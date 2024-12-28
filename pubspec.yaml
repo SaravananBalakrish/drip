@@ -25,6 +25,7 @@ dependencies:
   provider: ^6.0.5
   linked_scroll_controller: ^0.2.0
   responsive_grid_list: ^1.4.0
+  flutter_svg: ^2.0.16
 
 dev_dependencies:
   flutter_test:
@@ -105,6 +106,8 @@ flutter:
      - assets/Images/Png/objectId_38.png
      - assets/Images/Png/objectId_39.png
      - assets/Images/Png/objectId_40.png
+     - assets/SiteConfig/objectId_11_center_0.svg
+     - assets/SiteConfig/objectId_11_last_0.svg.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

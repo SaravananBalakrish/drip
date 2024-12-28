@@ -5,7 +5,7 @@ import '../Models/Configuration/device_object_model.dart';
 import '../Screens/ConfigMaker/config_base_page.dart';
 
 class ConfigMakerProvider extends ChangeNotifier{
-  ConfigMakerTabs selectedTab = ConfigMakerTabs.productLimit;
+  ConfigMakerTabs selectedTab = ConfigMakerTabs.siteConfigure;
   List<int> noticeableObjectId = [];
   List<DeviceModel> listOfDeviceModel = [];
   List<Map<String, dynamic>>sampleData = [
@@ -150,4 +150,15 @@ class ConfigMakerProvider extends ChangeNotifier{
     });
   }
 
+
+  //TODO: Site Config Properties
+  static const List<String> siteConfigTabs = ['Water source config', 'Pump Config', 'Filter config', 'Dosing config', 'Irrigation Line Config'];
+  int _selectedSiteConfig = 0;
+  int get selectedSiteConfig => _selectedSiteConfig;
+  void updateSelectedSiteConfig(int index) {
+    if (_selectedSiteConfig != index) {
+      _selectedSiteConfig = index;
+      notifyListeners();
+    }
+  }
 }

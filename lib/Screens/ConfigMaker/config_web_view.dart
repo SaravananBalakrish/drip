@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/dialog_boxes.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/product_limit.dart';
+import 'package:oro_drip_irrigation/Screens/ConfigMaker/site_config.dart';
 import 'package:provider/provider.dart';
 import '../../Constants/properties.dart';
 import '../../Models/Configuration/device_model.dart';
@@ -48,7 +49,10 @@ class _ConfigWebViewState extends State<ConfigWebView> {
           sideNavigationWidget(screenWidth, screenHeight),
           Expanded(
             child: configPvd.selectedTab == ConfigMakerTabs.deviceList
-                ? DeviceList(listOfDevices: widget.listOfDevices) : ProductLimit(listOfDevices: widget.listOfDevices,configPvd: configPvd,),
+                ? DeviceList(listOfDevices: widget.listOfDevices)
+                : configPvd.selectedTab == ConfigMakerTabs.siteConfigure
+                ? SiteConfig()
+                :ProductLimit(listOfDevices: widget.listOfDevices,configPvd: configPvd,),
           ),
 
         ],

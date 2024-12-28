@@ -64,5 +64,5 @@ class AppProperties {
     ),
   ];
 
-
+  static const selectedColor = Color(0xff054750);
 }

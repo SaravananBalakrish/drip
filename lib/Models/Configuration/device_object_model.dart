@@ -1,5 +1,7 @@
 
-class DeviceObjectModel {
+import 'package:flutter/foundation.dart';
+
+class DeviceObjectModel with DiagnosticableTreeMixin {
   final int objectId;
   int? sNo;
   String? name;
@@ -18,7 +20,20 @@ class DeviceObjectModel {
     required this.type,
     this.deviceId,
     this.count,
-});
+  });
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(IntProperty('objectId', objectId));
+    properties.add(IntProperty('sNo', sNo));
+    properties.add(StringProperty('name', name));
+    properties.add(StringProperty('objectName', objectName));
+    properties.add(IterableProperty<int>('location', location));
+    properties.add(StringProperty('type', type));
+    properties.add(StringProperty('deviceId', deviceId));
+    properties.add(StringProperty('count', count));
+  }
 
   factory DeviceObjectModel.fromJson(data){
     return DeviceObjectModel(

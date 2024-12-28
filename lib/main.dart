@@ -2,18 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/theme.dart';
 import 'package:oro_drip_irrigation/StateManagement/config_maker_provider.dart';
 import 'package:provider/provider.dart';
+import 'Constants/env_setup.dart';
 import 'Screens/ConfigMaker/config_base_page.dart';
 
 void main() {
+  GlobalConfig.setEnvironment(Environment.development);
   runApp(
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ConfigMakerProvider()),
+          // Provider<Logger>(
+          //   create: (_) => GlobalConfig.getService<Logger>(),
+          // ),
         ],
         child: const MyApp(),
       )
   );
-
 }
 
 class MyApp extends StatelessWidget {

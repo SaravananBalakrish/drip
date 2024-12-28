@@ -11,7 +11,7 @@ class AppThemes {
       elevation: 0,
       centerTitle: true,
     ),
-    textTheme: TextTheme(
+    textTheme: const TextTheme(
       headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.black),
       bodyMedium: TextStyle(fontSize: 16, color: Colors.black87),
     ),
@@ -25,7 +25,7 @@ class AppThemes {
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color(0xffB1FFCB),
         foregroundColor: Colors.black,
-        textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8), // Add border radius
@@ -34,16 +34,16 @@ class AppThemes {
     ),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
-      labelStyle: TextStyle(color: Colors.blue),
+      focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
+      labelStyle: const TextStyle(color: Colors.blue),
 
     ),
     tabBarTheme: TabBarTheme(
-      indicatorColor: Color(0xffB1FFCB),
+      indicatorColor: const Color(0xffB1FFCB),
       labelColor: Colors.white,
       unselectedLabelColor: Colors.grey.shade400
     ),
-    floatingActionButtonTheme: FloatingActionButtonThemeData(
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: Colors.blue,
       foregroundColor: Colors.white,
     ),
@@ -52,7 +52,7 @@ class AppThemes {
       shadowColor: Colors.grey.shade200,
       elevation: 4,
     ),
-    colorScheme: ColorScheme.light(
+    colorScheme: const ColorScheme.light(
       primary: Colors.blue,
       secondary: Colors.blueAccent,
       surface: Colors.white,
@@ -65,14 +65,14 @@ class AppThemes {
   static final darkTheme = ThemeData(
     brightness: Brightness.dark,
     primaryColor: Colors.teal,
-    scaffoldBackgroundColor: Color(0xFF121212),
-    appBarTheme: AppBarTheme(
+    scaffoldBackgroundColor: const Color(0xFF121212),
+    appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF1E1E1E),
       foregroundColor: Colors.white,
       elevation: 0,
       centerTitle: true,
     ),
-    textTheme: TextTheme(
+    textTheme: const TextTheme(
       headlineLarge: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.white),
       bodyMedium: TextStyle(fontSize: 16, color: Colors.white70),
     ),
@@ -80,25 +80,25 @@ class AppThemes {
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.teal,
         foregroundColor: Colors.white,
-        textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       ),
     ),
     inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.teal)),
-      labelStyle: TextStyle(color: Colors.teal),
+      focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.teal)),
+      labelStyle: const TextStyle(color: Colors.teal),
     ),
-    floatingActionButtonTheme: FloatingActionButtonThemeData(
+    floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: Colors.teal,
       foregroundColor: Colors.white,
     ),
     cardTheme: CardTheme(
-      color: Color(0xFF1E1E1E),
+      color: const Color(0xFF1E1E1E),
       shadowColor: Colors.grey.shade900,
       elevation: 4,
     ),
-    colorScheme: ColorScheme.dark(
+    colorScheme: const ColorScheme.dark(
       primary: Colors.teal,
       secondary: Colors.tealAccent,
       surface: Color(0xFF1E1E1E),
