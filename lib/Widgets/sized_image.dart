@@ -27,3 +27,17 @@ class SizedImageMedium extends StatelessWidget {
     );
   }
 }
+
+class SizedImageSmall extends StatelessWidget {
+  final String imagePath;
+  const SizedImageSmall({super.key, required this.imagePath});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 20,
+      height: 20,
+      child: Image.asset(imagePath),
+    );
+  }
+}

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/dialog_boxes.dart';
+import 'package:oro_drip_irrigation/Models/Configuration/device_model.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/product_limit.dart';
 import 'package:oro_drip_irrigation/Widgets/blinking_container.dart';
 import 'package:oro_drip_irrigation/Widgets/sized_image.dart';
+import 'package:oro_drip_irrigation/Widgets/toggle_text_form_field_connection.dart';
 import 'package:oro_drip_irrigation/Widgets/toggle_text_form_field_product_limit.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import '../Constants/communication_codes.dart';
@@ -10,24 +12,26 @@ import '../Constants/properties.dart';
 import '../Models/Configuration/device_object_model.dart';
 import '../StateManagement/config_maker_provider.dart';
 
-class ProductLimitGridListTile extends StatefulWidget {
+class ConnectionGridListTile extends StatefulWidget {
   final List<DeviceObjectModel> listOfObjectModel;
   final ConfigMakerProvider configPvd;
   final String title;
   Color? leadingColor;
-  ProductLimitGridListTile({
+  final DeviceModel selectedDevice;
+  ConnectionGridListTile({
     super.key,
     required this.listOfObjectModel,
     required this.title,
     required this.configPvd,
+    required this.selectedDevice,
     this.leadingColor,
   });
 
   @override
-  State<ProductLimitGridListTile> createState() => _ProductLimitGridListTileState();
+  State<ConnectionGridListTile> createState() => _ConnectionGridListTileState();
 }
 
-class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> with SingleTickerProviderStateMixin{
+class _ConnectionGridListTileState extends State<ConnectionGridListTile> with SingleTickerProviderStateMixin{
   late AnimationController _controller;
   late Animation<Color?> _colorAnimation;
 
@@ -54,9 +58,6 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
     }
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -77,20 +78,18 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
           ),
           children: [
             for(var object in widget.listOfObjectModel)
-              if(['-', '1,2'].contains(object.type)  || getInputCount(int.parse(object.type), widget.configPvd.listOfDeviceModel) != 0)
-                if(dependentObjectByCommonObject(object.objectId))
-                  objectTile(object)
+              objectTile(object)
           ],
         ),
       ],
     );
   }
-  
+
   Widget objectTile(DeviceObjectModel object){
     Widget myWidget = ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       title: Text(object.objectName, style: AppProperties.listTileBlackBoldStyle,),
-      subtitle: Text('Configured : ${getConfiguredObjectByObjectId(object.objectId)}', style: TextStyle(fontSize: 11),),
+      subtitle: Text('Not Configured : ${getNotConfiguredObjectByObjectId(object.objectId, widget.configPvd)}', style: TextStyle(fontSize: 11),),
       leading: Container(
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
@@ -103,64 +102,29 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
       ),
       trailing: SizedBox(
         width: 80,
-        child: ToggleTextFormFieldForProductLimit(
+        child: ToggleTextFormFieldForConnection(
           configPvd: widget.configPvd,
           initialValue: object.count.toString(),
           object: object,
+          selectedDevice: widget.selectedDevice,
         ),
       ),
     );
-    if(widget.configPvd.noticeableObjectId.contains(object.objectId)){
-      return BlinkingContainer(child: myWidget);
-    }else{
-      return Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            color: Colors.white,
-            boxShadow: AppProperties.customBoxShadow
-        ),
-        width: 300,
-        child: myWidget,
-      );
-    }
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.white,
+          boxShadow: AppProperties.customBoxShadow
+      ),
+      width: 300,
+      child: myWidget,
+    );
   }
-  int getConfiguredObjectByObjectId(int objectId){
-    List<DeviceObjectModel> configured = widget.configPvd.listOfGeneratedObject.where((object) => (object.objectId == objectId && object.deviceId != '')).toList();
-    return configured.length;
-  }
-  bool dependentObjectByCommonObject(int objectId){
-    bool visible = true;
-    if(objectIdDependsOnDosing.contains(objectId)){
-      //filter object by dosing site
-      DeviceObjectModel dosingObject = widget.configPvd.listOfSampleObjectModel.firstWhere((object) => object.objectId == 3);
-      if(dosingObject.count == '0'){
-        visible = false;
-      }
-    }else if(objectIdDependsOnFiltration.contains(objectId)){
-      DeviceObjectModel filtrationObject = widget.configPvd.listOfSampleObjectModel.firstWhere((object) => object.objectId == 4);
-      if(filtrationObject.count == '0'){
-        visible = false;
-      }
-    }else if(objectIdDependsOnTank.contains(objectId)){
-      DeviceObjectModel tankObject = widget.configPvd.listOfSampleObjectModel.firstWhere((object) => object.objectId == 1);
-      if(tankObject.count == '0'){
-        visible = false;
-      }
-    }else if([31, 32, 34, 35, 37, 38].contains(objectId)){
-      bool weatherDeviceAvailable = widget.configPvd.listOfDeviceModel.any((device) => device.categoryId == 4);
-      if(!weatherDeviceAvailable){
-        visible = false;
-      }
-    }else if([15, 16, 17, 18, 19, 20, 21].contains(objectId)){
-      bool gemModel3Available = widget.configPvd.listOfDeviceModel.any((device) => (device.categoryId == 4 && device.modelId == 3));
-      if(!gemModel3Available){
-        visible = false;
-      }
-    }
+}
 
-    return visible;
-  }
-
+int getNotConfiguredObjectByObjectId(int objectId, ConfigMakerProvider configPvd){
+  List<DeviceObjectModel> notConfigured = configPvd.listOfGeneratedObject.where((object) => (object.objectId == objectId && object.deviceId == '')).toList();
+  return notConfigured.length;
 }
 
 List<int> objectIdDependsOnDosing = [7, 8, 10, 27, 28];

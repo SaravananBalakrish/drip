@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Screens/ConfigMaker/connection.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/device_list.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/product_limit.dart';
 import 'package:provider/provider.dart';
@@ -89,13 +90,12 @@ class _ConfigMobileViewState extends State<ConfigMobileView>
         children: [
           DeviceList(listOfDevices: widget.listOfDevices),
           ProductLimit(listOfDevices: widget.listOfDevices, configPvd: configPvd,),
-          Text('dscdsf'),
+          Connection(configPvd: configPvd),
           Text('dscdsf'),
         ],
       ),
     );
   }
-
 }
 
 ConfigMakerTabs updateConfigMakerTabs({

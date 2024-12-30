@@ -6,17 +6,17 @@ import '../Models/Configuration/device_object_model.dart';
 import '../Screens/ConfigMaker/product_limit.dart';
 import '../StateManagement/config_maker_provider.dart';
 
-class ToggleTextFormField extends StatefulWidget {
+class ToggleTextFormFieldForProductLimit extends StatefulWidget {
   final ConfigMakerProvider configPvd;
   String initialValue;
   DeviceObjectModel object;
-  ToggleTextFormField({super.key,required this.initialValue, required this.object, required this.configPvd,});
+  ToggleTextFormFieldForProductLimit({super.key,required this.initialValue, required this.object, required this.configPvd,});
 
   @override
-  State<ToggleTextFormField> createState() => _ToggleTextFormFieldState();
+  State<ToggleTextFormFieldForProductLimit> createState() => _ToggleTextFormFieldForProductLimitState();
 }
 
-class _ToggleTextFormFieldState extends State<ToggleTextFormField> {
+class _ToggleTextFormFieldForProductLimitState extends State<ToggleTextFormFieldForProductLimit> {
   FocusNode myFocus = FocusNode();
   late TextEditingController myController;
   bool focus = false;
@@ -41,6 +41,7 @@ class _ToggleTextFormFieldState extends State<ToggleTextFormField> {
               availableCount += widget.initialValue == '' ? 0 : int.parse(widget.initialValue);
               if(integerValue > availableCount){
                 simpleDialogBox(context: context, title: 'Alert', message: 'The maximum allowable value is $availableCount. Please enter a value less than or equal to $availableCount.');
+
                 widget.configPvd.updateObjectCount(widget.object.objectId, availableCount.toString());
               }else{
                 widget.configPvd.updateObjectCount(widget.object.objectId, integerValue.toString());
@@ -68,6 +69,13 @@ class _ToggleTextFormFieldState extends State<ToggleTextFormField> {
           }
         });
       });
+    }
+  }
+
+  void validateAndUpdateObjectCount(DeviceObjectModel object,int newCount){
+    List<DeviceObjectModel> availableObject = widget.configPvd.listOfGeneratedObject.where((available) => (available.objectId == object.objectId)).toList();
+    if(availableObject.length >= newCount){
+      widget.configPvd.updateObjectCount(object.objectId, newCount.toString());
     }
   }
 

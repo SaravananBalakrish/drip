@@ -64,5 +64,8 @@ class AppProperties {
     ),
   ];
 
+  //Todo radius
+  static const Radius radius5 = Radius.circular(5);
+
 
 }

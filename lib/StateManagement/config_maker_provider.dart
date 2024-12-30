@@ -1,14 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 
 import '../Models/Configuration/device_model.dart';
 import '../Models/Configuration/device_object_model.dart';
 import '../Screens/ConfigMaker/config_base_page.dart';
+import '../Screens/ConfigMaker/config_web_view.dart';
 
 class ConfigMakerProvider extends ChangeNotifier{
-  ConfigMakerTabs selectedTab = ConfigMakerTabs.productLimit;
+  ConfigMakerTabs selectedTab = ConfigMakerTabs.connection;
+  int selectedCategory = 6;
+  int selectedModelControllerId = 100;
   List<int> noticeableObjectId = [];
   List<DeviceModel> listOfDeviceModel = [];
-  List<Map<String, dynamic>>sampleData = [
+  List<dynamic>sampleData = [
     {
       "connectingObjectId" : [1, 2, 3, 4], "controllerId": 1, "deviceId": "EDEFEADE0001", "deviceName": "Oro Gem 1", "categoryId": 1, "categoryName": "Oro Gem", "modelId": 1, "modelName": "Gem", "interfaceId": 1, "interval": 5, "serialNo": 0, "isUsedInConfig": 1, "masterDeviceId": "EDEFEADE0001", "noOfRelay": 0, "noOfLatch": 0, "noOfAnalogInput": 0, "noOfDigitalInput": 0, "noOfPulseInput": 0, "noOfMoistureInput": 0, "noOfI2CInput": 0
     },
@@ -31,6 +36,12 @@ class ConfigMakerProvider extends ChangeNotifier{
       "connectingObjectId" : [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 28, 30, 31, 32, 35, 37, 38, 39, 40], "controllerId": 7, "deviceId": "EDEFEADE0007", "deviceName": "Oro Smart Plus 1", "categoryId": 6, "categoryName": "Oro Smart Plus", "modelId": 3, "modelName": "Oro Smart Plus m3", "interfaceId": 1, "interval": 5, "serialNo": 0, "isUsedInConfig": 1, "masterDeviceId": "EDEFEADE0001", "noOfRelay": 16, "noOfLatch": 0, "noOfAnalogInput": 8, "noOfDigitalInput": 5, "noOfPulseInput": 1, "noOfMoistureInput": 0, "noOfI2CInput": 0
     },
     {
+      "connectingObjectId" : [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 28, 30, 31, 32, 35, 37, 38, 39, 40], "controllerId": 100, "deviceId": "EDEFEADE0100", "deviceName": "Oro Smart Plus 2", "categoryId": 6, "categoryName": "Oro Smart Plus", "modelId": 3, "modelName": "Oro Smart Plus m3", "interfaceId": 1, "interval": 5, "serialNo": 0, "isUsedInConfig": 1, "masterDeviceId": "EDEFEADE0001", "noOfRelay": 16, "noOfLatch": 0, "noOfAnalogInput": 8, "noOfDigitalInput": 5, "noOfPulseInput": 1, "noOfMoistureInput": 0, "noOfI2CInput": 0
+    },
+    {
+      "connectingObjectId" : [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 28, 30, 31, 32, 35, 37, 38, 39, 40], "controllerId": 99, "deviceId": "EDEFEADE0101", "deviceName": "Oro Smart Plus 3", "categoryId": 6, "categoryName": "Oro Smart Plus", "modelId": 3, "modelName": "Oro Smart Plus m3", "interfaceId": 1, "interval": 5, "serialNo": 0, "isUsedInConfig": 1, "masterDeviceId": "EDEFEADE0001", "noOfRelay": 16, "noOfLatch": 0, "noOfAnalogInput": 8, "noOfDigitalInput": 5, "noOfPulseInput": 1, "noOfMoistureInput": 0, "noOfI2CInput": 0
+    },
+    {
       "connectingObjectId" : [5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 24, 26, 27, 28, 31, 35, 37], "controllerId": 8, "deviceId": "EDEFEADE0008", "deviceName": "Oro Rtu 1", "categoryId": 7, "categoryName": "Oro Rtu", "modelId": 5, "modelName": "Oro Rtu m5", "interfaceId": 1, "interval": 5, "serialNo": 0, "isUsedInConfig": 0, "masterDeviceId": "", "noOfRelay": 0, "noOfLatch": 8, "noOfAnalogInput": 4, "noOfDigitalInput": 0, "noOfPulseInput": 1, "noOfMoistureInput": 0, "noOfI2CInput": 0
     },
     {
@@ -44,8 +55,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     }
 
   ];
-
-  List<Map<String, dynamic>> sampleObject = [
+  List<dynamic> sampleObject = [
     {"objectId" : 1, "type" : "-", "objectName" : "Tank"},
     {"objectId" : 2, "type" : "-", "objectName" : "Irrigation Line"},
     {"objectId" : 3, "type" : "-", "objectName" : "Dosing Site"},
@@ -87,58 +97,226 @@ class ConfigMakerProvider extends ChangeNotifier{
     {"objectId" : 40, "type" : "4", "objectName" : "Manual Button"},
   ];
   List<DeviceObjectModel> listOfSampleObjectModel = [];
+  List<DeviceObjectModel> listOfObjectModelConnection = [];
+  List<DeviceObjectModel> listOfGeneratedObject = [];
+
+
+  DeviceObjectModel mapToDeviceObject(dynamic object) {
+    return DeviceObjectModel(
+      objectId: object['objectId'],
+      objectName: object['objectName'],
+      type: object['type'],
+      count: [1, 2].contains(object['objectId']) ? '1' : '0',
+    );
+  }
 
   Future<List<DeviceModel>> fetchData()async {
     await Future.delayed(const Duration(seconds: 0));
     try{
-      listOfDeviceModel = sampleData.map((devices) {
-        return DeviceModel(
-          controllerId: devices['controllerId'],
-          deviceId: devices['deviceId'],
-          deviceName: devices['deviceName'],
-          categoryId: devices['categoryId'],
-          categoryName: devices['categoryName'],
-          modelId: devices['modelId'],
-          modelName: devices['modelName'],
-          interfaceId: devices['interfaceId'],
-          interval: 5,
-          serialNo: devices['serialNo'],
-          isUsedInConfig: devices['isUsedInConfig'],
-          masterDeviceId: devices['masterDeviceId'],
-          noOfRelay: devices['noOfRelay'],
-          noOfLatch: devices['noOfLatch'],
-          noOfAnalogInput: devices['noOfAnalogInput'],
-          noOfDigitalInput: devices['noOfDigitalInput'],
-          noOfPulseInput: devices['noOfPulseInput'],
-          noOfMoistureInput: devices['noOfMoistureInput'],
-          noOfI2CInput: devices['noOfI2CInput'],
-          select: false,
-          connectingObjectId: devices['connectingObjectId']
-        );
-      }).toList();
-      listOfSampleObjectModel = sampleObject.map((object){
-        return DeviceObjectModel(
-            objectId: object['objectId'],
-            objectName: object['objectName'],
-            type: object['type'],
-          count: [1,2].contains(object['objectId']) ? '1' :  '0'
-        );
-      }).toList();
+      String? dataFromSession = readFromSessionStorage('configData');
+      if(dataFromSession != null){
+        Map<String, dynamic> jsonData = jsonDecode(dataFromSession);
+        listOfDeviceModel = (jsonData['listOfDeviceModel'] as List<dynamic>).map((devices) {
+          return DeviceModel(
+              controllerId: devices['controllerId'],
+              deviceId: devices['deviceId'],
+              deviceName: devices['deviceName'],
+              categoryId: devices['categoryId'],
+              categoryName: devices['categoryName'],
+              modelId: devices['modelId'],
+              modelName: devices['modelName'],
+              interfaceId: devices['interfaceId'],
+              interval: 5,
+              serialNo: devices['serialNo'],
+              isUsedInConfig: devices['isUsedInConfig'],
+              masterDeviceId: devices['masterDeviceId'],
+              noOfRelay: devices['noOfRelay'],
+              noOfLatch: devices['noOfLatch'],
+              noOfAnalogInput: devices['noOfAnalogInput'],
+              noOfDigitalInput: devices['noOfDigitalInput'],
+              noOfPulseInput: devices['noOfPulseInput'],
+              noOfMoistureInput: devices['noOfMoistureInput'],
+              noOfI2CInput: devices['noOfI2CInput'],
+              select: false,
+              connectingObjectId: (devices['connectingObjectId'] as List<dynamic>).map((e) => e as int).toList()
+          );
+        }).toList();
+        listOfSampleObjectModel = (jsonData['listOfSampleObjectModel'] as List<dynamic>).map((object) => DeviceObjectModel.fromJson(object)).toList();
+        listOfObjectModelConnection = (jsonData['listOfObjectModelConnection'] as List<dynamic>).map((object) => DeviceObjectModel.fromJson(object)).toList();
+        listOfGeneratedObject = (jsonData['listOfGeneratedObject'] as List<dynamic>).map((object) => DeviceObjectModel.fromJson(object)).toList();
+        selectedCategory = listOfDeviceModel[1].categoryId;
+        selectedModelControllerId = listOfDeviceModel[1].controllerId;
+
+      }else{
+        listOfDeviceModel = sampleData.map((devices) {
+          return DeviceModel(
+              controllerId: devices['controllerId'],
+              deviceId: devices['deviceId'],
+              deviceName: devices['deviceName'],
+              categoryId: devices['categoryId'],
+              categoryName: devices['categoryName'],
+              modelId: devices['modelId'],
+              modelName: devices['modelName'],
+              interfaceId: devices['interfaceId'],
+              interval: 5,
+              serialNo: devices['serialNo'],
+              isUsedInConfig: devices['isUsedInConfig'],
+              masterDeviceId: devices['masterDeviceId'],
+              noOfRelay: devices['noOfRelay'],
+              noOfLatch: devices['noOfLatch'],
+              noOfAnalogInput: devices['noOfAnalogInput'],
+              noOfDigitalInput: devices['noOfDigitalInput'],
+              noOfPulseInput: devices['noOfPulseInput'],
+              noOfMoistureInput: devices['noOfMoistureInput'],
+              noOfI2CInput: devices['noOfI2CInput'],
+              select: false,
+              connectingObjectId: devices['connectingObjectId']
+          );
+        }).toList();
+        listOfSampleObjectModel = sampleObject.map(mapToDeviceObject).toList();
+        listOfObjectModelConnection = sampleObject.map(mapToDeviceObject).toList();
+      }
+
     }catch (e){
       print('Error on converting to device model :: $e');
     }
+    notifyListeners();
     return listOfDeviceModel;
   }
 
   void updateObjectCount(int objectId, String count){
     for(var object in listOfSampleObjectModel){
       if(object.objectId == objectId){
+        int oldCount = object.count == '' ? 0 : int.parse(object.count!);
+        int newCount = int.parse(count);
         object.count = count;
+        if(oldCount <= newCount){
+          for(var start = oldCount;start < newCount;start++){
+            int increment = start+1;
+            String StringDecimalNo = '${object.objectId}.${increment < 100 ? '0' : ''}${increment < 10 ? '0' : ''}${start+1}';
+            listOfGeneratedObject.add(
+                DeviceObjectModel(
+                  objectId: object.objectId,
+                  objectName: object.objectName,
+                  type: object.type,
+                  name: '${object.objectName} ${start+1}',
+                  sNo: double.parse(StringDecimalNo),
+                  deviceId: '',
+                  location: [],
+                )
+            );
+          }
+        }else{
+          int howManyObjectToDelete = oldCount - newCount;
+          List<double> filteredList = listOfGeneratedObject
+              .where((available) => (available.objectId == object.objectId))
+              .map((e) => e.sNo!).toList();
+          filteredList = filteredList.sublist(filteredList.length - howManyObjectToDelete, filteredList.length);
+          listOfGeneratedObject.removeWhere((e) => filteredList.contains(e.sNo));
+        }
       }
     }
     Future.delayed(Duration.zero, () {
       notifyListeners();
     });
+    for(var object in listOfGeneratedObject){
+      print('generated :: ${object.name} , ${object.sNo}');
+    }
+  }
+
+  void updateObjectConnection(DeviceObjectModel selectedConnectionObject,int newCount){
+    print('selectedConnectionObject : ${selectedConnectionObject.objectName}  newCount : ${newCount}');
+
+    // ------making connection list--------------------------------------------------------
+    DeviceModel selectedDevice = listOfDeviceModel.firstWhere((device) => device.controllerId == selectedModelControllerId);
+    Map<String, int> connectionTypeCountMapping = {
+      '1,2': selectedDevice.noOfRelay,
+      '3': selectedDevice.noOfAnalogInput,
+      '4': selectedDevice.noOfDigitalInput,
+      '5': selectedDevice.noOfMoistureInput,
+      '6': selectedDevice.noOfPulseInput,
+    };
+    int totalConnectionCount = connectionTypeCountMapping[selectedConnectionObject.type]!;
+    List<int> selectedModelDefaultConnectionList = List<int>.generate(totalConnectionCount, (index) => index + 1);
+
+
+    // ------filtering object by objectId, configure & not configured----------------------
+    int oldCount = ['', null].contains(selectedConnectionObject.count) ? 0 : int.parse(selectedConnectionObject.count!);
+    List<DeviceObjectModel> filteredByObjectId = listOfGeneratedObject
+        .where((object) => object.objectId == selectedConnectionObject.objectId)
+        .toList();
+    List<DeviceObjectModel> filteredByNotConfigured = filteredByObjectId.where((object) => object.deviceId == '').toList();
+    List<DeviceObjectModel> filteredByConfigured = listOfGeneratedObject.where((object) => (object.deviceId == selectedDevice.deviceId && object.type == selectedConnectionObject.type)).toList();
+    List<DeviceObjectModel> filteredByObjectIdToConfigured = listOfGeneratedObject.where((object) => (object.deviceId == selectedDevice.deviceId && object.type == selectedConnectionObject.type && object.objectId == selectedConnectionObject.objectId)).toList();
+    for(var configuredObject in filteredByConfigured){
+      if(selectedModelDefaultConnectionList.contains(configuredObject.connectionNo)){
+        selectedModelDefaultConnectionList.remove(configuredObject.connectionNo);
+      }
+    }
+
+    if(newCount > oldCount){   // adding
+      // ------------- validate ec, ph and pressure switch for category 6----------------------------
+      if(selectedDevice.categoryId == 6){
+        int ph = 28;
+        if(selectedConnectionObject.objectId == ph && selectedDevice.categoryId == 6){
+          selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [5,6].contains(connectionNo)).toList();
+        }
+        int ec = 27;
+        if(selectedConnectionObject.objectId == ec && selectedDevice.categoryId == 6){
+          selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [7,8].contains(connectionNo)).toList();
+        }
+        int pressureSwitch = 23;
+        if(selectedConnectionObject.objectId == pressureSwitch && selectedDevice.categoryId == 6){
+          selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [5].contains(connectionNo)).toList();
+        }
+      }
+      // ------------- validate ph, others for category 5----------------------------
+      int ph = 28;
+      if(selectedConnectionObject.objectId == ph && selectedDevice.categoryId == 5){
+        selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [1,2].contains(connectionNo)).toList();
+      }
+      if(selectedDevice.categoryId == 5 && selectedConnectionObject.objectId != ph){
+        selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => ![1,2].contains(connectionNo)).toList();
+      }
+
+      print('selectedModelDefaultConnectionList :: $selectedModelDefaultConnectionList');
+      int howManyObjectSupposedToConnect = newCount - oldCount;
+      for(var notConfiguredObject = 0;notConfiguredObject < howManyObjectSupposedToConnect;notConfiguredObject++){
+        inner : for(var object in listOfGeneratedObject){
+          if(object.sNo == filteredByNotConfigured[notConfiguredObject].sNo){
+            print('object.sNo : ${object.sNo}');
+            object.connectionNo = selectedModelDefaultConnectionList[notConfiguredObject];
+            object.deviceId = selectedDevice.deviceId;
+            break inner;
+          }
+        }
+      }
+    }else{  // removing
+      int deletingCount = oldCount - newCount;
+      List<DeviceObjectModel> objectToDelete = filteredByObjectIdToConfigured.sublist(filteredByObjectIdToConfigured.length - deletingCount, filteredByObjectIdToConfigured.length);
+      for(var delete in objectToDelete){
+        print('name : ${delete.name}, objectName : ${delete.objectName}');
+      }
+      for(var deletingObject in objectToDelete){
+        inner : for(var object in listOfGeneratedObject){
+          if(deletingObject.sNo == object.sNo){
+            object.connectionNo = 0;
+            object.deviceId = '';
+            break inner;
+          }
+        }
+      }
+    }
+    for(var connectionObject in listOfObjectModelConnection){
+      if(connectionObject.objectId == selectedConnectionObject.objectId){
+        connectionObject.count = newCount.toString();
+      }
+    }
+    for(var object in listOfGeneratedObject){
+      print('generated :: ${object.name} , ${object.sNo}  connection :: ${object.connectionNo}  deviceId :: ${object.deviceId}');
+    }
+    notifyListeners();
+
   }
 
   void noticeObjectForTemporary(List<int> listOfObjectId){
@@ -148,6 +326,36 @@ class ConfigMakerProvider extends ChangeNotifier{
       noticeableObjectId = [];
       notifyListeners();
     });
+  }
+
+  void updateConnectionListTile(){
+    DeviceModel selectedDevice = listOfDeviceModel.firstWhere((device) => device.controllerId == selectedModelControllerId);
+    for(var connectionObject in listOfObjectModelConnection){
+      int count = 0;
+      for(var object in listOfGeneratedObject){
+        if(connectionObject.objectId == object.objectId && selectedDevice.deviceId == object.deviceId){
+          count += 1;
+        }
+      }
+      print('connectionObject :: ${connectionObject.objectName}  , count :: $count');
+      connectionObject.count = count.toString();
+    }
+    notifyListeners();
+  }
+
+  void removeSingleObjectFromConfigureToConfigure(DeviceObjectModel object){
+    for(var generatedObject in listOfGeneratedObject){
+      if(generatedObject.sNo == object.sNo){
+        generatedObject.deviceId = '';
+        generatedObject.connectionNo = 0;
+        break;
+      }
+    }
+    for(var connectionObject in listOfObjectModelConnection){
+      if(connectionObject.objectId == object.objectId){
+        connectionObject.count = (int.parse(connectionObject.count!) - 1).toString();      }
+    }
+    notifyListeners();
   }
 
 }

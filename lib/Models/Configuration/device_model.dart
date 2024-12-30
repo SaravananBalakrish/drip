@@ -71,7 +71,7 @@ class DeviceModel {
     );
   }
 
-  Map<String, dynamic> toJson(){
+  dynamic toJson(){
     return {
       'controllerId' : controllerId,
       'deviceId' : deviceId,
