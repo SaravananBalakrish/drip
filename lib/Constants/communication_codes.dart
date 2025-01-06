@@ -89,7 +89,6 @@ Color getObjectTypeCodeToColor(int code){
 }
 
 //Todo deviceType
-
 String getDeviceCodeToString(int code){
   switch(code){
     case 1 :
@@ -116,3 +115,38 @@ String getDeviceCodeToString(int code){
       return '-';
   }
 }
+
+// Todo: tankType
+String getTankCodeToString(int code){
+  switch(code){
+    case 1 :
+      return 'Tank';
+    case 2 :
+      return 'Sump';
+    case 3 :
+      return 'Well';
+    case 4 :
+      return 'Bore';
+    case 5 :
+      return 'Others';
+    default :
+      return '-';
+  }
+}
+int getTankStringToCode(String type){
+  switch(type){
+    case 'Tank' :
+      return 1;
+    case 'Sump' :
+      return 2;
+    case 'Well' :
+      return 3;
+    case 'Bore' :
+      return 4;
+    case 'Others' :
+      return 5;
+    default :
+      return 0;
+  }
+}
+

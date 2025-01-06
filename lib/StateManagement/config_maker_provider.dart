@@ -119,8 +119,9 @@ class ConfigMakerProvider extends ChangeNotifier{
     {"objectId" : 36, "type" : "7", "objectName" : "Humidity Sensor"},
     {"objectId" : 37, "type" : "3", "objectName" : "Leaf Wetness Sensor"},
     {"objectId" : 38, "type" : "4", "objectName" : "Rain Fall Sensor"},
-    {"objectId" : 39, "type" : "4", "objectName" : "Float"},
-    {"objectId" : 40, "type" : "4", "objectName" : "Manual Button"},
+    {"objectId" : 39, "type" : "4", "objectName" : "Atm. Pressure"},
+    {"objectId" : 40, "type" : "4", "objectName" : "Float"},
+    {"objectId" : 41, "type" : "4", "objectName" : "Manual Button"},
   ];
   List<DeviceObjectModel> listOfSampleObjectModel = [];
   List<DeviceObjectModel> listOfObjectModelConnection = [];

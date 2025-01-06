@@ -107,6 +107,7 @@ flutter:
      - assets/Images/Png/objectId_38.png
      - assets/Images/Png/objectId_39.png
      - assets/Images/Png/objectId_40.png
+     - assets/Images/Png/objectId_41.png
      - assets/Images/Filtration/single_filter_0.svg
      - assets/Images/Filtration/single_filter_4.svg
      - assets/Images/Filtration/multiple_filter_first_0.svg
@@ -140,7 +141,8 @@ flutter:
      - assets/Images/Source/bore_1.svg
      - assets/Images/Source/bottom_float.svg
      - assets/Images/Source/backside_pipe_1.svg
-     - assets/Images/Source/front_corner_pipe_1.svg
+     - assets/Images/Source/front_corner_left_radius_pipe_1.svg
+     - assets/Images/Source/front_corner_right_radius_pipe_1.svg
      - assets/Images/Source/pond_1.svg
      - assets/Images/Source/sump_1.svg
      - assets/Images/Source/tank_1.svg
