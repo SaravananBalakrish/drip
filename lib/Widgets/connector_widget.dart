@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
+import 'package:oro_drip_irrigation/Screens/ConfigMaker/connection.dart';
 import 'package:oro_drip_irrigation/Widgets/sized_image.dart';
 
 import '../Models/Configuration/device_model.dart';
@@ -29,14 +30,20 @@ class ConnectorWidget extends StatelessWidget {
       orElse: () => null as DeviceObjectModel?,
     );
     String? name = object?.name;
+    bool selectedConnector = (configPvd.selectedModelControllerId == selectedDevice.controllerId && configPvd.selectedType == type && configPvd.selectedConnectionNo == connectionNo);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         InkWell(
-          onTap: (){
+          onDoubleTap: configPvd.selectedSelectionMode == SelectionMode.auto ? null :  (){
             if(object != null){
               configPvd.removeSingleObjectFromConfigureToConfigure(object);
             }
+          },
+          onTap: configPvd.selectedSelectionMode == SelectionMode.auto ? null : (){
+            configPvd.updateSelectedConnectionNoAndItsType(connectionNo, type);
+            print('connectionNo : $connectionNo   type : $type');
           },
           child: Row(
             children: [
@@ -46,7 +53,7 @@ class ConnectorWidget extends StatelessWidget {
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(2),
-                    color: Colors.black
+                    color:  selectedConnector ? Colors.red : Colors.black
                 ),
                 child: Center(
                   child: Container(
@@ -62,8 +69,8 @@ class ConnectorWidget extends StatelessWidget {
               Container(
                 width: 20,
                 height: 5,
-                decoration: const BoxDecoration(
-                  color: Colors.black,
+                decoration: BoxDecoration(
+                  color: selectedConnector ? Colors.red : Colors.black,
                 ),
               ),
               const SizedBox(width: 5,),
@@ -100,11 +107,12 @@ class ConnectorWidget extends StatelessWidget {
       specificSensor = '(Ec)';
     }else if(connectionNo == 8 && selectedDevice.categoryId == 6 && selectedDevice.modelId == 3 && type == '3'){
       specificSensor = '(Ec)';
-    }else if(connectionNo == 1 && selectedDevice.categoryId == 5 && type == '3'){
-      specificSensor = '(Ph)';
-    }else if(connectionNo == 2 && selectedDevice.categoryId == 5 && type == '3'){
-      specificSensor = '(Ph)';
     }
+    // else if(connectionNo == 1 && selectedDevice.categoryId == 5 && type == '3'){
+    //   specificSensor = '(Ph)';
+    // }else if(connectionNo == 2 && selectedDevice.categoryId == 5 && type == '3'){
+    //   specificSensor = '(Ph)';
+    // }
     return '$keyWord$connectionNo$specificSensor';
   }
 

@@ -1,3 +1,5 @@
+import 'package:oro_drip_irrigation/Models/Configuration/weather_model.dart';
+
 class DeviceModel {
   final int controllerId;
   final String deviceId;
@@ -11,6 +13,7 @@ class DeviceModel {
   final int serialNo;
   int isUsedInConfig;
   String? masterDeviceId;
+  String? extendDeviceId;
   final int noOfRelay;
   final int noOfLatch;
   final int noOfAnalogInput;
@@ -34,6 +37,7 @@ class DeviceModel {
     required this.serialNo,
     required this.isUsedInConfig,
     required this.masterDeviceId,
+    required this.extendDeviceId,
     required this.noOfRelay,
     required this.noOfLatch,
     required this.noOfAnalogInput,
@@ -59,6 +63,7 @@ class DeviceModel {
         serialNo : data['serialNo'],
         isUsedInConfig : data['isUsedInConfig'],
         masterDeviceId : data['masterDeviceId'],
+        extendDeviceId : data['extendDeviceId'] ?? '',
         noOfRelay : data['noOfRelay'],
         noOfLatch : data['noOfLatch'],
         noOfAnalogInput : data['noOfAnalogInput'],
@@ -85,6 +90,7 @@ class DeviceModel {
       'serialNo' : serialNo,
       'isUsedInConfig' : isUsedInConfig,
       'masterDeviceId' : masterDeviceId,
+      'extendDeviceId' : extendDeviceId,
       'noOfRelay' : noOfRelay,
       'noOfLatch' : noOfLatch,
       'noOfAnalogInput' : noOfAnalogInput,

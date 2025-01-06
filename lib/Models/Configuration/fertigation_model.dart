@@ -2,17 +2,15 @@ import 'device_object_model.dart';
 
 class FertilizationModel{
   DeviceObjectModel commonDetails;
-  int? siteMode;
-  List<int>? channel;
-  List<int>? boosterPump;
-  List<int>? agitator;
-  List<int>? selector;
-  List<int>? ec;
-  List<int>? ph;
+  List<double> channel;
+  List<double> boosterPump;
+  List<double> agitator;
+  List<double> selector;
+  List<double> ec;
+  List<double> ph;
 
   FertilizationModel({
     required this.commonDetails,
-    required this.siteMode,
     required this.channel,
     required this.boosterPump,
     required this.agitator,
@@ -22,22 +20,22 @@ class FertilizationModel{
   });
 
   factory FertilizationModel.fromJson(data){
+    DeviceObjectModel deviceObjectModel = DeviceObjectModel.fromJson(data);
+    print('from json in fertilization');
     return FertilizationModel(
-        commonDetails: data,
-        siteMode: data['siteMode'],
-        channel: data['channel'],
-        boosterPump: data['boosterPump'],
-        agitator: data['agitator'],
-        selector: data['selector'],
-        ec: data['ec'],
-        ph: data['ph']
+        commonDetails: deviceObjectModel,
+        channel: (data['channel'] as List<dynamic>).map((sNo) => sNo as double).toList(),
+        boosterPump: (data['boosterPump'] as List<dynamic>).map((sNo) => sNo as double).toList(),
+        agitator: (data['agitator'] as List<dynamic>).map((sNo) => sNo as double).toList(),
+        selector: (data['selector'] as List<dynamic>).map((sNo) => sNo as double).toList(),
+        ec: (data['ec'] as List<dynamic>).map((sNo) => sNo as double).toList(),
+        ph: (data['ph'] as List<dynamic>).map((sNo) => sNo as double).toList(),
     );
   }
 
   Map<String, dynamic> toJson(){
     var commonInfo = commonDetails.toJson();
     commonInfo.addAll({
-      'siteMode' : siteMode,
       'channel' : channel,
       'boosterPump' : boosterPump,
       'agitator' : agitator,

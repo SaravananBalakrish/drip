@@ -25,6 +25,7 @@ dependencies:
   provider: ^6.0.5
   linked_scroll_controller: ^0.2.0
   responsive_grid_list: ^1.4.0
+  flutter_svg: ^2.0.16
 
 dev_dependencies:
   flutter_test:
@@ -70,7 +71,7 @@ flutter:
      - assets/Images/Png/objectId_3.png
      - assets/Images/Png/objectId_4.png
      - assets/Images/Png/objectId_5.png
-#     - assets/Images/Png/objectId_6.png
+     - assets/Images/Png/objectId_6.png
      - assets/Images/Png/objectId_7.png
      - assets/Images/Png/objectId_8.png
      - assets/Images/Png/objectId_9.png
@@ -89,6 +90,7 @@ flutter:
      - assets/Images/Png/objectId_22.png
      - assets/Images/Png/objectId_23.png
      - assets/Images/Png/objectId_24.png
+     - assets/Images/Svg/objectId_24.svg
      - assets/Images/Png/objectId_25.png
      - assets/Images/Png/objectId_26.png
      - assets/Images/Png/objectId_27.png
@@ -105,6 +107,47 @@ flutter:
      - assets/Images/Png/objectId_38.png
      - assets/Images/Png/objectId_39.png
      - assets/Images/Png/objectId_40.png
+     - assets/Images/Filtration/single_filter_0.svg
+     - assets/Images/Filtration/single_filter_4.svg
+     - assets/Images/Filtration/multiple_filter_first_0.svg
+     - assets/Images/Filtration/multiple_filter_first_4.svg
+     - assets/Images/Filtration/multiple_filter_middle_0.svg
+     - assets/Images/Filtration/multiple_filter_middle_4.svg
+     - assets/Images/Filtration/multiple_filter_last_0.svg
+     - assets/Images/Filtration/multiple_filter_last_4.svg
+     - assets/Images/Filtration/multiple_filter_middle_backwash_pipe_0.svg
+     - assets/Images/Filtration/multiple_filter_first_backwash_pipe_0.svg
+     - assets/Images/Filtration/multiple_filter_last_bottom_filtration_pipe.svg
+     - assets/Images/Filtration/multiple_filter_last_bottom_filtration_pipe_4.svg
+     - assets/Images/Filtration/horizontal_pipe_0.svg
+     - assets/Images/Filtration/horizontal_pipe_4.svg
+     - assets/Images/Fertilization/single_channel_0.svg
+     - assets/Images/Fertilization/single_channel_1.svg
+     - assets/Images/Fertilization/multiple_channel_first_0.svg
+     - assets/Images/Fertilization/multiple_channel_first_1.svg
+     - assets/Images/Fertilization/multiple_channel_middle_0.svg
+     - assets/Images/Fertilization/multiple_channel_middle_1.svg
+     - assets/Images/Fertilization/multiple_channel_last_0.svg
+     - assets/Images/Fertilization/multiple_channel_last_1.svg
+     - assets/Images/Fertilization/booster_0.svg
+     - assets/Images/Fertilization/booster_1.svg
+     - assets/Images/Fertilization/agitator_0.svg
+     - assets/Images/Fertilization/agitator_1.svg
+     - assets/Images/Fertilization/agitator_connection_pipe_first_0.svg
+     - assets/Images/Fertilization/agitator_connection_pipe_first_1.svg
+     - assets/Images/Fertilization/agitator_connection_pipe_last_0.svg
+     - assets/Images/Fertilization/agitator_connection_pipe_last_1.svg
+     - assets/Images/Source/bore_1.svg
+     - assets/Images/Source/bottom_float.svg
+     - assets/Images/Source/backside_pipe_1.svg
+     - assets/Images/Source/front_corner_pipe_1.svg
+     - assets/Images/Source/pond_1.svg
+     - assets/Images/Source/sump_1.svg
+     - assets/Images/Source/tank_1.svg
+     - assets/Images/Source/top_float.svg
+     - assets/Images/Source/water_view.svg
+     - assets/Images/Source/well_1.svg
+     - assets/Images/Source/pump_1.svg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

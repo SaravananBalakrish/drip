@@ -46,18 +46,22 @@ class _ToggleTextFormFieldForProductLimitState extends State<ToggleTextFormField
               }else{
                 widget.configPvd.updateObjectCount(widget.object.objectId, integerValue.toString());
               }
-            }else{
-              if([1, 2].contains(widget.object.objectId)){
-                if(integerValue == 0){  //Validating tank and line at least 1 count.
-                  widget.configPvd.updateObjectCount(widget.object.objectId, '1');
-                  simpleDialogBox(context: context, title: 'Alert', message: 'You need to specify at least one ${widget.object.objectName}.');
-                }else{   // update value if more than 0
-                  widget.configPvd.updateObjectCount(widget.object.objectId, integerValue.toString());
-                }
-              }else{
-                widget.configPvd.updateObjectCount(widget.object.objectId, integerValue.toString());
-              }
             }
+            else{
+              widget.configPvd.updateObjectCount(widget.object.objectId, integerValue.toString());
+            }
+            // else{
+            //   if([1, 2].contains(widget.object.objectId)){
+            //     if(integerValue == 0){  //Validating tank and line at least 1 count.
+            //       widget.configPvd.updateObjectCount(widget.object.objectId, '1');
+            //       simpleDialogBox(context: context, title: 'Alert', message: 'You need to specify at least one ${widget.object.objectName}.');
+            //     }else{   // update value if more than 0
+            //       widget.configPvd.updateObjectCount(widget.object.objectId, integerValue.toString());
+            //     }
+            //   }else{
+            //     widget.configPvd.updateObjectCount(widget.object.objectId, integerValue.toString());
+            //   }
+            // }
             setState(() {
               focus = false;
             });

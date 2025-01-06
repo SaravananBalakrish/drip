@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/dialog_boxes.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/connection.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/product_limit.dart';
+import 'package:oro_drip_irrigation/Screens/ConfigMaker/site_configure.dart';
 import 'package:provider/provider.dart';
 import '../../Constants/properties.dart';
 import '../../Models/Configuration/device_model.dart';
@@ -25,7 +26,7 @@ String? readFromSessionStorage(String key) {
 }
 
 void deleteFromSessionStorage(String key) {
-  // window.sessionStorage.remove(key);
+  window.sessionStorage.remove(key);
 }
 
 class ConfigWebView extends StatefulWidget {
@@ -68,46 +69,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                 : configPvd.selectedTab == ConfigMakerTabs.productLimit
                 ? ProductLimit(listOfDevices: widget.listOfDevices,configPvd: configPvd,)
                 : configPvd.selectedTab == ConfigMakerTabs.connection
-                ? Connection(configPvd: configPvd,)
-                : Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                      onPressed: (){
-                        var listOfDeviceModel = configPvd.listOfDeviceModel.map((object){
-                          return object.toJson();
-                        }).toList();
-                        var listOfSampleObjectModel = configPvd.listOfSampleObjectModel.map((object){
-                          return object.toJson();
-                        }).toList();
-                        var listOfObjectModelConnection = configPvd.listOfObjectModelConnection.map((object){
-                          return object.toJson();
-                        }).toList();
-                        var listOfGeneratedObject = configPvd.listOfGeneratedObject.map((object){
-                          return object.toJson();
-                        }).toList();
-                        String data = jsonEncode({
-                        'listOfDeviceModel' : listOfDeviceModel,
-                        'listOfSampleObjectModel' : listOfSampleObjectModel,
-                        'listOfObjectModelConnection' : listOfObjectModelConnection,
-                        'listOfGeneratedObject' : listOfGeneratedObject,
-                      }
-                        );
-                        saveToSessionStorage('configData',data);
-                      },
-                      child: const Text('Store')
-                  ),
-                  ElevatedButton(
-                      onPressed: (){
-                        String dataFromSession = readFromSessionStorage('configData')!;
-                        print('dataFromSession :: $dataFromSession');
-                      },
-                      child: const Text('Read')
-                  ),
-                ],
-              ),
-            ),
+                ? Connection(configPvd: configPvd,) : SiteConfigure(configPvd: configPvd)
           ),
         ],
       ),

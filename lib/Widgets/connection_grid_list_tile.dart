@@ -100,7 +100,13 @@ class _ConnectionGridListTileState extends State<ConnectionGridListTile> with Si
           imagePath: 'assets/Images/Png/objectId_${object.objectId}.png',
         ),
       ),
-      trailing: SizedBox(
+      trailing: (widget.selectedDevice.categoryId == 4 && object.objectId != 25)
+          ? Checkbox(
+          value: isConnectedToWeather(object),
+          onChanged: (value){
+            widget.configPvd.updateObjectConnection(object, value! ? 1 : 0);
+          }
+      ) : SizedBox(
         width: 80,
         child: ToggleTextFormFieldForConnection(
           configPvd: widget.configPvd,
@@ -120,7 +126,14 @@ class _ConnectionGridListTileState extends State<ConnectionGridListTile> with Si
       child: myWidget,
     );
   }
+
+  bool isConnectedToWeather(DeviceObjectModel object){
+    return widget.configPvd.listOfGeneratedObject.any((generatedObject) => (generatedObject.objectId == object.objectId && generatedObject.deviceId == widget.selectedDevice.deviceId));
+  }
+
 }
+
+
 
 int getNotConfiguredObjectByObjectId(int objectId, ConfigMakerProvider configPvd){
   List<DeviceObjectModel> notConfigured = configPvd.listOfGeneratedObject.where((object) => (object.objectId == objectId && object.deviceId == '')).toList();

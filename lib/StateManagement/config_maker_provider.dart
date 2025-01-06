@@ -1,17 +1,35 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:oro_drip_irrigation/Models/Configuration/fertigation_model.dart';
+import 'package:oro_drip_irrigation/Models/Configuration/filtration_model.dart';
+import 'package:oro_drip_irrigation/Models/Configuration/weather_model.dart';
 
 import '../Models/Configuration/device_model.dart';
 import '../Models/Configuration/device_object_model.dart';
+import '../Models/Configuration/source_model.dart';
 import '../Screens/ConfigMaker/config_base_page.dart';
 import '../Screens/ConfigMaker/config_web_view.dart';
+import '../Screens/ConfigMaker/connection.dart';
 
 class ConfigMakerProvider extends ChangeNotifier{
-  ConfigMakerTabs selectedTab = ConfigMakerTabs.connection;
+  ConfigMakerTabs selectedTab = ConfigMakerTabs.siteConfigure;
+  Map<int, String> configurationTab = {
+    0 : 'Source Configuration',
+    1 : 'Pump Configuration',
+    2 : 'Filtration Configuration',
+    3 : 'Fertilization Configuration',
+    4 : 'Line Configuration',
+  };
+  int selectedConfigurationTab = 0;
+  SelectionMode selectedSelectionMode = SelectionMode.auto;
+  int selectedConnectionNo = 0;
+  String selectedType = '';
   int selectedCategory = 6;
   int selectedModelControllerId = 100;
   List<int> noticeableObjectId = [];
+  List<double> listOfSelectedSno = [];
+  double selectedSno = 0.0;
   List<DeviceModel> listOfDeviceModel = [];
   List<dynamic>sampleData = [
     {
@@ -52,8 +70,16 @@ class ConfigMakerProvider extends ChangeNotifier{
     },
     {
       "connectingObjectId" : [29, 33, 34], "controllerId": 11, "deviceId": "EDEFEADE0011", "deviceName": "Oro Sense 2", "categoryId": 9, "categoryName": "Oro Sense", "modelId": 2, "modelName": "Oro Sense m2", "interfaceId": 1, "interval": 5, "serialNo": 0, "isUsedInConfig": 0, "masterDeviceId": "", "noOfRelay": 0, "noOfLatch": 0, "noOfAnalogInput": 0, "noOfDigitalInput": 0, "noOfPulseInput": 0, "noOfMoistureInput": 0, "noOfI2CInput": 2
+    },
+    {
+      "connectingObjectId" : [0], "controllerId": 12, "deviceId": "EDEFEADE0012", "deviceName": "Oro Extend 1", "categoryId": 10, "categoryName": "Oro Extend", "modelId": 3, "modelName": "Oro Extend m3", "interfaceId": 1, "interval": 5, "serialNo": 0, "isUsedInConfig": 0, "masterDeviceId": "", "noOfRelay": 0, "noOfLatch": 0, "noOfAnalogInput": 0, "noOfDigitalInput": 0, "noOfPulseInput": 0, "noOfMoistureInput": 0, "noOfI2CInput": 2
+    },
+    {
+      "connectingObjectId" : [0], "controllerId": 13, "deviceId": "EDEFEADE0013", "deviceName": "Oro Extend 2", "categoryId": 10, "categoryName": "Oro Extend", "modelId": 3, "modelName": "Oro Extend m3", "interfaceId": 1, "interval": 5, "serialNo": 0, "isUsedInConfig": 0, "masterDeviceId": "", "noOfRelay": 0, "noOfLatch": 0, "noOfAnalogInput": 0, "noOfDigitalInput": 0, "noOfPulseInput": 0, "noOfMoistureInput": 0, "noOfI2CInput": 0
+    },
+    {
+      "connectingObjectId" : [25, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39], "controllerId": 14, "deviceId": "EDEFEADE0014", "deviceName": "Oro Weather 1", "categoryId": 4, "categoryName": "Oro Weather", "modelId": 1, "modelName": "Oro Weather m1", "interfaceId": 1, "interval": 5, "serialNo": 0, "isUsedInConfig": 0, "masterDeviceId": "", "noOfRelay": 0, "noOfLatch": 0, "noOfAnalogInput": 3, "noOfDigitalInput": 4, "noOfPulseInput": 0, "noOfMoistureInput": 4, "noOfI2CInput": 4
     }
-
   ];
   List<dynamic> sampleObject = [
     {"objectId" : 1, "type" : "-", "objectName" : "Tank"},
@@ -99,14 +125,16 @@ class ConfigMakerProvider extends ChangeNotifier{
   List<DeviceObjectModel> listOfSampleObjectModel = [];
   List<DeviceObjectModel> listOfObjectModelConnection = [];
   List<DeviceObjectModel> listOfGeneratedObject = [];
-
+  List<FiltrationModel> filtration = [];
+  List<FertilizationModel> fertilization = [];
+  List<SourceModel> source = [];
 
   DeviceObjectModel mapToDeviceObject(dynamic object) {
     return DeviceObjectModel(
       objectId: object['objectId'],
       objectName: object['objectName'],
       type: object['type'],
-      count: [1, 2].contains(object['objectId']) ? '1' : '0',
+      count: '0',
     );
   }
 
@@ -130,6 +158,7 @@ class ConfigMakerProvider extends ChangeNotifier{
               serialNo: devices['serialNo'],
               isUsedInConfig: devices['isUsedInConfig'],
               masterDeviceId: devices['masterDeviceId'],
+              extendDeviceId: devices['extendDeviceId'],
               noOfRelay: devices['noOfRelay'],
               noOfLatch: devices['noOfLatch'],
               noOfAnalogInput: devices['noOfAnalogInput'],
@@ -138,12 +167,15 @@ class ConfigMakerProvider extends ChangeNotifier{
               noOfMoistureInput: devices['noOfMoistureInput'],
               noOfI2CInput: devices['noOfI2CInput'],
               select: false,
-              connectingObjectId: (devices['connectingObjectId'] as List<dynamic>).map((e) => e as int).toList()
+              connectingObjectId: (devices['connectingObjectId'] as List<dynamic>).map((e) => e as int).toList(),
           );
         }).toList();
         listOfSampleObjectModel = (jsonData['listOfSampleObjectModel'] as List<dynamic>).map((object) => DeviceObjectModel.fromJson(object)).toList();
         listOfObjectModelConnection = (jsonData['listOfObjectModelConnection'] as List<dynamic>).map((object) => DeviceObjectModel.fromJson(object)).toList();
         listOfGeneratedObject = (jsonData['listOfGeneratedObject'] as List<dynamic>).map((object) => DeviceObjectModel.fromJson(object)).toList();
+        filtration = (jsonData['filtration'] as List<dynamic>).map((filtrationObject) => FiltrationModel.fromJson(filtrationObject)).toList();
+        fertilization = (jsonData['fertilization'] as List<dynamic>).map((fertilizationObject) => FertilizationModel.fromJson(fertilizationObject)).toList();
+        source = (jsonData['source'] as List<dynamic>).map((sourceObject) => SourceModel.fromJson(sourceObject)).toList();
         selectedCategory = listOfDeviceModel[1].categoryId;
         selectedModelControllerId = listOfDeviceModel[1].controllerId;
 
@@ -162,6 +194,7 @@ class ConfigMakerProvider extends ChangeNotifier{
               serialNo: devices['serialNo'],
               isUsedInConfig: devices['isUsedInConfig'],
               masterDeviceId: devices['masterDeviceId'],
+              extendDeviceId: devices['extendDeviceId'],
               noOfRelay: devices['noOfRelay'],
               noOfLatch: devices['noOfLatch'],
               noOfAnalogInput: devices['noOfAnalogInput'],
@@ -170,7 +203,7 @@ class ConfigMakerProvider extends ChangeNotifier{
               noOfMoistureInput: devices['noOfMoistureInput'],
               noOfI2CInput: devices['noOfI2CInput'],
               select: false,
-              connectingObjectId: devices['connectingObjectId']
+              connectingObjectId: devices['connectingObjectId'],
           );
         }).toList();
         listOfSampleObjectModel = sampleObject.map(mapToDeviceObject).toList();
@@ -194,17 +227,37 @@ class ConfigMakerProvider extends ChangeNotifier{
           for(var start = oldCount;start < newCount;start++){
             int increment = start+1;
             String StringDecimalNo = '${object.objectId}.${increment < 100 ? '0' : ''}${increment < 10 ? '0' : ''}${start+1}';
-            listOfGeneratedObject.add(
-                DeviceObjectModel(
-                  objectId: object.objectId,
-                  objectName: object.objectName,
-                  type: object.type,
-                  name: '${object.objectName} ${start+1}',
-                  sNo: double.parse(StringDecimalNo),
-                  deviceId: '',
-                  location: [],
-                )
+            DeviceObjectModel deviceObjectModel = DeviceObjectModel(
+              objectId: object.objectId,
+              objectName: object.objectName,
+              type: object.type,
+              name: '${object.objectName} ${start+1}',
+              sNo: double.parse(StringDecimalNo),
+              deviceId: '',
+              location: [],
             );
+            listOfGeneratedObject.add(
+                deviceObjectModel
+            );
+            if(deviceObjectModel.objectId == 4){
+              filtration.add(
+                FiltrationModel(
+                    commonDetails: deviceObjectModel,
+                  filters: []
+                )
+              );
+            }
+            if(deviceObjectModel.objectId == 3){
+              fertilization.add(
+                  FertilizationModel(commonDetails: deviceObjectModel, channel: [], boosterPump: [], agitator: [], selector: [], ec: [], ph: [])
+              );
+            }
+            if(deviceObjectModel.objectId == 1){
+              print('source is addded');
+              source.add(
+                SourceModel(commonDetails: deviceObjectModel, inletPump: [], outletPump: [], valves: [])
+              );
+            }
           }
         }else{
           int howManyObjectToDelete = oldCount - newCount;
@@ -213,6 +266,9 @@ class ConfigMakerProvider extends ChangeNotifier{
               .map((e) => e.sNo!).toList();
           filteredList = filteredList.sublist(filteredList.length - howManyObjectToDelete, filteredList.length);
           listOfGeneratedObject.removeWhere((e) => filteredList.contains(e.sNo));
+          filtration.removeWhere((e) => filteredList.contains(e.commonDetails.sNo));
+          fertilization.removeWhere((e) => filteredList.contains(e.commonDetails.sNo));
+          source.removeWhere((e) => filteredList.contains(e.commonDetails.sNo));
         }
       }
     }
@@ -230,11 +286,12 @@ class ConfigMakerProvider extends ChangeNotifier{
     // ------making connection list--------------------------------------------------------
     DeviceModel selectedDevice = listOfDeviceModel.firstWhere((device) => device.controllerId == selectedModelControllerId);
     Map<String, int> connectionTypeCountMapping = {
-      '1,2': selectedDevice.noOfRelay,
+      '1,2': selectedDevice.noOfRelay == 0 ? selectedDevice.noOfLatch : selectedDevice.noOfRelay,
       '3': selectedDevice.noOfAnalogInput,
       '4': selectedDevice.noOfDigitalInput,
       '5': selectedDevice.noOfMoistureInput,
       '6': selectedDevice.noOfPulseInput,
+      '7': selectedDevice.noOfI2CInput,
     };
     int totalConnectionCount = connectionTypeCountMapping[selectedConnectionObject.type]!;
     List<int> selectedModelDefaultConnectionList = List<int>.generate(totalConnectionCount, (index) => index + 1);
@@ -270,14 +327,14 @@ class ConfigMakerProvider extends ChangeNotifier{
           selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [5].contains(connectionNo)).toList();
         }
       }
-      // ------------- validate ph, others for category 5----------------------------
-      int ph = 28;
-      if(selectedConnectionObject.objectId == ph && selectedDevice.categoryId == 5){
-        selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [1,2].contains(connectionNo)).toList();
-      }
-      if(selectedDevice.categoryId == 5 && selectedConnectionObject.objectId != ph){
-        selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => ![1,2].contains(connectionNo)).toList();
-      }
+      // // ------------- validate ph, others for category 5----------------------------
+      // int ph = 28;
+      // if(selectedConnectionObject.objectId == ph && selectedDevice.categoryId == 5){
+      //   selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [1,2].contains(connectionNo)).toList();
+      // }
+      // if(selectedDevice.categoryId == 5 && selectedConnectionObject.objectId != ph){
+      //   selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => ![1,2].contains(connectionNo)).toList();
+      // }
 
       print('selectedModelDefaultConnectionList :: $selectedModelDefaultConnectionList');
       int howManyObjectSupposedToConnect = newCount - oldCount;
@@ -312,9 +369,20 @@ class ConfigMakerProvider extends ChangeNotifier{
         connectionObject.count = newCount.toString();
       }
     }
-    for(var object in listOfGeneratedObject){
-      print('generated :: ${object.name} , ${object.sNo}  connection :: ${object.connectionNo}  deviceId :: ${object.deviceId}');
+    // for(var object in listOfGeneratedObject){
+    //   print('generated :: ${object.name} , ${object.sNo}  connection :: ${object.connectionNo}  deviceId :: ${object.deviceId}');
+    // }
+    for(var obj in listOfSampleObjectModel){
+      print('productLimit : ${obj.toJson()}');
     }
+    for(var obj in listOfObjectModelConnection){
+      print('connection : ${obj.toJson()}');
+    }
+    for(var obj in listOfGeneratedObject){
+      print('generated : ${obj.toJson()}');
+    }
+
+
     notifyListeners();
 
   }
@@ -353,9 +421,59 @@ class ConfigMakerProvider extends ChangeNotifier{
     }
     for(var connectionObject in listOfObjectModelConnection){
       if(connectionObject.objectId == object.objectId){
-        connectionObject.count = (int.parse(connectionObject.count!) - 1).toString();      }
+        connectionObject.count = (int.parse(connectionObject.count!) - 1).toString();
+      }
     }
     notifyListeners();
+  }
+
+  void updateSelectedConnectionNoAndItsType(int no, String type){
+    selectedConnectionNo = no;
+    selectedType = type;
+    notifyListeners();
+  }
+
+  void updateListOfSelectedSno(double sNo){
+    if(listOfSelectedSno.contains(sNo)){
+      listOfSelectedSno.remove(sNo);
+    }else{
+      listOfSelectedSno.add(sNo);
+    }
+    notifyListeners();
+  }
+
+  void updateSelectedSno(double sNo){
+    selectedSno = selectedSno == sNo ? 0.0 : sNo;
+    notifyListeners();
+  }
+
+  void updateSelectionInFertilization(double sNo, int parameter){
+    for(var fertilizerSite in fertilization){
+      if(fertilizerSite.commonDetails.sNo == sNo){
+        if(parameter == 1){
+          fertilizerSite.channel.clear();
+          fertilizerSite.channel.addAll(listOfSelectedSno);
+        }else if(parameter == 2){
+          fertilizerSite.boosterPump.clear();
+          fertilizerSite.boosterPump.addAll(listOfSelectedSno);
+        }else if(parameter == 3){
+          fertilizerSite.agitator.clear();
+          fertilizerSite.agitator.addAll(listOfSelectedSno);
+        }else if(parameter == 4){
+          fertilizerSite.selector.clear();
+          fertilizerSite.selector.addAll(listOfSelectedSno);
+        }else if(parameter == 5){
+          fertilizerSite.ec.clear();
+          fertilizerSite.ec.addAll(listOfSelectedSno);
+        }else{
+          fertilizerSite.ph.clear();
+          fertilizerSite.ph.addAll(listOfSelectedSno);
+        }
+
+        listOfSelectedSno.clear();
+      }
+    }
+
   }
 
 }

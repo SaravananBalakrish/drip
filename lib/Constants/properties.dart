@@ -16,6 +16,7 @@ class AppProperties {
   );
   static const normalBlackBoldTextStyle = TextStyle(fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis);
   static const tableHeaderStyle = TextStyle(fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis, fontSize: 12);
+  static const tableHeaderStyleWhite = TextStyle(fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis, fontSize: 12, color: Colors.white);
   static const normalWhiteBoldTextStyle = TextStyle(overflow: TextOverflow.ellipsis, color: Colors.white);
   static const listTileBlackBoldStyle = TextStyle(fontSize: 13, fontWeight: FontWeight.bold);
 

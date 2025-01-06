@@ -37,9 +37,9 @@ class _ToggleTextFormFieldForConnectionState extends State<ToggleTextFormFieldFo
           if(!myFocus.hasFocus){
             toggleEditing();
             Map<String, int> mappingBalanceType = {
-              '1,2' : widget.selectedDevice.noOfRelay - getConfigureCountByType('1,2'),
+              '1,2' : (widget.selectedDevice.noOfRelay == 0 ? widget.selectedDevice.noOfLatch : widget.selectedDevice.noOfRelay) - getConfigureCountByType('1,2'),
               '3' : widget.selectedDevice.noOfAnalogInput - getNoFixedConnectionCount() - getConfigureCountByType('3'),
-              '4' : widget.selectedDevice.noOfDigitalInput - getConfigureCountByType('4'),
+              '4' : widget.selectedDevice.noOfDigitalInput - getNoFixedConnectionCount() - getConfigureCountByType('4'),
               '5' : widget.selectedDevice.noOfMoistureInput - getConfigureCountByType('5'),
               '6' : widget.selectedDevice.noOfPulseInput - getConfigureCountByType('6'),
               '7' : widget.selectedDevice.noOfI2CInput - getConfigureCountByType('7'),
@@ -99,17 +99,30 @@ class _ToggleTextFormFieldForConnectionState extends State<ToggleTextFormFieldFo
   }
 
   int getNoFixedConnectionCount(){
-    int category_6 = 4;
-    bool model_in_6 = widget.selectedDevice.noOfAnalogInput == 8;
-    int category_5 = 2;
     int fixedConnectionCount = 0;
-    int ph = 28;
-    int ec = 27;
-    if(widget.selectedDevice.categoryId == 6  && [ec, ph].contains(widget.object.objectId)){
-      fixedConnectionCount = widget.selectedDevice.noOfAnalogInput - (model_in_6 ? category_6 : 0);
-    }else if(widget.selectedDevice.categoryId == 5 && [ph].contains(widget.object.objectId)){
-      fixedConnectionCount = widget.selectedDevice.noOfAnalogInput - (category_5);
+    if(widget.object.type == '3'){
+      int ph = 28;
+      int ec = 27;
+      int category_6_analog = 4;
+      bool model_in_6_analog = widget.selectedDevice.noOfAnalogInput == 8;
+      // int category_5_analog = 2;
+      if(widget.selectedDevice.categoryId == 6  && ![ec, ph].contains(widget.object.objectId)){
+        fixedConnectionCount = model_in_6_analog ? category_6_analog : 0;
+      }
+      // else if(widget.selectedDevice.categoryId == 5 && ![ph].contains(widget.object.objectId)){
+      //   fixedConnectionCount = category_5_analog;
+      // }
+    }else if(widget.object.type == '4'){
+      int pressureSwitch = 23;
+      int category_6_digital = 1;
+      bool model_in_6_digital = widget.selectedDevice.noOfDigitalInput == 5;
+      // print('it is digital Input..  category_6_digital : $category_6_digital   model_in_6_digital : $model_in_6_digital widget.selectedDevice.noOfDigitalInput : ${widget.selectedDevice.noOfDigitalInput}');
+      if(widget.selectedDevice.categoryId == 6  && ![pressureSwitch].contains(widget.object.objectId)){
+        fixedConnectionCount = model_in_6_digital ? category_6_digital : 0;
+        print('fixedConnectionCount : $fixedConnectionCount');
+      }
     }
+
     return fixedConnectionCount;
   }
 

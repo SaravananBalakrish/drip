@@ -297,11 +297,22 @@ class _DeviceListState extends State<DeviceList> {
                                             CustomTableCell(title: device.deviceId, width: headerWidth),
                                             CustomTableCellPassingWidget(
                                                 widget: CustomDropDownButton(
-                                                    value: getInterfaceCodeToString(device.interfaceId),
-                                                    list: ['RS485', 'LoRa', 'MQTT'],
+                                                    value: getInterfaceValue(device),
+                                                    list: [
+                                                      'RS485', 'LoRa', 'MQTT',
+                                                      for(var extend in configPvd.listOfDeviceModel)
+                                                        if(extend.categoryId == 10 && extend.isUsedInConfig == 1)
+                                                          'Extend\n${extend.deviceId}'
+                                                    ],
                                                     onChanged: (String? newValue) {
+                                                      List<String> interface = newValue!.split('\n');
                                                       setState(() {
-                                                        device.interfaceId = getInterfaceStringToCode(newValue!);
+                                                        device.interfaceId = getInterfaceStringToCode(interface[0]);
+                                                        if(interface.length > 1){
+                                                          device.extendDeviceId = interface[1];
+                                                        }else{
+                                                          device.extendDeviceId = '';
+                                                        }
                                                       });
                                                     }
                                                 ),
@@ -323,10 +334,15 @@ class _DeviceListState extends State<DeviceList> {
                                                 widget: IconButton(
                                                   icon: const Icon(Icons.delete, color: Colors.red,),
                                                   onPressed: (){
-                                                    setState(() {
-                                                      device.isUsedInConfig = 0;
-                                                      device.masterDeviceId = '';
-                                                    });
+                                                    bool configured = configPvd.listOfGeneratedObject.any((object) => object.deviceId == device.deviceId);
+                                                    if(configured){
+                                                      simpleDialogBox(context: context, title: 'Alert', message: '${device.deviceName} cannot be removed. Please detach all connected objects first.');
+                                                    }else{
+                                                      setState(() {
+                                                        device.isUsedInConfig = 0;
+                                                        device.masterDeviceId = '';
+                                                      });
+                                                    }
                                                   },
                                                 ),
                                                 width: headerWidth
@@ -353,6 +369,15 @@ class _DeviceListState extends State<DeviceList> {
       ],
     );
   }
+
+  String getInterfaceValue(DeviceModel device){
+    String interface = getInterfaceCodeToString(device.interfaceId);
+    String interfaceWithDeviceId = device.interfaceId == 5
+        ? '$interface\n${device.extendDeviceId}'
+        : interface;
+    return interfaceWithDeviceId;
+  }
+
   String getTabName(ConfigMakerTabs configMakerTabs) {
     switch (configMakerTabs) {
       case ConfigMakerTabs.deviceList:

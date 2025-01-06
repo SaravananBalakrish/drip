@@ -13,6 +13,8 @@ int getInterfaceStringToCode(String title){
       return 3;
     case 'Wi-Fi' :
       return 4;
+    case 'Extend' :
+      return 5;
     default :
       return 0;
   }
@@ -27,6 +29,8 @@ String getInterfaceCodeToString(int code){
       return 'RS485';
     case 4 :
       return 'Wi-Fi';
+    case 5 :
+      return 'Extend';
     default :
       return '-';
   }
