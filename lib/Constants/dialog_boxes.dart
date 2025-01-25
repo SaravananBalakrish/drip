@@ -1,7 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
+import 'package:oro_drip_irrigation/Models/Configuration/device_object_model.dart';
+import 'package:provider/provider.dart';
+import 'package:responsive_grid_list/responsive_grid_list.dart';
 
+import '../StateManagement/config_maker_provider.dart';
 import '../Widgets/custom_buttons.dart';
 
 
@@ -32,9 +36,81 @@ void simpleDialogBox({
             message,
             style: const TextStyle(fontSize: 16),
           ),
-          actions: const [
+          actions: [
             CustomTextButton()
           ],
+        );
+      }
+  );
+}
+
+void selectionDialogBox({
+  required BuildContext context,
+  required String title,
+  required bool singleSelection,
+  required void Function()? onPressed,
+  required List<DeviceObjectModel> listOfObject,
+}){
+  showDialog(
+      context: context,
+      builder: (context){
+        return Consumer(
+          builder: (BuildContext context, ConfigMakerProvider configPvd, Widget? child) {
+            return AlertDialog(
+              title: Row(
+                children: [
+                  const Icon(
+                    Icons.touch_app,
+                    color: Colors.orange,
+                    size: 30,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+              content: SizedBox(
+                width: double.infinity  > 500 ? 500 : double.infinity,
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: listOfObject.map((object){
+                    return InkWell(
+                      onTap: (){
+                        if(!singleSelection){
+                          configPvd.updateListOfSelectedSno(object.sNo!);
+                        }else{
+                          configPvd.updateSelectedSno(object.sNo!);
+                        }
+                      },
+                      child: IntrinsicWidth(
+                        child: Container(
+                          // width: 100,
+                          padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 6),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: (singleSelection ? configPvd.selectedSno == object.sNo : configPvd.listOfSelectedSno.contains(object.sNo))
+                                  ? Colors.green.shade300
+                                  : Colors.grey.shade100
+                          ),
+                          child: Center(
+                            child: Text(object.name!,style: AppProperties.listTileBlackBoldStyle,),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+              actions: [
+                CustomTextButton(
+                  onPressed: onPressed,
+                )
+              ],
+            );
+          },
         );
       }
   );

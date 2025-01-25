@@ -27,12 +27,13 @@ class RadiusButtonStyle extends StatelessWidget {
 }
 
 class CustomTextButton extends StatelessWidget {
-  const CustomTextButton({super.key});
+  void Function()? onPressed;
+  CustomTextButton({super.key, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: () {
+      onPressed: onPressed ?? () {
         Navigator.of(context).pop(); // Dismiss the alert
       },
       child: const Text(

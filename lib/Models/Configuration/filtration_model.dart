@@ -3,25 +3,26 @@ import 'device_object_model.dart';
 class FiltrationModel {
   DeviceObjectModel commonDetails;
   int? siteMode;
-  List<int>? filters;
-  int? pressureIn;
-  int? pressureOut;
-  int? backWashValve;
+  List<double> filters;
+  double pressureIn;
+  double pressureOut;
+  double backWashValve;
 
   FiltrationModel({
     required this.commonDetails,
-    required this.siteMode,
+    this.siteMode,
     required this.filters,
-    required this.pressureIn,
-    required this.pressureOut,
-    required this.backWashValve,
+    this.pressureIn = 0.0,
+    this.pressureOut = 0.0,
+    this.backWashValve = 0.0,
   });
 
   factory FiltrationModel.fromJson(data){
+    DeviceObjectModel deviceObjectModel = DeviceObjectModel.fromJson(data);
     return FiltrationModel(
-        commonDetails: data,
+        commonDetails: deviceObjectModel,
         siteMode: data['siteMode'],
-        filters: data['filters'],
+        filters: (data['filters'] as List<dynamic>).map((sNo) => sNo as double).toList(),
         pressureIn: data['pressureIn'],
         pressureOut: data['pressureOut'],
         backWashValve: data['backWashValve'],

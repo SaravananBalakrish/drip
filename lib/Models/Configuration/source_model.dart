@@ -3,34 +3,36 @@ import 'device_object_model.dart';
 class SourceModel {
   DeviceObjectModel commonDetails;
   int sourceType;
-  int level;
-  int topFloat;
-  int bottomFloat;
-  final List<int> inletPump;
-  final List<int> outletPump;
-  final List<int> valves;
+  double level;
+  double topFloat;
+  double bottomFloat;
+  List<double> inletPump;
+  List<double> outletPump;
+  List<double> valves;
 
   SourceModel({
     required this.commonDetails,
-    required this.sourceType,
-    required this.level,
-    required this.topFloat,
-    required this.bottomFloat,
+    this.sourceType = 1,
+    this.level = 0.0,
+    this.topFloat = 0.0,
+    this.bottomFloat = 0.0,
     required this.inletPump,
     required this.outletPump,
     required this.valves,
   });
 
   factory SourceModel.fromJson(data){
+    DeviceObjectModel deviceObjectModel = DeviceObjectModel.fromJson(data);
+
     return SourceModel(
-        commonDetails: data,
+        commonDetails: deviceObjectModel,
         sourceType: data['sourceType'],
         level: data['level'],
         topFloat: data['topFloat'],
         bottomFloat: data['bottomFloat'],
-        inletPump: data['inletPump'],
-        outletPump: data['outletPump'],
-        valves: data['valves']
+        inletPump: (data['inletPump'] as List<dynamic>).map((sNo) => sNo as double).toList(),
+        outletPump: (data['outletPump'] as List<dynamic>).map((sNo) => sNo as double).toList(),
+        valves: (data['valves'] as List<dynamic>).map((sNo) => sNo as double).toList(),
     );
   }
 

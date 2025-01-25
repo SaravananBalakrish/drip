@@ -3,22 +3,24 @@ import 'package:flutter/foundation.dart';
 
 class DeviceObjectModel with DiagnosticableTreeMixin {
   final int objectId;
-  int? sNo;
+  double? sNo;
   String? name;
   String objectName;
+  int? connectionNo;
   List<int>? location;
   final String type;
-  String? deviceId;
+  int? controllerId;
   String? count;
 
   DeviceObjectModel({
     required this.objectId,
     this.sNo,
     this.name,
+    this.connectionNo,
     required this.objectName,
     this.location,
     required this.type,
-    this.deviceId,
+    this.controllerId,
     this.count,
   });
 
@@ -26,12 +28,12 @@ class DeviceObjectModel with DiagnosticableTreeMixin {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(IntProperty('objectId', objectId));
-    properties.add(IntProperty('sNo', sNo));
+    // properties.add(IntProperty('sNo', sNo));
     properties.add(StringProperty('name', name));
     properties.add(StringProperty('objectName', objectName));
     properties.add(IterableProperty<int>('location', location));
     properties.add(StringProperty('type', type));
-    properties.add(StringProperty('deviceId', deviceId));
+    // properties.add(StringProperty('deviceId', deviceId));
     properties.add(StringProperty('count', count));
   }
 
@@ -40,22 +42,26 @@ class DeviceObjectModel with DiagnosticableTreeMixin {
         objectId : data['objectId'],
         sNo : data['sNo'],
         name : data['name'],
+        connectionNo : data['connectionNo'] ?? 0,
         objectName : data['objectName'],
-        location : data['location'],
+        location : data['location'] != null ? (data['location'] as List<dynamic>).map((sNo) => sNo as int).toList() : [],
         type : data['type'],
-        deviceId : data['deviceId'],
+        controllerId : data['controllerId'],
+        count: data['count']
     );
   }
 
-  Map<String, dynamic> toJson(){
+  dynamic toJson(){
     return {
       'objectId' : objectId,
       'sNo' : sNo,
       'name' : name,
+      'connectionNo' : connectionNo,
       'objectName' : objectName,
       'location' : location,
       'type' : type,
-      'deviceId' : deviceId,
+      'controllerId' : controllerId,
+      'count' : count
     };
   }
 }

@@ -1,3 +1,5 @@
+import 'package:oro_drip_irrigation/Models/Configuration/weather_model.dart';
+
 class DeviceModel {
   final int controllerId;
   final String deviceId;
@@ -6,11 +8,11 @@ class DeviceModel {
   final String categoryName;
   final int modelId;
   final String modelName;
-  int interfaceId;
-  int interval;
-  final int serialNo;
-  int isUsedInConfig;
-  String? masterDeviceId;
+  int? interfaceTypeId;
+  int? interfaceInterval;
+  int? serialNumber;
+  int? masterId;
+  String? extendDeviceId;
   final int noOfRelay;
   final int noOfLatch;
   final int noOfAnalogInput;
@@ -18,8 +20,8 @@ class DeviceModel {
   final int noOfPulseInput;
   final int noOfMoistureInput;
   final int noOfI2CInput;
-  bool select;
   final List<int> connectingObjectId;
+  bool select;
 
   DeviceModel({
     required this.controllerId,
@@ -29,11 +31,11 @@ class DeviceModel {
     required this.categoryName,
     required this.modelId,
     required this.modelName,
-    required this.interfaceId,
-    required this.interval,
-    required this.serialNo,
-    required this.isUsedInConfig,
-    required this.masterDeviceId,
+    required this.interfaceTypeId,
+    required this.interfaceInterval,
+    required this.serialNumber,
+    required this.masterId,
+    required this.extendDeviceId,
     required this.noOfRelay,
     required this.noOfLatch,
     required this.noOfAnalogInput,
@@ -41,58 +43,58 @@ class DeviceModel {
     required this.noOfPulseInput,
     required this.noOfMoistureInput,
     required this.noOfI2CInput,
-    required this.select,
     required this.connectingObjectId,
-});
+    required this.select,
+  });
 
-  factory DeviceModel.fromJson(data){
+  factory DeviceModel.fromJson(data) {
     return DeviceModel(
-        controllerId : data['controllerId'],
-        deviceId : data['deviceId'],
-        deviceName : data['deviceName'],
-        categoryId : data['categoryId'],
-        categoryName : data['categoryName'],
-        modelId : data['modelId'],
-        modelName : data['modelName'],
-        interfaceId : data['interfaceId'],
-        interval : data['interval'],
-        serialNo : data['serialNo'],
-        isUsedInConfig : data['isUsedInConfig'],
-        masterDeviceId : data['masterDeviceId'],
-        noOfRelay : data['noOfRelay'],
-        noOfLatch : data['noOfLatch'],
-        noOfAnalogInput : data['noOfAnalogInput'],
-        noOfDigitalInput : data['noOfDigitalInput'],
-        noOfPulseInput : data['noOfPulseInput'],
-        noOfMoistureInput : data['noOfMoistureInput'],
-        noOfI2CInput : data['noOfI2CInput'],
-        select : data['select'],
-        connectingObjectId : data['connectingObjectId'],
+      controllerId: data['controllerId'],
+      deviceId: data['deviceId'],
+      deviceName: data['deviceName'],
+      categoryId: data['categoryId'],
+      categoryName: data['categoryName'],
+      modelId: data['modelId'],
+      modelName: data['modelName'],
+      interfaceTypeId: data['interfaceTypeId'],
+      interfaceInterval: data['interfaceInterval'],
+      serialNumber: data['serialNumber'],
+      masterId: data['masterId'],
+      extendDeviceId: data['extendDeviceId'] ?? '',
+      noOfRelay: data['noOfRelay'],
+      noOfLatch: data['noOfLatch'],
+      noOfAnalogInput: data['noOfAnalogInput'],
+      noOfDigitalInput: data['noOfDigitalInput'],
+      noOfPulseInput: data['noOfPulseInput'],
+      noOfMoistureInput: data['noOfMoistureInput'],
+      noOfI2CInput: data['noOfI2CInput'],
+      connectingObjectId: data['connectingObjectId'],
+      select: data['select'],
     );
   }
 
-  Map<String, dynamic> toJson(){
+  dynamic toJson() {
     return {
-      'controllerId' : controllerId,
-      'deviceId' : deviceId,
-      'deviceName' : deviceName,
-      'categoryId' : categoryId,
-      'categoryName' : categoryName,
-      'modelId' : modelId,
-      'modelName' : modelName,
-      'interfaceId' : interfaceId,
-      'interval' : interval,
-      'serialNo' : serialNo,
-      'isUsedInConfig' : isUsedInConfig,
-      'masterDeviceId' : masterDeviceId,
-      'noOfRelay' : noOfRelay,
-      'noOfLatch' : noOfLatch,
-      'noOfAnalogInput' : noOfAnalogInput,
-      'noOfDigitalInput' : noOfDigitalInput,
-      'noOfPulseInput' : noOfPulseInput,
-      'noOfMoistureInput' : noOfMoistureInput,
-      'noOfI2CInput' : noOfI2CInput,
-      'connectingObjectId' : connectingObjectId,
+      'controllerId': controllerId,
+      'deviceId': deviceId,
+      'deviceName': deviceName,
+      'categoryId': categoryId,
+      'categoryName': categoryName,
+      'modelId': modelId,
+      'modelName': modelName,
+      'interfaceTypeId': interfaceTypeId,
+      'interfaceInterval': interfaceInterval,
+      'serialNumber': serialNumber,
+      'masterId': masterId,
+      'extendDeviceId': extendDeviceId,
+      'noOfRelay': noOfRelay,
+      'noOfLatch': noOfLatch,
+      'noOfAnalogInput': noOfAnalogInput,
+      'noOfDigitalInput': noOfDigitalInput,
+      'noOfPulseInput': noOfPulseInput,
+      'noOfMoistureInput': noOfMoistureInput,
+      'noOfI2CInput': noOfI2CInput,
+      'connectingObjectId': connectingObjectId,
     };
   }
 }

@@ -3,7 +3,7 @@ import 'package:oro_drip_irrigation/Constants/dialog_boxes.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/product_limit.dart';
 import 'package:oro_drip_irrigation/Widgets/blinking_container.dart';
 import 'package:oro_drip_irrigation/Widgets/sized_image.dart';
-import 'package:oro_drip_irrigation/Widgets/toggle_text_form_field.dart';
+import 'package:oro_drip_irrigation/Widgets/toggle_text_form_field_product_limit.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import '../Constants/communication_codes.dart';
 import '../Constants/properties.dart';
@@ -90,7 +90,7 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
     Widget myWidget = ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       title: Text(object.objectName, style: AppProperties.listTileBlackBoldStyle,),
-      subtitle: const Text('Configured : 0', style: TextStyle(fontSize: 11),),
+      subtitle: Text('Configured : ${getConfiguredObjectByObjectId(object.objectId)}', style: TextStyle(fontSize: 11),),
       leading: Container(
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
@@ -103,7 +103,7 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
       ),
       trailing: SizedBox(
         width: 80,
-        child: ToggleTextFormField(
+        child: ToggleTextFormFieldForProductLimit(
           configPvd: widget.configPvd,
           initialValue: object.count.toString(),
           object: object,
@@ -124,7 +124,10 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
       );
     }
   }
-
+  int getConfiguredObjectByObjectId(int objectId){
+    List<DeviceObjectModel> configured = widget.configPvd.listOfGeneratedObject.where((object) => (object.objectId == objectId && object.controllerId != null)).toList();
+    return configured.length;
+  }
   bool dependentObjectByCommonObject(int objectId){
     bool visible = true;
     if(objectIdDependsOnDosing.contains(objectId)){

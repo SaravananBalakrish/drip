@@ -1,7 +1,8 @@
-
-// Todo interface
 import 'dart:ui';
 
+
+
+// Todo interface
 int getInterfaceStringToCode(String title){
   switch(title){
     case 'MQTT' :
@@ -12,11 +13,13 @@ int getInterfaceStringToCode(String title){
       return 3;
     case 'Wi-Fi' :
       return 4;
+    case 'Extend' :
+      return 5;
     default :
       return 0;
   }
 }
-String getInterfaceCodeToString(int code){
+String getInterfaceCodeToString(int? code){
   switch(code){
     case 1 :
       return 'MQTT';
@@ -26,6 +29,8 @@ String getInterfaceCodeToString(int code){
       return 'RS485';
     case 4 :
       return 'Wi-Fi';
+    case 5 :
+      return 'Extend';
     default :
       return '-';
   }
@@ -82,3 +87,66 @@ Color getObjectTypeCodeToColor(int code){
       return const Color(0xffDBDEFF);
   }
 }
+
+//Todo deviceType
+String getDeviceCodeToString(int code){
+  switch(code){
+    case 1 :
+      return 'GEM';
+    case 2 :
+      return 'PUMP';
+    case 3 :
+      return 'LEVEL';
+    case 4 :
+      return 'WEATHER';
+    case 5 :
+      return 'SMART';
+    case 6 :
+      return 'SMART PLUS';
+    case 7:
+      return 'RTU';
+    case 8:
+      return 'RTU PLUS';
+    case 9:
+      return 'SENSE';
+    case 10:
+      return 'EXTEND';
+    default :
+      return '-';
+  }
+}
+
+// Todo: tankType
+String getTankCodeToString(int code){
+  switch(code){
+    case 1 :
+      return 'Tank';
+    case 2 :
+      return 'Sump';
+    case 3 :
+      return 'Well';
+    case 4 :
+      return 'Bore';
+    case 5 :
+      return 'Others';
+    default :
+      return '-';
+  }
+}
+int getTankStringToCode(String type){
+  switch(type){
+    case 'Tank' :
+      return 1;
+    case 'Sump' :
+      return 2;
+    case 'Well' :
+      return 3;
+    case 'Bore' :
+      return 4;
+    case 'Others' :
+      return 5;
+    default :
+      return 0;
+  }
+}
+

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Screens/ConfigMaker/connection.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/device_list.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/product_limit.dart';
+import 'package:oro_drip_irrigation/Screens/ConfigMaker/site_configure.dart';
 import 'package:provider/provider.dart';
 import '../../Constants/dialog_boxes.dart';
 import '../../Models/Configuration/device_model.dart';
@@ -89,13 +91,12 @@ class _ConfigMobileViewState extends State<ConfigMobileView>
         children: [
           DeviceList(listOfDevices: widget.listOfDevices),
           ProductLimit(listOfDevices: widget.listOfDevices, configPvd: configPvd,),
-          Text('dscdsf'),
-          Text('dscdsf'),
+          Connection(configPvd: configPvd),
+          SiteConfigure(configPvd: configPvd)
         ],
       ),
     );
   }
-
 }
 
 ConfigMakerTabs updateConfigMakerTabs({
@@ -115,16 +116,16 @@ ConfigMakerTabs updateConfigMakerTabs({
     bool valveAvailable = valveObject.count != '0';
     bool dosingAvailable = dosingObject.count != '0';
     bool channelAvailable = channelObject.count != '0';
-    if(!pumpAvailable || !valveAvailable){
+    if(!pumpAvailable){
       update = false;
-      simpleDialogBox(context: context, title: 'Alert', message: 'At least one ${!pumpAvailable ? pumpObject.objectName : ''}${!valveAvailable ? ' & ${valveObject.objectName}' : ''} must be provided in the product limit.');
+      simpleDialogBox(context: context, title: 'Alert', message: 'At least one ${!pumpAvailable ? pumpObject.objectName : ''} must be provided in the product limit.');
       List<int> notice = [];
       if(!pumpAvailable){
         notice.add(pumpObject.objectId);
       }
-      if(!valveAvailable){
-        notice.add(valveObject.objectId);
-      }
+      // if(!valveAvailable){
+      //   notice.add(valveObject.objectId);
+      // }
       configPvd.noticeObjectForTemporary(notice);
     }else if(dosingAvailable && !channelAvailable){
       update = false;

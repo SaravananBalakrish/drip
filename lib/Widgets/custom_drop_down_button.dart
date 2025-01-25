@@ -16,6 +16,7 @@ class CustomDropDownButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('value :: $value');
     return DropdownButton<String>(
       underline: Container(),
       value: value,

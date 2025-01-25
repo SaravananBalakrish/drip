@@ -12,10 +12,11 @@ class AppProperties {
       color: Colors.white,
       fontWeight: FontWeight.bold,
       fontSize: 18,
-    overflow: TextOverflow.ellipsis
+      overflow: TextOverflow.ellipsis
   );
   static const normalBlackBoldTextStyle = TextStyle(fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis);
   static const tableHeaderStyle = TextStyle(fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis, fontSize: 12);
+  static const tableHeaderStyleWhite = TextStyle(fontWeight: FontWeight.bold,overflow: TextOverflow.ellipsis, fontSize: 12, color: Colors.white);
   static const normalWhiteBoldTextStyle = TextStyle(overflow: TextOverflow.ellipsis, color: Colors.white);
   static const listTileBlackBoldStyle = TextStyle(fontSize: 13, fontWeight: FontWeight.bold);
 
@@ -64,5 +65,8 @@ class AppProperties {
     ),
   ];
 
-  static const selectedColor = Color(0xff054750);
+  //Todo radius
+  static const Radius radius5 = Radius.circular(5);
+
+
 }

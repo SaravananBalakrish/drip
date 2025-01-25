@@ -1,7 +1,10 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/dialog_boxes.dart';
+import 'package:oro_drip_irrigation/Screens/ConfigMaker/connection.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/product_limit.dart';
-import 'package:oro_drip_irrigation/Screens/ConfigMaker/site_config.dart';
+import 'package:oro_drip_irrigation/Screens/ConfigMaker/site_configure.dart';
 import 'package:provider/provider.dart';
 import '../../Constants/properties.dart';
 import '../../Models/Configuration/device_model.dart';
@@ -12,6 +15,20 @@ import '../../Widgets/title_with_back_button.dart';
 import 'config_base_page.dart';
 import 'config_mobile_view.dart';
 import 'device_list.dart';
+import 'dart:html';
+
+
+void saveToSessionStorage(String key, String value) {
+  window.sessionStorage[key] = value;
+}
+
+String? readFromSessionStorage(String key) {
+  return window.sessionStorage[key];
+}
+
+void deleteFromSessionStorage(String key) {
+  window.sessionStorage.remove(key);
+}
 
 class ConfigWebView extends StatefulWidget {
   List<DeviceModel> listOfDevices;
@@ -48,17 +65,18 @@ class _ConfigWebViewState extends State<ConfigWebView> {
         children: [
           sideNavigationWidget(screenWidth, screenHeight),
           Expanded(
-            child: configPvd.selectedTab == ConfigMakerTabs.deviceList
-                ? DeviceList(listOfDevices: widget.listOfDevices)
-                : configPvd.selectedTab == ConfigMakerTabs.siteConfigure
-                ? SiteConfig()
-                :ProductLimit(listOfDevices: widget.listOfDevices,configPvd: configPvd,),
+              child: configPvd.selectedTab == ConfigMakerTabs.deviceList
+                  ? DeviceList(listOfDevices: widget.listOfDevices)
+                  : configPvd.selectedTab == ConfigMakerTabs.productLimit
+                  ? ProductLimit(listOfDevices: widget.listOfDevices,configPvd: configPvd,)
+                  : configPvd.selectedTab == ConfigMakerTabs.connection
+                  ? Connection(configPvd: configPvd,) : SiteConfigure(configPvd: configPvd)
           ),
-
         ],
       ),
     );
   }
+
   Widget sideNavigationWidget(screenWidth, screenHeight){
     return Container(
       // width: screenWidth * sideNavigationRatio,
@@ -101,41 +119,6 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                 setState: setState,
                 selectedTab: i
             );
-            // bool update = true;
-            // if(i == ConfigMakerTabs.connection){
-            //   final List<DeviceObjectModel> deviceObjects = configPvd.listOfSampleObjectModel;
-            //   final pumpObject = getObjectById(deviceObjects, 5);
-            //   final valveObject = getObjectById(deviceObjects, 13);
-            //   final channelObject = getObjectById(deviceObjects, 10);
-            //   final dosingObject = getObjectById(deviceObjects, 3);
-            //   bool pumpAvailable = pumpObject.count == '0' ? false : true;
-            //   bool valveAvailable = valveObject.count == '0' ? false : true;
-            //   bool dosingAvailable = dosingObject.count == '0' ? false : true;
-            //   bool channelAvailable = channelObject.count == '0' ? false : true;
-            //   if(!pumpAvailable || !valveAvailable){
-            //     update = false;
-            //     simpleDialogBox(context: context, title: 'Alert', message: 'At least one ${!pumpAvailable ? pumpObject.objectName : ''}${!valveAvailable ? ' & ${valveObject.objectName}' : ''} must be provided in the product limit.');
-            //     List<int> notice = [];
-            //     if(!pumpAvailable){
-            //       notice.add(pumpObject.objectId);
-            //     }
-            //     if(!valveAvailable){
-            //       notice.add(valveObject.objectId);
-            //     }
-            //     configPvd.noticeObjectForTemporary(notice);
-            //   }else if(dosingAvailable && !channelAvailable){
-            //     update = false;
-            //     configPvd.noticeObjectForTemporary([channelObject.objectId]);
-            //     simpleDialogBox(context: context, title: 'Alert', message: 'At least one ${channelObject.objectName} must be provided for the dosing site.');
-            //   }
-            //
-            // }
-            // if(update){
-            //   setState(() {
-            //     configPvd.selectedTab = i;
-            //   });
-            // }
-
           },
         )
     ];

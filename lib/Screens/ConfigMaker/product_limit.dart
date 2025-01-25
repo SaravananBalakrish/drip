@@ -4,7 +4,7 @@ import 'package:flutter/painting.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/Widgets/legend.dart';
 import 'package:oro_drip_irrigation/Widgets/product_limit_grid_list_tile.dart';
-import 'package:oro_drip_irrigation/Widgets/toggle_text_form_field.dart';
+import 'package:oro_drip_irrigation/Widgets/toggle_text_form_field_product_limit.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 import '../../Constants/communication_codes.dart';
@@ -123,13 +123,13 @@ class _ProductLimitState extends State<ProductLimit> {
     ];
   }
 
-
 }
+
 
 int getRelayLatchCount(List<DeviceModel> listOfDevices){
   int count = 0;
   for(var node in listOfDevices){
-    if(node.isUsedInConfig == 1){
+    if(node.masterId != null){
       count += node.noOfRelay;
       count += node.noOfLatch;
     }
@@ -141,18 +141,17 @@ int balanceCountForRelayLatch(ConfigMakerProvider configPvd){
   int totalCount = getRelayLatchCount(configPvd.listOfDeviceModel);
   for(var object in configPvd.listOfSampleObjectModel){
     if(object.type == '1,2'){
-      int objectCount = object.count == '' ? 0 : int.parse(object.count!);
+      int objectCount = [null, ''].contains(object.count) ? 0 : int.parse(object.count!);
       totalCount -= objectCount;
     }
   }
   return totalCount;
 }
 
-
 int getInputCount(int code, List<DeviceModel> listOfDevices){
   int count = 0;
   for(var node in listOfDevices){
-    if(node.isUsedInConfig == 1){
+    if(node.masterId != null){
       if(code == 3){
         count += node.noOfAnalogInput;
       }else if(code == 4){
@@ -173,7 +172,7 @@ int balanceCountForInputType(int code, ConfigMakerProvider configPvd){
   int totalCount = getInputCount(code, configPvd.listOfDeviceModel);
   for(var object in configPvd.listOfSampleObjectModel){
     if(object.type == '$code'){
-      int objectCount = object.count == '' ? 0 : int.parse(object.count!);
+      int objectCount = [null, ''].contains(object.count) ? 0 : int.parse(object.count!);
       totalCount -= objectCount;
     }
   }
