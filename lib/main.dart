@@ -4,6 +4,7 @@ import 'package:oro_drip_irrigation/StateManagement/config_maker_provider.dart';
 import 'package:provider/provider.dart';
 import 'Constants/env_setup.dart';
 import 'Screens/ConfigMaker/config_base_page.dart';
+import 'Screens/ConfigMaker/payload_proccessing.dart';
 
 void main() {
   GlobalConfig.setEnvironment(Environment.development);
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: AppThemes.lightTheme,
-      home: const ConfigBasePage(),
+      home: const PayloadProcessing(),
     );
   }
 }
