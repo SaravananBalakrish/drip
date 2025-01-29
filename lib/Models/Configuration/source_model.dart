@@ -50,6 +50,10 @@ class SourceModel {
     return commonInfo;
   }
 
+  SourceModel copy(){
+    return SourceModel.fromJson(toJson());
+  }
+
 }
 
 // tank type

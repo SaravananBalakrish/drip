@@ -67,7 +67,7 @@ class _PumpConfigurationState extends State<PumpConfiguration> {
                                 trailing: IntrinsicWidth(
                                   child: CustomDropDownButton(
                                       value: getPumpTypeCodeToString(pump.pumpType),
-                                      list: const ['-', 'source', 'irrigation'],
+                                      list: const ['source', 'irrigation'],
                                       onChanged: (value){
                                         setState(() {
                                           pump.pumpType = getPumpTypeStringToCode(value!);

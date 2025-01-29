@@ -63,9 +63,9 @@ class _LineConfigurationState extends State<LineConfiguration> {
                               spacing: 20,
                               children: [
                                 if(availability(2))
-                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.sourcePump, parameterType: LineParameter.sourcePump, objectId: 2, objectName: 'Source Pump', validateAllLine: false, mode: 1),
+                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.sourcePump, parameterType: LineParameter.sourcePump, objectId: 5, objectName: 'Source Pump', validateAllLine: false, mode: 1),
                                 if(availability(2))
-                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.irrigationPump, parameterType: LineParameter.irrigationPump, objectId: 2, objectName: 'Irrigation Pump', validateAllLine: false, mode: 2),
+                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.irrigationPump, parameterType: LineParameter.irrigationPump, objectId: 5, objectName: 'Irrigation Pump', validateAllLine: false, mode: 2),
                                 if(availability(13))
                                   getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.valve, parameterType: LineParameter.valve, objectId: 13, objectName: 'Valve', validateAllLine: true),
                                 if(availability(14))
@@ -97,7 +97,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
                           ),
                         ),
                         const SizedBox(height: 10,),
-                        diagramWidget(),
+                        diagramWidget(selectedIrrigationLine),
                         const SizedBox(height: 20,),
                         checkingAnyParameterAvailableInLine(selectedIrrigationLine),
                       ],
@@ -105,7 +105,6 @@ class _LineConfigurationState extends State<LineConfiguration> {
                   ),
                 ),
               ),
-
               // Container(
               //   // color: Colors.green.shade50,
               //   width: double.infinity,
@@ -173,7 +172,6 @@ class _LineConfigurationState extends State<LineConfiguration> {
 
   Widget checkingAnyParameterAvailableInLine(IrrigationLineModel selectedIrrigationLine){
     List<Widget> childrenWidget = [
-      ...getObjectInLine(selectedIrrigationLine.mainValve, 12),
       ...getObjectInLine(selectedIrrigationLine.mainValve, 12),
       if(selectedIrrigationLine.waterMeter != 0.0)
         ...getObjectInLine([selectedIrrigationLine.waterMeter], 22),
@@ -262,12 +260,12 @@ class _LineConfigurationState extends State<LineConfiguration> {
     );
   }
 
-  Widget diagramWidget(){
+  Widget diagramWidget(IrrigationLineModel selectedIrrigationLine){
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: SizedBox(
         width: 1600,
-        child: getSuitableSourceConnection(),
+        child: getSuitableSourceConnection(selectedIrrigationLine),
       ),
     );
   }
@@ -376,15 +374,32 @@ class _LineConfigurationState extends State<LineConfiguration> {
     return listOfObject;
   }
 
-  Widget getSuitableSourceConnection(){
-    List<SourceModel> boreOrOthers = widget.configPvd.source.where((source) => ([4, 5].contains(source.sourceType) || (source.sourceType == 3 && source.inletPump.isEmpty))).toList();
-    List<SourceModel> wellSumpTank = widget.configPvd.source.where((source) => ![3, 4, 5].contains(source.sourceType) || (source.sourceType == 3 && source.inletPump.isNotEmpty)).toList();
+  Widget getSuitableSourceConnection(IrrigationLineModel selectedIrrigationLine){
+    List<SourceModel> suitableSource = widget.configPvd.source
+        .where(
+            (source) =>
+        (
+            selectedIrrigationLine.sourcePump.any((pump) => (source.outletPump.contains(pump) || source.inletPump.contains(pump)))
+                ||
+                selectedIrrigationLine.irrigationPump.any((pump) => (source.outletPump.contains(pump) || source.inletPump.contains(pump)))
+        )
+    )
+        .map((source) => source.copy())
+        .toList();
+
+    for(var src in suitableSource){
+      src.inletPump = src.inletPump.where((pumpSno) => selectedIrrigationLine.sourcePump.contains(pumpSno) || selectedIrrigationLine.irrigationPump.contains(pumpSno)).toList();
+      src.outletPump = src.outletPump.where((pumpSno) => selectedIrrigationLine.sourcePump.contains(pumpSno) || selectedIrrigationLine.irrigationPump.contains(pumpSno)).toList();
+    }
+
+    List<SourceModel> boreOrOthers = suitableSource.where((source) => ([4, 5].contains(source.sourceType) || (source.sourceType == 3 && source.inletPump.isEmpty))).toList();
+    List<SourceModel> wellSumpTank = suitableSource.where((source) => ![3, 4, 5].contains(source.sourceType) || (source.sourceType == 3 && source.inletPump.isNotEmpty)).toList();
     if(boreOrOthers.length == 1 && wellSumpTank.isEmpty){
-      return oneSource();
+      return oneSource(suitableSource);
     }else if(boreOrOthers.isEmpty && wellSumpTank.length == 1){
-      return oneTank(widget.configPvd.source[0], inlet: false);
+      return oneTank(suitableSource[0], inlet: false);
     }else if(boreOrOthers.length == 1 && wellSumpTank.length == 1){
-      return oneSourceAndOneTank();
+    return oneSourceAndOneTank(suitableSource);
     }else if(boreOrOthers.length > 1 && wellSumpTank.length == 1){
       return multipleSourceAndOneTank(multipleSource: boreOrOthers, oneTankList: wellSumpTank);
     }else{
@@ -392,11 +407,11 @@ class _LineConfigurationState extends State<LineConfiguration> {
     }
   }
 
-  Widget oneSource(){
+  Widget oneSource(List<SourceModel> suitableSource){
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ...oneSourceList(widget.configPvd.source[0]),
+        ...oneSourceList(suitableSource[0]),
         ...filtrationAndFertilization(maxLength: 1)      ],
     );
   }
@@ -412,10 +427,10 @@ class _LineConfigurationState extends State<LineConfiguration> {
     );
   }
 
-  Widget oneSourceAndOneTank(){
+  Widget oneSourceAndOneTank(List<SourceModel> suitableSource){
     List<SourceModel> source = widget.configPvd.source;
-    SourceModel boreOthers = [4,5].contains(source[0].sourceType) ? source[0] : source[1];
-    SourceModel sumpTankWell = ![4,5].contains(source[0].sourceType) ? source[0] : source[1];
+    SourceModel boreOthers = [4,5].contains(suitableSource[0].sourceType) ? suitableSource[0] : suitableSource[1];
+    SourceModel sumpTankWell = ![4,5].contains(suitableSource[0].sourceType) ? suitableSource[0] : suitableSource[1];
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

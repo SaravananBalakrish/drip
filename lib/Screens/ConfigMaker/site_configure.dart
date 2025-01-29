@@ -72,25 +72,30 @@ class _SiteConfigureState extends State<SiteConfigure> {
     Widget child = Column(
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            for(var tab in widget.configPvd.configurationTab.entries)
-              InkWell(
-                onTap: (){
-                  setState(() {
-                    widget.configPvd.selectedConfigurationTab = tab.key;
-                  });
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
-                  decoration: BoxDecoration(
-                      color: widget.configPvd.selectedConfigurationTab == tab.key ? Theme.of(context).primaryColorLight : Colors.grey.shade300
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              for(var tab in widget.configPvd.configurationTab.entries)
+                InkWell(
+                  onTap: (){
+                    setState(() {
+                      widget.configPvd.selectedConfigurationTab = tab.key;
+                    });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                    decoration: BoxDecoration(
+                        color: widget.configPvd.selectedConfigurationTab == tab.key ? Theme.of(context).primaryColorLight : Colors.grey.shade300
+                    ),
+                    child: Text(tab.value, style: TextStyle(color: widget.configPvd.selectedConfigurationTab == tab.key ? Colors.white : Colors.black, fontSize: 13),),
                   ),
-                  child: Text(tab.value, style: TextStyle(color: widget.configPvd.selectedConfigurationTab == tab.key ? Colors.white : Colors.black, fontSize: 13),),
-                ),
-              )
-          ],
+                )
+            ],
+          ),
         ),
         Container(
           width: double.infinity,

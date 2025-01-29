@@ -12,7 +12,7 @@ class PumpModel{
     this.level = 0.0,
     this.pressure = 0.0,
     this.waterMeter = 0.0,
-    this.pumpType = 0,
+    this.pumpType = 1,
   });
 
   factory PumpModel.fromJson(dynamic data){
