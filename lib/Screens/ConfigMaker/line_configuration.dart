@@ -6,6 +6,7 @@ import 'package:oro_drip_irrigation/Models/Configuration/source_model.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/site_configure.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/source_configuration.dart';
 import 'package:oro_drip_irrigation/StateManagement/config_maker_provider.dart';
+import 'package:oro_drip_irrigation/Widgets/custom_buttons.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import '../../Constants/dialog_boxes.dart';
 import '../../Models/Configuration/device_object_model.dart';
@@ -63,10 +64,36 @@ class _LineConfigurationState extends State<LineConfiguration> {
                             child: Row(
                               spacing: 20,
                               children: [
+                                IconButton(
+                                    onPressed: (){
+                                      showModalBottomSheet(
+                                        shape: Border.all(),
+                                        isScrollControlled: true,
+                                          context: context,
+                                          builder: (context){
+                                            return SizedBox(
+                                              width: 700,
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Container(),
+                                                  RadiusButtonStyle(
+                                                      onPressed: (){
+
+                                                      },
+                                                      title: 'Save'
+                                                  )
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                      );
+                                    }, icon: const Icon(Icons.dataset)
+                                ),
                                 if(availability(2))
-                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.sourcePump, parameterType: LineParameter.sourcePump, objectId: 5, objectName: 'Source Pump', validateAllLine: false, mode: 1),
+                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.sourcePump, parameterType: LineParameter.sourcePump, objectId: 5, objectName: 'Source Pump', validateAllLine: false, listOfObject: widget.configPvd.pump.where((pump) => (pump.pumpType == 1)).toList().map((pump) => pump.commonDetails).toList()),
                                 if(availability(2))
-                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.irrigationPump, parameterType: LineParameter.irrigationPump, objectId: 5, objectName: 'Irrigation Pump', validateAllLine: false, mode: 2),
+                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.irrigationPump, parameterType: LineParameter.irrigationPump, objectId: 5, objectName: 'Irrigation Pump', validateAllLine: false, listOfObject: widget.configPvd.pump.where((pump) => (pump.pumpType == 2)).toList().map((pump) => pump.commonDetails).toList()),
                                 if(availability(13))
                                   getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.valve, parameterType: LineParameter.valve, objectId: 13, objectName: 'Valve', validateAllLine: true),
                                 if(availability(14))
@@ -93,6 +120,24 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                   getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.soilTemperature, parameterType: LineParameter.soilTemperature, objectId: 30, objectName: 'Soil Temperature', validateAllLine: true),
                                 if(availability(29))
                                   getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.temperature, parameterType: LineParameter.temperature, objectId: 29, objectName: 'Temperature', validateAllLine: true),
+                                if(availability(22))
+                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.waterMeter], parameterType: LineParameter.waterMeter, objectId: 22, objectName: 'Water Meter', validateAllLine: true, singleSelection: true),
+                                if(availability(42))
+                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.powerSupply], parameterType: LineParameter.powerSupply, objectId: 42, objectName: 'Power Supply', validateAllLine: true, singleSelection: true),
+                                if(availability(23))
+                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureSwitch], parameterType: LineParameter.pressureSwitch, objectId: 23, objectName: 'Power Switch', validateAllLine: true, singleSelection: true),
+                                if(availability(24))
+                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureIn], parameterType: LineParameter.pressureIn, objectId: 24, objectName: 'Pressure In', validateAllLine: true, singleSelection: true),
+                                if(availability(24))
+                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureOut], parameterType: LineParameter.pressureOut, objectId: 24, objectName: 'Pressure Out', validateAllLine: true, singleSelection: true),
+                                if(availability(3))
+                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.centralFertilization], parameterType: LineParameter.centralFertilization, objectId: 3, objectName: 'Central Fertilization', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.fertilization.where((site) => (site.siteMode == 1)).toList().map((site) => site.commonDetails).toList()),
+                                if(availability(3))
+                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.localFertilization], parameterType: LineParameter.localFertilization, objectId: 3, objectName: 'Local Fertilization', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.fertilization.where((site) => (site.siteMode == 2)).toList().map((site) => site.commonDetails).toList()),
+                                if(availability(4))
+                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.centralFiltration], parameterType: LineParameter.centralFiltration, objectId: 4, objectName: 'Central Filtration', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.filtration.where((site) => (site.siteMode == 2)).toList().map((site) => site.commonDetails).toList()),
+                                if(availability(4))
+                                  getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.localFiltration], parameterType: LineParameter.localFiltration, objectId: 4, objectName: 'Central Filtration', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.filtration.where((site) => (site.siteMode == 2)).toList().map((site) => site.commonDetails).toList()),
                               ],
                             ),
                           ),
@@ -188,6 +233,14 @@ class _LineConfigurationState extends State<LineConfiguration> {
       ...getObjectInLine(selectedIrrigationLine.pesticides, 18),
       ...getObjectInLine(selectedIrrigationLine.soilTemperature, 30),
       ...getObjectInLine(selectedIrrigationLine.temperature, 29),
+      if(selectedIrrigationLine.pressureIn != 0.0)
+        ...getObjectInLine([selectedIrrigationLine.pressureIn], 24),
+      if(selectedIrrigationLine.pressureOut != 0.0)
+        ...getObjectInLine([selectedIrrigationLine.pressureOut], 24),
+      if(selectedIrrigationLine.pressureSwitch != 0.0)
+        ...getObjectInLine([selectedIrrigationLine.pressureSwitch], 23),
+      if(selectedIrrigationLine.powerSupply != 0.0)
+        ...getObjectInLine([selectedIrrigationLine.powerSupply], 42),
     ];
     return childrenWidget.isEmpty ? Container() : Container(
       padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -278,19 +331,24 @@ class _LineConfigurationState extends State<LineConfiguration> {
     required int objectId,
     required String objectName,
     required bool validateAllLine,
-    int? mode,
+    bool singleSelection = false,
+    List<DeviceObjectModel>? listOfObject
   }){
     return InkWell(
       onTap: (){
         setState(() {
           widget.configPvd.listOfSelectedSno.clear();
           widget.configPvd.listOfSelectedSno.addAll(currentParameterValue);
+          if(currentParameterValue.isNotEmpty){
+            widget.configPvd.selectedSno = currentParameterValue[0];
+          }
         });
         selectionDialogBox(
             context: context,
             title: 'Select $objectName',
-            singleSelection: false,
-            listOfObject: mode != null ? widget.configPvd.pump.where((pump) => (mode == pump.pumpType)).toList().map((pump) => pump.commonDetails).toList() :
+            singleSelection: singleSelection,
+            // listOfObject: mode != null ? widget.configPvd.pump.where((pump) => (mode == pump.pumpType)).toList().map((pump) => pump.commonDetails).toList() :
+            listOfObject: listOfObject ??
             getUnselectedLineParameterObject(
                 currentParameterList: currentParameterValue,
                 objectId: objectId,
@@ -381,9 +439,10 @@ class _LineConfigurationState extends State<LineConfiguration> {
     List<SourceModel> suitableSource = widget.configPvd.source
         .where(
             (source){
+              print("source.sourceType :: ${source.sourceType}");
               bool sourcePumpAvailability = selectedIrrigationLine.sourcePump.any((pump) => (source.outletPump.contains(pump) || source.inletPump.contains(pump)));
               bool irrigationPumpAvailability = selectedIrrigationLine.irrigationPump.any((pump) => (source.outletPump.contains(pump) || source.inletPump.contains(pump)));
-              return (source.sourceType == 4 ? (sourcePumpAvailability || irrigationPumpAvailability) : (sourcePumpAvailability && irrigationPumpAvailability));
+              return ([4,3].contains(source.sourceType) ? (sourcePumpAvailability || irrigationPumpAvailability) : (sourcePumpAvailability && irrigationPumpAvailability));
             }
     )
         .map((source) => source.copy())
@@ -392,18 +451,18 @@ class _LineConfigurationState extends State<LineConfiguration> {
     for(var src in suitableSource){
       src.inletPump = src.inletPump.where((pumpSno) => selectedIrrigationLine.sourcePump.contains(pumpSno) || selectedIrrigationLine.irrigationPump.contains(pumpSno)).toList();
       src.outletPump = src.outletPump.where((pumpSno) => selectedIrrigationLine.sourcePump.contains(pumpSno) || selectedIrrigationLine.irrigationPump.contains(pumpSno)).toList();
+      print('source name : ${src.commonDetails.name}  ${src.sourceType}');
     }
 
     List<SourceModel> boreOrOthers = suitableSource.where((source) => ([4, 5].contains(source.sourceType) || (source.sourceType == 3 && source.inletPump.isEmpty))).toList();
     List<SourceModel> wellSumpTank = suitableSource.where((source) => ![3, 4, 5].contains(source.sourceType) || (source.sourceType == 3 && source.inletPump.isNotEmpty)).toList();
+
     if(boreOrOthers.length == 1 && wellSumpTank.isEmpty){
       return oneSource(suitableSource);
     }else if(boreOrOthers.isEmpty && wellSumpTank.length == 1){
       return oneTank(suitableSource[0], inlet: false);
     }else if(boreOrOthers.length == 1 && wellSumpTank.length == 1){
-    return oneSourceAndOneTank(suitableSource);
-    }else if(boreOrOthers.length > 1 && wellSumpTank.length == 1){
-      return multipleSourceAndOneTank(multipleSource: boreOrOthers, oneTankList: wellSumpTank);
+      return oneSourceAndOneTank(boreOthers: boreOrOthers[0],sumpTankWell: wellSumpTank[0]);
     }else{
       return multipleSourceAndMultipleTank(multipleSource: boreOrOthers, multipleTank: wellSumpTank);
     }
@@ -414,26 +473,25 @@ class _LineConfigurationState extends State<LineConfiguration> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ...oneSourceList(suitableSource[0]),
-        ...filtrationAndFertilization(maxLength: 1)      ],
+        ...filtrationAndFertilization(maxLength: 1)
+      ],
     );
   }
 
-  Widget oneTank(SourceModel source, {bool inlet = true, bool fertilizerSite = true, int? maxOutletPump}){
-    print('oneTank maxOutletPump : $maxOutletPump');
+  // Todo :: oneTank
+  Widget oneTank(SourceModel source, {bool inlet = true, bool fertilizerSite = true, int? maxOutletPumpForTank}){
+    print('oneTank maxOutletPumpForTank : $maxOutletPumpForTank');
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ...oneTankList(source, inlet: inlet, maxOutletPump: maxOutletPump),
+        ...oneTankList(source, inlet: inlet, maxOutletPumpForTank: maxOutletPumpForTank),
         if(fertilizerSite)
           ...filtrationAndFertilization(maxLength: 1)
       ],
     );
   }
 
-  Widget oneSourceAndOneTank(List<SourceModel> suitableSource){
-    List<SourceModel> source = widget.configPvd.source;
-    SourceModel boreOthers = [4,5].contains(suitableSource[0].sourceType) ? suitableSource[0] : suitableSource[1];
-    SourceModel sumpTankWell = ![4,5].contains(suitableSource[0].sourceType) ? suitableSource[0] : suitableSource[1];
+  Widget oneSourceAndOneTank({required SourceModel boreOthers, required SourceModel sumpTankWell}){
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -444,108 +502,114 @@ class _LineConfigurationState extends State<LineConfiguration> {
     );
   }
 
-  Widget multipleSourceAndOneTank({required List<SourceModel> multipleSource, required List<SourceModel> oneTankList}){
-    return LayoutBuilder(builder: (context, constraint){
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Column(
-            children: [
-              for(var src in multipleSource)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Row(
-                    children: [
-                      ...oneSourceList(src)
-                    ],
-                  ),
-                )
-            ],
-          ),
-          Column(
-            children: [
-              for(var src = 0;src < multipleSource.length;src++)
-                Container(
-                  width: 8 * widget.configPvd.ratio,
-                  height: 160 * widget.configPvd.ratio,
-                  child: Stack(
-                    children: [
-                      if(src == 0)
-                        Positioned(
-                            left: 0,
-                            bottom: 0,
-                            child: Container(
-                              width: 8,
-                              height: 80  * widget.configPvd.ratio,
-                              decoration: const BoxDecoration(
-                                  gradient: RadialGradient(
-                                      radius: 2,
-                                      colors: [
-                                        Color(0xffC0E3EE),
-                                        Color(0xff67B1C1),
-                                      ]
-                                  )
-                              ),
-                            )
-                        ),
-                      if(multipleSource.length - 1 == src)
-                        Positioned(
-                            left: 0,
-                            top: 0,
-                            child: Container(
-                              width: 8,
-                              height: 109,
-                              decoration: const BoxDecoration(
-                                  gradient: RadialGradient(
-                                      radius: 3,
-                                      colors: [
-                                        Color(0xffC0E3EE),
-                                        Color(0xff67B1C1),
-                                      ]
-                                  )
-                              ),
-                            )
-                        ),
-                      if(multipleSource.length > 2 && ![0, multipleSource.length - 1].contains(src))
-                        Positioned(
-                            left: 0,
-                            top: 0,
-                            child: Container(
-                              width: 8,
-                              height: 160,
-                              decoration: const BoxDecoration(
-                                  gradient: RadialGradient(
-                                      radius: 3,
-                                      colors: [
-                                        Color(0xffC0E3EE),
-                                        Color(0xff67B1C1),
-                                      ]
-                                  )
-                              ),
-                            )
-                        ),
-                    ],
-                  ),
-                )
-            ],
-          ),
-          oneTank(oneTankList[0], fertilizerSite: false),
-          ...filtrationAndFertilization(maxLength: 1)
-        ],
-      );
-    });
-  }
+  // Widget multipleSourceAndOneTank({required List<SourceModel> multipleSource, required List<SourceModel> oneTankList}){
+  //   print("multipleSourceAndOneTank");
+  //   return LayoutBuilder(builder: (context, constraint){
+  //     return Row(
+  //       crossAxisAlignment: CrossAxisAlignment.start,
+  //       children: [
+  //         Column(
+  //           children: [
+  //             for(var src in multipleSource)
+  //               Padding(
+  //                 padding: const EdgeInsets.symmetric(vertical: 20),
+  //                 child: Row(
+  //                   children: [
+  //                     ...oneSourceList(src)
+  //                   ],
+  //                 ),
+  //               )
+  //           ],
+  //         ),
+  //         Column(
+  //           children: [
+  //             for(var src = 0;src < multipleSource.length;src++)
+  //               Container(
+  //                 width: 8 * widget.configPvd.ratio,
+  //                 height: 160 * widget.configPvd.ratio,
+  //                 child: Stack(
+  //                   children: [
+  //                     if(src == 0)
+  //                       Positioned(
+  //                           left: 0,
+  //                           bottom: 0,
+  //                           child: Container(
+  //                             width: 8,
+  //                             height: 80  * widget.configPvd.ratio,
+  //                             decoration: const BoxDecoration(
+  //                                 gradient: RadialGradient(
+  //                                     radius: 2,
+  //                                     colors: [
+  //                                       Color(0xffC0E3EE),
+  //                                       Color(0xff67B1C1),
+  //                                     ]
+  //                                 )
+  //                             ),
+  //                           )
+  //                       ),
+  //                     if(multipleSource.length - 1 == src)
+  //                       Positioned(
+  //                           left: 0,
+  //                           top: 0,
+  //                           child: Container(
+  //                             width: 8,
+  //                             height: 109,
+  //                             decoration: const BoxDecoration(
+  //                                 gradient: RadialGradient(
+  //                                     radius: 3,
+  //                                     colors: [
+  //                                       Color(0xffC0E3EE),
+  //                                       Color(0xff67B1C1),
+  //                                     ]
+  //                                 )
+  //                             ),
+  //                           )
+  //                       ),
+  //                     if(multipleSource.length > 2 && ![0, multipleSource.length - 1].contains(src))
+  //                       Positioned(
+  //                           left: 0,
+  //                           top: 0,
+  //                           child: Container(
+  //                             width: 8,
+  //                             height: 160,
+  //                             decoration: const BoxDecoration(
+  //                                 gradient: RadialGradient(
+  //                                     radius: 3,
+  //                                     colors: [
+  //                                       Color(0xffC0E3EE),
+  //                                       Color(0xff67B1C1),
+  //                                     ]
+  //                                 )
+  //                             ),
+  //                           )
+  //                       ),
+  //                   ],
+  //                 ),
+  //               )
+  //           ],
+  //         ),
+  //         oneTank(oneTankList[0], fertilizerSite: false),
+  //         ...filtrationAndFertilization(maxLength: 1)
+  //       ],
+  //     );
+  //   });
+  // }
 
+  //Todo :: multipleSourceAndMultipleTank
   Widget multipleSourceAndMultipleTank({
     required List<SourceModel> multipleSource,
     required List<SourceModel> multipleTank
 }){
     int maxLength = multipleSource.length > multipleTank.length ? multipleSource.length : multipleTank.length;
-    int maxOutletPump = 0;
+    int maxOutletPumpForTank = 0;
+    int maxOutletPumpForSource = 0;
     for(var tank in multipleTank){
-      maxOutletPump = maxOutletPump < tank.outletPump.length ? tank.outletPump.length : maxOutletPump;
+      maxOutletPumpForTank = maxOutletPumpForTank < tank.outletPump.length ? tank.outletPump.length : maxOutletPumpForTank;
     }
-    print('multipleSourceAndMultipleTank maxOutletPump : $maxOutletPump');
+    for(var tank in multipleSource){
+      maxOutletPumpForSource = maxOutletPumpForTank < tank.outletPump.length ? tank.outletPump.length : maxOutletPumpForTank;
+    }
+    print('multipleSourceAndMultipleTank maxOutletPumpForTank : $maxOutletPumpForTank');
     return LayoutBuilder(builder: (context, constraint){
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -559,17 +623,18 @@ class _LineConfigurationState extends State<LineConfiguration> {
                   padding: const EdgeInsets.symmetric(vertical: 20),
                   child: Row(
                     children: [
-                      ...oneSourceList(src)
+                      ...oneSourceList(src, maxOutletPumpForTank: maxOutletPumpForTank, maxOutletPumpForSource: maxOutletPumpForSource)
                     ],
                   ),
                 )
             ],
           ),
-          Column(
+          if(maxOutletPumpForTank != 0)
+            Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               for(var srcOrTank = 0;srcOrTank < maxLength;srcOrTank++)
-                Container(
+                SizedBox(
                   width: 8 * widget.configPvd.ratio,
                   height: 160 * widget.configPvd.ratio,
                   child: Stack(
@@ -639,7 +704,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
               for(var tank = 0;tank < multipleTank.length;tank++)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: oneTank(multipleTank[tank], fertilizerSite: false, maxOutletPump: maxOutletPump),
+                  child: oneTank(multipleTank[tank], fertilizerSite: false, maxOutletPumpForTank: maxOutletPumpForTank),
                 ),
             ],
           ),
@@ -713,6 +778,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
             ],
           ),
         ),
+
       Stack(
         children: [
           if(widget.configPvd.fertilization.isNotEmpty && widget.configPvd.filtration.isNotEmpty)
@@ -785,22 +851,46 @@ class _LineConfigurationState extends State<LineConfiguration> {
     ];
   }
 
-  List<Widget> oneSourceList(SourceModel source, ){
+  // Todo :: oneSourceList
+  List<Widget> oneSourceList(SourceModel source,{ int? maxOutletPumpForTank, int? maxOutletPumpForSource} ){
+    print("oneSourceList maxOutletPumpForTank : $maxOutletPumpForTank");
     pumpExtendedWidth += (120 * 2);
     return [
       getSource(source,widget.configPvd , inlet: false,dashboard: true),
       if(source.outletPump.length == 1)
-        singlePump(source, false, widget.configPvd, dashboard: true)
+        Row(
+          children: [
+            singlePump(source, false, widget.configPvd, dashboard: true),
+            if(maxOutletPumpForSource != null)
+              for(var i = 0;i < (maxOutletPumpForSource - source.outletPump.length);i++)
+                SizedBox(
+                  width: 94,
+                  height: 120 * widget.configPvd.ratio,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        bottom : 32 * widget.configPvd.ratio,
+                        child: SvgPicture.asset(
+                          'assets/Images/Source/backside_pipe_1.svg',
+                          width: 120,
+                          height: 8.5 * widget.configPvd.ratio,
+                        ),
+                      )
+                    ],
+                  ),
+                )
+          ],
+        )
       else
-        multiplePump(source, false, widget.configPvd, dashBoard: true)
+        multiplePump(source, false, widget.configPvd, dashBoard: true, maxOutletPumpForTank: maxOutletPumpForTank)
     ];
   }
 
-  List<Widget> oneTankList(SourceModel source, {bool inlet = true, int? maxOutletPump}){
+  List<Widget> oneTankList(SourceModel source, {bool inlet = true, int? maxOutletPumpForTank}){
     pumpExtendedWidth += 120 + (source.outletPump.length * 120);
     return [
       getSource(source, widget.configPvd, inlet: inlet),
-      multiplePump(source, false, widget.configPvd, dashBoard: true, maxOutletPump: maxOutletPump),
+      multiplePump(source, false, widget.configPvd, dashBoard: true, maxOutletPumpForTank: maxOutletPumpForTank),
     ];
   }
 
