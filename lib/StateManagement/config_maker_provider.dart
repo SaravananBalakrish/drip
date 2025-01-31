@@ -549,12 +549,20 @@ class ConfigMakerProvider extends ChangeNotifier{
         }else if(parameter == LineParameter.co2){
           irrigationLine.co2.clear();
           irrigationLine.co2.addAll(listOfSelectedSno);
+        }else if(parameter == LineParameter.waterMeter){
+          irrigationLine.waterMeter = selectedSno;
+        }else if(parameter == LineParameter.pressureIn){
+          irrigationLine.pressureIn = selectedSno;
+        }else if(parameter == LineParameter.pressureOut){
+          irrigationLine.pressureOut = selectedSno;
+        }else if(parameter == LineParameter.pressureSwitch){
+          irrigationLine.pressureSwitch = selectedSno;
         }
+        selectedSno = 0.0;
         listOfSelectedSno.clear();
       }
     }
     notifyListeners();
-
   }
 
   void updateSelectionInMoisture(double sNo){

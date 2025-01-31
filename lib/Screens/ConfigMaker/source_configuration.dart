@@ -320,9 +320,9 @@ Widget singlePump(SourceModel source, bool fillingPump, ConfigMakerProvider conf
 }
 
 Widget multiplePump(SourceModel source, bool fillingPump, ConfigMakerProvider configPvd,
-    {bool dashBoard = false, int? maxOutletPump}){
+    {bool dashBoard = false, int? maxOutletPumpForTank}){
   List<double> currentParameter = fillingPump ? source.inletPump : source.outletPump;
-  print('multiplePump maxOutletPump :: $maxOutletPump');
+  print('multiplePump maxOutletPumpForTank :: $maxOutletPumpForTank');
   return Row(
     children: [
       for(var i = 0;i < currentParameter.length;i++)
@@ -371,8 +371,8 @@ Widget multiplePump(SourceModel source, bool fillingPump, ConfigMakerProvider co
             )
           ],
         ),
-      if(maxOutletPump != null)
-        for(var i = 0;i < (maxOutletPump - currentParameter.length);i++)
+      if(maxOutletPumpForTank != null)
+        for(var i = 0;i < (maxOutletPumpForTank - currentParameter.length);i++)
           SizedBox(
             width: 94,
             height: 120 * configPvd.ratio,
