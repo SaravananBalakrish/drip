@@ -40,21 +40,21 @@ class _PayloadProcessingState extends State<PayloadProcessing> {
                   ]
                 };
                 final Map<String, dynamic> configMakerPayload = {
-                  "200": {
-                    [
-                      {"201": getPumpPayload()},
-                      {"202": getIrrigationLinePayload()},
-                      {"203": getFertilizerPayload()},
-                      {"204": getFilterPayload()},
-                      {"205": getWeatherPayload()},
-                      {"206": getObjectPayload()},
-                      {"207": 0},
-                      {"208": '1'}
-                    ]
-                  }
+                  "200": [
+                    {"201": getPumpPayload()},
+                    {"202": getIrrigationLinePayload()},
+                    {"203": getFertilizerPayload()},
+                    {"204": getFilterPayload()},
+                    {"205": getWeatherPayload()},
+                    {"206": getObjectPayload()},
+                    {"207": 0},
+                    {"208": '1'}
+                  ]
                 };
 
-                print("getIrrigationLinePayload ==> ${getIrrigationLinePayload()}");
+                /*print("getIrrigationLinePayload ==> ${jsonEncode(configMakerPayload)}");
+                print("deviceListPayload ==> ${jsonEncode(deviceListPayload)}");*/
+                print("getOroPumpPayload ==> ${getOroPumpPayload()}");
               },
               child: const Text('Continue'),
             ),
@@ -215,7 +215,7 @@ class _PayloadProcessingState extends State<PayloadProcessing> {
 
   String getWeatherPayload() {
     final configPvd = context.read<ConfigMakerProvider>();
-    List<dynamic> devicePayload = [];
+    List<dynamic> weatherPayload = [];
 
     final weatherControllersList = configPvd.listOfDeviceModel.where((e) => e.categoryId == 4).toList();
     for (var i = 0; i < weatherControllersList.length; i++) {
@@ -234,25 +234,25 @@ class _PayloadProcessingState extends State<PayloadProcessing> {
       var rainFallSensor = configPvd.listOfGeneratedObject.where((object) => object.controllerId == weather.controllerId && object.objectId == 38).toList();
       var leafWetnessSensor = configPvd.listOfGeneratedObject.where((object) => object.controllerId == weather.controllerId && object.objectId == 37).toList();
       if (weather.masterId != null) {
-        devicePayload.add(weatherSensorPayload(weather, soilMoistureSensor.isNotEmpty ? soilMoistureSensor[0] : null, 1));
-        devicePayload.add(weatherSensorPayload(weather, soilMoistureSensor.length > 1 ? soilMoistureSensor[1] : null, 2));
-        devicePayload.add(weatherSensorPayload(weather, soilMoistureSensor.length > 2 ? soilMoistureSensor[2] : null, 3));
-        devicePayload.add(weatherSensorPayload(weather, soilMoistureSensor.length > 3 ? soilMoistureSensor[3] : null, 4));
-        devicePayload.add(weatherSensorPayload(weather, soilTemperatureSensor.isNotEmpty ? soilTemperatureSensor[0] : null, 5));
-        devicePayload.add(weatherSensorPayload(weather, humiditySensor.isNotEmpty ? humiditySensor[0] : null, 6));
-        devicePayload.add(weatherSensorPayload(weather, temperatureSensor.isNotEmpty ? temperatureSensor[0] : null, 7));
-        devicePayload.add(weatherSensorPayload(weather, atmosphericSensor.isNotEmpty ? atmosphericSensor[0] : null, 8));
-        devicePayload.add(weatherSensorPayload(weather, co2Sensor.isNotEmpty ? co2Sensor[0] : null, 9));
-        devicePayload.add(weatherSensorPayload(weather, ldrSensor.isNotEmpty ? ldrSensor[0] : null, 10));
-        devicePayload.add(weatherSensorPayload(weather, luxSensor.isNotEmpty ? luxSensor[0] : null, 11));
-        devicePayload.add(weatherSensorPayload(weather, windDirectionSensor.isNotEmpty ? windDirectionSensor[0] : null, 12));
-        devicePayload.add(weatherSensorPayload(weather, windSpeedSensor.isNotEmpty ? windSpeedSensor[0] : null, 13));
-        devicePayload.add(weatherSensorPayload(weather, rainFallSensor.isNotEmpty ? rainFallSensor[0] : null, 14));
-        devicePayload.add(weatherSensorPayload(weather, leafWetnessSensor.isNotEmpty ? leafWetnessSensor[0] : null, 15));
+        weatherPayload.add(weatherSensorPayload(weather, soilMoistureSensor.isNotEmpty ? soilMoistureSensor[0] : null, 1));
+        weatherPayload.add(weatherSensorPayload(weather, soilMoistureSensor.length > 1 ? soilMoistureSensor[1] : null, 2));
+        weatherPayload.add(weatherSensorPayload(weather, soilMoistureSensor.length > 2 ? soilMoistureSensor[2] : null, 3));
+        weatherPayload.add(weatherSensorPayload(weather, soilMoistureSensor.length > 3 ? soilMoistureSensor[3] : null, 4));
+        weatherPayload.add(weatherSensorPayload(weather, soilTemperatureSensor.isNotEmpty ? soilTemperatureSensor[0] : null, 5));
+        weatherPayload.add(weatherSensorPayload(weather, humiditySensor.isNotEmpty ? humiditySensor[0] : null, 6));
+        weatherPayload.add(weatherSensorPayload(weather, temperatureSensor.isNotEmpty ? temperatureSensor[0] : null, 7));
+        weatherPayload.add(weatherSensorPayload(weather, atmosphericSensor.isNotEmpty ? atmosphericSensor[0] : null, 8));
+        weatherPayload.add(weatherSensorPayload(weather, co2Sensor.isNotEmpty ? co2Sensor[0] : null, 9));
+        weatherPayload.add(weatherSensorPayload(weather, ldrSensor.isNotEmpty ? ldrSensor[0] : null, 10));
+        weatherPayload.add(weatherSensorPayload(weather, luxSensor.isNotEmpty ? luxSensor[0] : null, 11));
+        weatherPayload.add(weatherSensorPayload(weather, windDirectionSensor.isNotEmpty ? windDirectionSensor[0] : null, 12));
+        weatherPayload.add(weatherSensorPayload(weather, windSpeedSensor.isNotEmpty ? windSpeedSensor[0] : null, 13));
+        weatherPayload.add(weatherSensorPayload(weather, rainFallSensor.isNotEmpty ? rainFallSensor[0] : null, 14));
+        weatherPayload.add(weatherSensorPayload(weather, leafWetnessSensor.isNotEmpty ? leafWetnessSensor[0] : null, 15));
       }
     }
 
-    return devicePayload.join(";");
+    return weatherPayload.join(";");
   }
 
   String weatherSensorPayload(DeviceModel weather, DeviceObjectModel? sensor, int sensorId){
@@ -271,13 +271,7 @@ class _PayloadProcessingState extends State<PayloadProcessing> {
 
     for (var i = 0; i < configPvd.line.length; i++) {
       var line = configPvd.line[i];
-      // var actualLine = configPvd.listOfGeneratedObject.firstWhere((object) => object.sNo == line.commonDetails.sNo);
-      // var controller = configPvd.listOfDeviceModel.firstWhere((e) => e.controllerId == actualLine.controllerId);
-      // var sump = configPvd.source.where((e) => ![1, 4].contains(e.sourceType));
-      // var tank = configPvd.source.where((e) => e.sourceType == 1);
-      // var irrigationLine = configPvd.line.where((line) => (line.pumpType == 1 ? line.sourcePump : line.irrigationPump).contains(line.commonDetails.sNo)).toList();
-
-      Map<String, dynamic> payload = {
+      irrigationLinePayload.add({
         "S_No": line.commonDetails.sNo,
         "Name": '',
         "ValveCount": line.valve.toList().join('_'),
@@ -298,9 +292,7 @@ class _PayloadProcessingState extends State<PayloadProcessing> {
         "PressureSwitch": line.pressureSwitch != 0.0 ? line.pressureSwitch : '',
         "LevelSensor": '',
         "Agitator": ''
-      };
-
-      irrigationLinePayload.add(payload.entries.map((e) => e.value).join(", "));
+      }.entries.map((e) => e.value).toList().join('_'));
     }
 
     return irrigationLinePayload.join(";");
@@ -323,5 +315,22 @@ class _PayloadProcessingState extends State<PayloadProcessing> {
       default:
         return 1;
     }
+  }
+
+  String getOroPumpPayload() {
+    final configPvd = context.read<ConfigMakerProvider>();
+    List<dynamic> oroPumpPayload = [];
+
+    final oroPumpControllersList = configPvd.listOfDeviceModel.where((e) => e.categoryId == 2 && e.modelId == 1).toList();
+    for(var i = 0; i < configPvd.pump.length; i++) {
+      var pump = configPvd.pump[i];
+      var actualPump = configPvd.listOfGeneratedObject.firstWhere((object) => object.sNo == pump.commonDetails.sNo);
+      var controller = configPvd.listOfDeviceModel.firstWhere((e) => e.controllerId == actualPump.controllerId);
+      var relatedSources = configPvd.source.where((e) => e.inletPump.contains(pump.commonDetails.sNo) || e.outletPump.contains(pump.commonDetails.sNo)).toList();
+      var sump = configPvd.source.where((e) => ![1, 4].contains(e.sourceType));
+      var tank = configPvd.source.where((e) => e.sourceType == 1);
+    }
+    print(oroPumpControllersList.map((e) => e.toJson()));
+    return '';
   }
 }
