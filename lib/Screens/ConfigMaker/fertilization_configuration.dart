@@ -157,12 +157,12 @@ class _FertilizationConfigurationState extends State<FertilizationConfiguration>
                             'listOfSampleObjectModel' : listOfSampleObjectModel,
                             'listOfObjectModelConnection' : listOfObjectModelConnection,
                             'listOfGeneratedObject' : listOfGeneratedObject,
-                            'filtration' : filtration,
-                            'fertilization' : fertilization,
-                            'source' : source,
+                            'filterSite' : filtration,
+                            'fertilizerSite' : fertilization,
+                            'waterSource' : source,
                             'pump' : pump,
-                            'moisture' : moisture,
-                            'line' : line,
+                            'moistureSensor' : moisture,
+                            'irrigationLine' : line,
                           });
                           print('data : $data');
                           saveToSessionStorage('configData',data);

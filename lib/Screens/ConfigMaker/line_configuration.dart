@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
+import 'package:oro_drip_irrigation/Models/Configuration/fertigation_model.dart';
+import 'package:oro_drip_irrigation/Models/Configuration/filtration_model.dart';
 import 'package:oro_drip_irrigation/Models/Configuration/irrigationLine_model.dart';
 import 'package:oro_drip_irrigation/Models/Configuration/source_model.dart';
+import 'package:oro_drip_irrigation/Screens/ConfigMaker/config_object_name_editing.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/site_configure.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/source_configuration.dart';
 import 'package:oro_drip_irrigation/StateManagement/config_maker_provider.dart';
@@ -73,18 +76,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                           builder: (context){
                                             return SizedBox(
                                               width: 700,
-                                              child: Column(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Container(),
-                                                  RadiusButtonStyle(
-                                                      onPressed: (){
-
-                                                      },
-                                                      title: 'Save'
-                                                  )
-                                                ],
-                                              ),
+                                              child: ConfigObjectNameEditing(listOfObjectInLine: widget.configPvd.listOfGeneratedObject, configPvd: widget.configPvd,),
                                             );
                                           }
                                       );
@@ -308,7 +300,6 @@ class _LineConfigurationState extends State<LineConfiguration> {
               ),
               const SizedBox(width: 10,)
             ]
-
         ],
       ),
     );
@@ -436,13 +427,15 @@ class _LineConfigurationState extends State<LineConfiguration> {
 
   //Todo :: getSuitableSourceConnection
   Widget getSuitableSourceConnection(IrrigationLineModel selectedIrrigationLine){
+    FiltrationModel? filterSite = widget.configPvd.filtration.cast<FiltrationModel?>().firstWhere((site) => site!.commonDetails.sNo == selectedIrrigationLine.centralFiltration, orElse: ()=> null);
+    FertilizationModel? fertilizerSite = widget.configPvd.fertilization.cast<FertilizationModel?>().firstWhere((site) => site!.commonDetails.sNo == selectedIrrigationLine.centralFertilization, orElse: ()=> null);
     List<SourceModel> suitableSource = widget.configPvd.source
         .where(
             (source){
               print("source.sourceType :: ${source.sourceType}");
               bool sourcePumpAvailability = selectedIrrigationLine.sourcePump.any((pump) => (source.outletPump.contains(pump) || source.inletPump.contains(pump)));
               bool irrigationPumpAvailability = selectedIrrigationLine.irrigationPump.any((pump) => (source.outletPump.contains(pump) || source.inletPump.contains(pump)));
-              return ([4,3].contains(source.sourceType) ? (sourcePumpAvailability || irrigationPumpAvailability) : (sourcePumpAvailability && irrigationPumpAvailability));
+              return ((sourcePumpAvailability || irrigationPumpAvailability));
             }
     )
         .map((source) => source.copy())
@@ -454,50 +447,58 @@ class _LineConfigurationState extends State<LineConfiguration> {
       print('source name : ${src.commonDetails.name}  ${src.sourceType}');
     }
 
-    List<SourceModel> boreOrOthers = suitableSource.where((source) => ([4, 5].contains(source.sourceType) || (source.sourceType == 3 && source.inletPump.isEmpty))).toList();
-    List<SourceModel> wellSumpTank = suitableSource.where((source) => ![3, 4, 5].contains(source.sourceType) || (source.sourceType == 3 && source.inletPump.isNotEmpty)).toList();
+    List<SourceModel> boreOrOthers = suitableSource.where((source) => source.outletPump.any((pumpSno) => widget.configPvd.pump.firstWhere((pump) => pump.commonDetails.sNo == pumpSno).pumpType == 1)).toList();
+    List<SourceModel> wellSumpTank = suitableSource.where((source) => source.outletPump.any((pumpSno) => widget.configPvd.pump.firstWhere((pump) => pump.commonDetails.sNo == pumpSno).pumpType == 2)).toList();
+    print('boreOrOthers: ${boreOrOthers.length}');
+    print('wellSumpTank: ${wellSumpTank.length}');
 
     if(boreOrOthers.length == 1 && wellSumpTank.isEmpty){
-      return oneSource(suitableSource);
+      return oneSource(suitableSource, selectedIrrigationLine);
     }else if(boreOrOthers.isEmpty && wellSumpTank.length == 1){
-      return oneTank(suitableSource[0], inlet: false);
+      return oneTank(suitableSource[0],selectedIrrigationLine, inlet: false);
     }else if(boreOrOthers.length == 1 && wellSumpTank.length == 1){
-      return oneSourceAndOneTank(boreOthers: boreOrOthers[0],sumpTankWell: wellSumpTank[0]);
+      return oneSourceAndOneTank(boreOthers: boreOrOthers[0],sumpTankWell: wellSumpTank[0], selectedIrrigationLine: selectedIrrigationLine);
     }else{
-      return multipleSourceAndMultipleTank(multipleSource: boreOrOthers, multipleTank: wellSumpTank);
+      return multipleSourceAndMultipleTank(multipleSource: boreOrOthers, multipleTank: wellSumpTank, selectedIrrigationLine: selectedIrrigationLine);
     }
   }
 
-  Widget oneSource(List<SourceModel> suitableSource){
+  Widget oneSource(List<SourceModel> suitableSource, IrrigationLineModel selectedIrrigationLine,){
+    FiltrationModel? filterSite = widget.configPvd.filtration.cast<FiltrationModel?>().firstWhere((site) => site!.commonDetails.sNo == selectedIrrigationLine.centralFiltration, orElse: ()=> null);
+    FertilizationModel? fertilizerSite = widget.configPvd.fertilization.cast<FertilizationModel?>().firstWhere((site) => site!.commonDetails.sNo == selectedIrrigationLine.centralFertilization, orElse: ()=> null);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ...oneSourceList(suitableSource[0]),
-        ...filtrationAndFertilization(maxLength: 1)
+        ...filtrationAndFertilization(maxLength: 1, fertilizerSite: fertilizerSite, filterSite: filterSite)
       ],
     );
   }
 
   // Todo :: oneTank
-  Widget oneTank(SourceModel source, {bool inlet = true, bool fertilizerSite = true, int? maxOutletPumpForTank}){
+  Widget oneTank(SourceModel source, IrrigationLineModel selectedIrrigationLine, {bool inlet = true, int? maxOutletPumpForTank, FiltrationModel? filterSite, FertilizationModel? fertilizerSite}){
     print('oneTank maxOutletPumpForTank : $maxOutletPumpForTank');
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ...oneTankList(source, inlet: inlet, maxOutletPumpForTank: maxOutletPumpForTank),
-        if(fertilizerSite)
-          ...filtrationAndFertilization(maxLength: 1)
+        if(fertilizerSite != null || filterSite != null)
+          ...filtrationAndFertilization(maxLength: 1, filterSite: filterSite, fertilizerSite: fertilizerSite)
       ],
     );
   }
 
-  Widget oneSourceAndOneTank({required SourceModel boreOthers, required SourceModel sumpTankWell}){
+  Widget oneSourceAndOneTank({required SourceModel boreOthers, required SourceModel sumpTankWell, required IrrigationLineModel selectedIrrigationLine,}){
+    FiltrationModel? filterSite = widget.configPvd.filtration.cast<FiltrationModel?>().firstWhere((site) => site!.commonDetails.sNo == selectedIrrigationLine.centralFiltration, orElse: ()=> null);
+    FertilizationModel? fertilizerSite = widget.configPvd.fertilization.cast<FertilizationModel?>().firstWhere((site) => site!.commonDetails.sNo == selectedIrrigationLine.centralFertilization, orElse: ()=> null);
+    print('oneSourceAndOneTank filterSite : $filterSite');
+    print('oneSourceAndOneTank fertilizerSite : $fertilizerSite');
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ...oneSourceList(boreOthers),
         ...oneTankList(sumpTankWell),
-        ...filtrationAndFertilization(maxLength: 1)
+        ...filtrationAndFertilization(maxLength: 1, filterSite: filterSite, fertilizerSite: fertilizerSite)
       ],
     );
   }
@@ -598,8 +599,13 @@ class _LineConfigurationState extends State<LineConfiguration> {
   //Todo :: multipleSourceAndMultipleTank
   Widget multipleSourceAndMultipleTank({
     required List<SourceModel> multipleSource,
-    required List<SourceModel> multipleTank
+    required List<SourceModel> multipleTank,
+    required IrrigationLineModel selectedIrrigationLine
 }){
+    FiltrationModel? filterSite = widget.configPvd.filtration.cast<FiltrationModel?>().firstWhere((site) => site!.commonDetails.sNo == selectedIrrigationLine.centralFiltration, orElse: ()=> null);
+    FertilizationModel? fertilizerSite = widget.configPvd.fertilization.cast<FertilizationModel?>().firstWhere((site) => site!.commonDetails.sNo == selectedIrrigationLine.centralFertilization, orElse: ()=> null);
+    print('filterSite : $filterSite');
+    print('fertilizerSite : $fertilizerSite');
     int maxLength = multipleSource.length > multipleTank.length ? multipleSource.length : multipleTank.length;
     int maxOutletPumpForTank = 0;
     int maxOutletPumpForSource = 0;
@@ -607,10 +613,14 @@ class _LineConfigurationState extends State<LineConfiguration> {
       maxOutletPumpForTank = maxOutletPumpForTank < tank.outletPump.length ? tank.outletPump.length : maxOutletPumpForTank;
     }
     for(var tank in multipleSource){
-      maxOutletPumpForSource = maxOutletPumpForTank < tank.outletPump.length ? tank.outletPump.length : maxOutletPumpForTank;
+      maxOutletPumpForSource = maxOutletPumpForSource < tank.outletPump.length ? tank.outletPump.length : maxOutletPumpForSource;
     }
     print('multipleSourceAndMultipleTank maxOutletPumpForTank : $maxOutletPumpForTank');
+    print('multipleSourceAndMultipleTank maxOutletPumpForSource : $maxOutletPumpForSource');
     return LayoutBuilder(builder: (context, constraint){
+      if(maxOutletPumpForTank == 0 && maxOutletPumpForSource == 0){
+        return Container();
+      }
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -631,10 +641,10 @@ class _LineConfigurationState extends State<LineConfiguration> {
           ),
           if(maxOutletPumpForTank != 0)
             Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              for(var srcOrTank = 0;srcOrTank < maxLength;srcOrTank++)
-                SizedBox(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for(var srcOrTank = 0;srcOrTank < maxLength;srcOrTank++)
+                  SizedBox(
                   width: 8 * widget.configPvd.ratio,
                   height: 160 * widget.configPvd.ratio,
                   child: Stack(
@@ -704,23 +714,25 @@ class _LineConfigurationState extends State<LineConfiguration> {
               for(var tank = 0;tank < multipleTank.length;tank++)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: oneTank(multipleTank[tank], fertilizerSite: false, maxOutletPumpForTank: maxOutletPumpForTank),
+                  child: oneTank(multipleTank[tank], selectedIrrigationLine, maxOutletPumpForTank: maxOutletPumpForTank),
                 ),
             ],
           ),
-          ...filtrationAndFertilization(maxLength: maxLength)
+          ...filtrationAndFertilization(maxLength: maxLength, fertilizerSite: fertilizerSite, filterSite: filterSite)
         ],
       );
     });
   }
 
   List<Widget> filtrationAndFertilization({
+    required FertilizationModel? fertilizerSite,
+    required FiltrationModel? filterSite,
     required int maxLength
 }){
     double connectionPipeHeight = maxLength * 160;
-    double connectingHeight = widget.configPvd.filtration.isEmpty ? 198 : 400;
+    double connectingHeight = filterSite == null ? 198 : 400;
     return [
-      if(widget.configPvd.fertilization.isNotEmpty)
+      if(filterSite != null || fertilizerSite != null)
         SizedBox(
           width: 50,
           height: (connectionPipeHeight > connectingHeight ? connectionPipeHeight : connectingHeight) * widget.configPvd.ratio,
@@ -729,7 +741,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
               Positioned(
                 top: (maxLength == 1 ? 80 : 100) * widget.configPvd.ratio,
                 child: Container(
-                  width: 8 * widget.configPvd.ratio ,
+                  width: 8 * widget.configPvd.ratio,
                   height: (maxLength == 1 ? 200 : (connectionPipeHeight - 135)) * widget.configPvd.ratio,
                   decoration: const BoxDecoration(
                       gradient: RadialGradient(
@@ -758,35 +770,34 @@ class _LineConfigurationState extends State<LineConfiguration> {
                   ),
                 ),
               ),
-              if(widget.configPvd.filtration.isNotEmpty)
-                Positioned(
-                  top: 277  * widget.configPvd.ratio,
-                  child: Container(
-                    width: 50,
-                    height: 8 * widget.configPvd.ratio,
-                    decoration: const BoxDecoration(
-                        gradient: RadialGradient(
-                            radius: 2,
-                            colors: [
-                              Color(0xffC0E3EE),
-                              Color(0xff67B1C1),
-                            ]
-                        )
-                    ),
+              Positioned(
+                top: 277  * widget.configPvd.ratio,
+                child: Container(
+                  width: 50,
+                  height: 8 * widget.configPvd.ratio,
+                  decoration: const BoxDecoration(
+                      gradient: RadialGradient(
+                          radius: 2,
+                          colors: [
+                            Color(0xffC0E3EE),
+                            Color(0xff67B1C1),
+                          ]
+                      )
                   ),
                 ),
+              ),
             ],
           ),
         ),
 
       Stack(
         children: [
-          if(widget.configPvd.fertilization.isNotEmpty && widget.configPvd.filtration.isNotEmpty)
+          if(fertilizerSite != null && filterSite != null)
             Positioned(
             right: 0,
             top: 98 * widget.configPvd.ratio,
             child: Container(
-              width: (widget.configPvd.filtration[0].filters.length * 150 - 50) * widget.configPvd.ratio,
+              width: (filterSite.filters.length * 150 - 50) * widget.configPvd.ratio,
               height: 7 * widget.configPvd.ratio,
               decoration: const BoxDecoration(
                   gradient: RadialGradient(
@@ -802,32 +813,32 @@ class _LineConfigurationState extends State<LineConfiguration> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if(widget.configPvd.fertilization.isNotEmpty)
+              if(fertilizerSite != null)
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    if(widget.configPvd.fertilization[0].channel.length == 1)
-                      FertilizationDashboardFormation(fertilizationFormation: FertilizationFormation.singleChannel, fertilizationSite: widget.configPvd.fertilization[0]),
-                    if(widget.configPvd.fertilization[0].channel.length > 1)
-                      FertilizationDashboardFormation(fertilizationFormation: FertilizationFormation.multipleChannel, fertilizationSite: widget.configPvd.fertilization[0]),
+                    if(fertilizerSite.channel.length == 1)
+                      FertilizationDashboardFormation(fertilizationFormation: FertilizationFormation.singleChannel, fertilizationSite: fertilizerSite),
+                    if(fertilizerSite.channel.length > 1)
+                      FertilizationDashboardFormation(fertilizationFormation: FertilizationFormation.multipleChannel, fertilizationSite: fertilizerSite),
                   ],
                 ),
-              if(widget.configPvd.filtration.isNotEmpty)
+              if(filterSite != null)
                 ...[
                   SizedBox(height: 80 * widget.configPvd.ratio,),
                   Row(
                     children: [
-                      if(widget.configPvd.filtration[0].filters.length == 1)
-                        FiltrationDashboardFormation(filtrationFormation: FiltrationFormation.singleFilter, filtrationSite: widget.configPvd.filtration[0]),
-                      if(widget.configPvd.filtration[0].filters.length > 1)
-                        FiltrationDashboardFormation(filtrationFormation: FiltrationFormation.multipleFilter, filtrationSite: widget.configPvd.filtration[0]),
+                      if(filterSite.filters.length == 1)
+                        FiltrationDashboardFormation(filtrationFormation: FiltrationFormation.singleFilter, filtrationSite: filterSite),
+                      if(filterSite.filters.length > 1)
+                        FiltrationDashboardFormation(filtrationFormation: FiltrationFormation.multipleFilter, filtrationSite: filterSite),
                     ],
                   ),
                 ]
             ],
           ),
-          if(widget.configPvd.fertilization.isNotEmpty && widget.configPvd.filtration.isNotEmpty)
+          if(fertilizerSite != null && filterSite != null)
             Positioned(
             right: 0,
             bottom: 8 * widget.configPvd.ratio,

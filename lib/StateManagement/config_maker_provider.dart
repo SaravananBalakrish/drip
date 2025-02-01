@@ -184,15 +184,14 @@ class ConfigMakerProvider extends ChangeNotifier{
         listOfSampleObjectModel = (jsonData['listOfSampleObjectModel'] as List<dynamic>).map((object) => DeviceObjectModel.fromJson(object)).toList();
         listOfObjectModelConnection = (jsonData['listOfObjectModelConnection'] as List<dynamic>).map((object) => DeviceObjectModel.fromJson(object)).toList();
         listOfGeneratedObject = (jsonData['listOfGeneratedObject'] as List<dynamic>).map((object) => DeviceObjectModel.fromJson(object)).toList();
-        filtration = (jsonData['filtration'] as List<dynamic>).map((filtrationObject) => FiltrationModel.fromJson(filtrationObject)).toList();
-        fertilization = (jsonData['fertilization'] as List<dynamic>).map((fertilizationObject) => FertilizationModel.fromJson(fertilizationObject)).toList();
-        source = (jsonData['source'] as List<dynamic>).map((sourceObject) => SourceModel.fromJson(sourceObject)).toList();
+        filtration = (jsonData['filterSite'] as List<dynamic>).map((filtrationObject) => FiltrationModel.fromJson(filtrationObject)).toList();
+        fertilization = (jsonData['fertilizerSite'] as List<dynamic>).map((fertilizationObject) => FertilizationModel.fromJson(fertilizationObject)).toList();
+        source = (jsonData['waterSource'] as List<dynamic>).map((sourceObject) => SourceModel.fromJson(sourceObject)).toList();
         pump = (jsonData['pump'] as List<dynamic>).map((pumpObject) => PumpModel.fromJson(pumpObject)).toList();
-        moisture = (jsonData['moisture'] as List<dynamic>).map((moistureObject) => MoistureModel.fromJson(moistureObject)).toList();
-        line = (jsonData['line'] as List<dynamic>).map((lineObject) => IrrigationLineModel.fromJson(lineObject)).toList();
+        moisture = (jsonData['moistureSensor'] as List<dynamic>).map((moistureObject) => MoistureModel.fromJson(moistureObject)).toList();
+        line = (jsonData['irrigationLine'] as List<dynamic>).map((lineObject) => IrrigationLineModel.fromJson(lineObject)).toList();
         selectedCategory = listOfDeviceModel[1].categoryId;
         selectedModelControllerId = listOfDeviceModel[1].controllerId;
-
       }else{
         listOfDeviceModel = sampleData.map((devices) {
           return DeviceModel(
@@ -557,6 +556,14 @@ class ConfigMakerProvider extends ChangeNotifier{
           irrigationLine.pressureOut = selectedSno;
         }else if(parameter == LineParameter.pressureSwitch){
           irrigationLine.pressureSwitch = selectedSno;
+        }else if(parameter == LineParameter.centralFiltration){
+          irrigationLine.centralFiltration = selectedSno;
+        }else if(parameter == LineParameter.centralFertilization){
+          irrigationLine.centralFertilization = selectedSno;
+        }else if(parameter == LineParameter.localFiltration){
+          irrigationLine.localFiltration = selectedSno;
+        }else if(parameter == LineParameter.localFertilization){
+          irrigationLine.localFertilization = selectedSno;
         }
         selectedSno = 0.0;
         listOfSelectedSno.clear();
@@ -573,6 +580,48 @@ class ConfigMakerProvider extends ChangeNotifier{
         listOfSelectedSno.clear();
       }
     }
+    notifyListeners();
+  }
+
+  void updateName(List<DeviceObjectModel> listOfObject){
+    for(var obj in listOfObject){
+      for(var generatedObj in listOfGeneratedObject){
+        if(obj.sNo == generatedObj.sNo){
+          generatedObj.name = obj.name;
+        }
+      }
+      for(var pump in pump){
+        if(pump.commonDetails.sNo == obj.sNo){
+          pump.commonDetails.name = obj.name;
+        }
+      }
+      for(var src in source){
+        if(src.commonDetails.sNo == obj.sNo){
+          src.commonDetails.name = obj.name;
+        }
+      }
+      for(var filtration in filtration){
+        if(filtration.commonDetails.sNo == obj.sNo){
+          filtration.commonDetails.name = obj.name;
+        }
+      }
+      for(var fertilization in fertilization){
+        if(fertilization.commonDetails.sNo == obj.sNo){
+          fertilization.commonDetails.name = obj.name;
+        }
+      }
+      for(var line in line){
+        if(line.commonDetails.sNo == obj.sNo){
+          line.commonDetails.name = obj.name;
+        }
+      }
+      for(var moisture in moisture){
+        if(moisture.commonDetails.sNo == obj.sNo){
+          moisture.commonDetails.name = obj.name;
+        }
+      }
+    }
+
     notifyListeners();
   }
 
