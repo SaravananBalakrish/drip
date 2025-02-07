@@ -1,6 +1,8 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/theme.dart';
+import 'package:oro_drip_irrigation/Screens/IrrigationProgram/program_library.dart';
 import 'package:oro_drip_irrigation/StateManagement/config_maker_provider.dart';
 import 'package:provider/provider.dart';
 import 'Constants/constants.dart';
@@ -16,6 +18,9 @@ void main() {
       MultiProvider(
         providers: [
           ChangeNotifierProvider(create: (_) => ConfigMakerProvider()),
+          // Provider<Logger>(
+          //   create: (_) => GlobalConfig.getService<Logger>(),
+          // ),
         ],
         child: const MyApp(),
       )
@@ -31,7 +36,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: AppThemes.lightTheme,
-      home: const ConfigBasePage(),
+      home: const ProgramLibrary(),
     );
   }
 }

@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/Models/Configuration/fertigation_model.dart';
-import 'package:oro_drip_irrigation/Models/Configuration/filtration_model.dart';
-import 'package:oro_drip_irrigation/Models/Configuration/irrigationLine_model.dart';
-import 'package:oro_drip_irrigation/Models/Configuration/source_model.dart';
-import 'package:oro_drip_irrigation/Screens/ConfigMaker/config_object_name_editing.dart';
+import 'package:oro_drip_irrigation/Models/Configuration/pump_model.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/site_configure.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/source_configuration.dart';
-import 'package:oro_drip_irrigation/StateManagement/config_maker_provider.dart';
-import 'package:oro_drip_irrigation/Widgets/custom_buttons.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
+import '../../Constants/constants.dart';
 import '../../Constants/dialog_boxes.dart';
+import '../../Constants/properties.dart';
 import '../../Models/Configuration/device_object_model.dart';
+import '../../Models/Configuration/filtration_model.dart';
+import '../../Models/Configuration/irrigationLine_model.dart';
+import '../../Models/Configuration/source_model.dart';
+import '../../Models/LineDataModel.dart';
+import '../../StateManagement/config_maker_provider.dart';
 import '../../Widgets/sized_image.dart';
+import 'config_object_name_editing.dart';
 import 'fertilization_configuration.dart';
 import 'filtration_configuration.dart';
 
@@ -88,6 +90,9 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.sourcePump, parameterType: LineParameter.sourcePump, objectId: 5, objectName: 'Source Pump', validateAllLine: false, listOfObject: widget.configPvd.pump.where((pump) => (pump.pumpType == 1)).toList().map((pump) => pump.commonDetails).toList()),
                                     if(availability(2))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.irrigationPump, parameterType: LineParameter.irrigationPump, objectId: 5, objectName: 'Irrigation Pump', validateAllLine: false, listOfObject: widget.configPvd.pump.where((pump) => (pump.pumpType == 2)).toList().map((pump) => pump.commonDetails).toList()),
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.sourcePump, parameterType: LineParameter.sourcePump, objectId: 5, objectName: 'Source Pump', validateAllLine: false, listOfObject: widget.configPvd.pump.cast<PumpModel>().where((pump) => (pump.pumpType == 1)).toList().map((pump) => pump.commonDetails).toList()),
+                                    if(availability(2))
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.irrigationPump, parameterType: LineParameter.irrigationPump, objectId: 5, objectName: 'Irrigation Pump', validateAllLine: false, listOfObject: widget.configPvd.pump.cast<PumpModel>().where((pump) => (pump.pumpType == 2)).toList().map((pump) => pump.commonDetails).toList()),
                                     if(availability(13))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.valve, parameterType: LineParameter.valve, objectId: 13, objectName: 'Valve', validateAllLine: true),
                                     if(availability(14))
@@ -132,6 +137,13 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.centralFiltration], parameterType: LineParameter.centralFiltration, objectId: 4, objectName: 'Central Filtration', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.filtration.where((site) => (site.siteMode == 1)).toList().map((site) => site.commonDetails).toList()),
                                     if(availability(4))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.localFiltration], parameterType: LineParameter.localFiltration, objectId: 4, objectName: 'Local Filtration', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.filtration.where((site) => (site.siteMode == 2)).toList().map((site) => site.commonDetails).toList()),
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.centralFertilization], parameterType: LineParameter.centralFertilization, objectId: 3, objectName: 'Central Fertilization', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.fertilization.cast<FertilizationModel>().where((site) => (site.siteMode == 1)).toList().map((site) => site.commonDetails).toList()),
+                                    if(availability(3))
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.localFertilization], parameterType: LineParameter.localFertilization, objectId: 3, objectName: 'Local Fertilization', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.fertilization.cast<FertilizationModel>().where((site) => (site.siteMode == 2)).toList().map((site) => site.commonDetails).toList()),
+                                    if(availability(4))
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.centralFiltration], parameterType: LineParameter.centralFiltration, objectId: 4, objectName: 'Central Filtration', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.filtration.cast<FiltrationModel>().where((site) => (site.siteMode == 1)).toList().map((site) => site.commonDetails).toList()),
+                                    if(availability(4))
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.localFiltration], parameterType: LineParameter.localFiltration, objectId: 4, objectName: 'Local Filtration', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.filtration.cast<FiltrationModel>().where((site) => (site.siteMode == 2)).toList().map((site) => site.commonDetails).toList()),
                                   ],
                                 ),
                               ),
@@ -208,8 +220,35 @@ class _LineConfigurationState extends State<LineConfiguration> {
             ),
           ),
           floatingActionButton: FloatingActionButton(
-            onPressed: (){
+            onPressed: () async {
+              final Map<String, dynamic> deviceListPayload = {
+                "100": [
+                  {"101": widget.configPvd.getDeviceListPayload()}
+                ]
+              };
+              final Map<String, dynamic> configMakerPayload = {
+                "200": [
+                  {"201": widget.configPvd.getPumpPayload()},
+                  {"202": widget.configPvd.getIrrigationLinePayload()},
+                  {"203": widget.configPvd.getFertilizerPayload()},
+                  {"204": widget.configPvd.getFilterPayload()},
+                  {"205": widget.configPvd.getWeatherPayload()},
+                  {"206": widget.configPvd.getObjectPayload()},
+                  {"207": 0},
+                  {"208": '1'}
+                ]
+              };
 
+              /*print("getIrrigationLinePayload ==> ${jsonEncode(configMakerPayload)}");
+                print("deviceListPayload ==> ${jsonEncode(deviceListPayload)}");*/
+              // print("getOroPumpPayload ==> ${widget.configPvd.getOroPumpPayload()}");
+              print(payloadConversion()['irrigationLine']);
+              List<FilterSite> filterSite = (payloadConversion()['filterSite'] as List).map((element) => FilterSite.fromJson(element as Map<String, dynamic>)).toList();
+              List<FertilizerSite> fertilizerSite = (payloadConversion()['fertilizerSite'] as List).map((element) => FertilizerSite.fromJson(element as Map<String, dynamic>)).toList();
+              List<WaterSource> waterSource = (payloadConversion()['waterSource'] as List).map((element) => WaterSource.fromJson(element as Map<String, dynamic>)).toList();
+              List<Pump> pump = (payloadConversion()['pump'] as List).map((element) => Pump.fromJson(element as Map<String, dynamic>)).toList();
+              List<MoistureSensor> moistureSensor = (payloadConversion()['moistureSensor'] as List).map((element) => MoistureSensor.fromJson(element as Map<String, dynamic>)).toList();
+              List<IrrigationLine> irrigationLine = (payloadConversion()['irrigationLine'] as List).map((element) => IrrigationLine.fromJson(element as Map<String, dynamic>)).toList();
             },
             child: const Icon(Icons.send),
           ),
@@ -470,8 +509,8 @@ class _LineConfigurationState extends State<LineConfiguration> {
       print('source name : ${src.commonDetails.name}  ${src.sourceType}');
     }
 
-    List<SourceModel> boreOrOthers = suitableSource.where((source) => source.outletPump.any((pumpSno) => widget.configPvd.pump.firstWhere((pump) => pump.commonDetails.sNo == pumpSno).pumpType == 1)).toList();
-    List<SourceModel> wellSumpTank = suitableSource.where((source) => source.outletPump.any((pumpSno) => widget.configPvd.pump.firstWhere((pump) => pump.commonDetails.sNo == pumpSno).pumpType == 2)).toList();
+    List<SourceModel> boreOrOthers = suitableSource.where((source) => source.outletPump.any((pumpSno) => widget.configPvd.pump.cast<PumpModel>().firstWhere((pump) => pump.commonDetails.sNo == pumpSno).pumpType == 1)).toList();
+    List<SourceModel> wellSumpTank = suitableSource.where((source) => source.outletPump.any((pumpSno) => widget.configPvd.pump.cast<PumpModel>().firstWhere((pump) => pump.commonDetails.sNo == pumpSno).pumpType == 2)).toList();
     print('boreOrOthers: ${boreOrOthers.length}');
     print('wellSumpTank: ${wellSumpTank.length}');
 
@@ -526,100 +565,6 @@ class _LineConfigurationState extends State<LineConfiguration> {
     );
   }
 
-  // Widget multipleSourceAndOneTank({required List<SourceModel> multipleSource, required List<SourceModel> oneTankList}){
-  //   print("multipleSourceAndOneTank");
-  //   return LayoutBuilder(builder: (context, constraint){
-  //     return Row(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         Column(
-  //           children: [
-  //             for(var src in multipleSource)
-  //               Padding(
-  //                 padding: const EdgeInsets.symmetric(vertical: 20),
-  //                 child: Row(
-  //                   children: [
-  //                     ...oneSourceList(src)
-  //                   ],
-  //                 ),
-  //               )
-  //           ],
-  //         ),
-  //         Column(
-  //           children: [
-  //             for(var src = 0;src < multipleSource.length;src++)
-  //               Container(
-  //                 width: 8 * widget.configPvd.ratio,
-  //                 height: 160 * widget.configPvd.ratio,
-  //                 child: Stack(
-  //                   children: [
-  //                     if(src == 0)
-  //                       Positioned(
-  //                           left: 0,
-  //                           bottom: 0,
-  //                           child: Container(
-  //                             width: 8,
-  //                             height: 80  * widget.configPvd.ratio,
-  //                             decoration: const BoxDecoration(
-  //                                 gradient: RadialGradient(
-  //                                     radius: 2,
-  //                                     colors: [
-  //                                       Color(0xffC0E3EE),
-  //                                       Color(0xff67B1C1),
-  //                                     ]
-  //                                 )
-  //                             ),
-  //                           )
-  //                       ),
-  //                     if(multipleSource.length - 1 == src)
-  //                       Positioned(
-  //                           left: 0,
-  //                           top: 0,
-  //                           child: Container(
-  //                             width: 8,
-  //                             height: 109,
-  //                             decoration: const BoxDecoration(
-  //                                 gradient: RadialGradient(
-  //                                     radius: 3,
-  //                                     colors: [
-  //                                       Color(0xffC0E3EE),
-  //                                       Color(0xff67B1C1),
-  //                                     ]
-  //                                 )
-  //                             ),
-  //                           )
-  //                       ),
-  //                     if(multipleSource.length > 2 && ![0, multipleSource.length - 1].contains(src))
-  //                       Positioned(
-  //                           left: 0,
-  //                           top: 0,
-  //                           child: Container(
-  //                             width: 8,
-  //                             height: 160,
-  //                             decoration: const BoxDecoration(
-  //                                 gradient: RadialGradient(
-  //                                     radius: 3,
-  //                                     colors: [
-  //                                       Color(0xffC0E3EE),
-  //                                       Color(0xff67B1C1),
-  //                                     ]
-  //                                 )
-  //                             ),
-  //                           )
-  //                       ),
-  //                   ],
-  //                 ),
-  //               )
-  //           ],
-  //         ),
-  //         oneTank(oneTankList[0], fertilizerSite: false),
-  //         ...filtrationAndFertilization(maxLength: 1)
-  //       ],
-  //     );
-  //   });
-  // }
-
-  //Todo :: multipleSourceAndMultipleTank
   Widget multipleSourceAndMultipleTank({
     required List<SourceModel> multipleSource,
     required List<SourceModel> multipleTank,
@@ -897,7 +842,8 @@ class _LineConfigurationState extends State<LineConfiguration> {
             ),
         ],
       ),
-      Column(
+      if(fertilizerSite.length > 1 || filterSite.length > 1)
+        Column(
         children: [
           Container(
             margin: const EdgeInsets.only(left: 30),
