@@ -14,7 +14,6 @@ import 'config_base_page.dart';
 import 'config_mobile_view.dart';
 import 'connection.dart';
 import 'device_list.dart';
-// import 'dart:html';
 
 
 void saveToSessionStorage(String key, String value) {

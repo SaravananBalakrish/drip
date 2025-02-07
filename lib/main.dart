@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:oro_drip_irrigation/Constants/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/Constants/mqtt_manager_web.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/theme.dart';
 import 'package:oro_drip_irrigation/Screens/IrrigationProgram/program_library.dart';
@@ -13,6 +13,7 @@ import 'Screens/ConfigMaker/config_web_view.dart';
 
 void main() {
   GlobalConfig.setEnvironment(Environment.development);
+  MqttManager mqttManager = MqttManager();
   // print(payloadConversion());
   runApp(
       MultiProvider(
@@ -36,7 +37,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: AppThemes.lightTheme,
-      home: const ProgramLibrary(),
+      home: const ConfigBasePage(),
     );
   }
 }

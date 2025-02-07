@@ -26,6 +26,8 @@ dependencies:
   linked_scroll_controller: ^0.2.0
   responsive_grid_list: ^1.4.0
   flutter_svg: ^2.0.16
+  mqtt_client: ^10.5.1
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:
@@ -108,8 +110,6 @@ flutter:
      - assets/Images/Png/objectId_38.png
      - assets/Images/Png/objectId_39.png
      - assets/Images/Png/objectId_40.png
-     - assets/SiteConfig/objectId_11_center_0.svg
-     - assets/SiteConfig/objectId_11_last_0.svg.svg
      - assets/Images/Png/objectId_41.png
      - assets/Images/Filtration/single_filter_0.svg
      - assets/Images/Filtration/single_filter_4.svg
