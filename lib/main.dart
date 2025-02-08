@@ -29,63 +29,63 @@ void main() {
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+// class MyApp extends StatelessWidget {
+//   const MyApp({super.key});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       debugShowCheckedModeBanner: false,
+//       title: 'Flutter Demo',
+//       theme: AppThemes.lightTheme,
+//       // home: const ConfigBasePage(),
+//       home: const ConfigBasePage(),
+//     );
+//   }
+// }
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
-      theme: AppThemes.lightTheme,
-      // home: const ConfigBasePage(),
-      home: const ConfigBasePage(),
-    );
-  }
-}
-
-class TimeInputModel{
-  int type;
-  String value;
-
-  TimeInputModel({
-    required this.type,
-    required this.value,
-  });
-
-  String getHours(){
-    return value.split(':')[0];
-  }
-
-  String getMinutes(){
-    return value.split(':')[1];
-  }
-
-  String getSeconds(){
-    return value.split(':')[2];
-  }
-}
-
-class IntInput{
-  int inputId;
-  int type;
-  int value;
-
-  IntInput({
-    required this.inputId,
-    required this.type,
-    required this.value,
-  });
-
-  String stringValue(){
-    return value.toString();
-  }
-
-  void updateValue(String val){
-    if(val.isEmpty){
-      value = 0;
-    }else{
-      value = int.parse(val);
-    }
-  }
-}
+// class TimeInputModel{
+//   int type;
+//   String value;
+//
+//   TimeInputModel({
+//     required this.type,
+//     required this.value,
+//   });
+//
+//   String getHours(){
+//     return value.split(':')[0];
+//   }
+//
+//   String getMinutes(){
+//     return value.split(':')[1];
+//   }
+//
+//   String getSeconds(){
+//     return value.split(':')[2];
+//   }
+// }
+//
+// class IntInput{
+//   int inputId;
+//   int type;
+//   int value;
+//
+//   IntInput({
+//     required this.inputId,
+//     required this.type,
+//     required this.value,
+//   });
+//
+//   String stringValue(){
+//     return value.toString();
+//   }
+//
+//   void updateValue(String val){
+//     if(val.isEmpty){
+//       value = 0;
+//     }else{
+//       value = int.parse(val);
+//     }
+//   }
+// }
