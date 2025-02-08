@@ -1,0 +1,155 @@
+import 'dart:convert';
+import 'package:flutter/cupertino.dart';
+import '../../Models/customer/site_model.dart';
+import '../../repository/repository.dart';
+import '../../services/mqtt_service.dart';
+
+enum MQTTConnectionState { connected, disconnected, connecting}
+
+class CustomerScreenControllerViewModel extends ChangeNotifier {
+
+  late MqttService mqttService = MqttService();
+
+  final Repository repository;
+  bool isLoading = false;
+  String errorMsg = '';
+
+  late SiteModel mySiteList = SiteModel(data: []);
+  int sIndex = 0, mIndex = 0, lIndex = 0, wifiStrength = 0;
+  late String myCurrentSite;
+  late String myCurrentMaster;
+  String fromWhere = '';
+  String myCurrentIrrLine= 'No Line Available';
+  int controllerId = 0;
+
+  CustomerScreenControllerViewModel(this.repository){
+    mqttService.initializeMQTTClient(state: this);
+    mqttService.connect();
+  }
+
+  void changeMQTTConnectionState(MQTTConnectionState state) {
+    if (state == MQTTConnectionState.connected) {
+      notifyListeners();
+      onSubscribeTopic();
+    }
+  }
+
+  void onSubscribeTopic(){
+    Future.delayed(const Duration(milliseconds: 500), () {
+      mqttService.subscribeToTopic('FirmwareToApp/${mySiteList.data[sIndex].master[mIndex].deviceId}');
+      onRefreshClicked();
+    });
+  }
+
+  void updateReceivedPayload(String payload) {
+    debugPrint('payload: $payload');
+    try {
+      Map<String, dynamic> data = jsonDecode(payload);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error parsing JSON: $e');
+    }
+    notifyListeners();
+  }
+
+  Future<void> getAllMySites() async {
+    setLoading(true);
+    try {
+      Map<String, dynamic> jsonData = await repository.fetchAllMySite({"userId": "1"});
+      mySiteList = SiteModel.fromJson(jsonData);
+    } catch (error) {
+      errorMsg = 'Error fetching site list: $error';
+    } finally {
+      setLoading(false);
+      notifyListeners();  // Ensure UI updates
+    }
+  }
+
+  void setLoading(bool value) {
+    isLoading = value;
+    notifyListeners();
+  }
+
+  void siteOnChanged(String siteName) {
+    if (mySiteList.data.isEmpty) return;
+    int index = mySiteList.data.indexWhere((site) => site.groupName == siteName);
+    if (index != -1) {
+      sIndex = index;
+      fromWhere='site';
+      updateSite(index, 0, 0);
+    }
+  }
+
+  void masterOnChanged(categoryName){
+    int masterIdx = mySiteList.data[sIndex].master.indexWhere((master)=>
+    master.categoryName == categoryName);
+    if (masterIdx != -1 && mySiteList.data[sIndex].master.length > 1) {
+      mIndex = masterIdx;
+      lIndex = 0;
+      fromWhere='master';
+      updateMaster(sIndex, masterIdx, 0);
+    }
+  }
+
+  void lineOnChanged(lineName){
+    int lInx = mySiteList.data[sIndex].master[mIndex].config.lineData!.indexWhere((line)
+    => line.name == lineName);
+    if (lInx != -1 && mySiteList.data[sIndex].master[mIndex].config.lineData!.length > 1) {
+      lIndex = lInx;
+      fromWhere='line';
+      updateMasterLine(sIndex, mIndex, lInx);
+    }
+
+  }
+
+  void updateSite(sIdx, mIdx, lIdx){
+    myCurrentSite = mySiteList.data[sIdx].groupName;
+    updateMaster(sIdx, mIdx, lIdx);
+  }
+
+  void updateMaster(sIdx, mIdx, lIdx){
+    myCurrentMaster = mySiteList.data[sIdx].master[mIdx].categoryName;
+    /*subscribeCurrentMaster(sIdx, mIdx);
+    if(mySiteList[sIdx].master[mIdx].categoryId == 1 ||
+        mySiteList[sIdx].master[mIdx].categoryId == 2){
+      updateMasterLine(sIdx, mIdx, lIdx);
+      displayServerData();
+    }else{
+      //pump controller
+      MqttPayloadProvider payloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
+      payloadProvider.updateLastSync('${mySiteList[siteIndex].master[masterIndex].liveSyncDate} ${mySiteList[siteIndex].master[masterIndex].liveSyncTime}');
+    }*/
+    notifyListeners();
+  }
+
+  void updateMasterLine(sIdx, mIdx, lIdx){
+    if(mySiteList.data[sIdx].master[mIdx].config.lineData!.isNotEmpty){
+      myCurrentIrrLine = mySiteList.data[sIdx].master[mIdx].config.lineData![lIdx].name!;
+      notifyListeners();
+    }
+  }
+
+  void onRefreshClicked() {
+    notifyListeners();
+
+   /* MqttPayloadProvider payloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
+    Future.delayed(const Duration(milliseconds: 1000), () {
+
+      payloadProvider.liveSyncCall(true);
+      String livePayload = '';
+
+      if(mySiteList[siteIndex].master[masterIndex].categoryId==1 ||
+          mySiteList[siteIndex].master[masterIndex].categoryId==2){
+        livePayload = jsonEncode({"3000": [{"3001": ""}]});
+      }else{
+        livePayload = jsonEncode({"sentSMS": "#live"});
+      }
+      MQTTManager().publish(livePayload, 'AppToFirmware/${mySiteList[siteIndex].master[masterIndex].deviceId}');
+    });*/
+
+    Future.delayed(const Duration(milliseconds: 6000), () {
+      //payloadProvider.liveSyncCall(false);
+    });
+  }
+
+}
