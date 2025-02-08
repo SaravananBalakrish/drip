@@ -4,6 +4,8 @@ import 'dart:async';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:uuid/uuid.dart';
 
+import '../utils/environment.dart';
+
 class MqttManager {
   static MqttManager? _instance;
   MqttServerClient? _client;
@@ -16,14 +18,14 @@ class MqttManager {
   MqttManager._internal();
 
   bool get isConnected => _client?.connectionStatus?.state == MqttConnectionState.connected;
+  String? currentSubscribedTopic;
 
   void initializeMQTTClient() {
 
     String uniqueId = const Uuid().v4();
 
-    // String baseURL = '192.168.68.141';
-    int port = 1883;
-    String baseURL = '13.235.254.21';
+    int port = Environment.mqttPort;
+    String baseURL = Environment.mqttMobileUrl;
 
     if (_client == null) {
       _client = MqttServerClient(baseURL, uniqueId);
