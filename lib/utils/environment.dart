@@ -6,7 +6,8 @@ class Environment {
     'development': {
       'apiUrl': 'http://192.168.68.141:5000/api/v1',
       'apiKey': 'dev-api-key',
-      'mqttUrl': 'ws://192.168.68.141',
+      'mqttWebUrl': 'ws://192.168.68.141',
+      'mqttMobileUrl': '192.168.68.141',
       'mqttPort': 9001,
     },
     'production': {
@@ -20,6 +21,7 @@ class Environment {
   static String get apiUrl => config[currentEnvironment]?['apiUrl'] ?? '';
   static String get apiKey => config[currentEnvironment]?['apiKey'] ?? '';
 
-  static String get mqttUrl => config[currentEnvironment]?['mqttUrl'] ?? '';
+  static String get mqttWebUrl => config[currentEnvironment]?['mqttWebUrl'] ?? '';
+  static String get mqttMobileUrl => config[currentEnvironment]?['mqttMobileUrl'] ?? '';
   static int get mqttPort => config[currentEnvironment]?['mqttPort'] ?? 0;
 }

@@ -12,7 +12,7 @@ class AppConstants {
   static String apiUrl = Environment.apiUrl;
   static const int timeoutDuration = 30;
 
-  static String mqttUrl = Environment.mqttUrl;
+  static String mqttUrl = Environment.mqttWebUrl;
   static int mqttPort = Environment.mqttPort;
 
 
