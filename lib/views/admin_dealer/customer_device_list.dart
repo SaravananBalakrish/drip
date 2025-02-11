@@ -505,7 +505,11 @@ class _CustomerDeviceListState extends State<CustomerDeviceList> with TickerProv
                                                   MaterialButton(
                                                     onPressed:() async {
                                                       Navigator.push(context, MaterialPageRoute(builder: (context){
-                                                        return const ConfigBasePage(masterData: {},);
+                                                        return const ConfigBasePage(
+                                                          masterData: {
+                                                            "userId": 0, "customerId": 0, "controllerId": 1, "deviceId": "EDEFEADE0001", "deviceName": "Oro Gem 1", "categoryId": 1, "categoryName": "Oro Gem", "modelId": 1, "modelName": "Gem", "groupId" : 1, "groupName" : "Carrot"
+                                                          },
+                                                        );
                                                       }));
                                                     },
                                                     textColor: Colors.white,
