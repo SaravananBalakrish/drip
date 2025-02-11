@@ -505,9 +505,22 @@ class _CustomerDeviceListState extends State<CustomerDeviceList> with TickerProv
                                                   MaterialButton(
                                                     onPressed:() async {
                                                       Navigator.push(context, MaterialPageRoute(builder: (context){
-                                                        return const ConfigBasePage(
+                                                        return ConfigBasePage(
                                                           masterData: {
-                                                            "userId": 0, "customerId": 0, "controllerId": 1, "deviceId": "EDEFEADE0001", "deviceName": "Oro Gem 1", "categoryId": 1, "categoryName": "Oro Gem", "modelId": 1, "modelName": "Gem", "groupId" : 1, "groupName" : "Carrot"
+                                                            "userId": widget.userId,
+                                                            "customerId": widget.customerId,
+                                                            "controllerId": viewModel.customerSiteList[siteIndex].master[mstIndex].controllerId,
+                                                            "deviceId": viewModel.customerSiteList[siteIndex].master[mstIndex].deviceId,
+                                                            "deviceName": viewModel.customerSiteList[siteIndex].master[mstIndex].deviceName,
+                                                            "categoryId": viewModel.customerSiteList[siteIndex].master[mstIndex].categoryId,
+                                                            "categoryName": viewModel.customerSiteList[siteIndex].master[mstIndex].categoryName,
+                                                            "modelId": viewModel.customerSiteList[siteIndex].master[mstIndex].modelId,
+                                                            "modelName": viewModel.customerSiteList[siteIndex].master[mstIndex].modelName,
+                                                            "groupId" : viewModel.customerSiteList[siteIndex].userGroupId,
+                                                            "groupName" : viewModel.customerSiteList[siteIndex].groupName,
+                                                            "inputObjectId" : viewModel.customerSiteList[siteIndex]..master[mstIndex].inputObjectId,
+                                                            "outputObjectId" : viewModel.customerSiteList[siteIndex]..master[mstIndex].outputObjectId,
+
                                                           },
                                                         );
                                                       }));
