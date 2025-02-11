@@ -1,10 +1,11 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:oro_drip_irrigation/Screens/ConfigMaker/config_base_page.dart';
 import 'package:provider/provider.dart';
 import '../../models/admin&dealer/stock_model.dart';
 import '../../repository/repository.dart';
-import '../../services/api_service.dart';
+import '../../services/http_service.dart';
 import '../../view_models/admin&dealer/customer_device_list_view_model.dart';
 
 enum MasterController {gem1, gem2, gem3, gem4, gem5, gem6, gem7, gem8, gem9, gem10,}
@@ -38,7 +39,7 @@ class _CustomerDeviceListState extends State<CustomerDeviceList> with TickerProv
   @override
   void initState() {
     super.initState();
-    viewModel = CustomerDeviceListViewModel(Repository(ApiService()), widget.userId, widget.customerId, widget.productStockList.length);
+    viewModel = CustomerDeviceListViewModel(Repository(HttpService()), widget.userId, widget.customerId, widget.productStockList.length);
     tabController = TabController(length: tabList.length, vsync: this);
     tabController.addListener(() {
       setState(() {});
@@ -503,7 +504,9 @@ class _CustomerDeviceListState extends State<CustomerDeviceList> with TickerProv
                                                   const SizedBox(width: 8,),
                                                   MaterialButton(
                                                     onPressed:() async {
-                                                      //Navigator.push(context, MaterialPageRoute(builder: (context) =>  ProductLimits(userID: widget.userID, customerID: widget.customerID, userType: 2, outputCount: outputCnt, siteName: customerSiteList[siteIndex].groupName, controllerId: customerSiteList[siteIndex].master[mstIndex].controllerId, deviceId: customerSiteList[siteIndex].master[mstIndex].deviceId, inputCount: inputCnt, myCatIds: catId)),);
+                                                      Navigator.push(context, MaterialPageRoute(builder: (context){
+                                                        return const ConfigBasePage(masterData: {},);
+                                                      }));
                                                     },
                                                     textColor: Colors.white,
                                                     color: Colors.teal,

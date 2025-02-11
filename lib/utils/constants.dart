@@ -15,6 +15,9 @@ class AppConstants {
   static String mqttUrl = Environment.mqttWebUrl;
   static int mqttPort = Environment.mqttPort;
 
+  static const String  publishTopic = 'AppToFirmware';
+  static const String subscribeTopic = 'FirmwareToApp';
+
 
   static const String appTitle = 'ORO DRIP IRRIGATION';
   static const String appShortContent = 'Drip irrigation is a type of watering system used in agriculture, gardening, and landscaping to efficiently deliver water directly to the roots of plants.';

@@ -15,7 +15,8 @@ enum ConfigMakerTabs {deviceList, productLimit, connection, siteConfigure}
 
 
 class ConfigBasePage extends StatefulWidget {
-  const ConfigBasePage({super.key});
+  final Map<String, dynamic> masterData;
+  const ConfigBasePage({super.key, required this.masterData});
 
   @override
   State<ConfigBasePage> createState() => _ConfigBasePageState();
@@ -53,7 +54,7 @@ class _ConfigBasePageState extends State<ConfigBasePage> {
             child: ConfigWebView(listOfDevices: listOfDevices),
           ) : ConfigMobileView(listOfDevices: listOfDevices,);
         } else {
-          return Text('No data'); // Shouldn't reach here normally
+          return const Text('No data'); // Shouldn't reach here normally
         }
       },
     );

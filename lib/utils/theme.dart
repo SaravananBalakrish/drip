@@ -13,6 +13,23 @@ class MyTheme {
         color: Colors.white,
       ),
     ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: const Color(0xffB1FFCB),
+        foregroundColor: Colors.black,
+        textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8), // Add border radius
+        ),
+      ),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
+      labelStyle: const TextStyle(color: Colors.blue),
+    ),
+    dialogBackgroundColor: Colors.white,
 
     navigationRailTheme: const NavigationRailThemeData(
       backgroundColor: Color(0xFF036673),

@@ -36,7 +36,7 @@ class ConfigMakerProvider extends ChangeNotifier{
   List<DeviceModel> listOfDeviceModel = [];
   int serialNumberIncrement = 0;
   Map<String, dynamic> masterData = {
-    "controllerId": 1, "deviceId": "EDEFEADE0001", "deviceName": "Oro Gem 1", "categoryId": 1, "categoryName": "Oro Gem", "modelId": 1, "modelName": "Gem", "groupId" : 1, "groupName" : "Carrot"
+    "userId": 0, "customerId": 0, "controllerId": 1, "deviceId": "EDEFEADE0001", "deviceName": "Oro Gem 1", "categoryId": 1, "categoryName": "Oro Gem", "modelId": 1, "modelName": "Gem", "groupId" : 1, "groupName" : "Carrot"
   };
 
   List<dynamic>sampleData = [

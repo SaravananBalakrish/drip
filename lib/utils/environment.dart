@@ -2,6 +2,7 @@ class Environment {
   static const String currentEnvironment = String.fromEnvironment('ENV', defaultValue: 'development');
   static const String appVersion = String.fromEnvironment('APP_VERSION', defaultValue: '1.0.0');
 
+
   static const Map<String, Map<String, dynamic>> config = {
     'development': {
       'apiUrl': 'http://192.168.68.141:5000/api/v1',

@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import '../../Models/customer/site_model.dart';
 import '../../repository/repository.dart';
 import '../../services/mqtt_service.dart';
+import '../../utils/constants.dart';
 
 enum MQTTConnectionState { connected, disconnected, connecting}
 
@@ -15,7 +16,8 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   String errorMsg = '';
 
   late SiteModel mySiteList = SiteModel(data: []);
-  int sIndex = 0, mIndex = 0, lIndex = 0, wifiStrength = 0;
+  int sIndex = 0,
+      mIndex = 0, lIndex = 0, wifiStrength = 0;
   late String myCurrentSite;
   late String myCurrentMaster;
   String fromWhere = '';
@@ -36,7 +38,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
 
   void onSubscribeTopic(){
     Future.delayed(const Duration(milliseconds: 500), () {
-      mqttService.subscribeToTopic('FirmwareToApp/${mySiteList.data[sIndex].master[mIndex].deviceId}');
+      mqttService.topicToSubscribe('${AppConstants.subscribeTopic}/${mySiteList.data[sIndex].master[mIndex].deviceId}');
       onRefreshClicked();
     });
   }

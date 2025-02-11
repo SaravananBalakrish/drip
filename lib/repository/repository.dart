@@ -1,9 +1,9 @@
 import 'package:http/http.dart' as http;
-import '../services/api_service.dart';
+import '../services/http_service.dart';
 
 class Repository{
 
-  final ApiService apiService;
+  final HttpService apiService;
   Repository(this.apiService);
 
   Future<dynamic> checkLoginAuth(body) async {

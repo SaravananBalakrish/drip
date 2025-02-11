@@ -10,6 +10,7 @@ class MqttService {
   MqttBrowserClient? _client;
   String? currentTopic;
 
+
   factory MqttService() {
     _instance ??= MqttService._internal();
     return _instance!;
@@ -58,7 +59,7 @@ class MqttService {
     }
   }
 
-  void subscribeToTopic(String topic) {
+  void topicToSubscribe(String topic) {
 
     if (currentTopic != null) {
       _client!.unsubscribe(currentTopic!);
@@ -76,7 +77,7 @@ class MqttService {
     });
   }
 
-  publish(String message, String topic) {
+  topicToPublishAndItsMessage(String message, String topic) {
     final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
     builder.addString(message);
     _client!.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!);

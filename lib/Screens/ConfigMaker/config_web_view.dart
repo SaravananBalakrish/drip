@@ -80,14 +80,15 @@ class _ConfigWebViewState extends State<ConfigWebView> {
     return Container(
       width: screenWidth  > webBreakPoint ? sideNavigationWidth : sideNavigationBreakPointWidth,
       decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Theme.of(context).primaryColor,
-                Theme.of(context).primaryColor.withOpacity(0.8),
-              ]
-          )
+        color: Theme.of(context).primaryColorDark,
+          // gradient: LinearGradient(
+          //     begin: Alignment.topLeft,
+          //     end: Alignment.bottomRight,
+          //     colors: [
+          //       Theme.of(context).primaryColor,
+          //       Theme.of(context).primaryColor.withOpacity(0.9),
+          //     ]
+          // )
       ),
       height: screenHeight,
       child: Column(
