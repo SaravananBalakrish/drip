@@ -24,7 +24,7 @@ class CustomerProduct extends StatelessWidget {
               dataRowHeight: 35.0,
               headingRowHeight: 35,
               headingRowColor: WidgetStateProperty.all<Color>(Theme.of(context).primaryColorDark.withOpacity(0.1)),
-              border: TableBorder.all(color: Colors.grey),
+              border: TableBorder.all(color: Colors.grey.shade100),
               columns: const [
                 DataColumn2(
                     label: Center(child: Text('S.No')),

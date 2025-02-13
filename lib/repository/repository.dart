@@ -122,7 +122,11 @@ class Repository{
     return await apiService.postRequest('/user/deviceList/createAndGroup', body);
   }
 
-  Future<Map<String, dynamic>> fetchAllMySite(body) async {
+  Future<http.Response> fetchAllMySite(body) async {
+    return await apiService.postRequest('/user/dashboard', body);
+  }
+
+  Future<Map<String, dynamic>> fetchAllMySiteOld(body) async {
     return {
       "code": 200,
       "message": "",
@@ -130,6 +134,7 @@ class Repository{
         {
           "groupId": 1,
           "groupName": "New Config Site",
+          "groupAddress": "Testing address",
           "master": [
             {
               "controllerId": 1,
@@ -708,7 +713,7 @@ class Repository{
                 "cC": "1234567890AB",
                 "cD": "2024-11-14",
                 "cT": "12:15:00",
-              }
+              },
             }
           ]
         }

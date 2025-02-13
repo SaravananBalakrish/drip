@@ -54,11 +54,18 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getAllMySites() async {
+  Future<void> getAllMySites(customerId) async {
     setLoading(true);
     try {
-      Map<String, dynamic> jsonData = await repository.fetchAllMySite({"userId": "1"});
-      mySiteList = SiteModel.fromJson(jsonData);
+      Map<String, dynamic> body = {"userId": customerId};
+      final response = await repository.fetchAllMySite(body);
+      print(response.body);
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        if (jsonData["code"] == 200) {
+          mySiteList = SiteModel.fromJson(jsonData);
+        }
+      }
     } catch (error) {
       errorMsg = 'Error fetching site list: $error';
     } finally {

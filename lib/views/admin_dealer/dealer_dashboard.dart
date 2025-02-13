@@ -461,7 +461,7 @@ class DealerDashboard extends StatelessWidget {
                                     Navigator.push(context,
                                       MaterialPageRoute(
                                           builder: (context) => CustomerScreenController(userId: viewModel.myCustomerList[index].userId,
-                                            userName: viewModel.myCustomerList[index].userName,
+                                            customerName: viewModel.myCustomerList[index].userName,
                                             mobileNo: viewModel.myCustomerList[index].mobileNumber, fromLogin: false, emailId: viewModel.myCustomerList[index].emailId,
                                             customerId: viewModel.myCustomerList[index].userId,)),
                                     );

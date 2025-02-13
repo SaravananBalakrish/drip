@@ -25,7 +25,7 @@ class Group {
 
   factory Group.fromJson(Map<String, dynamic> json) {
     return Group(
-      groupId: json['groupId'],
+      groupId: json['userGroupId'],
       groupName: json['groupName'],
       master: List<Master>.from(json['master'].map((x) => Master.fromJson(x))),
     );
@@ -33,7 +33,7 @@ class Group {
 
   Map<String, dynamic> toJson() {
     return {
-      'groupId': groupId,
+      'userGroupId': groupId,
       'groupName': groupName,
       'master': master.map((x) => x.toJson()).toList(),
     };
@@ -48,7 +48,6 @@ class Master {
   final String categoryName;
   final int modelId;
   final String modelName;
-  final int conditionLibraryCount;
   final List<Unit> units;
   final Config config;
   final Live live;
@@ -61,7 +60,6 @@ class Master {
     required this.categoryName,
     required this.modelId,
     required this.modelName,
-    required this.conditionLibraryCount,
     required this.units,
     required this.config,
     required this.live,
@@ -76,10 +74,9 @@ class Master {
       categoryName: json['categoryName'],
       modelId: json['modelId'],
       modelName: json['modelName'],
-      conditionLibraryCount: json['conditionLibraryCount'],
       units: List<Unit>.from(json['units'].map((x) => Unit.fromJson(x))),
       config: Config.fromJson(json['config']),
-      live: Live.fromJson(json['live']),
+      live: Live.fromJson(json['liveMessage']),
     );
   }
 
@@ -92,10 +89,9 @@ class Master {
       'categoryName': categoryName,
       'modelId': modelId,
       'modelName': modelName,
-      'conditionLibraryCount': conditionLibraryCount,
       'units': units.map((x) => x.toJson()).toList(),
       'config': config,
-      'live': live.toJson(),
+      'liveMessage': live.toJson(),
     };
   }
 }
@@ -125,8 +121,8 @@ class Unit {
 }
 
 class Config {
-  List<Site>? filterSite;
-  List<Site>? fertilizerSite;
+  List<FilterSite>? filterSite;
+  List<FilterSite>? fertilizerSite;
   List<WaterSource>? waterSource;
   List<Pump>? pump;
   List<MoistureSensor>? moistureSensor;
@@ -143,10 +139,10 @@ class Config {
 
   factory Config.fromJson(Map<String, dynamic> json) => Config(
     filterSite: json["filterSite"] != null
-        ? (json["filterSite"] as List).map((i) => Site.fromJson(i)).toList()
+        ? (json["filterSite"] as List).map((i) => FilterSite.fromJson(i)).toList()
         : [],
     fertilizerSite: json["fertilizerSite"] != null
-        ? (json["fertilizerSite"] as List).map((i) => Site.fromJson(i)).toList()
+        ? (json["fertilizerSite"] as List).map((i) => FilterSite.fromJson(i)).toList()
         : [],
     waterSource: json["waterSource"] != null
         ? (json["waterSource"] as List)
@@ -169,7 +165,7 @@ class Config {
   );
 }
 
-class Site {
+class FilterSite {
   int? objectId;
   double? sNo;
   String? name;
@@ -183,7 +179,7 @@ class Site {
   List<Item>? ec;
   List<Item>? ph;
 
-  Site({
+  FilterSite({
     this.objectId,
     this.sNo,
     this.name,
@@ -198,7 +194,7 @@ class Site {
     this.ph,
   });
 
-  factory Site.fromJson(Map<String, dynamic> json) => Site(
+  factory FilterSite.fromJson(Map<String, dynamic> json) => FilterSite(
     objectId: json['objectId'],
     sNo: json['sNo'],
     name: json['name'],
