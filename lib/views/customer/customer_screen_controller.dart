@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
 import 'package:oro_drip_irrigation/views/customer/site_config.dart';
+import '../../Models/customer/site_model.dart';
 import 'package:provider/provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
@@ -12,9 +13,9 @@ import 'customer_home.dart';
 import 'customer_product.dart';
 
 class CustomerScreenController extends StatelessWidget {
-  const CustomerScreenController({super.key, required this.userId, required this.userName, required this.mobileNo, required this.emailId, required this.customerId, required this.fromLogin});
+  const CustomerScreenController({super.key, required this.userId, required this.customerName, required this.mobileNo, required this.emailId, required this.customerId, required this.fromLogin});
   final int customerId, userId;
-  final String userName, mobileNo, emailId;
+  final String customerName, mobileNo, emailId;
   final bool fromLogin;
 
   @override
@@ -23,7 +24,7 @@ class CustomerScreenController extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => NavRailViewModel()),
         ChangeNotifierProvider(
-          create: (_) => CustomerScreenControllerViewModel(Repository(HttpService()))..getAllMySites(),
+          create: (_) => CustomerScreenControllerViewModel(Repository(HttpService()))..getAllMySites(customerId),
         ),
       ],
       child: Consumer2<NavRailViewModel, CustomerScreenControllerViewModel>(
@@ -59,7 +60,7 @@ class CustomerScreenController extends StatelessWidget {
                     focusColor: Colors.transparent,
                   ):
                   Text(vm.mySiteList.data[vm.sIndex].groupName,
-                    style: const TextStyle(fontSize: 17),overflow: TextOverflow.ellipsis,),
+                    style: const TextStyle(fontSize: 17), overflow: TextOverflow.ellipsis,),
 
                   const SizedBox(width: 15,),
                   Container(width: 1,height: 20, color: Colors.white54,),
@@ -203,7 +204,7 @@ class CustomerScreenController extends StatelessWidget {
                       backgroundColor: Colors.white,
                       child: Icon(Icons.live_help_outlined),
                     )),
-                    IconButton(tooltip : 'Niagara Account\n$userName\n $mobileNo', onPressed: (){
+                    IconButton(tooltip : 'Niagara Account\n$customerName\n $mobileNo', onPressed: (){
                       showMenu(
                         context: context,
                         position: const RelativeRect.fromLTRB(100, 0, 10, 0),
@@ -216,10 +217,10 @@ class CustomerScreenController extends StatelessWidget {
                               children: [
                                 Center(
                                   child: CircleAvatar(radius: 30, backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-                                    child: Text(userName.substring(0, 1).toUpperCase(),
+                                    child: Text(customerName.substring(0, 1).toUpperCase(),
                                         style: const TextStyle(fontSize: 25)),),
                                 ),
-                                Text('Hi, $userName!',style: const TextStyle(fontSize: 20)),
+                                Text('Hi, $customerName!',style: const TextStyle(fontSize: 20)),
                                 Text(mobileNo, style: const TextStyle(fontSize: 13)),
                                 const SizedBox(height: 8),
                                 MaterialButton(
@@ -231,7 +232,7 @@ class CustomerScreenController extends StatelessWidget {
                                      Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => AccountSettings(userId: customerId, customerId: customerId, userName: userName, mobileNo: mobileNo, emailId: emailId),
+                                        builder: (context) => AccountSettings(userId: customerId, customerId: customerId, userName: customerName, mobileNo: mobileNo, emailId: emailId),
                                       ),
                                     );
                                   },
@@ -276,7 +277,7 @@ class CustomerScreenController extends StatelessWidget {
                     }, icon: CircleAvatar(
                       radius: 17,
                       backgroundColor: Colors.white,
-                      child: Text(userName.substring(0, 1).toUpperCase()),
+                      child: Text(customerName.substring(0, 1).toUpperCase()),
                     )),
                   ],),
                 const SizedBox(width: 05),
@@ -314,7 +315,8 @@ class CustomerScreenController extends StatelessWidget {
                           color: Theme.of(context).scaffoldBackgroundColor,
                           borderRadius: const BorderRadius.only(topLeft: Radius.circular(5),topRight: Radius.circular(5)),
                         ),
-                        child: mainScreen(navViewModel.selectedIndex, userId, userName),
+                        child: mainScreen(navViewModel.selectedIndex, vm.mySiteList.data[vm.sIndex].groupId,
+                            vm.mySiteList.data[vm.sIndex].groupName, vm.mySiteList.data[vm.sIndex].master),
                       )
                   ),
                 ),
@@ -585,18 +587,25 @@ class CustomerScreenController extends StatelessWidget {
     return destinations;
   }
 
-  Widget mainScreen(int index, int userId, String userName) {
+  Widget mainScreen(int index, groupId, groupName, List<Master> masterData) {
     switch (index) {
       case 0:
         return const CustomerHome();
       case 1:
         return CustomerProduct(customerId: userId);
       case 2:
-        return  SentAndReceived(customerId: userId);
+        return SentAndReceived(customerId: userId);
       case 3:
-        return SizedBox();
-      case 4:
-        return const SiteConfig();
+        return const SizedBox();
+      /*case 4:
+        return SiteConfig(
+            userId: userId,
+            customerId: customerId,
+            customerName: customerName,
+            masterData: masterData,
+            groupId: groupId,
+            groupName: groupName
+        );*/
       default:
         return const SizedBox();
     }

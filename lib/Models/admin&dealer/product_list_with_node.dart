@@ -1,12 +1,14 @@
 class ProductListWithNode {
   final int userGroupId;
   final String groupName;
+  final String groupAddress;
   final String active;
   final List<Master> master;
 
   ProductListWithNode({
     required this.userGroupId,
     required this.groupName,
+    required this.groupAddress,
     required this.active,
     required this.master,
   });
@@ -19,6 +21,7 @@ class ProductListWithNode {
     return ProductListWithNode(
       userGroupId: json['userGroupId'],
       groupName: json['groupName'],
+      groupAddress: json['groupAddress'],
       active: json['active'],
       master: masters,
     );
