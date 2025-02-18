@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+Color primaryDark = const Color(0xFF036673);
+Color primary = const Color(0xFF2999A9);
+
 class MyTheme {
   static ThemeData lightTheme = ThemeData.light().copyWith(
-    primaryColorDark: const Color(0xFF036673),
-    primaryColor: const Color(0xFF1D808E),
+    primaryColorDark: primaryDark,
+    primaryColor: primary,
     primaryColorLight: const Color(0x6438D3E8),
     scaffoldBackgroundColor:  Colors.blueGrey[50],
+
 
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF036673),
@@ -17,7 +21,7 @@ class MyTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: const Color(0xffB1FFCB),
+        backgroundColor: primary,
         foregroundColor: Colors.black,
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),

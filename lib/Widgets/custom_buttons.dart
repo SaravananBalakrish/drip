@@ -21,7 +21,7 @@ class RadiusButtonStyle extends StatelessWidget {
           borderRadius: BorderRadius.circular(8), // Add border radius
         ),
       ),
-      child: Text(title,),
+      child: Text(title,style: const TextStyle(color: Colors.white),),
     );
   }
 }
