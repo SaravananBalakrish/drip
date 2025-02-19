@@ -32,13 +32,17 @@ class CustomTextButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextButton(
+    return MaterialButton(
+      color: Theme.of(context).primaryColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15)
+      ),
       onPressed: onPressed ?? () {
         Navigator.of(context).pop(); // Dismiss the alert
       },
       child: const Text(
         "OK",
-        style: TextStyle(color: Colors.blue),
+        style: TextStyle(color: Colors.white),
       ),
     );
   }

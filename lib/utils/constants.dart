@@ -266,9 +266,9 @@ class AppConstants {
               siteFormation[siteKey] = siteFormation[siteKey] is List<dynamic>
                   ? (siteFormation[siteKey] as List<dynamic>).map((element) {
                     if(element is double){
-                      return (data['listOfGeneratedObject'] as List<dynamic>).firstWhere((object) => object['sNo'] == element);
+                      return (data['configObject'] as List<dynamic>).firstWhere((object) => object['sNo'] == element);
                     }else{
-                      var object = (data['listOfGeneratedObject'] as List<dynamic>).firstWhere((object) => object['sNo'] == element['sNo']);
+                      var object = (data['configObject'] as List<dynamic>).firstWhere((object) => object['sNo'] == element['sNo']);
                       for(var key in element.keys){
                         if(!(object as Map<String, dynamic>).containsKey(key)){
                           object[key] = element[key];

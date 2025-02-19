@@ -72,7 +72,9 @@ class _SiteConfigureState extends State<SiteConfigure> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
+            spacing: 5,
             mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               for(var tab in widget.configPvd.configurationTab.entries)
                 if(widget.configPvd.listOfGeneratedObject.any((object) => object.objectId == widget.configPvd.configurationTabObjectId[tab.key]))
@@ -82,10 +84,13 @@ class _SiteConfigureState extends State<SiteConfigure> {
                       widget.configPvd.selectedConfigurationTab = tab.key;
                     });
                   },
-                    child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                    child: AnimatedContainer(
+                      duration: Duration(milliseconds: 500),
+                    padding: EdgeInsets.symmetric(horizontal: 15,vertical: widget.configPvd.selectedConfigurationTab == tab.key ? 12 :10),
                     decoration: BoxDecoration(
-                        color: widget.configPvd.selectedConfigurationTab == tab.key ? Theme.of(context).primaryColor : Colors.grey.shade300
+                      border: const Border(top: BorderSide(width: 0.5), left: BorderSide(width: 0.5), right: BorderSide(width: 0.5)),
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+                        color: widget.configPvd.selectedConfigurationTab == tab.key ? Theme.of(context).primaryColor : Colors.grey.shade100
                     ),
                     child: Text(tab.value, style: TextStyle(color: widget.configPvd.selectedConfigurationTab == tab.key ? Colors.white : Colors.black, fontSize: 13),),
                   ),

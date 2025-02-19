@@ -30,6 +30,7 @@ class DeviceList extends StatefulWidget {
 class _DeviceListState extends State<DeviceList> {
   late ConfigMakerProvider configPvd;
   int selectedMasterId = 1;
+  bool selectAllNode = false;
 
   @override
   void initState() {
@@ -103,7 +104,7 @@ class _DeviceListState extends State<DeviceList> {
                               Text(device.deviceName, style: textStyleInCell),
                             ),
                             DataCell(
-                              Text(device.deviceId, style: TextStyle(color: Theme.of(context).primaryColor),),
+                              Text(device.deviceId, style: TextStyle(color: Theme.of(context).primaryColorDark),),
                             ),
                             DataCell(
                                 CustomDropDownButton(
@@ -186,6 +187,9 @@ class _DeviceListState extends State<DeviceList> {
         trailing: IntrinsicWidth(
           child: RadiusButtonStyle(
               onPressed: (){
+                setState(() {
+                  selectAllNode = false;
+                });
                 bool isThereNodeToConfigure = listOfDevices.any((node) => node.masterId == null);
                 if(isThereNodeToConfigure){
                   showDialog(
@@ -194,52 +198,72 @@ class _DeviceListState extends State<DeviceList> {
                         return StatefulBuilder(
                             builder: (context, stateSetter){
                               return AlertDialog(
-                                title: const Text('Choose Node for Configuration Under Master',style: AppProperties.normalBlackBoldTextStyle,),
+                                backgroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(0)
+                                ),
+                                title: const Text('Choose Node for Configuration Under Master',),
                                 content: SizedBox(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      // Row(
-                                      //   mainAxisAlignment: MainAxisAlignment.center,
-                                      //   children: [
-                                      //     const CustomTableCellPassingWidget(
-                                      //         widget: Icon(Icons.touch_app),
-                                      //         width: 50
-                                      //     ),
-                                      //     CustomTableHeader(title: 'MODEL NAME', width: headerWidth),
-                                      //     CustomTableHeader(title: 'DEVICE ID', width: headerWidth),
-                                      //   ],
-                                      // ),
-                                      // ...listOfDevices
-                                      //     .where((node) => node.masterId == null)
-                                      //     .toList()
-                                      //     .asMap()
-                                      //     .entries.map((entry){
-                                      //   int index = entry.key;
-                                      //   DeviceModel device = entry.value;
-                                      //   return Row(
-                                      //     mainAxisAlignment: MainAxisAlignment.center,
-                                      //     children: [
-                                      //       CustomTableCellPassingWidget(
-                                      //           widget: Checkbox(
-                                      //             value: device.select,
-                                      //             onChanged: (value){
-                                      //               stateSetter((){
-                                      //                 setState(() {
-                                      //                   device.select = value!;
-                                      //                 });
-                                      //               });
-                                      //             },
-                                      //           ),
-                                      //           width: 50
-                                      //       ),
-                                      //       CustomTableCell(title: device.deviceName, width: 120),
-                                      //       CustomTableCell(title: device.deviceId, width: 120),
-                                      //     ],
-                                      //   );
-                                      // })
-                                    ],
+                                  width: MediaQuery.of(context).size.width >= 400 ? 400 : MediaQuery.of(context).size.width,
+                                  child: DataTable2(
+                                    headingRowColor: const WidgetStatePropertyAll(Color(0xffEAECF0)),
+                                    dataRowColor: const WidgetStatePropertyAll(Color(0xffFCFCFD)),
+                                    dataTextStyle: textStyleInCell,
+                                      columns: [
+                                        DataColumn2(
+                                          label: Checkbox(
+                                              value: selectAllNode,
+                                              onChanged: (value){
+                                                stateSetter((){
+                                                  setState(() {
+                                                    selectAllNode = !selectAllNode;
+                                                    for(var device in configPvd.listOfDeviceModel){
+                                                      device.select = selectAllNode;
+                                                    }
+                                                  });
+                                                });
+                                              }
+                                          )
+                                        ),
+                                        DataColumn2(
+                                          label: Text('MODEL NAME'),
+                                          fixedWidth: 180,
+                                        ),
+                                        DataColumn2(
+                                          fixedWidth: 180,
+                                          label: Text('DEVICE ID'),
+                                        )
+                                      ],
+                                      rows: listOfDevices
+                                          .where((node) => node.masterId == null)
+                                          .toList()
+                                          .asMap()
+                                          .entries.map((entry){
+                                        int index = entry.key;
+                                        DeviceModel device = entry.value;
+                                        return DataRow(
+                                            cells: [
+                                              DataCell(
+                                                Checkbox(
+                                                  value: device.select,
+                                                  onChanged: (value){
+                                                    stateSetter((){
+                                                      setState(() {
+                                                        device.select = value!;
+                                                      });
+                                                    });
+                                                  },
+                                                ),
+                                              ),
+                                              DataCell(
+                                                Text(device.deviceName,)
+                                              ),
+                                              DataCell(
+                                                  Text(device.deviceId, style: TextStyle(color: Theme.of(context).primaryColor))
+                                              ),
+                                            ]
+                                        );
+                                      }).toList(),
                                   ),
                                 ),
                                 actions: [
@@ -257,7 +281,6 @@ class _DeviceListState extends State<DeviceList> {
                                           });
                                         });
                                       }
-
                                       Navigator.pop(context);
                                     },
                                     title: 'Add',
