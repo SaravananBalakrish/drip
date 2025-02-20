@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:flutter/cupertino.dart';
 
@@ -268,8 +269,8 @@ class AppConstants {
         for(var site in data[globalKey]){
           dynamic siteFormation = site;
           for(var siteKey in site.keys){
-            if(!['objectId', 'sNo', 'name', 'objectName', 'connectionNo', 'type', 'controllerId', 'count', 'siteMode', 'pumpType'].contains(siteKey)){
-              siteFormation[siteKey] = siteFormation[siteKey] is List<dynamic>
+            if(['level', 'inletPump', 'outletPump', 'valves'].contains(siteKey)){
+              siteFormation[siteKey] = siteFormation[siteKey] is Array<dynamic>
                   ? (siteFormation[siteKey] as List<dynamic>).map((element) => (data['listOfGeneratedObject'] as List<dynamic>).firstWhere((object) => object['sNo'] == element)).toList()
                   : (data['listOfGeneratedObject'] as List<dynamic>).firstWhere((object) => object['sNo'] == siteFormation[siteKey], orElse: ()=> {});
             }
