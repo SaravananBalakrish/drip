@@ -37,7 +37,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   }
 
   void onSubscribeTopic(){
-    Future.delayed(const Duration(milliseconds: 500), () {
+    Future.delayed(const Duration(milliseconds: 2000), () {
       mqttService.topicToSubscribe('${AppConstants.subscribeTopic}/${mySiteList.data[sIndex].master[mIndex].deviceId}');
       onRefreshClicked();
     });
