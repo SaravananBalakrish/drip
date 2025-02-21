@@ -303,7 +303,7 @@ class AppConstants {
               if (['level', 'inletPump', 'outletPump', 'valves'].contains(
                   siteKey)) {
                 siteFormation[siteKey] =
-                siteFormation[siteKey] is Array<dynamic>
+                siteFormation[siteKey] is List<dynamic>
                     ? (siteFormation[siteKey] as List<dynamic>)
                     .map((element) =>
                     (data['listOfGeneratedObject'] as List<dynamic>)

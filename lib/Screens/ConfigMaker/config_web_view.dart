@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:html';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/product_limit.dart';
@@ -30,11 +29,11 @@ import 'package:oro_drip_irrigation/Constants/mqtt_manager_mobile.dart' if (dart
 
 
 void saveToSessionStorage(String key, String value) {
-  window.sessionStorage[key] = value;
+  // window.sessionStorage[key] = value;
 }
 
 String? readFromSessionStorage(String key) {
-  return window.sessionStorage[key];
+  // return window.sessionStorage[key];
 }
 
 void deleteFromSessionStorage(String key) {
