@@ -129,11 +129,15 @@ class _ToggleTextFormFieldForConnectionState extends State<ToggleTextFormFieldFo
     required int newCount,
     required int countLimitFromProductLimit,
 }){
+    print('oldCount : $oldCount');
+    print('newCount : $newCount');
+    print('countLimitFromProductLimit : $countLimitFromProductLimit');
     int ph = 28;
     int ec = 27;
     int pressureSwitch = 23;
 
     if ([ph, ec].contains(widget.object.objectId)) {
+      print('updating ec, ph');
       int updateCount = newCount > 2
           ? 2
           : (newCount > countLimitFromProductLimit
@@ -142,6 +146,7 @@ class _ToggleTextFormFieldForConnectionState extends State<ToggleTextFormFieldFo
       widget.configPvd.updateObjectConnection(widget.object, updateCount);
       return false;
     }else if(widget.object.objectId == pressureSwitch){
+      print('updating pressureSwitch');
       int updateCount = newCount > 1
           ? 1
           : (newCount > countLimitFromProductLimit

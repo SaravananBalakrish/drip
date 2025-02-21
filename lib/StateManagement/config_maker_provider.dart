@@ -376,7 +376,8 @@ class ConfigMakerProvider extends ChangeNotifier{
   }
 
   void updateObjectConnection(DeviceObjectModel selectedConnectionObject,int newCount){
-    print('selectedConnectionObject : ${selectedConnectionObject.objectName}  newCount : ${newCount}');
+    print('selectedConnectionObject  ${selectedConnectionObject.toJson()}');
+    print('newCount : ${newCount}');
 
     // ------making connection list--------------------------------------------------------
     DeviceModel selectedDevice = listOfDeviceModel.firstWhere((device) => device.controllerId == selectedModelControllerId);
@@ -390,6 +391,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     };
     int totalConnectionCount = connectionTypeCountMapping[selectedConnectionObject.type]!;
     List<int> selectedModelDefaultConnectionList = List<int>.generate(totalConnectionCount, (index) => index + 1);
+    print('selectedModelDefaultConnectionList first: $selectedModelDefaultConnectionList');
 
 
     // ------filtering object by objectId, configure & not configured----------------------
@@ -422,14 +424,6 @@ class ConfigMakerProvider extends ChangeNotifier{
           selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [5].contains(connectionNo)).toList();
         }
       }
-      // // ------------- validate ph, others for category 5----------------------------
-      // int ph = 28;
-      // if(selectedConnectionObject.objectId == ph && selectedDevice.categoryId == 5){
-      //   selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [1,2].contains(connectionNo)).toList();
-      // }
-      // if(selectedDevice.categoryId == 5 && selectedConnectionObject.objectId != ph){
-      //   selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => ![1,2].contains(connectionNo)).toList();
-      // }
 
       print('selectedModelDefaultConnectionList :: $selectedModelDefaultConnectionList');
       int howManyObjectSupposedToConnect = newCount - oldCount;
@@ -467,12 +461,12 @@ class ConfigMakerProvider extends ChangeNotifier{
     // for(var object in listOfGeneratedObject){
     //   print('generated :: ${object.name} , ${object.sNo}  connection :: ${object.connectionNo}  deviceId :: ${object.deviceId}');
     // }
-    for(var obj in listOfSampleObjectModel){
-      print('productLimit : ${obj.toJson()}');
-    }
-    for(var obj in listOfObjectModelConnection){
-      print('connection : ${obj.toJson()}');
-    }
+    // for(var obj in listOfSampleObjectModel){
+    //   print('productLimit : ${obj.toJson()}');
+    // }
+    // for(var obj in listOfObjectModelConnection){
+    //   print('connection : ${obj.toJson()}');
+    // }
     // for(var obj in listOfGeneratedObject){
     //   print('generated : ${obj.toJson()}');
     // }
