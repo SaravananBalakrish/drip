@@ -325,7 +325,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
         margin: const EdgeInsets.symmetric(horizontal: 20),
         decoration: BoxDecoration(
             color: Colors.white,
-            boxShadow: AppProperties.customBoxShadow,
+            boxShadow: AppProperties.customBoxShadowLiteTheme,
             borderRadius: BorderRadius.circular(10)
         ),
         child: Column(

@@ -55,7 +55,7 @@ class _FertilizationConfigurationState extends State<FertilizationConfiguration>
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: Colors.white,
-                            boxShadow: AppProperties.customBoxShadow
+                            boxShadow: AppProperties.customBoxShadowLiteTheme
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

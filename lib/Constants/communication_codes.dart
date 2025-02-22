@@ -68,17 +68,17 @@ String getObjectTypeCodeToString(int code){
 Color getObjectTypeCodeToColor(int code){
   switch(code){
     case 1 :
-      return const Color(0xffD2EAFF);
+      return const Color(0xff078BFF);
     case 2 :
       return const Color(0xffD2EAFF);
     case 3 :
-      return const Color(0xffFFFCDE);
+      return const Color(0xffBFB976);
     case 4 :
-      return const Color(0xffDBFFC3);
+      return const Color(0xff98C07D);
     case 5 :
-      return const Color(0xffFDBEFF);
+      return const Color(0xffB67FB8);
     case 6 :
-      return const Color(0xffFFEDEB);
+      return const Color(0xffB4766F);
     case 7 :
       return const Color(0xffEDC9B1);
     default :

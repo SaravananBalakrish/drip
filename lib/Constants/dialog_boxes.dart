@@ -51,7 +51,7 @@ void simpleDialogBox({
             ],
           ),
           actions: [
-            CustomTextButton()
+            CustomMaterialButton()
           ],
         );
       }
@@ -119,7 +119,7 @@ void selectionDialogBox({
                 ),
               ),
               actions: [
-                CustomTextButton(
+                CustomMaterialButton(
                   onPressed: onPressed,
                 )
               ],

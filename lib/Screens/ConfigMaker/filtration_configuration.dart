@@ -49,7 +49,7 @@ class _FiltrationConfigurationState extends State<FiltrationConfiguration> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         color: Colors.white,
-                        boxShadow: AppProperties.customBoxShadow
+                        boxShadow: AppProperties.customBoxShadowLiteTheme
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

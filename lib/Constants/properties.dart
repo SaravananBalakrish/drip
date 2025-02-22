@@ -49,7 +49,7 @@ class AppProperties {
   );
 
   //Todo : box shadow
-  static final List<BoxShadow> customBoxShadow = [
+  static final List<BoxShadow> customBoxShadowLiteTheme = [
     BoxShadow(
         offset: const Offset(0,45),
         blurRadius: 112,
@@ -71,6 +71,30 @@ class AppProperties {
         color: Colors.black.withOpacity(0.02)
     ),
   ];
+  static final List<BoxShadow> customBoxShadowDarkTheme = [
+    BoxShadow(
+        offset: const Offset(0,45),
+        blurRadius: 112,
+        color: Colors.white.withOpacity(0.06)
+    ),
+    BoxShadow(
+        offset: const Offset(0,22.78),
+        blurRadius: 48.83,
+        color: Colors.white.withOpacity(0.04)
+    ),
+    BoxShadow(
+        offset: const Offset(0,9),
+        blurRadius: 18.2,
+        color: Colors.white.withOpacity(0.03)
+    ),
+    BoxShadow(
+        offset: const Offset(0,1.97),
+        blurRadius: 6.47,
+        color: Colors.white.withOpacity(0.02)
+    ),
+  ];
+
+
 
   //Todo radius
   static const Radius radius5 = Radius.circular(5);

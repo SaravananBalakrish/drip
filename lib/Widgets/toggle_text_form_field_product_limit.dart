@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../Constants/communication_codes.dart';
 import '../Constants/dialog_boxes.dart';
 import '../Models/Configuration/device_object_model.dart';
 import '../Screens/ConfigMaker/product_limit.dart';
@@ -9,7 +10,8 @@ class ToggleTextFormFieldForProductLimit extends StatefulWidget {
   final ConfigMakerProvider configPvd;
   String initialValue;
   DeviceObjectModel object;
-  ToggleTextFormFieldForProductLimit({super.key,required this.initialValue, required this.object, required this.configPvd,});
+  Color leadingColor;
+  ToggleTextFormFieldForProductLimit({super.key,required this.initialValue, required this.object, required this.configPvd,required this.leadingColor});
 
   @override
   State<ToggleTextFormFieldForProductLimit> createState() => _ToggleTextFormFieldForProductLimitState();
@@ -107,6 +109,7 @@ class _ToggleTextFormFieldForProductLimitState extends State<ToggleTextFormField
     if(!editable()){
       return const Text('Limit reached');
     }
+    bool themeMode = Theme.of(context).brightness == Brightness.light;
     return GestureDetector(
       onTap: toggleEditing,
       child: isEditing

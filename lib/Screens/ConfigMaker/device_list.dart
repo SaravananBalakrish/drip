@@ -185,7 +185,7 @@ class _DeviceListState extends State<DeviceList> {
         title: Text('${configPvd.masterData['deviceName']}', style: const TextStyle(fontWeight: FontWeight.bold),),
         subtitle: Text('${configPvd.masterData['deviceId']}', style: const TextStyle(fontSize: 12 ),),
         trailing: IntrinsicWidth(
-          child: RadiusButtonStyle(
+          child: CustomMaterialButton(
               onPressed: (){
                 setState(() {
                   selectAllNode = false;
@@ -267,7 +267,7 @@ class _DeviceListState extends State<DeviceList> {
                                   ),
                                 ),
                                 actions: [
-                                  RadiusButtonStyle(
+                                  CustomMaterialButton(
                                     onPressed: () {
                                       for (var node in configPvd.listOfDeviceModel) {
                                         stateSetter(() {

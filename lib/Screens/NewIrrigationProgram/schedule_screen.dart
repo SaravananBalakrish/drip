@@ -464,7 +464,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         color: Colors.white,
-                        boxShadow: AppProperties.customBoxShadow
+                        boxShadow: AppProperties.customBoxShadowLiteTheme
                     ),
                     child: CustomTile(
                       title: 'No. of days to cycle',
@@ -1001,7 +1001,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: Colors.white,
-              boxShadow: AppProperties.customBoxShadow
+              boxShadow: AppProperties.customBoxShadowLiteTheme
           ),
           child: CustomDataTable(
               headerText: "RTC Details",

@@ -89,7 +89,7 @@ class _NewAlarmScreen2State extends State<NewAlarmScreen2> {
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10),
                               color: Colors.white,
-                              boxShadow: AppProperties.customBoxShadow
+                              boxShadow: AppProperties.customBoxShadowLiteTheme
                           ),
                           padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width > 1200 ? 8 : 0),
                           child: ListTile(

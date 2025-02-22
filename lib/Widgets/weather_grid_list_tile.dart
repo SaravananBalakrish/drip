@@ -116,7 +116,7 @@ class _WeatherGridListTileState extends State<WeatherGridListTile> with SingleTi
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),
           color: Colors.white,
-          boxShadow: AppProperties.customBoxShadow
+          boxShadow: AppProperties.customBoxShadowLiteTheme
       ),
       width: 300,
       child: myWidget,

@@ -19,6 +19,7 @@ import '../../Widgets/custom_buttons.dart';
 import '../../Widgets/custom_side_tab.dart';
 import '../../Widgets/title_with_back_button.dart';
 import '../../services/http_service.dart';
+import '../../utils/Theme/oro_theme.dart';
 import '../../utils/constants.dart';
 import 'config_base_page.dart';
 import 'config_mobile_view.dart';
@@ -70,8 +71,9 @@ class _ConfigWebViewState extends State<ConfigWebView> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
+    bool themeMode = Theme.of(context).brightness == Brightness.light;
     return Material(
-      color: Theme.of(context).primaryColorDark,
+      color: Theme.of(context).primaryColorDark.withOpacity(themeMode ? 1.0 : 0.2),
       child: Column(
         children: [
           SizedBox(
@@ -136,9 +138,9 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                 sideNavigationWidget(screenWidth, screenHeight),
                 Expanded(
                   child: Container(
-                    decoration: const BoxDecoration(
-                      color: Color(0xffF6F6F6),
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(10))
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(10))
                     ),
                       child: configPvd.selectedTab == ConfigMakerTabs.deviceList
                           ? DeviceList(listOfDevices: widget.listOfDevices)

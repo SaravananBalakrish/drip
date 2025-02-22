@@ -59,7 +59,7 @@ class _BlinkingContainerState extends State<BlinkingContainer>
               borderRadius: BorderRadius.circular(5),
               // color: Colors.white,
               color: _colorAnimation.value,
-              boxShadow: AppProperties.customBoxShadow
+              boxShadow: AppProperties.customBoxShadowLiteTheme
           ),
           width: 300,
           child: widget.child,

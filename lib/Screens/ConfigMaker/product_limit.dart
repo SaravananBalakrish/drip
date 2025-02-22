@@ -70,7 +70,7 @@ class _ProductLimitState extends State<ProductLimit> {
     return ProductLimitGridListTile(
       listOfObjectModel: filteredList,
       title: 'Output Object',
-      leadingColor: const Color(0xffD2EAFF),
+      leadingColor: const Color(0xff078BFF),
       configPvd: widget.configPvd,
     );
   }
@@ -87,14 +87,14 @@ class _ProductLimitState extends State<ProductLimit> {
 
   List<Widget> colorLegendBox(double screenWidth,double screenHeight){
     return [
-      const Text('Enter The Count Of The Object',style: AppProperties.normalBlackBoldTextStyle),
+      const Text('Enter The Count Of The Object'),
       const SizedBox(height: 10,),
       Container(
         width: screenWidth > 500 ? null : double.infinity,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 1),
+          border: Border.all(width: 1, color: Colors.grey),
         ),
         child: Wrap(
           runSpacing: 10,

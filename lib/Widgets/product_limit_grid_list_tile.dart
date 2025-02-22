@@ -70,7 +70,7 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
         const SizedBox(height: 5,),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Text(widget.title,style: AppProperties.tableHeaderStyle,),
+          child: Text(widget.title,style: Theme.of(context).textTheme.bodyLarge,),
         ),
         ResponsiveGridList(
           horizontalGridMargin: 20,
@@ -92,14 +92,16 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
   }
   
   Widget objectTile(DeviceObjectModel object){
+    bool themeMode = Theme.of(context).brightness == Brightness.light;
+    Color typeColor = widget.leadingColor ?? getObjectTypeCodeToColor(int.parse(object.type));
     Widget myWidget = ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-      title: Text(object.objectName, style: AppProperties.listTileBlackBoldStyle,),
+      title: Text(object.objectName, style: TextStyle(color: typeColor),),
       subtitle: Text('Configured : ${getConfiguredObjectByObjectId(object.objectId)}', style: const TextStyle(fontSize: 11),),
       leading: Container(
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
-          color: widget.leadingColor ?? getObjectTypeCodeToColor(int.parse(object.type)),
+          color: Theme.of(context).primaryColorDark.withOpacity(themeMode ? 1.0 : 0.5),
           borderRadius: BorderRadius.circular(5),
         ),
         child: SizedImage(
@@ -109,6 +111,7 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
       trailing: SizedBox(
         width: 80,
         child: ToggleTextFormFieldForProductLimit(
+          leadingColor: typeColor,
           configPvd: widget.configPvd,
           initialValue: object.count.toString(),
           object: object,
@@ -121,8 +124,9 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
       return Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            color: Colors.white,
-            boxShadow: AppProperties.customBoxShadow
+            // border: Border.all(width: 5,color: typeColor.withOpacity(themeMode ? 1.0 : 0.5)),
+            color: Theme.of(context).cardColor,
+            boxShadow: AppProperties.customBoxShadowLiteTheme
         ),
         width: 300,
         child: myWidget,

@@ -159,7 +159,7 @@ Widget buildListTile({
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: color ?? Colors.white,
-        boxShadow: isNeedBoxShadow ? AppProperties.customBoxShadow : null
+        boxShadow: isNeedBoxShadow ? AppProperties.customBoxShadowLiteTheme : null
     ),
     child: ListTile(
       title: titleChild ?? Text(title, style: TextStyle(color: textColor, fontWeight: FontWeight.bold),),

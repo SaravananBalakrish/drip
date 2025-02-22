@@ -20,11 +20,12 @@ class CustomSideTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print('selected : $selected');
+    bool themeMode = Theme.of(context).brightness == Brightness.light;
     Widget myChild =  Container(
       margin: const EdgeInsets.only(bottom: 20),
       width: width,
       decoration: BoxDecoration(
-          color: selected ? Theme.of(context).primaryColor : null,
+          color: selected ? Theme.of(context).primaryColor.withOpacity(themeMode ? 1.0 : 0.5) : null,
           borderRadius: BorderRadius.circular(8)
       ),
       child: ListTile(

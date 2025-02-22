@@ -68,7 +68,7 @@ class _SequenceScreenState extends State<SequenceScreen> {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10),
                       color: Colors.white,
-                      boxShadow: AppProperties.customBoxShadow
+                      boxShadow: AppProperties.customBoxShadowLiteTheme
                   ),
                   child: Container(
                     clipBehavior: Clip.antiAliasWithSaveLayer,
@@ -722,7 +722,7 @@ Widget buildLineAndValveContainerUpdated({
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
-        boxShadow: AppProperties.customBoxShadow
+        boxShadow: AppProperties.customBoxShadowLiteTheme
     ),
     child: MediaQuery.of(context).size.width > 800 ?
     Row(
@@ -830,7 +830,7 @@ Widget buildSubList({
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
-        boxShadow: AppProperties.customBoxShadow
+        boxShadow: AppProperties.customBoxShadowLiteTheme
     ),
     child: Column(
       mainAxisSize: MainAxisSize.min,

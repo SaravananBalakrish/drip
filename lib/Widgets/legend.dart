@@ -28,7 +28,7 @@ class ColorLegend extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 10,),
-          Text(message,style: screenWidth > 1000 ? AppProperties.normalBlackBoldTextStyle : AppProperties.tableHeaderStyle,)
+          Text(message,)
         ],
       ),
     );
