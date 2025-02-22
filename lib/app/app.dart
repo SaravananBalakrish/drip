@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
+import '../Screens/dashboard/customerdashboard.dart';
 import '../utils/Theme/lk_theme.dart';
 import '../utils/routes.dart';
 import '../utils/shared_preferences_helper.dart';
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
           theme: Environment.currentEnvironment == 'oroDevelopment' ? OroTheme.lightTheme : LkTheme.lightTheme,
           darkTheme: OroTheme.darkTheme,
           themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          home: navigateToInitialScreen(snapshot.data ?? Routes.login),
+          home: Dashboard(),//   navigateToInitialScreen(snapshot.data ?? Routes.login),
           onGenerateRoute: Routes.generateRoute,
         );
       },

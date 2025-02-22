@@ -170,7 +170,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
         {"108": configPvd.getIrrigationLinePayload()},
       ]
     };
-    MqttManager().topicToPublishAndItsMessage('${Environment.mqttWebPublishTopic}/${configPvd.masterData['deviceId']}', jsonEncode(configMakerPayload));
+    MQTTManager().topicToPublishAndItsMessage('${Environment.mqttWebPublishTopic}/${configPvd.masterData['deviceId']}', jsonEncode(configMakerPayload));
     print("configMakerPayload ==> ${jsonEncode(configMakerPayload)}");
     // print("getOroPumpPayload ==> ${widget.configPvd.getOroPumpPayload()}");
   }

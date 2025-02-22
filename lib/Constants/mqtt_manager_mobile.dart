@@ -6,16 +6,16 @@ import 'package:uuid/uuid.dart';
 
 import '../utils/environment.dart';
 
-class MqttManager {
-  static MqttManager? _instance;
+class MQTTManager {
+  static MQTTManager? _instance;
   MqttServerClient? _client;
 
-  factory MqttManager() {
-    _instance ??= MqttManager._internal();
+  factory MQTTManager() {
+    _instance ??= MQTTManager._internal();
     return _instance!;
   }
 
-  MqttManager._internal();
+  MQTTManager._internal();
 
   bool get isConnected => _client?.connectionStatus?.state == MqttConnectionState.connected;
   String? currentSubscribedTopic;

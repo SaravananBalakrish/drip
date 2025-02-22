@@ -22,7 +22,7 @@ void main() {
   NetworkUtils.initialize();
   // GlobalConfig.setEnvironment(Environment.development);
   // GlobalConfig.setEnvironment(Environment.development);
-  MqttManager mqttManager = MqttManager();
+  MQTTManager mqttManager = MQTTManager();
   mqttManager.initializeMQTTClient();
   mqttManager.connect();
   // Future.delayed(Duration(seconds: 5),(){
@@ -41,6 +41,7 @@ void main() {
           // ),
         ],
         child: const MyApp(),
+
       )
   );
 }

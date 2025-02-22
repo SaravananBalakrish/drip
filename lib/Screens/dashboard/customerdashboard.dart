@@ -1,0 +1,2817 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
+import 'package:loading_indicator/loading_indicator.dart';
+
+import 'package:provider/provider.dart';
+ import '../../../../constants/http_service.dart';
+ import 'package:shared_preferences/shared_preferences.dart';
+import '../../../constants/theme.dart';
+import '../../Constants/mqtt_manager_mobile.dart';
+import '../../Constants/mqtt_manager_web.dart';
+import '../../StateManagement/mqtt_payload_provider.dart';
+import '../../StateManagement/overall_use.dart';
+import '../../Widgets/SCustomWidgets/custom_date_picker.dart';
+import '../../Widgets/SCustomWidgets/custom_list_tile.dart';
+import '../../Widgets/SCustomWidgets/custom_native_time_picker.dart';
+import '../../services/http_service.dart';
+import '../../utils/snack_bar.dart';
+import '../NewIrrigationProgram/preview_screen.dart';
+import '../NewIrrigationProgram/schedule_screen.dart';
+
+
+final double speed = 100.0;
+final double gap = 100;
+final double initialPosition = -100.0;
+//siva prakash
+
+class Dashboard extends StatefulWidget {
+  const Dashboard({super.key});
+  @override
+  State<Dashboard> createState() => _DashboardState();
+}
+
+class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
+  late MqttPayloadProvider payloadProvider;
+  late OverAllUse overAllPvd;
+  MqttManager manager = MqttManager();
+  bool sourcePumpMode = false;
+  bool irrigationLineMode = false;
+  bool irrigationPumpMode = false;
+  bool filtrationWidgetMode = false;
+  bool fertigationWidgetMode = false;
+  late Timer _timer;
+  int selectedTab = 0;
+  int userId = 0;
+  double appBarHeight = 105.0;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final String _correctPassword = 'Oro@321';
+  dynamic newlivedata = {
+    "code": 200,
+    "message": "",
+    "data": [
+      {
+        "groupId": 1,
+        "groupName": "GroupName",
+        "master": [
+          {
+            "controllerId": 1,
+            "deviceId": "2CCF676089F2",
+            "deviceName": "ORO GEM",
+            "categoryId": 2,
+            "categoryName": "ORO GEM",
+            "modelId": 16,
+            "modelName": "5G",
+            "conditionLibraryCount": 10,
+            "units": [
+              {
+                "dealerDefinitionId": 114,
+                "parameter": "Water Meter",
+                "value": "l/s"
+              },
+              {
+                "dealerDefinitionId": 115,
+                "parameter": "Pressure Sensor",
+                "value": "bar"
+              },
+              {
+                "dealerDefinitionId": 116,
+                "parameter": "Moisture Sensor",
+                "value": "cb"
+              },
+              {
+                "dealerDefinitionId": 117,
+                "parameter": "Level Sensor",
+                "value": "feet"
+              },
+              {
+                "dealerDefinitionId": 118,
+                "parameter": "Temperature Sensor",
+                "value": "°C"
+              },
+              {
+                "dealerDefinitionId": 119,
+                "parameter": "Soil Temperature Sensor",
+                "value": "°C"
+              },
+              {
+                "dealerDefinitionId": 120,
+                "parameter": "Humdity Sensor",
+                "value": "%"
+              },
+              {
+                "dealerDefinitionId": 121,
+                "parameter": "CO2 Sensor",
+                "value": "ppm"
+              },
+              {
+                "dealerDefinitionId": 122,
+                "parameter": "LUX Sensor",
+                "value": "lux"
+              },
+              {
+                "dealerDefinitionId": 123,
+                "parameter": "Leaf Wetness Sensor",
+                "value": "%"
+              },
+              {
+                "dealerDefinitionId": 124,
+                "parameter": "Rain Fall",
+                "value": "mm"
+              },
+              {
+                "dealerDefinitionId": 125,
+                "parameter": "Wind Speed",
+                "value": "km/h"
+              },
+              {
+                "dealerDefinitionId": 126,
+                "parameter": "Wind Direction",
+                "value": "°"
+              },
+              {
+                "dealerDefinitionId": 128,
+                "parameter": "Atmospheric Pressure Sensor",
+                "value": "kPa"
+              },
+              {
+                "dealerDefinitionId": 129,
+                "parameter": "LDX Sensor",
+                "value": "lux"
+              }
+            ],
+            "nodeList": [],
+            "config":  {
+              "filterSite": [
+                {
+                  "objectId": 4,
+                  "sNo": 4.001,
+                  "name": "Filtration Site 1",
+                  "connectionNo": null,
+                  "objectName": "Filtration Site",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "siteMode": 1,
+                  "filters": [
+                    {
+                      "objectId": 11,
+                      "sNo": 11.001,
+                      "name": "Filter 1",
+                      "connectionNo": null,
+                      "objectName": "Filter",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 11,
+                      "sNo": 11.002,
+                      "name": "Filter 2",
+                      "connectionNo": null,
+                      "objectName": "Filter",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 11,
+                      "sNo": 11.003,
+                      "name": "Filter 3",
+                      "connectionNo": null,
+                      "objectName": "Filter",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "pressureIn": {
+                    "objectId": 24,
+                    "sNo": 24.001,
+                    "name": "Pressure Sensor 1",
+                    "connectionNo": null,
+                    "objectName": "Pressure Sensor",
+                    "type": "3",
+                    "controllerId": null,
+                    "count": null
+                  },
+                  "pressureOut": {
+                    "objectId": 24,
+                    "sNo": 24.002,
+                    "name": "Pressure Sensor 2",
+                    "connectionNo": null,
+                    "objectName": "Pressure Sensor",
+                    "type": "3",
+                    "controllerId": null,
+                    "count": null
+                  },
+                  "backWashValve": {}
+                },
+                {
+                  "objectId": 4,
+                  "sNo": 4.002,
+                  "name": "Filtration Site 2",
+                  "connectionNo": null,
+                  "objectName": "Filtration Site",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "siteMode": 2,
+                  "filters": [
+                    {
+                      "objectId": 11,
+                      "sNo": 11.004,
+                      "name": "Filter 4",
+                      "connectionNo": null,
+                      "objectName": "Filter",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 11,
+                      "sNo": 11.005,
+                      "name": "Filter 5",
+                      "connectionNo": null,
+                      "objectName": "Filter",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 11,
+                      "sNo": 11.006,
+                      "name": "Filter 6",
+                      "connectionNo": null,
+                      "objectName": "Filter",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "pressureIn": {},
+                  "pressureOut": {},
+                  "backWashValve": {}
+                }
+              ],
+              "fertilizerSite": [
+                {
+                  "objectId": 3,
+                  "sNo": 3.001,
+                  "name": "Dosing Site 1",
+                  "connectionNo": null,
+                  "objectName": "Dosing Site",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "siteMode": 1,
+                  "channel": [
+                    {
+                      "objectId": 10,
+                      "sNo": 10.001,
+                      "name": "Injector 1",
+                      "connectionNo": null,
+                      "objectName": "Injector",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 10,
+                      "sNo": 10.002,
+                      "name": "Injector 2",
+                      "connectionNo": null,
+                      "objectName": "Injector",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 10,
+                      "sNo": 10.003,
+                      "name": "Injector 3",
+                      "connectionNo": null,
+                      "objectName": "Injector",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "boosterPump": [
+                    {
+                      "objectId": 7,
+                      "sNo": 7.001,
+                      "name": "Booster Pump 1",
+                      "connectionNo": null,
+                      "objectName": "Booster Pump",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "agitator": [
+                    {
+                      "objectId": 9,
+                      "sNo": 9.001,
+                      "name": "Agitator 1",
+                      "connectionNo": null,
+                      "objectName": "Agitator",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "selector": [],
+                  "ec": [
+                    {
+                      "objectId": 27,
+                      "sNo": 27.001,
+                      "name": "EC Sensor 1",
+                      "connectionNo": null,
+                      "objectName": "EC Sensor",
+                      "type": "3",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 27,
+                      "sNo": 27.002,
+                      "name": "EC Sensor 2",
+                      "connectionNo": null,
+                      "objectName": "EC Sensor",
+                      "type": "3",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "ph": [
+                    {
+                      "objectId": 28,
+                      "sNo": 28.001,
+                      "name": "PH Sensor 1",
+                      "connectionNo": null,
+                      "objectName": "PH Sensor",
+                      "type": "3",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 28,
+                      "sNo": 28.002,
+                      "name": "PH Sensor 2",
+                      "connectionNo": null,
+                      "objectName": "PH Sensor",
+                      "type": "3",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ]
+                },
+                {
+                  "objectId": 3,
+                  "sNo": 3.002,
+                  "name": "Dosing Site 2",
+                  "connectionNo": null,
+                  "objectName": "Dosing Site",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "siteMode": 2,
+                  "channel": [
+                    {
+                      "objectId": 10,
+                      "sNo": 10.004,
+                      "name": "Injector 4",
+                      "connectionNo": null,
+                      "objectName": "Injector",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 10,
+                      "sNo": 10.005,
+                      "name": "Injector 5",
+                      "connectionNo": null,
+                      "objectName": "Injector",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 10,
+                      "sNo": 10.006,
+                      "name": "Injector 6",
+                      "connectionNo": null,
+                      "objectName": "Injector",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "boosterPump": [
+                    {
+                      "objectId": 7,
+                      "sNo": 7.002,
+                      "name": "Booster Pump 2",
+                      "connectionNo": null,
+                      "objectName": "Booster Pump",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "agitator": [
+                    {
+                      "objectId": 9,
+                      "sNo": 9.002,
+                      "name": "Agitator 2",
+                      "connectionNo": null,
+                      "objectName": "Agitator",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "selector": [],
+                  "ec": [
+                    {
+                      "objectId": 27,
+                      "sNo": 27.003,
+                      "name": "EC Sensor 3",
+                      "connectionNo": null,
+                      "objectName": "EC Sensor",
+                      "type": "3",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 27,
+                      "sNo": 27.004,
+                      "name": "EC Sensor 4",
+                      "connectionNo": null,
+                      "objectName": "EC Sensor",
+                      "type": "3",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "ph": [
+                    {
+                      "objectId": 28,
+                      "sNo": 28.003,
+                      "name": "PH Sensor 3",
+                      "connectionNo": null,
+                      "objectName": "PH Sensor",
+                      "type": "3",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 28,
+                      "sNo": 28.004,
+                      "name": "PH Sensor 4",
+                      "connectionNo": null,
+                      "objectName": "PH Sensor",
+                      "type": "3",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ]
+                }
+              ],
+              "waterSource": [
+                {
+                  "objectId": 1,
+                  "sNo": 1.001,
+                  "name": "Source 1",
+                  "connectionNo": null,
+                  "objectName": "Source",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "sourceType": {},
+                  "level": {},
+                  "topFloat": {},
+                  "bottomFloat": {},
+                  "inletPump": [],
+                  "outletPump": [
+                    {
+                      "objectId": 5,
+                      "sNo": 5.001,
+                      "name": "Pump 1",
+                      "connectionNo": null,
+                      "objectName": "Pump",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "valves": []
+                },
+                {
+                  "objectId": 1,
+                  "sNo": 1.002,
+                  "name": "Source 2",
+                  "connectionNo": null,
+                  "objectName": "Source",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "sourceType": {},
+                  "level": {},
+                  "topFloat": {},
+                  "bottomFloat": {},
+                  "inletPump": [],
+                  "outletPump": [
+                    {
+                      "objectId": 5,
+                      "sNo": 5.002,
+                      "name": "Pump 2",
+                      "connectionNo": null,
+                      "objectName": "Pump",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "valves": []
+                },
+                {
+                  "objectId": 1,
+                  "sNo": 1.003,
+                  "name": "Source 3",
+                  "connectionNo": null,
+                  "objectName": "Source",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "sourceType": {},
+                  "level": {},
+                  "topFloat": {},
+                  "bottomFloat": {},
+                  "inletPump": [
+                    {
+                      "objectId": 5,
+                      "sNo": 5.001,
+                      "name": "Pump 1",
+                      "connectionNo": null,
+                      "objectName": "Pump",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 5,
+                      "sNo": 5.002,
+                      "name": "Pump 2",
+                      "connectionNo": null,
+                      "objectName": "Pump",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "outletPump": [
+                    {
+                      "objectId": 5,
+                      "sNo": 5.003,
+                      "name": "Pump 3",
+                      "connectionNo": null,
+                      "objectName": "Pump",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "valves": [{
+                    "objectId": 13,
+                    "sNo": 13.001,
+                    "name": "Valve 1",
+                    "connectionNo": null,
+                    "objectName": "Valve",
+                    "type": "1,2",
+                    "controllerId": null,
+                    "count": null
+                  },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.002,
+                      "name": "Valve 2",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }]
+                }
+              ],
+              "pump": [
+                {
+                  "objectId": 5,
+                  "sNo": 5.001,
+                  "name": "Pump 1",
+                  "connectionNo": null,
+                  "objectName": "Pump",
+                  "type": "1,2",
+                  "controllerId": null,
+                  "count": null,
+                  "pressure": {},
+                  "waterMeter": {
+                    "objectId": 22,
+                    "sNo": 22.001,
+                    "name": "Water Meter 1",
+                    "connectionNo": null,
+                    "objectName": "Water Meter",
+                    "type": "6",
+                    "controllerId": null,
+                    "count": null
+                  },
+                  "pumpType": 1,
+                  "level": {}
+                },
+                {
+                  "objectId": 5,
+                  "sNo": 5.002,
+                  "name": "Pump 2",
+                  "connectionNo": null,
+                  "objectName": "Pump",
+                  "type": "1,2",
+                  "controllerId": null,
+                  "count": null,
+                  "pressure": {},
+                  "waterMeter": {
+                    "objectId": 22,
+                    "sNo": 22.002,
+                    "name": "Water Meter 2",
+                    "connectionNo": null,
+                    "objectName": "Water Meter",
+                    "type": "6",
+                    "controllerId": null,
+                    "count": null
+                  },
+                  "pumpType": 1,
+                  "level": {}
+                },
+                {
+                  "objectId": 5,
+                  "sNo": 5.003,
+                  "name": "Pump 3",
+                  "connectionNo": null,
+                  "objectName": "Pump",
+                  "type": "1,2",
+                  "controllerId": null,
+                  "count": null,
+                  "pressure": {},
+                  "waterMeter": {
+                    "objectId": 22,
+                    "sNo": 22.003,
+                    "name": "Water Meter 3",
+                    "connectionNo": null,
+                    "objectName": "Water Meter",
+                    "type": "6",
+                    "controllerId": null,
+                    "count": null
+                  },
+                  "pumpType": 2,
+                  "level": {}
+                }
+              ],
+              "moistureSensor": [
+                {
+                  "objectId": 25,
+                  "sNo": 25.001,
+                  "name": "Moisture Sensor 1",
+                  "connectionNo": null,
+                  "objectName": "Moisture Sensor",
+                  "type": "5",
+                  "controllerId": null,
+                  "count": null,
+                  "valves": [
+                    {
+                      "objectId": 13,
+                      "sNo": 13.001,
+                      "name": "Valve 1",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.002,
+                      "name": "Valve 2",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.003,
+                      "name": "Valve 3",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.004,
+                      "name": "Valve 4",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.005,
+                      "name": "Valve 5",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.006,
+                      "name": "Valve 6",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.007,
+                      "name": "Valve 7",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ]
+                },
+                {
+                  "objectId": 25,
+                  "sNo": 25.002,
+                  "name": "Moisture Sensor 2",
+                  "connectionNo": null,
+                  "objectName": "Moisture Sensor",
+                  "type": "5",
+                  "controllerId": null,
+                  "count": null,
+                  "valves": [
+                    {
+                      "objectId": 13,
+                      "sNo": 13.008,
+                      "name": "Valve 8",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.009,
+                      "name": "Valve 9",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.01,
+                      "name": "Valve 10",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.011,
+                      "name": "Valve 11",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.012,
+                      "name": "Valve 12",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.013,
+                      "name": "Valve 13",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.014,
+                      "name": "Valve 14",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ]
+                },
+                {
+                  "objectId": 25,
+                  "sNo": 25.003,
+                  "name": "Moisture Sensor 3",
+                  "connectionNo": null,
+                  "objectName": "Moisture Sensor",
+                  "type": "5",
+                  "controllerId": null,
+                  "count": null,
+                  "valves": [
+                    {
+                      "objectId": 13,
+                      "sNo": 13.015,
+                      "name": "Valve 15",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.016,
+                      "name": "Valve 16",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.017,
+                      "name": "Valve 17",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ]
+                },
+                {
+                  "objectId": 25,
+                  "sNo": 25.004,
+                  "name": "Moisture Sensor 4",
+                  "connectionNo": null,
+                  "objectName": "Moisture Sensor",
+                  "type": "5",
+                  "controllerId": null,
+                  "count": null,
+                  "valves": [
+                    {
+                      "objectId": 13,
+                      "sNo": 13.018,
+                      "name": "Valve 18",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.019,
+                      "name": "Valve 19",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.02,
+                      "name": "Valve 20",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ]
+                }
+              ],
+              "irrigationLine": [
+                {
+                  "objectId": 2,
+                  "sNo": 2.001,
+                  "name": "Irrigation Line 1",
+                  "connectionNo": null,
+                  "objectName": "Irrigation Line",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "source": [],
+                  "sourcePump": [
+                    {
+                      "objectId": 5,
+                      "sNo": 5.001,
+                      "name": "Pump 1",
+                      "connectionNo": null,
+                      "objectName": "Pump",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 5,
+                      "sNo": 5.002,
+                      "name": "Pump 2",
+                      "connectionNo": null,
+                      "objectName": "Pump",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "irrigationPump": [
+                    {
+                      "objectId": 5,
+                      "sNo": 5.003,
+                      "name": "Pump 3",
+                      "connectionNo": null,
+                      "objectName": "Pump",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "centralFiltration": {
+                    "objectId": 4,
+                    "sNo": 4.002,
+                    "name": "Filtration Site 2",
+                    "connectionNo": null,
+                    "objectName": "Filtration Site",
+                    "type": "-",
+                    "controllerId": null,
+                    "count": null
+                  },
+                  "localFiltration": {},
+                  "centralFertilization": {
+                    "objectId": 3,
+                    "sNo": 3.001,
+                    "name": "Dosing Site 1",
+                    "connectionNo": null,
+                    "objectName": "Dosing Site",
+                    "type": "-",
+                    "controllerId": null,
+                    "count": null
+                  },
+                  "localFertilization": {},
+                  "valve": [
+                    {
+                      "objectId": 13,
+                      "sNo": 13.001,
+                      "name": "Valve 1",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.002,
+                      "name": "Valve 2",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.003,
+                      "name": "Valve 3",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.004,
+                      "name": "Valve 4",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.005,
+                      "name": "Valve 5",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.006,
+                      "name": "Valve 6",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.007,
+                      "name": "Valve 7",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "mainValve": [],
+                  "fan": [],
+                  "fogger": [],
+                  "pesticides": [],
+                  "heater": [],
+                  "screen": [],
+                  "vent": [],
+                  "powerSupply": {},
+                  "pressureSwitch": {
+                    "objectId": 23,
+                    "sNo": 23.001,
+                    "name": "Pressure Switch 1",
+                    "connectionNo": null,
+                    "objectName": "Pressure Switch",
+                    "type": "4",
+                    "controllerId": null,
+                    "count": null
+                  },
+                  "waterMeter": {
+                    "objectId": 22,
+                    "sNo": 22.005,
+                    "name": "Water Meter 5",
+                    "connectionNo": null,
+                    "objectName": "Water Meter",
+                    "type": "6",
+                    "controllerId": null,
+                    "count": null
+                  },
+                  "pressureIn": {},
+                  "pressureOut": {},
+                  "moisture": [
+                    {
+                      "objectId": 25,
+                      "sNo": 25.001,
+                      "name": "Moisture Sensor 1",
+                      "connectionNo": null,
+                      "objectName": "Moisture Sensor",
+                      "type": "5",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 25,
+                      "sNo": 25.002,
+                      "name": "Moisture Sensor 2",
+                      "connectionNo": null,
+                      "objectName": "Moisture Sensor",
+                      "type": "5",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "temperature": [],
+                  "soilTemperature": [],
+                  "humidity": [],
+                  "co2": []
+                },
+                {
+                  "objectId": 2,
+                  "sNo": 2.002,
+                  "name": "Irrigation Line 2",
+                  "connectionNo": null,
+                  "objectName": "Irrigation Line",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "source": [],
+                  "sourcePump": [
+                    {
+                      "objectId": 5,
+                      "sNo": 5.001,
+                      "name": "Pump 1",
+                      "connectionNo": null,
+                      "objectName": "Pump",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "irrigationPump": [
+                    {
+                      "objectId": 5,
+                      "sNo": 5.003,
+                      "name": "Pump 3",
+                      "connectionNo": null,
+                      "objectName": "Pump",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "centralFiltration": {},
+                  "localFiltration": {},
+                  "centralFertilization": {},
+                  "localFertilization": {},
+                  "valve": [
+                    {
+                      "objectId": 13,
+                      "sNo": 13.008,
+                      "name": "Valve 8",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.009,
+                      "name": "Valve 9",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.01,
+                      "name": "Valve 10",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.011,
+                      "name": "Valve 11",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.012,
+                      "name": "Valve 12",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.013,
+                      "name": "Valve 13",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.014,
+                      "name": "Valve 14",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.015,
+                      "name": "Valve 15",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.016,
+                      "name": "Valve 16",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.017,
+                      "name": "Valve 17",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.018,
+                      "name": "Valve 18",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.019,
+                      "name": "Valve 19",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 13,
+                      "sNo": 13.02,
+                      "name": "Valve 20",
+                      "connectionNo": null,
+                      "objectName": "Valve",
+                      "type": "1,2",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "mainValve": [],
+                  "fan": [],
+                  "fogger": [],
+                  "pesticides": [],
+                  "heater": [],
+                  "screen": [],
+                  "vent": [],
+                  "powerSupply": {},
+                  "pressureSwitch": {},
+                  "waterMeter": {
+                    "objectId": 22,
+                    "sNo": 22.004,
+                    "name": "Water Meter 4",
+                    "connectionNo": null,
+                    "objectName": "Water Meter",
+                    "type": "6",
+                    "controllerId": null,
+                    "count": null
+                  },
+                  "pressureIn": {},
+                  "pressureOut": {},
+                  "moisture": [
+                    {
+                      "objectId": 25,
+                      "sNo": 25.003,
+                      "name": "Moisture Sensor 3",
+                      "connectionNo": null,
+                      "objectName": "Moisture Sensor",
+                      "type": "5",
+                      "controllerId": null,
+                      "count": null
+                    },
+                    {
+                      "objectId": 25,
+                      "sNo": 25.004,
+                      "name": "Moisture Sensor 4",
+                      "connectionNo": null,
+                      "objectName": "Moisture Sensor",
+                      "type": "5",
+                      "controllerId": null,
+                      "count": null
+                    }
+                  ],
+                  "temperature": [],
+                  "soilTemperature": [],
+                  "humidity": [],
+                  "co2": []
+                }
+              ]
+            },
+            "live": {
+              "cC": "1234567890AB",
+              "cD": "2024-11-14",
+              "cT": "12:15:00",
+              "mC": "2400",
+              "2402": "1,1;2,2;3,3;4,3;5,3;6,3;7,3;8,3;9,3;10,3;11,3;12,3;13,3;14,3;15,3;16,3;17,3;18,3;",
+              "2403": "19,25.5,123456;20,1,;21,12.0,;22,10.0,;23,200.0,;24,200.0,;25,1,;25,1,;27,1,;28,1,;29,5,50;",
+              "2404": "1,20,12.5,19.5,1,230,240,235,11.1,11.2,12.3;1,20,12.5,19.5,1,230,240,235,11.1,11.2,12.3;",
+              "2405": "1,1;",
+              "2406": "10,-1,0,01:00:00,00:38:00,2.1;",
+              "2407": "1,400,1,00:05:00,00:05:00,10,20;",
+              "2408": "1,1.1,1,00:30:00,00:29:00,6,2,5,1,10,9,10:00:00,2,15000,00:00:00,00:00:00,1;",
+              "2409": "1,1.2,1,00:50:00,1;",
+              "2410": "1,1,10,29-11-24,10:00:00,30-11-24,1,100,10,11,1,10,11,,,;2,1,10,29-11-24,10:00:00,30-11-24,1,100,10,11,1,10,11,,,;3,1,10,29-11-24,10:00:00,30-11-24,1,100,10,11,1,10,11,,,;4,1,10,29-11-24,10:00:00,30-11-24,1,100,10,11,1,10,11,,,;",
+              "2412": "1,10,100000,100700,29-11-24,10:00:00,1;"
+            }
+          }
+        ]
+      }
+    ]
+  };
+  @override
+  void initState() {
+    payloadProvider = Provider.of<MqttPayloadProvider>(context,listen: false);
+    overAllPvd = Provider.of<OverAllUse>(context,listen: false);
+    _timer = Timer.periodic(const Duration(seconds: 15), (Timer timer){
+      if (mounted) { //
+        setState(() {
+          irrigationLineMode = !irrigationLineMode;
+          sourcePumpMode = !sourcePumpMode;
+          irrigationPumpMode = !irrigationPumpMode;
+          filtrationWidgetMode = !filtrationWidgetMode;
+          fertigationWidgetMode = !fertigationWidgetMode;
+        });
+      }
+    });
+    getData();
+    super.initState();
+  }
+
+  void getData() async{
+    print("getData");
+    // print('//////////////////////////////////////////get function called//////////////////////////');
+    if(payloadProvider.timerForIrrigationPump != null){
+      setState(() {
+        payloadProvider.timerForIrrigationPump!.cancel();
+        payloadProvider.timerForSourcePump!.cancel();
+        payloadProvider.timerForCentralFiltration!.cancel();
+        payloadProvider.timerForLocalFiltration!.cancel();
+        payloadProvider.timerForCentralFertigation!.cancel();
+        payloadProvider.timerForLocalFertigation!.cancel();
+        payloadProvider.timerForCurrentSchedule!.cancel();
+      });
+    }
+    // payloadProvider.clearData();
+    final prefs = await SharedPreferences.getInstance();
+    final userIdFromPref = prefs.getString('userId') ?? '';
+    // payloadProvider.editLoading(true);
+    try{
+      print("getData");
+      HttpService service = HttpService();
+      var getUserDetails = await service.postRequest('/user/dashboard', {'userId' : '4',});
+      // var getUserDetails = await service.postRequest('getCustomerDashboard', {'userId' : userIdFromPref,});
+
+      var jsonData1 = jsonDecode(getUserDetails.body);
+      print("jsonData1: $jsonData1");
+      Map<String, dynamic> jsonData =  newlivedata;
+
+      if(jsonData['code'] == 200){
+        payloadProvider.updatedashboard(jsonData);
+        if(jsonData['data'].isNotEmpty){
+          //Modified by saravanan
+          await Future.delayed(Duration.zero, () {
+          });
+          for(var i = 0;i < 2;i++){
+            Future.delayed(const Duration(seconds: 3),(){
+              autoRefresh();
+            });
+          }
+        }
+      }
+      print("getData complete");
+      payloadProvider.httpError = false;
+    }catch(e,stackTrace){
+      payloadProvider.httpError = true;
+      print(' Error overAll getData => ${e.toString()}');
+      print(' trace overAll getData  => ${stackTrace}');
+    }
+  }
+
+  void mqttConfigureAndConnect() {
+    MqttPayloadProvider payloadProvider = Provider.of<MqttPayloadProvider>(context,listen: false);
+    manager.initializeMQTTClient();
+    manager.connect();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    _timer.cancel();
+    super.dispose();
+  }
+
+  dynamic getPublishMessage(){
+    dynamic refersh = '';
+    if(![3,4].contains(!overAllPvd.takeSharedUserId ? payloadProvider.listOfSite[payloadProvider.selectedSite]['master'][payloadProvider.selectedMaster]['categoryId'] : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['categoryId'])){
+      refersh = jsonEncode({"3000":[{"3001":""}]});
+    }else{
+      refersh = jsonEncode({"sentSms": "#live"});
+      if(mounted){
+        setState(() {
+          payloadProvider.dataFetchingStatus = 2;
+        });
+        Future.delayed(const Duration(seconds: 10), () {
+          if(payloadProvider.dataFetchingStatus != 1) {
+            setState(() {
+              payloadProvider.dataFetchingStatus = 3;
+            });
+          }
+        });
+      }
+    }
+    return refersh;
+  }
+
+  dynamic getLinePauseResumeMessage(code){
+    var lineMessage = '';
+    switch (code){
+      case(0):{
+        lineMessage = '';
+      }
+      case(1):{
+        lineMessage = 'Paused Manually';
+      }
+      case(2):{
+        lineMessage = 'Scheduled Program Paused By StandAlone Program';
+      }
+      case(3):{
+        lineMessage = 'Paused By System Definition';
+      }
+      case(4):{
+        lineMessage = 'Paused By LowFlow Alarm';
+      }
+      case(5):{
+        lineMessage = 'Paused By HighFlow Alarm';
+      }
+      case(6):{
+        lineMessage = 'Paused By NoFlow Alarm';
+      }
+      case(7):{
+        lineMessage = 'Paused By EcHigh';
+      }
+      case(8):{
+        lineMessage = 'Paused By PhLow';
+      }
+      case(9):{
+        lineMessage = 'Paused By PhHigh';
+      }
+      case(10):{
+        lineMessage = 'Paused By PressureLow';
+      }
+      case(11):{
+        lineMessage = 'Paused By PressureHigh';
+      }
+      case(12):{
+        lineMessage = 'Paused By No Power Supply';
+      }
+      case(13):{
+        lineMessage = 'Paused By No Communication';
+      }
+    }
+    return lineMessage;
+  }
+
+  @override
+  Widget build(BuildContext context)
+  {
+    var selectedSite = payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite];
+    var selectedMaster = payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster];
+    var selectedLine = payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].config!.irrigationLine![payloadProvider.selectedLine];
+    var selectedfiltersite = payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].config!.filterSite;
+    var selectedfertilizer = payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].config!.irrigationLine![payloadProvider.selectedLine];
+
+    return ((payloadProvider.dashboardLiveInstance.data != null && payloadProvider.dashboardLiveInstance.data!.isNotEmpty)) ?
+    Scaffold(
+      body: SafeArea(child: Center(child: Column(
+        children: [
+          Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  IconButton(
+                      onPressed: (){
+                        if(overAllPvd.fromDealer) {
+                          MqttManager().onDisconnected();
+                          Future.delayed(Duration.zero, () {
+                            payloadProvider.clearData();
+                            overAllPvd.userId = 0;
+                            overAllPvd.controllerId = 0;
+                            overAllPvd.controllerType = 0;
+                            overAllPvd.imeiNo = '';
+                            overAllPvd.customerId = 0;
+                            overAllPvd.sharedUserId = 0;
+                            overAllPvd.takeSharedUserId = false;
+                          });
+                          Navigator.of(context).pop();
+                        } else {
+                          _scaffoldKey.currentState?.openDrawer();
+                        }
+                      },
+                      icon: Icon(!overAllPvd.fromDealer ? Icons.menu : Icons.arrow_back,size: 25,)
+                  ),
+                  InkWell(
+                    onTap: (){
+                      print('payloadProvider.dashboardLiveInstance.data!.length: ${payloadProvider.dashboardLiveInstance.data?.length}');
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context){
+                            return StatefulBuilder(builder: (context, StateSetter stateSetter) {
+                              return Container(
+                                height: 400,
+                                decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20))
+                                ),
+                                child: Column(
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text('List of Site',style: TextStyle(fontSize: 20),),
+                                    ),
+                                    Expanded(
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          children: [
+
+                                            for(var site = 0;site < payloadProvider.dashboardLiveInstance.data!.length;site++)
+                                              ListTile(
+                                                title: Text(payloadProvider.dashboardLiveInstance.data![site].groupName ?? ''),
+                                                trailing: IntrinsicWidth(
+                                                  child: Radio(
+                                                    value: 'site-${site}',
+                                                    groupValue: payloadProvider.selectedSiteString,
+                                                    onChanged: (value) {
+                                                      stateSetter((){
+                                                        setState(() {
+                                                          var unSubscribeTopic = 'FirmwareToApp/${overAllPvd.imeiNo}';
+                                                          payloadProvider.selectedSite = site;
+                                                          payloadProvider.selectedSiteString = value!;
+                                                          payloadProvider.selectedMaster = 0;
+                                                          overAllPvd.takeSharedUserId = false;
+                                                          var selectedMasterData = payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster];
+                                                          overAllPvd.imeiNo = selectedMasterData.deviceId!;
+                                                          overAllPvd.controllerId = selectedMasterData.controllerId!;
+                                                          overAllPvd.controllerType = selectedMasterData.categoryId!;
+                                                          if(selectedMasterData.config!.irrigationLine != null){
+                                                            payloadProvider.editLineData(selectedMasterData.config!.irrigationLine);
+                                                          }
+                                                          manager.topicToUnSubscribe(unSubscribeTopic);
+
+                                                          print("controllerType ==> ${overAllPvd.controllerType}");
+                                                          payloadProvider.updateReceivedPayload(jsonEncode([3,4].contains(overAllPvd.controllerType) ? {"mC":"LD01",'cM' : "selectedMasterData['liveMessage']"} : selectedMasterData),true);
+                                                          if([3,4].contains(overAllPvd.controllerType)) {
+                                                            if(payloadProvider.dataFetchingStatus != 1) {
+                                                              // payloadProvider.lastUpdate = DateTime.parse("${selectedMasterData['liveSyncDate']} ${selectedMasterData['liveSyncTime']}");
+                                                              payloadProvider.lastUpdate = DateTime.parse("12-01-2025 00:00:00}");
+                                                            }
+                                                          }
+                                                           manager.topicToSubscribe('FirmwareToApp/${overAllPvd.imeiNo}');
+
+                                                          Future.delayed(const Duration(milliseconds: 300),(){
+                                                            Navigator.pop(context);
+                                                          });
+                                                        });
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            if(payloadProvider.listOfSharedUser.isNotEmpty)
+                                              for(var sharedUser = 0;sharedUser < payloadProvider.listOfSharedUser['users'].length;sharedUser++)
+                                                if(payloadProvider.listOfSharedUser['devices'].isNotEmpty)
+                                                  ListTile(
+                                                    title: Text(payloadProvider.listOfSharedUser['users'][sharedUser]['userName']),
+                                                    trailing: IntrinsicWidth(
+                                                      child: Radio(
+                                                        value: 'sharedUser-${sharedUser}',
+                                                        groupValue: payloadProvider.selectedSiteString,
+                                                        onChanged: (value) async{
+                                                          try{
+                                                            HttpService service = HttpService();
+                                                            var getSharedUserDetails = await service.postRequest('getSharedUserDeviceList', {'userId' : overAllPvd.userId,"sharedUser" : payloadProvider.listOfSharedUser['users'][sharedUser]['userId']});
+                                                            stateSetter((){
+                                                              setState((){
+                                                                var unSubscribeTopic = 'FirmwareToApp/${overAllPvd.imeiNo}';
+                                                                payloadProvider.selectedSite = sharedUser;
+                                                                payloadProvider.selectedSiteString = value!;
+                                                                payloadProvider.selectedMaster = 0;
+                                                                var jsonDataSharedDevice = jsonDecode(getSharedUserDetails.body);
+                                                                // print('code is =======================       ${jsonDataSharedDevice['code']}      ========================');
+                                                                if(jsonDataSharedDevice['code'] == 200){
+                                                                  payloadProvider.listOfSharedUser = jsonDataSharedDevice['data'];
+                                                                  // print('getSharedUserDeviceList : ${payloadProvider.listOfSharedUser}');
+                                                                  if(payloadProvider.listOfSharedUser['devices'].isNotEmpty){
+                                                                    setState(() {
+                                                                      payloadProvider.selectedMaster = 0;
+                                                                      var imeiNo = payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['deviceId'];
+                                                                      var controllerId = payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['controllerId'];
+                                                                      overAllPvd.sharedUserId = jsonDataSharedDevice['data']['users'][0]['userId'];
+                                                                      overAllPvd.takeSharedUserId = true;
+                                                                      overAllPvd.imeiNo = imeiNo;
+                                                                      overAllPvd.controllerId = controllerId;
+                                                                      overAllPvd.controllerType = payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['categoryId'];
+                                                                      if(payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['irrigationLine'] != null){
+                                                                        payloadProvider.editLineData(payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['irrigationLine']);
+                                                                      }
+                                                                      payloadProvider.updateReceivedPayload(jsonEncode([3,4].contains(overAllPvd.controllerType) ? {"mC":"LD01",'cM' : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['liveMessage']} : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]),true);
+                                                                      if([3,4].contains(overAllPvd.controllerType)) {
+                                                                        if(payloadProvider.dataFetchingStatus != 1) {
+                                                                          payloadProvider.lastUpdate = DateTime.parse("${payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['liveSyncDate']} ${payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['liveSyncTime']}");
+                                                                        }
+                                                                      }
+                                                                      payloadProvider.editSubscribeTopic('FirmwareToApp/$imeiNo');
+                                                                      payloadProvider.editPublishTopic('AppToFirmware/$imeiNo');
+                                                                      payloadProvider.editPublishMessage(getPublishMessage());
+                                                                      manager.topicToUnSubscribe(unSubscribeTopic);
+                                                                      manager.topicToSubscribe('FirmwareToApp/${overAllPvd.imeiNo}');
+                                                                      Future.delayed(const Duration(milliseconds: 300),(){
+                                                                        Navigator.pop(context);
+                                                                      });
+                                                                    });
+                                                                    for(var i = 0;i < 2;i++){
+                                                                      Future.delayed(const Duration(seconds: 3),(){
+                                                                        autoRefresh();
+                                                                      });
+                                                                    }
+                                                                  }
+                                                                }
+                                                                overAllPvd.editImeiNo(payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['deviceId']);
+                                                                overAllPvd.editControllerId(payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['controllerId']);
+                                                                overAllPvd.editControllerType(payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['categoryId']);
+                                                              });
+                                                            });
+                                                          }catch(e,stackTrace){
+                                                            setState(() {
+                                                              payloadProvider.httpError = true;
+                                                            });
+                                                            print(' Site selecting Error getSharedUserDeviceList  => ${e.toString()}');
+                                                            print(' Site selecting trace getSharedUserDeviceList  => ${stackTrace}');
+                                                          }
+                                                          // print('after => ${overAllPvd.userId}');
+
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            });
+                          }
+                      );
+                    },
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('${!overAllPvd.takeSharedUserId ? payloadProvider.listOfSite[payloadProvider.selectedSite]['groupName'] : payloadProvider.listOfSharedUser['users'][payloadProvider.selectedSite]['userName']}',style: const TextStyle(fontSize: 14,overflow: TextOverflow.ellipsis,fontWeight: FontWeight.bold),),
+                              Text('Last Sync : \n${payloadProvider.lastUpdate.day}/${payloadProvider.lastUpdate.month}/${payloadProvider.lastUpdate.year} ${payloadProvider.lastUpdate.hour}:${payloadProvider.lastUpdate.minute}:${payloadProvider.lastUpdate.second}',style: const TextStyle(fontWeight: FontWeight.normal,color: Colors.black,fontSize: 12,overflow: TextOverflow.ellipsis),),
+                            ],
+                          ),
+                          const SizedBox(
+                              width: 15,
+                              child: Icon(Icons.arrow_drop_down_sharp)
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  if(payloadProvider.currentSchedule.isNotEmpty)
+                    if(payloadProvider.currentSchedule.any((element) => !element['ProgName'].contains('StandAlone')))
+                      Row(
+                        children: [
+                          getActiveObjects(
+                              context: context,
+                              active: payloadProvider.active == 1 ? true : false,
+                              title: 'All',
+                              onTap: (){
+                                setState(() {
+                                  payloadProvider.active = 1;
+                                });
+                              },
+                              mode: payloadProvider.active
+                          ),
+                          getActiveObjects(
+                              context: context,
+                              active: payloadProvider.active == 2 ? true : false,
+                              title: 'Active',
+                              onTap: (){
+                                setState(() {
+                                  payloadProvider.active = 2;
+                                });
+                              },
+                              mode: payloadProvider.active
+                          ),
+
+                        ],
+                      ),
+
+                  // Modified by saravanan
+                  buildPopUpMenuButton(
+                      context: context,
+                      dataList: ([1,2].contains(overAllPvd.controllerType) && overAllPvd.fromDealer)
+                          ? ["Standalone", "Node status", "Node details", "Sent and Received", "Controller Info"]
+                          : [1,2].contains(overAllPvd.controllerType)
+                          ? ["Standalone", "Node status", "Node details"]
+                          : ["Sent and Received", "Controller Info"],
+                      onSelected: (newValue){
+                        if(newValue == "Standalone") {
+                          showGeneralDialog(
+                            barrierLabel: "Side sheet",
+                            barrierDismissible: true,
+                            // barrierColor: const Color(0xff6600),
+                            transitionDuration: const Duration(milliseconds: 300),
+                            context: context,
+                            pageBuilder: (context, animation1, animation2) {
+                              return Align(
+                                alignment: Alignment.centerRight,
+                                child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    // child: ManualOperationScreen(userId: overAllPvd.userId, controllerId: overAllPvd.controllerId, customerId: overAllPvd.customerId, deviceId: overAllPvd.imeiNo,)
+                                ),
+                              );
+                            },
+                            transitionBuilder: (context, animation1, animation2, child) {
+                              return SlideTransition(
+                                position: Tween(begin: const Offset(1, 0), end: const Offset(0, 0)).animate(animation1),
+                                child: child,
+                              );
+                            },
+                          );
+                        }
+                        // else if(newValue == "Node status") {
+                        //   showGeneralDialog(
+                        //     barrierLabel: "Side sheet",
+                        //     barrierDismissible: true,
+                        //     barrierColor: const Color(0xff66000000),
+                        //     transitionDuration: const Duration(milliseconds: 300),
+                        //     context: context,
+                        //     pageBuilder: (context, animation1, animation2) {
+                        //       return Align(
+                        //         alignment: Alignment.centerRight,
+                        //         child: Material(
+                        //           elevation: 15,
+                        //           color: Colors.transparent,
+                        //           borderRadius: BorderRadius.zero,
+                        //           child: Consumer<MqttPayloadProvider>(
+                        //               builder: (context, mqttPayloadProvider, _) {
+                        //                 return NodeStatus();
+                        //               }
+                        //           ),
+                        //         ),
+                        //       );
+                        //     },
+                        //     transitionBuilder: (context, animation1, animation2, child) {
+                        //       return SlideTransition(
+                        //         position: Tween(begin: const Offset(1, 0), end: const Offset(0, 0)).animate(animation1),
+                        //         child: child,
+                        //       );
+                        //     },
+                        //   );
+                        // }
+                        else if(newValue == "Node details") {
+                          // showNodeDetailsBottomSheet(context: context);
+                        }
+                        else if(newValue == "Sent and Received") {
+                          // Navigator.push(context, MaterialPageRoute(builder: (context) => SentAndReceived()));
+                        }
+                        else if(newValue == "Controller Info") {
+                          showPasswordDialog(context, _correctPassword);
+                        }
+                      },
+                      child: ([1,2].contains(overAllPvd.controllerType) || overAllPvd.fromDealer) ? const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 5.0),
+                        child: Icon(Icons.more_vert),
+                      ) : ![1,2].contains(overAllPvd.controllerType) ? Container() : Container()
+                  )
+                ],
+              ),
+              (payloadProvider.listOfSite.isNotEmpty
+                  ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master!.length > 1 || [1,2].contains(overAllPvd.controllerType)
+                  : true)
+                  ? Container(
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(20)),
+                  // boxShadow: customBoxShadow
+                ),
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Theme.of(context).primaryColor
+                      ),
+                      child: PopupMenuButton<int>(
+                        offset: const Offset(0,50),
+                        initialValue: payloadProvider.selectedMaster,
+                        onSelected: (int master) {
+                          setState(() {
+                            payloadProvider.selectedMaster = master;
+                          });
+                        },
+                        //every ternary operator  ? user device : sharedevice details
+                        itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                          for(var master = 0;master < (!overAllPvd.takeSharedUserId ?  payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master : payloadProvider.dashboardLiveInstance.data!)!.length;master++)
+                            PopupMenuItem<int>(
+                              value: master,
+                              child: Text(!overAllPvd.takeSharedUserId
+                                  ? '${payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master?[master].deviceName ?? ''}\n${payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master?[master].deviceId} ${[1,2].contains(payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master?[master].categoryId) ? '(version : ${payloadProvider.version})' : ''}'
+                                  : '${payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master?[master].deviceName ?? ''}\n ${[1,2].contains(payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master?[master].categoryId ?? '') ? '(version : ${payloadProvider.version})' : ''}'
+                              ),
+                              onTap: ()async{
+                                var unSubscribeTopic = 'FirmwareToApp/${overAllPvd.imeiNo}';
+                                payloadProvider.selectedMaster = master;
+                                overAllPvd.editImeiNo((!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].deviceName : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['deviceId']));
+                                overAllPvd.editControllerType((!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].categoryId : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['categoryId']));
+                                overAllPvd.editControllerId((!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].controllerId : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['controllerId']));
+                                var selectedMaster = !overAllPvd.takeSharedUserId
+                                    ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster]
+                                    : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster];
+
+                                manager.topicToUnSubscribe('FirmwareToApp/${overAllPvd.imeiNo}');
+
+                                payloadProvider.updateReceivedPayload(
+                                    jsonEncode([3,4].contains(overAllPvd.controllerType) ? {"mC":"LD01",'cM' : selectedMaster['liveMessage']} : selectedMaster),true);
+                                if([3,4].contains(overAllPvd.controllerType)) {
+                                  payloadProvider.lastUpdate = DateTime.parse("${selectedMaster['liveSyncDate']}${selectedMaster['liveSyncTime']}");
+                                }
+                                for(var i = 0;i < 1;i++){
+                                  await Future.delayed(const Duration(seconds: 3));
+                                  autoRefresh();
+                                }
+                              },
+                            ),
+                        ],
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: Image.asset('assets/images/choose_controller.png'),
+                            ),
+                            Column(
+                              children: [
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.3,
+                                  //                 payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster]
+                                  child: Text('${(!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].config?.irrigationLine![payloadProvider.selectedLine].irrigationLine.name :    payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].deviceName )}'
+                                    ,style: const TextStyle(fontSize: 12,color: Colors.white,overflow: TextOverflow.ellipsis),),
+                                ),
+                                Row(
+                                  children: [
+                                    const Icon(Icons.wifi,color: Colors.orange,size: 20,),
+                                    const SizedBox(width: 10,),
+                                    Text('${payloadProvider.wifiStrength}',style: const TextStyle(color: Colors.white),)
+                                  ],
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if(![3,4].contains(overAllPvd.controllerType))
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 5,vertical: 5),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.white
+                        ),
+                        child: PopupMenuButton<int>(
+                          offset: const Offset(0,50),
+                          initialValue: payloadProvider.selectedLine,
+                          onSelected: (int line) {
+                            setState(() {
+                              payloadProvider.selectedLine = line;
+                            });
+                          },
+                          itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
+                            for(var line = 0;line < payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].config!.irrigationLine!.length;line++)
+                              PopupMenuItem<int>(
+                                value: line,
+                                child: Row(
+                                  children: [
+                                    Text('${payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].config!.irrigationLine![line].irrigationLine.name}'),
+                                    const SizedBox(width: 10,),
+                                    if(payloadProvider.lineData[line]['mode'] != 0)
+                                      const Icon(Icons.info,color: Colors.red,)
+                                  ],
+                                ),
+                                onTap: (){
+                                  setState(() {
+                                    payloadProvider.selectedLine = line;
+                                  });
+                                },
+                              ),
+                          ],
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: Image.asset('assets/images/irrigation_line1.png'),
+                              ),
+                              SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.25,
+                                  child: Text('${payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master?[payloadProvider.selectedMaster].config?.irrigationLine?[0].irrigationLine.name}',style: const TextStyle(fontSize: 12,color: Colors.black,overflow: TextOverflow.ellipsis),)
+                              ),
+                              if(payloadProvider.lineData.any((line) => line['mode'] != 0))
+                                const Icon(Icons.info,color: Colors.red,)
+                            ],
+                          ),
+                        ),
+                      ),
+                    if(![3,4].contains(overAllPvd.controllerType))
+                      InkWell(
+                        onTap:  (){
+                          showModalBottomSheet(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return Consumer<MqttPayloadProvider>(
+                                builder: (context, payloadProvider, child) {
+                                  return Container(
+                                    height: 300,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        topRight: Radius.circular(20),
+                                      ),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            const Padding(
+                                              padding: EdgeInsets.symmetric(horizontal: 10),
+                                              child: Text(
+                                                'Alarms',
+                                                style: TextStyle(fontSize: 20),
+                                              ),
+                                            ),
+                                            IconButton(
+                                              onPressed: () {
+                                                // Close the bottom sheet
+                                                Navigator.pop(context);
+                                              },
+                                              icon: const Icon(Icons.cancel),
+                                            ),
+                                          ],
+                                        ),
+                                        for(var alarm = 0;alarm < payloadProvider.alarmList.length;alarm++)
+                                          ListTile(
+                                            title: Text('${getAlarmMessage[payloadProvider.alarmList[alarm]['AlarmType']]}'),
+                                            subtitle: Text('Location : ${payloadProvider.alarmList[alarm]['Location']}'),
+                                            trailing: (overAllPvd.takeSharedUserId ?  (payloadProvider.userPermission[0]['status'] || payloadProvider.userPermission[5]['status']) : true) ? MaterialButton(
+                                              color: payloadProvider.alarmList[alarm]['Status'] == 1 ? Colors.orange : Colors.red,
+                                              onPressed: (){},
+                                              // onPressed: DashboardPayloadHandler(manager: manager, payloadProvider: payloadProvider, overAllPvd: overAllPvd, setState: setState, context: context,index: alarm).alarmReset,
+                                              // onPressed: () {
+                                              //   String payload =  '${i['S_No']}';
+                                              //   String payLoadFinal = jsonEncode({
+                                              //     "4100": [{"4101": payload}]
+                                              //   });
+                                              //   MqttManager().publish(payLoadFinal, payloadProvider.publishTopic);
+                                              // },
+                                              child: const Text('Reset',style: TextStyle(color: Colors.white),),
+                                            ) : null,
+                                          )
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          );
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Stack(
+                            children: [
+                              const Icon(Icons.notifications,color: Colors.black,size: 30,),
+                              if(payloadProvider.alarmList.isNotEmpty)
+                                const Positioned(
+                                  top: 0,
+                                  left: 10,
+                                  child: CircleAvatar(
+                                    radius: 8,
+                                    backgroundColor: Colors.red,
+                                    child: Center(
+                                        child: Text('1',style: TextStyle(color: Colors.white,fontSize: 12),)
+                                    ),
+                                  ),
+                                )
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              )
+                  : Container(),
+            ],
+          ),
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: onRefresh,
+              child: [1,2].contains(overAllPvd.controllerType) ? SingleChildScrollView(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(topRight: Radius.circular(30),topLeft: Radius.circular(30)),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if(payloadProvider.tryingToGetPayload > 3)
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.red
+                            ),
+                            child: const Center(
+                              child: Text('Please Check Internet In Your Controller.....',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+                            ),
+                          ),
+                        // if(payloadProvider.powerSupply == 0)
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 5),
+                          margin: const EdgeInsets.symmetric(horizontal: 10),
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(5),
+                              color: Colors.deepOrange
+                          ),
+                          child: Center(
+                            child: Text('No Power To ${!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].deviceName : payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].deviceName}',style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+                          ),
+                        ),
+                        // if(![3,4].contains(overAllPvd.controllerType))
+                        ListTile(
+                          leading: SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: Image.asset('assets/images/irrigation_line1.png'),
+                          ),
+                          subtitle: getLinePauseResumeMessage(selectedLine.irrigationLine.mode) == '' ? null : Text('${getLinePauseResumeMessage(selectedLine.irrigationLine.mode)}',style: const TextStyle(color: Colors.red,fontWeight: FontWeight.bold),),
+                          title: Text('${selectedLine.irrigationLine.name}',style: const TextStyle(fontSize: 12,color: Colors.black),),
+                          trailing: ([0,1].contains(selectedLine) && (overAllPvd.takeSharedUserId ?  (payloadProvider.userPermission[0]['status'] || payloadProvider.userPermission[4]['status']) : true))
+                              ? MaterialButton(
+                              color: selectedLine.irrigationLine.mode == 0 ? Colors.orange : Colors.yellow,
+                              onPressed:(){},
+                              // onPressed: DashboardPayloadHandler(manager: manager, payloadProvider: payloadProvider, overAllPvd: overAllPvd, setState: setState, context: context).irrigationLinePauseResume,
+                              child: Text(selectedLine.irrigationLine.mode == 0 ? 'Pause' : 'Resume',style: TextStyle(color: selectedLine.irrigationLine.mode == 0 ? Colors.white : Colors.black),)
+                            // : loadingButton(),
+                          ) : null,
+                           // subtitle: Text("subtile"),
+                          // title: Text("title"),
+                          // trailing: Text("trailing"),
+                        ),
+                        if([3,4].contains(overAllPvd.controllerType))
+                        Container()//  PumpControllerDashboard(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : userId, deviceId: overAllPvd.imeiNo, controllerId: overAllPvd.controllerId, selectedSite: payloadProvider.selectedSite, selectedMaster: payloadProvider.selectedMaster,)
+                        else
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              if(sourcePumpMode)
+    Container(child: Text("true irrigationPumpMode"),)// inletPumpDashBoardTrue(active: 1, selectedLine: payloadProvider.selectedLine, imeiNo: overAllPvd.imeiNo,)
+                              else
+                                Container(child: Text("true irrigationPumpMode"),),// inletPumpDashBoardFalse(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine, imeiNo: overAllPvd.imeiNo,),
+                              if(sourcePumpMode)
+  Container(child: Text("true irrigationPumpMode"),) //SourceTypeDashBoardTrue(active: 1, selectedLine: payloadProvider.selectedLine, imeiNo: overAllPvd.imeiNo,)
+                              else
+                                Container(child: Text("true irrigationPumpMode"),) ,//SourceTypeDashBoardFalse(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine, imeiNo: overAllPvd.imeiNo,),
+                              // if(sourcePumpMode)
+                              //   SourcePumpDashBoardTrue(active: 1, selectedLine: payloadProvider.selectedLine, imeiNo: overAllPvd.imeiNo,)
+                              // else
+                              //   SourcePumpDashBoardFalse(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine, imeiNo: overAllPvd.imeiNo,),
+                              // if(sourcePumpMode)
+                              //   outletPumpDashBoardTrue(active: 1, selectedLine: payloadProvider.selectedLine, imeiNo: overAllPvd.imeiNo,)
+                              // else
+                              //   outletPumpDashBoardFalse(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine, imeiNo: overAllPvd.imeiNo,),
+                              if(irrigationPumpMode)
+  Container(child: Text("true irrigationPumpMode"),)//IrrigationPumpDashBoardTrue(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine, imeiNo: overAllPvd.imeiNo,)
+                              else
+                                Container(child: Text("true irrigationPumpMode"),),// IrrigationPumpDashBoardFalse(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine, imeiNo: overAllPvd.imeiNo,),
+
+                              for(var i = 0;i < payloadProvider.filtersCentral.length;i++)
+                                filterFertilizerLineFiltering(active: payloadProvider.active, siteIndex: i, selectedLine: payloadProvider.selectedLine, programName: payloadProvider.filtersCentral[i]['Program'], siteData: payloadProvider.filtersCentral[i], centralOrLocal: 1, filter_Fertilizer_line: 1),
+                              for(var i = 0;i < payloadProvider.filtersLocal.length;i++)
+                                filterFertilizerLineFiltering(active: payloadProvider.active, siteIndex: i, selectedLine: payloadProvider.selectedLine, programName: payloadProvider.filtersLocal[i]['Program'], siteData: payloadProvider.filtersLocal[i], centralOrLocal: 2,filter_Fertilizer_line: 1),
+                              for(var i = 0;i < payloadProvider.fertilizerCentral.length;i++)
+                                filterFertilizerLineFiltering(active: payloadProvider.active, siteIndex: i, selectedLine: payloadProvider.selectedLine, programName: payloadProvider.fertilizerCentral[i]['Program'], siteData: payloadProvider.fertilizerCentral[i], centralOrLocal: 1,filter_Fertilizer_line: 2),
+                              for(var i = 0;i < payloadProvider.fertilizerLocal.length;i++)
+                                filterFertilizerLineFiltering(active: payloadProvider.active, siteIndex: i, selectedLine: payloadProvider.selectedLine, programName: payloadProvider.fertilizerLocal[i]['Program'], siteData: payloadProvider.fertilizerLocal[i], centralOrLocal: 2,filter_Fertilizer_line: 2),
+                              for(var line = 1;line < payloadProvider.lineData.length;line++)
+                                if(payloadProvider.selectedLine == 0 || line == payloadProvider.selectedLine)
+                                  if(irrigationLineMode)
+                                   Container(child: Text("true irrigationLineMode"),) //IrrigationLineTrue(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine, currentLine: line, payloadProvider: payloadProvider)
+                                  else
+                                    Container(child: Text("true irrigationLineMode"),),//IrrigationLineFalse(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine, currentLine: line, payloadProvider: payloadProvider),
+                              SizedBox(height: MediaQuery.of(context).size.height * 0.3,),
+                            ],
+                          )
+                      ],
+                    ),
+                  )
+              ) : Container(child: Text("true irrigationPumpMode"),),// PumpControllerDashboard(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : userId, deviceId: overAllPvd.imeiNo, controllerId: overAllPvd.controllerId, selectedSite: payloadProvider.selectedSite, selectedMaster: payloadProvider.selectedMaster,),
+            ),
+          ),
+        ],
+      ))),
+    ) : Scaffold(
+        body: Center(
+            child: Text(
+              '${payloadProvider.dashboardLiveInstance.message}',
+              style: const TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
+            ))
+      // Center(child: CircularProgressIndicator(
+      //   ),),
+    );
+  }
+
+  Widget getActiveObjects({required BuildContext context,required bool active,required String title,required Function()? onTap,required int mode}){
+    List<Color> gradient = active == true
+        ? [const Color(0xff22414C),const Color(0xff294C5C)]
+        : [];
+    return  InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 5),
+        height: (30 * getTextScaleFactor(context)).toDouble(),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(mode == 1 ? 4 : 0),
+              bottomLeft: Radius.circular(mode == 1 ? 4 : 0),
+              topRight: Radius.circular(mode == 2 ? 4 : 0),
+              bottomRight: Radius.circular(mode == 2 ? 4 : 0),
+            ),
+            gradient:  active == true ? LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: gradient,
+            ) : null,
+            color: active == false ? const Color(0xffECECEC) : null
+        ),
+        child: Center(child: Text(title,style: TextStyle(fontWeight: FontWeight.bold,color: active == true ? Colors.white : Colors.black),)),
+      ),
+    );
+  }
+
+  int getFilter(filterStatus,BuildContext context,programStatus){
+    int mode = 0;
+    if(filterStatus == 1){
+      mode = 1;
+    }else if(filterStatus == 2){
+      mode = 2;
+    }
+    // else if(getWaterPipeStatus(context) == 0){
+    //   mode = 0;
+    // }
+    else if(filterStatus == 0){
+      mode = 3;
+    }
+    if(programStatus == ''){
+      mode = 0;
+    }
+    return mode;
+  }
+  void autoRefresh()async{
+    // manager.subscribeToTopic('FirmwareToApp/${overAllPvd.imeiNo}');
+    // manager.publish(payloadProvider.publishMessage,'AppToFirmware/${overAllPvd.imeiNo}');
+    // setState(() {
+    //   payloadProvider.tryingToGetPayload += 1;
+    // });
+  }
+  Future onRefresh() async{
+    if(manager.isConnected){
+      autoRefresh();
+    }
+    if (mounted) {
+      setState(() {});
+    }
+    return Future.delayed(const Duration(seconds: 5));
+  }
+  getTextScaleFactor(context){
+    return MediaQuery.of(context).textScaleFactor;
+  }
+  Widget loadingButton(){
+    return const SizedBox(
+      width: 20,
+      height: 20,
+      child: const LoadingIndicator(
+        colors: [
+          Colors.white,
+          Colors.white,
+        ],
+        indicatorType: Indicator.ballPulse,
+      ),
+    );
+  }
+  Widget filterFertilizerLineFiltering({
+    required int active,
+    required int siteIndex,
+    required int selectedLine,
+    required int centralOrLocal,
+    required int filter_Fertilizer_line,
+    required String programName,
+    required dynamic siteData,
+    dynamic currentLine,
+  }){
+    MqttPayloadProvider payloadProvider = Provider.of<MqttPayloadProvider>(context,listen: false);
+    Widget filterWidget = Container();
+    Widget fertilizerWidget = Container();
+    // Widget filterWidget = filtrationWidgetMode
+    //     ? FiltrationSiteTrue(siteIndex: siteIndex, centralOrLocal: centralOrLocal, selectedLine: selectedLine,)
+    //     : FiltrationSiteFalse(siteIndex: siteIndex, centralOrLocal: centralOrLocal, selectedLine: selectedLine,);
+    // Widget fertilizerWidget = fertigationWidgetMode
+    //     ? FertilizerSiteTrue(siteIndex: siteIndex, centralOrLocal: centralOrLocal,selectedLine: selectedLine,)
+    //     : FertilizerSiteFalse(siteIndex: siteIndex, centralOrLocal: centralOrLocal,selectedLine: selectedLine,);
+    Widget widget = Container();
+    if(active == 1 && selectedLine == 0){
+      widget = filter_Fertilizer_line == 1 ? filterWidget : fertilizerWidget;
+    }
+    else if(active == 1 && selectedLine != 0 && (siteData['Location'] ?? siteData['Line']).contains(payloadProvider.lineData[selectedLine]['id'])){
+      widget = filter_Fertilizer_line == 1 ? filterWidget : fertilizerWidget;
+    }
+    else if(active == 2 && programName != '' && selectedLine == 0){
+      widget = filter_Fertilizer_line == 1 ? filterWidget : fertilizerWidget;
+    }else if(active == 2 && programName != '' && selectedLine != 0 && (siteData['Location'] ?? siteData['Line']).contains(payloadProvider.lineData[selectedLine]['id'])){
+      widget = filter_Fertilizer_line == 1 ? filterWidget : fertilizerWidget;
+    }
+    return widget;
+  }
+
+  void sideSheet({
+    required MqttPayloadProvider payloadProvider,
+    required selectedTab,
+    required OverAllUse overAllPvd
+  }) {
+    showGeneralDialog(
+      barrierLabel: "Side sheet",
+      barrierDismissible: true,
+      transitionDuration: const Duration(milliseconds: 300),
+      context: context,
+      pageBuilder: (context, animation1, animation2) {
+        return Align(
+          alignment: Alignment.centerRight,
+          child: Material(
+            elevation: 15,
+            color: Colors.transparent,
+            borderRadius: BorderRadius.zero,
+            child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter stateSetter) {
+                return SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Scaffold(
+                    floatingActionButton: InkWell(
+                      onTap: (){
+                        Navigator.pop(context);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            boxShadow: customBoxShadow
+                        ),
+                        height: 60,
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Icon(Icons.keyboard_double_arrow_left),
+                            Text('Go Back'),
+                          ],
+                        ),
+                      ),
+                    ),
+                    floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+                    body: Container(
+                      padding: const EdgeInsets.all(3),
+                      // margin: EdgeInsets.all(10),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      height: double.infinity,
+                      width:  MediaQuery.of(context).size.width,
+                      child: const SingleChildScrollView(
+                        // child: Column(
+                        //   crossAxisAlignment: CrossAxisAlignment.start,
+                        //   mainAxisSize: MainAxisSize.min,
+                        //   children: [
+                        //     if(selectedTab == 0)
+                        //       CurrentScheduleForMobile(manager: manager, deviceId: '${overAllPvd.imeiNo}',),
+                        //     if(selectedTab == 1)
+                        //       NextScheduleForMobile(),
+                        //     if(selectedTab == 2)
+                        //       ScheduleProgramForMobile(manager: manager, deviceId: '${overAllPvd.imeiNo}', selectedLine: payloadProvider.selectedLine, userId: overAllPvd.userId, controllerId: overAllPvd.controllerId,),
+                        //   ],
+                        // ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, animation1, animation2, child) {
+        return SlideTransition(
+          position: Tween(begin: const Offset(1, 0), end: const Offset(0, 0)).animate(animation1),
+          child: child,
+        );
+      },
+    );
+  }
+}
+
+Widget getLoadingWidget({
+  required BuildContext context,
+  required double controllerValue
+}){
+  return Container(
+    color: Colors.white,
+    width: MediaQuery.of(context).size.width,
+    height: MediaQuery.of(context).size.height,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        const Text('Loading....',style: TextStyle(fontSize: 24,color: Colors.black),),
+        Transform.rotate(
+          angle: 6.28 * controllerValue,
+          child: const Icon(Icons.hourglass_bottom,color: Colors.black,),
+        )
+      ],
+    ),
+  );
+}
+void showPasswordDialog(BuildContext context, correctPassword) {
+  final TextEditingController _passwordController = TextEditingController();
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Enter Password'),
+        content: TextField(
+          controller: _passwordController,
+          obscureText: true,
+          decoration: const InputDecoration(
+            labelText: 'Password',
+            border: OutlineInputBorder(),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              final enteredPassword = _passwordController.text;
+
+              if (enteredPassword == correctPassword) {
+                Navigator.of(context).pop(); // Close the dialog
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => ResetVerssion()),
+                // );
+              } else {
+                Navigator.of(context).pop(); // Close the dialog
+                showErrorDialog(context);
+              }
+            },
+            child: const Text('Submit'),
+          ),
+        ],
+      );
+    },
+  );
+}
+void showErrorDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Error'),
+        content: const Text('Incorrect password. Please try again.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      );
+    },
+  );
+}
+void stayAlert({required BuildContext context,required MqttPayloadProvider payloadProvider,required String message}){
+  GlobalSnackBar.show(context, message, int.parse(payloadProvider.messageFromHw['Code']));
+  // showDialog(context: context, builder: (context){
+  //   return AlertDialog(
+  //     title: Text('Message From Hardware'),
+  //     content: Text('${payloadProvider.messageFromHw}'),
+  //     actions: [
+  //       TextButton(
+  //           onPressed: (){
+  //             Navigator.pop(context);
+  //           },
+  //           child: Text('OK')
+  //       )
+  //     ],
+  //   );
+  // });
+}
+
+class Pump extends CustomPainter {
+  final double rotationAngle;
+  final int mode;
+  Pump({required this.rotationAngle,required this.mode});
+
+  List<Color> pipeColor = const [Color(0xff166890), Color(0xff45C9FA), Color(0xff166890)];
+  List<Color> bodyColor = const [Color(0xffC7BEBE), Colors.white, Color(0xffC7BEBE)];
+  List<Color> headColorOn = const [Color(0xff097E54), Color(0xff10E196), Color(0xff097E54)];
+  List<Color> headColorOff = const [Color(0xff540000), Color(0xffB90000), Color(0xff540000)];
+  List<Color> headColorFault = const [Color(0xffF66E21), Color(0xffFFA06B), Color(0xffF66E21)];
+  List<Color> headColorIdle = [Colors.grey, Colors.grey.shade300, Colors.grey];
+
+  List<Color> getMotorColor(){
+    if(mode == 1){
+      return headColorOn;
+    }else if(mode == 3){
+      return headColorOff;
+    }else if(mode == 2){
+      return headColorFault;
+    }else{
+      return headColorIdle;
+    }
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+
+    Paint motorHead = Paint();
+    Radius headRadius = const Radius.circular(5);
+    motorHead.color = const Color(0xff097B52);
+    motorHead.style = PaintingStyle.fill;
+    motorHead.shader = getLinearShaderHor(getMotorColor(),Rect.fromCenter(center: const Offset(50,18), width: 35, height: 35));
+    canvas.drawRRect(RRect.fromRectAndCorners(Rect.fromCenter(center: const Offset(50,20), width: 45, height: 40),topLeft: headRadius,topRight: headRadius,bottomRight: headRadius,bottomLeft: headRadius), motorHead);
+    canvas.drawRRect(RRect.fromRectAndCorners(Rect.fromCenter(center: const Offset(50,20), width: 45, height: 40),topLeft: headRadius,topRight: headRadius,bottomRight: headRadius,bottomLeft: headRadius), motorHead);
+    Paint line = Paint();
+    line.color = Colors.white;
+    line.strokeWidth = 1;
+    line.style = PaintingStyle.fill;
+    double startingPosition = 26;
+    double lineGap = 8;
+    for(var i = 0;i < 7;i++)
+      canvas.drawLine(Offset(startingPosition+(i*lineGap), 5), Offset(startingPosition+(i*lineGap), 35), line);
+    canvas.drawLine(const Offset(28, 5), const Offset(72, 5), line);
+    canvas.drawLine(const Offset(28, 35), const Offset(72, 35), line);
+
+
+    Paint neck = Paint();
+    neck.shader = getLinearShaderHor(bodyColor,Rect.fromCenter(center: const Offset(50,45), width: 20, height: 10));
+    neck.strokeWidth = 0.5;
+    neck.style = PaintingStyle.fill;
+    canvas.drawRect(Rect.fromCenter(center: const Offset(50,45 ), width: 20, height: 10), neck);
+
+    Paint body = Paint();
+    body.style = PaintingStyle.fill;
+    body.shader = getLinearShaderHor(bodyColor,Rect.fromCenter(center: const Offset(50,64), width: 35, height: 28));
+    canvas.drawRRect(RRect.fromRectAndCorners(Rect.fromCenter(center: const Offset(50,64), width: 35, height: 28),topLeft: headRadius,topRight: headRadius,bottomRight: headRadius,bottomLeft: headRadius), body);
+
+    Paint joint = Paint();
+    joint.shader = getLinearShaderVert(bodyColor,Rect.fromCenter(center: const Offset(30,64 ), width: 6, height: 15));
+    joint.strokeWidth = 0.5;
+    joint.style = PaintingStyle.fill;
+    canvas.drawRect(Rect.fromCenter(center: const Offset(30,64 ), width: 6, height: 15), joint);
+    canvas.drawRect(Rect.fromCenter(center: const Offset(70,64 ), width: 6, height: 15), joint);
+
+    Paint sholder1 = Paint();
+    sholder1.shader = getLinearShaderVert(bodyColor,Rect.fromCenter(center: const Offset(24,64 ), width: 6, height: 20));
+    sholder1.strokeWidth = 0.5;
+    sholder1.style = PaintingStyle.fill;
+    canvas.drawRect(Rect.fromCenter(center: const Offset(24,64 ), width: 6, height: 20), sholder1);
+    canvas.drawRect(Rect.fromCenter(center: const Offset(75,64 ), width: 6, height: 20), sholder1);
+
+    Paint sholder2 = Paint();
+    sholder2.shader = getLinearShaderVert(pipeColor,Rect.fromCenter(center: const Offset(30,64), width: 6, height: 15));
+    sholder2.strokeWidth = 0.5;
+    sholder2.style = PaintingStyle.fill;
+    canvas.drawRect(Rect.fromCenter(center: const Offset(20,64 ), width: 6, height: 20), sholder2);
+    canvas.drawRect(Rect.fromCenter(center: const Offset(80,64 ), width: 6, height: 20), sholder2);
+
+    Paint hand = Paint();
+    hand.shader = getLinearShaderVert(pipeColor,Rect.fromCenter(center: const Offset(30,64), width: 6, height: 15));
+    hand.strokeWidth = 0.5;
+    hand.style = PaintingStyle.fill;
+    canvas.drawRect(Rect.fromCenter(center: const Offset(10,64 ), width: 18, height: 15), hand);
+    canvas.drawRect(Rect.fromCenter(center: const Offset(90,64 ), width: 18 , height: 15), hand);
+
+    Paint paint = Paint()..color = Colors.blueGrey;
+    double centerX = 50;
+    double centerY = 65;
+    double radius = 8;
+    double angle = (2 * pi) / 4; // Angle between each rectangle
+    double rectangleWidth = 8;
+    double rectangleHeight = 10;
+
+    for (int i = 0; i < 4; i++) {
+      double x = centerX + radius * cos(i * angle + rotationAngle/2);
+      double y = centerY + radius * sin(i * angle + rotationAngle/2);
+      double rotation = i * angle - pi / 2 + rotationAngle; // Rotate rectangles to fit the circle
+
+      canvas.save(); // Save canvas state before rotation
+      canvas.translate(x, y); // Translate to the position
+      canvas.rotate(rotation);
+      canvas.drawRRect(
+        RRect.fromRectAndCorners(
+          Rect.fromLTWH(-rectangleWidth / 2, -rectangleHeight / 2, rectangleWidth, rectangleHeight),
+          bottomLeft: const Radius.circular(20),
+          bottomRight: const Radius.circular(80),
+          topLeft: const Radius.circular(40),
+          topRight: const Radius.circular(40),
+        ),
+        paint,
+      );
+      canvas.restore(); // Restore canvas state after rotation
+    }
+    Paint smallCircle = Paint();
+    smallCircle.color = Colors.black;
+    smallCircle.style = PaintingStyle.fill;
+    canvas.drawCircle(Offset(centerX, centerY), 4, smallCircle);
+  }
+
+  dynamic getLinearShaderVert(List<Color> colors,Rect rect){
+    return LinearGradient(
+      begin: Alignment.topCenter,
+      end: Alignment.bottomCenter,
+      colors: colors,
+    ).createShader(rect);
+  }
+
+  dynamic getLinearShaderHor(List<Color> colors,Rect rect){
+    return LinearGradient(
+      begin: Alignment.centerLeft,
+      end: Alignment.centerRight,
+      colors: colors,
+    ).createShader(rect);
+  }
+  Widget buildPopUpMenuButton({required BuildContext context, selected,
+    required List<String> dataList, required void Function(String) onSelected, required Widget child, Offset offset = Offset.zero}){
+    return PopupMenuButton<String>(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      surfaceTintColor: Colors.white,
+      itemBuilder: (context) {
+        return dataList.map((String value) {
+          return PopupMenuItem<String>(
+            value: value,
+            child: Center(child: Text(value, style: TextStyle(color: selected == value ? Theme.of(context).primaryColor : null),)),
+          );
+        }).toList();
+      },
+      onSelected: onSelected,
+      offset: offset,
+      child: child,
+    );
+  }
+
+  Widget buildCustomListTile({
+    required BuildContext context,
+    required String title,
+    daysType,
+    void Function(String)? onChanged,
+    bool isTextForm = false,
+    bool isTimePicker = false,
+    bool isDatePicker = false,
+    bool isCheckBox = false,
+    bool isSwitch = false,
+    initialValue,
+    dateType,
+    firstDate,
+    EdgeInsets? padding,
+    void Function(DateTime)? onDateChanged,
+    void Function(String)? onTimeChanged,
+    bool checkBoxValue = false,
+    void Function(bool?)? onCheckBoxChanged,
+    bool switchValue = false,
+    void Function(bool)? onSwitchChanged,
+    required icon}) {
+    return Container(
+      padding: padding ?? const EdgeInsets.all(0),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.white,
+          boxShadow: customBoxShadow
+      ),
+      child: isTextForm ?
+      CustomTextFormTile(
+        subtitle: title,
+        hintText: '00',
+        keyboardType: TextInputType.number,
+        inputFormatters: [
+          FilteringTextInputFormatter.deny(RegExp('[^0-9]')),
+          LengthLimitingTextInputFormatter(2),
+        ],
+        initialValue: daysType ?? initialValue,
+        onChanged: onChanged ?? (newValue) {},
+        icon: icon,
+      )
+          :
+      CustomTile(
+        title: title,
+        content: icon,
+        trailing: IntrinsicWidth(
+          child: isTimePicker ?
+          CustomNativeTimePicker(
+              initialValue: initialValue,
+              is24HourMode: false,
+              // style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+              onChanged: onTimeChanged ?? (newValue) {}
+          )
+              : isDatePicker ?
+          DatePickerField(
+            value: dateType,
+            firstDate: firstDate,
+            onChanged: onDateChanged ?? (DateTime dateTime) {},
+          )
+              : isCheckBox
+              ? Checkbox(value: checkBoxValue, onChanged: onCheckBoxChanged ?? (bool? value) {})
+              : isSwitch
+              ? Switch(value: switchValue, onChanged: onSwitchChanged) : const SizedBox(),
+        ),
+      ),
+    );
+  }
+
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return true;
+  }
+}
+
+dynamic getAlarmMessage = {
+  1 : 'Low Flow',
+  2 : 'High Flow',
+  3 : 'No Flow',
+  4 : 'Ec High',
+  5 : 'Ph Low',
+  6 : 'Ph High',
+  7 : 'Pressure Low',
+  8 : 'Pressure High',
+  9 : 'No Power Supply',
+  10 : 'No Communication',
+  11 : 'Wrong Feedback',
+  12 : 'Sump Tank Empty',
+  13 : 'Top Tank Full',
+  14 : 'Low Battery',
+  15 : 'Ec Difference',
+  16 : 'Ph Difference',
+  17 : 'Pump Off Alarm',
+  18 : 'Pressure Switch High',
+};
+
+dynamic pumpAlarmMessage = {
+  '1' : 'sump empty',
+  '2' : 'upper tank full',
+  '3' : 'low voltage',
+  '4' : 'high voltage',
+  '5' : 'voltage SPP',
+  '6' : 'reverse phase',
+  '7' : 'starter trip',
+  '8' : 'dry run',
+  '9' : 'overload',
+  '10' : 'current SPP',
+  '11' : 'cyclic trip',
+  '12' : 'maximum run time',
+  '13' : 'sump empty',
+  '14' : 'upper tank full',
+  '15' : 'RTC 1',
+  '16' : 'RTC 2',
+  '17' : 'RTC 3',
+  '18' : 'RTC 4',
+  '19' : 'RTC 5',
+  '20' : 'RTC 6',
+  '21' : 'auto mobile key off',
+  '22' : 'cyclic time',
+  '23' : 'RTC 1',
+  '24' : 'RTC 2',
+  '25' : 'RTC 3',
+  '26' : 'RTC 4',
+  '27' : 'RTC 5',
+  '28' : 'RTC 6',
+  '29' : 'auto mobile key on',
+  '30' : 'Power off',
+  '31' : 'Power on',
+};
+
+class MarqueeText extends StatelessWidget {
+  final String text;
+  final TextStyle style;
+  final double containerWidth;
+  final double containerHeight;
+
+  MarqueeText({
+    required this.text,
+    required this.style,
+    required this.containerWidth,
+    required this.containerHeight,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints constraints) {
+        final TextPainter textPainter = TextPainter(
+          text: TextSpan(text: text, style: style),
+          maxLines: 1,
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: containerWidth);
+
+        bool isOverflowing = textPainter.didExceedMaxLines;
+
+        return SizedBox(
+          width: containerWidth,
+          height: containerHeight,
+          child: Text(
+            text,
+            style: style,
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
+      },
+    );
+  }
+}
