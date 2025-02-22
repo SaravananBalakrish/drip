@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'environment.dart';
 
@@ -253,75 +255,54 @@ class AppConstants {
     }
   }
 
-  dynamic payloadConversion(data) {
+  dynamic payloadConversion(Map<String, dynamic> data) {
+    if (data.isEmpty || !data.containsKey('configObject')) return {};
+
     dynamic dataFormation = {};
+
     for (var globalKey in data.keys) {
-      if ([
-        'filterSite',
-        'fertilizerSite',
-        'waterSource',
-        'pump',
-        'moistureSensor',
-        'irrigationLine'
-      ].contains(globalKey)) {
+      if (['filterSite', 'fertilizerSite', 'waterSource', 'pump', 'moistureSensor', 'irrigationLine']
+          .contains(globalKey)) {
         dataFormation[globalKey] = [];
+
         for (var site in data[globalKey]) {
-          dynamic siteFormation = site;
+          var siteFormation = Map<String, dynamic>.from(site); // Copy to avoid modifying original
+
           for (var siteKey in site.keys) {
-            if (![
-              'objectId',
-              'sNo',
-              'name',
-              'objectName',
-              'connectionNo',
-              'type',
-              'controllerId',
-              'count',
-              'siteMode',
-              'pumpType'
-            ].contains(siteKey)) {
-              siteFormation[siteKey] = siteFormation[siteKey] is List<dynamic>
-                  ? (siteFormation[siteKey] as List<dynamic>).map((element) {
-                if (element is double) {
-                  return (data['configObject'] as List<dynamic>).firstWhere((
-                      object) => object['sNo'] == element);
-                } else {
-                  print('element : $element');
-                  var object = (data['configObject'] as List<dynamic>)
-                      .firstWhere((object) => object['sNo'] == element['sNo']);
-                  for (var key in element.keys) {
-                    if (!(object as Map<String, dynamic>).containsKey(key)) {
-                      object[key] = element[key];
+            if (!['objectId', 'sNo', 'name', 'objectName', 'connectionNo', 'type', 'controllerId', 'count', 'siteMode', 'pumpType']
+                .contains(siteKey)) {
+
+              if (siteFormation[siteKey] is List<dynamic>) {
+                siteFormation[siteKey] = (siteFormation[siteKey] as List<dynamic>).map((element) {
+                  if (element is double) {
+                    return (data['configObject'] as List<dynamic>)
+                        .firstWhere((object) => object['sNo'] == element, orElse: () => {});
+                  } else {
+                    var object = (data['configObject'] as List<dynamic>)
+                        .firstWhere((object) => object['sNo'] == element['sNo'], orElse: () => {});
+
+                    if (object is Map<String, dynamic>) {
+                      for (var key in element.keys) {
+                        object.putIfAbsent(key, () => element[key]);
+                      }
                     }
+                    return object;
                   }
-                  return object;
-                }
-              }).toList()
-                  : (data['configObject'] as List<dynamic>).firstWhere((
-                  object) => object['sNo'] == siteFormation[siteKey],
-                  orElse: () => {});
-              if (['level', 'inletPump', 'outletPump', 'valves'].contains(
-                  siteKey)) {
-                siteFormation[siteKey] =
-                siteFormation[siteKey] is List<dynamic>
-                    ? (siteFormation[siteKey] as List<dynamic>)
-                    .map((element) =>
-                    (data['listOfGeneratedObject'] as List<dynamic>)
-                        .firstWhere((object) => object['sNo'] == element))
-                    .toList()
-                    : (data['listOfGeneratedObject'] as List<dynamic>)
-                    .firstWhere((object) =>
-                object['sNo'] == siteFormation[siteKey], orElse: () => {});
+                }).toList();
+              } else {
+                siteFormation[siteKey] = (data['configObject'] as List<dynamic>)
+                    .firstWhere((object) => object['sNo'] == siteFormation[siteKey], orElse: () => {});
               }
             }
-            dataFormation[globalKey].add(site);
           }
+          dataFormation[globalKey].add(siteFormation);
         }
       }
-      // print('dataFormation : ${jsonEncode(dataFormation)}');
-      // print('-------------------------------------------');
-      return dataFormation;
     }
+
+    //print('dataFormation: ${jsonEncode(dataFormation)}');
+    return dataFormation;
   }
+
 
 }

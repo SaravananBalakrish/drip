@@ -752,6 +752,21 @@ class Repository{
   Future<http.Response> getProgramLibraryData(body) async {
     return await apiService.postRequest('/user/program/getLibrary', body);
   }
+
+  Future<http.Response> fetchStandAloneData(body) async {
+    return await apiService.postRequest('/user/getUserDashboardByManual', body);
+  }
+
+  Future<http.Response> fetchCustomerProgramList(body) async {
+    return await apiService.postRequest('/user/getUserProgramNameList', body);
+  }
+
+  Future<http.Response> fetchUserManualOperation(body) async {
+    return await apiService.postRequest('/user/getUserManualOperation', body);
+  }
+
+
+
 }
 
 /*
