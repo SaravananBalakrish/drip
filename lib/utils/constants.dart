@@ -255,8 +255,8 @@ class AppConstants {
     }
   }
 
-  static dynamic payloadConversion(data) {
-    dynamic dataFormation = {};
+  static Map<String, dynamic> payloadConversion(data) {
+    Map<String, dynamic> dataFormation = {};
     for (var globalKey in data.keys) {
       if (['filterSite', 'fertilizerSite', 'waterSource', 'pump', 'moistureSensor', 'irrigationLine'].contains(globalKey)) {
         dataFormation[globalKey] = [];

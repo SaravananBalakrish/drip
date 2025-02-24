@@ -90,6 +90,7 @@ class Master {
 
   // Manual fromJson
   factory Master.fromJson(Map<String, dynamic> json) {
+    print(json['config'].runtimeType);
     print('payload processing ::: ${AppConstants.payloadConversion(json['config'])}');
     return Master(
       controllerId: json['controllerId'],
@@ -102,7 +103,7 @@ class Master {
       conditionLibraryCount: json['conditionLibraryCount'],
       units: (json['units'] as List?)?.map((e) => Unit.fromJson(e)).toList(),
       nodeList: json['nodeList'],
-      config: Config.fromJson(AppConstants.payloadConversion(Map<String, dynamic>.from(json['config']))),
+      config: Config.fromJson(AppConstants.payloadConversion(json['config'])),
       live: json['live'] != null ? Live.fromJson(json['live']) : null,
     );
   }
@@ -169,12 +170,12 @@ class Config {
 }
 
 class FilterSite {
-  final DeviceObjectModel filterSite;
+  final DashBoardObjectModel filterSite;
   final int? siteMode;
-  final List<DeviceObjectModel> filters;
-  final DeviceObjectModel pressureIn;
-  final DeviceObjectModel pressureOut;
-  final DeviceObjectModel backWashValve;
+  final List<DashBoardObjectModel> filters;
+  final DashBoardObjectModel pressureIn;
+  final DashBoardObjectModel pressureOut;
+  final DashBoardObjectModel backWashValve;
 
   FilterSite({
     required this.filterSite,
@@ -187,25 +188,25 @@ class FilterSite {
 
   factory FilterSite.fromJson(Map<String, dynamic> json) {
     return FilterSite(
-      filterSite: DeviceObjectModel.fromJson(json),
+      filterSite: DashBoardObjectModel.fromJson(json),
       siteMode: json['siteMode'],
-      filters: (json['filters'] as List).map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
-      pressureIn: DeviceObjectModel.fromJson(Map<String, dynamic>.from(json['pressureIn'])),
-      pressureOut: DeviceObjectModel.fromJson(Map<String, dynamic>.from(json['pressureOut'])),
-      backWashValve: DeviceObjectModel.fromJson(Map<String, dynamic>.from(json['backWashValve'])),
+      filters: (json['filters'] as List).map((e) => DashBoardObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
+      pressureIn: DashBoardObjectModel.fromJson(Map<String, dynamic>.from(json['pressureIn'])),
+      pressureOut: DashBoardObjectModel.fromJson(Map<String, dynamic>.from(json['pressureOut'])),
+      backWashValve: DashBoardObjectModel.fromJson(Map<String, dynamic>.from(json['backWashValve'])),
     );
   }
 }
 
 class FertilizerSite {
-  final DeviceObjectModel fertilizerSite;
+  final DashBoardObjectModel fertilizerSite;
   final int? siteMode;
-  final List<DeviceObjectModel> channel;
-  final List<DeviceObjectModel> boosterPump;
-  final List<DeviceObjectModel> agitator;
-  final List<DeviceObjectModel> selector;
-  final List<DeviceObjectModel> ec;
-  final List<DeviceObjectModel> ph;
+  final List<DashBoardObjectModel> channel;
+  final List<DashBoardObjectModel> boosterPump;
+  final List<DashBoardObjectModel> agitator;
+  final List<DashBoardObjectModel> selector;
+  final List<DashBoardObjectModel> ec;
+  final List<DashBoardObjectModel> ph;
 
   FertilizerSite({
     required this.fertilizerSite,
@@ -220,27 +221,27 @@ class FertilizerSite {
 
   factory FertilizerSite.fromJson(Map<String, dynamic> json) {
     return FertilizerSite(
-      fertilizerSite: DeviceObjectModel.fromJson(json),
+      fertilizerSite: DashBoardObjectModel.fromJson(json),
       siteMode: json['siteMode'],
-      channel: (json['channel'] as List).map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
-      boosterPump: (json['boosterPump'] as List).map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
-      agitator: (json['agitator'] as List).map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
-      selector: (json['selector'] as List).map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
-      ec: (json['ec'] as List).map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
-      ph: (json['ph'] as List).map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
+      channel: (json['channel'] as List).map((e) => DashBoardObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
+      boosterPump: (json['boosterPump'] as List).map((e) => DashBoardObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
+      agitator: (json['agitator'] as List).map((e) => DashBoardObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
+      selector: (json['selector'] as List).map((e) => DashBoardObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
+      ec: (json['ec'] as List).map((e) => DashBoardObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
+      ph: (json['ph'] as List).map((e) => DashBoardObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
     );
   }
 }
 
 class WaterSource {
-  final DeviceObjectModel waterSource;
-  final DeviceObjectModel sourceType;
-  final DeviceObjectModel level;
-  final DeviceObjectModel topFloat;
-  final DeviceObjectModel bottomFloat;
-  final List<DeviceObjectModel> inletPump;
-  final List<DeviceObjectModel> outletPump;
-  final List<DeviceObjectModel> valves;
+  final DashBoardObjectModel waterSource;
+  final DashBoardObjectModel sourceType;
+  final DashBoardObjectModel level;
+  final DashBoardObjectModel topFloat;
+  final DashBoardObjectModel bottomFloat;
+  final List<DashBoardObjectModel> inletPump;
+  final List<DashBoardObjectModel> outletPump;
+  final List<DashBoardObjectModel> valves;
 
   WaterSource({
     required this.waterSource,
@@ -254,48 +255,53 @@ class WaterSource {
   });
 
   factory WaterSource.fromJson(Map<String, dynamic> json) {
+    // print('vv  json : $json');
     return WaterSource(
-      waterSource: DeviceObjectModel.fromJson(json),
-      sourceType: DeviceObjectModel.fromJson(json['sourceType']),
-      level: DeviceObjectModel.fromJson(json['level']),
-      topFloat: DeviceObjectModel.fromJson(json['topFloat']),
-      bottomFloat: DeviceObjectModel.fromJson(json['bottomFloat']),
-      inletPump: (json['inletPump'] as List).map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
-      outletPump: (json['outletPump'] as List).map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
-      valves: (json['valves'] as List).map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
+      waterSource: DashBoardObjectModel.fromJson(json),
+      sourceType: DashBoardObjectModel.fromJson(json['sourceType']),
+      level: DashBoardObjectModel.fromJson(json['level']),
+      topFloat: DashBoardObjectModel.fromJson(json['topFloat']),
+      bottomFloat: DashBoardObjectModel.fromJson(json['bottomFloat']),
+      inletPump: (json['inletPump'] as List).map((e) => DashBoardObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
+      outletPump: (json['outletPump'] as List).map((e) => DashBoardObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
+      valves: (json['valves'] as List).map((e) => DashBoardObjectModel.fromJson(e as Map<String, dynamic>)).toList(),
     );
   }
 }
 
 class Pump {
-  final DeviceObjectModel waterSource;
-  final DeviceObjectModel level;
-  final DeviceObjectModel pressure;
-  final DeviceObjectModel waterMeter;
+  final DashBoardObjectModel waterSource;
+  final DashBoardObjectModel level;
+  final DashBoardObjectModel pressureIn;
+  final DashBoardObjectModel pressureOut;
+  final DashBoardObjectModel waterMeter;
   final int pumpType;
 
   Pump({
     required this.waterSource,
     required this.level,
-    required this.pressure,
+    required this.pressureIn,
+    required this.pressureOut,
     required this.waterMeter,
     required this.pumpType,
   });
 
   factory Pump.fromJson(Map<String, dynamic> json) {
+    print("Pump json :$json");
     return Pump(
-      waterSource: DeviceObjectModel.fromJson(json),
-      level: DeviceObjectModel.fromJson(json['level']),
-      pressure: DeviceObjectModel.fromJson(json['pressure']),
-      waterMeter: DeviceObjectModel.fromJson(json['waterMeter']),
+      waterSource: DashBoardObjectModel.fromJson(json),
+      level: DashBoardObjectModel.fromJson(json['level']),
+      pressureIn: DashBoardObjectModel.fromJson(json['pressureIn']),
+      pressureOut: DashBoardObjectModel.fromJson(json['pressureOut']),
+      waterMeter: DashBoardObjectModel.fromJson(json['waterMeter']),
       pumpType: json['pumpType'],
     );
   }
 }
 
 class MoistureSensor {
-  final DeviceObjectModel waterSource;
-  final List<DeviceObjectModel> valves;
+  final DashBoardObjectModel waterSource;
+  final List<DashBoardObjectModel> valves;
 
   MoistureSensor({
     required this.waterSource,
@@ -304,39 +310,39 @@ class MoistureSensor {
 
   factory MoistureSensor.fromJson(Map<String, dynamic> json) {
     return MoistureSensor(
-      waterSource: DeviceObjectModel.fromJson(json),
-      valves: (json['valves'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      waterSource: DashBoardObjectModel.fromJson(json),
+      valves: (json['valves'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
     );
   }
 }
 
 class IrrigationLine {
-  DeviceObjectModel irrigationLine;
-  List<DeviceObjectModel> source;
-  List<DeviceObjectModel> sourcePump;
-  List<DeviceObjectModel> irrigationPump;
-  DeviceObjectModel centralFiltration;
-  DeviceObjectModel localFiltration;
-  DeviceObjectModel centralFertilization;
-  DeviceObjectModel localFertilization;
-  List<DeviceObjectModel> valve;
-  List<DeviceObjectModel> mainValve;
-  List<DeviceObjectModel> fan;
-  List<DeviceObjectModel> fogger;
-  List<DeviceObjectModel> pesticides;
-  List<DeviceObjectModel> heater;
-  List<DeviceObjectModel> screen;
-  List<DeviceObjectModel> vent;
-  DeviceObjectModel powerSupply;
-  DeviceObjectModel pressureSwitch;
-  DeviceObjectModel waterMeter;
-  DeviceObjectModel pressureIn;
-  DeviceObjectModel pressureOut;
-  List<DeviceObjectModel> moisture;
-  List<DeviceObjectModel> temperature;
-  List<DeviceObjectModel> soilTemperature;
-  List<DeviceObjectModel> humidity;
-  List<DeviceObjectModel> co2;
+  DashBoardObjectModel irrigationLine;
+  List<DashBoardObjectModel> source;
+  List<DashBoardObjectModel> sourcePump;
+  List<DashBoardObjectModel> irrigationPump;
+  DashBoardObjectModel centralFiltration;
+  DashBoardObjectModel localFiltration;
+  DashBoardObjectModel centralFertilization;
+  DashBoardObjectModel localFertilization;
+  List<DashBoardObjectModel> valve;
+  List<DashBoardObjectModel> mainValve;
+  List<DashBoardObjectModel> fan;
+  List<DashBoardObjectModel> fogger;
+  List<DashBoardObjectModel> pesticides;
+  List<DashBoardObjectModel> heater;
+  List<DashBoardObjectModel> screen;
+  List<DashBoardObjectModel> vent;
+  DashBoardObjectModel powerSupply;
+  DashBoardObjectModel pressureSwitch;
+  DashBoardObjectModel waterMeter;
+  DashBoardObjectModel pressureIn;
+  DashBoardObjectModel pressureOut;
+  List<DashBoardObjectModel> moisture;
+  List<DashBoardObjectModel> temperature;
+  List<DashBoardObjectModel> soilTemperature;
+  List<DashBoardObjectModel> humidity;
+  List<DashBoardObjectModel> co2;
 
   IrrigationLine({
     required this.irrigationLine,
@@ -369,67 +375,68 @@ class IrrigationLine {
 
   factory IrrigationLine.fromJson(Map<String, dynamic> json) {
     return IrrigationLine(
-      irrigationLine: DeviceObjectModel.fromJson(json),
-      source: (json['source'] as List).map((e) => DeviceObjectModel.fromJson(Map<String,dynamic>.from(e))).toList(),
-      sourcePump: (json['sourcePump'] as List).map((e) => DeviceObjectModel.fromJson(Map<String,dynamic>.from(e))).toList(),
-      irrigationPump: (json['irrigationPump'] as List).map((e) => DeviceObjectModel.fromJson(Map<String,dynamic>.from(e))).toList(),
-      centralFiltration: DeviceObjectModel.fromJson(Map<String,dynamic>.from(json['centralFiltration'])),
-      localFiltration: DeviceObjectModel.fromJson(Map<String,dynamic>.from(json['localFiltration'])),
-      centralFertilization: DeviceObjectModel.fromJson(Map<String,dynamic>.from(json['centralFertilization'])),
-      localFertilization: DeviceObjectModel.fromJson(Map<String,dynamic>.from(json['localFertilization'])),
-      valve: (json['valve'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
-      mainValve: (json['mainValve'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
-      fan: (json['fan'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
-      fogger: (json['fogger'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
-      pesticides: (json['pesticides'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
-      heater: (json['heater'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
-      screen: (json['screen'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
-      vent: (json['vent'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
-      powerSupply: DeviceObjectModel.fromJson(Map<String, dynamic>.from(json['powerSupply'])),
-      pressureSwitch: DeviceObjectModel.fromJson(Map<String, dynamic>.from(json['pressureSwitch'])),
-      waterMeter: DeviceObjectModel.fromJson(Map<String, dynamic>.from(json['waterMeter'])),
-      pressureIn: DeviceObjectModel.fromJson(Map<String, dynamic>.from(json['pressureIn'])),
-      pressureOut: DeviceObjectModel.fromJson(Map<String, dynamic>.from(json['pressureOut'])),
-      moisture: (json['moisture'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
-      temperature: (json['temperature'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
-      soilTemperature: (json['soilTemperature'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
-      humidity: (json['humidity'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
-      co2: (json['co2'] as List).map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      irrigationLine: DashBoardObjectModel.fromJson(json),
+      source: (json['source'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String,dynamic>.from(e))).toList(),
+      sourcePump: (json['sourcePump'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String,dynamic>.from(e))).toList(),
+      irrigationPump: (json['irrigationPump'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String,dynamic>.from(e))).toList(),
+      centralFiltration: DashBoardObjectModel.fromJson(Map<String,dynamic>.from(json['centralFiltration'])),
+      localFiltration: DashBoardObjectModel.fromJson(Map<String,dynamic>.from(json['localFiltration'])),
+      centralFertilization: DashBoardObjectModel.fromJson(Map<String,dynamic>.from(json['centralFertilization'])),
+      localFertilization: DashBoardObjectModel.fromJson(Map<String,dynamic>.from(json['localFertilization'])),
+      valve: (json['valve'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      mainValve: (json['mainValve'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      fan: (json['fan'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      fogger: (json['fogger'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      pesticides: (json['pesticides'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      heater: (json['heater'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      screen: (json['screen'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      vent: (json['vent'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      powerSupply: DashBoardObjectModel.fromJson(Map<String, dynamic>.from(json['powerSupply'])),
+      pressureSwitch: DashBoardObjectModel.fromJson(Map<String, dynamic>.from(json['pressureSwitch'])),
+      waterMeter: DashBoardObjectModel.fromJson(Map<String, dynamic>.from(json['waterMeter'])),
+      pressureIn: DashBoardObjectModel.fromJson(Map<String, dynamic>.from(json['pressureIn'])),
+      pressureOut: DashBoardObjectModel.fromJson(Map<String, dynamic>.from(json['pressureOut'])),
+      moisture: (json['moisture'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      temperature: (json['temperature'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      soilTemperature: (json['soilTemperature'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      humidity: (json['humidity'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
+      co2: (json['co2'] as List).map((e) => DashBoardObjectModel.fromJson(Map<String, dynamic>.from(e))).toList(),
     );
   }
 }
 
-class DeviceObjectModel {
-  final int objectId;
+class DashBoardObjectModel {
+   int? objectId;
   double? sNo;
   String? name;
-  String objectName;
+  String? objectName;
   int? connectionNo;
-  final String type;
+  String? type;
   int? controllerId;
   String? count;
-  int mode;
+  int? mode;
 
-  DeviceObjectModel({
-    required this.objectId,
+  DashBoardObjectModel({
+    this.objectId,
     this.sNo,
     this.name,
     this.connectionNo,
-    required this.objectName,
-    required this.type,
+    this.objectName,
+    this.type,
     this.controllerId,
     this.count,
     this.mode = 0,
   });
 
-  factory DeviceObjectModel.fromJson(data){
-    return DeviceObjectModel(
-        objectId : data['objectId'] ?? 0,
+  factory DashBoardObjectModel.fromJson(data){
+print('DashBoardObjectModel : $data');
+    return DashBoardObjectModel(
+        objectId : data['objectId'],
         sNo : data['sNo'],
-        name : data['name'] ?? '',
-        connectionNo : data['connectionNo'] ?? 0,
-        objectName : data['objectName'] ?? '',
-        type : data['type'] ?? '',
+        name : data['name'],
+        connectionNo : data['connectionNo'],
+        objectName : data['objectName'],
+        type : data['type'],
         controllerId : data['controllerId'],
         count: data['count']
     );
