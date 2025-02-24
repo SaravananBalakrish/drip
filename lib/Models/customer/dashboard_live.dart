@@ -15,7 +15,7 @@ class LiveData {
     return LiveData(
       code: json['code'],
       message: json['message'],
-      data: (json['data'] as List?)?.map((e) => Datum.fromJson(e)).toList(),
+      data: (json['data'] as List?)?.map((e) => Datum.fromJson(Map<String, dynamic>.from(e))).toList(),
     );
   }
   // Manual toJson
@@ -41,10 +41,11 @@ class Datum {
 
   // Manual fromJson
   factory Datum.fromJson(Map<String, dynamic> json) {
+    print("json in the live ::: ${json['master']}");
     return Datum(
       groupId: json['groupId'],
       groupName: json['groupName'],
-      master: (json['master'] as List?)?.map((e) => Master.fromJson(e)).toList(),
+      master: (json['master'] as List?)?.map((e) => Master.fromJson(Map<String, dynamic>.from(e as Map))).toList(),
     );
   }
 
@@ -69,7 +70,7 @@ class Master {
   int? conditionLibraryCount;
   List<Unit>? units;
   List<dynamic>? nodeList;
-  Config? config;
+  Config config;
   Live? live;
 
   Master({
@@ -83,12 +84,13 @@ class Master {
     this.conditionLibraryCount,
     this.units,
     this.nodeList,
-    this.config,
+    required this.config,
     this.live,
   });
 
   // Manual fromJson
   factory Master.fromJson(Map<String, dynamic> json) {
+    print('payload processing ::: ${AppConstants.payloadConversion(json['config'])}');
     return Master(
       controllerId: json['controllerId'],
       deviceId: json['deviceId'],
@@ -100,7 +102,7 @@ class Master {
       conditionLibraryCount: json['conditionLibraryCount'],
       units: (json['units'] as List?)?.map((e) => Unit.fromJson(e)).toList(),
       nodeList: json['nodeList'],
-      config: json['config'] != null ? Config.fromJson(AppConstants().payloadConversion(json['config'])) : null,
+      config: Config.fromJson(AppConstants.payloadConversion(Map<String, dynamic>.from(json['config']))),
       live: json['live'] != null ? Live.fromJson(json['live']) : null,
     );
   }
@@ -144,12 +146,12 @@ class Config {
   // Manual fromJson
   factory Config.fromJson(Map<String, dynamic> json) {
     return Config(
-      filterSite: (json['filterSite'] as List?)?.map((e) => FilterSite.fromJson(e)).toList(),
-      fertilizerSite: (json['fertilizerSite'] as List?)?.map((e) => FertilizerSite.fromJson(e)).toList(),
-      waterSource: (json['waterSource'] as List?)?.map((e) => WaterSource.fromJson(e)).toList(),
-      pump: (json['pump'] as List?)?.map((e) => Pump.fromJson(e)).toList(),
-      moistureSensor: (json['moistureSensor'] as List?)?.map((e) => MoistureSensor.fromJson(e)).toList(),
-      irrigationLine: (json['irrigationLine'] as List?)?.map((e) => IrrigationLine.fromJson(e)).toList(),
+      filterSite: (json['filterSite'] as List).map((e) => FilterSite.fromJson(e as Map<String, dynamic>)).toList(),
+      fertilizerSite: (json['fertilizerSite'] as List).map((e) => FertilizerSite.fromJson(e as Map<String, dynamic>)).toList(),
+      waterSource: (json['waterSource'] as List).map((e) => WaterSource.fromJson(e as Map<String, dynamic>)).toList(),
+      pump: (json['pump'] as List).map((e) => Pump.fromJson(e as Map<String, dynamic>)).toList(),
+      moistureSensor: (json['moistureSensor'] as List).map((e) => MoistureSensor.fromJson(e as Map<String, dynamic>)).toList(),
+      irrigationLine: (json['irrigationLine'] as List).map((e) => IrrigationLine.fromJson(e as Map<String, dynamic>)).toList(),
     );
   }
 

@@ -1,7 +1,6 @@
 import 'dart:convert';
-import 'dart:ffi';
+
 import 'package:flutter/cupertino.dart';
-import '../Screens/ConfigMaker/config_web_view.dart';
 import 'environment.dart';
 
 enum UserRole { admin, dealer, subUser }
@@ -256,43 +255,27 @@ class AppConstants {
     }
   }
 
-  dynamic payloadConversion(data) {
-    print('dataFormation data : ${data}');
+  static dynamic payloadConversion(data) {
     dynamic dataFormation = {};
     for (var globalKey in data.keys) {
-      if ([
-        'filterSite',
-        'fertilizerSite',
-        'waterSource',
-        'pump',
-        'moistureSensor',
-        'irrigationLine'
-      ].contains(globalKey)) {
+      if (['filterSite', 'fertilizerSite', 'waterSource', 'pump', 'moistureSensor', 'irrigationLine'].contains(globalKey)) {
         dataFormation[globalKey] = [];
         for (var site in data[globalKey]) {
           dynamic siteFormation = site;
           for (var siteKey in site.keys) {
-            if (![
-              'objectId',
-              'sNo',
-              'name',
-              'objectName',
-              'connectionNo',
-              'type',
-              'controllerId',
-              'count',
-              'siteMode',
-              'pumpType'
-            ].contains(siteKey)) {
+            if (!['objectId', 'sNo', 'name', 'objectName', 'connectionNo', 'type', 'controllerId', 'count', 'siteMode', 'pumpType'].contains(siteKey)) {
               siteFormation[siteKey] = siteFormation[siteKey] is List<dynamic>
                   ? (siteFormation[siteKey] as List<dynamic>).map((element) {
                 if (element is double) {
-                  return (data['configObject'] as List<dynamic>).firstWhere((
-                      object) => object['sNo'] == element);
+                  return (data['configObject'] as List<dynamic>).firstWhere(
+                        (object) => object['sNo'] == element,
+                    orElse: () => <String, dynamic>{}, // Ensure correct type
+                  );
                 } else {
-                  print('element : $element');
-                  var object = (data['configObject'] as List<dynamic>)
-                      .firstWhere((object) => object['sNo'] == element['sNo']);
+                  var object = (data['configObject'] as List<dynamic>).firstWhere(
+                        (object) => object['sNo'] == element['sNo'],
+                    orElse: () => <String, dynamic>{}, // Ensure correct type
+                  );
                   for (var key in element.keys) {
                     if (!(object as Map<String, dynamic>).containsKey(key)) {
                       object[key] = element[key];
@@ -301,31 +284,18 @@ class AppConstants {
                   return object;
                 }
               }).toList()
-                  : (data['configObject'] as List<dynamic>).firstWhere((
-                  object) => object['sNo'] == siteFormation[siteKey],
-                  orElse: () => {});
-              if (['level', 'inletPump', 'outletPump', 'valves'].contains(
-                  siteKey)) {
-                siteFormation[siteKey] =
-                siteFormation[siteKey] is Array<dynamic>
-                    ? (siteFormation[siteKey] as List<dynamic>)
-                    .map((element) =>
-                    (data['listOfGeneratedObject'] as List<dynamic>)
-                        .firstWhere((object) => object['sNo'] == element))
-                    .toList()
-                    : (data['listOfGeneratedObject'] as List<dynamic>)
-                    .firstWhere((object) =>
-                object['sNo'] == siteFormation[siteKey], orElse: () => {});
-              }
+                  : (data['configObject'] as List<dynamic>).firstWhere(
+                    (object) => object['sNo'] == siteFormation[siteKey],
+                orElse: () => <String, dynamic>{}, // Ensure correct type
+              );
             }
-            dataFormation[globalKey].add(site);
           }
+          dataFormation[globalKey].add(site);
         }
       }
-      print('dataFormation : ${dataFormation}');
-      print('-------------------------------------------');
-      return dataFormation;
     }
+    return dataFormation;
   }
+
 
 }

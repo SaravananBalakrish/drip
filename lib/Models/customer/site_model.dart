@@ -77,7 +77,7 @@ class Master {
       modelId: json['modelId'],
       modelName: json['modelName'],
       units: List<Unit>.from(json['units'].map((x) => Unit.fromJson(x))),
-      config: Config.fromJson(AppConstants().payloadConversion(json['config'])),
+      config: Config.fromJson(AppConstants.payloadConversion(json['config'])),
       live: Live.fromJson(json['liveMessage']),
     );
   }
