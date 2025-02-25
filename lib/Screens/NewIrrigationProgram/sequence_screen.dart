@@ -281,12 +281,12 @@ class _SequenceScreenState extends State<SequenceScreen> {
                               isGroup: false,
                               isMainValve: true
                           ),
-                        /*if(irrigationProgram)
+                        if(irrigationProgram)
                           buildIrrigationLinesList(
                               context: context,
                               dataList: irrigationProgramProvider.irrigationLine!.defaultData.group,
                               isGroup: true
-                          ),*/
+                          ),
                         if(irrigationProgramProvider.sampleIrrigationLine!.isNotEmpty && irrigationProgram)
                           buildIrrigationLinesList(
                               context: context,
@@ -480,7 +480,7 @@ class _SequenceScreenState extends State<SequenceScreen> {
     );
   }
 
-  Widget buildIrrigationLinesList({required BuildContext context, required List<IrrigationLine> dataList, required bool isGroup, bool isMainValve = false, bool isAgitator = false}) {
+  Widget buildIrrigationLinesList({required BuildContext context, required dataList, required bool isGroup, bool isMainValve = false, bool isAgitator = false}) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),

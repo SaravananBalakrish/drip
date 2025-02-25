@@ -58,44 +58,32 @@ class valveGroupData {
 
 
 class ValveGroup {
-  final int objectId;
+  final String groupID;
   final String groupName;
   final String irrigationLineName;
-  final double sNo;
-  final String name;
-  final String objectName;
   final List<Valve> valve;
 
   ValveGroup({
-    required this.objectId,
+    required this.groupID,
     required this.groupName,
     required this.irrigationLineName,
-    required this.sNo,
-    required this.name,
-    required this.objectName,
     required this.valve,
   });
 
   factory ValveGroup.fromJson(Map<String, dynamic> json) {
     return ValveGroup(
-      objectId: json['objectId'],
+      groupID: json['groupId'],
       groupName: json['groupName'],
       irrigationLineName: json['irrigationLineName'],
-      sNo: json['sNo'].toDouble(),
-      name: json['name'],
-      objectName: json['objectName'],
       valve: List<Valve>.from(json['valve'].map((x) => Valve.fromJson(x))),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'objectId': objectId,
+      'groupId': groupID,
       'groupName': groupName,
       'irrigationLineName': irrigationLineName,
-      'sNo': sNo,
-      'name': name,
-      'objectName': objectName,
       'valve': valve.map((x) => x.toJson()).toList(),
     };
   }
@@ -105,11 +93,13 @@ class Valve {
   final int objectId;
   final double sNo;
   final String name;
+  String? type;
   final String objectName;
 
   Valve({
     required this.objectId,
     required this.sNo,
+    this.type,
     required this.name,
     required this.objectName,
   });
@@ -119,6 +109,7 @@ class Valve {
       objectId: json['objectId'],
       sNo: json['sNo'].toDouble(),
       name: json['name'],
+      type: json['type'],
       objectName: json['objectName'],
     );
   }
@@ -128,6 +119,7 @@ class Valve {
       'objectId': objectId,
       'sNo': sNo,
       'name': name,
+      'type': name,
       'objectName': objectName,
     };
   }

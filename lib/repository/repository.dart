@@ -826,5 +826,9 @@ class Repository{
     return await apiService.postRequest('/user/getUserManualOperation', body);
   }
 
+  Future<http.Response> createUserValveGroup(body) async {
+    return await apiService.postRequest('/user/deviceList/create', body);
+  }
+
 }
 

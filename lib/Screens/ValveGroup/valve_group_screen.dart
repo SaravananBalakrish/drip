@@ -57,7 +57,6 @@ class _GroupListScreenState extends State<GroupListScreen> {
     print("response.body in the valve group ::: ${response.body}");
     if (response.statusCode == 200) {
       setState(() {
-
         var jsonData = jsonDecode(response.body);
         _groupdata = Groupdata.fromJson(jsonData);
       });
@@ -77,7 +76,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Color(0xffE6EDF5),
+      backgroundColor: const Color(0xffE6EDF5),
       appBar: AppBar(
         title: Text('Groups',
             style: TextStyle(
@@ -109,23 +108,23 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                 children: [
                                   Text(
                                     "${_groupdata.data?.valveGroup?[index].groupName}",
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                   Text(
                                     "${_groupdata.data?.valveGroup?[index].irrigationLineName}",
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  Text("Valves List:"),
+                                  const Text("Valves List:"),
                                   Wrap(
                                     spacing: 5.0,
                                     runSpacing: 10.0,
                                     children: List.generate(
-                                        3 /*_groupdata.data?.valveGroup![index].valve.length ?? 0*/,
+                                        _groupdata.data?.valveGroup![index].valve.length ?? 0,
                                             (vindex) {
                                           return Chip(
                                             label: Text(
@@ -143,15 +142,15 @@ class _GroupListScreenState extends State<GroupListScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 IconButton(
-                                    icon: Icon(Icons
+                                    icon: const Icon(Icons
                                         .delete), // The icon you want to display
                                     onPressed: () {
                                       showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
                                           return AlertDialog(
-                                            title: Text('Delete Valve Group'),
-                                            content: Text(
+                                            title: const Text('Delete Valve Group'),
+                                            content: const Text(
                                                 'Are you sure you want to delete this valve group?'),
                                             actions: <Widget>[
                                               TextButton(
@@ -159,25 +158,25 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                                   Navigator.of(context)
                                                       .pop(); // Close the dialog
                                                 },
-                                                child: Text('Cancel'),
+                                                child: const Text('Cancel'),
                                               ),
                                               TextButton(
                                                 onPressed: () {
                                                   deleteValveGroupAtIndex(index);
                                                   Navigator.of(context).pop();
                                                 },
-                                                child: Text('Delete'),
+                                                child: const Text('Delete'),
                                               ),
                                             ],
                                           );
                                         },
                                       );
                                     }),
-                                SizedBox(
+                                const SizedBox(
                                   height: 5,
                                 ),
                                 IconButton(
-                                  icon: Icon(Icons
+                                  icon: const Icon(Icons
                                       .edit_note_rounded), // The icon you want to display
                                   onPressed: () {
                                     Navigator.push(context, MaterialPageRoute(builder: (context) => AddEditValveGroup(
@@ -187,7 +186,6 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                       selectedgroupindex: index,
                                       groupdata: _groupdata.data!,
                                     )));
-                                    print('Icon Button Pressed');
                                   },
                                 ),
                               ],
@@ -213,7 +211,18 @@ class _GroupListScreenState extends State<GroupListScreen> {
             // foregroundColor: Colors.white,
             child: const Icon(Icons.add),
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => AddEditValveGroup(editcheck: false, groupdata: _groupdata.data!,)));
+              if (_groupdata.data != null)
+                if (_groupdata.data!.defaultData.valveGroupLimit >
+                    _groupdata.data!.valveGroup!.length) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>
+                      AddEditValveGroup(
+                        editcheck: false, groupdata: _groupdata.data!,)));
+                }
+                else{
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Reached Group Limit!!! ')),
+                  );
+                }
             },
           ),
           const SizedBox(
@@ -227,7 +236,18 @@ class _GroupListScreenState extends State<GroupListScreen> {
           ElevatedButton(
             // backgroundColor: Theme.of(context).primaryColor,
             // foregroundColor: Colors.white,
-            onPressed: () {},
+
+            onPressed: () async {
+              Map<String,dynamic> body =  {
+                "userId": 8,
+                "controllerId": 13,
+                "valveGroup": _groupdata.data!.valveGroup!.map((e) => e.toJson()).toList(),
+                "createUser": 13
+              };
+              final Repository repository = Repository(HttpService());
+              final response = await repository.createUserValveGroup(body);
+              print("response.body${response.body}");
+            },
             child: const Icon(Icons.send),
           ),
         ],
@@ -235,6 +255,7 @@ class _GroupListScreenState extends State<GroupListScreen> {
       // ),
     );
   }
+
 }
 
 
