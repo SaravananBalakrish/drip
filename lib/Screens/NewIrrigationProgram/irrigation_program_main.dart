@@ -8,7 +8,6 @@ import 'package:oro_drip_irrigation/Screens/NewIrrigationProgram/selection_scree
 import 'package:oro_drip_irrigation/Screens/NewIrrigationProgram/sequence_screen.dart';
 import 'package:oro_drip_irrigation/Screens/NewIrrigationProgram/water_and_fertilizer_screen.dart';
 import 'package:provider/provider.dart';
-import '../../../../constants/http_service.dart';
 import '../../StateManagement/irrigation_program_provider.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../StateManagement/overall_use.dart';

@@ -10,7 +10,7 @@ import '../views/splash_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
+  
   Future<String> getInitialRoute() async {
     try {
       final token = await PreferenceHelper.getToken();

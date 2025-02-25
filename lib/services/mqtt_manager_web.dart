@@ -23,14 +23,7 @@ class MqttManager {
 
     String uniqueId = const Uuid().v4();
 
-    // development
-    //   String baseURL = 'ws://192.168.68.141';
-    //   int port = 9001;
-
-    // cloud
-    // String baseURL = 'ws://13.235.254.21:8083/mqtt';
     String baseURL = Environment.mqttWebUrl;
-    // int port = 8083;
     int port = Environment.mqttPort;
 
     if (_client == null) {

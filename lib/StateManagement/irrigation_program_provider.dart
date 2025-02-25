@@ -868,7 +868,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         line.add({
           'sNo' : l['sNo'],
           'id' : l['id'],
-          'hid' : l['hid'],
           'name' : l['name'],
           'location' : l['location'],
         });
@@ -877,7 +876,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         fert.add({
           'sNo' : l['sNo'],
           'id' : l['id'],
-          'hid' : l['hid'],
           'name' : l['name'],
           'location' : l['location'],
         });
@@ -887,7 +885,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
           ec.add({
             'sNo' : l['sNo'],
             'id' : l['id'],
-            'hid' : l['hid'],
             'name' : l['name'],
             'location' : l['location'],
           });
@@ -897,7 +894,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         ph.add({
           'sNo' : l['sNo'],
           'id' : l['id'],
-          'hid' : l['hid'],
           'name' : l['name'],
           'location' : l['location'],
         });
@@ -905,7 +901,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       centralDuplicate.add({
         'sNo' : i['sNo'],
         'id' : i['id'],
-        'hid' : i['hid'],
         'name' : i['name'],
         'location' : i['location'],
         'irrigationLine' : line,
@@ -925,7 +920,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         fert.add({
           'sNo' : l['sNo'],
           'id' : l['id'],
-          'hid' : l['hid'],
           'name' : l['name'],
           'location' : l['location'],
         });
@@ -935,7 +929,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
           ec.add({
             'sNo' : l['sNo'],
             'id' : l['id'],
-            'hid' : l['hid'],
             'name' : l['name'],
             'location' : l['location'],
           });
@@ -945,7 +938,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         ph.add({
           'sNo' : l['sNo'],
           'id' : l['id'],
-          'hid' : l['hid'],
           'name' : l['name'],
           'location' : l['location'],
         });
@@ -953,7 +945,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       localDuplicate.add({
         'sNo' : i['sNo'],
         'id' : i['id'],
-        'hid' : i['hid'],
         'name' : i['name'],
         'location' : i['location'],
         'fertilizer' : fert,
@@ -993,7 +984,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
               'sNo' : cd['sNo'],
               'name' : cd['name'],
               'id' : cd['id'],
-              'hid' : cd['hid'],
               'location' : cd['location'],
               'recipe' : recipe,
               'applyRecipe' : applyRecipe,
@@ -1164,7 +1154,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                 'sNo' : ld['sNo'],
                 'name' : ld['name'],
                 'id' : ld['id'],
-                'hid' : ld['hid'],
                 'location' : ld['location'],
                 'recipe' : recipe,
                 'applyRecipe' : applyRecipe,
@@ -1349,7 +1338,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     var central = [];
     var local = [];
     for(var site in apiData['fertilization']){
-      if(site['id'].contains('CFESI')){
+      if(site['sNo'].contains('CFESI')){
         central.add(site);
       }else{
         local.add(site);
@@ -1397,26 +1386,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     }
 
     sequenceData = generateNew;
-    // for(var i in sequenceData){
-    //   for(var cd in i['centralDosing']){
-    //     for(var slt in _selectionModel!.data!.centralFertilizerSite!){
-    //       if(slt.selected == true){
-    //         if(cd['sNo'] == slt.sNo){
-    //           i['selectedCentralSite'] = i['centralDosing'].indexOf(cd);
-    //         }
-    //       }
-    //     }
-    //   }
-    //   for(var ld in i['localDosing']){
-    //     for(var slt in _selectionModel!.data!.localFertilizerSite!){
-    //       if(slt.selected == true){
-    //         if(ld['sNo'] == slt.sNo){
-    //           i['selectedLocalSite'] = i['localDosing'].indexOf(ld);
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
     if(sequenceData.isNotEmpty){
       selectedGroup = 0;
       waterValueInTime = sequenceData[selectedGroup]['timeValue'];
@@ -1463,6 +1432,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     }
   }
 
+
   dynamic hwPayloadForWF(serialNumber){
     var wf = '';
     editGroupSiteInjector('selectedGroup', 0);
@@ -1471,10 +1441,10 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       var valId = '';
       var mvId = '';
       for(var vl in sq['valve']){
-        valId += '${valId.length != 0 ? '_' : ''}${vl['hid']}';
+        valId += '${valId.length != 0 ? '_' : ''}${vl['sNo']}';
       }
       for(var vl in sq['mainValve']){
-        mvId += '${mvId.length != 0 ? '_' : ''}${vl['hid']}';
+        mvId += '${mvId.length != 0 ? '_' : ''}${vl['sNo']}';
       }
       var centralMethod = '';
       var centralTimeAndQuantity = '';
@@ -1513,7 +1483,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         for(var ft in sq['centralDosing'][sq['selectedCentralSite']]['fertilizer']){
           centralMethod += '${centralMethod.isNotEmpty ? '_' : ''}${fertMethodHw(ft['method'])}';
           centralFertOnOff += '${centralFertOnOff.isNotEmpty ? '_' : ''}${ft['onOff'] == true ? 1 : 0}';
-          centralFertId += '${centralFertId.isNotEmpty ? '_' : ''}${ft['hid']}';
+          centralFertId += '${centralFertId.isNotEmpty ? '_' : ''}${ft['sNo']}';
           centralTimeAndQuantity += '${centralTimeAndQuantity.isNotEmpty ? '_' : ''}${ft['method'].contains('ime') ? ft['timeValue'] : ft['quantityValue']}';
           centralEcActive = sq['centralDosing'][sq['selectedCentralSite']]['needEcValue'] == null ? 0 : sq['centralDosing'][sq['selectedCentralSite']]['needEcValue'] == true ? 1 : 0;
           centralEcValue = '${sq['centralDosing'][sq['selectedCentralSite']]['ecValue'] ?? 0}';
@@ -1541,7 +1511,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         for(var ft in sq['localDosing'][sq['selectedLocalSite']]['fertilizer']){
           localMethod += '${localMethod.isNotEmpty ? '_' : ''}${fertMethodHw(ft['method'])}';
           localFertOnOff += '${localFertOnOff.isNotEmpty ? '_' : ''}${ft['onOff'] == true ? 1 : 0}';
-          localFertId += '${localFertId.isNotEmpty ? '_' : ''}${ft['hid']}';
+          localFertId += '${localFertId.isNotEmpty ? '_' : ''}${ft['sNo']}';
           localTimeAndQuantity += '${localTimeAndQuantity.isNotEmpty ? '_' : ''}${ft['method'].contains('ime') ? ft['timeValue'] : ft['quantityValue']}';
           localEcActive = sq['localDosing'][sq['selectedLocalSite']]['needEcValue'] == null ? 0 : sq['localDosing'][sq['selectedLocalSite']]['needEcValue'] == true ? 1 : 0;
           localEcValue = '${sq['localDosing'][sq['selectedLocalSite']]['ecValue'] ?? 0}';
@@ -1566,9 +1536,9 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
           '${sq['method'] == 'Time' ? 1 : 2},'
           '${sq['method'] == 'Time' ? sq['timeValue'] : sq['quantityValue']},'
           '${sq['applyFertilizerForCentral'] == false ? 0 : sq['selectedCentralSite'] == -1 ? 0 : 1},'
-          '${sq['selectedCentralSite'] == -1 ? 0 : sq['centralDosing'].isEmpty ? 0 : sq['centralDosing'][sq['selectedCentralSite']]['hid']},'
+          '${sq['selectedCentralSite'] == -1 ? 0 : sq['centralDosing'].isEmpty ? 0 : sq['centralDosing'][sq['selectedCentralSite']]['sNo']},'
           '${sq['applyFertilizerForLocal'] == false ? 0 : sq['selectedLocalSite'] == -1 ? 0 : 1},'
-          '${sq['selectedLocalSite'] == -1 ? 0 : sq['localDosing'].isEmpty ? 0 : sq['localDosing'][sq['selectedLocalSite']]['hid']},'
+          '${sq['selectedLocalSite'] == -1 ? 0 : sq['localDosing'].isEmpty ? 0 : sq['localDosing'][sq['selectedLocalSite']]['sNo']},'
           '${sq['prePostMethod'] == 'Time' ? 1 : 2},'
           '${sq['preValue']},'
           '${sq['postValue']},'

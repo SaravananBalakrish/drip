@@ -46,6 +46,7 @@ dev_dependencies:
     sdk: flutter
 
   flutter_lints: ^3.0.0
+  flutter_flavorizr: ^2.2.3
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -92,3 +93,28 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flavorizr:
+  flavors:
+    oroDevelopment:
+      app:
+        name: "ORO"
+      android:
+        applicationId: "com.example.oroDevelopment"
+#      ios:
+#        bundleId: "com.example.apple"
+    oroProduction:
+      app:
+        name: "ORO"
+      android:
+        applicationId: "com.example.oroProduction"
+    #      ios:
+    #        bundleId: "com.example.apple"
+    smartComm:
+      app:
+        name: "SMART COMM"
+      android:
+        applicationId: "com.example.smartComm"
+#      ios:
+#        bundleId: "com.example.banana"
+#      macos:
+#        bundleId: "com.example.banana"
