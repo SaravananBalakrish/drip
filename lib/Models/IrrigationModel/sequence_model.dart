@@ -28,7 +28,7 @@ class Default {
   bool reuseValve;
   bool namedGroup;
   // List<Line> line;
-  List<Line> group;
+  List<ValveGroup> group;
   // List<Valve> agitator;
 
   Default(
@@ -42,7 +42,7 @@ class Default {
       });
 
   factory Default.fromJson(Map<String, dynamic> json) {
-    List<Line> groupList = List<Line>.from(json['valveGroupList'].map((x) => Line.fromJson(x)));
+    List<ValveGroup> groupList = List<ValveGroup>.from(json['valveGroupList'].map((x) => ValveGroup.fromJson(x)));
 
     return Default(
       startTogether: json['startTogether'],
@@ -55,10 +55,10 @@ class Default {
     );
   }
 
-  factory Default.fromJson2(Map<String, dynamic> json) {
-    List<Line> lineList = List<Line>.from(json['line'].map((x) => Line.fromJson(x)));
+/*  factory Default.fromJson2(Map<String, dynamic> json) {
+    // List<Line> lineList = List<Line>.from(json['line'].map((x) => Line.fromJson(x)));
     List<Line> groupList = List<Line>.from(json['group'].map((x) => Line.fromJson(x)));
-    List<Valve> agitatorList = List<Valve>.from(json['agitator'].map((x) => Valve.fromJson(x)));
+    // List<Valve> agitatorList = List<Valve>.from(json['agitator'].map((x) => Valve.fromJson(x)));
 
     return Default(
       startTogether: json['startTogether'] ?? false,
@@ -69,7 +69,7 @@ class Default {
       group: groupList,
       // agitator: agitatorList,
     );
-  }
+  }*/
 
   Map<String, dynamic> toJson() {
     return {
@@ -84,88 +84,38 @@ class Default {
   }
 }
 
-class Line {
-  int sNo;
+class ValveGroup {
   String id;
-  String hid;
-  String location;
   String name;
-  bool? selected;
-  List<Valve> valve;
+  List<DeviceObjectModel> valve;
 
-  Line(
-      {required this.sNo,
+  ValveGroup(
+      {
         required this.id,
-        required this.hid,
-        required this.location,
         required this.name,
-        this.selected,
         required this.valve});
 
-  factory Line.fromJson(Map<String, dynamic> json) {
+  factory ValveGroup.fromJson(Map<String, dynamic> json) {
     var valveList = json['valve'] as List<dynamic>?;
 
-    List<Valve> valves = valveList != null
+    List<DeviceObjectModel> valves = valveList != null
         ? valveList
-        .map((e) => Valve.fromJson(e as Map<String, dynamic>))
+        .map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>))
         .toList()
         : [];
 
-    return Line(
-      sNo: json['sNo'],
-      id: json['id'],
-      hid: json['hid'] ?? "",
-      location: json['location'],
-      name: json['name'],
-      selected: json['selected'] ?? false,
+    return ValveGroup(
+      id: json['groupID'],
+      name: json['groupName'],
       valve: valves,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "sNo": sNo,
       "id": id,
-      "hid": hid,
-      "location": location,
       "name": name,
-      "selected": selected ?? false,
       "valve": valve.map((e) => e.toJson()).toList(),
-    };
-  }
-}
-
-class Valve {
-  int sNo;
-  String id;
-  String hid;
-  String location;
-  String name;
-
-  Valve(
-      {required this.sNo,
-        required this.id,
-        required this.hid,
-        required this.location,
-        required this.name});
-
-  factory Valve.fromJson(Map<String, dynamic> json) {
-    return Valve(
-      sNo: json['sNo'],
-      id: json['id'],
-      hid: json['hid'] ?? "",
-      location: json['location'],
-      name: json['name'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "sNo": sNo,
-      "id": id,
-      "hid": hid,
-      "location": location,
-      "name": name,
     };
   }
 }

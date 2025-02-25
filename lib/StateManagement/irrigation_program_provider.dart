@@ -130,7 +130,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateGroup({required List<Line> valveGroup}) {
+  void updateGroup({required List<ValveGroup> valveGroup}) {
     // irrigationLine!.defaultData.group = valveGroup;
     for (var i = 0; i < irrigationLine!.sequence.length; i++) {
       if (irrigationLine!.sequence[i]['selectedGroup'].isNotEmpty) {
@@ -138,7 +138,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
           for (var j = 0; j < valveGroup.length; j++) {
             if (valveGroup[j].id == group) {
               for (var l = 0; l < valveGroup[j].valve.length; l++) {
-                bool valveExistsInSequence = irrigationLine!.sequence[i]['valve'].any((e) => e['id'] == valveGroup[j].valve[l].id) ?? false;
+                bool valveExistsInSequence = irrigationLine!.sequence[i]['valve'].any((e) => e['sNo'] == valveGroup[j].valve[l].sNo) ?? false;
 
                 if (!valveExistsInSequence) {
                   irrigationLine!.sequence[i]['valve'].add(valveGroup[j].valve[l].toJson());
@@ -146,7 +146,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
               }
 
               irrigationLine!.sequence[i]['valve'].removeWhere((e) {
-                return !valveGroup[j].valve.any((valve) => valve.id == e['id']);
+                return !valveGroup[j].valve.any((valve) => valve.sNo == e['sNo']);
               });
             }
           }

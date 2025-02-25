@@ -36,7 +36,7 @@ class DeviceObjectModel {
       name: data['name'],
       connectionNo: data['connectionNo'],
       objectName: data['objectName'],
-      type: data['type'],
+      type: data['type'] ?? '',
       controllerId: data['controllerId'],
       count: data['count'],
       connectedObject: data['connectedObject'],

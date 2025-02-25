@@ -492,7 +492,13 @@ class _SequenceScreenState extends State<SequenceScreen> {
             buildLineAndValveContainerUpdated(
                 context: context,
                 dataList: dataList,
-                title: isGroup ? "Valve Groups" : isMainValve ? "Main valves" : isAgitator ? "Agitators": dataList[lineIndex].irrigationLine.name!,
+                title: isGroup
+                    ? "Valve Groups"
+                    : isMainValve
+                    ? "Main valves"
+                    : isAgitator
+                    ? "Agitators"
+                    : dataList[lineIndex].irrigationLine.name!,
                 isGroup:isGroup,
                 trailing: isGroup
                     ? TextButton(
@@ -623,7 +629,7 @@ class _SequenceScreenState extends State<SequenceScreen> {
                 isGroup: isGroup,
                 serialNumber: widget.serialNumber == 0 ? irrigationProgramProvider.serialNumberCreation : widget.serialNumber,
                 sNo: sequence.length+1,
-                groupId: ''
+                groupId: item.id
             );
             // if(isGroup && sequence.isNotEmpty && sequence.any((element) => element['selectedGroup'] == null)) {
             //   // showDialog(
