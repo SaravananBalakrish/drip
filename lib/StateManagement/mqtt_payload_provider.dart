@@ -12,7 +12,7 @@ enum MQTTConnectionState { connected, disconnected, connecting }
 class MqttPayloadProvider with ChangeNotifier {
   MQTTConnectionState _appConnectionState = MQTTConnectionState.disconnected;
    LiveData dashboardLiveInstance = LiveData();
-
+  dynamic spa = '';
   String dashBoardPayload = '', schedulePayload = '';
 
   Map<String, dynamic> pumpControllerPayload = {};
