@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import '../StateManagement/irrigation_program_provider.dart';
 import '../StateManagement/overall_use.dart';
-import '../constants/theme.dart';
 
 class HoursMinutesSeconds extends StatefulWidget {
   final String initialTime;

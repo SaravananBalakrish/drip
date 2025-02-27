@@ -57,14 +57,14 @@ class NodeList extends StatelessWidget {
             ),
           ),
           const Divider(),
-          SizedBox(
+          const SizedBox(
             height: 50,
             child: Row(
               children: [
                 Row(
                   children: [
-                    const SizedBox(width: 5),
-                    const Column(
+                    SizedBox(width: 5),
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -86,8 +86,8 @@ class NodeList extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(width: 10),
-                    const Column(
+                    SizedBox(width: 10),
+                    Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -109,7 +109,7 @@ class NodeList extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(width: 20),
+                    SizedBox(width: 20),
                     /*SizedBox(
                       width: 40,
                       child: IconButton(

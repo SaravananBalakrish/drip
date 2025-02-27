@@ -71,7 +71,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
       appBar: MediaQuery.of(context).size.width < 550 ?
       AppBar(
         surfaceTintColor: Colors.white,
-        title: Text('Program Library', style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),),
+        title: Text('Program Library',),
         centerTitle: false,
         automaticallyImplyLeading: false,
       ) : PreferredSize(preferredSize: const Size(0, 0), child: Container()),

@@ -1,9 +1,5 @@
 import 'package:oro_drip_irrigation/Models/Configuration/irrigationLine_model.dart';
 
-import 'package:oro_drip_irrigation/Models/Configuration/irrigationLine_model.dart';
-
-import 'package:oro_drip_irrigation/Models/Configuration/irrigationLine_model.dart';
-
 import 'device_object_model.dart';
 
 class SourceModel {

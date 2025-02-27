@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/Screens/NewIrrigationProgram/program_library.dart';
 import '../flavors.dart';
 import '../utils/Theme/smart_comm_theme.dart';
 import '../utils/routes.dart';
@@ -47,6 +46,8 @@ class MyApp extends StatelessWidget {
 Widget navigateToInitialScreen(String route) {
   switch (route) {
     case Routes.login:
+      // // return SystemDefinition(userId: 8, controllerId: 13, deviceId: '', menuId: 0);
+      // // return PreferenceMainScreen(userId: 8, controllerId: 13, deviceId: '', customerId: 8, menuId: 0);
       // return ProgramLibraryScreenNew(userId: 8, controllerId: 13, deviceId: '', fromDealer: false);
       return const LoginScreen();
     case Routes.dashboard:

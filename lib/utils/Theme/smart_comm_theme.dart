@@ -4,16 +4,16 @@ import 'package:google_fonts/google_fonts.dart';
 import 'oro_theme.dart';
 
 Color primaryDark = const Color(0xFF005C8F);
-Color primary = const Color(0xFF1B8BCB);
+// Color primary = const Color(0xFF1B8BCB);
 
 class SmartCommTheme {
   static ThemeData lightTheme = ThemeData.light().copyWith(
     primaryColorDark: primaryDark,
-    primaryColor: primary,
-    primaryColorLight: const Color(0x6438D3E8),
+    primaryColor: primaryDark,
+    primaryColorLight: primaryDark,
     scaffoldBackgroundColor:  Colors.blueGrey[50],
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF036673),
+    appBarTheme: AppBarTheme(
+      backgroundColor: primaryDark,
       titleTextStyle: TextStyle(color: Colors.white, fontSize: 22),
       iconTheme: IconThemeData(
         color: Colors.white,
@@ -21,7 +21,7 @@ class SmartCommTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: primary,
+        backgroundColor: primaryDark,
         foregroundColor: Colors.black,
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
@@ -41,11 +41,11 @@ class SmartCommTheme {
           borderRadius: BorderRadius.circular(0)
       ),
     ),
-    navigationRailTheme: const NavigationRailThemeData(
-      backgroundColor: Color(0xFF036673),
+    navigationRailTheme: NavigationRailThemeData(
+      backgroundColor: primary,
       elevation: 0,
       labelType: NavigationRailLabelType.all,
-      indicatorColor: Color(0x6438D3E8),
+      indicatorColor: primaryDark,
       unselectedIconTheme: IconThemeData(color: Colors.white54),
     ),
     segmentedButtonTheme: SegmentedButtonThemeData(
@@ -101,19 +101,37 @@ class SmartCommTheme {
         borderRadius: BorderRadius.circular(5.0),
       ),
     ),
+      colorScheme: ColorScheme.fromSeed(
+        primary: primaryDark,
+        secondary: primaryDark,
+        surface: Colors.white,
+        background: lightThemeBackGroundColor,
+        error: Colors.red,
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onSurface: Colors.black,
+        onBackground: Colors.black,
+        onError: Colors.white,
+        seedColor: primaryDark,
+      )
   );
 
   static ThemeData darkTheme = ThemeData.dark().copyWith(
     primaryColorDark: primaryDark,
-    primaryColor: primary,
-    primaryColorLight: const Color(0x6438D3E8),
+    primaryColor: primaryDark,
+    primaryColorLight: primaryDark,
     scaffoldBackgroundColor:  darkThemeBackGroundColor,
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF036673),
+    appBarTheme: AppBarTheme(
+      backgroundColor: primary,
       titleTextStyle: TextStyle(color: Colors.white, fontSize: 22),
       iconTheme: IconThemeData(
         color: Colors.white,
       ),
+    ),
+    tabBarTheme: const TabBarTheme(
+      indicatorColor: Colors.white70,
+      labelColor: Colors.white70,
+      unselectedLabelColor: Colors.white54,
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -196,5 +214,19 @@ class SmartCommTheme {
         borderRadius: BorderRadius.circular(5.0),
       ),
     ),
+    colorScheme: ColorScheme.fromSeed(
+      seedColor: primary,
+      primary: primary,
+      secondary: primaryDark,
+      surface: Colors.grey[100]!,
+      background: Colors.grey[100]!,
+      error: Colors.red,
+      onPrimary: Colors.black,
+      onSecondary: Colors.black,
+      onSurface: Colors.black,
+      onBackground: Colors.black,
+      onError: Colors.white,
+      brightness: Brightness.dark,
+    )
   );
 }

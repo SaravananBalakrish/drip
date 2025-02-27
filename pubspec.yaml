@@ -61,11 +61,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-     - assets/Images/Fertilization/
-     - assets/Images/Filtration/
-     - assets/Images/Source/
-     - assets/Images/Svg/
-     - assets/Images/Png/
+     - assets/Images/
+     - assets/png_images/
+     - assets/svg_images/
      - assets/SVGPicture/
 
   # An image asset can refer to one or more resolution-specific "variants", see

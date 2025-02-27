@@ -1,7 +1,3 @@
-import 'dart:convert';
-
-import '../Screens/ConfigMaker/config_web_view.dart';
-
 class Constants {
   static const String sNo = 'sNo';
   static const String objectId = 'objectId';
@@ -25,7 +21,7 @@ class Constants {
         for(var site in data[globalKey]){
           dynamic siteFormation = site;
           for(var siteKey in site.keys){
-            if(!['objectId', 'sNo', 'name', 'objectName', 'connectionNo', 'type', 'controllerId', 'count', 'siteMode', 'pumpType'].contains(siteKey)){
+            if(!['objectId', 'sNo', 'name', 'objectName', 'connectionNo', 'type', 'controllerId', 'count', 'siteMode', 'pumpType', 'connectedObject'].contains(siteKey)){
               siteFormation[siteKey] = siteFormation[siteKey] is List<dynamic>
                   ? (siteFormation[siteKey] as List<dynamic>).map((element) {
                 if(element is double){
