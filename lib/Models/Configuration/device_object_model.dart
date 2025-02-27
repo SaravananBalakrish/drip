@@ -30,6 +30,7 @@ class DeviceObjectModel {
   }
 
   factory DeviceObjectModel.fromJson(Map<String, dynamic> data) {
+    print("deveice object model:::::$data");
     return DeviceObjectModel(
       objectId: data['objectId'],
       sNo: data['sNo'],

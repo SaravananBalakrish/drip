@@ -16,21 +16,22 @@ class CustomerHome extends StatelessWidget {
     final fertilizerSite = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.fertilizerSite;
     final lineData = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.lineData;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        if (lineData.length == 1 && fertilizerSite.isEmpty)
-          SingleSourcePumpStation(
-            sourceName: waterSources[0].name,
-            level: waterSources[0].level,
-            outletPump:  waterSources[0].outletPump ?? [],
-            irrLineData: lineData,
-          )
-        else
-          const Text('No Single Water Source site'),
-      ],
-    );
+    return Container();
+    // return Column(
+    //   crossAxisAlignment: CrossAxisAlignment.start,
+    //   mainAxisAlignment: MainAxisAlignment.start,
+    //   children: [
+    //     if (lineData.length == 1 && fertilizerSite.isEmpty)
+    //       SingleSourcePumpStation(
+    //         sourceName: waterSources[0].name,
+    //         level: waterSources[0].level,
+    //         outletPump:  waterSources[0].outletPump ?? [],
+    //         irrLineData: lineData,
+    //       )
+    //     else
+    //       const Text('No Single Water Source site'),
+    //   ],
+    // );
   }
 }
 
@@ -140,8 +141,8 @@ class SingleSourcePumpStation extends StatelessWidget {
           ),
           if (outletPump.isNotEmpty)
             ...outletPump.map((pump) => displayPump(pump)),
-          if (irrLineData!.isNotEmpty)
-            IrrigationLine(lineData: irrLineData, pumpStationWith: (outletPump.length * 70)+210),
+          // if (irrLineData!.isNotEmpty)
+            // IrrigationLine(lineData: irrLineData, pumpStationWith: (outletPump.length * 70)+210),
         ],
       ),
     );
@@ -171,11 +172,11 @@ class SingleSourcePumpStation extends StatelessWidget {
               SizedBox(
                 width: 70,
                 height: 60,
-                child: AppConstants.getAsset('pump', pump.status, ''),
+                // child: AppConstants.getAsset('pump', pump.status, ''),
               ),
               const SizedBox(height: 4),
               Text(
-                pump.name,
+                "pump.name",
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 10, color: Colors.black54),
               ),

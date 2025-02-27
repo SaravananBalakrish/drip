@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
@@ -24,7 +25,7 @@ class LoginScreen extends StatelessWidget {
             backgroundColor: Colors.white,
             body: Row(
               children: [
-                Expanded(
+              kIsWeb ?  Expanded(
                   flex:2,
                   child: Container(
                       width: double.infinity, height: double.infinity,
@@ -34,7 +35,7 @@ class LoginScreen extends StatelessWidget {
                         child: SvgPicture.asset('assets/svg_images/login_left_picture.svg'),
                       )
                   ),
-                ),
+                ) : Container(),
                 Expanded(
                     child: Container(
                       color: Colors.white,

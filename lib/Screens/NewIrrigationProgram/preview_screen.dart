@@ -735,7 +735,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
               rangePadding: ChartRangePadding.round,
               labelPlacement: LabelPlacement.onTicks,
               minimum: -0.5,
-              maximum: chartDataList!.length.toDouble() - 0.5,
+             maximum: chartDataList!.length.toDouble() - 0.5,
               initialVisibleMinimum: -0.5,
               initialVisibleMaximum: chartDataList!.length < 6 ? chartDataList!.length.toDouble() - 0.5 : 6,
             ),
