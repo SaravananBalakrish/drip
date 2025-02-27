@@ -598,7 +598,6 @@ class AdditionalData {
         required this.programBasedInjector});
 
   factory AdditionalData.fromJson(Map<String, dynamic> json) {
-    print("json in the AdditionalData ::: $json");
     return AdditionalData(
       centralFiltrationOperationMode: json['centralFiltrationOperationMode'] ?? "TIME",
       localFiltrationOperationMode: json['localFiltrationOperationMode'] ?? "TIME",

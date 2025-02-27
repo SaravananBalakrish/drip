@@ -2894,7 +2894,8 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     return {
       "2500": [
         {
-          "2501": "${hwPayloadForWF(serialNumber)};"
+          "2501": ""
+          // "2501": "${hwPayloadForWF(serialNumber)};"
         },
         {
           "2502": "${[
@@ -3016,17 +3017,16 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                 : selectedLocalFiltrationMode == "DP"
                 ? 2
                 : 3}',/*LocalFilterSiteOperationMode*/
-       /*     centralFertilizerSite.toList().isNotEmpty
-                ?  localFertilizerSite.map((e) => e.selector != null ? List<DeviceObjectModel>.from(e.selector!) : [])
+            centralFilterSite.toList().isNotEmpty
+                ?  centralFilterSite.where((element) => selectedObjects.any((ele) => ele.sNo == element.filterSite!.sNo)).map((e) => e.filters != null ? List<DeviceObjectModel>.from(e.filters!) : [])
                 .expand((list) => list)
                 .whereType<DeviceObjectModel>()
-                .toList().map((e) => e.sNo).join('_'),*/
-            // selectionModel!.data.centralFilterSite!.any((element) => element.selected == true)
-            //     ? (generateFertilizerString(dataList: _selectionModel!.data.centralFilter, requiredType: "onOff"))
-            //     : "",/*CentralFilterSelection*/
-            // selectionModel!.data.localFilterSite!.any((element) => element.selected == true)
-            //     ? (generateFertilizerString(dataList: _selectionModel!.data.localFilter, requiredType: "onOff"))
-            //     : "",/*LocalFilterSelection*/
+                .toList().map((e) => e.sNo).join('_') : '',/*CentralFilterSelection*/
+            localFilterSite.toList().isNotEmpty
+                ?  localFilterSite.where((element) => selectedObjects.any((ele) => ele.sNo == element.filterSite!.sNo)).map((e) => e.filters != null ? List<DeviceObjectModel>.from(e.filters!) : [])
+                .expand((list) => list)
+                .whereType<DeviceObjectModel>()
+                .toList().map((e) => e.sNo).join('_') : '',/*LocalFilterSelection*/
             '${centralFiltBegin ? 1 : 0}',/*CentralFilterBeginningOnly*/
             '${localFiltBegin ? 1 : 0}',/*LocalFilterBeginningOnly*/
             '${_sampleConditions?.condition != null
@@ -3066,7 +3066,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   List valveSerialNumbers = e['valve'].map((valve) => valve['sNo']).toList();
                   return valveSerialNumbers.join('_');
                 }).toList().join("+")}',/*HeadUnitToPause*/
-            '${_irrigationLine?.sequence.map((e) => e['name']).toList().join("_")}',/*ZoneList*/
           ].join(',')};",
         },
       ]

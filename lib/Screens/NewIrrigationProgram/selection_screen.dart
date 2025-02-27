@@ -593,63 +593,11 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
       });
 
       return Column(
-        children: [
-          showSubList ?
-          buildSubList(
-            context: context,
-            dataList: dataList,
-            title: title,
-            children: [
-              if(!(title == "Central fert Selector" || title == "Local fert Selector"))
-                ...data.map((e) {
-                  bool isSelected = irrigationProgramProvider.selectedObjects.any((element) => element.sNo == e.sNo);
-
-                  return buildListOfContainer(
-                    context: context,
-                    onTap: () {
-                      setState(() {
-                        e.connectedObject = connectedObject;
-                        e.siteMode = siteMode;
-                        if (isSelected) {
-                          irrigationProgramProvider.selectedObjects.removeWhere((element) => element.sNo == e.sNo);
-                        } else {
-                          irrigationProgramProvider.selectedObjects.add(e);
-                        }
-                      });
-                    },
-                    itemName: e.name ?? "No name",
-                    containerColor: isSelected ? darkColor : lightColor,
-                  );
-                })
-              else
-                for (var index = 0; index < data.length; index++)
-                  buildListOfContainer(
-                    context: context,
-                    onTap: () {
-                      dataList[index].connectedObject = connectedObject;
-                      dataList[index].siteMode = siteMode;
-                      bool isAlreadySelected = irrigationProgramProvider.selectedObjects.any((element) => element.sNo == dataList[index].sNo);
-                      if (isAlreadySelected) {
-                        irrigationProgramProvider.selectedObjects.removeWhere((element) => element.sNo == dataList[index].sNo);
-                      } else {
-                        if (data[index].objectId == 8) {
-                          irrigationProgramProvider.selectedObjects.removeWhere((element) => element.objectId == 8 && irrigationProgramProvider.fertilizerSite!.any((site) => site.siteMode == 2 && site.selector!.any((selector) => selector.sNo == element.sNo)));
-                        } else {
-                          irrigationProgramProvider.selectedObjects.removeWhere((element) => element.objectId == 8 && irrigationProgramProvider.fertilizerSite!.any((site) => site.siteMode == 1 && site.selector!.any((selector) => selector.sNo == element.sNo)));
-                        }
-                        irrigationProgramProvider.selectedObjects.add(dataList[index]);
-                      }
-                    },
-                    itemName: data[index].name ?? "No name",
-                    containerColor: irrigationProgramProvider.selectedObjects.any((element) => element.sNo == data[index].sNo) ? darkColor : lightColor,
-                  )
-            ],
-          )
-              : buildLineAndValveContainerUpdated(
+        children: [buildLineAndValveContainerUpdated(
             context: context,
             title: title,
-            showSubList: showSubList,
-            dataList: dataList,
+            // showSubList: showSubList,
+            // dataList: dataList,
             leading: image != null
                 ? Container(
               padding: const EdgeInsets.all(5),

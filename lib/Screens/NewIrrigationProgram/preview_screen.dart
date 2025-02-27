@@ -495,7 +495,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   void sendFunction() async{
     final mainProvider = Provider.of<IrrigationProgramMainProvider>(context, listen: false);
     Map<String, dynamic> dataToMqtt = {};
-    // dataToMqtt = mainProvider.dataToMqtt(widget.serialNumber == 0 ? mainProvider.serialNumberCreation : widget.serialNumber, widget.programType);
+    dataToMqtt = mainProvider.dataToMqtt(widget.serialNumber == 0 ? mainProvider.serialNumberCreation : widget.serialNumber, widget.programType);
     var userData = {
       "defaultProgramName": mainProvider.defaultProgramName,
       "userId": widget.userId,

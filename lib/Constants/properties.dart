@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:oro_drip_irrigation/utils/Theme/smart_comm_theme.dart';
+
+import '../flavors.dart';
+import '../utils/Theme/oro_theme.dart';
 
 class AppProperties {
   //Todo duration
@@ -100,10 +104,10 @@ class AppProperties {
   static const Radius radius5 = Radius.circular(5);
 
 
-  static LinearGradient linearGradientLeading = const LinearGradient(
+  static LinearGradient linearGradientLeading = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
-    colors: [Color(0xff1D808E), Color(0xff044851)],
+    colors: F.appFlavor!.name.contains('oro') ? [const Color(0xff1D808E), const Color(0xff044851)] : [SmartCommTheme.lightTheme.primaryColor.withOpacity(0.7), SmartCommTheme.lightTheme.primaryColorDark],
   );
 
   static LinearGradient linearGradientLeading2 = const LinearGradient(
@@ -145,18 +149,21 @@ class AppProperties {
     return Material(
       type: MaterialType.transparency,
       child: MediaQuery.of(context).size.width > 600 ?
-      ListTile(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width > 600 ? 12 : 25)
-          ),
-          title: child ?? Text(title, style: TextStyle(color: selected ? MediaQuery.of(context).size.width > 600 ? Colors.white : Colors.white : Theme.of(context).primaryColor),),
-          leading: icons != null ? Icon(icons[index], color: Colors.white,) : null,
-          selected: selected,
-          onTap: () {
-            onTap(index);
-          },
-          selectedTileColor: selected ? const Color(0xff2999A9)  : null,
-          hoverColor: selected ? const Color(0xff2999A9) : null
+      IntrinsicWidth(
+        stepWidth: constraints!.maxWidth * 0.15,
+        child: ListTile(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(MediaQuery.of(context).size.width > 600 ? 12 : 25)
+            ),
+            title: child ?? Text(title, style: TextStyle(color: selected ? MediaQuery.of(context).size.width > 600 ? Colors.white : Colors.white : Theme.of(context).primaryColor),),
+            leading: icons != null ? Icon(icons[index], color: Colors.white,) : null,
+            selected: selected,
+            onTap: () {
+              onTap(index);
+            },
+            selectedTileColor: selected ? const Color(0xff2999A9)  : null,
+            hoverColor: selected ? const Color(0xff2999A9) : null
+        ),
       ) :
       InkWell(
           onTap: () {
@@ -171,7 +178,7 @@ class AppProperties {
                   // boxShadow: customBoxShadow2,
                   gradient: selected ? linearGradientLeading : null,
                   border: Border.all(color: Theme.of(context).primaryColor, width: 0.3),
-                  color: selected ? Theme.of(context).primaryColor : Color(0xffF2F2F2)
+                  color: selected ? Theme.of(context).primaryColor : const Color(0xffF2F2F2)
               ),
               child: Center(
                   child: child ?? Text(title, style: TextStyle(color: selected ? Colors.white : Theme.of(context).primaryColor),)

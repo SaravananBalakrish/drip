@@ -172,81 +172,77 @@ class _SequenceScreenState extends State<SequenceScreen> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           for (var index = 0; index < irrigationProgramProvider.irrigationLine!.sequence.length; index++)
-                                            Column(
-                                              children: [
-                                                Card(
-                                                  child: buildListTile(
-                                                    context: context,
-                                                    padding: const EdgeInsets.all(0),
-                                                    isNeedBoxShadow: false,
-                                                    title: irrigationProgramProvider.irrigationLine!.sequence[index]['name'],
-                                                    subTitle: irrigationProgramProvider.irrigationLine!.sequence[index]['valve']
-                                                        .map((e) => e['name'])
-                                                        .toList()
-                                                        .join(", "),
-                                                    leading: "${index + 1}",
-                                                    trailing: IconButton(
-                                                      onPressed: () {
-                                                        _textEditingController.text = irrigationProgramProvider.irrigationLine!.sequence[index]['name'];
-                                                        _textEditingController.selection = TextSelection(
-                                                          baseOffset: 0,
-                                                          extentOffset: _textEditingController.text.length,
-                                                        );
-                                                        final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (ctx) {
-                                                            return AlertDialog(
-                                                              title: const Text("Edit Sequence name"),
-                                                              content: Form(
-                                                                key: _formKey,
-                                                                child: TextFormField(
-                                                                  autofocus: true,
-                                                                  controller: _textEditingController,
-                                                                  // onChanged: (newValue) => tempSequenceName = newValue,
-                                                                  inputFormatters: [
-                                                                    LengthLimitingTextInputFormatter(20),
-                                                                    FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s.]'))
-                                                                  ],
-                                                                  validator: (value) {
-                                                                    if (value == null || value.isEmpty) {
-                                                                      return "Name cannot be empty";
-                                                                    } else if (irrigationProgramProvider.irrigationLine!.sequence.any((element) => element.programName == value)) {
-                                                                      return "Name already exists";
-                                                                    } else {
-                                                                      setState(() {
-                                                                        _textEditingController.text = value;
-                                                                      });
-                                                                    }
-                                                                    return null;
-                                                                  },
-                                                                ),
-                                                              ),
-                                                              actions: <Widget>[
-                                                                TextButton(
-                                                                  onPressed: () => Navigator.of(ctx).pop(),
-                                                                  child: const Text("CANCEL", style: TextStyle(color: Colors.red)),
-                                                                ),
-                                                                TextButton(
-                                                                  onPressed: () {
-                                                                    Navigator.of(ctx).pop();
-                                                                    setModalState(() {
-                                                                      irrigationProgramProvider.irrigationLine!.sequence[index]['name'] = _textEditingController.text;
-                                                                    });
-                                                                    setState(() {});
-                                                                  },
-                                                                  child: const Text("OKAY", style: TextStyle(color: Colors.green)),
-                                                                ),
+                                            Card(
+                                              child: buildListTile(
+                                                context: context,
+                                                padding: const EdgeInsets.all(0),
+                                                isNeedBoxShadow: false,
+                                                title: irrigationProgramProvider.irrigationLine!.sequence[index]['name'],
+                                                subTitle: irrigationProgramProvider.irrigationLine!.sequence[index]['valve']
+                                                    .map((e) => e['name'])
+                                                    .toList()
+                                                    .join(", "),
+                                                leading: "${index + 1}",
+                                                trailing: IconButton(
+                                                  onPressed: () {
+                                                    _textEditingController.text = irrigationProgramProvider.irrigationLine!.sequence[index]['name'];
+                                                    _textEditingController.selection = TextSelection(
+                                                      baseOffset: 0,
+                                                      extentOffset: _textEditingController.text.length,
+                                                    );
+                                                    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (ctx) {
+                                                        return AlertDialog(
+                                                          title: const Text("Edit Sequence name"),
+                                                          content: Form(
+                                                            key: _formKey,
+                                                            child: TextFormField(
+                                                              autofocus: true,
+                                                              controller: _textEditingController,
+                                                              // onChanged: (newValue) => tempSequenceName = newValue,
+                                                              inputFormatters: [
+                                                                LengthLimitingTextInputFormatter(20),
+                                                                FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s.]'))
                                                               ],
-                                                            );
-                                                          },
+                                                              validator: (value) {
+                                                                if (value == null || value.isEmpty) {
+                                                                  return "Name cannot be empty";
+                                                                } else if (irrigationProgramProvider.irrigationLine!.sequence.any((element) => element.programName == value)) {
+                                                                  return "Name already exists";
+                                                                } else {
+                                                                  setState(() {
+                                                                    _textEditingController.text = value;
+                                                                  });
+                                                                }
+                                                                return null;
+                                                              },
+                                                            ),
+                                                          ),
+                                                          actions: <Widget>[
+                                                            TextButton(
+                                                              onPressed: () => Navigator.of(ctx).pop(),
+                                                              child: const Text("CANCEL", style: TextStyle(color: Colors.red)),
+                                                            ),
+                                                            TextButton(
+                                                              onPressed: () {
+                                                                Navigator.of(ctx).pop();
+                                                                setModalState(() {
+                                                                  irrigationProgramProvider.irrigationLine!.sequence[index]['name'] = _textEditingController.text;
+                                                                });
+                                                                setState(() {});
+                                                              },
+                                                              child: const Text("OKAY", style: TextStyle(color: Colors.green)),
+                                                            ),
+                                                          ],
                                                         );
                                                       },
-                                                      icon: const Icon(Icons.edit),
-                                                    ),
-                                                  ),
+                                                    );
+                                                  },
+                                                  icon: const Icon(Icons.edit),
                                                 ),
-                                              ],
+                                              ),
                                             ),
                                         ],
                                       ),
@@ -491,7 +487,6 @@ class _SequenceScreenState extends State<SequenceScreen> {
           children: [
             buildLineAndValveContainerUpdated(
                 context: context,
-                dataList: dataList,
                 title: isGroup
                     ? "Valve Groups"
                     : isMainValve
@@ -499,7 +494,6 @@ class _SequenceScreenState extends State<SequenceScreen> {
                     : isAgitator
                     ? "Agitators"
                     : dataList[lineIndex].irrigationLine.name!,
-                isGroup:isGroup,
                 trailing: isGroup
                     ? TextButton(
                     onPressed: (){
@@ -629,42 +623,8 @@ class _SequenceScreenState extends State<SequenceScreen> {
                 isGroup: isGroup,
                 serialNumber: widget.serialNumber == 0 ? irrigationProgramProvider.serialNumberCreation : widget.serialNumber,
                 sNo: sequence.length+1,
-                groupId: item.id
+                groupId: isGroup ? item.id : ''
             );
-            // if(isGroup && sequence.isNotEmpty && sequence.any((element) => element['selectedGroup'] == null)) {
-            //   // showDialog(
-            //   //     context: context,
-            //   //     builder: (BuildContext context) {
-            //   //       return AlertDialog(
-            //   //         icon: Icon(Icons.warning),
-            //   //         title: Text("Warning!"),
-            //   //         content: Text("Please clear all the sequences to select the group! \nHere after no need to do this again. \nThis has to be done due to software update."),
-            //   //         actions: [
-            //   //           TextButton(
-            //   //               onPressed: (){
-            //   //                 Navigator.of(context).pop();
-            //   //               },
-            //   //               child: Text("OK", style: TextStyle(color: Theme.of(context).primaryColor),)
-            //   //           ),
-            //   //         ],
-            //   //       );
-            //   //     }
-            //   // );
-            //   if (!sequence[indexToShow].containsKey('selectedGroup')) {
-            //     sequence[indexToShow]['selectedGroup'] = [];
-            //   }
-            // } else {
-            //   irrigationProgramProvider.addValvesInSequence(
-            //       valves: isGroup ? dataList.map((e) => e.toJson()).toList() : [item.toJson()],
-            //       lineIndex: lineIndex,
-            //       isMainValve: isMainValve,
-            //       sequenceIndex: indexToShow,
-            //       isGroup: isGroup,
-            //       serialNumber: widget.serialNumber == 0 ? irrigationProgramProvider.serialNumberCreation : widget.serialNumber,
-            //       sNo: sequence.length+1,
-            //       groupId: item.id
-            //   );
-            // }
           }
         },
         containerColor: isGroup
@@ -713,166 +673,76 @@ Widget buildListOfContainer(
 }
 
 Widget buildLineAndValveContainerUpdated({
-  required context,
-  dataList,
-  isGroup,
-  bool showSubList = false,
-  double height = 0.0,
-  required List<Widget> children,
+  required BuildContext context,
   required String title,
-  leading,
-  Widget? trailing
+  required List<Widget> children,
+  Widget? leading,
+  Widget? trailing,
+  bool isRowLayout = true,
 }) {
-
   return Container(
     padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.white,
-        boxShadow: AppProperties.customBoxShadowLiteTheme
+      borderRadius: BorderRadius.circular(10),
+      color: Colors.white,
+      boxShadow: AppProperties.customBoxShadowLiteTheme,
     ),
-    child: MediaQuery.of(context).size.width > 800 ?
-    Row(
-      mainAxisAlignment: MainAxisAlignment.start,
+    child: isRowLayout && MediaQuery.of(context).size.width > 800
+        ? Row(
       children: [
-        Expanded(
-          flex: 1,
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: Image.asset(
-                  'assets/images/irrigation_line1.png',
-                ),
-              ),
-              const SizedBox(width: 20),
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),
-                  maxLines: 2,
-                ),
-              ),
-            ],
-          ),
-        ),
+        buildLeadingTitle(context, title, leading, 40, 22),
         const SizedBox(width: 10),
         const VerticalDivider(),
         const SizedBox(width: 10),
         Expanded(
           flex: 5,
-          child: Wrap(
-            runSpacing: 10,
-            spacing: 5,
-            direction: Axis.horizontal,
-            children: children,
-          ),
+          child: Wrap(spacing: 5, runSpacing: 10, children: children),
         ),
       ],
     )
-        :Column(
-      mainAxisSize: MainAxisSize.min,
+        : Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Container(
-              width: 35,
-              height: 35,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              // child: Icon(Icons.line_axis_outlined, color: Theme.of(context).primaryColor),
-              // child: leading ?? SvgPicture.asset(
-              //   'assets/images/default.svg',
-              // ),
-              child: leading ?? Container(
-                padding: const EdgeInsets.all(5),
-                decoration: BoxDecoration(
-                    color: cardColor,
-                    shape: BoxShape.circle
-                ),
-                child: Image.asset(
-                  'assets/Images/irrigation_line1.png',
+            buildLeadingTitle(context, title, leading, 35, 16),
+            if (trailing != null)
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: trailing,
                 ),
               ),
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-            ),
-            if(trailing != null)
-              Expanded(child: Container(child: Align(alignment: Alignment.centerRight, child: trailing)))
           ],
         ),
-        const SizedBox(height: 10,),
-        Wrap(
-          runSpacing: 10,
-          spacing: 5,
-          direction: Axis.horizontal,
-          children: children,
+        const SizedBox(height: 10),
+        Wrap(spacing: 5, runSpacing: 10, children: children),
+      ],
+    ),
+  );
+}
+
+Widget buildLeadingTitle(BuildContext context, String title, Widget? leading, double size, double fontSize) {
+  return Expanded(
+    flex: 1,
+    child: Row(
+      children: [
+        Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(15)),
+          child: leading ?? Image.asset('assets/Images/irrigation_line1.png', color: Theme.of(context).primaryColorDark),
+        ),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Text(
+            title,
+            style: TextStyle(fontSize: fontSize, fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),
+            maxLines: 2,
+          ),
         ),
       ],
     ),
   );
 }
 
-Widget buildSubList({
-  required context,
-  dataList,
-  isGroup,
-  required List<Widget> children,
-  required String title,
-}) {
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-    decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.white,
-        boxShadow: AppProperties.customBoxShadowLiteTheme
-    ),
-    child: Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Container(
-              width: 20,
-              height: 20,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-              ),
-              // child: Icon(Icons.line_axis_outlined, color: Theme.of(context).primaryColor),
-              child: SvgPicture.asset(
-                'assets/Images/default.svg',
-              ),
-            ),
-            const SizedBox(width: 20),
-            Expanded(
-              child: Text(
-                title,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(fontWeight: FontWeight.bold),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 10,),
-        Wrap(
-          runSpacing: 10,
-          spacing: 5,
-          direction: Axis.horizontal,
-          children: children,
-        ),
-      ],
-    ),
-  );
-}

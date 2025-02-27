@@ -40,7 +40,7 @@ class DeviceObjectModel {
       type: data['type'] ?? '',
       controllerId: data['controllerId'],
       count: data['count'],
-      connectedObject: data['connectedObject'],
+      connectedObject: null,
       siteMode: data['siteMode'],
     );
   }

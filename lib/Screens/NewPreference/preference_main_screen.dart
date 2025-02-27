@@ -103,7 +103,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                         controller: _tabController,
                         physics: const NeverScrollableScrollPhysics(),
                         children: [
-                          SettingsScreen(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId,)
+                          SettingsScreen(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, viewSettings: false,)
                         ],
                       ),
                     ),

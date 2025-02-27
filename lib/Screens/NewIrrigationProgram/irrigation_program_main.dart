@@ -129,46 +129,42 @@ class _IrrigationProgramState extends State<IrrigationProgram> with SingleTicker
               appBar: MediaQuery.of(context).size.width < 600
                   ? AppBar(
                 // title: Text(mainProvider.programName != '' ? mainProvider.programName : 'New Program'),
-                title: Text(widget.serialNumber == 0 ? "New Program" : program, style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),),
+                title: Text(widget.serialNumber == 0 ? "New Program" : program,),
                 centerTitle: true,
                 leading: IconButton(
                   onPressed: () {
                     mainProvider.programLibraryData(overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, widget.controllerId);
                     Navigator.pop(context);
                   },
-                  icon: Icon(Icons.arrow_back, color: Theme.of(context).primaryColor,),
+                  icon: Icon(Icons.arrow_back, color: Colors.white,),
                 ),
                 bottom: constraints.maxWidth < 600
                     ?
                 PreferredSize(
                   preferredSize: const Size.fromHeight(80.0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    // color: Theme.of(context).colorScheme.background,
-                    child: TabBar(
-                      controller: _tabController,
-                      tabAlignment: TabAlignment.start,
-                      isScrollable: true,
-                      tabs: [
-                        for (int i = 0; i < labels.length; i++)
-                          InkWell(
-                            onTap: () {
-                              if(_tabController.index == 0 && mainProvider.irrigationLine!.sequence.every((element) => element['valve'].isEmpty)) {
-                                validatorFunction(context, mainProvider);
-                              } else {
-                                validateSelection(index: i);
-                              }
-                            },
-                            child: CustomTab(
-                              height: 80,
-                              label: labels[i],
-                              content: icons[i],
-                              tabIndex: i,
-                              selectedTabIndex: mainProvider.selectedTabIndex,
-                            ),
+                  child: TabBar(
+                    controller: _tabController,
+                    tabAlignment: TabAlignment.start,
+                    isScrollable: true,
+                    tabs: [
+                      for (int i = 0; i <  labels.length; i++)
+                        InkWell(
+                          onTap: () {
+                            if(_tabController.index == 0 && mainProvider.irrigationLine!.sequence.every((element) => element['valve'].isEmpty)) {
+                              validatorFunction(context, mainProvider);
+                            } else {
+                              validateSelection(index: i);
+                            }
+                          },
+                          child: CustomTab(
+                            height: 80,
+                            label: labels[i],
+                            content: icons[i],
+                            tabIndex: i,
+                            selectedTabIndex: mainProvider.selectedTabIndex,
                           ),
-                      ],
-                    ),
+                        ),
+                    ],
                   ),
                 ) : null,
               ) : PreferredSize(

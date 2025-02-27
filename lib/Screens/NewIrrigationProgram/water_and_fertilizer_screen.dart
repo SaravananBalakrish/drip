@@ -7,7 +7,6 @@ import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/app.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
-import '../../../../constants/theme.dart';
 import '../../StateManagement/irrigation_program_provider.dart';
 import '../../StateManagement/overall_use.dart';
 import '../../Widgets/HoursMinutesSeconds.dart';
