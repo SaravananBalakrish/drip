@@ -8,6 +8,8 @@ import 'package:provider/provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/formatters.dart';
+import '../../utils/routes.dart';
+import '../../utils/shared_preferences_helper.dart';
 import '../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../../view_models/nav_rail_view_model.dart';
 import '../account_settings.dart';
@@ -250,23 +252,9 @@ class CustomerScreenController extends StatelessWidget {
                                   },
                                 ),
                                 const SizedBox(height: 8),
-                                TextButton(onPressed: (){
-                                  /*final prefs = await SharedPreferences.getInstance();
-                                        await prefs.remove('userId');
-                                        await prefs.remove('userName');
-                                        await prefs.remove('userType');
-                                        await prefs.remove('countryCode');
-                                        await prefs.remove('mobileNumber');
-                                        await prefs.remove('subscribeTopic');
-                                        await prefs.remove('password');
-                                        await prefs.remove('email');
-
-                                        MyFunction().clearMQTTPayload(context);
-                                        MQTTManager().onDisconnected();
-
-                                        if (context.mounted){
-                                          Navigator.pushReplacementNamed(context, '/login');
-                                        }*/
+                                TextButton(onPressed: () async {
+                                  await PreferenceHelper.clearAll();
+                                  Navigator.pushNamedAndRemoveUntil(context, Routes.login, (route) => false,);
                                 },
                                   child: const SizedBox(
                                     width:100,

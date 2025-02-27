@@ -14,8 +14,8 @@ class SmartCommTheme {
     scaffoldBackgroundColor:  Colors.blueGrey[50],
     appBarTheme: AppBarTheme(
       backgroundColor: primaryDark,
-      titleTextStyle: TextStyle(color: Colors.white, fontSize: 22),
-      iconTheme: IconThemeData(
+      titleTextStyle: const TextStyle(color: Colors.white, fontSize: 22),
+      iconTheme: const IconThemeData(
         color: Colors.white,
       ),
     ),
@@ -30,11 +30,11 @@ class SmartCommTheme {
         ),
       ),
     ),
-    inputDecorationTheme: InputDecorationTheme(
+   /* inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
       labelStyle: const TextStyle(color: Colors.blue),
-    ),
+    ),*/
     dialogBackgroundColor: Colors.white,
     dialogTheme: DialogTheme(
       shape: RoundedRectangleBorder(
@@ -88,7 +88,7 @@ class SmartCommTheme {
 
       headlineLarge: GoogleFonts.roboto(fontSize: 20, color: Colors.black),
 
-      bodyLarge: GoogleFonts.roboto(fontSize: 13, color: Colors.black, fontWeight: FontWeight.bold),
+      bodyLarge: GoogleFonts.roboto(fontSize: 15, color: Colors.black87),
       bodyMedium: GoogleFonts.roboto(fontSize: 13, color: Colors.black, fontWeight: FontWeight.bold),
       bodySmall: GoogleFonts.roboto(fontSize: 12, color: Colors.black, fontWeight: FontWeight.bold),
     ),

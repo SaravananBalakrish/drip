@@ -397,12 +397,12 @@ class AdminDashboard extends StatelessWidget {
                                       style: const TextStyle(fontSize: 12,
                                           fontWeight: FontWeight.normal)),
                                   onTap: () {
-                                    // Navigator.push(context,
-                                    //   MaterialPageRoute(
-                                    //       builder: (context) => DealerScreenController(userId: viewModel.myCustomerList[index].userId,
-                                    //         userName: viewModel.myCustomerList[index].userName,
-                                    //           mobileNo: viewModel.myCustomerList[index].mobileNumber, fromLogin: false, emailId: viewModel.myCustomerList[index].emailId,)),
-                                    // );
+                                    Navigator.push(context,
+                                      MaterialPageRoute(
+                                          builder: (context) => DealerScreenController(userId: viewModel.myCustomerList[index].userId,
+                                            userName: viewModel.myCustomerList[index].userName,
+                                              mobileNo: viewModel.myCustomerList[index].mobileNumber, fromLogin: false, emailId: viewModel.myCustomerList[index].emailId,)),
+                                    );
                                   },
                                   trailing: IconButton(
                                     tooltip: 'View and Add new product',

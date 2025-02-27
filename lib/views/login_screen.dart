@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:provider/provider.dart';
+import '../flavors.dart';
 import '../repository/repository.dart';
 import '../services/http_service.dart';
 import '../utils/constants.dart';
@@ -25,23 +26,26 @@ class LoginScreen extends StatelessWidget {
             backgroundColor: Colors.white,
             body: Row(
               children: [
-              kIsWeb ?  Expanded(
+              kIsWeb? Expanded(
                   flex:2,
                   child: Container(
                       width: double.infinity, height: double.infinity,
-                      color: Theme.of(context).primaryColor,
-                      child: Padding(
+                      color: Theme.of(context).primaryColorDark,
+                      child: F.appFlavor!.name.contains('oro')?
+                      Padding(
                         padding: const EdgeInsets.all(50.0),
                         child: SvgPicture.asset('assets/svg_images/login_left_picture.svg'),
-                      )
+                      ):
+                      const Image(image: AssetImage('assets/png_images/lk_login_left_picture.png'), fit: BoxFit.fill),
                   ),
-                ) : Container(),
-                Expanded(
+                ):
+              Container(),
+              Expanded(
                     child: Container(
                       color: Colors.white,
                       child: Column(
                         children: [
-                          Expanded(
+                          F.appFlavor!.name.contains('oro')?Expanded(
                             child: Container(
                                 color: Colors.white,
                                 child: Row(
@@ -51,6 +55,10 @@ class LoginScreen extends StatelessWidget {
                                   ],
                                 ),
                               ),
+                          ):
+                          Padding(
+                            padding: const EdgeInsets.only(left: 150, top: 40),
+                            child: SvgPicture.asset('assets/svg_images/lk_login_top_corner.svg', fit: BoxFit.fitWidth),
                           ),
                           Expanded(
                               flex:5,
@@ -63,8 +71,10 @@ class LoginScreen extends StatelessWidget {
                                     padding: const EdgeInsets.only(left: 20, right: 40),
                                     child: Column(
                                       children: [
-                                        SvgPicture.asset('assets/svg_images/oro_logo.svg', fit: BoxFit.cover),
-                                        const SizedBox(height: 10),
+                                        F.appFlavor!.name.contains('oro')?SvgPicture.asset('assets/svg_images/oro_logo.svg', fit: BoxFit.cover):
+                                        const SizedBox(),
+                                        F.appFlavor!.name.contains('oro')?const SizedBox(height: 10):
+                                        const SizedBox(),
                                         Padding(
                                           padding: const EdgeInsets.only(left: 5, right: 5, bottom: 5),
                                           child: Text(AppConstants.appShortContent, style: Theme.of(context).textTheme.titleMedium, textAlign: TextAlign.center,),

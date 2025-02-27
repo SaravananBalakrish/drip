@@ -32,23 +32,20 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future<void> login() async {
-    isLoading = true;
     errorMessage = "";
-    notifyListeners();
-
+    setLoading(true);
     try {
       String mobileNumber = mobileNoController.text.trim();
       String password = passwordController.text.trim();
 
       if (mobileNumber.isEmpty || password.isEmpty) {
-        isLoading = false;
         errorMessage = "Both fields are required!";
-        notifyListeners();
+        setLoading(false);
         return;
-      }else if(mobileNumber.length < 6 || password.length < 5) {
-        isLoading = false;
+      }
+      else if(mobileNumber.length < 6 || password.length < 5) {
         errorMessage = "Invalid Mobile number or Password!";
-        notifyListeners();
+        setLoading(false);
         return;
       }
 
@@ -60,36 +57,40 @@ class LoginViewModel extends ChangeNotifier {
       };
 
       final response = await repository.checkLoginAuth(body);
-      final data = jsonDecode(response.body);
       if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        if (data["code"] == 200) {
+          final customerData = data["data"];
+          final user = customerData["user"];
 
-        final customerData = data["data"];
-        final user = customerData["user"];
+          String countryCodeFinal = countryCode.replaceAll('+', '');
 
-        String countryCodeFinal = countryCode.replaceAll('+', '');
+          await PreferenceHelper.saveUserDetails(
+            token: user['accessToken'],
+            userId: user['userId'],
+            role: user['userType']=='1'? 'admin' : user['userType']=='2' ? 'dealer' :'customer',
+            userName: user['userName'],
+            countryCode: countryCodeFinal,
+            mobileNumber: mobileNumber,
+            email: user['email'],
+          );
 
-        await PreferenceHelper.saveUserDetails(
-          token: user['accessToken'],
-          userId: user['userId'],
-          role: user['userType']=='1'? 'admin' : user['userType']=='2' ? 'dealer' :'customer',
-          userName: user['userName'],
-          countryCode: countryCodeFinal,
-          mobileNumber: mobileNumber,
-          email: user['email'],
-        );
-
-        onLoginSuccess(user['userType']=='1'? 'admin' :
-        user['userType']=='2'? 'dealer':'customer');
-
-      } else {
-        isLoading = false;
-        errorMessage = data['message'];
-        notifyListeners();
+          onLoginSuccess(user['userType']=='1'? 'admin' :
+          user['userType']=='2'? 'dealer':'customer');
+        }else{
+          errorMessage = data['message'];
+        }
       }
     } catch (error) {
-      isLoading = false;
+      debugPrint('login error: $error');
       errorMessage = "An error occurred: $error";
-      notifyListeners();
+    } finally {
+      setLoading(false);
     }
+  }
+
+  void setLoading(bool value) {
+    isLoading = value;
+    notifyListeners();
   }
 }

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../view_models/screen_controller_view_model.dart';
 import 'admin_dealer/admin_screen_controller.dart';
 import 'admin_dealer/dealer_screen_controller.dart';
+import 'customer/customer_screen_controller.dart';
 
 class ScreenController extends StatelessWidget {
   const ScreenController({super.key});
@@ -62,7 +63,14 @@ class ScreenController extends StatelessWidget {
           emailId: emailId,
         );
       default:
-        return const SizedBox();
+        return CustomerScreenController(
+          userId: userId,
+          customerName: userName,
+          mobileNo: mobileNo,
+          emailId: emailId,
+          customerId: userId,
+          fromLogin: true,
+        );
     }
   }
 }
