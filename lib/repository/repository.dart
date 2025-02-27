@@ -264,6 +264,5 @@ class Repository{
     return await apiService.postRequest('/user/manualOperation/create', body);
   }
 
-
 }
 
