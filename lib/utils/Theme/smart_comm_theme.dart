@@ -2,17 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'oro_theme.dart';
+
 Color primary = const Color(0xFF004265);
 Color onPrimary = const Color(0xFF008CD7);
+Color primaryLight = const Color(0xFF9BD8F8);
 Color secondary = const Color(0xFF005C8E);
 Color onBackground = const Color(0xFFEFEFEF);
 
 
+
 class SmartCommTheme {
   static ThemeData lightTheme = ThemeData.light().copyWith(
-    primaryColorDark: primary,
+    primaryColorDark: primaryDark,
     primaryColor: primary,
-    primaryColorLight: primaryDark,
+    primaryColorLight: primaryLight,
     scaffoldBackgroundColor:  Colors.blueGrey[50],
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -36,18 +39,19 @@ class SmartCommTheme {
           borderRadius: BorderRadius.circular(0)
       ),
     ),
+
     navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: primary,
-      elevation: 0,
-      labelType: NavigationRailLabelType.all,
-      indicatorColor: primaryDark,
-      unselectedIconTheme: IconThemeData(color: Colors.white54),
-    ),
+        backgroundColor: primaryDark,
+        elevation: 1,
+        labelType: NavigationRailLabelType.all,
+        indicatorColor: primary,
+        unselectedIconTheme: const IconThemeData(color: Colors.white54),
+      ),
     segmentedButtonTheme: SegmentedButtonThemeData(
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
           if (states.contains(WidgetState.selected)) {
-            return lightTheme.primaryColor.withAlpha(7);
+            return primary;
           }
           return Colors.grey[300];
         },
@@ -113,7 +117,7 @@ class SmartCommTheme {
       onBackground: onPrimary.withOpacity(0.1), // siva
       onError: Colors.white,
       seedColor: primaryDark,
-    )
+    ),
   );
 
   static ThemeData darkTheme = ThemeData.dark().copyWith(
@@ -124,7 +128,7 @@ class SmartCommTheme {
     appBarTheme: AppBarTheme(
       backgroundColor: primary,
       titleTextStyle: TextStyle(color: Colors.white, fontSize: 22),
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: Colors.white,
       ),
     ),
