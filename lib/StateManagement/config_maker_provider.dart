@@ -16,7 +16,7 @@ import '../Screens/ConfigMaker/connection.dart';
 
 class ConfigMakerProvider extends ChangeNotifier{
   double ratio = 1.0;
-  ConfigMakerTabs selectedTab = ConfigMakerTabs.siteConfigure;
+  ConfigMakerTabs selectedTab = ConfigMakerTabs.deviceList;
   Map<int, String> configurationTab = {
     0 : 'Source Configuration',
     1 : 'Pump Configuration',

@@ -312,10 +312,10 @@ class Pump {
   final int objectId;
   final double sNo;
   final String name;
-  final int connectionNo;
+  final int? connectionNo;
   final String objectName;
   final String type;
-  final int controllerId;
+  final int? controllerId;
   final dynamic count;
   int status;
   bool selected;
