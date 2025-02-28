@@ -33,13 +33,14 @@ class SizedImageMedium extends StatelessWidget {
 
 class SizedImageSmall extends StatelessWidget {
   final String imagePath;
-  const SizedImageSmall({super.key, required this.imagePath});
+  Color? color;
+  SizedImageSmall({super.key, required this.imagePath, this.color});
 
   @override
   Widget build(BuildContext context) {
     bool themeMode = Theme.of(context).brightness == Brightness.light;
     return SvgPicture.asset(
-      color: themeMode ? Colors.black : Colors.white70,
+      color: color ?? (themeMode ? Colors.black : Colors.white70),
       imagePath,
       width: 20,
       height: 20,

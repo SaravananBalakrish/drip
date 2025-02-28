@@ -21,7 +21,7 @@ class CustomDropDownButton extends StatelessWidget {
     return DropdownButton<String>(
       underline: Container(),
       value: value,
-      style: textStyleInCell,
+      style: Theme.of(context).textTheme.headlineSmall,
       items: list.map((String item) {
         return DropdownMenuItem<String>(
           value: item,

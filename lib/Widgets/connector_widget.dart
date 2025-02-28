@@ -60,7 +60,7 @@ class ConnectorWidget extends StatelessWidget {
                     height: double.infinity,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(2),
-                        color: selectedConnector ? Colors.white : (object != null ? Theme.of(context).primaryColor : Colors.grey.shade500)
+                        color: selectedConnector ? Colors.white : (object != null ? Theme.of(context).colorScheme.onPrimary : Colors.grey.shade500)
                     ),
                   ),
                 ),

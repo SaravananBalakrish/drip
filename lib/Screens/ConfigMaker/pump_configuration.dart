@@ -69,6 +69,19 @@ class _PumpConfigurationState extends State<PumpConfiguration> {
                                       list: const ['source', 'irrigation'],
                                       onChanged: (value){
                                         setState(() {
+                                          for(var line in widget.configPvd.line){
+                                            if(value == 'source'){
+                                              if(line.irrigationPump.contains(pump.commonDetails.sNo)){
+                                                line.irrigationPump.remove(pump.commonDetails.sNo);
+                                              }
+                                            }else{
+                                              if(line.sourcePump.contains(pump.commonDetails.sNo)){
+                                                line.sourcePump.remove(pump.commonDetails.sNo);
+                                              }
+                                            }
+
+                                          }
+
                                           pump.pumpType = getPumpTypeStringToCode(value!);
                                         });
                                       }

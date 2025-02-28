@@ -8,10 +8,12 @@ class CustomMaterialButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialButton(
-      color: Theme.of(context).primaryColor,
+      hoverColor: Theme.of(context).colorScheme.onPrimary,
+      color: Theme.of(context).colorScheme.secondary,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15)
       ),
+      padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
       onPressed: onPressed ?? () {
         Navigator.of(context).pop(); // Dismiss the alert
       },

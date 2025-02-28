@@ -70,31 +70,31 @@ class _DeviceListState extends State<DeviceList> {
               Expanded(
                 child: DataTable2(
                   minWidth: 900,
-                  headingRowColor: WidgetStateProperty.all(themeData.cardColor),
-                  dataRowColor: WidgetStateProperty.all(themeData.cardColor),
+                  headingRowColor: WidgetStatePropertyAll(themeData.colorScheme.onBackground),
+                  dataRowColor: WidgetStatePropertyAll(themeData.colorScheme.onBackground),
                     fixedLeftColumns: 2,
                     columns: [
                       DataColumn2(
                         fixedWidth: 80,
-                        label: Text('SNO', style: themeData.textTheme.bodyLarge,),
+                        label: Text('SNO', style: themeData.textTheme.headlineLarge,),
                       ),
                       DataColumn2(
                         fixedWidth: 180,
-                        label: Text('MODEL NAME', style: themeData.textTheme.bodyLarge,),
+                        label: Text('MODEL NAME', style: themeData.textTheme.headlineLarge,),
                       ),
                       DataColumn2(
                         fixedWidth: 180,
-                        label: Text('DEVICE ID', style: themeData.textTheme.bodyLarge,),
+                        label: Text('DEVICE ID', style: themeData.textTheme.headlineLarge,),
                       ),
                       DataColumn2(
                         fixedWidth: 150,
-                        label: Text('INTERFACE', style: themeData.textTheme.bodyLarge,),
+                        label: Text('INTERFACE', style: themeData.textTheme.headlineLarge,),
                       ),
                       DataColumn2(
                         fixedWidth: 150,
-                        label: Text('INTERVAL', style: themeData.textTheme.bodyLarge,),
+                        label: Text('INTERVAL', style: themeData.textTheme.headlineLarge,),
                       ),
-                      DataColumn2(
+                      const DataColumn2(
                         fixedWidth: 100,
                         label: Text(''),
                       ),
@@ -111,10 +111,10 @@ class _DeviceListState extends State<DeviceList> {
                       return DataRow(
                           cells: [
                             DataCell(
-                              Text('${index + 1}', style: textStyleInCell),
+                              Text('${index + 1}', style: themeData.textTheme.headlineSmall),
                             ),
                             DataCell(
-                              Text(device.deviceName, style: textStyleInCell),
+                              Text(device.deviceName, style: themeData.textTheme.headlineSmall),
                             ),
                             DataCell(
                               Text(device.deviceId, style: TextStyle(color: themeData.primaryColorDark),),
@@ -189,8 +189,9 @@ class _DeviceListState extends State<DeviceList> {
       width:  double.infinity,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-        color: themeData.cardColor,
-        border: Border.all(width: 0.5, color: const Color(0xffC9C6C6))
+        color: Colors.white,
+        border: Border.all(width: 0.5, color: const Color(0xffC9C6C6)),
+        boxShadow: AppProperties.customBoxShadowLiteTheme
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(0),
@@ -218,12 +219,11 @@ class _DeviceListState extends State<DeviceList> {
                                 title: const Text('Choose Node for Configuration Under Master',),
                                 content: SizedBox(
                                   width: MediaQuery.of(context).size.width >= 400 ? 400 : MediaQuery.of(context).size.width,
-                                  child: DataTable2(
-                                    headingRowColor: const WidgetStatePropertyAll(Color(0xffEAECF0)),
-                                    dataRowColor: const WidgetStatePropertyAll(Color(0xffFCFCFD)),
-                                    dataTextStyle: textStyleInCell,
+                                  child: DataTable(
+                                    headingRowColor: WidgetStatePropertyAll(themeData.colorScheme.onBackground),
+                                    dataRowColor: WidgetStatePropertyAll(themeData.colorScheme.onBackground),
                                       columns: [
-                                        DataColumn2(
+                                        DataColumn(
                                           label: Checkbox(
                                               value: selectAllNode,
                                               onChanged: (value){
@@ -238,13 +238,11 @@ class _DeviceListState extends State<DeviceList> {
                                               }
                                           )
                                         ),
-                                        DataColumn2(
-                                          label: Text('MODEL NAME'),
-                                          fixedWidth: 180,
+                                        DataColumn(
+                                          label: Text('MODEL NAME', style: themeData.textTheme.headlineLarge,),
                                         ),
-                                        DataColumn2(
-                                          fixedWidth: 180,
-                                          label: Text('DEVICE ID'),
+                                        DataColumn(
+                                          label: Text('DEVICE ID',style: themeData.textTheme.headlineLarge,),
                                         )
                                       ],
                                       rows: listOfDevices
@@ -269,7 +267,7 @@ class _DeviceListState extends State<DeviceList> {
                                                 ),
                                               ),
                                               DataCell(
-                                                Text(device.deviceName,)
+                                                Text(device.deviceName,style: themeData.textTheme.headlineSmall,)
                                               ),
                                               DataCell(
                                                   Text(device.deviceId, style: TextStyle(color: themeData.primaryColor))

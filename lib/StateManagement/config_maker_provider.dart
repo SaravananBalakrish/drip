@@ -16,7 +16,9 @@ import '../Screens/ConfigMaker/connection.dart';
 
 class ConfigMakerProvider extends ChangeNotifier{
   double ratio = 1.0;
-  ConfigMakerTabs selectedTab = ConfigMakerTabs.siteConfigure;
+  ConfigMakerTabs selectedTab = ConfigMakerTabs.deviceList;
+  Map<String, dynamic> configMakerDataFromHttp = {};
+  Map<String, dynamic> defaultDataFromHttp = {};
   Map<int, String> configurationTab = {
     0 : 'Source Configuration',
     1 : 'Pump Configuration',
@@ -161,12 +163,8 @@ class ConfigMakerProvider extends ChangeNotifier{
   List<IrrigationLineModel> line = [];
 
   void clearData(){
-    for(var i in listOfSampleObjectModel){
-      i.count = '0';
-    }
-    for(var i in listOfObjectModelConnection){
-      i.count = '0';
-    }
+    listOfSampleObjectModel = (defaultDataFromHttp['objectType'] as List<dynamic>).map(mapToDeviceObject).toList();
+    listOfObjectModelConnection = (defaultDataFromHttp['objectType'] as List<dynamic>).map(mapToDeviceObject).toList();
     for(var i in listOfDeviceModel){
       i.masterId = null;
       i.serialNumber = null;
@@ -206,6 +204,8 @@ class ConfigMakerProvider extends ChangeNotifier{
       print('jsonData : ${jsonData}');
       Map<String, dynamic> defaultData = jsonData['data']['default'];
       Map<String, dynamic> configMakerData = jsonData['data']['configMaker'];
+      configMakerDataFromHttp = jsonData['data']['configMaker'];
+      defaultDataFromHttp = jsonData['data']['default'];
       masterData = masterDataFromSiteConfigure;
       listOfDeviceModel = (defaultData['deviceList'] as List<dynamic>).map((devices) {
         Map<String, dynamic> deviceProperty = defaultData['productModel'].firstWhere((product) => devices['modelId'] == product['modelId']);

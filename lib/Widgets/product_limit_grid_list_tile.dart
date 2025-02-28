@@ -70,8 +70,8 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
       children: [
         const SizedBox(height: 5,),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12),
-          child: Text(widget.title,style: Theme.of(context).textTheme.bodyLarge,),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child: Text(widget.title,style: Theme.of(context).textTheme.headlineLarge,),
         ),
         ResponsiveGridList(
           horizontalGridMargin: 20,
@@ -97,18 +97,15 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
     Color typeColor = widget.leadingColor ?? getObjectTypeCodeToColor(int.parse(object.type));
     Widget myWidget = ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-      title: Text(object.objectName, style: TextStyle(color: typeColor),),
-      subtitle: Text('Configured : ${getConfiguredObjectByObjectId(object.objectId)}', style: Theme.of(context).textTheme.bodySmall,),
-      leading: Container(
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          color: Theme.of(context).primaryColorDark.withOpacity(themeMode ? 1.0 : 0.5),
-          borderRadius: BorderRadius.circular(5),
+      title: Text(object.objectName, style: Theme.of(context).textTheme.labelLarge,),
+      subtitle: Text('Configured : ${getConfiguredObjectByObjectId(object.objectId)}', style: Theme.of(context).textTheme.labelSmall,),
+        leading: CircleAvatar(
+          radius: 30,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          child: SizedImage(
+            imagePath: '${AppConstants.svgObjectPath}objectId_${object.objectId}.svg',
+          ),
         ),
-        child: SizedImage(
-          imagePath: '${AppConstants.svgObjectPath}objectId_${object.objectId}.svg',
-        ),
-      ),
       trailing: SizedBox(
         width: 80,
         child: ToggleTextFormFieldForProductLimit(
@@ -125,9 +122,9 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
       return Container(
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(5),
-            // border: Border.all(width: 5,color: typeColor.withOpacity(themeMode ? 1.0 : 0.5)),
+            border: Border(left: BorderSide(width: 3, color: typeColor)),
             color: Theme.of(context).cardColor,
-            boxShadow: AppProperties.customBoxShadowLiteTheme
+            // boxShadow: AppProperties.customBoxShadowLiteTheme
         ),
         width: 300,
         child: myWidget,

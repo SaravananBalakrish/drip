@@ -81,6 +81,7 @@ class _SiteConfigureState extends State<SiteConfigure> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
+            spacing: 10,
              mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [

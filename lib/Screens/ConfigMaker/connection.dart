@@ -111,6 +111,7 @@ class _ConnectionState extends State<Connection> {
                         SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
                           child: Row(
+                            spacing: 10,
                              crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if((selectedDevice.noOfRelay == 0 ? selectedDevice.noOfLatch : selectedDevice.noOfRelay) != 0)
@@ -287,6 +288,7 @@ class _ConnectionState extends State<Connection> {
     required String keyWord,
   }
       ){
+
     int firstEight = 8;
     if(to < 8){
       firstEight = firstEight - (8 - to);
@@ -296,9 +298,8 @@ class _ConnectionState extends State<Connection> {
       height: 260,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: themeData.cardColor,
-          boxShadow: AppProperties.customBoxShadowLiteTheme
+        borderRadius: BorderRadius.circular(5),
+        color: color.withOpacity(0.2),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -411,6 +412,7 @@ class _ConnectionState extends State<Connection> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Row(
+          spacing: 10,
            mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -457,6 +459,7 @@ class _ConnectionState extends State<Connection> {
     Widget child = SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
+          spacing: 10,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             for(var model in filteredDeviceModel)
