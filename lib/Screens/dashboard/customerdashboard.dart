@@ -50,7 +50,710 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
   double appBarHeight = 105.0;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final String _correctPassword = 'Oro@321';
-  dynamic newlivedata = {"code":200,"message":"User dashboard listed successfully","data":[{"customerId":4,"customerName":"Cutomer","userGroupId":1,"groupName":"testing site","groupAddress":"testing site","master":[{"controllerId":1,"deviceId":"ABC123456703","deviceName":"ORO GEM","categoryId":1,"categoryName":"ORO GEM","modelId":3,"modelName":"OGEMPRL","liveMessage":null,"config":{"configObject":[{"objectId":1,"sNo":1.001,"name":"Tank 1","connectionNo":null,"objectName":"Tank","type":"-","controllerId":null,"count":null},{"objectId":1,"sNo":1.002,"name":"Tank 2","connectionNo":null,"objectName":"Tank","type":"-","controllerId":null,"count":null},{"objectId":2,"sNo":2.001,"name":"Irrigation Line 1","connectionNo":null,"objectName":"Irrigation Line","type":"-","controllerId":null,"count":null},{"objectId":3,"sNo":3.001,"name":"Dosing Site 1","connectionNo":null,"objectName":"Dosing Site","type":"-","controllerId":null,"count":null},{"objectId":4,"sNo":4.001,"name":"Filtration Site 1","connectionNo":null,"objectName":"Filtration Site","type":"-","controllerId":null,"count":null},{"objectId":5,"sNo":5.001,"name":"Pump 1","connectionNo":null,"objectName":"Pump","type":"1,2","controllerId":null,"count":null},{"objectId":5,"sNo":5.002,"name":"Pump 2","connectionNo":null,"objectName":"Pump","type":"1,2","controllerId":null,"count":null},{"objectId":7,"sNo":7.001,"name":"Booster Pump 1","connectionNo":null,"objectName":"Booster Pump","type":"1,2","controllerId":null,"count":null},{"objectId":9,"sNo":9.001,"name":"Agitator 1","connectionNo":null,"objectName":"Agitator","type":"1,2","controllerId":null,"count":null},{"objectId":10,"sNo":10.001,"name":"Injector 1","connectionNo":null,"objectName":"Injector","type":"1,2","controllerId":null,"count":null},{"objectId":10,"sNo":10.002,"name":"Injector 2","connectionNo":null,"objectName":"Injector","type":"1,2","controllerId":null,"count":null},{"objectId":10,"sNo":10.003,"name":"Injector 3","connectionNo":null,"objectName":"Injector","type":"1,2","controllerId":null,"count":null},{"objectId":10,"sNo":10.004,"name":"Injector 4","connectionNo":null,"objectName":"Injector","type":"1,2","controllerId":null,"count":null},{"objectId":10,"sNo":10.005,"name":"Injector 5","connectionNo":null,"objectName":"Injector","type":"1,2","controllerId":null,"count":null},{"objectId":10,"sNo":10.006,"name":"Injector 6","connectionNo":null,"objectName":"Injector","type":"1,2","controllerId":null,"count":null},{"objectId":10,"sNo":10.007,"name":"Injector 7","connectionNo":null,"objectName":"Injector","type":"1,2","controllerId":null,"count":null},{"objectId":10,"sNo":10.008,"name":"Injector 8","connectionNo":null,"objectName":"Injector","type":"1,2","controllerId":null,"count":null},{"objectId":11,"sNo":11.001,"name":"Filter 1","connectionNo":null,"objectName":"Filter","type":"1,2","controllerId":null,"count":null},{"objectId":11,"sNo":11.002,"name":"Filter 2","connectionNo":null,"objectName":"Filter","type":"1,2","controllerId":null,"count":null},{"objectId":13,"sNo":13.001,"name":"Valve 1","connectionNo":null,"objectName":"Valve","type":"1,2","controllerId":null,"count":null},{"objectId":13,"sNo":13.002,"name":"Valve 2","connectionNo":null,"objectName":"Valve","type":"1,2","controllerId":null,"count":null},{"objectId":14,"sNo":14.001,"name":"Main Valve 1","connectionNo":null,"objectName":"Main Valve","type":"1,2","controllerId":null,"count":null},{"objectId":27,"sNo":27.001,"name":"EC Sensor 1","connectionNo":7,"objectName":"EC Sensor","type":"3","controllerId":10,"count":null},{"objectId":27,"sNo":27.002,"name":"EC Sensor 2","connectionNo":8,"objectName":"EC Sensor","type":"3","controllerId":10,"count":null},{"objectId":28,"sNo":28.001,"name":"PH Sensor 1","connectionNo":5,"objectName":"PH Sensor","type":"3","controllerId":10,"count":null},{"objectId":28,"sNo":28.002,"name":"PH Sensor 2","connectionNo":6,"objectName":"PH Sensor","type":"3","controllerId":10,"count":null}],"waterSource":[{"objectId":1,"sNo":1.001,"name":"Tank 1","connectionNo":null,"objectName":"Tank","type":"-","controllerId":null,"count":null,"sourceType":5,"level":0,"topFloat":0,"bottomFloat":0,"inletPump":[],"outletPump":[5.001],"valves":[]},{"objectId":1,"sNo":1.002,"name":"Tank 2","connectionNo":null,"objectName":"Tank","type":"-","controllerId":null,"count":null,"sourceType":1,"level":0,"topFloat":0,"bottomFloat":0,"inletPump":[5.001],"outletPump":[5.002],"valves":[]}],"pump":[{"objectId":5,"sNo":5.001,"name":"Pump 1","connectionNo":null,"objectName":"Pump","type":"1,2","controllerId":null,"count":null,"level":0,"pressureIn":0,"pressureOut":0,"waterMeter":0,"pumpType":1},{"objectId":5,"sNo":5.002,"name":"Pump 2","connectionNo":null,"objectName":"Pump","type":"1,2","controllerId":null,"count":null,"level":0,"pressureIn":0,"pressureOut":0,"waterMeter":0,"pumpType":2}],"filterSite":[{"objectId":4,"sNo":4.001,"name":"Filtration Site 1","connectionNo":null,"objectName":"Filtration Site","type":"-","controllerId":null,"count":null,"siteMode":1,"filters":[11.001,11.002],"pressureIn":0,"pressureOut":0,"backWashValve":0}],"fertilizerSite":[{"objectId":3,"sNo":3.001,"name":"Dosing Site 1","connectionNo":null,"objectName":"Dosing Site","type":"-","controllerId":null,"count":null,"siteMode":1,"channel":[{"sNo":10.001,"level":0},{"sNo":10.002,"level":0},{"sNo":10.003,"level":0},{"sNo":10.004,"level":0},{"sNo":10.005,"level":0},{"sNo":10.006,"level":0},{"sNo":10.007,"level":0},{"sNo":10.008,"level":0}],"boosterPump":[7.001],"agitator":[9.001],"selector":[],"ec":[27.001,27.002],"ph":[28.001,28.002]}],"moistureSensor":[],"irrigationLine":[{"objectId":2,"sNo":2.001,"name":"Irrigation Line 1","connectionNo":null,"objectName":"Irrigation Line","type":"-","controllerId":null,"count":null,"source":[],"sourcePump":[5.001],"irrigationPump":[5.002],"centralFiltration":4.001,"localFiltration":0,"centralFertilization":3.001,"localFertilization":0,"valve":[13.001,13.002],"mainValve":[14.001],"fan":[],"fogger":[],"pesticides":[],"heater":[],"screen":[],"vent":[],"powerSupply":0,"pressureSwitch":0,"waterMeter":0,"pressureIn":0,"pressureOut":0,"moisture":[],"temperature":[],"soilTemperature":[],"humidity":[],"co2":[]}]},"nodeList":[{"controllerId":2,"deviceId":"ABCD12345678","deviceName":"ORO SMART+","categoryId":6,"categoryName":"ORO SMART+","modelId":14,"modelName":"OSP8R","referenceNumber":1,"serialNumber":1,"interfaceTypeId":1,"interface":"MQTT","extendControllerId":null},{"controllerId":10,"deviceId":"AACCDDE11223","deviceName":"ORO SMART+","categoryId":6,"categoryName":"ORO SMART+","modelId":16,"modelName":"OSP16RADC","referenceNumber":2,"serialNumber":1,"interfaceTypeId":1,"interface":"MQTT","extendControllerId":null},{"controllerId":3,"deviceId":"ABC123456702","deviceName":"ORO SMART","categoryId":5,"categoryName":"ORO SMART","modelId":11,"modelName":"OS8R","referenceNumber":1,"serialNumber":2,"interfaceTypeId":1,"interface":"MQTT","extendControllerId":null},{"controllerId":4,"deviceId":"PUMP12345678","deviceName":"ORO PUMP","categoryId":2,"categoryName":"ORO PUMP","modelId":4,"modelName":"OPUMP","referenceNumber":1,"serialNumber":3,"interfaceTypeId":1,"interface":"MQTT","extendControllerId":null},{"controllerId":6,"deviceId":"ABC123456714","deviceName":"ORO SMART+","categoryId":6,"categoryName":"ORO SMART+","modelId":14,"modelName":"OSP8R","referenceNumber":3,"serialNumber":4,"interfaceTypeId":1,"interface":"MQTT","extendControllerId":null}],"program":[{"programId":1,"serialNumber":1,"programName":"Program 1","defaultProgramName":"Program 1","programType":"Irrigation Program"},{"programId":2,"serialNumber":2,"programName":"Program 2","defaultProgramName":"Program 2","programType":"Irrigation Program"},{"programId":3,"serialNumber":3,"programName":"Program 3","defaultProgramName":"Program 3","programType":"Irrigation Program"}],"units":[{"dealerDefinitionId":114,"parameter":"Water Meter","value":"l/s"},{"dealerDefinitionId":115,"parameter":"Pressure Sensor","value":"bar"},{"dealerDefinitionId":116,"parameter":"Moisture Sensor","value":"cb"},{"dealerDefinitionId":117,"parameter":"Level Sensor","value":"feet"},{"dealerDefinitionId":118,"parameter":"Temperature Sensor","value":"°C"},{"dealerDefinitionId":119,"parameter":"Soil Temperature Sensor","value":"°C"},{"dealerDefinitionId":120,"parameter":"Humdity Sensor","value":"%"},{"dealerDefinitionId":121,"parameter":"CO2 Sensor","value":"ppm"},{"dealerDefinitionId":122,"parameter":"LUX Sensor","value":"lux"},{"dealerDefinitionId":123,"parameter":"Leaf Wetness Sensor","value":"%"},{"dealerDefinitionId":124,"parameter":"Rain Fall","value":"mm"},{"dealerDefinitionId":125,"parameter":"Wind Speed","value":"km/h"},{"dealerDefinitionId":126,"parameter":"Wind Direction","value":"°"},{"dealerDefinitionId":128,"parameter":"Atmospheric Pressure Sensor","value":"kPa"},{"dealerDefinitionId":129,"parameter":"LDX Sensor","value":"lux"}]}]}]};
+  Map<String, dynamic> newlivedata = {
+    "code": 200,
+    "message": "User dashboard listed successfully",
+    "data": [
+      {
+        "customerId": 8,
+        "customerName": "Testing",
+        "userGroupId": 3,
+        "groupName": "Hardware Testing site",
+        "groupAddress": "address",
+        "master": [
+          {
+            "controllerId": 13,
+            "deviceId": "2CCF674C0F8A",
+            "deviceName": "ORO GEM",
+            "categoryId": 1,
+            "categoryName": "ORO GEM",
+            "modelId": 1,
+            "modelName": "OGEMR",
+            "liveMessage": {
+              "cC": "2CCF674C0F8A",
+              "cM": {
+                "2401": "2,0.0,0.0,3,-;3,0.0,0.0,3,-;1,0.0,0.0,3,-",
+                "2402": "5.001,0;5.002,0;13.001,0;13.002,0;13.003,0;13.004,0;13.005,0;9.001,0;7.001,0;10.001,0;10.002,0;10.003,0;10.004,0;14.001,0",
+                "2403": "",
+                "2404": "5.001,0,0,0,0,000,000,000,1:0.0,2:0.0,3:0.0,00:00:00;5.002,0,0,0,0,000,000,000,1:0.0,2:0.0,3:0.0,00:00:00",
+                "2405": "2.001,0",
+                "2406": "4.001,0,01:00:00,0.0",
+                "2407": "",
+                "2408": "0,0,1,00:05:00,00:05:00,0,0,0,0,0,0,13:20:07,0,0,00:00:00,None,1,0,0.00",
+                "2409": "",
+                "2410": "",
+                "2411": "",
+                "2412": "",
+                "WifiStrength": 100,
+                "SentTime": "2025-02-27 12:36:59",
+                "Version": "1.1.0:008",
+                "PowerSupply": 1,
+                "PowerSupplyError": 1
+              },
+              "cD": "2025-02-27",
+              "cT": "12:36:59",
+              "mC": "2400"
+            },
+            "config": {
+              "configObject": [
+                {
+                  "objectId": 1,
+                  "sNo": 1.001,
+                  "name": "Tank 1",
+                  "connectionNo": null,
+                  "objectName": "Tank",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 2,
+                  "sNo": 2.001,
+                  "name": "Irrigation Line 1",
+                  "connectionNo": null,
+                  "objectName": "Irrigation Line",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 5,
+                  "sNo": 5.001,
+                  "name": "Pump 1",
+                  "connectionNo": 1,
+                  "objectName": "Pump",
+                  "type": "1,2",
+                  "controllerId": 15,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 5,
+                  "sNo": 5.002,
+                  "name": "Pump 2",
+                  "connectionNo": 2,
+                  "objectName": "Pump",
+                  "type": "1,2",
+                  "controllerId": 15,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 13,
+                  "sNo": 13.001,
+                  "name": "Valve 1",
+                  "connectionNo": 3,
+                  "objectName": "Valve",
+                  "type": "1,2",
+                  "controllerId": 15,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 13,
+                  "sNo": 13.002,
+                  "name": "Valve 2",
+                  "connectionNo": 4,
+                  "objectName": "Valve",
+                  "type": "1,2",
+                  "controllerId": 15,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 13,
+                  "sNo": 13.003,
+                  "name": "Valve 3",
+                  "connectionNo": 5,
+                  "objectName": "Valve",
+                  "type": "1,2",
+                  "controllerId": 15,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 13,
+                  "sNo": 13.004,
+                  "name": "Valve 4",
+                  "connectionNo": 6,
+                  "objectName": "Valve",
+                  "type": "1,2",
+                  "controllerId": 15,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 13,
+                  "sNo": 13.005,
+                  "name": "Valve 5",
+                  "connectionNo": 7,
+                  "objectName": "Valve",
+                  "type": "1,2",
+                  "controllerId": 15,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 3,
+                  "sNo": 3.001,
+                  "name": "Dosing Site 1",
+                  "connectionNo": null,
+                  "objectName": "Dosing Site",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 4,
+                  "sNo": 4.001,
+                  "name": "Filtration Site 1",
+                  "connectionNo": null,
+                  "objectName": "Filtration Site",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 9,
+                  "sNo": 9.001,
+                  "name": "Agitator 1",
+                  "connectionNo": 1,
+                  "objectName": "Agitator",
+                  "type": "1,2",
+                  "controllerId": 20,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 7,
+                  "sNo": 7.001,
+                  "name": "Booster Pump 1",
+                  "connectionNo": 8,
+                  "objectName": "Booster Pump",
+                  "type": "1,2",
+                  "controllerId": 15,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 10,
+                  "sNo": 10.001,
+                  "name": "Injector 1",
+                  "connectionNo": 3,
+                  "objectName": "Injector",
+                  "type": "1,2",
+                  "controllerId": 20,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 10,
+                  "sNo": 10.002,
+                  "name": "Injector 2",
+                  "connectionNo": 4,
+                  "objectName": "Injector",
+                  "type": "1,2",
+                  "controllerId": 20,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 11,
+                  "sNo": 11.001,
+                  "name": "Filter 1",
+                  "connectionNo": null,
+                  "objectName": "Filter",
+                  "type": "1,2",
+                  "controllerId": null,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 11,
+                  "sNo": 11.002,
+                  "name": "Filter 2",
+                  "connectionNo": null,
+                  "objectName": "Filter",
+                  "type": "1,2",
+                  "controllerId": null,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 10,
+                  "sNo": 10.003,
+                  "name": "Injector 3",
+                  "connectionNo": 5,
+                  "objectName": "Injector",
+                  "type": "1,2",
+                  "controllerId": 20,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 10,
+                  "sNo": 10.004,
+                  "name": "Injector 4",
+                  "connectionNo": 6,
+                  "objectName": "Injector",
+                  "type": "1,2",
+                  "controllerId": 20,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 14,
+                  "sNo": 14.001,
+                  "name": "Main Valve 1",
+                  "connectionNo": 2,
+                  "objectName": "Main Valve",
+                  "type": "1,2",
+                  "controllerId": 20,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 3,
+                  "sNo": 3.002,
+                  "name": "Dosing Site 2",
+                  "connectionNo": null,
+                  "objectName": "Dosing Site",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 10,
+                  "sNo": 10.005,
+                  "name": "Injector 5",
+                  "connectionNo": 9,
+                  "objectName": "Injector",
+                  "type": "1,2",
+                  "controllerId": 20,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 10,
+                  "sNo": 10.006,
+                  "name": "Injector 6",
+                  "connectionNo": 10,
+                  "objectName": "Injector",
+                  "type": "1,2",
+                  "controllerId": 20,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 9,
+                  "sNo": 9.002,
+                  "name": "Agitator 2",
+                  "connectionNo": 8,
+                  "objectName": "Agitator",
+                  "type": "1,2",
+                  "controllerId": 20,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                },
+                {
+                  "objectId": 7,
+                  "sNo": 7.002,
+                  "name": "Booster Pump 2",
+                  "connectionNo": 7,
+                  "objectName": "Booster Pump",
+                  "type": "1,2",
+                  "controllerId": 20,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null
+                }
+              ],
+              "waterSource": [
+                {
+                  "objectId": 1,
+                  "sNo": 1.001,
+                  "name": "Tank 1",
+                  "connectionNo": null,
+                  "objectName": "Tank",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null,
+                  "sourceType": 3,
+                  "level": 0,
+                  "topFloat": 0,
+                  "bottomFloat": 0,
+                  "inletPump": [],
+                  "outletPump": [
+                    5.001,
+                    5.002
+                  ],
+                  "valves": []
+                }
+              ],
+              "pump": [
+                {
+                  "objectId": 5,
+                  "sNo": 5.001,
+                  "name": "Pump 1",
+                  "connectionNo": 1,
+                  "objectName": "Pump",
+                  "type": "1,2",
+                  "controllerId": 15,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null,
+                  "level": 0,
+                  "pressureIn": 0,
+                  "pressureOut": 0,
+                  "waterMeter": 0,
+                  "pumpType": 2
+                },
+                {
+                  "objectId": 5,
+                  "sNo": 5.002,
+                  "name": "Pump 2",
+                  "connectionNo": 2,
+                  "objectName": "Pump",
+                  "type": "1,2",
+                  "controllerId": 15,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null,
+                  "level": 0,
+                  "pressureIn": 0,
+                  "pressureOut": 0,
+                  "waterMeter": 0,
+                  "pumpType": 2
+                }
+              ],
+              "filterSite": [
+                {
+                  "objectId": 4,
+                  "sNo": 4.001,
+                  "name": "Filtration Site 1",
+                  "connectionNo": null,
+                  "objectName": "Filtration Site",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": 1,
+                  "filters": [
+                    11.001,
+                    11.002
+                  ],
+                  "pressureIn": 0,
+                  "pressureOut": 0,
+                  "backWashValve": 0
+                }
+              ],
+              "fertilizerSite": [
+                {
+                  "objectId": 3,
+                  "sNo": 3.001,
+                  "name": "Dosing Site 1",
+                  "connectionNo": null,
+                  "objectName": "Dosing Site",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": 1,
+                  "channel": [
+                    {
+                      "sNo": 10.001,
+                      "level": 0
+                    },
+                    {
+                      "sNo": 10.002,
+                      "level": 0
+                    },
+                    {
+                      "sNo": 10.003,
+                      "level": 0
+                    },
+                    {
+                      "sNo": 10.004,
+                      "level": 0
+                    }
+                  ],
+                  "boosterPump": [
+                    7.001
+                  ],
+                  "agitator": [
+                    9.001
+                  ],
+                  "selector": [],
+                  "ec": [],
+                  "ph": []
+                },
+                {
+                  "objectId": 3,
+                  "sNo": 3.002,
+                  "name": "Dosing Site 2",
+                  "connectionNo": null,
+                  "objectName": "Dosing Site",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": 2,
+                  "channel": [
+                    {
+                      "sNo": 10.005,
+                      "level": 0
+                    },
+                    {
+                      "sNo": 10.006,
+                      "level": 0
+                    }
+                  ],
+                  "boosterPump": [
+                    7.002
+                  ],
+                  "agitator": [
+                    9.002
+                  ],
+                  "selector": [],
+                  "ec": [],
+                  "ph": []
+                }
+              ],
+              "moistureSensor": [],
+              "irrigationLine": [
+                {
+                  "objectId": 2,
+                  "sNo": 2.001,
+                  "name": "Irrigation Line 1",
+                  "connectionNo": null,
+                  "objectName": "Irrigation Line",
+                  "type": "-",
+                  "controllerId": null,
+                  "count": null,
+                  "connectedObject": null,
+                  "siteMode": null,
+                  "source": [],
+                  "sourcePump": [],
+                  "irrigationPump": [
+                    5.001,
+                    5.002
+                  ],
+                  "centralFiltration": 4.001,
+                  "localFiltration": 0,
+                  "centralFertilization": 3.001,
+                  "localFertilization": 3.002,
+                  "valve": [
+                    13.001,
+                    13.002,
+                    13.003,
+                    13.004,
+                    13.005
+                  ],
+                  "mainValve": [],
+                  "fan": [],
+                  "fogger": [],
+                  "pesticides": [],
+                  "heater": [],
+                  "screen": [],
+                  "vent": [],
+                  "powerSupply": 0,
+                  "pressureSwitch": 0,
+                  "waterMeter": 0,
+                  "pressureIn": 0,
+                  "pressureOut": 0,
+                  "moisture": [],
+                  "temperature": [],
+                  "soilTemperature": [],
+                  "humidity": [],
+                  "co2": []
+                }
+              ]
+            },
+            "nodeList": [
+              {
+                "controllerId": 21,
+                "deviceId": "AABBCC112244",
+                "deviceName": "ORO SENSE",
+                "categoryId": 9,
+                "categoryName": "ORO SENSE",
+                "modelId": 24,
+                "modelName": "OSMST",
+                "referenceNumber": 1,
+                "serialNumber": 1,
+                "interfaceTypeId": 1,
+                "interface": "MQTT",
+                "extendControllerId": null
+              },
+              {
+                "controllerId": 15,
+                "deviceId": "ABC123456712",
+                "deviceName": "ORO SMART+",
+                "categoryId": 6,
+                "categoryName": "ORO SMART+",
+                "modelId": 14,
+                "modelName": "OSP8R",
+                "referenceNumber": 1,
+                "serialNumber": 2,
+                "interfaceTypeId": 1,
+                "interface": "MQTT",
+                "extendControllerId": null
+              },
+              {
+                "controllerId": 20,
+                "deviceId": "AABBCC112233",
+                "deviceName": "ORO SMART+",
+                "categoryId": 6,
+                "categoryName": "ORO SMART+",
+                "modelId": 16,
+                "modelName": "OSP16RADC",
+                "referenceNumber": 2,
+                "serialNumber": 3,
+                "interfaceTypeId": 1,
+                "interface": "MQTT",
+                "extendControllerId": null
+              }
+            ],
+            "program": [
+              {
+                "serialNumber": 1,
+                "programName": "Program 1",
+                "defaultProgramName": "Program 1",
+                "programType": "Irrigation Program",
+                "sequence": [
+                  {
+                    "sNo": "1.1",
+                    "name": "Sequence 1.1"
+                  }
+                ],
+                "selectedSchedule": "NO SCHEDULE"
+              },
+              {
+                "serialNumber": 2,
+                "programName": "Program 2",
+                "defaultProgramName": "Program 2",
+                "programType": "Irrigation Program",
+                "sequence": [
+                  {
+                    "sNo": "2.1",
+                    "name": "Sequence 2.1"
+                  }
+                ],
+                "selectedSchedule": "NO SCHEDULE"
+              }
+            ],
+            "units": [
+              {
+                "dealerDefinitionId": 114,
+                "parameter": "Water Meter",
+                "value": "l/s"
+              },
+              {
+                "dealerDefinitionId": 115,
+                "parameter": "Pressure Sensor",
+                "value": "bar"
+              },
+              {
+                "dealerDefinitionId": 116,
+                "parameter": "Moisture Sensor",
+                "value": "cb"
+              },
+              {
+                "dealerDefinitionId": 117,
+                "parameter": "Level Sensor",
+                "value": "feet"
+              },
+              {
+                "dealerDefinitionId": 118,
+                "parameter": "Temperature Sensor",
+                "value": "°C"
+              },
+              {
+                "dealerDefinitionId": 119,
+                "parameter": "Soil Temperature Sensor",
+                "value": "°C"
+              },
+              {
+                "dealerDefinitionId": 120,
+                "parameter": "Humdity Sensor",
+                "value": "%"
+              },
+              {
+                "dealerDefinitionId": 121,
+                "parameter": "CO2 Sensor",
+                "value": "ppm"
+              },
+              {
+                "dealerDefinitionId": 122,
+                "parameter": "LUX Sensor",
+                "value": "lux"
+              },
+              {
+                "dealerDefinitionId": 123,
+                "parameter": "Leaf Wetness Sensor",
+                "value": "%"
+              },
+              {
+                "dealerDefinitionId": 124,
+                "parameter": "Rain Fall",
+                "value": "mm"
+              },
+              {
+                "dealerDefinitionId": 125,
+                "parameter": "Wind Speed",
+                "value": "km/h"
+              },
+              {
+                "dealerDefinitionId": 126,
+                "parameter": "Wind Direction",
+                "value": "°"
+              },
+              {
+                "dealerDefinitionId": 128,
+                "parameter": "Atmospheric Pressure Sensor",
+                "value": "kPa"
+              },
+              {
+                "dealerDefinitionId": 129,
+                "parameter": "LDX Sensor",
+                "value": "lux"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  };
   @override
   void initState() {
     payloadProvider = Provider.of<MqttPayloadProvider>(context,listen: false);
@@ -89,7 +792,6 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
     final userIdFromPref = prefs.getString('userId') ?? '';
     // payloadProvider.editLoading(true);
     try{
-      print("getData");
       HttpService service = HttpService();
       // var getUserDetails = Repository().fetchAllMySite({'userId' : '4',});
       // var getUserDetails = await service.postRequest('getCustomerDashboard', {'userId' : userIdFromPref,});
@@ -105,21 +807,21 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
       //   print("Parsed JSON is a List");
       // }
 
-      Map<String, dynamic> jsonData = newlivedata;
 
-      if(jsonData['code'] == 200){
+      Map<String, dynamic> jsonData = newlivedata;
+      print('newlivedata ::: $newlivedata');
+       if(jsonData['code'] == 200){
         print('jsonData[code] ; ${jsonData['code']}');
         payloadProvider.updatedashboard(jsonData);
-        if(jsonData['data'].isNotEmpty){
-          //Modified by saravanan
-          await Future.delayed(Duration.zero, () {
-          });
-          for(var i = 0;i < 2;i++){
-            Future.delayed(const Duration(seconds: 3),(){
-              autoRefresh();
-            });
-          }
-        }
+        // if(jsonData['data'].isNotEmpty){
+        //    await Future.delayed(Duration.zero, () {
+        //   });
+        //   for(var i = 0;i < 2;i++){
+        //     Future.delayed(const Duration(seconds: 3),(){
+        //       autoRefresh();
+        //     });
+        //   }
+        // }
       }
       print("getData complete");
       payloadProvider.httpError = false;
@@ -129,8 +831,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
       print(' trace overAll getData  => ${stackTrace}');
     }
   }
-
-  void mqttConfigureAndConnect() {
+   void mqttConfigureAndConnect() {
     MqttPayloadProvider payloadProvider = Provider.of<MqttPayloadProvider>(context,listen: false);
     manager.initializeMQTTClient();
     manager.connect();
@@ -217,20 +918,21 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
   @override
   Widget build(BuildContext context)
   {
+    print("Dashboard Mobile Screen");
     var selectedLine = null;
     var selectedSite = null;
     var selectedMaster = null;
     var selectedfiltersite = null;
     var selectedfertilizer = null;
-    if(payloadProvider.dashboardLiveInstance.data != null && payloadProvider.dashboardLiveInstance.data!.isNotEmpty)
+    if(payloadProvider.dashboardLiveInstance!.data.isNotEmpty)
       {
-    var selectedSite = payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite];
-    var selectedMaster = payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster];
-     selectedLine =  payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].config!.irrigationLine![payloadProvider.selectedLine];
-    var selectedfiltersite = payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].config!.filterSite;
-    var selectedfertilizer = payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].config!.irrigationLine![payloadProvider.selectedLine];
+    var selectedSite = payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite];
+    var selectedMaster = payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster];
+     selectedLine =  payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].config.lineData[payloadProvider.selectedLine];
+    var selectedfiltersite = payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].config.filterSite;
+    var selectedfertilizer = payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].config.lineData[payloadProvider.selectedLine];
       }
-    return ((payloadProvider.dashboardLiveInstance.data != null && payloadProvider.dashboardLiveInstance.data!.isNotEmpty)) ?
+    return ((payloadProvider.dashboardLiveInstance!.data.isNotEmpty)) ?
      Scaffold(
       body: SafeArea(child: Center(child: Column(
         children: [
@@ -262,7 +964,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                   ),
                   InkWell(
                     onTap: (){
-                      print('payloadProvider.dashboardLiveInstance.data!.length: ${payloadProvider.dashboardLiveInstance.data?.length}');
+                      // print('payloadProvider.dashboardLiveInstance!.data!.length: ${payloadProvider.dashboardLiveInstance!.data.length}');
                       showModalBottomSheet(
                           context: context,
                           builder: (BuildContext context){
@@ -284,9 +986,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                                         child: Column(
                                           children: [
 
-                                            for(var site = 0;site < payloadProvider.dashboardLiveInstance.data!.length;site++)
+                                            for(var site = 0;site < payloadProvider.dashboardLiveInstance!.data.length;site++)
                                               ListTile(
-                                                title: Text(payloadProvider.dashboardLiveInstance.data![site].groupName ?? ''),
+                                                title: Text(payloadProvider.dashboardLiveInstance!.data[site].groupName ?? ''),
                                                 trailing: IntrinsicWidth(
                                                   child: Radio(
                                                     value: 'site-${site}',
@@ -299,13 +1001,13 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                                                           payloadProvider.selectedSiteString = value!;
                                                           payloadProvider.selectedMaster = 0;
                                                           overAllPvd.takeSharedUserId = false;
-                                                          var selectedMasterData = payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster];
-                                                          overAllPvd.imeiNo = selectedMasterData.deviceId!;
-                                                          overAllPvd.controllerId = selectedMasterData.controllerId!;
-                                                          overAllPvd.controllerType = selectedMasterData.categoryId!;
-                                                          if(selectedMasterData.config!.irrigationLine != null){
+                                                          var selectedMasterData = payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster];
+                                                          overAllPvd.imeiNo = selectedMasterData.deviceId;
+                                                          overAllPvd.controllerId = selectedMasterData.controllerId;
+                                                          overAllPvd.controllerType = selectedMasterData.categoryId;
+                                                          /*if(selectedMasterData.config!.irrigationLine != null){
                                                             payloadProvider.editLineData(selectedMasterData.config!.irrigationLine);
-                                                          }
+                                                          }*/
                                                           manager.topicToUnSubscribe(unSubscribeTopic);
 
                                                           print("controllerType ==> ${overAllPvd.controllerType}");
@@ -423,7 +1125,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('${!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance.data![0].groupName : 'test'}',style: const TextStyle(fontSize: 14,overflow: TextOverflow.ellipsis,fontWeight: FontWeight.bold),),
+                              Text('${!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance!.data[0].groupName : 'test'}',style: const TextStyle(fontSize: 14,overflow: TextOverflow.ellipsis,fontWeight: FontWeight.bold),),
                               Text('Last Sync : \n${payloadProvider.lastUpdate.day}/${payloadProvider.lastUpdate.month}/${payloadProvider.lastUpdate.year} ${payloadProvider.lastUpdate.hour}:${payloadProvider.lastUpdate.minute}:${payloadProvider.lastUpdate.second}',style: const TextStyle(fontWeight: FontWeight.normal,color: Colors.black,fontSize: 12,overflow: TextOverflow.ellipsis),),
                             ],
                           ),
@@ -546,7 +1248,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                 ],
               ),
               (payloadProvider.listOfSite.isNotEmpty
-                  ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master!.length > 1 || [1,2].contains(overAllPvd.controllerType)
+                  ? payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master.length > 1 || [1,2].contains(overAllPvd.controllerType)
                   : true)
                   ? Container(
                 decoration: const BoxDecoration(
@@ -573,21 +1275,21 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                         },
                         //every ternary operator  ? user device : sharedevice details
                         itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                          for(var master = 0;master < (!overAllPvd.takeSharedUserId ?  payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master : payloadProvider.dashboardLiveInstance.data!)!.length;master++)
+                          for(var master = 0;master < (!overAllPvd.takeSharedUserId ?  payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master : payloadProvider.dashboardLiveInstance!.data).length;master++)
                             PopupMenuItem<int>(
                               value: master,
                               child: Text(!overAllPvd.takeSharedUserId
-                                  ? '${payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master?[master].deviceName ?? ''}\n${payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master?[master].deviceId} ${[1,2].contains(payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master?[master].categoryId) ? '(version : ${payloadProvider.version})' : ''}'
-                                  : '${payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master?[master].deviceName ?? ''}\n ${[1,2].contains(payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master?[master].categoryId ?? '') ? '(version : ${payloadProvider.version})' : ''}'
+                                  ? '${payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[master].deviceName ?? ''}\n${payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[master].deviceId} ${[1,2].contains(payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[master].categoryId) ? '(version : ${payloadProvider.version})' : ''}'
+                                  : '${payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[master].deviceName ?? ''}\n ${[1,2].contains(payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[master].categoryId ?? '') ? '(version : ${payloadProvider.version})' : ''}'
                               ),
                               onTap: ()async{
                                 var unSubscribeTopic = 'FirmwareToApp/${overAllPvd.imeiNo}';
                                 payloadProvider.selectedMaster = master;
-                                overAllPvd.editImeiNo((!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].deviceName : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['deviceId']));
-                                overAllPvd.editControllerType((!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].categoryId : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['categoryId']));
-                                overAllPvd.editControllerId((!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].controllerId : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['controllerId']));
+                                overAllPvd.editImeiNo((!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].deviceName : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['deviceId']));
+                                overAllPvd.editControllerType((!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].categoryId : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['categoryId']));
+                                overAllPvd.editControllerId((!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].controllerId : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['controllerId']));
                                 var selectedMaster = !overAllPvd.takeSharedUserId
-                                    ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster]
+                                    ? payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster]
                                     : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster];
 
                                 manager.topicToUnSubscribe('FirmwareToApp/${overAllPvd.imeiNo}');
@@ -615,8 +1317,8 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                               children: [
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width * 0.3,
-                                  //                 payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster]
-                                  child: Text('${(!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].config?.irrigationLine![payloadProvider.selectedLine].irrigationLine.name :    payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].deviceName )}'
+                                  //                 payloadProvider.dashboardLiveInstance!.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster]
+                                  child: Text('${(!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].config.lineData[payloadProvider.selectedLine].name :    payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].deviceName )}'
                                     ,style: const TextStyle(fontSize: 12,color: Colors.white,overflow: TextOverflow.ellipsis),),
                                 ),
                                 Row(
@@ -648,12 +1350,12 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                             });
                           },
                           itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                            for(var line = 0;line < payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].config!.irrigationLine!.length;line++)
+                            for(var line = 0;line < payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].config.lineData.length;line++)
                               PopupMenuItem<int>(
                                 value: line,
                                 child: Row(
                                   children: [
-                                    Text('${payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].config!.irrigationLine![line].irrigationLine.name}'),
+                                    Text('${payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].config.lineData[line].name}'),
                                     const SizedBox(width: 10,),
                                     if(payloadProvider.lineData[line]['mode'] != 0)
                                       const Icon(Icons.info,color: Colors.red,)
@@ -675,7 +1377,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                               ),
                               SizedBox(
                                   width: MediaQuery.of(context).size.width * 0.25,
-                                  child: Text('${payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master?[payloadProvider.selectedMaster].config?.irrigationLine?[0].irrigationLine.name}',style: const TextStyle(fontSize: 12,color: Colors.black,overflow: TextOverflow.ellipsis),)
+                                  child: Text('${payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].config.lineData[0].name}',style: const TextStyle(fontSize: 12,color: Colors.black,overflow: TextOverflow.ellipsis),)
                               ),
                               if(payloadProvider.lineData.any((line) => line['mode'] != 0))
                                 const Icon(Icons.info,color: Colors.red,)
@@ -808,7 +1510,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                               color: Colors.deepOrange
                           ),
                           child: Center(
-                            child: Text('No Power To ${!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].deviceName : payloadProvider.dashboardLiveInstance.data![payloadProvider.selectedSite].master![payloadProvider.selectedMaster].deviceName}',style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
+                            child: Text('No Power To ${!overAllPvd.takeSharedUserId ? payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].deviceName : payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].deviceName}',style: const TextStyle(color: Colors.white,fontWeight: FontWeight.bold)),
                           ),
                         ),
                         // if(![3,4].contains(overAllPvd.controllerType))
@@ -887,7 +1589,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
     ) : Scaffold(
         body: Center(
             child: Text(
-              '${payloadProvider.dashboardLiveInstance.message}',
+              'Data not available',
               style: const TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
             ))
       // Center(child: CircularProgressIndicator(

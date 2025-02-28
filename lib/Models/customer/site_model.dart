@@ -1,3 +1,4 @@
+import '../../Constants/constants.dart';
 import '../../utils/constants.dart';
 
 class SiteModel {
@@ -90,7 +91,7 @@ class Master {
       modelName: json['modelName'],
       units: List<Unit>.from(json['units'].map((x) => Unit.fromJson(x))),
       config: (json["config"] != null && json["config"] is Map<String, dynamic> && json["config"].isNotEmpty)
-          ? Config.fromJson(Map<String, dynamic>.from(AppConstants.payloadConversion(json["config"])))
+          ? Config.fromJson(Map<String, dynamic>.from(Constants.payloadConversion(json["config"])))
           : Config(waterSource: [], pump: [], filterSite: [], fertilizerSite: [], moistureSensor: [], lineData: []),
       configObjects: configObjects,
       live: json['liveMessage'] != null ? LiveMessage.fromJson(json['liveMessage']) : null,

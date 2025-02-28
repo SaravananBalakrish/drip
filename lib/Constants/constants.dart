@@ -14,6 +14,7 @@ class Constants {
   static const String waterMeter = 'waterMeter';
 
   static dynamic payloadConversion(data) {
+    print('data in the payloadConversion ::: $data');
     dynamic dataFormation = {};
     for(var globalKey in data.keys) {
       if(['filterSite', 'fertilizerSite', 'waterSource', 'pump', 'moistureSensor', 'irrigationLine'].contains(globalKey)){

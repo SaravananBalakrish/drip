@@ -4,14 +4,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../Constants/data_convertion.dart';
-import '../Models/customer/dashboard_live.dart';
+import '../Models/customer/site_model.dart';
 
 
 enum MQTTConnectionState { connected, disconnected, connecting }
 
 class MqttPayloadProvider with ChangeNotifier {
   MQTTConnectionState _appConnectionState = MQTTConnectionState.disconnected;
-   LiveData dashboardLiveInstance = LiveData();
+  // SiteModel dashboardLiveInstance = SiteModel(data: data);
+  SiteModel? _dashboardLiveInstance;
+  SiteModel? get dashboardLiveInstance => _dashboardLiveInstance;
   dynamic spa = '';
   String dashBoardPayload = '', schedulePayload = '';
 
@@ -737,7 +739,8 @@ class MqttPayloadProvider with ChangeNotifier {
   // }
 
   void updatedashboard(Map<String, dynamic> payload) {
-    dashboardLiveInstance =  LiveData.fromJson(payload);
+    print(payload.runtimeType);
+    _dashboardLiveInstance = SiteModel.fromJson(payload);
     print('dashboardLiveInstance update payload');
     notifyListeners();
   }

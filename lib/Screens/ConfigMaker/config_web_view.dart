@@ -118,6 +118,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                     ),
                     const SizedBox(width: 50,),
                     Row(
+                      spacing: 20,
                       children: [
                         IconButton(
                           onPressed: (){
