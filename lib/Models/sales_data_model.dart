@@ -43,6 +43,7 @@ class Category {
   });
 
   factory Category.fromJson(Map<String, dynamic> json, int index) {
+    print(json);
     return Category(
       categoryId: json['categoryId'],
       categoryName: json['categoryName'],
@@ -53,7 +54,10 @@ class Category {
   }
 
   static Color _parseColor(String hexString) {
+    if (!hexString.startsWith("0x") && !hexString.startsWith("#")) {
+      hexString = "FF$hexString";
+    }
     final color = int.parse(hexString, radix: 16);
-    return Color(color).withAlpha(1);
+    return Color(color);
   }
 }
