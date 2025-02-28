@@ -283,7 +283,11 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
                     lightColor: yellowLight,
                     darkColor: yellowDark,
                     height: -70.0,
-                    condition: localFertilizerSite.map((e) => e.selector).toList().isNotEmpty,
+                    condition: localFertilizerSite
+                        .map((e) => e.selector != null ? List<DeviceObjectModel>.from(e.selector!) : [])
+                        .expand((list) => list)
+                        .whereType<DeviceObjectModel>()
+                        .toList().isNotEmpty,
                     siteMode: 2,
                     connectedObject: 3
                 ),
@@ -299,7 +303,11 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
                     lightColor: greenLight,
                     darkColor: greenDark,
                     height: localFertilizerSite.map((e) => e.selector).toList().isNotEmpty ? -140.0: -70.0,
-                    condition: localFertilizerSite.map((e) => e.ec).toList().isNotEmpty,
+                    condition: localFertilizerSite
+                        .map((e) => e.ec != null ? List<DeviceObjectModel>.from(e.ec!) : [])
+                        .expand((list) => list)
+                        .whereType<DeviceObjectModel>()
+                        .toList().isNotEmpty,
                     siteMode: 2,
                     connectedObject: 3
                 ),
@@ -314,7 +322,11 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
                     lightColor: redLight,
                     darkColor: redDark,
                     height: localFertilizerSite.map((e) => e.selector).toList().isNotEmpty ? -210.0: -70.0,
-                   condition: localFertilizerSite.map((e) => e.ph).toList().isNotEmpty,
+                   condition: localFertilizerSite
+                       .map((e) => e.ph != null ? List<DeviceObjectModel>.from(e.ph!) : [])
+                       .expand((list) => list)
+                       .whereType<DeviceObjectModel>()
+                       .toList().isNotEmpty,
                     siteMode: 2,
                     connectedObject: 3
                 ),

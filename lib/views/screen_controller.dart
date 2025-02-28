@@ -16,7 +16,8 @@ class ScreenController extends StatelessWidget {
       child: Consumer<ScreenControllerViewModel>(
         builder: (context, viewModel, _) {
 
-          debugPrint(viewModel.userId.toString());
+          // debugPrint("viewModel.userId.toString() ::: ${viewModel.userId.toString()}");
+          // debugPrint("viewModel.isNetworkConnected ::: ${viewModel.isNetworkConnected}");
           if (viewModel.userId == null) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),

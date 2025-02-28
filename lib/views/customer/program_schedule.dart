@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Screens/NewIrrigationProgram/program_library.dart';
 
 
 class ProgramSchedule extends StatefulWidget {
@@ -85,35 +86,35 @@ class _ProgramScheduleState extends State<ProgramSchedule> with SingleTickerProv
   }
 
   Widget getViewForParameter(int id) {
-    return Container();
-    /*switch (id) {
+    // return Container();
+    switch (id) {
       case 1:
-        return ProgramLibraryScreen(userId: widget.customerID, controllerId: widget.controllerID, deviceId: widget.imeiNumber,);
-      case 66:
-        return watersourceUI(userId: widget.customerID, controllerId: widget.controllerID, deviceID: widget.imeiNumber,);
-      case 67:
-        return VirtualMeterScreen(userId: widget.customerID, controllerId: widget.controllerID, deviceId: widget.imeiNumber);
-      case 68:
-        return MyGroupScreen(userId: widget.customerID, controllerId: widget.controllerID);
-      case 69:
-        return ConditionScreen(userId: widget.customerID, controllerId: widget.controllerID, imeiNo: widget.imeiNumber);
-      case 70:
-        return FrostMobUI(userId: widget.customerID, controllerId: widget.controllerID,deviceID: widget.imeiNumber,);
-      case 71:
-        return FilterBackwashUI(userId: widget.customerID, controllerId: widget.controllerID,deviceID: widget.imeiNumber,);
-      case 72:
-        return FertilizerLibrary(userId: widget.userId, controllerId: widget.controllerID, customerID: widget.customerID);
-      case 73:
-        return GlobalFertLimit(userId: widget.userId, controllerId: widget.controllerID, customerId: widget.customerID,);
-      case 74:
-        return SystemDefinition(userId: widget.userId, controllerId: widget.controllerID);
-      case 77:
-        return ProgramQueueScreen(userId: widget.userId, controllerId: widget.controllerID, cutomerId: widget.customerID,);
-      case 78:
-        return ScheduleViewScreen(userId: widget.userId, controllerId: widget.controllerID, customerId: widget.customerID, deviceId: widget.imeiNumber,);
+        return ProgramLibraryScreenNew(userId: widget.customerID, controllerId: widget.controllerID, deviceId: widget.imeiNumber, fromDealer: false,);
+      // case 66:
+      //   return watersourceUI(userId: widget.customerID, controllerId: widget.controllerID, deviceID: widget.imeiNumber,);
+      // case 67:
+      //   return VirtualMeterScreen(userId: widget.customerID, controllerId: widget.controllerID, deviceId: widget.imeiNumber);
+      // case 68:
+      //   return MyGroupScreen(userId: widget.customerID, controllerId: widget.controllerID);
+      // case 69:
+      //   return ConditionScreen(userId: widget.customerID, controllerId: widget.controllerID, imeiNo: widget.imeiNumber);
+      // case 70:
+      //   return FrostMobUI(userId: widget.customerID, controllerId: widget.controllerID,deviceID: widget.imeiNumber,);
+      // case 71:
+      //   return FilterBackwashUI(userId: widget.customerID, controllerId: widget.controllerID,deviceID: widget.imeiNumber,);
+      // case 72:
+      //   return FertilizerLibrary(userId: widget.userId, controllerId: widget.controllerID, customerID: widget.customerID);
+      // case 73:
+      //   return GlobalFertLimit(userId: widget.userId, controllerId: widget.controllerID, customerId: widget.customerID,);
+      // case 74:
+      //   return SystemDefinition(userId: widget.userId, controllerId: widget.controllerID);
+      // case 77:
+      //   return ProgramQueueScreen(userId: widget.userId, controllerId: widget.controllerID, cutomerId: widget.customerID,);
+      // case 78:
+      //   return ScheduleViewScreen(userId: widget.userId, controllerId: widget.controllerID, customerId: widget.customerID, deviceId: widget.imeiNumber,);
       default:
         return const Center(child: Text('id'));
-    }*/
+    }
 
   }
 
@@ -123,7 +124,8 @@ class _ProgramScheduleState extends State<ProgramSchedule> with SingleTickerProv
     //var fertSetPvd = Provider.of<FertilizerSetProvider>(context, listen: true);
     return Scaffold(
       backgroundColor: const Color(0xFF03464F),
-      body: sideMenuList.isEmpty? const Center(child: CircularProgressIndicator()):
+      body:
+      // sideMenuList.isEmpty? const Center(child: CircularProgressIndicator()):
       SafeArea(
         child: SizedBox(
           width: double.infinity,
@@ -242,7 +244,8 @@ class _ProgramScheduleState extends State<ProgramSchedule> with SingleTickerProv
                         borderRadius: BorderRadius.circular(20)),
                     child: Padding(
                       padding: const EdgeInsets.all(10.0),
-                      child: getViewForParameter(sideMenuList[selectedIndex]['id']),
+                      child: getViewForParameter(1),
+                      // child: getViewForParameter(sideMenuList[selectedIndex]['id']),
                     ),
                   ),
                 ),

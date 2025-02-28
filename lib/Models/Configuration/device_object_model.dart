@@ -30,7 +30,7 @@ class DeviceObjectModel {
   }
 
   factory DeviceObjectModel.fromJson(Map<String, dynamic> data) {
-    print("deveice object model:::::$data");
+    // print("deveice object model:::::$data");
     return DeviceObjectModel(
       objectId: data['objectId'],
       sNo: data['sNo'],
@@ -40,7 +40,7 @@ class DeviceObjectModel {
       type: data['type'] ?? '',
       controllerId: data['controllerId'],
       count: data['count'],
-      connectedObject: null,
+      connectedObject: data['connectedObject'],
       siteMode: data['siteMode'],
     );
   }

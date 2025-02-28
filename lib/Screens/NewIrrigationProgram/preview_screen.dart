@@ -268,7 +268,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       child: buildAlarmDetails()
                   ),
                   const SizedBox(height: 20,),
-                  /*Container(
+                  Container(
                     margin: MediaQuery.of(context).size.width > 1200 ? const EdgeInsets.all(20) : const EdgeInsets.symmetric(horizontal: 20),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
@@ -310,7 +310,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                             (data, index) => buildDataCell(dataItem: data['levelCondition'], widthRatio: constraints.maxWidth * 0.1),
                       ],
                     ),
-                  ),*/
+                  ),
                   const SizedBox(height: 20,),
                   if(fertilizerCondition)
                     Container(
@@ -442,15 +442,12 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   final List<String> payloadList = [
     "S_No",
+    "ProgramType",
     "ProgramCategory",
-    "ProgramCategoryName",
-    "Name",
     "Sequence",
     "PumpStationMode",
     "Pump",
-    "PumpName",
     "MainValve",
-    "MainValveName",
     "Priority",
     "DelayBetweenZones",
     "ScaleFactor",
@@ -465,31 +462,23 @@ class _PreviewScreenState extends State<PreviewScreen> {
     "CycleCount",
     "IntervalBetweenCycles",
     "CentralFertilizerSite",
-    "CentralFertilizerSiteName",
     "LocalFertilizerSite",
-    "LocalFertilizerSiteName",
     "CentralFertilizerTankSelection",
     "LocalFertilizerTankSelection",
     "CentralFilterSite",
-    "CentralFilterSiteName",
     "LocalFilterSite",
-    "LocalFilterSiteName",
     "CentralFilterSiteOperationMode",
     "LocalFilterSiteOperationMode",
     "CentralFilterSelection",
-    "CentralFilterName",
     "LocalFilterSelection",
-    "LocalFilterName",
     "CentralFilterBeginningOnly",
     "LocalFilterBeginningOnly",
     "ConditionBasedProgram",
     "Conditions",
     "AlarmOnOff",
     "PumpChangeOverFlag",
-    "IrrigationLine",
     "HeadUnit",
     "HeadUnitToPause",
-    "ZoneList"
   ];
 
   void sendFunction() async{

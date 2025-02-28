@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:oro_drip_irrigation/utils/Theme/smart_comm_theme.dart';
 
 import '../flavors.dart';
-import '../utils/Theme/oro_theme.dart';
 
 class AppProperties {
   //Todo duration

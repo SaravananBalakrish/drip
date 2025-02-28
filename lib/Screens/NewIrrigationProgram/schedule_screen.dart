@@ -13,16 +13,16 @@ import '../../Widgets/SCustomWidgets/custom_list_tile.dart';
 import '../../Widgets/SCustomWidgets/custom_native_time_picker.dart';
 import 'conditions_screen.dart';
 import 'irrigation_program_main.dart';
-final lightColor1 = const Color(0xffD6EDFC);
-final darkColor1 = const Color(0xff39a4fc);
-final lightColor2 = const Color(0xffF9DEFB);
-final darkColor2 = const Color(0xfff569fc);
-final lightColor3 = const Color(0xffE3DAFF);
-final darkColor3 = const Color(0xff7452ff);
-final lightColor4 = const Color(0xffE3DAFF);
-final darkColor4 = const Color(0xff8054fd);
-final color5 = const Color(0xffFFF6ED);
-final cardColor = const Color(0xffE7F0F2);
+const lightColor1 = Color(0xffD6EDFC);
+const darkColor1 = Color(0xff39a4fc);
+const lightColor2 = Color(0xffF9DEFB);
+const darkColor2 = Color(0xfff569fc);
+const lightColor3 = Color(0xffE3DAFF);
+const darkColor3 = Color(0xff7452ff);
+const lightColor4 = Color(0xffE3DAFF);
+const darkColor4 = Color(0xff8054fd);
+const color5 = Color(0xffFFF6ED);
+const cardColor = Color(0xffE7F0F2);
 final dateFormat = DateFormat('dd-MM-yyyy');
 class ScheduleScreen extends StatefulWidget {
   final int serialNumber;
@@ -338,7 +338,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         Row(
           children: [
             Expanded(
-              child: buildOnTime(),
+              child: buildCheckBox(),
             ),
             const SizedBox(width: 20,),
             Expanded(
@@ -350,7 +350,10 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
         Row(
           children: [
             Expanded(
-              child: buildCheckBox(),
+              child: CustomAnimatedSwitcher(
+                  condition: dayCountSchedule["shouldLimitCycles"],
+                  child: buildOnTime()
+              ),
             ),
             const SizedBox(width: 20,),
             Expanded(
