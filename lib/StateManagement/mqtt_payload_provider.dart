@@ -739,10 +739,8 @@ class MqttPayloadProvider with ChangeNotifier {
   // }
 
   void updatedashboard(Map<String, dynamic> payload) {
-    print(payload.runtimeType);
-    _dashboardLiveInstance = SiteModel.fromJson(payload);
-    print('dashboardLiveInstance update payload');
-    notifyListeners();
+     _dashboardLiveInstance = SiteModel.fromJson(payload);
+     notifyListeners();
   }
 
   Timer? _timerForPumpController;
