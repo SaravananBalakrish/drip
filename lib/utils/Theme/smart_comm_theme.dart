@@ -3,9 +3,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'oro_theme.dart';
 
-Color primary = const Color(0xFF004265);
-Color onPrimary = const Color(0xFF008CD7);
-Color primaryLight = const Color(0xFF9BD8F8);
+Color primaryDark = const Color(0xFF004265);
+Color primaryColor = const Color(0xFF005C8E);
+Color primaryLight = const Color(0xFF008CD7);
 Color secondary = const Color(0xFF005C8E);
 Color onBackground = const Color(0xFFEFEFEF);
 
@@ -14,9 +14,16 @@ Color onBackground = const Color(0xFFEFEFEF);
 class SmartCommTheme {
   static ThemeData lightTheme = ThemeData.light().copyWith(
     primaryColorDark: primaryDark,
-    primaryColor: primary,
+    primaryColor: primaryColor,
     primaryColorLight: primaryLight,
     scaffoldBackgroundColor:  Colors.blueGrey[50],
+    appBarTheme: AppBarTheme(
+      backgroundColor: primaryDark,
+      titleTextStyle: const TextStyle(color: Colors.white, fontSize: 22),
+      iconTheme: const IconThemeData(
+        color: Colors.white,
+      ),
+    ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: secondary,
@@ -28,12 +35,6 @@ class SmartCommTheme {
         ),
       ),
     ),
-   /* inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-      focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
-      labelStyle: const TextStyle(color: Colors.blue),
-    ),*/
-    dialogBackgroundColor: Colors.white,
     dialogTheme: DialogTheme(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(0)
@@ -44,14 +45,14 @@ class SmartCommTheme {
         backgroundColor: primaryDark,
         elevation: 1,
         labelType: NavigationRailLabelType.all,
-        indicatorColor: primary,
+        indicatorColor: primaryLight,
         unselectedIconTheme: const IconThemeData(color: Colors.white54),
       ),
     segmentedButtonTheme: SegmentedButtonThemeData(
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
           if (states.contains(WidgetState.selected)) {
-            return primary;
+            return primaryLight;
           }
           return Colors.grey[300];
         },
@@ -106,15 +107,15 @@ class SmartCommTheme {
     ),
     cardColor: Colors.white,
     colorScheme: ColorScheme.fromSeed(
-      primary: primary, // siva
+      primary: primaryLight, // siva
       secondary: secondary, // siva
       surface: Colors.white,
       background: Colors.white, // siva
       error: Colors.red,
-      onPrimary: onPrimary, // siva
+      onPrimary: primary, // siva
       onSecondary: Colors.white, // siva
       onSurface: Colors.black,
-      onBackground: onPrimary.withOpacity(0.1), // siva
+      onBackground: primary.withOpacity(0.1), // siva
       onError: Colors.white,
       seedColor: primaryDark,
     ),
@@ -148,11 +149,11 @@ class SmartCommTheme {
         ),
       ),
     ),
-    inputDecorationTheme: InputDecorationTheme(
+    /*inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
       labelStyle: const TextStyle(color: Colors.blue),
-    ),
+    ),*/
     dialogBackgroundColor: Colors.white,
     dialogTheme: DialogTheme(
       shape: RoundedRectangleBorder(
