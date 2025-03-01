@@ -129,7 +129,7 @@ class SmartCommTheme {
     primaryColorDark: primary,
     primaryColor: primary,
     primaryColorLight: primaryLight,
-    scaffoldBackgroundColor:  darkThemeBackGroundColor,
+    scaffoldBackgroundColor:  primaryBackground,
     appBarTheme: AppBarTheme(
       backgroundColor: primary,
       titleTextStyle: TextStyle(color: Colors.white, fontSize: 22),
