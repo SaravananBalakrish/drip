@@ -89,6 +89,7 @@ class MqttService {
     try {
       Map<String, dynamic> payloadMessage = jsonDecode(payload);
       if (payloadMessage['mC']=='2400') {
+        print(payloadMessage);
         liveMessageStreamController.add(payload);
       }
     } catch (e) {

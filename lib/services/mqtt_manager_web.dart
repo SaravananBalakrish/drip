@@ -5,6 +5,8 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:uuid/uuid.dart';
 import '../utils/environment.dart';
 
+enum MQTTConnectionState {connected, disconnected, connecting}
+
 class MqttManager {
   static MqttManager? _instance;
   MqttBrowserClient? _client;
