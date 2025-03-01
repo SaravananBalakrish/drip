@@ -31,7 +31,6 @@ class Routes {
            builder: (_) => const ScreenController(),
           settings: settings,
         );
-
       default:
         return MaterialPageRoute(
           builder: (_) => const Scaffold(

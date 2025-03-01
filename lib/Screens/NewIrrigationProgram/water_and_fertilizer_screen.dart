@@ -78,6 +78,7 @@ class _WaterAndFertilizerScreenState extends State<WaterAndFertilizerScreen> {
         });
       }
     });
+    print('isIrrigationProgram ::: ${widget.isIrrigationProgram}');
   }
 
   @override
@@ -153,159 +154,161 @@ class _WaterAndFertilizerScreenState extends State<WaterAndFertilizerScreen> {
                 ),
               ),
             ),
-            Container(
-                alignment: Alignment.center,
-                height: 80,
-                child:Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    if(programPvd.sequenceData.isNotEmpty)
-                      SizedBox(
-                        width: constraint.maxWidth - 40,
+            if(widget.isIrrigationProgram)
+              Container(
+                  alignment: Alignment.center,
+                  height: 80,
+                  child:Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      if(programPvd.sequenceData.isNotEmpty)
+                        SizedBox(
+                          width: constraint.maxWidth - 40,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              if(['0','0.0',''].contains(programPvd.waterValueInQuantity))
+                                Expanded(child: Text('0',style: graphTextStyle,)),
+                              if(!['0','0.0',''].contains(programPvd.waterValueInQuantity))
+                                for(var i = 0;i < generateValuesLiters(double.parse(programPvd.waterValueInQuantity)).length;i++)
+                                  Text('${generateValuesLiters(double.parse(programPvd.waterValueInQuantity))[i]} L',style: graphTextStyle),
+                            ],
+                          ),
+                        ),
+                      const SizedBox(height: 5,),
+                      Container(
+                        margin: const EdgeInsets.only(left: 8,right: 8),
+                        width: screenSizeForGraph,
+                        color: const Color(0xffD8E6FD),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            if(['0','0.0',''].contains(programPvd.waterValueInQuantity))
-                              Expanded(child: Text('0',style: graphTextStyle,)),
-                            if(!['0','0.0',''].contains(programPvd.waterValueInQuantity))
-                              for(var i = 0;i < generateValuesLiters(double.parse(programPvd.waterValueInQuantity)).length;i++)
-                                Text('${generateValuesLiters(double.parse(programPvd.waterValueInQuantity))[i]} L',style: graphTextStyle),
+                            if(programPvd.sequenceData[programPvd.selectedGroup]['centralDosing'].isNotEmpty || programPvd.sequenceData[programPvd.selectedGroup]['localDosing'].isNotEmpty)
+                              AnimatedContainer(
+                                  width: returnWidth(programPvd,'pre',screenSizeForGraph),
+                                  decoration: BoxDecoration(
+                                      color: const Color(0xff5CB2D1),
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+                                  height: 40,
+                                  duration: const Duration(milliseconds: 500)
+                              ),
+                            SizedBox(
+                              height: 40,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  if(programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'applyFertilizerForCentral' : 'applyFertilizerForLocal'])
+                                    for(var inj = 0;inj < programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'].length;inj++)
+                                      if(programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][inj]['method'].contains('Pro'))
+                                        Container(
+                                          width: returnWidthForProMethod(programPvd, screenSizeForGraph),
+                                          height: 30/programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'].length,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(10),
+                                              gradient: const LinearGradient(
+                                                  colors: [
+                                                    Color(0xffFF857D),
+                                                    Color(0xff5CB2D1),
+                                                    Color(0xffFF857D),
+                                                    Color(0xff5CB2D1),
+                                                    Color(0xffFF857D),
+                                                    Color(0xff5CB2D1),
+                                                    Color(0xffFF857D),
+                                                    Color(0xff5CB2D1),
+                                                    Color(0xffFF857D),
+                                                    Color(0xff5CB2D1),
+                                                    Color(0xffFF857D),
+                                                    Color(0xff5CB2D1),
+
+                                                  ],
+                                                  begin: Alignment.centerLeft,
+                                                  end: Alignment.centerRight
+                                              )
+                                          ),
+                                        )
+                                      else
+                                        Container(
+                                          width: returnWidthForProMethod(programPvd, screenSizeForGraph),
+                                          height: 30/programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'].length,
+                                          child: Row(
+                                            children: [
+                                              AnimatedContainer(
+                                                width: returnWidthForFertilizer(programPvd,programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][inj],screenSizeForGraph),
+                                                decoration: const BoxDecoration(
+                                                  borderRadius: BorderRadius.only(topLeft: Radius.circular(10),bottomLeft: Radius.circular(10)),
+                                                  color:Color(0xffFF857D),
+                                                ),
+                                                height: 30/programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'].length,
+                                                duration: const Duration(milliseconds: 500),
+                                              ),
+                                              if(returnWidthForFertilizer(programPvd,programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][inj],screenSizeForGraph) > 0)
+                                                Expanded(
+                                                  child: Container(
+                                                    // width: constraint.maxWidth - (returnWidth(programPvd,'pre',constraint.maxWidth) + returnWidth(programPvd,'post',constraint.maxWidth) + returnWidthForFertilizer(programPvd,programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][inj],constraint.maxWidth)) -1,
+                                                    width: double.infinity,
+                                                    decoration: const BoxDecoration(
+                                                      borderRadius: BorderRadius.only(topRight: Radius.circular(10),bottomRight: Radius.circular(10)),
+                                                      color: AppProperties.primaryColorMedium,
+                                                      // color:Colors.blueGrey
+                                                    ),
+                                                    height: 30/programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'].length,
+                                                    // duration: const Duration(milliseconds: 500),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                ],
+                              ),
+                            ),
+                            const Expanded(
+                              child: SizedBox(
+                                // color: Color(0xffD8E6FD),
+                                width: double.infinity,
+                                height: 40,
+                              ),
+                            ),
+                            if(programPvd.sequenceData[programPvd.selectedGroup]['centralDosing'].isNotEmpty || programPvd.sequenceData[programPvd.selectedGroup]['localDosing'].isNotEmpty)
+                              AnimatedContainer(
+                                // width: returnWidth(programPvd.sequenceData[programPvd.selectedGroup]['timeValue'],programPvd.sequenceData[programPvd.selectedGroup]['postValue'],constraints.maxWidth),
+                                  width: returnWidth(programPvd,'post',screenSizeForGraph),
+                                  decoration: BoxDecoration(
+                                      color: const Color(0xff6EA661),
+                                      borderRadius: BorderRadius.circular(10)
+                                  ),
+                                  height: 40,
+                                  duration: const Duration(seconds: 1)
+                              ),
                           ],
                         ),
                       ),
-                    const SizedBox(height: 5,),
-                    Container(
-                      margin: const EdgeInsets.only(left: 8,right: 8),
-                      width: screenSizeForGraph,
-                      color: const Color(0xffD8E6FD),
-                      child: Row(
-                        children: [
-                          if(programPvd.sequenceData[programPvd.selectedGroup]['centralDosing'].isNotEmpty || programPvd.sequenceData[programPvd.selectedGroup]['localDosing'].isNotEmpty)
-                            AnimatedContainer(
-                                width: returnWidth(programPvd,'pre',screenSizeForGraph),
-                                decoration: BoxDecoration(
-                                    color: const Color(0xff5CB2D1),
-                                    borderRadius: BorderRadius.circular(10)
-                                ),
-                                height: 40,
-                                duration: const Duration(milliseconds: 500)
-                            ),
-                          SizedBox(
-                            height: 40,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                if(programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'applyFertilizerForCentral' : 'applyFertilizerForLocal'])
-                                  for(var inj = 0;inj < programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'].length;inj++)
-                                    if(programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][inj]['method'].contains('Pro'))
-                                      Container(
-                                        width: returnWidthForProMethod(programPvd, screenSizeForGraph),
-                                        height: 30/programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'].length,
-                                        decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(10),
-                                            gradient: const LinearGradient(
-                                                colors: [
-                                                  Color(0xffFF857D),
-                                                  Color(0xff5CB2D1),
-                                                  Color(0xffFF857D),
-                                                  Color(0xff5CB2D1),
-                                                  Color(0xffFF857D),
-                                                  Color(0xff5CB2D1),
-                                                  Color(0xffFF857D),
-                                                  Color(0xff5CB2D1),
-                                                  Color(0xffFF857D),
-                                                  Color(0xff5CB2D1),
-                                                  Color(0xffFF857D),
-                                                  Color(0xff5CB2D1),
-
-                                                ],
-                                                begin: Alignment.centerLeft,
-                                                end: Alignment.centerRight
-                                            )
-                                        ),
-                                      )
-                                    else
-                                      Container(
-                                        width: returnWidthForProMethod(programPvd, screenSizeForGraph),
-                                        height: 30/programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'].length,
-                                        child: Row(
-                                          children: [
-                                            AnimatedContainer(
-                                              width: returnWidthForFertilizer(programPvd,programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][inj],screenSizeForGraph),
-                                              decoration: const BoxDecoration(
-                                                borderRadius: BorderRadius.only(topLeft: Radius.circular(10),bottomLeft: Radius.circular(10)),
-                                                color:Color(0xffFF857D),
-                                              ),
-                                              height: 30/programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'].length,
-                                              duration: const Duration(milliseconds: 500),
-                                            ),
-                                            if(returnWidthForFertilizer(programPvd,programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][inj],screenSizeForGraph) > 0)
-                                              Expanded(
-                                                child: Container(
-                                                  // width: constraint.maxWidth - (returnWidth(programPvd,'pre',constraint.maxWidth) + returnWidth(programPvd,'post',constraint.maxWidth) + returnWidthForFertilizer(programPvd,programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][inj],constraint.maxWidth)) -1,
-                                                  width: double.infinity,
-                                                  decoration: const BoxDecoration(
-                                                    borderRadius: BorderRadius.only(topRight: Radius.circular(10),bottomRight: Radius.circular(10)),
-                                                    color: AppProperties.primaryColorMedium,
-                                                    // color:Colors.blueGrey
-                                                  ),
-                                                  height: 30/programPvd.sequenceData[programPvd.selectedGroup][programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'].length,
-                                                  // duration: const Duration(milliseconds: 500),
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                              ],
-                            ),
-                          ),
-                          const Expanded(
-                            child: SizedBox(
-                              // color: Color(0xffD8E6FD),
-                              width: double.infinity,
-                              height: 40,
-                            ),
-                          ),
-                          if(programPvd.sequenceData[programPvd.selectedGroup]['centralDosing'].isNotEmpty || programPvd.sequenceData[programPvd.selectedGroup]['localDosing'].isNotEmpty)
-                            AnimatedContainer(
-                              // width: returnWidth(programPvd.sequenceData[programPvd.selectedGroup]['timeValue'],programPvd.sequenceData[programPvd.selectedGroup]['postValue'],constraints.maxWidth),
-                                width: returnWidth(programPvd,'post',screenSizeForGraph),
-                                decoration: BoxDecoration(
-                                    color: const Color(0xff6EA661),
-                                    borderRadius: BorderRadius.circular(10)
-                                ),
-                                height: 40,
-                                duration: const Duration(seconds: 1)
-                            ),
-                        ],
+                      const SizedBox(height: 5),
+                      SizedBox(
+                        width: constraint.maxWidth - 10.5,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            if(programPvd.waterValueInTime == '00:00:00' || programPvd.waterValueInTime == '0:0:0')
+                              Text('00:00:00',style: graphTextStyle,),
+                            if(programPvd.waterValueInTime != '00:00:00' && programPvd.waterValueInTime != '0:0:0')
+                              ...generateTimeValues(programPvd.waterValueInTime),
+                            //   Text(generateTimeValues(programPvd.waterValueInTime)[0],style: graphTextStyle),
+                            // if(programPvd.waterValueInTime != '00:00:00')
+                            //   Text(generateTimeValues(programPvd.waterValueInTime)[1],style: graphTextStyle),
+                            // if(programPvd.waterValueInTime != '00:00:00')
+                            //   Text(generateTimeValues(programPvd.waterValueInTime)[2],style: graphTextStyle),
+                            // if(programPvd.waterValueInTime != '00:00:00')
+                            //   Text(generateTimeValues(programPvd.waterValueInTime)[3],style: graphTextStyle),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 5),
-                    SizedBox(
-                      width: constraint.maxWidth - 10.5,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          if(programPvd.waterValueInTime == '00:00:00' || programPvd.waterValueInTime == '0:0:0')
-                            Text('00:00:00',style: graphTextStyle,),
-                          if(programPvd.waterValueInTime != '00:00:00' && programPvd.waterValueInTime != '0:0:0')
-                            ...generateTimeValues(programPvd.waterValueInTime),
-                          //   Text(generateTimeValues(programPvd.waterValueInTime)[0],style: graphTextStyle),
-                          // if(programPvd.waterValueInTime != '00:00:00')
-                          //   Text(generateTimeValues(programPvd.waterValueInTime)[1],style: graphTextStyle),
-                          // if(programPvd.waterValueInTime != '00:00:00')
-                          //   Text(generateTimeValues(programPvd.waterValueInTime)[2],style: graphTextStyle),
-                          // if(programPvd.waterValueInTime != '00:00:00')
-                          //   Text(generateTimeValues(programPvd.waterValueInTime)[3],style: graphTextStyle),
-                        ],
-                      ),
-                    ),
 
-                  ],
-                )
-            ),
-            const SizedBox(height: 10,),
+                    ],
+                  )
+              ),
+            if(widget.isIrrigationProgram)
+              const SizedBox(height: 10,),
             Container(
                 width: constraint.maxWidth,
                 height: constraint.maxHeight - 35 - 41 - 100,
@@ -318,64 +321,66 @@ class _WaterAndFertilizerScreenState extends State<WaterAndFertilizerScreen> {
                   width: double.infinity,
                   child: CustomScrollView(
                     slivers: [
-                      SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: 30,
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: (constraint.maxWidth - 20)/2,
-                                child: const Row(
-                                  children: [
-                                    Icon(Icons.apple_rounded,color: Color(0xff5CB2D1),),
-                                    SizedBox(width: 20,),
-                                    Text('Pre water')
-                                  ],
+                      if(widget.isIrrigationProgram)
+                        SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: 30,
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: (constraint.maxWidth - 20)/2,
+                                  child: const Row(
+                                    children: [
+                                      Icon(Icons.apple_rounded,color: Color(0xff5CB2D1),),
+                                      SizedBox(width: 20,),
+                                      Text('Pre water')
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                width: (constraint.maxWidth - 20)/2,
-                                child: const Row(
-                                  children: [
-                                    Icon(Icons.apple_rounded,color: Color(0xff6EA661)),
-                                    SizedBox(width: 20,),
-                                    Text('Post water')
-                                  ],
+                                SizedBox(
+                                  width: (constraint.maxWidth - 20)/2,
+                                  child: const Row(
+                                    children: [
+                                      Icon(Icons.apple_rounded,color: Color(0xff6EA661)),
+                                      SizedBox(width: 20,),
+                                      Text('Post water')
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                      SliverToBoxAdapter(
-                        child: SizedBox(
-                          height: 30,
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: (constraint.maxWidth - 20)/2,
-                                child: const Row(
-                                  children: [
-                                    Icon(Icons.apple_rounded,color: Color(0xffFF857D),),
-                                    SizedBox(width: 20,),
-                                    Text('Fertilizer water')
-                                  ],
+                      if(widget.isIrrigationProgram)
+                        SliverToBoxAdapter(
+                          child: SizedBox(
+                            height: 30,
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: (constraint.maxWidth - 20)/2,
+                                  child: const Row(
+                                    children: [
+                                      Icon(Icons.apple_rounded,color: Color(0xffFF857D),),
+                                      SizedBox(width: 20,),
+                                      Text('Fertilizer water')
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                width: (constraint.maxWidth - 20)/2,
-                                child: Row(
-                                  children: [
-                                    Icon(Icons.apple_rounded,color: AppProperties.primaryColorMedium,),
-                                    const SizedBox(width: 20,),
-                                    const Text('Balance water')
-                                  ],
+                                SizedBox(
+                                  width: (constraint.maxWidth - 20)/2,
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.apple_rounded,color: AppProperties.primaryColorMedium,),
+                                      const SizedBox(width: 20,),
+                                      const Text('Balance water')
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
                       const SliverToBoxAdapter(
                         child: SizedBox(
                           height: 10,

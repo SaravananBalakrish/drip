@@ -3,14 +3,18 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'oro_theme.dart';
 
-Color primaryDark = const Color(0xFF005C8F);
-// Color primary = const Color(0xFF1B8BCB);
+Color primaryDark = const Color(0xFF004265);
+Color primaryColor = const Color(0xFF005C8E);
+Color primaryLight = const Color(0xFF008CD7);
+Color secondary = const Color(0xFF005C8E);
+Color onBackground = const Color(0xFFEFEFEF);
+
 
 class SmartCommTheme {
   static ThemeData lightTheme = ThemeData.light().copyWith(
     primaryColorDark: primaryDark,
-    primaryColor: primaryDark,
-    primaryColorLight: primaryDark,
+    primaryColor: primaryColor,
+    primaryColorLight: primaryLight,
     scaffoldBackgroundColor:  Colors.blueGrey[50],
     appBarTheme: AppBarTheme(
       backgroundColor: primaryDark,
@@ -21,7 +25,7 @@ class SmartCommTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: primaryDark,
+        backgroundColor: secondary,
         foregroundColor: Colors.black,
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
@@ -30,29 +34,24 @@ class SmartCommTheme {
         ),
       ),
     ),
-   /* inputDecorationTheme: InputDecorationTheme(
-      border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-      focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
-      labelStyle: const TextStyle(color: Colors.blue),
-    ),*/
-    dialogBackgroundColor: Colors.white,
     dialogTheme: DialogTheme(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(0)
       ),
     ),
+
     navigationRailTheme: NavigationRailThemeData(
-      backgroundColor: primary,
-      elevation: 0,
-      labelType: NavigationRailLabelType.all,
-      indicatorColor: primaryDark,
-      unselectedIconTheme: IconThemeData(color: Colors.white54),
-    ),
+        backgroundColor: primaryDark,
+        elevation: 1,
+        labelType: NavigationRailLabelType.all,
+        indicatorColor: primaryLight,
+        unselectedIconTheme: const IconThemeData(color: Colors.white54),
+      ),
     segmentedButtonTheme: SegmentedButtonThemeData(
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
           if (states.contains(WidgetState.selected)) {
-            return lightTheme.primaryColor.withAlpha(7);
+            return primaryLight;
           }
           return Colors.grey[300];
         },
@@ -86,7 +85,11 @@ class SmartCommTheme {
       titleMedium: GoogleFonts.roboto(fontSize: 15, color: Colors.black),
       titleSmall: GoogleFonts.roboto(fontSize: 12, color: Colors.black),
 
-      headlineLarge: GoogleFonts.roboto(fontSize: 20, color: Colors.black),
+      headlineLarge: GoogleFonts.roboto(fontSize: 15, color: const Color(0xFF1E1E1E), fontWeight: FontWeight.bold), // siva
+      headlineSmall: GoogleFonts.roboto(fontSize: 13, color: Colors.black87, fontWeight: FontWeight.bold), // siva
+      labelLarge: GoogleFonts.roboto(fontSize: 15, color: const Color(0xFF1E1E1E), fontWeight: FontWeight.bold), // siva
+      labelSmall: GoogleFonts.roboto(fontSize: 13, color: const Color(0xFF3C3C3C)), // siva
+
 
       bodyLarge: GoogleFonts.roboto(fontSize: 15, color: Colors.black87),
       bodyMedium: GoogleFonts.roboto(fontSize: 13, color: Colors.black, fontWeight: FontWeight.bold),
@@ -101,19 +104,24 @@ class SmartCommTheme {
         borderRadius: BorderRadius.circular(5.0),
       ),
     ),
-      colorScheme: ColorScheme.fromSeed(
-        primary: primaryDark,
-        secondary: primaryDark,
-        surface: Colors.white,
-        background: lightThemeBackGroundColor,
-        error: Colors.red,
-        onPrimary: Colors.white,
-        onSecondary: Colors.white,
-        onSurface: Colors.black,
-        onBackground: Colors.black,
-        onError: Colors.white,
-        seedColor: primaryDark,
-      )
+    checkboxTheme: CheckboxThemeData(
+      checkColor: WidgetStateProperty.all(Colors.white),
+      fillColor: WidgetStateProperty.all(primary)
+    ),
+    cardColor: Colors.white,
+    colorScheme: ColorScheme.fromSeed(
+      primary: primaryLight, // siva
+      secondary: secondary, // siva
+      surface: Colors.white,
+      background: Colors.white, // siva
+      error: Colors.red,
+      onPrimary: primary, // siva
+      onSecondary: Colors.white, // siva
+      onSurface: Colors.black,
+      onBackground: primary.withOpacity(0.1), // siva
+      onError: Colors.white,
+      seedColor: primaryDark,
+    ),
   );
 
   static ThemeData darkTheme = ThemeData.dark().copyWith(
@@ -124,7 +132,7 @@ class SmartCommTheme {
     appBarTheme: AppBarTheme(
       backgroundColor: primary,
       titleTextStyle: TextStyle(color: Colors.white, fontSize: 22),
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: Colors.white,
       ),
     ),
@@ -144,11 +152,11 @@ class SmartCommTheme {
         ),
       ),
     ),
-    inputDecorationTheme: InputDecorationTheme(
+    /*inputDecorationTheme: InputDecorationTheme(
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       focusedBorder: const OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
       labelStyle: const TextStyle(color: Colors.blue),
-    ),
+    ),*/
     dialogBackgroundColor: Colors.white,
     dialogTheme: DialogTheme(
       shape: RoundedRectangleBorder(

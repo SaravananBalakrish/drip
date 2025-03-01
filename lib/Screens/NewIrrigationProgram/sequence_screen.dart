@@ -289,13 +289,13 @@ class _SequenceScreenState extends State<SequenceScreen> {
                               dataList: irrigationProgramProvider.sampleIrrigationLine!,
                               isGroup: false
                           ),
-                        /*if(irrigationProgramProvider.irrigationLine!.defaultData.agitator.isNotEmpty && agitatorProgram)
+                        if(irrigationProgramProvider.agitators != null && agitatorProgram)
                           buildIrrigationLinesList(
                               context: context,
-                              dataList: irrigationProgramProvider.irrigationLine!.defaultData.agitator,
+                              dataList: irrigationProgramProvider.agitators,
                               isGroup: false,
                               isAgitator: true
-                          ),*/
+                          ),
                       ],
                     ),
                   ),

@@ -82,6 +82,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
                               child: SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: Row(
+                                  spacing: 10,
                                   children: [
                                     IconButton(
                                         onPressed: (){
@@ -98,9 +99,9 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                           );
                                         }, icon: const Icon(Icons.dataset)
                                     ),
-                                    if(availability(2))
+                                    if(widget.configPvd.pump.any((pump) => pump.pumpType == 1))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.sourcePump, parameterType: LineParameter.sourcePump, objectId: 5, objectName: 'Source Pump', validateAllLine: false, listOfObject: widget.configPvd.pump.where((pump) => (pump.pumpType == 1)).toList().map((pump) => pump.commonDetails).toList()),
-                                    if(availability(2))
+                                    if(widget.configPvd.pump.any((pump) => pump.pumpType == 2))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.irrigationPump, parameterType: LineParameter.irrigationPump, objectId: 5, objectName: 'Irrigation Pump', validateAllLine: false, listOfObject: widget.configPvd.pump.where((pump) => (pump.pumpType == 2)).toList().map((pump) => pump.commonDetails).toList()),
                                     if(availability(13))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.valve, parameterType: LineParameter.valve, objectId: 13, objectName: 'Valve', validateAllLine: true),
@@ -135,9 +136,9 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                     if(availability(23))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureSwitch], parameterType: LineParameter.pressureSwitch, objectId: 23, objectName: 'Power Switch', validateAllLine: true, singleSelection: true),
                                     if(availability(24))
-                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureIn], parameterType: LineParameter.pressureIn, objectId: 24, objectName: 'Pressure In', validateAllLine: true, singleSelection: true, listOfObject: widget.configPvd.listOfGeneratedObject.where((object) => !widget.configPvd.pump.any((pump) => [pump.pressureIn,pump.pressureOut].contains(object.sNo))).toList()),
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureIn], parameterType: LineParameter.pressureIn, objectId: 24, objectName: 'Pressure In', validateAllLine: true, singleSelection: true, listOfObject: widget.configPvd.listOfGeneratedObject.where((object) => (object.objectId == 24 && !widget.configPvd.pump.any((pump) => [pump.pressureIn,pump.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureOut)).toList()),
                                     if(availability(24))
-                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureOut], parameterType: LineParameter.pressureOut, objectId: 24, objectName: 'Pressure Out', validateAllLine: true, singleSelection: true),
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureOut], parameterType: LineParameter.pressureOut, objectId: 24, objectName: 'Pressure Out', validateAllLine: true, singleSelection: true, listOfObject: widget.configPvd.listOfGeneratedObject.where((object) => (object.objectId == 24 && !widget.configPvd.pump.any((pump) => [pump.pressureIn,pump.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureIn)).toList()),
                                     if(availability(3))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.centralFertilization], parameterType: LineParameter.centralFertilization, objectId: 3, objectName: 'Central Fertilization', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.fertilization.where((site) => (site.siteMode == 1)).toList().map((site) => site.commonDetails).toList()),
                                     if(availability(3))
@@ -381,7 +382,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: Theme.of(context).primaryColor.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.onBackground,
         ),
         child: Row(
            mainAxisSize: MainAxisSize.min,

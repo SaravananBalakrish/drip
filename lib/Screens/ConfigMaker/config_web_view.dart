@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/product_limit.dart';
 import 'package:oro_drip_irrigation/Screens/ConfigMaker/site_configure.dart';
+import 'package:oro_drip_irrigation/Widgets/sized_image.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 import '../../Constants/properties.dart';
@@ -59,6 +61,8 @@ class _ConfigWebViewState extends State<ConfigWebView> {
   double webBreakPoint = 1000;
   late ThemeData themeData;
   late bool themeMode;
+  bool clearOnHover = false;
+  bool sendOnHover = false;
 
   @override
   void initState() {
@@ -100,42 +104,54 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                   titleWidth: sideNavigationTabWidth,
                 ),
                 Row(
+                  spacing:20,
                   children: [
-                    Row(
+                    InkWell(
+                    onHover: (value){
+                      setState(() {
+                        clearOnHover = value;
+                      });
+                    },
+                    onTap: (){
+                      configPvd.clearData();
+                    },
+                    child:  Row(
+                      spacing: 10,
                       children: [
-                        IconButton(
-                            onPressed: (){
-                              configPvd.clearData();
-                            },
-                          style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(Colors.green.shade100)
-                          ),
-                            icon: const Icon(Icons.cleaning_services_sharp),
+                        CircleAvatar(
+                          backgroundColor: clearOnHover ? themeData.colorScheme.onPrimary : themeData.colorScheme.secondary,
+                          radius: 20,
+                          child: SizedImageSmall(imagePath: '${AppConstants.svgObjectPath}clear.svg',color:  Colors.white,),
                         ),
-                        const SizedBox(width: 10,),
                         const Text('Click To Clear Config', style: TextStyle(color: Colors.white),)
                       ],
                     ),
-                    const SizedBox(width: 50,),
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: (){
-                            sendToMqtt();
-                            sendToHttp();
-                          },
-                          style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all(Colors.green.shade100)
+                  ),
+                    InkWell(
+                      onHover: (value){
+                        setState(() {
+                          sendOnHover = value;
+                        });
+                      },
+                      onTap: (){
+                        sendToMqtt();
+                        sendToHttp();                  },
+                      child:  Row(
+                        spacing: 10,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: sendOnHover ? themeData.colorScheme.onPrimary : themeData.colorScheme.secondary,
+                            radius: 20,
+                            child: SizedImageSmall(imagePath: '${AppConstants.svgObjectPath}send.svg',color:  Colors.white,),
                           ),
-                          icon: const Icon(Icons.send),
-                        ),
-                        const SizedBox(width: 10,),
-                        const Text('Click To Send Config', style: TextStyle(color: Colors.white),)
-                      ],
+                          const Text('Click To Send Config', style: TextStyle(color: Colors.white),)
+                        ],
+                      ),
                     ),
-                    const SizedBox(width: 10,),
+                    const SizedBox(width: 10,)
                   ],
                 ),
+
 
               ],
             ),
@@ -147,7 +163,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                 Expanded(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: themeData.scaffoldBackgroundColor,
+                      color: themeData.colorScheme.background,
                       borderRadius: const BorderRadius.only(topLeft: Radius.circular(10))
                     ),
                       child: configPvd.selectedTab == ConfigMakerTabs.deviceList

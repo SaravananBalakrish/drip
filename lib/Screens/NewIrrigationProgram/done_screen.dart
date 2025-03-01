@@ -10,6 +10,9 @@ import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../StateManagement/overall_use.dart';
 import '../../Widgets/SCustomWidgets/custom_alert_dialog.dart';
 import '../../Widgets/SCustomWidgets/custom_native_time_picker.dart';
+import '../../Widgets/SCustomWidgets/custom_snack_bar.dart';
+import '../../repository/repository.dart';
+import '../../services/http_service.dart';
 import 'conditions_screen.dart';
 
 class AdditionalDataScreen extends StatefulWidget {
@@ -186,7 +189,7 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
                   },
                 ),
               if(!(widget.isIrrigationProgram))
-                const SizedBox(height: 80,)
+                const SizedBox(height: 100,)
             ],
           );
         }
@@ -199,17 +202,20 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
     dataToMqtt = mainProvider.dataToMqtt(widget.serialNumber == 0 ? mainProvider.serialNumberCreation : widget.serialNumber, widget.programType);
     var userData = {
       "defaultProgramName": mainProvider.defaultProgramName,
-      "userId": overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId,
+      "userId": widget.userId,
       "controllerId": widget.controllerId,
-      "createUser": overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId,
+      "createUser": widget.userId,
       "serialNumber": widget.serialNumber == 0 ? mainProvider.serialNumberCreation : widget.serialNumber,
     };
     if(mainProvider.irrigationLine!.sequence.isNotEmpty) {
       // print(mainProvider.selectionModel.data!.toJson());
+      // print(mainProvider.additionalData!.toJson());
       var dataToSend = {
         "sequence": mainProvider.irrigationLine!.sequence,
         "schedule": mainProvider.sampleScheduleModel!.toJson(),
-        "conditions": mainProvider.sampleConditions!.toJson(),
+        "conditions": {},
+        // "conditions": mainProvider.sampleConditions!.toJson(),
+        // "waterAndFert": [],
         "waterAndFert": mainProvider.sequenceData,
         "selection": {
           ...mainProvider.additionalData!.toJson(),
@@ -221,19 +227,16 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
         "delayBetweenZones": mainProvider.programDetails!.delayBetweenZones,
         "adjustPercentage": mainProvider.programDetails!.adjustPercentage,
         "incompleteRestart": mainProvider.isCompletionEnabled ? "1" : "0",
-        "controllerReadStatus": 0,
+        "controllerReadStatus": '0',
         "programType": mainProvider.selectedProgramType,
         "hardware": dataToMqtt
       };
       userData.addAll(dataToSend);
-      for(var i = 0; i < dataToMqtt['2500'][1]['2502'].split(',').length; i++) {
-        print("${i+1} ==> ${dataToMqtt['2500'][1]['2502'].split(',')[i]}");
-      }
       // print(dataToMqtt['2500'][1]['2502'].split(',').join('\n'));
       // print(dataToMqtt['2500'][1]['2502'].split(',').length);
-      /*try {
+      try {
         // MQTTManager().publish(jsonEncode(dataToMqtt), "AppToFirmware/${widget.deviceId}");
-        await validatePayloadSent(
+        /*await validatePayloadSent(
             dialogContext: context,
             context: context,
             mqttPayloadProvider: mqttPayloadProvider,
@@ -248,33 +251,60 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
             deviceId: widget.deviceId
         ).whenComplete(() {
           Future.delayed(const Duration(milliseconds: 300), () async {
-            final createUserProgram = await HttpService().postRequest('createUserProgram', userData);
+            final Repository repository = Repository(HttpService());
+            final createUserProgram = await repository.createUserProgram(userData);
             final response = jsonDecode(createUserProgram.body);
             if(createUserProgram.statusCode == 200) {
-              await mainProvider.programLibraryData(overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, widget.controllerId);
+              await irrigationProvider.programLibraryData(widget.userId, widget.controllerId);
               ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: response['message']));
               if(widget.toDashboard) {
-                mainProvider.updateBottomNavigation(0);
+                irrigationProvider.updateBottomNavigation(0);
                 Navigator.of(context).pop();
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => HomeScreen(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, fromDealer: widget.fromDealer,)),
-                );
-              } else {
-                Navigator.of(context).pop();
-                mainProvider.updateBottomNavigation(1);
+                print(irrigationProvider.selectedIndex);
                 // Navigator.push(
                 //   context,
-                //   MaterialPageRoute(builder: (context) => HomeScreen(userId: overAllPvd.userId, fromDealer: widget.fromDealer,)),
+                //   // MaterialPageRoute(builder: (context) => HomeScreen(userId: widget.userId, fromDealer: widget.fromDealer,)),
+                // );
+              } else {
+                Navigator.of(context).pop();
+                irrigationProvider.updateBottomNavigation(1);
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => HomeScreen(userId: widget.userId, fromDealer: widget.fromDealer,)),
                 // );
               }
             }
           });
+        });*/
+        Future.delayed(const Duration(milliseconds: 300), () async {
+          final Repository repository = Repository(HttpService());
+          final createUserProgram = await repository.createUserProgram(userData);
+          final response = jsonDecode(createUserProgram.body);
+          if(createUserProgram.statusCode == 200) {
+            // await irrigationProvider.programLibraryData(widget.userId, widget.controllerId);
+            ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: response['message']));
+            /* if(widget.toDashboard) {
+              irrigationProvider.updateBottomNavigation(0);
+              Navigator.of(context).pop();
+              print(irrigationProvider.selectedIndex);
+              // Navigator.push(
+              //   context,
+              //   // MaterialPageRoute(builder: (context) => HomeScreen(userId: widget.userId, fromDealer: widget.fromDealer,)),
+              // );
+            } else {
+              Navigator.of(context).pop();
+              irrigationProvider.updateBottomNavigation(1);
+              // Navigator.push(
+              //   context,
+              //   MaterialPageRoute(builder: (context) => HomeScreen(userId: widget.userId, fromDealer: widget.fromDealer,)),
+              // );
+            }*/
+          }
         });
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: 'Failed to update because of $error'));
         print("Error: $error");
-      }*/
+      }
       // print(mainProvider.selectionModel.data!.localFertilizerSet!.map((e) => e.toJson()));
     }
     else {

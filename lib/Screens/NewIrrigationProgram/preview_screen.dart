@@ -410,7 +410,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     const SizedBox(height: 20,),
                   SlidingSendButton(
                     onSend: (){
-                      irrigationProvider.programLibraryData(widget.userId, widget.controllerId);
+                      // print(irrigationProvider.dataToMqtt(widget.serialNumber == 0 ? irrigationProvider.serialNumberCreation : widget.serialNumber, widget.programType));
+                      // irrigationProvider.programLibraryData(widget.userId, widget.controllerId);
                       sendFunction();
                     },
                   ),
@@ -440,51 +441,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
     );
   }
 
-  final List<String> payloadList = [
-    "S_No",
-    "ProgramType",
-    "ProgramCategory",
-    "Sequence",
-    "PumpStationMode",
-    "Pump",
-    "MainValve",
-    "Priority",
-    "DelayBetweenZones",
-    "ScaleFactor",
-    "SchedulingMethod",
-    "ScheduleStartDate",
-    "ScheduleDayCount",
-    "ScheduleDaySelection",
-    "ScheduleEndDate",
-    "RtcOnTime",
-    "ProgramStopMethod",
-    "RtcOff_MaxTime",
-    "CycleCount",
-    "IntervalBetweenCycles",
-    "CentralFertilizerSite",
-    "LocalFertilizerSite",
-    "CentralFertilizerTankSelection",
-    "LocalFertilizerTankSelection",
-    "CentralFilterSite",
-    "LocalFilterSite",
-    "CentralFilterSiteOperationMode",
-    "LocalFilterSiteOperationMode",
-    "CentralFilterSelection",
-    "LocalFilterSelection",
-    "CentralFilterBeginningOnly",
-    "LocalFilterBeginningOnly",
-    "ConditionBasedProgram",
-    "Conditions",
-    "AlarmOnOff",
-    "PumpChangeOverFlag",
-    "HeadUnit",
-    "HeadUnitToPause",
-  ];
-
   void sendFunction() async{
     final mainProvider = Provider.of<IrrigationProgramMainProvider>(context, listen: false);
-    Map<String, dynamic> dataToMqtt = {};
-    dataToMqtt = mainProvider.dataToMqtt(widget.serialNumber == 0 ? mainProvider.serialNumberCreation : widget.serialNumber, widget.programType);
+    Map<String, dynamic> dataToMqtt = mainProvider.dataToMqtt(widget.serialNumber == 0 ? mainProvider.serialNumberCreation : widget.serialNumber, widget.programType);
     var userData = {
       "defaultProgramName": mainProvider.defaultProgramName,
       "userId": widget.userId,
@@ -500,8 +459,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
         "schedule": mainProvider.sampleScheduleModel!.toJson(),
         "conditions": {},
         // "conditions": mainProvider.sampleConditions!.toJson(),
-        "waterAndFert": {},
-        // "waterAndFert": mainProvider.sequenceData,
+        // "waterAndFert": [],
+        "waterAndFert": mainProvider.sequenceData,
         "selection": {
           ...mainProvider.additionalData!.toJson(),
           "selected": mainProvider.selectedObjects.map((e) => e.toJson()).toList(),

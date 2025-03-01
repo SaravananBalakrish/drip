@@ -53,6 +53,7 @@ class FertilizerSite {
   });
 
   factory FertilizerSite.fromJson(Map<String, dynamic> json) {
+    print('FertilizerSite.fromJson: $json');
     return FertilizerSite(
       fertilizerSite: DeviceObjectModel.fromJson(json),
       siteMode: json['siteMode'],
@@ -285,10 +286,6 @@ class IrrigationLine with DiagnosticableTreeMixin {
     return jsonList
         .where((e) => (e != null && e.isNotEmpty))
         .map((e) => DeviceObjectModel.fromJson(Map<String, dynamic>.from(e)))
-        .whereType<DeviceObjectModel>()
-        .toList();
-    return jsonList
-        .map((e) => e.isNotEmpty ? DeviceObjectModel.fromJson(Map<String, dynamic>.from(e)) : null)
         .whereType<DeviceObjectModel>()
         .toList();
   }

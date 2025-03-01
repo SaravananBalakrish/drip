@@ -65,6 +65,10 @@ flutter:
   assets:
      - assets/Images/
      - assets/Images/Svg/
+     - assets/Images/Fertilization/
+     - assets/Images/Filtration/
+     - assets/Images/Png/
+     - assets/Images/Source/
      - assets/png_images/
      - assets/svg_images/
      - assets/SVGPicture/

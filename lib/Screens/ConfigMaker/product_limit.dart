@@ -88,14 +88,16 @@ class _ProductLimitState extends State<ProductLimit> {
 
   List<Widget> colorLegendBox(double screenWidth,double screenHeight){
     return [
-      Text('Enter The Count Of The Object', style: Theme.of(context).textTheme.bodyLarge,),
       const SizedBox(height: 10,),
+      Text('Enter The Count Of The Object', style: Theme.of(context).textTheme.headlineLarge,),
+      const SizedBox(height: 20,),
       Container(
         width: screenWidth > 500 ? null : double.infinity,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(width: 1, color: Colors.grey),
+          color: Colors.white,
+          boxShadow: AppProperties.customBoxShadowLiteTheme
         ),
         child: Wrap(
           runSpacing: 10,
@@ -120,7 +122,8 @@ class _ProductLimitState extends State<ProductLimit> {
                 ),
           ],
         ),
-      )
+      ),
+      const SizedBox(height: 10,)
     ];
   }
 }
