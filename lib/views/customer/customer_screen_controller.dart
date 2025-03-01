@@ -5,6 +5,7 @@ import 'package:oro_drip_irrigation/views/customer/site_config.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone.dart';
 import '../../Models/customer/site_model.dart';
 import 'package:provider/provider.dart';
+import '../../flavors.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/formatters.dart';
@@ -50,7 +51,19 @@ class CustomerScreenController extends StatelessWidget {
             appBar: AppBar(
               title:  Row(
                 children: [
-                  const SizedBox(width: 10,),
+                  fromLogin ?const SizedBox():
+                  const SizedBox(width: 10),
+                  fromLogin ? Image(
+                    image: F.appFlavor!.name.contains('oro')?const AssetImage("assets/png_images/oro_logo_white.png"):
+                    const AssetImage("assets/png_images/company_logo.png"),
+                    height: 40,
+                    width: 60,
+                  ):
+                  const SizedBox(),
+
+                  fromLogin ?const SizedBox(width: 20,):
+                  const SizedBox(width: 0),
+
                   Container(width: 1, height: 20, color: Colors.white54,),
                   const SizedBox(width: 5,),
 
@@ -243,7 +256,7 @@ class CustomerScreenController extends StatelessWidget {
                                   child: const Text('Manage Your Niagara Account'),
                                   onPressed: () async {
                                     Navigator.pop(context);
-                                     Navigator.push(
+                                    Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => AccountSettings(userId: customerId, customerId: customerId, userName: customerName, mobileNo: mobileNo, emailId: emailId),
@@ -274,11 +287,13 @@ class CustomerScreenController extends StatelessWidget {
                           ),
                         ],
                       );
-                    }, icon: CircleAvatar(
-                      radius: 17,
-                      backgroundColor: Colors.white,
-                      child: Text(customerName.substring(0, 1).toUpperCase()),
-                    )),
+                    },
+                        icon: CircleAvatar(
+                          radius: 17,
+                          backgroundColor: Colors.white,
+                          child: Text(customerName.substring(0, 1).toUpperCase()),
+                        )
+                    ),
                   ],),
                 const SizedBox(width: 05),
               ],

@@ -3,21 +3,22 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'oro_theme.dart';
 
-Color primary = const Color(0xFF004265);
-Color onPrimary = const Color(0xFF008CD7);
-Color primaryLight = const Color(0xFF9BD8F8);
-Color secondary = const Color(0xFF005C8E);
-Color onBackground = const Color(0xFFEFEFEF);
+Color primaryDark = const Color(0xFF004265);
+Color primary = const Color(0xFF005C8E);
+Color primaryLight = const Color(0xFF008CD7);
+Color primaryBackground = const Color(0xFFEFEFEF);
+Color primaryTextColor = const Color(0xFF3C3C3C);
+Color secondaryTextColor = const Color(0xFF7E7E7E);
 
 
 class SmartCommTheme {
   static ThemeData lightTheme = ThemeData.light().copyWith(
-    primaryColorDark: primary,
+    primaryColorDark: primaryDark,
     primaryColor: primary,
     primaryColorLight: primaryLight,
-    scaffoldBackgroundColor:  Colors.blueGrey[50],
+    scaffoldBackgroundColor:  primaryBackground,
     appBarTheme: AppBarTheme(
-      backgroundColor: primaryDark,
+      backgroundColor: primary,
       titleTextStyle: const TextStyle(color: Colors.white, fontSize: 22),
       iconTheme: const IconThemeData(
         color: Colors.white,
@@ -25,7 +26,7 @@ class SmartCommTheme {
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        backgroundColor: secondary,
+        backgroundColor: primary,
         foregroundColor: Colors.black,
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
@@ -41,7 +42,7 @@ class SmartCommTheme {
     ),
 
     navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: primaryDark,
+        backgroundColor: primary,
         elevation: 1,
         labelType: NavigationRailLabelType.all,
         indicatorColor: primaryLight,
@@ -51,7 +52,7 @@ class SmartCommTheme {
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
           if (states.contains(WidgetState.selected)) {
-            return primaryLight;
+            return primary;
           }
           return Colors.grey[300];
         },
@@ -111,14 +112,14 @@ class SmartCommTheme {
     cardColor: Colors.white,
     colorScheme: ColorScheme.fromSeed(
       primary: primary, // siva
-      secondary: secondary, // siva
+      secondary: primaryLight, // siva
       surface: Colors.white,
       background: Colors.white, // siva
       error: Colors.red,
-      onPrimary: onPrimary, // siva
+      onPrimary: primary, // siva
       onSecondary: Colors.white, // siva
       onSurface: Colors.black,
-      onBackground: onPrimary.withOpacity(0.1), // siva
+      onBackground: primary.withOpacity(0.1), // siva
       onError: Colors.white,
       seedColor: primaryDark,
     ),
@@ -229,14 +230,14 @@ class SmartCommTheme {
     ),
     colorScheme: ColorScheme.fromSeed(
       primary: primary, // siva
-      secondary: secondary, // siva
+      secondary: primaryLight, // siva
       surface: Colors.white,
       background: Colors.white, // siva
       error: Colors.red,
-      onPrimary: onPrimary, // siva
+      onPrimary: primaryLight, // siva
       onSecondary: Colors.white, // siva
       onSurface: Colors.black,
-      onBackground: onPrimary.withOpacity(0.1), // siva
+      onBackground: primaryLight.withOpacity(0.1), // siva
       onError: Colors.white,
       seedColor: primaryDark,
     ),
