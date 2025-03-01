@@ -103,6 +103,10 @@ class SmartCommTheme {
         borderRadius: BorderRadius.circular(5.0),
       ),
     ),
+    checkboxTheme: CheckboxThemeData(
+      checkColor: WidgetStateProperty.all(Colors.white),
+      fillColor: WidgetStateProperty.all(primary)
+    ),
     cardColor: Colors.white,
     colorScheme: ColorScheme.fromSeed(
       primary: primary, // siva
