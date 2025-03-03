@@ -305,7 +305,7 @@ class AppConstants {
 
   static const String svgObjectPath = 'assets/Images/Svg/';
 
- static dynamic payloadConversion(data) {
+  static dynamic payloadConversion(data) {
     dynamic dataFormation = {};
     for(var globalKey in data.keys) {
       if(['filterSite', 'fertilizerSite', 'waterSource', 'pump', 'moistureSensor', 'irrigationLine'].contains(globalKey)){
@@ -313,13 +313,12 @@ class AppConstants {
         for(var site in data[globalKey]){
           dynamic siteFormation = site;
           for(var siteKey in site.keys){
-            if(!['objectId', 'sNo', 'name', 'objectName', 'connectionNo', 'type', 'controllerId', 'count', 'siteMode', 'pumpType'].contains(siteKey)){
+            if(!['objectId', 'sNo', 'name', 'objectName', 'connectionNo', 'type', 'controllerId', 'count', 'siteMode', 'pumpType', 'connectedObject'].contains(siteKey)){
               siteFormation[siteKey] = siteFormation[siteKey] is List<dynamic>
                   ? (siteFormation[siteKey] as List<dynamic>).map((element) {
                 if(element is double){
                   return (data['configObject'] as List<dynamic>).firstWhere((object) => object['sNo'] == element);
                 }else{
-                  print('element : $element');
                   var object = (data['configObject'] as List<dynamic>).firstWhere((object) => object['sNo'] == element['sNo']);
                   for(var key in element.keys){
                     if(!(object as Map<String, dynamic>).containsKey(key)){
