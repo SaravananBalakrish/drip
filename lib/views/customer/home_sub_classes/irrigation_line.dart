@@ -30,28 +30,33 @@ class IrrigationLine extends StatelessWidget {
             ]
           ];
 
-          int crossAxisCount = (screenWidth / 105).floor().clamp(1, double.infinity).toInt();
+          int crossAxisCount = (screenWidth / 90).floor().clamp(1, double.infinity).toInt();
           int rowCount = (valveWidgets.length / crossAxisCount).ceil();
-          double itemHeight = 72;
+          double itemHeight = 80;
           double gridHeight = rowCount * (itemHeight + 5);
 
           return SizedBox(
-            width: MediaQuery.sizeOf(context).width,
-            height: gridHeight,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 3, right: 3),
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: crossAxisCount,
-                  childAspectRatio: 1.32,
-                  mainAxisSpacing: 1.0,
-                  crossAxisSpacing: 1.0,
+            width: screenWidth,
+            height: gridHeight+10,
+            child: Column(
+              children: [
+                const Divider(height: 0, color: Colors.black12,),
+                const Divider(height: 5, color: Colors.black12,),
+                Expanded(
+                  child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: crossAxisCount,
+                      childAspectRatio: 1.20,
+                      mainAxisSpacing: 0.0,
+                      crossAxisSpacing: 0.0,
+                    ),
+                    itemCount: valveWidgets.length,
+                    itemBuilder: (context, index) {
+                      return valveWidgets[index];
+                    },
+                  ),
                 ),
-                itemCount: valveWidgets.length,
-                itemBuilder: (context, index) {
-                  return valveWidgets[index];
-                },
-              ),
+              ],
             ),
           );
 
@@ -106,7 +111,8 @@ class ValveWidget extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          width: 150,
+          width: 100,
+          //color: Colors.grey,
           margin: const EdgeInsets.only(left: 2, right: 2),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,

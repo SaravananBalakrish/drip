@@ -45,7 +45,7 @@ class _StandAloneState extends State<StandAlone> with SingleTickerProviderStateM
               children: [
                 SizedBox(
                   width: 400,
-                  height: 90,
+                  height: viewModel.programList.length > 1? 90:50,
                   child: Padding(
                     padding: const EdgeInsets.only(left: 10),
                     child: Column(
@@ -84,7 +84,7 @@ class _StandAloneState extends State<StandAlone> with SingleTickerProviderStateM
                             ),
                           ],
                         ) :
-                        Container(),
+                        const SizedBox(height: 8),
                         Row(
                           children: [
                             SizedBox(
@@ -165,7 +165,6 @@ class _StandAloneState extends State<StandAlone> with SingleTickerProviderStateM
                             Container(),
                           ],
                         )
-
                       ],
                     ),
                   ),

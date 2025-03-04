@@ -39,31 +39,6 @@ class AdminDashboard extends StatelessWidget {
           }
 
           return Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              title: const Text('Dashboard'),
-              actions: <Widget>[
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text(userName, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-                        Text(mobileNo, style: const TextStyle(
-                            fontWeight: FontWeight.normal, color: Colors.white)),
-                      ],
-                    ),
-                    const SizedBox(width: 08),
-                    const CircleAvatar(
-                      radius: 23,
-                      backgroundImage: AssetImage("assets/png_images/user_thumbnail.png"),
-                    ),
-                  ],),
-                const SizedBox(width: 10),
-              ],
-            ),
             body: Padding(
               padding: const EdgeInsets.all(3.0),
               child: Row(
