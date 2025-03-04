@@ -22,10 +22,10 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   String myCurrentIrrLine= 'No Line Available';
   int controllerId = 0;
 
-  final mqttService = MqttService();
+  //final mqttService = MqttService();
 
   CustomerScreenControllerViewModel(this.repository){
-    mqttService.initializeMQTTClient(state: this);
+    /*mqttService.initializeMQTTClient(state: this);
     mqttService.connect();
 
     mqttService.liveMessageStream.listen((liveMsg) {
@@ -37,7 +37,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
       wifiStrength = liveMessage['cM']['WifiStrength'];
 
       notifyListeners();
-    });
+    });*/
 
   }
 

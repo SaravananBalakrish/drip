@@ -80,7 +80,7 @@ class FertilizerSite {
   }
 }
 
-class WaterSource1 {
+class ProgramWaterSource {
   final DeviceObjectModel? waterSource;
   final DeviceObjectModel? sourceType;
   final DeviceObjectModel? level;
@@ -90,7 +90,7 @@ class WaterSource1 {
   final List<DeviceObjectModel>? outletPump;
   final List<DeviceObjectModel>? valves;
 
-  WaterSource1({
+  ProgramWaterSource({
     required this.waterSource,
     required this.sourceType,
     required this.level,
@@ -101,8 +101,8 @@ class WaterSource1 {
     required this.valves,
   });
 
-  factory WaterSource1.fromJson(Map<String, dynamic> json) {
-    return WaterSource1(
+  factory ProgramWaterSource.fromJson(Map<String, dynamic> json) {
+    return ProgramWaterSource(
       waterSource: DeviceObjectModel.fromJson(json),
       sourceType: (json['sourceType'].isNotEmpty && json['sourceType'] != null) ? DeviceObjectModel.fromJson(json['sourceType']) : null,
       level: (json['level'].isNotEmpty && json['level'] != null) ? DeviceObjectModel.fromJson(json['level']) : null,
