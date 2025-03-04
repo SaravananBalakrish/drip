@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:mqtt_client/mqtt_browser_client.dart';
 import 'package:mqtt_client/mqtt_client.dart';
+import '../StateManagement/mqtt_payload_provider.dart';
 import '../utils/constants.dart';
 import '../view_models/customer/customer_screen_controller_view_model.dart';
 
@@ -11,7 +12,7 @@ enum MQTTConnectionState {connected, disconnected, connecting}
 
 class MqttService {
   static MqttService? _instance;
-  CustomerScreenControllerViewModel? viewModelState;
+  MqttPayloadProvider? providerState;
   MqttBrowserClient? _client;
   String? currentTopic;
 
@@ -27,12 +28,12 @@ class MqttService {
   MqttService._internal();
   bool get isConnected => _client?.connectionStatus?.state == MqttConnectionState.connected;
 
-  void initializeMQTTClient({CustomerScreenControllerViewModel? state}) {
+  void initializeMQTTClient({MqttPayloadProvider? state}) {
 
     String uniqueId = 'uniqueId1234567890';//const Uuid().v4();
 
     if (_client == null) {
-      viewModelState = state;
+      providerState = state;
       _client = MqttBrowserClient(AppConstants.mqttUrl, uniqueId);
       _client!.port = AppConstants.mqttPort;
       _client!.keepAlivePeriod = 30;
@@ -59,7 +60,7 @@ class MqttService {
     if (!isConnected) {
       try {
         debugPrint('Mosquitto start client connecting....');
-        viewModelState?.changeMQTTConnectionState(MQTTConnectionState.connecting);
+        //providerState?.changeMQTTConnectionState(MQTTConnectionState.connecting);
         await _client!.connect();
       } on Exception catch (e, stackTrace) {
         debugPrint('Client exception - $e');
@@ -91,6 +92,7 @@ class MqttService {
       Map<String, dynamic> payloadMessage = jsonDecode(payload);
       if (payloadMessage['mC']=='2400') {
         print(payloadMessage);
+        //providerState.updateReceivedPayload(jsonEncode([3,4].contains(overAllPvd.controllerType) ? {"mC":"LD01",'cM' : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['liveMessage']} : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]),true);
         liveMessageStreamController.add(payload);
       }
     } catch (e) {
@@ -113,12 +115,12 @@ class MqttService {
     if (_client!.connectionStatus!.returnCode == MqttConnectReturnCode.noneSpecified) {
       debugPrint('OnDisconnected callback is solicited, this is correct');
     }
-    viewModelState?.changeMQTTConnectionState(MQTTConnectionState.disconnected);
+    //providerState?.changeMQTTConnectionState(MQTTConnectionState.disconnected);
   }
 
   void onConnected() {
     assert(isConnected);
-    viewModelState?.changeMQTTConnectionState(MQTTConnectionState.connected);
+    //providerState?.changeMQTTConnectionState(MQTTConnectionState.connected);
     debugPrint('Mosquitto client connected....');
   }
 
