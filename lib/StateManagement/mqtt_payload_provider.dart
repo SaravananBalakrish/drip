@@ -468,7 +468,7 @@ class MqttPayloadProvider with ChangeNotifier {
         nodeLiveMessage = data['cM']['2401'].split(";");
       }
 
-      if(data['liveSyncDate'] != null){
+     /* if(data['liveSyncDate'] != null){
         String dateStr = data['liveSyncDate'];
         String timeStr = data['liveSyncTime'];
         // Parse date string
@@ -690,7 +690,7 @@ class MqttPayloadProvider with ChangeNotifier {
       }
       else if(data.containsKey('5100') && data['5100'] != null && data['5100'].isNotEmpty){
         // weatherModelinstance = WeatherModel.fromJson(data);
-      }
+      }*/
     } catch (e, stackTrace) {
       print('Error parsing JSON: $e');
       print('Stacktrace while parsing json : $stackTrace');
@@ -757,8 +757,8 @@ class MqttPayloadProvider with ChangeNotifier {
 
   Future<void> updateDashboardPayload(Map<String, dynamic> payload) async{
      _dashboardLiveInstance = SiteModel.fromJson(payload);
-     sourcePump = _dashboardLiveInstance!.data[0].master[0].config.pump.where((e) => e.type == 1).toList().map((element) => element.toJson()).toList();
-     irrigationPump = _dashboardLiveInstance!.data[0].master[0].config.pump.where((e) => e.type == 2).toList().map((element) => element.toJson()).toList();
+     // sourcePump = _dashboardLiveInstance!.data[0].master[0].config.pump.where((e) => e.type == 1).toList().map((element) => element.toJson()).toList();
+     // irrigationPump = _dashboardLiveInstance!.data[0].master[0].config.pump.where((e) => e.type == 2).toList().map((element) => element.toJson()).toList();
      sourcetype = _dashboardLiveInstance!.data[0].master[0].config.waterSource.map((element) => element).toList();
      fertilizerCentral = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite.where((e) => e.siteMode == 1).toList().map((element) => element).toList();
      fertilizerLocal = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite.where((e) => e.siteMode == 2).toList().map((element) => element).toList();

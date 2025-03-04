@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/Screens/NewIrrigationProgram/preview_screen.dart';
 import 'package:oro_drip_irrigation/Screens/NewIrrigationProgram/schedule_screen.dart';
 import 'package:oro_drip_irrigation/Screens/NewIrrigationProgram/selection_screen.dart';
@@ -172,23 +173,16 @@ class _IrrigationProgramState extends State<IrrigationProgram> with SingleTicker
                   preferredSize: const Size(0, 0),
                   child: Container()
               ),
-              backgroundColor: const Color(0xffF9FEFF),
+              // backgroundColor: const Color(0xffF9FEFF),
               body: Row(
                 children: <Widget>[
                   if (constraints.maxWidth > 500)
                     Container(
                       width: constraints.maxWidth * 0.15,
-                      decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              Color(0xff1C7C8A),
-                              Color(0xff03464F)
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            tileMode: TileMode.clamp,
-                          )
-                      ),
+                     color: Theme.of(context).primaryColorDark,
+                     /* decoration: BoxDecoration(
+                          gradient: AppProperties.linearGradientLeading2
+                      ),*/
                       child: ListView(
                         padding: const EdgeInsets.all(10),
                         children: [
@@ -240,8 +234,10 @@ class _IrrigationProgramState extends State<IrrigationProgram> with SingleTicker
                                     //   _navigateToTab(i);
                                     // }
                                   },
-                                  selectedTileColor: _tabController.index == i ? const Color(0xff2999A9) : null,
-                                  hoverColor: _tabController.index == i ? const Color(0xff2999A9) : null
+                                /*  selectedTileColor: _tabController.index == i ? const Color(0xff2999A9) : null,
+                                  hoverColor: _tabController.index == i ? const Color(0xff2999A9) : null*/
+                                selectedTileColor: _tabController.index == i ? Theme.of(context).primaryColorLight : null,
+                                hoverColor: _tabController.index == i ? Theme.of(context).primaryColorLight : null,
                               ),
                             ),
                         ],
@@ -760,16 +756,8 @@ Widget buildCustomSideMenuBar(
   return Container(
     // width: constraints
     // .maxWidth * 0.15,
-    decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Color(0xff1C7C8A),
-            Color(0xff03464F)
-          ],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          tileMode: TileMode.clamp,
-        )
+    decoration: BoxDecoration(
+        gradient: AppProperties.linearGradientLeading
     ),
     child: Padding(
       padding: const EdgeInsets.all(10.0),

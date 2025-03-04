@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Screens/NewIrrigationProgram/program_library.dart';
 
+import '../../Constants/properties.dart';
+
 
 class ProgramSchedule extends StatefulWidget {
   const ProgramSchedule({
@@ -133,16 +135,10 @@ class _ProgramScheduleState extends State<ProgramSchedule> with SingleTickerProv
           child: Row(
             children: [
               Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                    colors: [
-                      Color(0xFF1C7C8A),
-                      Color(0xFF03464F),
-                    ],
-                  ),
-                ),
+                color: Theme.of(context).primaryColorDark,
+                /*decoration: BoxDecoration(
+                  gradient: AppProperties.linearGradientLeading2,
+                ),*/
                 width: 210,
                 height: double.infinity,
                 child: SingleChildScrollView(

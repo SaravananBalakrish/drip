@@ -1,4 +1,3 @@
-import '../../Constants/constants.dart';
 import '../../utils/constants.dart';
 
 class SiteModel {
@@ -91,7 +90,7 @@ class Master {
       modelName: json['modelName'],
       units: List<Unit>.from(json['units'].map((x) => Unit.fromJson(x))),
       config: (json["config"] != null && json["config"] is Map<String, dynamic> && json["config"].isNotEmpty)
-          ? Config.fromJson(Map<String, dynamic>.from(Constants.payloadConversion(json["config"])))
+          ? Config.fromJson(Map<String, dynamic>.from(AppConstants.payloadConversion(json["config"])))
           : Config(waterSource: [], pump: [], filterSite: [], fertilizerSite: [], moistureSensor: [], lineData: []),
       configObjects: configObjects,
       live: json['liveMessage'] != null ? LiveMessage.fromJson(json['liveMessage']) : null,
@@ -271,8 +270,7 @@ class WaterSource {
   final int? controllerId;
   final dynamic count;
   final Level? level;
-  final List<Pump>? outletPump;
-  final List<Pump>? inletPump;
+  final List<Pump> outletPump;
   final List<dynamic> valves;
 
   WaterSource({
@@ -286,7 +284,6 @@ class WaterSource {
     required this.count,
     required this.level,
     required this.outletPump,
-    required this.inletPump,
     required this.valves,
   });
 
@@ -306,9 +303,6 @@ class WaterSource {
       outletPump: (json['outletPump'] as List)
           .map((e) => Pump.fromJson(e))
           .toList(),
-      inletPump: (json['inletPump'] as List)
-          .map((e) => Pump.fromJson(e))
-          .toList(),
       valves: json['valves'] ?? [],
     );
   }
@@ -318,10 +312,10 @@ class Pump {
   final int objectId;
   final double sNo;
   final String name;
-  final int connectionNo;
+  final int? connectionNo;
   final String objectName;
-  final int? type;
-  final int controllerId;
+  final String type;
+  final int? controllerId;
   final dynamic count;
   int status;
   bool selected;
@@ -346,23 +340,10 @@ class Pump {
       name: json['name'],
       connectionNo: json['connectionNo'],
       objectName: json['objectName'],
-      type: json['pumpType'],
+      type: json['type'],
       controllerId: json['controllerId'],
       count: json['count'],
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      "objectId" : objectId,
-      "sNo" : sNo,
-      "name" : name,
-      "connectionNo" : connectionNo,
-      "objectName" : objectName,
-      "pumpType" : type,
-      "controllerId" : controllerId,
-      "count" : count,
-    };
   }
 }
 
