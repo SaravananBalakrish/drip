@@ -1422,7 +1422,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         'IrrigationMethod' : sq['method'] == 'Time' ? 1 : 2,
         'IrrigationDuration_Quantity' : sq['method'] == 'Time' ? sq['timeValue'] : sq['quantityValue'],
         'CentralFertOnOff' : sq['applyFertilizerForCentral'] == false ? 0 : sq['selectedCentralSite'] == -1 ? 0 : 1,
-        'CentralFertilizerSite' : sq['selectedLocalSite'] == -1 ? 0 : sq['localDosing'].isEmpty ? 0 : sq['localDosing'][sq['selectedLocalSite']]['sNo'],
+        'CentralFertilizerSite' : sq['selectedCentralSite'] == -1 ? 0 : sq['centralDosing'].isEmpty ? 0 : sq['centralDosing'][sq['selectedCentralSite']]['sNo'],
         'LocalFertOnOff' : sq['applyFertilizerForLocal'] == false ? 0 : sq['selectedLocalSite'] == -1 ? 0 : 1,
         'LocalFertilizerSite' : sq['selectedLocalSite'] == -1 ? 0 : sq['localDosing'].isEmpty ? 0 : sq['localDosing'][sq['selectedLocalSite']]['sNo'],
         'PrePostMethod' : sq['prePostMethod'] == 'Time' ? 1 : 2,

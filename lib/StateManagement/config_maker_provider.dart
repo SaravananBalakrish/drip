@@ -634,6 +634,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         "TopTankFloatLow" : topTankLevel == null ? '' : topTankLevel.bottomFloat,
         "SumpTankFloatHigh" : sumpTankLevel == null ? '' : sumpTankLevel.topFloat,
         "SumpTankFloatLow" : sumpTankLevel == null ? '' : sumpTankLevel.bottomFloat,
+        "IrrigationLine" : line.where((line) => (line.sourcePump.contains(pumpModelObject.commonDetails.sNo) || line.irrigationPump.contains(pumpModelObject.commonDetails.sNo))).map((line) => line.commonDetails.sNo).join('_'),
       };
 
       pumpPayload.add(payload.entries.map((e) => e.value).join(","));
