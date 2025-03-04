@@ -22,7 +22,7 @@ class ProductInventory extends StatelessWidget {
         builder: (context, viewModel, _) {
           return Scaffold(
             backgroundColor: Theme.of(context).primaryColorDark.withAlpha(1),
-            appBar: AppBar(
+            /*appBar: AppBar(
               automaticallyImplyLeading: false,
               title: const Text('Product Inventory'),
               actions: <Widget>[
@@ -165,7 +165,7 @@ class ProductInventory extends StatelessWidget {
                   ],),
                 const SizedBox(width: 10)
               ],
-            ),
+            ),*/
             body: viewModel.isLoading? Center(
               child: Visibility(
                 visible: true,

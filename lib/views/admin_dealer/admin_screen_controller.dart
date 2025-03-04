@@ -21,6 +21,55 @@ class AdminScreenController extends StatelessWidget {
         builder: (context, viewModel, _) {
           return Scaffold(
             backgroundColor: Colors.white,
+            appBar: AppBar(
+              title: Image.asset(
+                width: F.appFlavor!.name.contains('oro')?70:110,
+                F.appFlavor!.name.contains('oro')
+                    ? "assets/png_images/oro_logo_white.png"
+                    : "assets/png_images/company_logo.png",
+                fit: BoxFit.fitWidth,
+              ),
+              actions: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Image.asset(
+                      width: 140,
+                      "assets/png_images/lk_logo_white.png",
+                      fit: BoxFit.fitWidth,
+                    ),
+                    const SizedBox(width: 10),
+                    Container(
+                      width: 200,
+                      height: 36,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          bottomLeft: Radius.circular(20),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 2),
+                          const CircleAvatar(
+                            radius: 18,
+                            backgroundImage: AssetImage("assets/png_images/user_thumbnail.png"),
+                          ),
+                          const SizedBox(width: 5),
+                          Text(userName, style: const TextStyle(fontWeight: FontWeight.bold))
+                        ],
+                      ),
+                    )
+                    /*Text(viewModel.userName!, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                    const SizedBox(width: 08),
+                    const CircleAvatar(
+                      radius: 23,
+                      backgroundImage: AssetImage("assets/png_images/user_thumbnail.png"),
+                    ),*/
+                  ],),
+              ],
+            ),
             body: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -28,17 +77,6 @@ class AdminScreenController extends StatelessWidget {
                   selectedIndex: viewModel.selectedIndex,
                   labelType: NavigationRailLabelType.all,
                   elevation: 5,
-                  leading: Column(
-                    children: [
-                      Image(
-                        image: F.appFlavor!.name.contains('oro')?const AssetImage("assets/png_images/oro_logo_white.png"):
-                        const AssetImage("assets/png_images/company_logo.png"),
-                        height: 40,
-                        width: 60,
-                      ),
-                      const SizedBox(height: 20),
-                    ],
-                  ),
                   trailing: Expanded(
                     child: Align(
                       alignment: Alignment.bottomCenter,

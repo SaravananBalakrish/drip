@@ -391,6 +391,8 @@ class ControllerSettings extends StatelessWidget {
                           ),
                         ),
                         const Center(child: Text('Tab 2 Content')),
+                        const Center(child: Text('Tab 3 Content')),
+                        const Center(child: Text('Tab 4 Content')),
                         /*Column(
                           children: [
                             Expanded(

@@ -56,8 +56,8 @@ class CustomerScreenController extends StatelessWidget {
                   fromLogin ? Image(
                     image: F.appFlavor!.name.contains('oro')?const AssetImage("assets/png_images/oro_logo_white.png"):
                     const AssetImage("assets/png_images/company_logo.png"),
-                    height: 40,
-                    width: 60,
+                    width: 110,
+                    fit: BoxFit.fitWidth,
                   ):
                   const SizedBox(),
 
@@ -183,7 +183,7 @@ class CustomerScreenController extends StatelessWidget {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     tileMode: TileMode.clamp,
-                    colors: [Theme.of(context).primaryColorDark, Theme.of(context).primaryColor], // Define your gradient colors
+                    colors: [Theme.of(context).primaryColor, Theme.of(context).primaryColor], // Define your gradient colors
                   ),
                 ),
               ),
