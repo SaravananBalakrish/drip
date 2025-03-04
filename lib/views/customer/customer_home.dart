@@ -230,6 +230,142 @@ class DisplayPumpStation extends StatelessWidget {
             ),
         ],
       ):
+      ((fertilizerSite.isNotEmpty && (outletPump.length + filterSite.length) < 7) ||
+          (fertilizerSite.isEmpty && irrLineData![0].valves.length < 15)) ?
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(top: fertilizerSite.isNotEmpty?38.4:0),
+            child: Stack(
+              children: [
+                SizedBox(
+                    width: 70,
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 33),
+                          child: Divider(thickness: 2, color: Colors.grey.shade300, height: 5.5),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 37),
+                          child: Divider(thickness: 2, color: Colors.grey.shade300, height: 4.5),
+                        ),
+                      ],
+                    )
+                ),
+                SizedBox(
+                  width: 70,
+                  height: 95,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        width: 70,
+                        height: 15,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 3),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              VerticalDivider(thickness: 1, color: Colors.grey.shade400, width: 3),
+                              VerticalDivider(thickness: 1, color: Colors.grey.shade400, width: 5),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 45,
+                        height: 45,
+                        decoration: BoxDecoration(
+                            color: Colors.blue.shade300,
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1,
+                            ),
+                            borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5))
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        sourceName,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontSize: 10, color: Colors.black54),
+                      ),
+                    ],
+                  ),
+                ),
+                if (level != null) ...[
+                  Positioned(
+                    top: 25,
+                    left: 5,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.yellow,
+                        borderRadius: const BorderRadius.all(Radius.circular(2)),
+                        border: Border.all(color: Colors.grey, width: .50),
+                      ),
+                      width: 60,
+                      height: 18,
+                      child: Center(
+                        child: Text(
+                          '${level!.percentage!} feet',
+                          style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const Positioned(
+                    top: 50,
+                    left: 5,
+                    child: SizedBox(
+                      width: 60,
+                      child: Center(
+                        child: Text(
+                          '70%',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ]
+              ],
+            ),
+          ),
+
+          if (outletPump.isNotEmpty)
+            ...outletPump.map((pump) => Padding(
+              padding: EdgeInsets.only(top: fertilizerSite.isNotEmpty?38.4:0),
+              child: displayPump(pump),
+            )),
+
+          if (filterSite.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.only(top: fertilizerSite.isNotEmpty?38.4:0),
+              child: displayFilterSite(context, filterSite),
+            ),
+
+          if (fertilizerSite.isNotEmpty)
+            displayFertilizerSite(context, fertilizerSite),
+
+          Container(height: 142, width: 1, color: Colors.black12),
+          const SizedBox(width: 2.0),
+          Container(height: 147, width: 1, color: Colors.black12),
+
+          IrrigationLine(lineData: irrLineData, pumpStationWith: 870,),
+
+        ],
+      ):
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -371,10 +507,11 @@ class DisplayPumpStation extends StatelessWidget {
               ),
             ),
           ),
-          Divider(height: 0, color: Colors.grey.shade300),
+          IrrigationLine(lineData: irrLineData, pumpStationWith: 0,)
+          /*Divider(height: 0, color: Colors.grey.shade300),
           Container(height: 4, color: Colors.white24),
           Divider(height: 0, color: Colors.grey.shade300),
-          IrrigationLine(lineData: irrLineData, pumpStationWith: 0,),
+          IrrigationLine(lineData: irrLineData, pumpStationWith: 0,),*/
         ],
       ),
     );
@@ -806,9 +943,8 @@ class DisplayPumpStation extends StatelessWidget {
                           },
                         ),
                       ),
-                      fertilizerSite[fIndex].agitator.isNotEmpty
-                          ? Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                      fertilizerSite[fIndex].agitator.isNotEmpty ? Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: fertilizerSite[fIndex].agitator.map<Widget>((agitator) {
                           return Column(
                             children: [
@@ -821,125 +957,145 @@ class DisplayPumpStation extends StatelessWidget {
                             ],
                           );
                         }).toList(), // Convert the map result to a list of widgets
-                      )
-                          : const SizedBox(),
+                      ):
+                      const SizedBox(),
 
                     ],
                   ),
                 ),
                 SizedBox(
                   height: 30,
-                  width: fertilizerSite[fIndex].channel.length * 79,
-                  child: Row(
+                  width: (fertilizerSite[fIndex].channel.length * 79 + fertilizerSite[fIndex].agitator.length*59)+50,
+                  child: Column(
                     children: [
-                      if(fIndex!=0)
-                        Row(
+                      SizedBox(
+                        height: 24,
+                        child: Row(
                           children: [
-                            VerticalDivider(width: 0,color: Colors.grey.shade300,),
-                            const SizedBox(width: 4.0,),
-                            VerticalDivider(width: 0,color: Colors.grey.shade300,),
-                          ],
-                        ),
-                      Row(
-                        children: [
-                          const SizedBox(width: 10.5,),
-                          VerticalDivider(width: 0,color: Colors.grey.shade300,),
-                          const SizedBox(width: 4.0,),
-                          VerticalDivider(width: 0,color: Colors.grey.shade300,),
-                          const SizedBox(width: 5.0,),
-
-                          fertilizerSite[fIndex].ec.isNotEmpty || fertilizerSite[fIndex].ph.isNotEmpty
-                              ? SizedBox(
-                            width: fertilizerSite[fIndex].ec.length > 1 ? 130 : 70,
-                            height: 30,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            if(fIndex!=0)
+                              const Row(
+                                children: [
+                                  VerticalDivider(width: 0,color: Colors.black12),
+                                  SizedBox(width: 4.0,),
+                                  VerticalDivider(width: 0,color: Colors.black12),
+                                ],
+                              ),
+                            Row(
                               children: [
-                                // Display Ec values if available
-                                fertilizerSite[fIndex].ec.isNotEmpty
-                                    ? SizedBox(
-                                  height: 15,
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: fertilizerSite[fIndex].ec.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      return Row(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Center(
-                                              child: Text(
-                                                'Ec : ',
-                                                style: TextStyle(
-                                                    fontSize: 11, fontWeight: FontWeight.normal),
-                                              )),
-                                          Center(
-                                            child: Text(
-                                              double.parse(
-                                                  '${fertilizerSite[fIndex].ec[index]['Status']}')
-                                                  .toStringAsFixed(2),
-                                              style: const TextStyle(fontSize: 11),
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                        ],
-                                      );
-                                    },
+                                const SizedBox(width: 10.5,),
+                                const VerticalDivider(width: 0,color: Colors.black12),
+                                const SizedBox(width: 4.0,),
+                                const VerticalDivider(width: 0,color: Colors.black12),
+                                const SizedBox(width: 5.0,),
+
+                                fertilizerSite[fIndex].ec.isNotEmpty || fertilizerSite[fIndex].ph.isNotEmpty?
+                                SizedBox(
+                                  width: fertilizerSite[fIndex].ec.length > 1 ? 130 : 70,
+                                  height: 30,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      fertilizerSite[fIndex].ec.isNotEmpty?
+                                      SizedBox(
+                                        height: 15,
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: fertilizerSite[fIndex].ec.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return Row(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                const Center(
+                                                    child: Text(
+                                                      'Ec : ',
+                                                      style: TextStyle(
+                                                          fontSize: 11, fontWeight: FontWeight.normal),
+                                                    )),
+                                                Center(
+                                                  child: Text(
+                                                    double.parse(
+                                                        '${fertilizerSite[fIndex].ec[index]['Status']}')
+                                                        .toStringAsFixed(2),
+                                                    style: const TextStyle(fontSize: 11),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ):
+                                      const SizedBox(),
+
+                                      fertilizerSite[fIndex].ph.isNotEmpty?
+                                      SizedBox(
+                                        height: 15,
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: fertilizerSite[fIndex].ph.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return Row(
+                                              children: [
+                                                const Center(
+                                                    child: Text(
+                                                      'pH : ',
+                                                      style: TextStyle(
+                                                          fontSize: 11, fontWeight: FontWeight.normal),
+                                                    )),
+                                                Center(
+                                                  child: Text(
+                                                    double.parse(
+                                                        '${fertilizerSite[fIndex].ph[index]['Status']}')
+                                                        .toStringAsFixed(2),
+                                                    style: const TextStyle(fontSize: 11),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ):
+                                      const SizedBox(),
+                                    ],
                                   ),
-                                )
-                                    : const SizedBox(),
-                                // Display Ph values if available
-                                fertilizerSite[fIndex].ph.isNotEmpty
-                                    ? SizedBox(
-                                  height: 15,
-                                  child: ListView.builder(
-                                    scrollDirection: Axis.horizontal,
-                                    itemCount: fertilizerSite[fIndex].ph.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      return Row(
-                                        children: [
-                                          const Center(
-                                              child: Text(
-                                                'pH : ',
-                                                style: TextStyle(
-                                                    fontSize: 11, fontWeight: FontWeight.normal),
-                                              )),
-                                          Center(
-                                            child: Text(
-                                              double.parse(
-                                                  '${fertilizerSite[fIndex].ph[index]['Status']}')
-                                                  .toStringAsFixed(2),
-                                              style: const TextStyle(fontSize: 11),
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            width: 5,
-                                          ),
-                                        ],
-                                      );
-                                    },
+                                ):
+                                const SizedBox(),
+
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.shade50,
+                                    borderRadius: BorderRadius.circular(3),
                                   ),
-                                )
-                                    : const SizedBox(),
+                                  width: (fertilizerSite[fIndex].channel.length * 67) - (fertilizerSite[fIndex].ec.isNotEmpty ?
+                                  fertilizerSite[fIndex].ec.length * 70 : fertilizerSite[fIndex].ph.length * 70),
+                                  child: Center(
+                                    child: Text(fertilizerSite[fIndex].name, style: TextStyle(color: primaryDark, fontSize: 11),),
+                                  ),
+                                ),
                               ],
                             ),
-                          ):
-                          const SizedBox(),
-
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.green.shade50,
-                              borderRadius: BorderRadius.circular(3),
-                            ),
-                            width: (fertilizerSite[fIndex].channel.length * 67) - (fertilizerSite[fIndex].ec.length > 0 ?
-                            fertilizerSite[fIndex].ec.length * 70 : fertilizerSite[fIndex].ph.length * 70),
-                            child: Center(
-                              child: Text(fertilizerSite[fIndex].name, style: TextStyle(color: primaryDark, fontSize: 11),),
-                            ),
+                          ],
+                        ),
+                      ),
+                      const Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 14),
+                            child: Divider(height: 0, color: Colors.black12),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.only(left: 10.5),
+                            child: Divider(height: 6, color: Colors.black12),
                           ),
                         ],
-                      ),
+                      )
                     ],
                   ),
                 ),

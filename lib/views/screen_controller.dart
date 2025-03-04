@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/Screens/dashboard/customerdashboard.dart';
 import 'package:provider/provider.dart';
-import '../Screens/planning/fiterbackwash.dart';
+import '../Screens/dashboard/customerdashboard.dart';
 import '../view_models/screen_controller_view_model.dart';
 import 'admin_dealer/admin_screen_controller.dart';
 import 'admin_dealer/dealer_screen_controller.dart';
@@ -19,8 +18,6 @@ class ScreenController extends StatelessWidget {
       child: Consumer<ScreenControllerViewModel>(
         builder: (context, viewModel, _) {
 
-          // debugPrint("viewModel.userId.toString() ::: ${viewModel.userId.toString()}");
-          // debugPrint("viewModel.isNetworkConnected ::: ${viewModel.isNetworkConnected}");
           if (viewModel.userId == null) {
             return const Scaffold(
               body: Center(child: CircularProgressIndicator()),
@@ -28,21 +25,7 @@ class ScreenController extends StatelessWidget {
           }
 
           return Scaffold(
-            backgroundColor: Colors.white,
-            body: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                viewModel.isNetworkConnected?
-                const SizedBox():
-                Container(
-                  color: Colors.red.shade100,
-                  width: MediaQuery.sizeOf(context).width,
-                  height: 25,
-                  child: const Center(child: Text('No network connection')),
-                ),
-                Expanded(child: controllerScreen(viewModel.userRole!, viewModel.userId!, viewModel.userName!, viewModel.mobileNo!, viewModel.emailId!)),
-              ],
-            ),
+            body: controllerScreen(viewModel.userRole!, viewModel.userId!, viewModel.userName!, viewModel.mobileNo!, viewModel.emailId!),
           );
         },
       ),
@@ -67,14 +50,6 @@ class ScreenController extends StatelessWidget {
           emailId: emailId,
         );
       default:
-        // return kIsWeb ? CustomerScreenController(
-        //   userId: userId,
-        //   customerName: userName,
-        //   mobileNo: mobileNo,
-        //   emailId: emailId,
-        //   customerId: userId,
-        //   fromLogin: true,
-        // ) : Dashboard();
         return kIsWeb ? CustomerScreenController(
           userId: userId,
           customerName: userName,
@@ -82,7 +57,7 @@ class ScreenController extends StatelessWidget {
           emailId: emailId,
           customerId: userId,
           fromLogin: true,
-        ) : FilterBackwashUI();
+        ) : const Dashboard();
     }
   }
 }

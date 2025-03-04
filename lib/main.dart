@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/app/app.dart';
+import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:provider/provider.dart';
 import 'StateManagement/config_maker_provider.dart';
 import 'StateManagement/irrigation_program_provider.dart';
@@ -13,9 +15,16 @@ import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.
 
 
 FutureOr<void> main() async {
-  MqttManager mqttManager = MqttManager();
-  mqttManager.initializeMQTTClient();
-  mqttManager.connect();
+
+  if (kIsWeb) {
+    //final mqttService = MqttService();
+    //mqttService.initializeMQTTClient();
+    //mqttService.connect();
+  }else{
+    MqttManager mqttManager = MqttManager();
+    mqttManager.initializeMQTTClient();
+    mqttManager.connect();
+  }
 
   runApp(
     MultiProvider(

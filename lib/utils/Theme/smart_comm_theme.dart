@@ -132,7 +132,7 @@ class SmartCommTheme {
     scaffoldBackgroundColor:  primaryBackground,
     appBarTheme: AppBarTheme(
       backgroundColor: primary,
-      titleTextStyle: TextStyle(color: Colors.white, fontSize: 22),
+      titleTextStyle: const TextStyle(color: Colors.white, fontSize: 22),
       iconTheme: const IconThemeData(
         color: Colors.white,
       ),
@@ -149,7 +149,7 @@ class SmartCommTheme {
         textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8), // Add border radius
+          borderRadius: BorderRadius.circular(8),
         ),
       ),
     ),

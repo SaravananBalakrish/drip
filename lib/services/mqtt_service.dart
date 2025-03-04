@@ -46,6 +46,7 @@ class MqttService {
           .withClientIdentifier(uniqueId)
           .withWillTopic('will-topic')
           .withWillMessage('My Will message')
+          .authenticateAs('imsmqtt', '2L9((WonMr')
           .startClean()
           .withWillQos(MqttQos.atLeastOnce);
       debugPrint('Mosquitto client connecting....');
