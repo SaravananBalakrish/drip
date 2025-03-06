@@ -1,27 +1,24 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
-import 'package:flutter/cupertino.dart';
+ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:loading_indicator/loading_indicator.dart';
+ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../Models/admin&dealer/product_list_with_node.dart';
+ import '../../Models/customer/site_model.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../StateManagement/overall_use.dart';
-import '../../Widgets/SCustomWidgets/custom_date_picker.dart';
-import '../../Widgets/SCustomWidgets/custom_list_tile.dart';
-import '../../Widgets/SCustomWidgets/custom_native_time_picker.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../services/mqtt_manager_web.dart';
+import '../../utils/Theme/oro_theme.dart';
+import '../../utils/constants.dart';
 import '../../utils/snack_bar.dart';
+import '../../views/customer/home_sub_classes/irrigation_line.dart';
 import '../NewIrrigationProgram/preview_screen.dart';
 import '../NewIrrigationProgram/schedule_screen.dart';
-import 'fertilizerdashboard.dart';
 
 final double speed = 100.0;
 final double gap = 100;
@@ -489,10 +486,10 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                   "connectedObject": null,
                   "siteMode": 1,
                   "channel": [
-                    {"sNo": 10.001, "level": 0},
-                    {"sNo": 10.002, "level": 0},
-                    {"sNo": 10.003, "level": 0},
-                    {"sNo": 10.004, "level": 0}
+                    {"sNo": 10.001, "level": 0.0},
+                    {"sNo": 10.002, "level": 0.0},
+                    {"sNo": 10.003, "level": 0.0},
+                    {"sNo": 10.004, "level": 0.0}
                   ],
                   "boosterPump": [7.001],
                   "agitator": [9.001],
@@ -986,7 +983,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                                                 payloadProvider.selectedSiteString = value!;
                                                                 payloadProvider.selectedMaster = 0;
                                                                 overAllPvd.takeSharedUserId = false;
-                                                                Master selectedMasterData = liveData[payloadProvider.selectedSite].master[payloadProvider.selectedMaster];
+                                                                var selectedMasterData = liveData[payloadProvider.selectedSite].master[payloadProvider.selectedMaster];
                                                                 overAllPvd.imeiNo =selectedMasterData.deviceId;
                                                                 overAllPvd.controllerId =selectedMasterData.controllerId;
                                                                 overAllPvd.controllerType =selectedMasterData.categoryId;
@@ -1751,215 +1748,12 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
                                         scrollDirection: Axis.horizontal,
                                         child: Column(
                                           children: [
-                                            payloadProvider.sourcePump.length > 0 ? SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Container(
-                                                padding: EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(5),
-                                                    boxShadow: customBoxShadow
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    for(var pump in payloadProvider.sourcePump)
-                                                      Column(
-                                                        children: [
-                                                          SvgPicture.asset(
-                                                              'assets/Images/newDashboard/Pump.svg',
-                                                              semanticsLabel: 'Acme Logo'
-                                                          ),
-                                                          Text('${pump['name']}')
-                                                         ],
-                                                      ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ) : Container(),
-                                            SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Container(
-                                                padding: EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(5),
-                                                    boxShadow: customBoxShadow
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    for(var pump in payloadProvider.sourcetype)
-                                                       Column(
-                                                        children: [
-                                                          pump['sourceType'] == 1 ? SvgPicture.asset(
-                                                              'assets/Images/newDashboard/Tank4.svg',
-                                                              semanticsLabel: 'Acme Logo'
-                                                          ) : pump['sourceType'] == 2 ? SvgPicture.asset(
-                                                              'assets/Images/newDashboard/Source1.svg',
-                                                              semanticsLabel: 'Acme Logo'
-                                                          ) : pump['sourceType'] == 3 ? SvgPicture.asset(
-                                                              'assets/Images/newDashboard/Sump3.svg',
-                                                              semanticsLabel: 'Acme Logo'
-                                                          ) : pump['sourceType'] == 4 ? SvgPicture.asset(
-                                                              'assets/Images/newDashboard/Source2.svg',
-                                                              semanticsLabel: 'Acme Logo'
-                                                          ) : SvgPicture.asset(
-                                                              'assets/Images/newDashboard/Tank4.svg',
-                                                              semanticsLabel: 'Acme Logo'
-                                                          ),
-                                                          Text("Source ${pump['name']}")
-                                                        ],
-                                                      ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Container(
-                                                padding: EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(5),
-                                                    boxShadow: customBoxShadow
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    for(var pump in payloadProvider.irrigationPump)
-                                                      Column(
-                                                        children: [
-                                                          SvgPicture.asset(
-                                                              'assets/Images/newDashboard/Pump.svg',
-                                                              semanticsLabel: 'Acme Logo'
-                                                          ),
-                                                          Text("${pump['name']}"),
-                                                        ],
-                                                      ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            payloadProvider.filtersCentral.length > 0 ?  SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Container(
-                                                padding: EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(5),
-                                                    boxShadow: customBoxShadow
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    payloadProvider.filtersCentral.length > 0 ? Text("Central Filter") : Container(),
-                                                    Row(
-                                                      children: [
-                                                        for(var pump in payloadProvider.filtersCentral)
-                                                          Column(
-                                                            children: [
-                                                              SvgPicture.asset(
-                                                                  'assets/Images/newDashboard/Filter.svg',
-                                                                  semanticsLabel: 'Acme Logo'
-                                                              ),
-                                                              Text("${pump['name']}")
-                                                            ],
-                                                          ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ) : Container(),
-                                            payloadProvider.filtersLocal.length > 0 ? SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Container(
-                                                padding: EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(5),
-                                                    boxShadow: customBoxShadow
-                                                ),
-                                                child: Column(
-                                                  children: [
-                                                    payloadProvider.filtersLocal.length > 0 ? Text("Local Filter") : Container(),
-                                                    Row(
-                                                      children: [
-                                                        for(var pump in payloadProvider.filtersLocal)
-                                                          Column(
-                                                            children: [
-                                                              SvgPicture.asset(
-                                                                  'assets/Images/newDashboard/Filter.svg',
-                                                                  semanticsLabel: 'Acme Logo'
-                                                              ),
-                                                              Text("${pump['name']}")
-                                                            ],
-                                                          ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ) : Container(),
-                                            SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Container(
-                                                padding: EdgeInsets.all(10),
-                                                decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius: BorderRadius.circular(5),
-                                                    boxShadow: customBoxShadow
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    for(var pump in [1,2,3])
-                                                      Column(
-                                                        children: [
-                                                          SizedBox(
-                                                             child: SvgPicture.asset(
-                                                                'assets/Images/newDashboard/Agitator.svg',
-                                                                semanticsLabel: 'Acme Logo'
-                                                            ),
-
-                                                          ),
-                                                          Text("AG $pump")
-                                                        ],
-                                                      ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            // FertilizationDashboard(fertPvd: payloadProvider.fertilizersdashboard,),
-                                          ],
+                                            mobSourceFilter(context)
+                                   ],
                                         ),
                                                                                     ),
                                       ),
-                                      // WaterSourceDashBoard(waterSource: liveData[payloadProvider.selectedMaster].master[payloadProvider.selectedMaster].config.waterSource),
-                                      // if (sourcePumpMode)
-                                      //   intl(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine,imeiNo: overAllPvd.imeiNo,)
-                                      // else
-                                      //   SourceTypeDashBoardFalse(active: payloadProvider.active, selectedLine:payloadProvider.selectedLine,imeiNo: overAllPvd.imeiNo,),
-                                    //   if (sourcePumpMode)
-                                    //     SourceTypeDashBoardTrue(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine,imeiNo: overAllPvd.imeiNo,)
-                                    //   else
-                                    //     SourceTypeDashBoardFalse(active: payloadProvider.active, selectedLine:payloadProvider.selectedLine,imeiNo: overAllPvd.imeiNo,),
-                                    // if (irrigationPumpMode)
-                                    //     IrrigationPumpDashBoardTrue(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine,imeiNo: overAllPvd.imeiNo,)
-                                    //   else
-                                    //     IrrigationPumpDashBoardFalse(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine, imeiNo: overAllPvd.imeiNo,  ),
-                                    //   for (var i = 0;i < payloadProvider.filtersCentral.length;i++)
-                                    //     filterFertilizerLineFiltering(active: payloadProvider.active,  siteIndex: i,  selectedLine:  payloadProvider.selectedLine, programName: 'program', siteData: payloadProvider.filtersCentral[i],centralOrLocal: 1,filter_Fertilizer_line: 1),
-                                    //   for (var i = 0;i < payloadProvider.filtersLocal.length;i++)
-                                    //     filterFertilizerLineFiltering(active: payloadProvider.active,siteIndex: i,selectedLine: payloadProvider.selectedLine,programName: 'Program',siteData:payloadProvider.filtersLocal[i],centralOrLocal: 2, filter_Fertilizer_line: 1),
-                                    //   for (var i = 0;i < payloadProvider.fertilizerCentral.length;i++)
-                                    //     filterFertilizerLineFiltering( active: payloadProvider.active,  siteIndex: i, selectedLine: payloadProvider.selectedLine, programName: 'Program', siteData: payloadProvider.fertilizerCentral[i],centralOrLocal: 1,filter_Fertilizer_line: 2),
-                                    //   for (var i = 0;i <payloadProvider.fertilizerLocal.length;i++)
-                                    //     filterFertilizerLineFiltering(active: payloadProvider.active, siteIndex: i, selectedLine: payloadProvider.selectedLine, programName: 'Program', siteData: payloadProvider .fertilizerLocal[i], centralOrLocal: 2, filter_Fertilizer_line: 2),
-                                    //   for (var line = 1;line < payloadProvider.lineData.length;line++)
-                                    //     if (payloadProvider.selectedLine == 0 || line ==  payloadProvider.selectedLine)
-                                    //       if (irrigationLineMode)
-                                    //        IrrigationLineTrue(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine, currentLine: line, payloadProvider: payloadProvider)
-                                    //       else
-                                    //      IrrigationLineFalse(active: payloadProvider.active, selectedLine: payloadProvider.selectedLine, currentLine: line, payloadProvider: payloadProvider),
-                                    //
-                                SizedBox(
+                                 SizedBox(
                                         height:
                                             MediaQuery.of(context).size.height *
                                                 0.3,
@@ -1980,6 +1774,793 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
           )
         : const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
+
+  @override
+  Widget mobSourceFilter(BuildContext context) {
+      List<WaterSource> waterSource = payloadProvider.waterSourceMobDash;
+     List<FilterSite> filterSite = payloadProvider.filterSiteMobDash;
+     List<FertilizerSite> fertilizerSite = payloadProvider.fertilizerSiteMobDash;
+     List<IrrigationLineData>? irrLineData = payloadProvider.irrLineDataMobDash;
+
+
+    double screenWith = MediaQuery.sizeOf(context).width;
+
+    int totalWaterSources = waterSource.length;
+    int totalOutletPumps = waterSource.fold(0, (sum, source) => sum + source.outletPump.length);
+
+    int totalFilters = filterSite.fold(0, (sum, site) => sum + (site.filters.length ?? 0));
+    int totalPressureIn = filterSite.fold(0, (sum, site) => sum + (site.pressureIn!.isNotEmpty ? 1 : 0));
+    int totalPressureOut = filterSite.fold(0, (sum, site) => sum + (site.pressureOut!.isNotEmpty ? 1 : 0));
+
+    int totalBoosterPump = fertilizerSite.fold(0, (sum, site) => sum + (site.boosterPump.length ?? 0));
+    int totalChannels = fertilizerSite.fold(0, (sum, site) => sum + (site.channel.length ?? 0));
+    int totalAgitators = fertilizerSite.fold(0, (sum, site) => sum + (site.agitator.length ?? 0));
+
+
+
+    int grandTotal = totalWaterSources + totalOutletPumps +
+        totalFilters + totalPressureIn + totalPressureOut +
+        totalBoosterPump + totalChannels + totalAgitators;
+
+     print(screenWith);
+
+    List<WaterSource> sortedWaterSources = [...waterSource]
+      ..sort((a, b) {
+        bool aHasOutlet = a.outletPump.isNotEmpty;
+        bool bHasOutlet = b.outletPump.isNotEmpty;
+
+        bool aHasInlet = a.inletPump.isNotEmpty;
+        bool bHasInlet = b.inletPump.isNotEmpty;
+
+        if (aHasOutlet && !aHasInlet && (!bHasOutlet || bHasInlet)) return -1;
+        if (bHasOutlet && !bHasInlet && (!aHasOutlet || aHasInlet)) return 1;
+
+        return 0;
+      });
+
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(
+            color: Colors.grey.shade400,
+            width: 0.5,
+          ),
+          borderRadius: const BorderRadius.all(Radius.circular(5)),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 5, bottom: 5),
+          child: Column(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: sortedWaterSources.asMap().entries.map((entry) {
+                  int index = entry.key;
+                  var source = entry.value;
+                  bool isLastIndex = index == sortedWaterSources.length - 1;
+
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: fertilizerSite.isNotEmpty?38.4:0),
+                        child: Stack(
+                          children: [
+                            SizedBox(
+                                width: 70,
+                                child: Column(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.only(left:index==0?33:0),
+                                      child: Divider(thickness: 2, color: Colors.grey.shade300, height: 5.5),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(left:index==0?37:0),
+                                      child: Divider(thickness: 2, color: Colors.grey.shade300, height: 4.5),
+                                    ),
+                                  ],
+                                )
+                            ),
+                            SizedBox(
+                              width: 70,
+                              height: 95,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  SizedBox(
+                                    width: 70,
+                                    height: 15,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 3),
+                                      child: Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          VerticalDivider(thickness: 1, color: Colors.grey.shade400, width: 3),
+                                          VerticalDivider(thickness: 1, color: Colors.grey.shade400, width: 5),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width: 45,
+                                    height: 45,
+                                    decoration: BoxDecoration(
+                                        color: Colors.blue.shade300,
+                                        border: Border.all(
+                                          color: Colors.grey,
+                                          width: 1,
+                                        ),
+                                        borderRadius: const BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5))
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    source.name,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(fontSize: 10, color: Colors.black54),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            if (source.level != null) ...[
+                              Positioned(
+                                top: 25,
+                                left: 5,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.yellow,
+                                    borderRadius: const BorderRadius.all(Radius.circular(2)),
+                                    border: Border.all(color: Colors.grey, width: .50),
+                                  ),
+                                  width: 60,
+                                  height: 18,
+                                  child: Center(
+                                    child: Text(
+                                      '${source.level!.percentage!} feet',
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                top: 50,
+                                left: 5,
+                                child: SizedBox(
+                                  width: 60,
+                                  child: Center(
+                                    child: Text(
+                                      '${source.valves} %',
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      Wrap(
+                        spacing: 0.0,
+                        children: source.outletPump.map((pump) {
+                          return Padding(
+                            padding: EdgeInsets.only(top: fertilizerSite.isNotEmpty?38.4:0),
+                            child: displayPump(pump),
+                          );
+                        }).toList(),
+                      ),
+                      if (isLastIndex && filterSite.isNotEmpty)
+                        Padding(
+                          padding: EdgeInsets.only(top: fertilizerSite.isNotEmpty?38.4:0),
+                          child: displayFilterSite(context, filterSite),
+                        ),
+                      if (isLastIndex && fertilizerSite.isNotEmpty)
+                        displayFertilizerSite(context, fertilizerSite),
+                    ],
+                  );
+
+                }).toList(),
+              ),
+              IrrigationLine(lineData: irrLineData, pumpStationWith: 0,),
+            ],
+          ),
+        ),
+      ),
+    );
+
+  }
+
+  Widget displayPump(Pump pump){
+    return Stack(
+      children: [
+        SizedBox(
+          width: 70,
+          height: 100,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 70,
+                height: 70,
+                child: AppConstants.getAsset('pump', pump.status, ''),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                pump.name,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 10, color: Colors.black54),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget displayFilter(Filters filter){
+    return Stack(
+      children: [
+        SizedBox(
+            width: 70,
+            child: Divider(thickness: 2, color: Colors.grey.shade300, height: 10)
+        ),
+        SizedBox(
+          width: 70,
+          height: 100,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 70,
+                height: 70,
+                child: AppConstants.getAsset('filter', filter.status, ''),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                filter.name,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 10, color: Colors.black54),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget displayFilterSite(context, List<FilterSite> filterSite){
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for(int i=0; i<filterSite.length; i++)
+              Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      filterSite[i].pressureIn!.isNotEmpty?
+                      SizedBox(
+                        width: 70,
+                        height: 70,
+                        child : Stack(
+                          children: [
+                            Image.asset('assets/images/dp_prs_sensor.png',),
+                            Positioned(
+                              top: 42,
+                              left: 5,
+                              child: Container(
+                                width: 60,
+                                height: 17,
+                                decoration: BoxDecoration(
+                                  color:Colors.yellow,
+                                  borderRadius: const BorderRadius.all(Radius.circular(2)),
+                                  border: Border.all(color: Colors.grey, width: .50,),
+                                ),
+                                child: Center(
+                                  child: Text('${filterSite[i].pressureIn?['val'].toStringAsFixed(2)} bar', style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ):
+                      const SizedBox(),
+                      SizedBox(
+                        height: 91,
+                        width: filterSite[i].filters.length * 70,
+                        child: ListView.builder(
+                          itemCount: filterSite[i].filters.length,
+                          scrollDirection: Axis.horizontal,
+                          //reverse: true,
+                          itemBuilder: (BuildContext context, int flIndex) {
+                            return Column(
+                              children: [
+                                Stack(
+                                  children: [
+                                    SizedBox(
+                                      width: 70,
+                                      height: 70,
+                                      child: AppConstants.getAsset('filter', filterSite[i].filters[flIndex].status,''),
+                                    ),
+                                   ],
+                                ),
+                                SizedBox(
+                                  width: 70,
+                                  height: 20,
+                                  child: Center(
+                                    child: Text(filterSite[i].filters[flIndex].name, style: const TextStyle(
+                                      color: Colors.black54,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                      filterSite[i].pressureOut!.isNotEmpty?
+                      SizedBox(
+                        width: 70,
+                        height: 70,
+                        child : Stack(
+                          children: [
+                            Image.asset('assets/images/dp_prs_sensor.png',),
+                            Positioned(
+                              top: 42,
+                              left: 5,
+                              child: Container(
+                                width: 60,
+                                height: 17,
+                                decoration: BoxDecoration(
+                                  color:Colors.yellow,
+                                  borderRadius: const BorderRadius.all(Radius.circular(2)),
+                                  border: Border.all(color: Colors.grey, width: .50,),
+                                ),
+                                child: Center(
+                                  child: Text('${filterSite[i].pressureOut?['val'].toStringAsFixed(2)} bar', style: const TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ):
+                      const SizedBox(),
+                    ],
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                    width: filterSite[i].pressureIn!.isNotEmpty? filterSite[i].filters.length * 70+70:
+                    filterSite[i].filters.length * 70,
+                    height: 20,
+                    child: Center(
+                      child: Text(filterSite[i].name, style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: 11),),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget displayFertilizerSite(context, List<FertilizerSite> fertilizerSite){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: 10,),
+        for(int fIndex=0; fIndex<fertilizerSite.length; fIndex++)
+          SizedBox(
+            height: 170,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 20,),
+                SizedBox(
+                  height: 120,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      if(fIndex!=0)
+                        SizedBox(
+                          width: 4.5,
+                          height: 120,
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 42),
+                                child: VerticalDivider(width: 0, color: Colors.grey.shade300,),
+                              ),
+                              const SizedBox(width: 4.5,),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 45),
+                                child: VerticalDivider(width: 0, color: Colors.grey.shade300,),
+                              ),
+                            ],
+                          ),
+                        ),
+                      SizedBox(
+                          width: 70,
+                          height: 120,
+                          child : Stack(
+                            children: [
+                              AppConstants.getAsset('booster', fertilizerSite[fIndex].boosterPump[0].status,''),
+                              Positioned(
+                                top: 70,
+                                left: 15,
+                                child: fertilizerSite[fIndex].selector.isNotEmpty ? const SizedBox(
+                                  width: 50,
+                                  child: Center(
+                                    child: Text('Selector' , style: TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                    ),
+                                  ),
+                                ) :
+                                const SizedBox(),
+                              ),
+                              Positioned(
+                                top: 85,
+                                left: 18,
+                                child: fertilizerSite[fIndex].selector.isNotEmpty ? Container(
+                                  decoration: BoxDecoration(
+                                    color: fertilizerSite[fIndex].selector[0]['Status']==0? Colors.grey.shade300:
+                                    fertilizerSite[fIndex].selector[0]['Status']==1? Colors.greenAccent:
+                                    fertilizerSite[fIndex].selector[0]['Status']==2? Colors.orangeAccent:Colors.redAccent,
+                                    borderRadius: BorderRadius.circular(3),
+                                  ),
+                                  width: 45,
+                                  height: 22,
+                                  child: Center(
+                                    child: Text(fertilizerSite[fIndex].selector[0]['Status']!=0?
+                                    fertilizerSite[fIndex].selector[0]['Name'] : '--' , style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    ),
+                                  ),
+                                ) :
+                                const SizedBox(),
+                              ),
+                              Positioned(
+                                top: 115,
+                                left: 8.3,
+                                child: Image.asset('assets/png_images/dp_frt_vertical_pipe.png', width: 9.5, height: 37,),
+                              ),
+                            ],
+                          )
+                      ),
+                      SizedBox(
+                        width: fertilizerSite[fIndex].channel.length * 70,
+                        height: 120,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: fertilizerSite[fIndex].channel.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            var fertilizer = fertilizerSite[fIndex].channel[index];
+                            double fertilizerQty = 0.0;
+                            var qtyValue = fertilizer.qty;
+                            fertilizerQty = double.parse(qtyValue);
+
+                            var fertilizerLeftVal = fertilizer.qtyLeft;
+                            fertilizer.qtyLeft = fertilizerLeftVal;
+
+                            return SizedBox(
+                              width: 70,
+                              height: 120,
+                              child: Stack(
+                                children: [
+                                  buildFertilizerImage(index, fertilizer.status, fertilizerSite[fIndex].channel.length, fertilizerSite[fIndex].agitator),
+                                  Positioned(
+                                    top: 52,
+                                    left: 6,
+                                    child: CircleAvatar(
+                                      radius: 8,
+                                      backgroundColor: Colors.teal.shade100,
+                                      child: Text('${index+1}', style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 50,
+                                    left: 18,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
+                                      width: 60,
+                                      child: Center(
+                                        child: Text(fertilizer.fertMethod=='1' || fertilizer.fertMethod=='3'? fertilizer.duration :
+                                        '${fertilizerQty.toStringAsFixed(2)} L', style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 65,
+                                    left: 18,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
+                                      width: 60,
+                                      child: Center(
+                                        child: Text('${fertilizer.flowRate_LpH}-lph', style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 9,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 103,
+                                    left: 0,
+                                    child: fertilizer.status !=0
+                                        &&
+                                        fertilizer.selected!='_'
+                                        &&
+                                        fertilizer.durationLeft !='00:00:00'
+                                        ?
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.greenAccent,
+                                        borderRadius: BorderRadius.circular(3),
+                                      ),
+                                      width: 50,
+                                      child: Center(
+                                        child: Text(fertilizer.fertMethod=='1' || fertilizer.fertMethod=='3'
+                                            ? fertilizer.durationLeft
+                                            : '${fertilizer.qtyLeft} L' , style: const TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        ),
+                                      ),
+                                    ) :
+                                    const SizedBox(),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      fertilizerSite[fIndex].agitator.isNotEmpty ? Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: fertilizerSite[fIndex].agitator.map<Widget>((agitator) {
+                          return Column(
+                            children: [
+                              SizedBox(
+                                width: 59,
+                                height: 34,
+                                child: AppConstants.getAsset('agitator', agitator.status, '',),
+                              ),
+                              Center(child: Text(agitator.name, style: const TextStyle(fontSize: 10, color: Colors.black54),)),
+                            ],
+                          );
+                        }).toList(), // Convert the map result to a list of widgets
+                      ):
+                      const SizedBox(),
+
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: 30,
+                  width: (fertilizerSite[fIndex].channel.length * 79 + fertilizerSite[fIndex].agitator.length*59)+50,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 30,
+                        child: Row(
+                          children: [
+                            if(fIndex!=0)
+                              const Row(
+                                children: [
+                                  VerticalDivider(width: 0,color: Colors.black12),
+                                  SizedBox(width: 4.0,),
+                                  VerticalDivider(width: 0,color: Colors.black12),
+                                ],
+                              ),
+                            Row(
+                              children: [
+                                const SizedBox(width: 10.5,),
+                                const VerticalDivider(width: 0,color: Colors.black12),
+                                const SizedBox(width: 4.0,),
+                                const VerticalDivider(width: 0,color: Colors.black12),
+                                const SizedBox(width: 5.0,),
+
+                                fertilizerSite[fIndex].ec!.isNotEmpty || fertilizerSite[fIndex].ph!.isNotEmpty?
+                                SizedBox(
+                                  width: fertilizerSite[fIndex].ec!.length > 1 ? 110 : 60,
+                                  height: 24,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      fertilizerSite[fIndex].ec!.isNotEmpty?
+                                      SizedBox(
+                                        height: 12,
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: fertilizerSite[fIndex].ec!.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return Row(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                const Center(
+                                                    child: Text(
+                                                      'Ec : ',
+                                                      style: TextStyle(
+                                                          fontSize: 10, fontWeight: FontWeight.normal),
+                                                    )),
+                                                Center(
+                                                  child: Text(
+                                                    double.parse(
+                                                        fertilizerSite[fIndex].ec![index].value)
+                                                        .toStringAsFixed(2),
+                                                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.normal),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ):
+                                      const SizedBox(),
+
+                                      fertilizerSite[fIndex].ph!.isNotEmpty?
+                                      SizedBox(
+                                        height: 12,
+                                        child: ListView.builder(
+                                          scrollDirection: Axis.horizontal,
+                                          itemCount: fertilizerSite[fIndex].ph!.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return Row(
+                                              children: [
+                                                const Center(
+                                                    child: Text(
+                                                      'pH : ',
+                                                      style: TextStyle(
+                                                          fontSize: 10, fontWeight: FontWeight.normal),
+                                                    )),
+                                                Center(
+                                                  child: Text(
+                                                    double.parse(
+                                                        fertilizerSite[fIndex].ph![index].value)
+                                                        .toStringAsFixed(2),
+                                                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.normal),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        ),
+                                      ):
+                                      const SizedBox(),
+                                    ],
+                                  ),
+                                ):
+                                const SizedBox(),
+
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.shade50,
+                                    borderRadius: BorderRadius.circular(3),
+                                  ),
+                                  width: (fertilizerSite[fIndex].channel.length * 67) - (fertilizerSite[fIndex].ec!.isNotEmpty ?
+                                  fertilizerSite[fIndex].ec!.length * 70 : fertilizerSite[fIndex].ph!.length * 70),
+                                  child: Center(
+                                    child: Text(fertilizerSite[fIndex].name, style: TextStyle(color: primaryDark, fontSize: 11),),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget buildFertilizerImage(int cIndex, int status, int cheLength, List agitatorList) {
+    String imageName;
+    if(cIndex == cheLength - 1){
+      if(agitatorList.isNotEmpty){
+        imageName='dp_frt_channel_last_aj';
+      }else{
+        imageName='dp_frt_channel_last';
+      }
+    }else{
+      if(agitatorList.isNotEmpty){
+        if(cIndex==0){
+          imageName='dp_frt_channel_first_aj';
+        }else{
+          imageName='dp_frt_channel_center_aj';
+        }
+      }else{
+        imageName='dp_frt_channel_center';
+      }
+    }
+
+    switch (status) {
+      case 0:
+        imageName += '.png';
+        break;
+      case 1:
+        imageName += '_g.png';
+        break;
+      case 2:
+        imageName += '_y.png';
+        break;
+      case 3:
+        imageName += '_r.png';
+        break;
+      case 4:
+        imageName += '.png';
+        break;
+      default:
+        imageName += '.png';
+    }
+
+    return Image.asset('assets/png_images/$imageName');
+
+  }
+
 
   Widget getActiveObjects(
       {required BuildContext context,
@@ -2022,25 +2603,6 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     );
   }
 
-  int getFilter(filterStatus, BuildContext context, programStatus)
-  {
-    int mode = 0;
-    if (filterStatus == 1) {
-      mode = 1;
-    } else if (filterStatus == 2) {
-      mode = 2;
-    }
-    // else if(getWaterPipeStatus(context) == 0){
-    //   mode = 0;
-    // }
-    else if (filterStatus == 0) {
-      mode = 3;
-    }
-    if (programStatus == '') {
-      mode = 0;
-    }
-    return mode;
-  }
 
   void autoRefresh() async
   {
@@ -2080,46 +2642,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin {
     );
   }
 
-  Widget filterFertilizerLineFiltering({
-    required int active,
-    required int siteIndex,
-    required int selectedLine,
-    required int centralOrLocal,
-    required int filter_Fertilizer_line,
-    required String programName,
-    required dynamic siteData,
-    dynamic currentLine,
-  })
-  {
-    MqttPayloadProvider payloadProvider =
-        Provider.of<MqttPayloadProvider>(context, listen: false);
-    Widget filterWidget = Container();
-    Widget fertilizerWidget = Container();
-    // Widget filterWidget = filtrationWidgetMode
-    //     ? FiltrationSiteTrue(siteIndex: siteIndex, centralOrLocal: centralOrLocal, selectedLine: selectedLine,)
-    //     : FiltrationSiteFalse(siteIndex: siteIndex, centralOrLocal: centralOrLocal, selectedLine: selectedLine,);
-    // Widget fertilizerWidget = fertigationWidgetMode
-    //     ? FertilizerSiteTrue(siteIndex: siteIndex, centralOrLocal: centralOrLocal,selectedLine: selectedLine,)
-    //     : FertilizerSiteFalse(siteIndex: siteIndex, centralOrLocal: centralOrLocal,selectedLine: selectedLine,);
-    Widget widget = Container();
-    if (active == 1 && selectedLine == 0) {
-      widget = filter_Fertilizer_line == 1 ? filterWidget : fertilizerWidget;
-    } else if (active == 1 &&
-        selectedLine != 0 &&
-        (siteData['Location'] ?? siteData['Line'])
-            .contains(payloadProvider.lineData[selectedLine]['id'])) {
-      widget = filter_Fertilizer_line == 1 ? filterWidget : fertilizerWidget;
-    } else if (active == 2 && programName != '' && selectedLine == 0) {
-      widget = filter_Fertilizer_line == 1 ? filterWidget : fertilizerWidget;
-    } else if (active == 2 &&
-        programName != '' &&
-        selectedLine != 0 &&
-        (siteData['Location'] ?? siteData['Line'])
-            .contains(payloadProvider.lineData[selectedLine]['id'])) {
-      widget = filter_Fertilizer_line == 1 ? filterWidget : fertilizerWidget;
-    }
-    return widget;
-  }
+
 
   void sideSheet(
       {required MqttPayloadProvider payloadProvider,
@@ -2302,337 +2825,10 @@ void stayAlert(
     required String message}) {
   GlobalSnackBar.show(
       context, message, int.parse(payloadProvider.messageFromHw['Code']));
-  // showDialog(context: context, builder: (context){
-  //   return AlertDialog(
-  //     title: Text('Message From Hardware'),
-  //     content: Text('${payloadProvider.messageFromHw}'),
-  //     actions: [
-  //       TextButton(
-  //           onPressed: (){
-  //             Navigator.pop(context);
-  //           },
-  //           child: Text('OK')
-  //       )
-  //     ],
-  //   );
-  // });
+
 }
 
-class Pump extends CustomPainter {
-  final double rotationAngle;
-  final int mode;
-  Pump({required this.rotationAngle, required this.mode});
 
-  List<Color> pipeColor = const [
-    Color(0xff166890),
-    Color(0xff45C9FA),
-    Color(0xff166890)
-  ];
-  List<Color> bodyColor = const [
-    Color(0xffC7BEBE),
-    Colors.white,
-    Color(0xffC7BEBE)
-  ];
-  List<Color> headColorOn = const [
-    Color(0xff097E54),
-    Color(0xff10E196),
-    Color(0xff097E54)
-  ];
-  List<Color> headColorOff = const [
-    Color(0xff540000),
-    Color(0xffB90000),
-    Color(0xff540000)
-  ];
-  List<Color> headColorFault = const [
-    Color(0xffF66E21),
-    Color(0xffFFA06B),
-    Color(0xffF66E21)
-  ];
-  List<Color> headColorIdle = [Colors.grey, Colors.grey.shade300, Colors.grey];
-
-  List<Color> getMotorColor() {
-    if (mode == 1) {
-      return headColorOn;
-    } else if (mode == 3) {
-      return headColorOff;
-    } else if (mode == 2) {
-      return headColorFault;
-    } else {
-      return headColorIdle;
-    }
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint motorHead = Paint();
-    Radius headRadius = const Radius.circular(5);
-    motorHead.color = const Color(0xff097B52);
-    motorHead.style = PaintingStyle.fill;
-    motorHead.shader = getLinearShaderHor(getMotorColor(),
-        Rect.fromCenter(center: const Offset(50, 18), width: 35, height: 35));
-    canvas.drawRRect(
-        RRect.fromRectAndCorners(
-            Rect.fromCenter(
-                center: const Offset(50, 20), width: 45, height: 40),
-            topLeft: headRadius,
-            topRight: headRadius,
-            bottomRight: headRadius,
-            bottomLeft: headRadius),
-        motorHead);
-    canvas.drawRRect(
-        RRect.fromRectAndCorners(
-            Rect.fromCenter(
-                center: const Offset(50, 20), width: 45, height: 40),
-            topLeft: headRadius,
-            topRight: headRadius,
-            bottomRight: headRadius,
-            bottomLeft: headRadius),
-        motorHead);
-    Paint line = Paint();
-    line.color = Colors.white;
-    line.strokeWidth = 1;
-    line.style = PaintingStyle.fill;
-    double startingPosition = 26;
-    double lineGap = 8;
-    for (var i = 0; i < 7; i++)
-      canvas.drawLine(Offset(startingPosition + (i * lineGap), 5),
-          Offset(startingPosition + (i * lineGap), 35), line);
-    canvas.drawLine(const Offset(28, 5), const Offset(72, 5), line);
-    canvas.drawLine(const Offset(28, 35), const Offset(72, 35), line);
-
-    Paint neck = Paint();
-    neck.shader = getLinearShaderHor(bodyColor,
-        Rect.fromCenter(center: const Offset(50, 45), width: 20, height: 10));
-    neck.strokeWidth = 0.5;
-    neck.style = PaintingStyle.fill;
-    canvas.drawRect(
-        Rect.fromCenter(center: const Offset(50, 45), width: 20, height: 10),
-        neck);
-
-    Paint body = Paint();
-    body.style = PaintingStyle.fill;
-    body.shader = getLinearShaderHor(bodyColor,
-        Rect.fromCenter(center: const Offset(50, 64), width: 35, height: 28));
-    canvas.drawRRect(
-        RRect.fromRectAndCorners(
-            Rect.fromCenter(
-                center: const Offset(50, 64), width: 35, height: 28),
-            topLeft: headRadius,
-            topRight: headRadius,
-            bottomRight: headRadius,
-            bottomLeft: headRadius),
-        body);
-
-    Paint joint = Paint();
-    joint.shader = getLinearShaderVert(bodyColor,
-        Rect.fromCenter(center: const Offset(30, 64), width: 6, height: 15));
-    joint.strokeWidth = 0.5;
-    joint.style = PaintingStyle.fill;
-    canvas.drawRect(
-        Rect.fromCenter(center: const Offset(30, 64), width: 6, height: 15),
-        joint);
-    canvas.drawRect(
-        Rect.fromCenter(center: const Offset(70, 64), width: 6, height: 15),
-        joint);
-
-    Paint sholder1 = Paint();
-    sholder1.shader = getLinearShaderVert(bodyColor,
-        Rect.fromCenter(center: const Offset(24, 64), width: 6, height: 20));
-    sholder1.strokeWidth = 0.5;
-    sholder1.style = PaintingStyle.fill;
-    canvas.drawRect(
-        Rect.fromCenter(center: const Offset(24, 64), width: 6, height: 20),
-        sholder1);
-    canvas.drawRect(
-        Rect.fromCenter(center: const Offset(75, 64), width: 6, height: 20),
-        sholder1);
-
-    Paint sholder2 = Paint();
-    sholder2.shader = getLinearShaderVert(pipeColor,
-        Rect.fromCenter(center: const Offset(30, 64), width: 6, height: 15));
-    sholder2.strokeWidth = 0.5;
-    sholder2.style = PaintingStyle.fill;
-    canvas.drawRect(
-        Rect.fromCenter(center: const Offset(20, 64), width: 6, height: 20),
-        sholder2);
-    canvas.drawRect(
-        Rect.fromCenter(center: const Offset(80, 64), width: 6, height: 20),
-        sholder2);
-
-    Paint hand = Paint();
-    hand.shader = getLinearShaderVert(pipeColor,
-        Rect.fromCenter(center: const Offset(30, 64), width: 6, height: 15));
-    hand.strokeWidth = 0.5;
-    hand.style = PaintingStyle.fill;
-    canvas.drawRect(
-        Rect.fromCenter(center: const Offset(10, 64), width: 18, height: 15),
-        hand);
-    canvas.drawRect(
-        Rect.fromCenter(center: const Offset(90, 64), width: 18, height: 15),
-        hand);
-
-    Paint paint = Paint()..color = Colors.blueGrey;
-    double centerX = 50;
-    double centerY = 65;
-    double radius = 8;
-    double angle = (2 * pi) / 4; // Angle between each rectangle
-    double rectangleWidth = 8;
-    double rectangleHeight = 10;
-
-    for (int i = 0; i < 4; i++) {
-      double x = centerX + radius * cos(i * angle + rotationAngle / 2);
-      double y = centerY + radius * sin(i * angle + rotationAngle / 2);
-      double rotation = i * angle -
-          pi / 2 +
-          rotationAngle; // Rotate rectangles to fit the circle
-
-      canvas.save(); // Save canvas state before rotation
-      canvas.translate(x, y); // Translate to the position
-      canvas.rotate(rotation);
-      canvas.drawRRect(
-        RRect.fromRectAndCorners(
-          Rect.fromLTWH(-rectangleWidth / 2, -rectangleHeight / 2,
-              rectangleWidth, rectangleHeight),
-          bottomLeft: const Radius.circular(20),
-          bottomRight: const Radius.circular(80),
-          topLeft: const Radius.circular(40),
-          topRight: const Radius.circular(40),
-        ),
-        paint,
-      );
-      canvas.restore(); // Restore canvas state after rotation
-    }
-    Paint smallCircle = Paint();
-    smallCircle.color = Colors.black;
-    smallCircle.style = PaintingStyle.fill;
-    canvas.drawCircle(Offset(centerX, centerY), 4, smallCircle);
-  }
-
-  dynamic getLinearShaderVert(List<Color> colors, Rect rect) {
-    return LinearGradient(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-      colors: colors,
-    ).createShader(rect);
-  }
-
-  dynamic getLinearShaderHor(List<Color> colors, Rect rect) {
-    return LinearGradient(
-      begin: Alignment.centerLeft,
-      end: Alignment.centerRight,
-      colors: colors,
-    ).createShader(rect);
-  }
-
-  Widget buildPopUpMenuButton(
-      {required BuildContext context,
-      selected,
-      required List<String> dataList,
-      required void Function(String) onSelected,
-      required Widget child,
-      Offset offset = Offset.zero}) {
-    return PopupMenuButton<String>(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
-      surfaceTintColor: Colors.white,
-      itemBuilder: (context) {
-        return dataList.map((String value) {
-          return PopupMenuItem<String>(
-            value: value,
-            child: Center(
-                child: Text(
-              value,
-              style: TextStyle(
-                  color: selected == value
-                      ? Theme.of(context).primaryColor
-                      : null),
-            )),
-          );
-        }).toList();
-      },
-      onSelected: onSelected,
-      offset: offset,
-      child: child,
-    );
-  }
-
-  Widget buildCustomListTile(
-      {required BuildContext context,
-      required String title,
-      daysType,
-      void Function(String)? onChanged,
-      bool isTextForm = false,
-      bool isTimePicker = false,
-      bool isDatePicker = false,
-      bool isCheckBox = false,
-      bool isSwitch = false,
-      initialValue,
-      dateType,
-      firstDate,
-      EdgeInsets? padding,
-      void Function(DateTime)? onDateChanged,
-      void Function(String)? onTimeChanged,
-      bool checkBoxValue = false,
-      void Function(bool?)? onCheckBoxChanged,
-      bool switchValue = false,
-      void Function(bool)? onSwitchChanged,
-      required icon}) {
-    return Container(
-      padding: padding ?? const EdgeInsets.all(0),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
-          boxShadow: customBoxShadow),
-      child: isTextForm
-          ? CustomTextFormTile(
-              subtitle: title,
-              hintText: '00',
-              keyboardType: TextInputType.number,
-              inputFormatters: [
-                FilteringTextInputFormatter.deny(RegExp('[^0-9]')),
-                LengthLimitingTextInputFormatter(2),
-              ],
-              initialValue: daysType ?? initialValue,
-              onChanged: onChanged ?? (newValue) {},
-              icon: icon,
-            )
-          : CustomTile(
-              title: title,
-              content: icon,
-              trailing: IntrinsicWidth(
-                child: isTimePicker
-                    ? CustomNativeTimePicker(
-                        initialValue: initialValue,
-                        is24HourMode: false,
-                        // style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
-                        onChanged: onTimeChanged ?? (newValue) {})
-                    : isDatePicker
-                        ? DatePickerField(
-                            value: dateType,
-                            firstDate: firstDate,
-                            onChanged: onDateChanged ?? (DateTime dateTime) {},
-                          )
-                        : isCheckBox
-                            ? Checkbox(
-                                value: checkBoxValue,
-                                onChanged:
-                                    onCheckBoxChanged ?? (bool? value) {})
-                            : isSwitch
-                                ? Switch(
-                                    value: switchValue,
-                                    onChanged: onSwitchChanged)
-                                : const SizedBox(),
-              ),
-            ),
-    );
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) {
-    return true;
-  }
-}
 
 dynamic getAlarmMessage = {
   1: 'Low Flow',

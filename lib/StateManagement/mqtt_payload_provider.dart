@@ -44,14 +44,19 @@ class MqttPayloadProvider with ChangeNotifier {
   List<dynamic> PrsOut = [];
   List<dynamic> nextSchedule = [];
   List<dynamic> upcomingProgram = [];
-  List<dynamic> filtersCentral = [];
-  List<dynamic> filtersLocal = [];
-  List<dynamic> irrigationPump = [];
-  List<dynamic> sourcePump = [];
-  List<dynamic> sourcetype = [];
-  List<dynamic> fertilizerCentral = [];
-  List<FertilizerSite> fertilizersdashboard = [];
-  List<dynamic> fertilizerLocal = [];
+  // List<Filters> filtersCentral = [];
+  // List<Filters> filtersLocal = [];
+  // List<Pump> irrigationPump = [];
+  // List<Pump> sourcePump = [];
+  // List<WaterSource> sourcetype = [];
+  // List<FertilizerSite> fertilizerCentral = [];
+  // List<FertilizerSite> fertilizersdashboard = [];
+  // List<FertilizerSite> fertilizerLocal = [];
+
+  List<WaterSource> waterSourceMobDash = [];
+  List<FilterSite> filterSiteMobDash = [];
+  List<FertilizerSite> fertilizerSiteMobDash = [];
+  List<IrrigationLineData>? irrLineDataMobDash = [];
   List<dynamic> flowMeter = [];
   List<dynamic> alarmList = [];
   List<dynamic> waterMeter = [];
@@ -121,260 +126,9 @@ class MqttPayloadProvider with ChangeNotifier {
   }
 
 
-  void updateLocalFertigationSite(){
-    if(timerForLocalFertigation != null){
-      timerForLocalFertigation!.cancel();
-    }
-    int seconds = 0;
-    DataConvert dataConvert = DataConvert();
-    timerForLocalFertigation = Timer.periodic(Duration(milliseconds: 100), (Timer timer){
-      if(seconds == 1000){
-        seconds = 0;
-      }else{
-        seconds += 100;
-      }
-      if(fertilizerLocal.any((element) => element['Fertilizer'].any((fert) => dataConvert.parseTimeStringForMilliSeconds(fert['Duration']) != dataConvert.parseTimeStringForMilliSeconds(fert['DurationCompleted'])))){
-        for(var i in fertilizerLocal) {
-          if (i['Fertilizer'].any((element) => element['Status'] != 0)){
-            for(var channel in i['Fertilizer']){
-              if(channel['Status'] != 0){
-                int onDelay = dataConvert.parseTimeStringForMilliSeconds(channel['Duration']);
-                if(channel['DurationCompleted'] == null){
-                  channel['DurationCompleted'] = '00:00:00:000';
-                }
-                int onDelayCompleted = dataConvert.parseTimeStringForMilliSeconds(channel['DurationCompleted']);
-                int leftDelay = onDelay - onDelayCompleted;
-                channel['DurationLeft'] = dataConvert.formatTimeForMilliSeconds(leftDelay);
-                if(leftDelay > 0){
-                  onDelayCompleted += 100;
-                  if(['1','2'].contains(channel['FertMethod'])){
-                    if(channel['Status'] == 1){
-                      channel['DurationCompleted'] = dataConvert.formatTimeForMilliSeconds(onDelayCompleted);
-                      if(channel['QtyLeft'] > 0.0){
-                        channel['QtyLeft'] = double.parse(channel['Qty']) - double.parse(channel['QtyCompleted']);
-                        channel['QtyCompleted']  = '${(double.parse(channel['QtyCompleted'])) + (channel['FlowRate'] / 10)}';
-                      }
-                    }
-                  }
-                  else if(['3','4','5'].contains(channel['FertMethod'])){
-                    if(channel['onOffMode'] == null){
-                      channel['onOffMode'] = 1;
-                      channel['onOffValue'] = 0;
-                    }
-                    if(channel['onOffMode'] == 1){
-                      channel['onOffValue'] += 100;
-                      if(channel['proportionalStatus'] == 1){
-                        channel['Status'] = channel['proportionalStatus'];
-                      }
-                      if(channel['proportionalStatus'] == 1){
-                        channel['DurationCompleted'] = dataConvert.formatTimeForMilliSeconds(onDelayCompleted);
-                        if(channel['QtyLeft'] > 0.0){
-                          channel['QtyLeft'] = double.parse(channel['Qty']) - double.parse(channel['QtyCompleted']);
-                          channel['QtyCompleted']  = '${(double.parse(channel['QtyCompleted'])) + (channel['FlowRate'] / 10)}';
-                        }
-                      }
-                      if(channel['onOffValue'] == (double.parse(channel['OnTime']) * 1000)){
-                        channel['onOffMode'] = 0;
-                        channel['onOffValue'] = 0;
-                      }
-                    }else{
-                      if(channel['proportionalStatus'] == 1){
-                        channel['Status'] = 4;
-                      }
-                      channel['onOffValue'] += 100;
-                      if(channel['onOffValue'] == (double.parse(channel['OffTime']) * 1000)){
-                        channel['onOffMode'] = 1;
-                        channel['onOffValue'] = 0;
-                      }
-                    }
-                  }
 
-                }else{
-                  channel['DurationCompleted'] = channel['Duration'];
-                }
-                notifyListeners();
-              }
-            }
 
-          }
-        }
-      }
-      // else{
-      //   if(timerForLocalFertigation != null){
-      //     timerForLocalFertigation!.cancel();
-      //   }
-      // }
-    });
-  }
 
-  void updateCentralFertigationSite(){
-    if(timerForCentralFertigation != null){
-      timerForCentralFertigation!.cancel();
-    }
-    int seconds = 0;
-    DataConvert dataConvert = DataConvert();
-    timerForCentralFertigation = Timer.periodic(Duration(milliseconds: 100), (Timer timer){
-      if(seconds == 1000){
-        seconds = 0;
-      }else{
-        seconds += 100;
-      }
-      if(fertilizerCentral.any((element) => element['Fertilizer'].any((fert) => dataConvert.parseTimeStringForMilliSeconds(fert['Duration']) != dataConvert.parseTimeStringForMilliSeconds(fert['DurationCompleted'])))){
-        for(var i in fertilizerCentral) {
-          if (i['Fertilizer'].any((element) => element['Status'] != 0)){
-            for(var channel in i['Fertilizer']){
-              if(channel['Status'] != 0){
-                int onDelay = dataConvert.parseTimeStringForMilliSeconds(channel['Duration']);
-                if(channel['DurationCompleted'] == null){
-                  channel['DurationCompleted'] = '00:00:00:000';
-                }
-                int onDelayCompleted = dataConvert.parseTimeStringForMilliSeconds(channel['DurationCompleted']);
-                int leftDelay = onDelay - onDelayCompleted;
-                channel['DurationLeft'] = dataConvert.formatTimeForMilliSeconds(leftDelay);
-                if(leftDelay > 0){
-                  onDelayCompleted += 100;
-                  if(['1','2'].contains(channel['FertMethod'])){
-                    if(channel['Status'] == 1){
-                      channel['DurationCompleted'] = dataConvert.formatTimeForMilliSeconds(onDelayCompleted);
-                      if(channel['QtyLeft'] > 0.0){
-                        channel['QtyLeft'] = double.parse(channel['Qty']) - double.parse(channel['QtyCompleted']);
-                        channel['QtyCompleted']  = '${(double.parse(channel['QtyCompleted'])) + (channel['FlowRate'] / 10)}';
-                      }
-                    }
-                  }
-                  else if(['3','4','5'].contains(channel['FertMethod'])){
-                    if(channel['onOffMode'] == null){
-                      channel['onOffMode'] = 1;
-                      channel['onOffValue'] = 0;
-                    }
-                    if(channel['onOffMode'] == 1){
-                      channel['onOffValue'] += 100;
-                      if(channel['proportionalStatus'] == 1){
-                        channel['Status'] = channel['proportionalStatus'];
-                      }
-                      if(channel['proportionalStatus'] == 1){
-                        channel['DurationCompleted'] = dataConvert.formatTimeForMilliSeconds(onDelayCompleted);
-                        if(channel['QtyLeft'] > 0.0){
-                          channel['QtyLeft'] = double.parse(channel['Qty']) - double.parse(channel['QtyCompleted']);
-                          channel['QtyCompleted']  = '${(double.parse(channel['QtyCompleted'])) + (channel['FlowRate'] / 10)}';
-                        }
-                      }
-                      if(channel['onOffValue'] == (double.parse(channel['OnTime']) * 1000)){
-                        channel['onOffMode'] = 0;
-                        channel['onOffValue'] = 0;
-                      }
-                    }else{
-                      if(channel['proportionalStatus'] == 1){
-                        channel['Status'] = 4;
-                      }
-                      channel['onOffValue'] += 100;
-                      if(channel['onOffValue'] == (double.parse(channel['OffTime']) * 1000)){
-                        channel['onOffMode'] = 1;
-                        channel['onOffValue'] = 0;
-                      }
-                    }
-                  }
-                }else{
-                  channel['DurationCompleted'] = channel['Duration'];
-                }
-                notifyListeners();
-              }
-            }
-
-          }
-        }
-      }
-    });
-  }
-
-  void updateCentralFiltrationSite(){
-    if(timerForCentralFiltration != null){
-      timerForCentralFiltration!.cancel();
-    }
-    DataConvert dataConvert = DataConvert();
-    timerForCentralFiltration = Timer.periodic(Duration(seconds: 1), (Timer timer){
-      for(var i in filtersCentral){
-        if(i['Status'] != 0 && i['Program'] != ''){
-          int onDelay = dataConvert.parseTimeString(i['Duration']);
-          if(i['DurationCompleted'] == null){
-            i['DurationCompleted'] = '00:00:00';
-          }
-          int onDelayCompleted = dataConvert.parseTimeString(i['DurationCompleted']);
-          int leftDelay = onDelay - onDelayCompleted;
-          i['DurationLeft'] = dataConvert.formatTime(leftDelay);
-          // // // print('${i['FilterStatus'][i['Status'] - 1]['Name']} => OnDelayLeft : ${i['DurationLeft']}');
-          if(leftDelay > 0){
-            onDelayCompleted += 1;
-            i['DurationCompleted'] = dataConvert.formatTime(onDelayCompleted);
-            // // // print('${i['FilterStatus'][i['Status'] - 1]['Name']} => DurationCompleted : ${i['DurationCompleted']}');
-          }else{
-            i['DurationCompleted'] = '00:00:00';
-            timerForCentralFiltration!.cancel();
-          }
-        }
-      }
-
-    });
-  }
-
-  void updateLocalFiltrationSite(){
-    if(timerForLocalFiltration != null){
-      timerForLocalFiltration!.cancel();
-    }
-    DataConvert dataConvert = DataConvert();
-    timerForLocalFiltration = Timer.periodic(Duration(seconds: 1), (Timer timer){
-      for(var i in filtersLocal){
-        if(i['Status'] != 0 && i['Program'] != ''){
-          int onDelay = dataConvert.parseTimeString(i['Duration']);
-          if(i['DurationCompleted'] == null){
-            i['DurationCompleted'] = '00:00:00';
-          }
-          int onDelayCompleted = dataConvert.parseTimeString(i['DurationCompleted']);
-          int leftDelay = onDelay - onDelayCompleted;
-          i['DurationLeft'] = dataConvert.formatTime(leftDelay);
-          // // // print('${i['FilterStatus'][i['Status'] - 1]['Name']} => OnDelayLeft : ${i['DurationLeft']}');
-          if(leftDelay > 0){
-            onDelayCompleted += 1;
-            i['DurationCompleted'] = dataConvert.formatTime(onDelayCompleted);
-            // // // print('${i['FilterStatus'][i['Status'] - 1]['Name']} => DurationCompleted : ${i['DurationCompleted']}');
-          }else{
-            i['DurationCompleted'] = '00:00:00';
-            timerForLocalFiltration!.cancel();
-          }
-        }
-      }
-
-    });
-  }
-
-  void updateIrrigationPump(){
-    if(timerForIrrigationPump != null){
-      timerForIrrigationPump!.cancel();
-    }
-    DataConvert dataConvert = DataConvert();
-    timerForIrrigationPump = Timer.periodic(Duration(seconds: 1), (Timer timer){
-      for(var i in irrigationPump){
-        if(i['Status'] != 1 && i['Program'] != ''){
-          if(i['OnDelay'] != i['OnDelayCompleted'] && i['OnDelayLeft'] != '00:00:00'){
-            int onDelay = dataConvert.parseTimeString(i['OnDelay']);
-            int onDelayCompleted = dataConvert.parseTimeString(i['OnDelayCompleted']);
-            int leftDelay = onDelay - onDelayCompleted;
-            i['OnDelayLeft'] = dataConvert.formatTime(leftDelay);
-            if(leftDelay > 0){
-              onDelayCompleted += 1;
-              i['OnDelayCompleted'] = dataConvert.formatTime(onDelayCompleted);
-            }else{
-              i['OnDelayCompleted'] = '00:00:00';
-            }
-          }
-        }
-      }
-      if(irrigationPump.every((element) => element['OnDelayCompleted'] == '00:00:00')){
-        timerForIrrigationPump!.cancel();
-      }
-    });
-
-  }
 
   void clearData() {
     listOfSite = [];
@@ -387,12 +141,12 @@ class MqttPayloadProvider with ChangeNotifier {
     selectedSite = 0;
     selectedMaster = 0;
     upcomingProgram = [];
-    filtersCentral = [];
-    filtersLocal = [];
-    irrigationPump = [];
-    sourcePump = [];
-    fertilizerCentral = [];
-    fertilizerLocal = [];
+    // filtersCentral = [];
+    // filtersLocal = [];
+    // irrigationPump = [];
+    // sourcePump = [];
+    // fertilizerCentral = [];
+    // fertilizerLocal = [];
     flowMeter = [];
     alarmList = [];
     waterMeter = [];
@@ -418,33 +172,6 @@ class MqttPayloadProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void updateSourcePump(){
-    if(timerForSourcePump != null){
-      timerForSourcePump!.cancel();
-    }
-    DataConvert dataConvert = DataConvert();
-    timerForSourcePump = Timer.periodic(Duration(seconds: 1), (Timer timer){
-      for(var i in sourcePump){
-        if((i['Status'] != 1 && i['Program'] != '') || (i['Status'] == 2 && i['OnDelayLeft'] != '00:00:00')){
-          int onDelay = dataConvert.parseTimeString(i['OnDelay']);
-          int onDelayCompleted = dataConvert.parseTimeString(i['OnDelayCompleted']);
-          int leftDelay = onDelay - onDelayCompleted;
-          i['OnDelayLeft'] = dataConvert.formatTime(leftDelay);
-          if(leftDelay > 0){
-            onDelayCompleted += 1;
-            i['OnDelayCompleted'] = dataConvert.formatTime(onDelayCompleted);
-            // // // print('${i['Name']} => OnDelayCompleted : ${i['OnDelayCompleted']}');
-          }else{
-            i['OnDelayCompleted'] = '00:00:00';
-          }
-        }
-      }
-      if(sourcePump.every((element) => element['OnDelayCompleted'] == '00:00:00')){
-        timerForSourcePump!.cancel();
-      }
-    });
-
-  }
 
   void updateReceivedPayload2(String payload,bool dataFromHttp) async{
     print('payload ::: $payload');
@@ -562,58 +289,40 @@ class MqttPayloadProvider with ChangeNotifier {
           selectedProgram = 0;
           // // print('upcomingProgram : $upcomingProgram');
         }
-        if (data['2400'][0].containsKey('2405')) {
-          List<dynamic> filtersJson = data['2400'][0]['2405'];
-          filtersCentral = [];
-          filtersLocal = [];
+        // if (data['2400'][0].containsKey('2405')) {
+        //   List<dynamic> filtersJson = data['2400'][0]['2405'];
+        //   filtersCentral = [];
+        //   filtersLocal = [];
+        //
+        //   for (var filter in filtersJson) {
+        //     if (filter['Type'] == 1) {
+        //       filtersCentral.add(filter);
+        //     } else if (filter['Type'] == 2) {
+        //       filtersLocal.add(filter);
+        //     }
+        //   }
+        // }
+        //
+        // if (data['2400'][0].containsKey('2406')) {
+        //   List<dynamic> fertilizerJson = data['2400'][0]['2406'];
+        //   fertilizerCentral = [];
+        //   fertilizerLocal = [];
+        //
+        //   for (var fertilizer in fertilizerJson) {
+        //     if (fertilizer['Type'] == 1) {
+        //       for(var channel in fertilizer['Fertilizer']){
+        //         channel['proportionalStatus'] = channel['Status'];
+        //       }
+        //       fertilizerCentral.add(fertilizer);
+        //     } else if (fertilizer['Type'] == 2) {
+        //       for(var channel in fertilizer['Fertilizer']){
+        //         channel['proportionalStatus'] = channel['Status'];
+        //       }
+        //       fertilizerLocal.add(fertilizer);
+        //     }
+        //   }
+        // }
 
-          for (var filter in filtersJson) {
-            if (filter['Type'] == 1) {
-              filtersCentral.add(filter);
-            } else if (filter['Type'] == 2) {
-              filtersLocal.add(filter);
-            }
-          }
-        }
-
-        if (data['2400'][0].containsKey('2406')) {
-          List<dynamic> fertilizerJson = data['2400'][0]['2406'];
-          fertilizerCentral = [];
-          fertilizerLocal = [];
-
-          for (var fertilizer in fertilizerJson) {
-            if (fertilizer['Type'] == 1) {
-              for(var channel in fertilizer['Fertilizer']){
-                channel['proportionalStatus'] = channel['Status'];
-              }
-              fertilizerCentral.add(fertilizer);
-            } else if (fertilizer['Type'] == 2) {
-              for(var channel in fertilizer['Fertilizer']){
-                channel['proportionalStatus'] = channel['Status'];
-              }
-              fertilizerLocal.add(fertilizer);
-            }
-          }
-        }
-
-        if (data['2400'][0].containsKey('2407')) {
-          List<dynamic> items = data['2400'][0]['2407'];
-          irrigationPump = items.where((item) => item['Type'] == 2).toList();
-          irrigationPump.sort((a,b) => a['S_No'].compareTo(b['S_No']));
-          if(dataFromHttp){
-            for(var pump in irrigationPump){
-              pump['Status'] = 0;
-              pump['Program'] = '';
-            }
-          }
-          sourcePump = items.where((item) => item['Type'] == 1).toList();
-          if(dataFromHttp){
-            for(var pump in sourcePump){
-              pump['Status'] = 0;
-            }
-          }
-          sourcePump.sort((a,b) => a['S_No'].compareTo(b['S_No']));
-        }
 
         if (data['2400'][0].containsKey('2409')) {
           alarmList = data['2400'][0]['2409'];
@@ -686,47 +395,16 @@ class MqttPayloadProvider with ChangeNotifier {
       print('Error parsing JSON: $e');
       print('Stacktrace while parsing json : $stackTrace');
     }
-    if(irrigationPump.isEmpty){
-      loading = true;
-    }else{
-      loading = false;
-    }
+    // if(irrigationPump.isEmpty){
+    //   loading = true;
+    // }else{
+    //   loading = false;
+    // }
     tryingToGetPayload = 0;
     notifyListeners();
 
-    for(var i in currentSchedule){
-      for(var centralFilteration in filtersCentral){
-        if(i['CentralFilterSite'] == centralFilteration['FilterSite']){
-          centralFilteration['Program'] = i['ProgName'];
-          for(var filter in centralFilteration['FilterStatus']){
-            if(![1,2].contains(filter['Status'])){
-              filter['Status'] = 0;
-            }
-          }
-        }
-      }
-      for(var localFilteration in filtersLocal){
-        if(i['LocalFilterSite'] == localFilteration['FilterSite']){
-          localFilteration['Program'] = i['ProgName'];
-          for(var filter in localFilteration['FilterStatus']){
-            if(![1,2].contains(filter['Status'])){
-              filter['Status'] = 0;
-            }
-          }
-        }
-      }
-      for(var line in sensorInLines){
-        if(i['ProgCategory'].split('_').contains(line['Line'])){
-          line['Program'] = i['ProgName'];
-        }
-      }
-    }
-    updateSourcePump();
-    updateIrrigationPump();
-    updateLocalFertigationSite();
-    updateCentralFertigationSite();
-    updateCentralFiltrationSite();
-    updateLocalFiltrationSite();
+
+
     // updateCurrentSchedule();
     notifyListeners();
   }
@@ -747,22 +425,32 @@ class MqttPayloadProvider with ChangeNotifier {
   //assets/mob_dashboard/sump.svg
 
   Future<void> updateDashboardPayload(Map<String, dynamic> payload) async{
+
+
+
+
      _dashboardLiveInstance = SiteModel.fromJson(payload);
-     sourcePump = _dashboardLiveInstance!.data[0].master[0].config.pump.where((e) => e.type == 1).toList().map((element) => element.toJson()).toList();
-     irrigationPump = _dashboardLiveInstance!.data[0].master[0].config.pump.where((e) => e.type == 2).toList().map((element) => element.toJson()).toList();
-     sourcetype = _dashboardLiveInstance!.data[0].master[0].config.waterSource.map((element) => element.toJson()).toList();
-     fertilizerCentral = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite.where((e) => e.siteMode == 1).toList().map((element) => element.toJson()).toList();
-     fertilizerLocal = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite.where((e) => e.siteMode == 2).toList().map((element) => element.toJson()).toList();
-     fertilizersdashboard = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite;
-     // filtersCentral = _dashboardLiveInstance!.data[0].master[0].config.filterSite.where((e) => e.siteMode == 1).toList().map((element) => element.filters.map((ele) => ele.toJson())).toList();
-     filtersCentral = _dashboardLiveInstance!.data[0].master[0].config.filterSite.where((e) => e.siteMode == 1).toList().expand((element) => element.filters.map((ele) => ele.toJson())).toList();
-     filtersLocal = _dashboardLiveInstance!.data[0].master[0].config.filterSite.where((e) => e.siteMode == 2).toList().expand((element) => element.filters.map((ele) => ele.toJson())).toList();
+
+     waterSourceMobDash = _dashboardLiveInstance!.data[0].master[0].config.waterSource;
+     filterSiteMobDash = _dashboardLiveInstance!.data[0].master[0].config.filterSite;
+     fertilizerSiteMobDash = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite;
+     irrLineDataMobDash = _dashboardLiveInstance!.data[0].master[0].config.lineData;
+
+     // sourcePump = _dashboardLiveInstance!.data[0].master[0].config.pump.where((e) => e.type == 1).toList().map((element) => element).toList();
+     // irrigationPump = _dashboardLiveInstance!.data[0].master[0].config.pump.where((e) => e.type == 2).toList().map((element) => element).toList();
+     // sourcetype = _dashboardLiveInstance!.data[0].master[0].config.waterSource.map((element) => element).toList();
+     // fertilizerCentral = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite.where((e) => e.siteMode == 1).toList().map((element) => element).toList();
+     // fertilizerLocal = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite.where((e) => e.siteMode == 2).toList().map((element) => element).toList();
+     // fertilizersdashboard = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite;
+     // // filtersCentral = _dashboardLiveInstance!.data[0].master[0].config.filterSite.where((e) => e.siteMode == 1).toList().map((element) => element.filters.map((ele) => ele.toJson())).toList();
+     // filtersCentral = _dashboardLiveInstance!.data[0].master[0].config.filterSite.where((e) => e.siteMode == 1).toList().expand((element) => element.filters.map((ele) => ele)).toList();
+     // filtersLocal = _dashboardLiveInstance!.data[0].master[0].config.filterSite.where((e) => e.siteMode == 2).toList().expand((element) => element.filters.map((ele) => ele)).toList();
 
       // lineData = _dashboardLiveInstance!.data[0].master[0].config.lineData.map((element) => element).toList();
-      print("filtersCentral :::: $filtersCentral");
-     filtersCentral.forEach((element) {
-       print(element);
-     });
+     //  print("filtersCentral :::: $filtersCentral");
+     // filtersCentral.forEach((element) {
+     //   print(element);
+     // });
      notifyListeners();
   }
 

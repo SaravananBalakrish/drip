@@ -1,3 +1,4 @@
+/*
 import 'dart:convert';
 import 'package:flutter/animation.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,7 +20,7 @@ import '../../services/mqtt_manager_mobile.dart';
 import '../NewIrrigationProgram/preview_screen.dart';
 import '../NewIrrigationProgram/schedule_screen.dart';
 import 'customerdashboard.dart';
- 
+
 
 double _calculatePosition(int index,double controllerValue) {
   double basePosition = initialPosition + (index * gap);
@@ -891,7 +892,8 @@ class _GetPumpAlertBoxState extends State<GetPumpAlertBox> {
                               ),
                             ),
                           ) : Container(),
-                          /*setActualwidget(sNo: payloadProvider.sourcePump[widget
+                          */
+/*setActualwidget(sNo: payloadProvider.sourcePump[widget
                               .index]['S_No'],
                               imei: widget.imeiNo ?? '',
                               setValue: payloadProvider.sourcePump[widget
@@ -901,7 +903,8 @@ class _GetPumpAlertBoxState extends State<GetPumpAlertBox> {
                               pumponoffStatus: '${payloadProvider
                                   .sourcePump[widget.index]['Status']}',
                               reasonCode: payloadProvider.sourcePump[widget
-                                  .index]['OnOffReason'] ?? ''),*/
+                                  .index]['OnOffReason'] ?? ''),*//*
+
 
                           SizedBox(height: 20,),
                           Row(
@@ -1160,7 +1163,8 @@ class _GetPumpAlertBoxState extends State<GetPumpAlertBox> {
                 Text(ActualValue)
               ],
             ),
-            /* Center(
+            */
+/* Center(
               child:  ['3','4','5','6','21','22','23','24','25','26','27','28','29','30','31'].contains(reasonCode) ?  TextButton(
                 onPressed: (){
                   if(mounted) {
@@ -1179,7 +1183,8 @@ class _GetPumpAlertBoxState extends State<GetPumpAlertBox> {
                 ),
                 child: Text('Reset'),
               ) : Container(),
-            ),*/
+            ),*//*
+
           ],
         ),
       ),
@@ -2462,4 +2467,4 @@ class MyFutureBuilderForSensorGraph extends StatelessWidget {
     );
   }
 
-}
+}*/

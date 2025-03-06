@@ -135,8 +135,7 @@ class ValveWidget extends StatelessWidget {
                     ? 'assets/png_images/valve_orange.png'
                     : 'assets/png_images/valve_red.png',
               ),
-              const SizedBox(height: 4),
-              Text(
+               Text(
                 vl.name,
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 10, color: Colors.black54),
