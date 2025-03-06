@@ -643,7 +643,7 @@ class Channel {
       type: json['type'],
       controllerId: json['controllerId'],
       count: json['count'],
-      level: json['level'],
+      level: json['level'].toDouble(),
     );
   }
 }

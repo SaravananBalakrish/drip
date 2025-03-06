@@ -86,6 +86,11 @@ class MqttPayloadProvider with ChangeNotifier {
   List<String> nodeLiveMessage = [];
   List<String> outputOnOffLiveMessage = [];
 
+  List<WaterSource> waterSourceMobDash = [];
+  List<FilterSite> filterSiteMobDash = [];
+  List<FertilizerSite> fertilizerSiteMobDash = [];
+  List<IrrigationLineData>? irrLineDataMobDash = [];
+
 
   void editSensorLogData(data){
     sensorLogData = data;
@@ -475,7 +480,7 @@ class MqttPayloadProvider with ChangeNotifier {
         notifyListeners();
       }
 
-     /* if(data['liveSyncDate'] != null){
+      /* if(data['liveSyncDate'] != null){
         String dateStr = data['liveSyncDate'];
         String timeStr = data['liveSyncTime'];
         // Parse date string
@@ -761,17 +766,19 @@ class MqttPayloadProvider with ChangeNotifier {
   //assets/mob_dashboard/sump.svg
 
   Future<void> updateDashboardPayload(Map<String, dynamic> payload) async{
-     _dashboardLiveInstance = SiteModel.fromJson(payload);
-     // sourcePump = _dashboardLiveInstance!.data[0].master[0].config.pump.where((e) => e.type == 1).toList().map((element) => element.toJson()).toList();
-     // irrigationPump = _dashboardLiveInstance!.data[0].master[0].config.pump.where((e) => e.type == 2).toList().map((element) => element.toJson()).toList();
-     sourcetype = _dashboardLiveInstance!.data[0].master[0].config.waterSource.map((element) => element).toList();
-     fertilizerCentral = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite.where((e) => e.siteMode == 1).toList().map((element) => element).toList();
-     fertilizerLocal = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite.where((e) => e.siteMode == 2).toList().map((element) => element).toList();
-     filtersCentral = _dashboardLiveInstance!.data[0].master[0].config.filterSite.where((e) => e.siteMode == 1).toList().map((element) => element).toList();
-     filtersLocal = _dashboardLiveInstance!.data[0].master[0].config.filterSite.where((e) => e.siteMode == 2).toList().map((element) => element).toList();
-     // lineData = _dashboardLiveInstance!.data[0].master[0].config.lineData.map((element) => element).toList();
-      print("sourcePump :::: $sourcePump");
-     notifyListeners();
+    _dashboardLiveInstance = SiteModel.fromJson(payload);
+    waterSourceMobDash = _dashboardLiveInstance!.data[0].master[0].config.waterSource;
+    filterSiteMobDash = _dashboardLiveInstance!.data[0].master[0].config.filterSite;
+    fertilizerSiteMobDash = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite;
+    irrLineDataMobDash = _dashboardLiveInstance!.data[0].master[0].config.lineData;
+
+      sourcetype = _dashboardLiveInstance!.data[0].master[0].config.waterSource.map((element) => element).toList();
+    fertilizerCentral = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite.where((e) => e.siteMode == 1).toList().map((element) => element).toList();
+    fertilizerLocal = _dashboardLiveInstance!.data[0].master[0].config.fertilizerSite.where((e) => e.siteMode == 2).toList().map((element) => element).toList();
+    filtersCentral = _dashboardLiveInstance!.data[0].master[0].config.filterSite.where((e) => e.siteMode == 1).toList().map((element) => element).toList();
+    filtersLocal = _dashboardLiveInstance!.data[0].master[0].config.filterSite.where((e) => e.siteMode == 2).toList().map((element) => element).toList();
+     print("sourcePump :::: $sourcePump");
+    notifyListeners();
   }
 
   Timer? _timerForPumpController;
