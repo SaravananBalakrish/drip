@@ -79,8 +79,9 @@ class MqttPayloadProvider with ChangeNotifier {
 
   //kamaraj
   int wifiStrength = 0;
-  String liveDataAndTime = '';
+  String liveDateAndTime = '';
   List<String> nodeLiveMessage = [];
+  List<String> outputOnOffLiveMessage = [];
 
 
   void editSensorLogData(data){
@@ -460,9 +461,10 @@ class MqttPayloadProvider with ChangeNotifier {
 
       //live payload
       if(data['mC']=='2400'){
-        liveDataAndTime = '${data['cD']} ${data['cT']}';
+        liveDateAndTime = '${data['cD']} ${data['cT']}';
         wifiStrength = data['cM']['WifiStrength'];
         updateNodeLiveMessage(data['cM']['2401'].split(";"));
+        updateOutputONOffLiveMessage(data['cM']['2402'].split(";"));
         notifyListeners();
       }
 
@@ -789,6 +791,10 @@ class MqttPayloadProvider with ChangeNotifier {
 
   void updateNodeLiveMessage(List<String> message) {
     nodeLiveMessage = message;
+  }
+
+  void updateOutputONOffLiveMessage(List<String> message) {
+    outputOnOffLiveMessage = message;
   }
 
   void saveUnits(List<dynamic> units) {
