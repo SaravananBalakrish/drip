@@ -465,6 +465,7 @@ class MqttPayloadProvider with ChangeNotifier {
       // Todo : Dashboard payload start
       Map<String, dynamic> data = jsonDecode(payload);
 
+      print("data from controller ::: $data");
       //live payload
       if(data['mC']=='2400'){
         liveDataAndTime = '${data['cD']} ${data['cT']}';
