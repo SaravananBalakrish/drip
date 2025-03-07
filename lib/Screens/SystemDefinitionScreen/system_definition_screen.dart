@@ -20,14 +20,14 @@ import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.
 class SystemDefinition extends StatefulWidget {
   final int userId;
   final int controllerId;
-  final int menuId;
+  final int customerId;
   final String deviceId;
   const SystemDefinition({
     super.key,
     required this.userId,
     required this.controllerId,
     required this.deviceId,
-    required this.menuId,
+    required this.customerId,
   });
 
   @override
@@ -93,27 +93,33 @@ class _SystemDefinitionState extends State<SystemDefinition> {
         body: (systemDefinitionProvider.irrigationLineSystemData != null)
             ? LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            return Row(
+            return Column(
               children: [
-                if (screenSize >= 600)
-                  buildCustomSideMenuBar(
-                    context: context,
-                    title: "System Definition",
-                    constraints: constraints,
-                    children: [
-                      for(var i = 0; i < systemDefinitionProvider.irrigationLineSystemData!.length; i++)
-                        AppProperties.buildSideBarMenuList(
-                          context: context,
-                          constraints: constraints,
-                          title: systemDefinitionProvider.irrigationLineSystemData![i].name,
-                          dataList: systemDefinitionProvider.irrigationLineSystemData!.map((e) => e.name).toList(),
-                          index: i,
-                          selected: systemDefinitionProvider.selectedIrrigationLine == i,
-                          onTap: (index) {
-                            systemDefinitionProvider.updateSelectedProgramCategory(index);
-                          },
-                        ),
-                    ],
+                if(screenSize >= 600)
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: LayoutBuilder(
+                      builder: (BuildContext context, BoxConstraints constraints){
+                        return Row(
+                          children: [
+                            for(var i = 0; i < systemDefinitionProvider.irrigationLineSystemData!.length; i++)
+                              SizedBox(
+                                width: 200,
+                                child: AppProperties.buildSideBarMenuList(
+                                  context: context,
+                                  title: systemDefinitionProvider.irrigationLineSystemData![i].name,
+                                  dataList: systemDefinitionProvider.irrigationLineSystemData!.map((e) => e.name).toList(),
+                                  index: i,
+                                  selected: systemDefinitionProvider.selectedIrrigationLine == i,
+                                  onTap: (index) {
+                                    systemDefinitionProvider.updateSelectedProgramCategory(index);
+                                  }, constraints: constraints,
+                                ),
+                              ),
+                          ],
+                        );
+                      },
+                    ),
                   ),
                 Expanded(
                   child: ListView.builder(

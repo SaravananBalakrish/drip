@@ -14,6 +14,7 @@ import '../../repository/repository.dart';
 import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
 
 import '../../utils/environment.dart';
+import '../NewIrrigationProgram/program_library.dart';
 
 const payloadTopic = "AppToFirmware";
 
@@ -402,15 +403,14 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     // print("payloadForGem ==> $payloadForGem");
 
     try {
-      MqttManager().topicToPublishAndItsMessage('${Environment.mqttPublishTopic}/${widget.deviceId}', jsonEncode(payloadForSlave));
-     /* if(preferenceProvider.passwordValidationCode != 200 && isToGem) {
-        MQTTManager().publish(jsonEncode(payloadForSlave), "AppToFirmware/${preferenceProvider.generalData!.deviceId}");
-      }*/
+      if(preferenceProvider.passwordValidationCode != 200 && isToGem) {
+        MqttManager().topicToPublishAndItsMessage('${Environment.mqttPublishTopic}/${widget.deviceId}', jsonEncode(payloadForSlave));
+      }
       bool isLevelSettingChanged = preferenceProvider.individualPumpSetting!.any((pump) => pump.settingList.any((setting) => setting.type == 210 && setting.changed));
 
       bool isAnyOtherChanged = preferenceProvider.commonPumpSettings!.any((pump) => pump.settingList.any((setting) => setting.changed));
 
-      /*if([1, 2].contains(preferenceProvider.generalData!.categoryId)) {
+      if([1, 2].contains(preferenceProvider.generalData!.categoryId)) {
         await validatePayloadSent(
             dialogContext: context,
             context: context,
@@ -422,9 +422,9 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             },
             payload: payloadForSlave,
             payloadCode: "400",
-            deviceId: preferenceProvider.generalData!.deviceId
+            deviceId: widget.deviceId
         );
-      }*/
+      }
 
       if (preferenceProvider.commonPumpSettings!.isNotEmpty && !(isLevelSettingChanged && !isAnyOtherChanged)) {
         if(isToGem ? preferenceProvider.generalData!.controllerReadStatus == "1" : true) {
@@ -448,7 +448,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                     pumpIndex++;
                   }
                   for (var individualPumpSetting in individualPump.settingList) {
-                    switch (individualPumpSetting.pumpType) {
+                    switch (individualPumpSetting.type) {
                       case 23:
                         if(key.contains("400-$pumpIndex")) individualPumpSetting.controllerReadStatus= "0";
                         break;
@@ -561,7 +561,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
               pumpIndex++;
             }
             for (var individualPumpSetting in individualPump.settingList) {
-              switch (individualPumpSetting.pumpType) {
+              switch (individualPumpSetting.type) {
                 case 203:
                   if (!sendAll ? individualPumpSetting.changed : true) {
                     final payload = jsonEncode({"400-$pumpIndex": jsonEncode({"sentSms": 'currentconfig,$pumpIndex,${getSettingValue(individualPumpSetting)}'})});
@@ -634,7 +634,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
               pumpIndex++;
             }
             for (var individualPumpSetting in individualPump.settingList) {
-              switch (individualPumpSetting.pumpType) {
+              switch (individualPumpSetting.type) {
                 case 203:
                   if (!sendAll ? (individualPumpSetting.controllerReadStatus == "0") : true) {
                     final payload = jsonEncode({"400-$pumpIndex": jsonEncode({"sentSms": 'currentconfig,$pumpIndex,${getSettingValue(individualPumpSetting)}'})});
@@ -1007,7 +1007,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
           mqttPayloadProvider: mqttPayloadProvider,
           payload: payload[i],
           index: i,
-          deviceId: preferenceProvider.generalData!.deviceId,
+          deviceId: widget.deviceId,
           key: key,
           isToGem: isToGem,
           total: payload.length

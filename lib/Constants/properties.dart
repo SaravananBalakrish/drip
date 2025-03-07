@@ -164,8 +164,8 @@ class AppProperties {
             onTap: () {
               onTap(index);
             },
-            selectedTileColor: selected ? const Color(0xff2999A9)  : null,
-            hoverColor: selected ? const Color(0xff2999A9) : null
+            selectedTileColor: selected ? Theme.of(context).primaryColor  : null,
+            hoverColor: selected ? Theme.of(context).primaryColor : null
         ),
       ) :
       InkWell(
@@ -181,7 +181,9 @@ class AppProperties {
                   // boxShadow: customBoxShadow2,
                   gradient: selected ? linearGradientLeading : null,
                   border: Border.all(color: Theme.of(context).primaryColor, width: 0.3),
-                  color: selected ? Theme.of(context).primaryColor : const Color(0xffF2F2F2)
+                  color: selected
+                      ? Theme.of(context).primaryColor
+                      : const Color(0xffF2F2F2)
               ),
               child: Center(
                   child: child ?? Text(title, style: TextStyle(color: selected ? Colors.white : Theme.of(context).primaryColor),)

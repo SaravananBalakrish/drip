@@ -152,6 +152,8 @@ class Repository{
     return await apiService.postRequest('/user/planning/filterBackwashing/create', body);
   }
 
+
+  ///Todo: Program urls
   Future<http.Response> getUserProgramSequence(body) async {
     return await apiService.postRequest('/user/program/sequence/get', body);
   }
@@ -213,6 +215,7 @@ class Repository{
   }
 
 
+  ///Todo: Preference urls
   Future<http.Response> getUserPreferenceSetting(body) async {
     return await apiService.postRequest('/user/preference/setting/get', body);
   }
@@ -237,6 +240,8 @@ class Repository{
     return await apiService.postRequest('/user/check', body);
   }
 
+
+  ///Todo: System definition urls
   Future<http.Response> getUserPlanningSystemDefinition(body) async {
     return await apiService.postRequest('/user/planning/systemDefinition/get', body);
   }
@@ -245,6 +250,8 @@ class Repository{
     return await apiService.postRequest('/user/planning/systemDefinition/create', body);
   }
 
+
+  ///Todo: Other planning urls
   Future<http.Response> getUserPlanningValveGroup(body) async {
     return await apiService.postRequest('/user/planning/valveGroup/get', body);
   }
@@ -272,6 +279,11 @@ class Repository{
 
   Future<http.Response> updateStandAloneData(body) async {
     return await apiService.postRequest('/user/manualOperation/create', body);
+  }
+
+  ///Todo: Other urls
+  Future<http.Response> getPlanningHiddenMenu(body) async {
+    return await apiService.postRequest('/user/dealerDefinition/mainMenu/get', body);
   }
 
 }

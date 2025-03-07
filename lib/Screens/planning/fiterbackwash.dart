@@ -16,10 +16,11 @@ import '../../StateManagement/overall_use.dart';
 import '../../Widgets/HoursMinutesSeconds.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
-import '../../services/mqtt_manager_mobile.dart';
 import '../../utils/snack_bar.dart';
 import '../NewIrrigationProgram/program_library.dart';
 import '../NewIrrigationProgram/water_and_fertilizer_screen.dart';
+import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
+
 class FilterBackwashUI extends StatefulWidget {
   final int userId;
   final int controllerId;
@@ -27,7 +28,7 @@ class FilterBackwashUI extends StatefulWidget {
   final String deviceId;
   final bool fromDealer;
   const FilterBackwashUI(
-      {Key? key, required this.userId, required this.controllerId, required this.customerId, required this.deviceId, required this.fromDealer,});
+      {super.key, required this.userId, required this.controllerId, required this.customerId, required this.deviceId, required this.fromDealer,});
 
   @override
   State<FilterBackwashUI> createState() => _FilterBackwashUIState();
@@ -53,7 +54,6 @@ class _FilterBackwashUIState extends State<FilterBackwashUI>
   }
 
   Future<void> fetchData() async {
-    print("widget userId${widget.userId},customer${widget.customerId},controlle${widget.controllerId},device${widget.deviceId},");
     var overAllPvd = Provider.of<OverAllUse>(context,listen: false);
     final prefs = await SharedPreferences.getInstance();
        try{
@@ -68,7 +68,6 @@ class _FilterBackwashUIState extends State<FilterBackwashUI>
         setState(() {
           var jsonData = jsonDecode(getUserDetails.body);
           _filterbackwash = Filterbackwash.fromJson(jsonData);
-          MqttManager().connect();
         });
       } else {
         //_showSnackBar(response.body);
@@ -90,8 +89,6 @@ class _FilterBackwashUIState extends State<FilterBackwashUI>
 
   @override
   Widget build(BuildContext context) {
-    print("_filterbackwash.code ${_filterbackwash.code}");
-    // print("_filterbackwash.data!.filterBackwashing!.isEmpty ${_filterbackwash.data!.filterBackwashing!.isEmpty}");
     mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: true);
     if (_filterbackwash.code != 200) {
       return Center(
@@ -288,7 +285,7 @@ class _FilterBackwashUIState extends State<FilterBackwashUI>
                           ),
                         ),
                       ),
-                    for (var i = 1; i < Listofvalue!.length; i++)
+                    for (var i = 1; i < Listofvalue.length; i++)
                       SizedBox(
                         width: 400,
                         height: 60,
@@ -1089,42 +1086,42 @@ class _FilterBackwashUIState extends State<FilterBackwashUI>
       ) {
     String mqttData = '';
     for (var i = 0; i < data!.filterBackwashing!.length; i++) {
-      double sno = data!.filterBackwashing![i].sNo!;
-      int id = data!.filterBackwashing![i].objectId!;
+      double sno = data.filterBackwashing![i].sNo!;
+      int id = data.filterBackwashing![i].objectId!;
       List<String> time = [];
-      for (var j = 0; j < data!.filterBackwashing![i].filter![0].value.length; j++) {
-        time.add('${data!.filterBackwashing![i].filter![0].value[j]['value']}');
+      for (var j = 0; j < data.filterBackwashing![i].filter![0].value.length; j++) {
+        time.add('${data.filterBackwashing![i].filter![0].value[j]['value']}');
       }
       String flushingTime = time.join('_');
-      String filterInterval = data!.filterBackwashing![i].filter![1].value!.isEmpty
+      String filterInterval = data.filterBackwashing![i].filter![1].value!.isEmpty
           ? '00:00:00'
-          : '${data!.filterBackwashing![i].filter![1].value!}';
-      String flushingInterval = data!.filterBackwashing![i].filter![2].value!.isEmpty
+          : '${data.filterBackwashing![i].filter![1].value!}';
+      String flushingInterval = data.filterBackwashing![i].filter![2].value!.isEmpty
           ? '00:00:00'
-          : '${data!.filterBackwashing![i].filter![2].value!}';
+          : '${data.filterBackwashing![i].filter![2].value!}';
       String whileFlushing = '2';
-      if (data!.filterBackwashing![i].filter![3].value! == 'Continue Irrigation') {
+      if (data.filterBackwashing![i].filter![3].value! == 'Continue Irrigation') {
         whileFlushing = '1';
-      } else if (data!.filterBackwashing![i].filter![3].value! == 'Stop Irrigation') {
+      } else if (data.filterBackwashing![i].filter![3].value! == 'Stop Irrigation') {
         whileFlushing = '2';
-      } else if (data!.filterBackwashing![i].filter![3].value! == 'No Fertilization') {
+      } else if (data.filterBackwashing![i].filter![3].value! == 'No Fertilization') {
         whileFlushing = '3';
-      } else if (data!.filterBackwashing![i].filter![3].value! == 'Open Valves') {
+      } else if (data.filterBackwashing![i].filter![3].value! == 'Open Valves') {
         whileFlushing = '4';
       }
       String cycles =
-      data!.filterBackwashing![i].filter![4].value!.isEmpty ? '0' : data!.filterBackwashing![i].filter![4].value!;
+      data.filterBackwashing![i].filter![4].value!.isEmpty ? '0' : data.filterBackwashing![i].filter![4].value!;
       String pressureValues =
-      data!.filterBackwashing![i].filter![5].value!.isEmpty ? '0' : data!.filterBackwashing![i].filter![5].value!;
-      String deltaPressureDelay = data!.filterBackwashing![i].filter![6].value!.isEmpty
+      data.filterBackwashing![i].filter![5].value!.isEmpty ? '0' : data.filterBackwashing![i].filter![5].value!;
+      String deltaPressureDelay = data.filterBackwashing![i].filter![6].value!.isEmpty
           ? '00:00:00'
-          : '${data!.filterBackwashing![i].filter![6].value!}';
-      String dwellTimeMainFilter = data!.filterBackwashing![i].filter![8].value!.isEmpty
+          : '${data.filterBackwashing![i].filter![6].value!}';
+      String dwellTimeMainFilter = data.filterBackwashing![i].filter![8].value!.isEmpty
           ? '00:00:00'
-          : '${data!.filterBackwashing![i].filter![8].value!}';
-      String afterDeltaPressureDelay = data!.filterBackwashing![i].filter![7].value!.isEmpty
+          : '${data.filterBackwashing![i].filter![8].value!}';
+      String afterDeltaPressureDelay = data.filterBackwashing![i].filter![7].value!.isEmpty
           ? '00:00:00'
-          : '${data!.filterBackwashing![i].filter![7].value!}';
+          : '${data.filterBackwashing![i].filter![7].value!}';
       mqttData +=
       '$sno,$id,$flushingTime,$filterInterval,$flushingInterval,$whileFlushing,$cycles,$pressureValues,$deltaPressureDelay,$dwellTimeMainFilter,$afterDeltaPressureDelay;';
     }
