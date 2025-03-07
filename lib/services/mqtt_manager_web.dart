@@ -13,6 +13,7 @@ class MqttManager {
   MqttBrowserClient? _client;
   String? currentTopic;
   final StreamController<Map<String, dynamic>?> _payloadController = StreamController.broadcast();
+  MqttPayloadProvider? providerState;
 
   Map<String, dynamic>? _payload;
   Map<String, dynamic>? get payload => _payload;
@@ -32,9 +33,9 @@ class MqttManager {
   bool get isConnected => _client?.connectionStatus?.state == MqttConnectionState.connected;
   MqttConnectionState get connectionState => _client!.connectionStatus!.state;
 
-  void initializeMQTTClient() {
+  void initializeMQTTClient(MqttPayloadProvider? state) {
     print('web mqtt manager is initialized');
-
+    providerState = state;
     String uniqueId = const Uuid().v4();
 
     String baseURL = Environment.mqttWebUrl;
@@ -100,8 +101,7 @@ class MqttManager {
     payload = jsonDecode(pt);
     print('Received message: $pt');
     print('payload updated: $payload');
-    // providerState?.updateReceivedPayload(pt,false);
-  }
+   }
 
   Future<void> topicToSubscribe(String topic) async {
     if (isConnected) {

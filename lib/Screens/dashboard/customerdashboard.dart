@@ -15,7 +15,7 @@ import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../StateManagement/overall_use.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
-import '../../services/mqtt_manager_web.dart';
+import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
 import '../../utils/Theme/oro_theme.dart';
 import '../../utils/constants.dart';
 import '../../utils/shared_preferences_helper.dart';
@@ -140,12 +140,7 @@ class _DashboardState extends State<MobDashboard>
     }
   }
 
-  void mqttConfigureAndConnect() {
-    MqttPayloadProvider payloadProvider =
-        Provider.of<MqttPayloadProvider>(context, listen: false);
-    manager.initializeMQTTClient();
-    manager.connect();
-  }
+
 
   @override
   void dispose() {
@@ -245,6 +240,38 @@ class _DashboardState extends State<MobDashboard>
         }
     }
     return lineMessage;
+  }
+
+  void autoRefresh()async{
+    String livePayload = '';
+    if(liveData[payloadProvider.selectedSite]
+        .master[payloadProvider.selectedMaster]
+        .categoryId==1 ||
+        liveData[payloadProvider.selectedSite]
+            .master[payloadProvider.selectedMaster]
+            .categoryId==2){
+      livePayload = jsonEncode({"3000": {"3001": ""}});
+    }else{
+      livePayload = jsonEncode({"sentSMS": "#live"});
+    }
+    // manager.subscribeToTopic('FirmwareToApp/${overAllPvd.imeiNo}');
+    manager.topicToSubscribe('FirmwareToApp/${liveData[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].deviceId}');
+    manager.topicToPublishAndItsMessage('AppToFirmware/${liveData[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].deviceId}',livePayload,);
+     // manager.publish(payloadProvider.publishMessage,'AppToFirmware/${overAllPvd.imeiNo}');
+    setState(() {
+      payloadProvider.tryingToGetPayload += 1;
+    });
+  }
+
+
+  Future onRefresh() async{
+    if(manager.isConnected){
+      autoRefresh();
+    }
+    if (mounted) {
+      setState(() {});
+    }
+    return Future.delayed(Duration(seconds: 5));
   }
 
   @override
@@ -479,7 +506,7 @@ class _DashboardState extends State<MobDashboard>
 
                                                                 print(
                                                                     "controllerType ==> ${overAllPvd.controllerType}");
-                                                                payloadProvider.updateReceivedPayload2(
+                                                                payloadProvider.updateReceivedPayload(
                                                                     jsonEncode([
                                                                       3,
                                                                       4
@@ -620,7 +647,7 @@ class _DashboardState extends State<MobDashboard>
                                                                                 null) {
                                                                               payloadProvider.editLineData(payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['irrigationLine']);
                                                                             }
-                                                                            payloadProvider.updateReceivedPayload2(
+                                                                            payloadProvider.updateReceivedPayload(
                                                                                 jsonEncode([3, 4].contains(overAllPvd.controllerType)
                                                                                     ? {
                                                                                         "mC": "LD01",
@@ -950,7 +977,7 @@ class _DashboardState extends State<MobDashboard>
                                                 'FirmwareToApp/${overAllPvd.imeiNo}');
 
                                             payloadProvider
-                                                .updateReceivedPayload2(
+                                                .updateReceivedPayload(
                                                     jsonEncode([3, 4].contains(
                                                             overAllPvd
                                                                 .controllerType)
@@ -2574,22 +2601,7 @@ class _DashboardState extends State<MobDashboard>
     );
   }
 
-  void autoRefresh() async {
-    // manager.subscribeToTopic('FirmwareToApp/${overAllPvd.imeiNo}');
-    // manager.publish(payloadProvider.publishMessage,'AppToFirmware/${overAllPvd.imeiNo}');
-    // setState(() {
-    //   payloadProvider.tryingToGetPayload += 1;
-    // });
-  }
-  Future onRefresh() async {
-    if (manager.isConnected) {
-      autoRefresh();
-    }
-    if (mounted) {
-      setState(() {});
-    }
-    return Future.delayed(const Duration(seconds: 5));
-  }
+
 
   getTextScaleFactor(context) {
     return MediaQuery.of(context).textScaleFactor;

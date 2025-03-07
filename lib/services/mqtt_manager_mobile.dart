@@ -6,12 +6,14 @@ import 'dart:async';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:uuid/uuid.dart';
 
+import '../StateManagement/mqtt_payload_provider.dart';
 import '../utils/environment.dart';
 
 class MqttManager {
   static MqttManager? _instance;
   MqttServerClient? _client;
   final StreamController<Map<String, dynamic>?> _payloadController = StreamController.broadcast();
+  MqttPayloadProvider? providerState;
 
   Map<String, dynamic>? _payload;
   Map<String, dynamic>? get payload => _payload;
@@ -34,13 +36,16 @@ class MqttManager {
 
   String? currentSubscribedTopic;
 
-  void initializeMQTTClient() {
-    print('mobile mqtt manager is initialized');
+  void initializeMQTTClient(MqttPayloadProvider? state) {
+
 
     String uniqueId = const Uuid().v4();
-
+    providerState = state;
     int port = Environment.mqttMobilePort;
     String baseURL = Environment.mqttMobileUrl;
+    print('mobile mqtt manager is initialized');
+    print('port : ${port}');
+    print('baseURL : ${baseURL}');
 
     if (_client == null) {
       _client = MqttServerClient(baseURL, uniqueId);
@@ -52,6 +57,7 @@ class MqttManager {
       _client!.onConnected = onConnected;
       _client!.onSubscribed = onSubscribed;
       final MqttConnectMessage connMess = MqttConnectMessage()
+          .authenticateAs('imsmqtt', '2L9((WonMr')
           .withClientIdentifier(uniqueId)
           .withWillTopic('will-topic')
           .withWillMessage('My Will message')
@@ -62,6 +68,8 @@ class MqttManager {
 
     }
   }
+
+
 
   Future<void> connect() async {
     print('connect function called.....');
@@ -100,6 +108,7 @@ class MqttManager {
     final MqttPublishMessage recMess = c![0].payload as MqttPublishMessage;
     final String pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
     payload = jsonDecode(pt);
+    onMqttPayloadReceived(pt);
     print('Received message: $pt');
     // providerState?.updateReceivedPayload(pt,false);
   }
@@ -147,6 +156,17 @@ class MqttManager {
     }
   }
 
+  void onMqttPayloadReceived(String payload) {
+    try {
+      Map<String, dynamic> payloadMessage = jsonDecode(payload);
+      if (payloadMessage['mC']=='2400') {
+        print("onMqttPayloadReceived -----> $payload");
+        providerState?.updateReceivedPayload(payload, false);
+      }
+    } catch (e) {
+      debugPrint('Error parsing MQTT payload: $e');
+    }
+  }
   /// The unsolicited disconnect callback
   void onDisconnected() async{
     await Future.delayed(const Duration(seconds: 5,));
@@ -175,4 +195,5 @@ class MqttManager {
       print('Mosquitto client connected....');
     }
   }
+
 }

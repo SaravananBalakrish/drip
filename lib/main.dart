@@ -17,7 +17,8 @@ import 'flavors.dart';
 
 FutureOr<void> main() async {
   MqttManager mqttManager = MqttManager();
-  mqttManager.initializeMQTTClient();
+  MqttPayloadProvider myMqtt = MqttPayloadProvider();
+  mqttManager.initializeMQTTClient(myMqtt);
   mqttManager.connect();
 
   runApp(
@@ -25,7 +26,7 @@ FutureOr<void> main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ConfigMakerProvider()),
         ChangeNotifierProvider(create: (_) => IrrigationProgramMainProvider()),
-        ChangeNotifierProvider(create: (_) => MqttPayloadProvider()),
+        ChangeNotifierProvider(create: (_) => myMqtt),
         ChangeNotifierProvider(create: (_) => OverAllUse()),
         ChangeNotifierProvider(create: (_) => PreferenceProvider()),
         ChangeNotifierProvider(create: (_) => SystemDefinitionProvider()),

@@ -1342,9 +1342,7 @@ class DisplayPumpStation extends StatelessWidget {
       default:
         imageName += '.png';
     }
-
     return Image.asset('assets/png_images/$imageName');
-
   }
 
   void updatePumpStatus(List<WaterSource> waterSource, List<dynamic> filteredPumpStatus) {
