@@ -130,7 +130,9 @@ class _DashboardState extends State<MobDashboard>
               .data[payloadProvider.selectedSite]
               .master[payloadProvider.selectedMaster]
               .deviceId);
+
         });
+       await onRefresh();
       }
       payloadProvider.httpError = false;
     } catch (e, stackTrace) {
@@ -1432,7 +1434,7 @@ class _DashboardState extends State<MobDashboard>
                           ), // PumpControllerDashboard(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : userId, deviceId: overAllPvd.imeiNo, controllerId: overAllPvd.controllerId, selectedSite: payloadProvider.selectedSite, selectedMaster: payloadProvider.selectedMaster,),
                   ),
                 ),
-                buildBottomNavigationBar(),
+                // buildBottomNavigationBar(),
               ],
             ))),
           )
