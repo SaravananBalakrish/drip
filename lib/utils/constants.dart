@@ -340,4 +340,7 @@ class AppConstants {
     return dataFormation;
   }
 
+  static Color outputColor = const Color(0xff7FAFD8);
+  static Color commonObjectColor = const Color(0xffC277CF);
+
 }

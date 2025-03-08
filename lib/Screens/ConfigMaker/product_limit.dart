@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 import '../../Constants/communication_codes.dart';
@@ -60,7 +61,7 @@ class _ProductLimitState extends State<ProductLimit> {
     return ProductLimitGridListTile(
       listOfObjectModel: filteredList,
       title: 'Common Object',
-      leadingColor: const Color(0xffDBDEFF),
+      leadingColor: AppConstants.commonObjectColor,
       configPvd: widget.configPvd,
     );
   }
@@ -70,7 +71,7 @@ class _ProductLimitState extends State<ProductLimit> {
     return ProductLimitGridListTile(
       listOfObjectModel: filteredList,
       title: 'Output Object',
-      leadingColor: const Color(0xffD2EAFF),
+      leadingColor: AppConstants.outputColor,
       configPvd: widget.configPvd,
     );
   }
@@ -103,12 +104,12 @@ class _ProductLimitState extends State<ProductLimit> {
           spacing: screenWidth > 500 ? 30 : 10,
           children: [
             ColorLegend(
-              color: const Color(0xffDBDEFF),
+              color: AppConstants.commonObjectColor,
               message: 'Common Object',
               screenWidth: screenWidth,
             ),
             ColorLegend(
-              color: const Color(0xffD2EAFF),
+              color: AppConstants.outputColor,
               message: 'Output : ${getRelayLatchCount(widget.listOfDevices) - balanceCountForRelayLatch(widget.configPvd)}/${getRelayLatchCount(widget.listOfDevices)}',
               screenWidth: screenWidth,
             ),
