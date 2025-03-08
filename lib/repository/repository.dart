@@ -265,11 +265,12 @@ class Repository{
   Future<http.Response> fetchUserManualOperation(body) async {
     return await apiService.postRequest('/user/manualOperation/recent/get', body);
   }
-
-  Future<http.Response> createUserValveGroup(body) async {
-    return await apiService.postRequest('/user/deviceList/create', body);
+  Future<http.Response> getUserValveGroup(body) async {
+    return await apiService.postRequest('/user/planning/valveGroup/get', body);
   }
-
+  Future<http.Response> createUserValveGroup(body) async {
+    return await apiService.postRequest('/user/planning/valveGroup/create', body);
+  }
   Future<http.Response> fetchStandAloneData(body) async {
     return await apiService.postRequest('/user/getUserDashboardByManual', body);
   }

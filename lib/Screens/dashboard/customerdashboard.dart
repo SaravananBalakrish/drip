@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:oro_drip_irrigation/Screens/dashboard/schedule_program.dart';
 import 'package:oro_drip_irrigation/Screens/dashboard/sidedrawer.dart';
 import 'package:oro_drip_irrigation/views/customer/node_list.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone.dart';
@@ -23,6 +24,7 @@ import '../../utils/snack_bar.dart';
 import '../../views/customer/home_sub_classes/irrigation_line.dart';
 import '../NewIrrigationProgram/preview_screen.dart';
 import '../NewIrrigationProgram/schedule_screen.dart';
+import 'next_schedule.dart';
 
 final double speed = 100.0;
 final double gap = 100;
@@ -923,45 +925,10 @@ class _DashboardState extends State<MobDashboard>
                                                 'FirmwareToApp/${overAllPvd.imeiNo}';
                                             payloadProvider.selectedMaster =
                                                 master;
-                                            overAllPvd.editImeiNo((!overAllPvd
-                                                    .takeSharedUserId
-                                                ? liveData[payloadProvider
-                                                        .selectedSite]
-                                                    .master[payloadProvider
-                                                        .selectedMaster]
-                                                    .deviceName
-                                                : payloadProvider
-                                                                .listOfSharedUser[
-                                                            'devices'][
-                                                        payloadProvider
-                                                            .selectedMaster]
-                                                    ['deviceId']));
-                                            overAllPvd.editControllerType(
-                                                (!overAllPvd.takeSharedUserId
-                                                    ? liveData[payloadProvider
-                                                            .selectedSite]
-                                                        .master[payloadProvider
-                                                            .selectedMaster]
-                                                        .categoryId
-                                                    : payloadProvider
-                                                                    .listOfSharedUser[
-                                                                'devices'][
-                                                            payloadProvider
-                                                                .selectedMaster]
-                                                        ['categoryId']));
+                                            overAllPvd.editImeiNo((!overAllPvd.takeSharedUserId? liveData[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].deviceName: payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['deviceId']));
+                                            overAllPvd.editControllerType((!overAllPvd.takeSharedUserId ? liveData[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].categoryId : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['categoryId']));
                                             overAllPvd.editControllerId(
-                                                (!overAllPvd.takeSharedUserId
-                                                    ? liveData[payloadProvider
-                                                            .selectedSite]
-                                                        .master[payloadProvider
-                                                            .selectedMaster]
-                                                        .controllerId
-                                                    : payloadProvider
-                                                                    .listOfSharedUser[
-                                                                'devices'][
-                                                            payloadProvider
-                                                                .selectedMaster]
-                                                        ['controllerId']));
+                                                (!overAllPvd.takeSharedUserId ? liveData[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].controllerId : payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['controllerId']));
                                             var selectedMaster = !overAllPvd
                                                     .takeSharedUserId
                                                 ? liveData[payloadProvider
@@ -2686,11 +2653,11 @@ class _DashboardState extends State<MobDashboard>
                               Container(),
                               // CurrentScheduleForMobile(manager: manager, deviceId: '${overAllPvd.imeiNo}',),
                             if(selectedTab == 1)
-                              Container(),
-                              // NextScheduleForMobile(),
+                              // Container(),
+                              NextScheduleForMobile(),
                             if(selectedTab == 2)
-                              Container(),
-                              // ScheduleProgramForMobile(manager: manager, deviceId: '${overAllPvd.imeiNo}', selectedLine: payloadProvider.selectedLine, userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: overAllPvd.controllerId,),
+                              // Container(),
+                              ScheduleProgramForMobile(manager: manager, deviceId: '${overAllPvd.imeiNo}', selectedLine: payloadProvider.selectedLine, userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: overAllPvd.controllerId,),
                           ],
                         ),
                       ),
