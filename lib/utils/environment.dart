@@ -41,6 +41,7 @@ class Environment {
 
   static String get mqttWebUrl => config[F.name]?['mqttWebUrl'] ?? '';
   static String get mqttPublishTopic => config[F.name]?['publishTopic'] ?? '';
+  static String get mqttSubscribeTopic => config[F.name]?['subscribeTopic'] ?? '';
   static String get mqttMobileUrl => config[F.name]?['mqttMobileUrl'] ?? '';
   static int get mqttWebPort => config[F.name]?['mqttWebPort'] ?? 0;
   static int get mqttMobilePort => config[F.name]?['mqttMobilePort'] ?? 0;

@@ -884,6 +884,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         'payload' : jsonEncode(payloadToSend),
         'acknowledgementState' : HardwareAcknowledgementSate.notSent,
         'selected' : true,
+        'hardwareType' : HardwareType.pump
       });
     }
 
@@ -913,7 +914,8 @@ class ConfigMakerProvider extends ChangeNotifier{
         'payload' : jsonEncode(pumpPayload),
         'acknowledgementState' : HardwareAcknowledgementSate.notSent,
         'selected' : true,
-        'checkingCode' : '$pumpConfigCode'
+        'checkingCode' : '$pumpConfigCode',
+        'hardwareType' : HardwareType.pump
       });
       List<DeviceObjectModel> listOfFloat = listOfGeneratedObject.where((object) => (object.controllerId == p2000.controllerId && object.objectId == 40)).toList();
       List<DeviceObjectModel> listOfPump = listOfGeneratedObject.where((object) => (object.controllerId == p2000.controllerId && object.objectId == 5)).toList();
@@ -998,7 +1000,8 @@ class ConfigMakerProvider extends ChangeNotifier{
         'payload' : jsonEncode(payloadToSendForTankConfig),
         'acknowledgementState' : HardwareAcknowledgementSate.notSent,
         'selected' : true,
-        'checkingCode' : '$tankConfigCode'
+        'checkingCode' : '$tankConfigCode',
+        'hardwareType' : HardwareType.pump
       });
     }
 
