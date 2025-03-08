@@ -398,6 +398,9 @@ class _ConnectionState extends State<Connection> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Row(
+          spacing: 10,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             for(var categoryId in listOfCategory)
               InkWell(
@@ -414,9 +417,12 @@ class _ConnectionState extends State<Connection> {
                   widget.configPvd.updateSelectedConnectionNoAndItsType(0, '');
                   widget.configPvd.updateConnectionListTile();
                 },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 500),
+                  padding: EdgeInsets.symmetric(horizontal: 15,vertical: widget.configPvd.selectedCategory == categoryId ? 12 :10),
                   decoration: BoxDecoration(
+                      border: const Border(top: BorderSide(width: 0.5), left: BorderSide(width: 0.5), right: BorderSide(width: 0.5)),
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5)),
                       color: widget.configPvd.selectedCategory == categoryId ? Theme.of(context).primaryColor : Colors.grey.shade300
                   ),
                   child: Text(getDeviceCodeToString(categoryId), style: TextStyle(color: widget.configPvd.selectedCategory == categoryId ? Colors.white : Colors.black, fontSize: 13),),

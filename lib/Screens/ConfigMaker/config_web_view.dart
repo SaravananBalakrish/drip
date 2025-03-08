@@ -225,7 +225,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                       children: [
                         for(var payload in listOfPayload)
                           CheckboxListTile(
-                            enabled: payloadSendState == PayloadSendState.idle,
+                            enabled: (payloadSendState == PayloadSendState.idle || payloadSendState == PayloadSendState.stop),
                             title: Text('${payload['title']}'),
                             subtitle: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -247,19 +247,18 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                     ),
                   ),
                   actions: [
-                    if(payloadSendState == PayloadSendState.start)
-                      CustomMaterialButton(
-                        outlined: true,
-                        title: 'Cancel',
-                        onPressed: (){
-                          stateSetter((){
-                            setState(() {
-                              payloadSendState = PayloadSendState.idle;
-                            });
-                            Navigator.pop(context);
+                    CustomMaterialButton(
+                      outlined: true,
+                      title: 'Cancel',
+                      onPressed: (){
+                        stateSetter((){
+                          setState(() {
+                            payloadSendState = PayloadSendState.idle;
                           });
-                        },
-                      ),
+                          Navigator.pop(context);
+                        });
+                      },
+                    ),
                     if(payloadSendState == PayloadSendState.idle)
                       CustomMaterialButton(
                         onPressed: ()async{
@@ -268,12 +267,13 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                               continue;
                             }
                             bool mqttAttempt = true;
-                            for(var sec = 0;sec < 5;sec++){
+                            for(var sec = 0;sec < 20;sec++){
                               if(mqttManager.connectionState == MqttConnectionState.connected && mqttAttempt == true){
                                 mqttManager.topicToPublishAndItsMessage('${Environment.mqttPublishTopic}/${configPvd.masterData['deviceId']}', payload['payload']);
                                 mqttAttempt = false;
-                                print('payload sending ${sec+1}');
+                                print('payload sent successfully...........');
                               }
+                              // print('${}')
                               if(mqttManager.payload != null && mqttManager.payload!['cC'] == payload['deviceId'] && mqttManager.payload!['PayloadCode'] == payload['checkingCode'] && mqttManager.payload!['Code'] == '200'){
                                 stateSetter((){
                                   setState(() {

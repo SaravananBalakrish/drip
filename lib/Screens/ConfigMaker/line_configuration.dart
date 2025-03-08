@@ -385,6 +385,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
           color: Theme.of(context).colorScheme.onBackground,
         ),
         child: Row(
+          spacing: 10,
            mainAxisSize: MainAxisSize.min,
           children: [
             SizedImage(imagePath: '${AppConstants.svgObjectPath}objectId_$objectId.svg', color: themeMode ? Colors.black : Colors.white,),
