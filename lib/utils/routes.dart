@@ -24,11 +24,10 @@ class Routes {
           builder: (_) => const LoginScreen(),
           settings: settings,
         );
-
       case dashboard:
         return MaterialPageRoute(
-          // builder: (_) => const ConfigBasePage(masterData: {}),
-           builder: (_) => const ScreenController(),
+          builder: (_) => const ConfigBasePage(masterData: {}),
+           // builder: (_) => const ScreenController(),
           settings: settings,
         );
       default:
