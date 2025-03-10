@@ -26,7 +26,7 @@ class MqttManager {
     String uniqueId = const Uuid().v4();
 
     String baseURL = Environment.mqttWebUrl;
-    int port = Environment.mqttPort;
+    int port = Environment.mqttWebPort;
 
     if (_client == null) {
       _client = MqttBrowserClient(baseURL, uniqueId);
