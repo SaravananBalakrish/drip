@@ -196,4 +196,3 @@ class NextSchedule extends StatelessWidget {
     return formattedTime;
   }
 
-}

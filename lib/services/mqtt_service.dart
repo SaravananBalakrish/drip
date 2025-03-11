@@ -33,13 +33,13 @@ class MqttService {
       providerState = state;
       if (kIsWeb) {
         debugPrint("Initializing MQTT for Web...");
-        _client = MqttBrowserClient(AppConstants.mqttUrlWeb, uniqueId);
+        _client = MqttBrowserClient(AppConstants.mqttUrl, uniqueId);
         (_client as MqttBrowserClient).websocketProtocols = MqttClientConstants.protocolsSingleDefault;
-        _client!.port = AppConstants.mqttPortWeb;
+        _client!.port = AppConstants.mqttWebPort;
       } else {
         debugPrint("Initializing MQTT for Mobile...");
         _client = MqttServerClient(AppConstants.mqttUrlMobile, uniqueId);
-        _client!.port = AppConstants.mqttPortMobile;
+        _client!.port = AppConstants.mqttMobilePort;
       }
 
       _client!.keepAlivePeriod = 30;

@@ -55,17 +55,13 @@ class ScreenController extends StatelessWidget {
           emailId: emailId,
         );
       default:
-        return FrostMobUI(userId: 4, controllerId: 1,  menuId: 66, );
-
-
-        //   CustomerScreenController(
-        //   userId: userId,
-        //   customerName: userName,
-        //   mobileNo: mobileNo,
-        //   emailId: emailId,
-        //   customerId: userId,
-        //   fromLogin: true,
-        // ) ;
+        return   CustomerScreenController(userId: userId,
+          customerName: userName,
+          mobileNo: mobileNo,
+          emailId: emailId,
+          customerId: userId,
+          fromLogin: true,
+        ) ;
     }
   }
 }
