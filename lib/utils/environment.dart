@@ -38,7 +38,6 @@ class Environment {
 
   static String get apiUrl => config[F.name]?['apiUrl'] ?? '';
   static String get apiKey => config[currentEnvironment]?['apiKey'] ?? '';
-
   static String get mqttWebUrl => config[F.name]?['mqttWebUrl'] ?? '';
   static String get mqttPublishTopic => config[F.name]?['publishTopic'] ?? '';
   static String get mqttMobileUrl => config[F.name]?['mqttMobileUrl'] ?? '';

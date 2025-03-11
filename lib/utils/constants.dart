@@ -56,9 +56,11 @@ enum GemProgramStartStopReasonCode {
 class AppConstants {
   static String apiUrl = Environment.apiUrl;
   static const int timeoutDuration = 30;
+  static String mqttUrlMobile = Environment.mqttMobileUrl;
 
   static String mqttUrl = Environment.mqttWebUrl;
   static int mqttWebPort = Environment.mqttWebPort;
+  static int mqttMobilePort = Environment.mqttMobilePort;
 
   static const String publishTopic = 'AppToFirmware';
   static const String subscribeTopic = 'FirmwareToApp';
