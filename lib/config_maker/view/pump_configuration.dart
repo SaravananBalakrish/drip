@@ -2,17 +2,17 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:oro_drip_irrigation/Screens/ConfigMaker/site_configure.dart';
-import 'package:oro_drip_irrigation/Screens/ConfigMaker/source_configuration.dart';
+import 'package:oro_drip_irrigation/config_maker/view/site_configure.dart';
+import 'package:oro_drip_irrigation/config_maker/view/source_configuration.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
 import '../../Constants/communication_codes.dart';
 import '../../Constants/dialog_boxes.dart';
 import '../../Constants/properties.dart';
-import '../../Models/Configuration/device_object_model.dart';
-import '../../Models/Configuration/filtration_model.dart';
-import '../../Models/Configuration/pump_model.dart';
-import '../../StateManagement/config_maker_provider.dart';
+import '../model/device_object_model.dart';
+import '../model/filtration_model.dart';
+import '../model/pump_model.dart';
+import '../state_management/config_maker_provider.dart';
 import '../../Widgets/custom_drop_down_button.dart';
 import '../../Widgets/sized_image.dart';
 import '../../utils/constants.dart';
@@ -27,6 +27,7 @@ class PumpConfiguration extends StatefulWidget {
 }
 
 class _PumpConfigurationState extends State<PumpConfiguration> {
+  List<int> pumpModelList = [5, 6, 7, 8, 9, 10];
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -63,7 +64,7 @@ class _PumpConfigurationState extends State<PumpConfiguration> {
                               child: ListTile(
                                 leading: SizedImage(imagePath: '${AppConstants.svgObjectPath}objectId_5.svg', color: Colors.black,),
                                 title: Text(pump.commonDetails.name!),
-                                trailing: IntrinsicWidth(
+                                trailing: !pumpModelList.contains(widget.configPvd.masterData['modelId']) ? IntrinsicWidth(
                                   child: CustomDropDownButton(
                                       value: getPumpTypeCodeToString(pump.pumpType),
                                       list: const ['source', 'irrigation'],
@@ -86,7 +87,7 @@ class _PumpConfigurationState extends State<PumpConfiguration> {
                                         });
                                       }
                                   ),
-                                ),
+                                ) : null,
                               ),
                             ),
                             Container(

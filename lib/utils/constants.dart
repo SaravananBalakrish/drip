@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
-import '../Screens/ConfigMaker/config_web_view.dart';
+import '../config_maker/view/config_web_view.dart';
 import 'environment.dart';
 
 enum UserRole { admin, dealer, subUser }
@@ -373,5 +373,9 @@ class AppConstants {
 
   static Color outputColor = const Color(0xff7FAFD8);
   static Color commonObjectColor = const Color(0xffC277CF);
+  static List<int> pumpModelList = [5, 6, 7, 8, 9, 10];
+  static int levelObjectId = 26;
+  static int waterMeterObjectId = 22;
+  static int pressureSensorObjectId = 24;
 
 }

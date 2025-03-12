@@ -1,18 +1,19 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:oro_drip_irrigation/Constants/sample_data.dart';
+import 'package:oro_drip_irrigation/config_maker/repository/config_maker_repository.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
-import '../Models/Configuration/device_model.dart';
-import '../Models/Configuration/device_object_model.dart';
-import '../Models/Configuration/fertigation_model.dart';
-import '../Models/Configuration/filtration_model.dart';
-import '../Models/Configuration/irrigationLine_model.dart';
-import '../Models/Configuration/moisture_model.dart';
-import '../Models/Configuration/pump_model.dart';
-import '../Models/Configuration/source_model.dart';
-import '../Screens/ConfigMaker/config_base_page.dart';
-import '../Screens/ConfigMaker/config_web_view.dart';
-import '../Screens/ConfigMaker/connection.dart';
+import '../model/device_model.dart';
+import '../model/device_object_model.dart';
+import '../model/fertigation_model.dart';
+import '../model/filtration_model.dart';
+import '../model/irrigationLine_model.dart';
+import '../model/moisture_model.dart';
+import '../model/pump_model.dart';
+import '../model/source_model.dart';
+import '../view/config_base_page.dart';
+import '../view/config_web_view.dart';
+import '../view/connection.dart';
 
 class ConfigMakerProvider extends ChangeNotifier{
   double ratio = 1.0;
@@ -99,7 +100,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         "groupId": masterDataFromSiteConfigure['groupId'],
         "categoryId" : masterDataFromSiteConfigure['categoryId']
       };
-      var response = await HttpService().postRequest('/user/configMaker/get', body);
+      var response = await ConfigMakerRepository().getUserConfigMaker(body);
       Map<String, dynamic> jsonData = jsonDecode(response.body);
       print('jsonData : $jsonData');
       Map<String, dynamic> defaultData = jsonData['data']['default'];
@@ -854,15 +855,17 @@ class ConfigMakerProvider extends ChangeNotifier{
 
   //Todo : getOroPumpPayload
   List<Map<String, dynamic>> getOroPumpPayload() {
-    HardwareType hardwareType = ![1, 2, 4].contains(masterData['modelId']) ? HardwareType.master : HardwareType.pump;
+    HardwareType hardwareType = [1, 2, 4].contains(masterData['modelId']) ? HardwareType.master : HardwareType.pump;
     List<Map<String, dynamic>> listOfPumpPayload = [];
     List<int> modelIdForPump1000 = [5, 6, 7];
     List<int> modelIdForPump2000 = [8, 9, 10];
     List<DeviceModel> listOfPump1000 = listOfDeviceModel.where((device) => modelIdForPump1000.contains(device.modelId)).toList();
     List<DeviceModel> listOfPump2000 = listOfDeviceModel.where((device) => modelIdForPump2000.contains(device.modelId)).toList();
+    int pumpCodeUnderGem = 5900;
     for(var p1000 in listOfPump1000){
       int pumpCount = listOfGeneratedObject.where((object) => (object.controllerId == p1000.controllerId && object.objectId == 5)).length;
       var pumpPayload = {"sentSms":"pumpconfig,$pumpCount,"};
+      int pumpConfigCode = 700;
       var gemPayload = {
         '5900' : {
           '5901' : {
@@ -875,7 +878,7 @@ class ConfigMakerProvider extends ChangeNotifier{
           }.entries.map((e) => e.value).join('+')
         }
       };
-      String deviceIdToSend = p1000.interfaceTypeId == 2 ? masterData['deviceId'] : p1000.deviceId;
+      String deviceIdToSend = hardwareType == HardwareType.master ? masterData['deviceId'] : p1000.deviceId;
       Map<String, dynamic> payloadToSend = p1000.interfaceTypeId == 2 ? gemPayload : pumpPayload;
 
       listOfPumpPayload.add({
@@ -885,6 +888,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         'payload' : jsonEncode(payloadToSend),
         'acknowledgementState' : HardwareAcknowledgementSate.notSent,
         'selected' : true,
+        'checkingCode' : hardwareType == HardwareType.master ? '$pumpCodeUnderGem' : '$pumpConfigCode',
         'hardwareType' : hardwareType
       });
     }
@@ -907,7 +911,7 @@ class ConfigMakerProvider extends ChangeNotifier{
           }.entries.map((e) => e.value).join('+')
         }
       };
-      Map<String, dynamic> payloadToSend = p2000.interfaceTypeId == 2 ? gemPayload : pumpPayload;
+      Map<String, dynamic> payloadToSend = hardwareType == HardwareType.master ? gemPayload : pumpPayload;
       listOfPumpPayload.add({
         'title' : '${p2000.deviceName}(pumpconfig)',
         'deviceId' : p2000.deviceId,
@@ -915,7 +919,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         'payload' : jsonEncode(payloadToSend),
         'acknowledgementState' : HardwareAcknowledgementSate.notSent,
         'selected' : true,
-        'checkingCode' : '$pumpConfigCode',
+        'checkingCode' : hardwareType == HardwareType.master ? '$pumpCodeUnderGem' : '$pumpConfigCode',
         'hardwareType' : hardwareType
       });
       List<DeviceObjectModel> listOfFloat = listOfGeneratedObject.where((object) => (object.controllerId == p2000.controllerId && object.objectId == 40)).toList();
@@ -993,15 +997,15 @@ class ConfigMakerProvider extends ChangeNotifier{
           }.entries.map((e) => e.value).join('+')
         }
       };
-      Map<String, dynamic> payloadToSendForTankConfig = p2000.interfaceTypeId == 2 ? gemPayloadForTankConfig : tankPayload;
+      Map<String, dynamic> payloadToSendForTankConfig = hardwareType == HardwareType.master ? gemPayloadForTankConfig : tankPayload;
       listOfPumpPayload.add({
         'title' : '${p2000.deviceName}(tankconfig)',
-        'deviceIdToSend' : p2000.deviceId,
-        'deviceId' : deviceIdToSend,
+        'deviceIdToSend' : deviceIdToSend,
+        'deviceId' : p2000.deviceId,
         'payload' : jsonEncode(payloadToSendForTankConfig),
         'acknowledgementState' : HardwareAcknowledgementSate.notSent,
         'selected' : true,
-        'checkingCode' : '$tankConfigCode',
+        'checkingCode' : hardwareType == HardwareType.master ? '$pumpCodeUnderGem' : '$tankConfigCode',
         'hardwareType' : hardwareType
       });
     }

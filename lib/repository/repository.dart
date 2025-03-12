@@ -2,7 +2,6 @@ import 'package:http/http.dart' as http;
 import '../services/http_service.dart';
 
 class Repository{
-
   final HttpService apiService;
   Repository(this.apiService);
 

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../Models/Configuration/device_model.dart';
-import '../../StateManagement/config_maker_provider.dart';
+import '../model/device_model.dart';
+import '../state_management/config_maker_provider.dart';
 import 'config_mobile_view.dart';
 import 'config_web_view.dart';
 
@@ -32,8 +32,7 @@ class _ConfigBasePageState extends State<ConfigBasePage> {
     configPvd = Provider.of<ConfigMakerProvider>(context, listen: false);
     // listOfDevices = configPvd.fetchData({"userId":3,"customerId":4,"controllerId":1,"deviceId":"2CCF674C0F8A","deviceName":"xMm","categoryId":1,"categoryName":"xMm","modelId":1,"modelName":"xMm1000_R","groupId":1,"groupName":"LK Demo","connectingObjectId":["1","2","3","4","1","2","3","4"]});
     // listOfDevices = configPvd.fetchData({"userId":3,"customerId":4,"controllerId":8,"deviceId":"223344AAEEFF","deviceName":"xMp","categoryId":2,"categoryName":"xMp","modelId":9,"modelName":"xMp2000GOOO","groupId":1,"groupName":"LK Demo","connectingObjectId":["5","22","24","26","40"],});
-    // listOfDevices = configPvd.fetchData({"userId":3,"customerId":4,"controllerId":1,"deviceId":"2CCF674C0F8A","deviceName":"xMm","categoryId":1,"categoryName":"xMm","modelId":1,"modelName":"xMm1000_R","groupId":1,"groupName":"LK Demo","connectingObjectId":["1","2","3","4","1","2","3","4"]});
-    // listOfDevices = configPvd.fetchData({"userId":3,"customerId":4,"controllerId":5,"deviceId":"2CCF676089F2","deviceName":"ORO GEM","categoryId":1,"categoryName":"ORO GEM","modelId":1,"modelName":"xMm1000ROOO","groupId":1,"groupName":"Testing Site","connectingObjectId":["1","2","3","4","1","2","3","4"]});
+    // listOfDevices = configPvd.fetchData({"userId":3,"customerId":4,"controllerId":13,"deviceId":"E8EB1B04DB38","deviceName":"xMp","categoryId":2,"categoryName":"xMp","modelId":9,"modelName":"xMp2000GOOO","groupId":1,"groupName":"LK Demo","connectingObjectId":["5","22","24","26","40"]});
     listOfDevices = configPvd.fetchData(widget.masterData);
   }
 
