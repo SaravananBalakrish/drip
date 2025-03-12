@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:oro_drip_irrigation/Screens/dashboard/mobileschedule_program.dart';
 import 'package:oro_drip_irrigation/Screens/dashboard/schedule_program.dart';
 import 'package:oro_drip_irrigation/Screens/dashboard/sidedrawer.dart';
 import 'package:oro_drip_irrigation/views/customer/node_list.dart';
@@ -77,7 +78,7 @@ class _DashboardState extends State<MobDashboard>
       }
     });
     _controller = AnimationController(
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       vsync: this,
     );
     getData();
@@ -279,7 +280,7 @@ class _DashboardState extends State<MobDashboard>
     if (mounted) {
       setState(() {});
     }
-    return Future.delayed(Duration(seconds: 5));
+    return Future.delayed(const Duration(seconds: 5));
   }
 
   @override
@@ -311,7 +312,7 @@ class _DashboardState extends State<MobDashboard>
       key: _scaffoldKey,
       backgroundColor: cardColor,
       floatingActionButton: ![3,4].contains(overAllPvd.controllerType) ? Container(
-        padding: EdgeInsets.only(top: 10),
+        padding: const EdgeInsets.only(top: 10),
         decoration: BoxDecoration(
             color: Colors.white,
             boxShadow: [
@@ -322,7 +323,7 @@ class _DashboardState extends State<MobDashboard>
               ),
             ],
             // color: primaryColorDark,
-            borderRadius: BorderRadius.only(topRight: Radius.circular(40),topLeft: Radius.circular(40))
+            borderRadius: const BorderRadius.only(topRight: Radius.circular(40),topLeft: Radius.circular(40))
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -337,12 +338,12 @@ class _DashboardState extends State<MobDashboard>
                     sideSheet( payloadProvider: payloadProvider, selectedTab: selectedTab, overAllPvd: overAllPvd,scheduledPrograms: scheduledPrograms);
                   },
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         color: Color(0xff95D394),
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(8),topRight: Radius.circular(30),bottomLeft: Radius.circular(8),bottomRight: Radius.circular(8))
                     ),
                     padding: const EdgeInsets.only(top: 5,bottom: 5,left: 10,right: 10),
-                    child: Text('Current\nSchedule',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 12),),
+                    child: const Text('Current\nSchedule',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 12),),
                   ),
                 ),
             if(payloadProvider.nextSchedule.isNotEmpty)
@@ -356,16 +357,16 @@ class _DashboardState extends State<MobDashboard>
 
                   },
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         color: Color(0xffFF9A49),
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(8),topRight: Radius.circular(30),bottomLeft: Radius.circular(8),bottomRight: Radius.circular(8))
                     ),
                     padding: const EdgeInsets.only(top: 5,bottom: 5,left: 10,right: 10),
-                    child: Text('Next\nSchedule',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 12),),
+                    child: const Text('Next\nSchedule',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 12),),
                   ),
                 ),
-            if(payloadProvider.upcomingProgram.isNotEmpty)
-              if(payloadProvider.selectedLine == 0 || payloadProvider.upcomingProgram.map((up) => up['ProgCategory']).join('').contains(payloadProvider.lineData[payloadProvider.selectedLine]['id']) )
+            // if(payloadProvider.upcomingProgram.isNotEmpty)
+            //   if(payloadProvider.selectedLine == 0 || payloadProvider.upcomingProgram.map((up) => up['ProgCategory']).join('').contains(payloadProvider.lineData[payloadProvider.selectedLine]['id']) )
                 InkWell(
                   onTap: (){
                     setState(() {
@@ -375,23 +376,17 @@ class _DashboardState extends State<MobDashboard>
 
                   },
                   child: Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.fill,
-                        image: AssetImage(
-                          'assets/images/schedule.png'
-                        )
-                      ),
+                    decoration: const BoxDecoration(
                         color: Color(0xff69BCFC),
                         borderRadius: BorderRadius.only(topLeft: Radius.circular(8),topRight: Radius.circular(30),bottomLeft: Radius.circular(8),bottomRight: Radius.circular(8))
                     ),
                     padding: const EdgeInsets.only(top: 5,bottom: 5,left: 10,right: 10),
                     child: Row(
                       children: [
-                        Text('Scheduled\nProgram',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 12),),
+                        const Text('Scheduled\nProgram',style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold,fontSize: 12),),
                         if(payloadProvider.upcomingProgram.any((program)=> (program['StartCondition'].isNotEmpty || program['StopCondition'].isNotEmpty)))
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
+                          const Padding(
+                            padding: EdgeInsets.all(5.0),
                             child: Icon(Icons.info,color: Colors.amberAccent,size: 30,),
                           )
                       ],
@@ -809,7 +804,7 @@ class _DashboardState extends State<MobDashboard>
                                       child: Container(
                                         width:
                                             MediaQuery.of(context).size.width,
-                                        child: Scaffold( appBar: AppBar(title: Text("StandAlone")),body: StandAlone(customerId: overAllPvd.customerId, siteId: overAllPvd.userGroupId, controllerId: overAllPvd.controllerId, userId: userId, deviceId: overAllPvd.deviceId, callbackFunction: callbackFunction, config: liveData?[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].config))
+                                        child: Scaffold( appBar: AppBar(title: const Text("StandAlone")),body: StandAlone(customerId: overAllPvd.customerId, siteId: overAllPvd.userGroupId, controllerId: overAllPvd.controllerId, userId: userId, deviceId: overAllPvd.deviceId, callbackFunction: callbackFunction, config: liveData?[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].config))
                                       ),
                                     );
                                   },
@@ -1369,7 +1364,7 @@ class _DashboardState extends State<MobDashboard>
                                 if ([3, 4].contains(overAllPvd.controllerType))
                                   Container(
                                     color: Colors.red,
-                                    child: Text(
+                                    child: const Text(
                                       "PumpControllerDashboard",
                                       style: TextStyle(color: Colors.white),
                                     ),
@@ -1382,7 +1377,7 @@ class _DashboardState extends State<MobDashboard>
                                     children: [
                                       Container(
                                         width: double.infinity,
-                                        padding: EdgeInsets.all(8),
+                                        padding: const EdgeInsets.all(8),
                                         child: SingleChildScrollView(
                                           scrollDirection: Axis.vertical,
                                           child: Column(
@@ -1404,7 +1399,7 @@ class _DashboardState extends State<MobDashboard>
                           ))
                         : Container(
                             color: Colors.red,
-                            child: Text(
+                            child: const Text(
                               " PumpControllerDashboard",
                               style: TextStyle(color: Colors.white),
                             ),
@@ -1661,7 +1656,7 @@ class _DashboardState extends State<MobDashboard>
               ),
               if (filterSite.isNotEmpty)
                 Padding(
-                  padding: EdgeInsets.only(top: 0),
+                  padding: const EdgeInsets.only(top: 0),
                   child: displayFilterSite(context, filterSite),
                 ),
               if (fertilizerSite.isNotEmpty)
@@ -1909,7 +1904,7 @@ class _DashboardState extends State<MobDashboard>
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
         for (int fIndex = 0; fIndex < fertilizerSite.length; fIndex++)
@@ -1918,7 +1913,7 @@ class _DashboardState extends State<MobDashboard>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 SizedBox(
@@ -2433,22 +2428,22 @@ class _DashboardState extends State<MobDashboard>
         // irrigationProgramProvider.updateBottomNavigation([1, 2].contains(overAllPvd.controllerType) ? actualIndex : index);
       },
       items: [
-        BottomNavigationBarItem(activeIcon: Icon(Icons.dashboard), label: "Dashboard", icon: Icon(Icons.dashboard_outlined)),
+        const BottomNavigationBarItem(activeIcon: Icon(Icons.dashboard), label: "Dashboard", icon: Icon(Icons.dashboard_outlined)),
         BottomNavigationBarItem(
             activeIcon: Icon([1, 2].contains(overAllPvd.controllerType) ? Icons.schedule : Icons.settings),
             label: [1, 2].contains(overAllPvd.controllerType) ? "Program" : "Settings",
             icon: Icon([1, 2].contains(overAllPvd.controllerType) ? Icons.schedule_outlined : Icons.settings_outlined)
         ),
         if([1, 2].contains(overAllPvd.controllerType))
-          BottomNavigationBarItem(icon: SizedBox.shrink(), label: ''), // Placeholder
+          const BottomNavigationBarItem(icon: SizedBox.shrink(), label: ''), // Placeholder
         BottomNavigationBarItem(
           icon: Icon([1, 2].contains(overAllPvd.controllerType) ? Icons.calendar_month_outlined : Icons.schedule_outlined),
           activeIcon: Icon([1, 2].contains(overAllPvd.controllerType) ? Icons.calendar_month : Icons.schedule),
           label: [1, 2].contains(overAllPvd.controllerType) ? "Schedule" : "View",
         ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.assessment_outlined),
-            activeIcon: Icon(Icons.assessment),
+            icon: const Icon(Icons.assessment_outlined),
+            activeIcon: const Icon(Icons.assessment),
             label: [1, 2].contains(overAllPvd.controllerType) ? "Log" : "Logs"
         ),
       ],
@@ -2668,9 +2663,8 @@ class _DashboardState extends State<MobDashboard>
                               // Container(),
                               NextScheduleForMobile(scheduledPrograms: scheduledPrograms,),
                             if(selectedTab == 2)
-                              // Container(),
-                              ScheduleProgramForMobile(manager: manager, deviceId: '${overAllPvd.imeiNo}', selectedLine: payloadProvider.selectedLine, userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: overAllPvd.controllerId,),
-                          ],
+                               ScheduledProgram(userId: userId, scheduledPrograms: scheduledPrograms, masterInx: payloadProvider.selectedMaster, deviceId: overAllPvd.imeiNo)
+                           ],
                         ),
                       ),
                     ),
