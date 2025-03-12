@@ -300,10 +300,16 @@ class Repository{
     return await apiService.postRequest('/user/manualOperation/create', body);
   }
 
+  Future<http.Response> fetchConditionLibrary(body) async {
+    return await apiService.postRequest('/user/planning/conditionLibrary/get', body);
+  }
+
   ///Todo: Other urls
   Future<http.Response> getPlanningHiddenMenu(body) async {
     return await apiService.postRequest('/user/dealerDefinition/mainMenu/get', body);
   }
+
+
 
 }
 
