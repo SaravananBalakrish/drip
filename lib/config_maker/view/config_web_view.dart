@@ -312,6 +312,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                               if(mqttManager.connectionState == MqttConnectionState.connected && mqttAttempt == true){
                                 mqttManager.topicToPublishAndItsMessage('${Environment.mqttPublishTopic}/${configPvd.masterData['deviceId']}', payload['payload']);
                                 mqttAttempt = false;
+
                               }
                               stateSetter((){
                                 setState(() {

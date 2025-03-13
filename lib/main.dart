@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+
 import 'package:oro_drip_irrigation/app/app.dart';
 import 'package:provider/provider.dart';
+import 'Screens/Constant/ConstantPageProvider/changeNotifier_constantProvider.dart';
 import 'config_maker/state_management/config_maker_provider.dart';
 import 'StateManagement/irrigation_program_provider.dart';
 import 'StateManagement/preference_provider.dart';
@@ -34,7 +36,9 @@ FutureOr<void> main() async {
         ChangeNotifierProvider(create: (_) => mySchedule),
         ChangeNotifierProvider(create: (_) => PreferenceProvider()),
         ChangeNotifierProvider(create: (_) => SystemDefinitionProvider()),
-       ],
+        ChangeNotifierProvider(create: (_) => ConstantProvider()),
+      ],
       child: MyApp(),
+      
     ),
   );}
