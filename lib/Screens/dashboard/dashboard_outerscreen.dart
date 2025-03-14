@@ -21,6 +21,10 @@ import '../NewIrrigationProgram/program_library.dart';
 import '../NewIrrigationProgram/schedule_screen.dart';
 import '../NewPreference/preference_main_screen.dart';
 import '../NewPreference/view_settings.dart';
+import '../planning/fiterbackwash.dart';
+import '../planning/frost_productionScreen.dart';
+import '../planning/planningwatersource.dart';
+import '../planning/virtual_screen.dart';
 import 'customerdashboard.dart';
 
 //This is Main dashboard --
@@ -752,22 +756,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     overAllPvd = Provider.of<OverAllUse>(context, listen: true);
 
     final screens = {
-      // 66: () => watersourceUI1(
-      //   userId: overAllPvd.takeSharedUserId
-      //       ? overAllPvd.sharedUserId
-      //       : overAllPvd.userId,
-      //   controllerId: overAllPvd.controllerId,
-      //   deviceID: overAllPvd.imeiNo,
-      //   menuId: 66,
-      // ),
-      // 67: () => VirtualMeterScreen(
-      //   userId: overAllPvd.takeSharedUserId
-      //       ? overAllPvd.sharedUserId
-      //       : overAllPvd.userId,
-      //   controllerId: overAllPvd.controllerId,
-      //   deviceId: overAllPvd.imeiNo,
-      //   menuId: 67,
-      // ),
+      66: () => watersourceUI(
+        userId: overAllPvd.takeSharedUserId
+            ? overAllPvd.sharedUserId
+            : overAllPvd.userId,
+        controllerId: overAllPvd.controllerId,
+        deviceID: overAllPvd.imeiNo,
+        menuId: 66,
+      ),
+      67: () => VirtualMeterScreen(
+        userId: overAllPvd.takeSharedUserId
+            ? overAllPvd.sharedUserId
+            : overAllPvd.userId,
+        controllerId: overAllPvd.controllerId,
+        deviceId: overAllPvd.imeiNo,
+        menuId: 67,
+      ),
       // 68: () => RadiationSetUI(
       //   userId: overAllPvd.takeSharedUserId
       //       ? overAllPvd.sharedUserId
@@ -776,14 +780,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       //   deviceId: overAllPvd.imeiNo,
       //   menuId: 68,
       // ),
-      // 69: () => MyGroupScreen(
-      //   userId: overAllPvd.takeSharedUserId
-      //       ? overAllPvd.sharedUserId
-      //       : overAllPvd.userId,
-      //   controllerId: overAllPvd.controllerId,
-      //   deviceID: overAllPvd.imeiNo,
-      //   menuId: 69,
-      // ),
+      69: () => VirtualMeterScreen(
+        userId: overAllPvd.takeSharedUserId
+            ? overAllPvd.sharedUserId
+            : overAllPvd.userId,
+        controllerId: overAllPvd.controllerId,
+        deviceId: overAllPvd.imeiNo,
+        menuId: 69,
+      ),
       // 70: () => ConditionScreen(
       //   userId: overAllPvd.takeSharedUserId
       //       ? overAllPvd.sharedUserId
@@ -793,22 +797,22 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       //   isProgram: false,
       //   menuId: 70,
       // ),
-      // 71: () => FrostMobUI(
-      //   userId: overAllPvd.takeSharedUserId
-      //       ? overAllPvd.sharedUserId
-      //       : overAllPvd.userId,
-      //   controllerId: overAllPvd.controllerId,
-      //   deviceID: overAllPvd.imeiNo,
-      //   menuId: 71,
-      // ),
-      // 72: () => FilterBackwashUI(
-      //   userId: overAllPvd.takeSharedUserId
-      //       ? overAllPvd.sharedUserId
-      //       : overAllPvd.userId,
-      //   controllerId: overAllPvd.controllerId,
-      //   deviceID: overAllPvd.imeiNo,
-      //   menuId: 72,
-      // ),
+      71: () => FrostMobUI(
+        userId: overAllPvd.takeSharedUserId
+            ? overAllPvd.sharedUserId
+            : overAllPvd.userId,
+        controllerId: overAllPvd.controllerId,
+        deviceID: overAllPvd.imeiNo,
+        menuId: 71,
+      ),
+      72: () => FilterBackwashUI(
+        userId: overAllPvd.takeSharedUserId
+            ? overAllPvd.sharedUserId
+            : overAllPvd.userId,
+        controllerId: overAllPvd.controllerId,
+        deviceId: overAllPvd.imeiNo, customerId: overAllPvd.customerId, fromDealer: false,
+
+      ),
       // 73: () => FertilizerSetScreen(
       //   userId: overAllPvd.takeSharedUserId
       //       ? overAllPvd.sharedUserId
