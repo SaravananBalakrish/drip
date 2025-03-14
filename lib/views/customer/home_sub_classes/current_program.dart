@@ -142,7 +142,7 @@ class CurrentProgram extends StatelessWidget {
                             MaterialButton(
                               color: Colors.redAccent,
                               textColor: Colors.white,
-                              onPressed: values[19]=='1'? (){
+                              onPressed: values[17]=='1'? (){
                                 String payLoadFinal = jsonEncode({
                                   "800": {"801": '0,0,0,0,0'}
                                 });
@@ -176,7 +176,7 @@ class CurrentProgram extends StatelessWidget {
                             MaterialButton(
                               color: Colors.orange,
                               textColor: Colors.white,
-                              onPressed: values[19]=='1' ? (){
+                              onPressed: values[17]=='1' ? (){
                                 String payload = '${values[0]},0';
                                 String payLoadFinal = jsonEncode({
                                   "3700": {"3701": payload}

@@ -32,54 +32,56 @@ class CurrentProgramViewModel extends ChangeNotifier {
       if(currentSchedule.isNotEmpty){
         for (int i = 0; i < currentSchedule.length; i++) {
           List<String> values = currentSchedule[i].split(",");
+          if(values.length>1){
+            if(values[17]=='1'){
+              if (values[4].contains(':')){
+                List<String> parts = values[4].split(':');
+                int hours = int.parse(parts[0]);
+                int minutes = int.parse(parts[1]);
+                int seconds = int.parse(parts[2]);
 
-          if(values[19]=='1'){
-            if (values[4].contains(':')){
-              List<String> parts = values[4].split(':');
-              int hours = int.parse(parts[0]);
-              int minutes = int.parse(parts[1]);
-              int seconds = int.parse(parts[2]);
-
-              if (seconds > 0) {
-                seconds--;
-              } else {
-                if (minutes > 0) {
-                  minutes--;
-                  seconds = 59;
+                if (seconds > 0) {
+                  seconds--;
                 } else {
-                  if (hours > 0) {
-                    hours--;
-                    minutes = 59;
+                  if (minutes > 0) {
+                    minutes--;
                     seconds = 59;
+                  } else {
+                    if (hours > 0) {
+                      hours--;
+                      minutes = 59;
+                      seconds = 59;
+                    }
                   }
                 }
-              }
 
-              if (values[4] != '00:00:00') {
-                values[4] = '${hours.toString().padLeft(2, '0')}:'
-                    '${minutes.toString().padLeft(2, '0')}:'
-                    '${seconds.toString().padLeft(2, '0')}';
-                currentSchedule[i] = values.join(",");
-                notifyListeners();
+                if (values[4] != '00:00:00') {
+                  values[4] = '${hours.toString().padLeft(2, '0')}:'
+                      '${minutes.toString().padLeft(2, '0')}:'
+                      '${seconds.toString().padLeft(2, '0')}';
+                  currentSchedule[i] = values.join(",");
+                  notifyListeners();
+                }
               }
-            }
-            else {
-              double remainFlow = double.parse(values[4]);
-              if (remainFlow > 0) {
-                double flowRate = double.parse(values[18]);
-                remainFlow -= flowRate;
-                String formattedFlow = remainFlow.toStringAsFixed(2);
+              else {
+                double remainFlow = double.parse(values[4]);
+                if (remainFlow > 0) {
+                  double flowRate = double.parse(values[16]);
+                  remainFlow -= flowRate;
+                  String formattedFlow = remainFlow.toStringAsFixed(2);
 
-                currentSchedule[i] = values.join(",");
-                values[4] = formattedFlow;
-                notifyListeners();
-              } else {
-                values[4] = '0.00';
+                  currentSchedule[i] = values.join(",");
+                  values[4] = formattedFlow;
+                  notifyListeners();
+                } else {
+                  values[4] = '0.00';
+                }
               }
+              allOnDelayLeftZero = false;
             }
-            allOnDelayLeftZero = false;
-          }else{
-            //pump on delay or filter running
+            else{
+              //pump on delay or filter running
+            }
           }
         }
       }
