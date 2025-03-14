@@ -24,15 +24,18 @@ class ScheduledProgram extends StatelessWidget {
     if(spLive.isNotEmpty){
       for(var sp in spLive){
         List<String> values = sp.split(",");
-        int index = scheduledPrograms.indexWhere((program) => program.serialNumber == int.parse(values[0]));
-        scheduledPrograms[index].startDate = values[3];
-        scheduledPrograms[index].startTime = values[4];
-        scheduledPrograms[index].endDate = values[5];
-        scheduledPrograms[index].programStatusPercentage = int.parse(values[6]);
-        scheduledPrograms[index].startStopReason = int.parse(values[7]);
-        scheduledPrograms[index].pauseResumeReason = int.parse(values[8]);
-        scheduledPrograms[index].prgOnOff = values[10];
-        scheduledPrograms[index].prgPauseResume = values[11];
+        if(values.length>1){
+          int index = scheduledPrograms.indexWhere((program) => program.serialNumber == int.parse(values[0]));
+          scheduledPrograms[index].startDate = values[3];
+          scheduledPrograms[index].startTime = values[4];
+          scheduledPrograms[index].endDate = values[5];
+          scheduledPrograms[index].programStatusPercentage = int.parse(values[6]);
+          scheduledPrograms[index].startStopReason = int.parse(values[7]);
+          scheduledPrograms[index].pauseResumeReason = int.parse(values[8]);
+          scheduledPrograms[index].prgOnOff = values[10];
+          scheduledPrograms[index].prgPauseResume = values[11];
+        }
+
       }
     }
     return Padding(

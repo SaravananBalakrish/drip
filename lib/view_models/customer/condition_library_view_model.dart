@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Models/customer/condition_library_model.dart';
 import '../../repository/repository.dart';
 
@@ -11,14 +12,23 @@ class ConditionLibraryViewModel extends ChangeNotifier {
   String errorMessage = "";
 
   late ConditionLibraryModel conditionLibraryData;
+  List<String> selectedCnType = [];
   List<String> selectedComponent = [];
-  List<String> selectedSensor = [];
-  List<String> selectedLevelParameter = [];
+  List<String> selectedParameter = [];
   List<String> selectedValue = [];
   List<String> selectedReason= [];
   List<String> selectedDelayTime= [];
-  List<String> selectedAction= [];
   List<String> selectedMessage= [];
+  List<bool> selectedSwitchState = [];
+
+  List<String> sensorList = [];
+
+
+  TimeOfDay selectedStartTime = const TimeOfDay(hour: 6, minute: 0);
+  TimeOfDay selectedEndTime = const TimeOfDay(hour: 12, minute: 0);
+
+  final TextEditingController controllerVT = TextEditingController();
+  final TextEditingController controllerAM = TextEditingController();
 
   ConditionLibraryViewModel(this.repository);
 
@@ -33,15 +43,19 @@ class ConditionLibraryViewModel extends ChangeNotifier {
         if (jsonData["code"] == 200) {
           conditionLibraryData = ConditionLibraryModel.fromJson(jsonData['data']);
           print("Parameter List: ${conditionLibraryData.defaultData.parameter}");
+          print("sensors List: ${conditionLibraryData.defaultData.sensors}");
 
-          selectedSensor = List.generate(5, (index) => '--');
-          selectedLevelParameter = List.generate(conditionLibraryData.defaultData.parameter.length+1, (index) => '--');
+          sensorList = conditionLibraryData.defaultData.sensors;
+          sensorList.insert(0, '--');
+
+          selectedParameter = List.generate(conditionLibraryData.defaultData.parameter.length+1, (index) => '--');
+          selectedCnType = List.generate(5, (index) => 'Sensor');
           selectedComponent = List.generate(7, (index) => '--');
           selectedValue = List.generate(7, (index) => '--');
           selectedReason = List.generate(11, (index) => '--');
           selectedDelayTime = List.generate(4, (index) => '--');
-          selectedAction = List.generate(5, (index) => '--');
           selectedMessage = List.generate(5, (index) => '--');
+          selectedSwitchState = List.generate(5, (index) => false);
 
         }
       }
@@ -52,13 +66,13 @@ class ConditionLibraryViewModel extends ChangeNotifier {
     }
   }
 
-  void sensorOnChange(String lvlSensor, int index){
-    selectedSensor[index] = lvlSensor;
+  void conTypeOnChange(String type, int index){
+    selectedCnType[index] = type;
     notifyListeners();
   }
 
-  void lvlSensorCountOnChange(String lvlSensor, int index){
-    selectedLevelParameter[index] = lvlSensor;
+  void lvlSensorCountOnChange(String param, int index){
+    selectedParameter[index] = param;
     notifyListeners();
   }
 
@@ -82,14 +96,52 @@ class ConditionLibraryViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void actionOnChange(String lvlSensor, int index){
-    selectedAction[index] = lvlSensor;
+  void switchStateOnChange(bool state, int index){
+    selectedSwitchState[index] = state;
     notifyListeners();
   }
+
+
+
 
   void messageOnChange(String lvlSensor, int index){
     selectedMessage[index] = lvlSensor;
     notifyListeners();
+  }
+
+  void clearCondition(int index){
+    selectedParameter[index] = '--';
+    selectedComponent[index] = '--';
+    selectedValue[index] = '--';
+    selectedReason[index] = '--';
+    selectedDelayTime[index] = '--';
+    selectedMessage[index] = '--';
+    notifyListeners();
+  }
+
+
+  Future<void> selectStartTime(BuildContext context) async {
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: selectedStartTime,
+    );
+
+    if (pickedTime != null && pickedTime != selectedStartTime) {
+      selectedStartTime = pickedTime;
+      notifyListeners();
+    }
+  }
+
+  Future<void> selectEndTime(BuildContext context) async {
+    TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: selectedEndTime,
+    );
+
+    if (pickedTime != null && pickedTime != selectedEndTime) {
+      selectedEndTime = pickedTime;
+      notifyListeners();
+    }
   }
 
 

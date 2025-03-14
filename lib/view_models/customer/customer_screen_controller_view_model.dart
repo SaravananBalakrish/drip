@@ -27,7 +27,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   late MqttPayloadProvider payloadProvider;
 
   CustomerScreenControllerViewModel(context, this.repository){
-
+    fromWhere='init';
     WidgetsBinding.instance.addPostFrameCallback((_) {
       payloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
       mqttConfigureAndConnect(context);
@@ -114,16 +114,16 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
 
   void updateMaster(sIdx, mIdx, lIdx){
     myCurrentMaster = mySiteList.data[sIdx].master[mIdx].categoryName;
-    /*subscribeCurrentMaster(sIdx, mIdx);
-    if(mySiteList[sIdx].master[mIdx].categoryId == 1 ||
-        mySiteList[sIdx].master[mIdx].categoryId == 2){
+    //subscribeCurrentMaster(sIdx, mIdx);
+    if(mySiteList.data[sIdx].master[mIdx].categoryId == 1 ||
+        mySiteList.data[sIdx].master[mIdx].categoryId == 2){
       updateMasterLine(sIdx, mIdx, lIdx);
-      displayServerData();
+      //displayServerData();
     }else{
       //pump controller
-      MqttPayloadProvider payloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
-      payloadProvider.updateLastSync('${mySiteList[siteIndex].master[masterIndex].liveSyncDate} ${mySiteList[siteIndex].master[masterIndex].liveSyncTime}');
-    }*/
+      //MqttPayloadProvider payloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
+      //payloadProvider.updateLastSync('${mySiteList[siteIndex].master[masterIndex].liveSyncDate} ${mySiteList[siteIndex].master[masterIndex].liveSyncTime}');
+    }
     notifyListeners();
   }
 
@@ -169,6 +169,30 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
 
   bool getPermissionStatusBySNo(BuildContext context, int sNo) {
     return true;
+  }
+
+  void linePauseOrResume(var lineLiveMgs) {
+    String strPRPayload = '';
+
+    for (int i = 0; i <lineLiveMgs.length; i++) {
+      if (lineLiveMgs.every((line) => line[1] == '1')) {
+        strPRPayload += '${lineLiveMgs[i].split(',')[0]},0;';
+      } else {
+        strPRPayload += '${lineLiveMgs[i].split(',')[0]},1;';
+      }
+    }
+    String payloadFinal = jsonEncode({
+      "4900": {"4901": strPRPayload}
+    });
+
+    MqttService().topicToPublishAndItsMessage(payloadFinal, '${AppConstants.publishTopic}/${mySiteList.data[sIndex].master[mIndex].deviceId}');
+
+    /*if (payload.payloadIrrLine.every((record) => record.irrigationPauseFlag == 1)) {
+      sentToServer('Resumed all line', payloadFinal);
+    } else {
+      sentToServer('Paused all line', payloadFinal);
+    }*/
+
   }
 
 

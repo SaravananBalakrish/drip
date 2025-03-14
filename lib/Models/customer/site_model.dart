@@ -279,6 +279,51 @@ class Config {
   });
 
   factory Config.fromJson(Map<String, dynamic> json) {
+
+    var irrigationLine = json['irrigationLine'] as List;
+    if(irrigationLine.isNotEmpty && irrigationLine.length>1){
+      var allLine = {
+        "objectId": 0,
+        "sNo": 0,
+        "name": "All irrigation line",
+        "connectionNo": null,
+        "objectName": "All Line",
+        "type": "",
+        "controllerId": null,
+        "count": null,
+        "connectedObject": null,
+        "siteMode": null,
+        "source": [],
+        "sourcePump": [],
+        "irrigationPump": [],
+        "centralFiltration": 0,
+        "localFiltration": 0,
+        "centralFertilization": 0,
+        "localFertilization": 0,
+        "valve": [],
+        "mainValve": [],
+        "fan": [],
+        "fogger": [],
+        "pesticides": [],
+        "heater": [],
+        "screen": [],
+        "vent": [],
+        "powerSupply": 0,
+        "pressureSwitch": 0,
+        "waterMeter": 0,
+        "pressureIn": 0,
+        "pressureOut": 0,
+        "moisture": [],
+        "temperature": [],
+        "soilTemperature": [],
+        "humidity": [],
+        "co2": []
+      };
+      irrigationLine.insert(0, allLine);
+    }
+
+    List<IrrigationLineData> irgLine = irrigationLine.isNotEmpty? irrigationLine.map((irl) => IrrigationLineData.fromJson(irl)).toList() : [];
+
     return Config(
       waterSource: (json['waterSource'] as List)
           .map((e) => WaterSource.fromJson(e))
@@ -291,11 +336,7 @@ class Config {
           .map((e) => FertilizerSite.fromJson(e))
           .toList(),
       moistureSensor: json['moistureSensor'] ?? [],
-      lineData: (json['irrigationLine'] != null && json['irrigationLine'] is List && json['irrigationLine'].isNotEmpty)
-          ? (json['irrigationLine'] as List)
-          .map((e) => IrrigationLineData.fromJson(e))
-          .toList()
-          : [],
+      lineData: irgLine,
     );
   }
 }

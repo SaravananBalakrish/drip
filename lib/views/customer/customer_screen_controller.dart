@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/views/customer/program_schedule.dart';
 import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
@@ -53,6 +54,8 @@ class CustomerScreenController extends StatelessWidget {
 
           int wifiStrength = Provider.of<MqttPayloadProvider>(context).wifiStrength;
           String liveDataAndTime = Provider.of<MqttPayloadProvider>(context).liveDateAndTime;
+          var iLineLiveMessage = Provider.of<MqttPayloadProvider>(context).lineLiveMessage;
+          print(iLineLiveMessage);
 
           if(liveDataAndTime.isNotEmpty){
             WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -128,20 +131,16 @@ class CustomerScreenController extends StatelessWidget {
                   Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
                     style: const TextStyle(fontSize: 17),),
 
-                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1 ||
-                      vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 2?
+                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1?
                   const SizedBox(width: 15,): const SizedBox(),
 
-                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1 ||
-                      vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 2?
+                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1?
                   Container(width: 1,height: 20, color: Colors.white54,): const SizedBox(),
 
-                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1 ||
-                      vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 2?
+                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1?
                   const SizedBox(width: 5,): const SizedBox(),
 
-                  /*(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1 ||
-                      vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 2) &&
+                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1 &&
                       vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.length>1?
                   DropdownButton(
                     underline: Container(),
@@ -151,58 +150,21 @@ class CustomerScreenController extends StatelessWidget {
                         child: Text(line.name, style: const TextStyle(color: Colors.white, fontSize: 17),),
                       );
                     }).toList(),
-                    onChanged: (lineName) =>vm.lineOnChanged(lineName),
+                    onChanged: (lineName) => vm.lineOnChanged(lineName),
                     value: vm.myCurrentIrrLine,
-                    dropdownColor: Colors.teal,
+                    dropdownColor: Theme.of(context).primaryColorLight,
                     iconEnabledColor: Colors.white,
                     iconDisabledColor: Colors.white,
                     focusColor: Colors.transparent,
                   ) :
-                  (vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1 ||
-                      vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 2)?
+                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1?
                   Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.isNotEmpty?
                   vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData[0].name:
                   'Line empty', style: const TextStyle(fontSize: 17),):
-                  const SizedBox(),*/
-
-                  (vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1 ||
-                      vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 2) &&
-                      vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.isNotEmpty
-                      ? DropdownButton<String>(
-                    underline: Container(),
-                    items: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData
-                        .map((line) => DropdownMenuItem<String>(
-                      value: line.name,
-                      child: Text(
-                        line.name,
-                        style: const TextStyle(color: Colors.white, fontSize: 17),
-                      ),
-                    ))
-                        .toList(),
-                    onChanged: (lineName) => vm.lineOnChanged(lineName),
-                    value: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData
-                        .any((line) => line.name == vm.myCurrentIrrLine)
-                        ? vm.myCurrentIrrLine
-                        : null,
-                    dropdownColor: Colors.teal,
-                    iconEnabledColor: Colors.white,
-                    iconDisabledColor: Colors.white,
-                    focusColor: Colors.transparent,
-                  )
-                      : (vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1 ||
-                      vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 2)
-                      ? Text(
-                    vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.isNotEmpty
-                        ? vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData[0].name
-                        : 'Line empty',
-                    style: const TextStyle(fontSize: 17),
-                  )
-                      : const SizedBox(),
-
+                  const SizedBox(),
                   const SizedBox(width: 15,),
                   Container(width: 1, height: 20, color: Colors.white54,),
                   const SizedBox(width: 5,),
-
                   Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5),
@@ -219,7 +181,6 @@ class CustomerScreenController extends StatelessWidget {
                       hoverColor: Theme.of(context).primaryColorLight,
                     ),
                   ),
-
                   Text(
                     'Last sync @ - ${Formatters.formatDateTime('${vm.mySiteList.data[vm.sIndex].master[vm.mIndex].live?.cD} ${vm.mySiteList.data[vm.sIndex].master[vm.mIndex].live?.cT}')}',
                     style: const TextStyle(fontSize: 15, color: Colors.white70),
@@ -233,7 +194,7 @@ class CustomerScreenController extends StatelessWidget {
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
                     tileMode: TileMode.clamp,
-                    colors: [Theme.of(context).primaryColor, Theme.of(context).primaryColor], // Define your gradient colors
+                    colors: [Theme.of(context).primaryColor, Theme.of(context).primaryColor],
                   ),
                 ),
               ),
@@ -241,32 +202,36 @@ class CustomerScreenController extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                   /* payload.currentSchedule.isNotEmpty?
+                    /*vm.currentSchedule.isNotEmpty?
                     CircleAvatar(
                       radius: 15,
-                      backgroundImage: const AssetImage('assets/GifFile/water_drop_ani.gif'),
+                      backgroundImage: const AssetImage('assets/gif_images/water_drop_ani.gif'),
                       backgroundColor: Colors.blue.shade100,
                     ):
                     const SizedBox(),
                     const SizedBox(width: 10,),*/
 
-                    TextButton(
-                      onPressed: () {},
+                    vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.length>1? TextButton(
+                      onPressed: () => vm.linePauseOrResume(iLineLiveMessage),
                       style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all<Color>(Colors.orange),
+                        backgroundColor: WidgetStateProperty.all<Color>(iLineLiveMessage.every((line) => line[1] == '1')?Colors.green: Colors.orange),
                         shape: WidgetStateProperty.all<OutlinedBorder>(
                           RoundedRectangleBorder(borderRadius: BorderRadius.circular(5),),
                         ),
                       ),
-                      child: const Row(
+                      child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.pause, color: Colors.black),
-                          SizedBox(width: 5),
-                          Text('PAUSE ALL LINE', style: TextStyle(color: Colors.black)),
+                          iLineLiveMessage.every((line) => line[1] == '1')
+                              ? const Icon(Icons.play_arrow_outlined, color: Colors.black)
+                              : const Icon(Icons.pause, color: Colors.black),
+                          const SizedBox(width: 5),
+                          Text(iLineLiveMessage.every((line) => line[1] == '1') ? 'RESUME ALL LINE' : 'PAUSE ALL LINE',
+                              style: const TextStyle(color: Colors.black)),
                         ],
                       ),
-                    ),
+                    ):
+                    const SizedBox(),
 
                     const SizedBox(width: 10),
                     const IconButton(color: Colors.transparent, onPressed: null, icon: CircleAvatar(
@@ -303,7 +268,7 @@ class CustomerScreenController extends StatelessWidget {
                                 MaterialButton(
                                   color: Theme.of(context).primaryColor,
                                   textColor: Colors.white,
-                                  child: const Text('Manage Your Niagara Account'),
+                                  child: const Text('Manage Your Account'),
                                   onPressed: () async {
                                     Navigator.pop(context);
                                     Navigator.push(
@@ -348,6 +313,7 @@ class CustomerScreenController extends StatelessWidget {
                 const SizedBox(width: 05),
               ],
             ),
+            extendBody: true,
             body: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -362,30 +328,16 @@ class CustomerScreenController extends StatelessWidget {
                 ),
                 Expanded(
                   child: Container(
-                      width: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId==1 ||
-                          vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId==2?
-                      MediaQuery.sizeOf(context).width-140:
-                      MediaQuery.sizeOf(context).width-80,
-                      height: MediaQuery.sizeOf(context).height,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          tileMode: TileMode.clamp,
-                          colors: [Theme.of(context).primaryColorDark, Theme.of(context).primaryColor],
-                        ),
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Theme.of(context).scaffoldBackgroundColor,
-                          borderRadius: const BorderRadius.only(topLeft: Radius.circular(5),topRight: Radius.circular(5)),
-                        ),
-                        child: mainScreen(navViewModel.selectedIndex, vm.mySiteList.data[vm.sIndex].groupId,
-                            vm.mySiteList.data[vm.sIndex].groupName, vm.mySiteList.data[vm.sIndex].master,
-                            vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId),
-                      )
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).scaffoldBackgroundColor,
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(5),topRight: Radius.circular(5)),
+                    ),
+                    child: mainScreen(navViewModel.selectedIndex, vm.mySiteList.data[vm.sIndex].groupId,
+                        vm.mySiteList.data[vm.sIndex].groupName, vm.mySiteList.data[vm.sIndex].master,
+                        vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId),
                   ),
                 ),
+                vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId==1?
                 Container(
                   width: 60,
                   height: MediaQuery.sizeOf(context).height,
@@ -622,7 +574,8 @@ class CustomerScreenController extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
+                ):
+                const SizedBox(),
               ],
             ),
           ) : HomeScreen(userId: 4,fromDealer: false,);
@@ -660,6 +613,14 @@ class CustomerScreenController extends StatelessWidget {
       ),
       const NavigationRailDestination(
         icon: Tooltip(
+          message: 'Controller Logs',
+          child: Icon(Icons.receipt_outlined),
+        ),
+        selectedIcon: Icon(Icons.receipt, color: Colors.white,),
+        label: Text(''),
+      ),
+      const NavigationRailDestination(
+        icon: Tooltip(
           message: 'Settings',
           child: Icon(Icons.settings_outlined),
         ),
@@ -688,6 +649,8 @@ class CustomerScreenController extends StatelessWidget {
       case 2:
         return SentAndReceived(customerId: userId, controllerId: controllerId);
       case 3:
+        return const Text('controller log');
+      case 4:
         return ControllerSettings(customerId: userId, controllerId: controllerId, adDrId: fromLogin?1:0,);
       /*case 4:
         return SiteConfig(
