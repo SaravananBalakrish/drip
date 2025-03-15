@@ -57,7 +57,10 @@ class _MoistureConfigurationState extends State<MoistureConfiguration> {
                             IntrinsicWidth(
                               stepWidth: 300,
                               child: ListTile(
-                                leading: SizedImage(imagePath: '${AppConstants.svgObjectPath}objectId_25.svg'),
+                                leading: SizedImage(
+                                    imagePath: '${AppConstants.svgObjectPath}objectId_25.svg',
+                                  color: Colors.black,
+                                ),
                                 title: Text(moistureSensor.commonDetails.name!),
                               ),
                             ),
@@ -110,7 +113,10 @@ class _MoistureConfigurationState extends State<MoistureConfiguration> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          SizedImage(imagePath: '${AppConstants.svgObjectPath}objectId_13.svg'),
+          SizedImage(
+              imagePath: '${AppConstants.svgObjectPath}objectId_13.svg',
+            color: Colors.black,
+          ),
           const SizedBox(width: 20,),
           const Text('Valves : ', style: AppProperties.listTileBlackBoldStyle,),
           Center(

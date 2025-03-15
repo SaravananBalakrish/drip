@@ -120,7 +120,7 @@ class ValveWithCentralLocalChannelModel{
       'sNo' : sNo,
       'name' : name,
       'objectName' : objectName,
-      'quantity' : quantity,
+      'quantity' : 0,
       'central1' : central1 != null ? central1!.toJson() : {},
       'central2' : central2 != null ? central2!.toJson() : {},
       'central3' : central3 != null ? central3!.toJson() : {},

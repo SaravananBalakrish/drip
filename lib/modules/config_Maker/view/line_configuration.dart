@@ -286,7 +286,12 @@ class _LineConfigurationState extends State<LineConfiguration> {
       for(var objectSno in parameters)
         Column(
           children: [
-            SizedImage(imagePath: '${AppConstants.svgObjectPath}objectId_$objectId.svg', color: themeMode ? Colors.black : Colors.white,),
+            Image.asset(
+                'assets/Images/Png/objectId_$objectId.png',
+              width: 30,
+              height: 30,
+            ),
+            // SizedImage(imagePath: '${AppConstants.svgObjectPath}objectId_$objectId.svg', color: themeMode ? Colors.black : Colors.white,),
             Text(getObjectName(objectSno, widget.configPvd).name!, style: AppProperties.listTileBlackBoldStyle,)
           ],
         )

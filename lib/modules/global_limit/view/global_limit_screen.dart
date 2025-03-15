@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/modules/global_limit/repository/global_limit_repository.dart';
@@ -145,7 +146,8 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
                                                   setState(() {
                                                     listOfIrrigationLine[selectedLine].valve[row].quantity = value;
                                                   });
-                                                }
+                                                },
+                                              inputFormatters: AppProperties.regexForNumbers
                                             )
                                         ),
                                         ...List.generate(maximumNoOfChannel, (int cell){
@@ -158,7 +160,8 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
                                                       setState(() {
                                                         listOfIrrigationLine[selectedLine].valve[row].getCentralChannel(channelNo: cell).value = value;
                                                       });
-                                                    }
+                                                    },
+                                                    inputFormatters: AppProperties.regexForDecimal
                                                 )
                                             );
                                           }else{
@@ -176,7 +179,8 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
                                                       setState(() {
                                                         listOfIrrigationLine[selectedLine].valve[row].getLocalChannel(channelNo: cell).value = value;
                                                       });
-                                                    }
+                                                    },
+                                                    inputFormatters: AppProperties.regexForDecimal
                                                 )
                                             );
                                           }else{
@@ -206,6 +210,8 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
     required String key,
     required String initialValue,
     required void Function(String)? onChanged,
+    required List<TextInputFormatter>? inputFormatters
+
   }){
     return Container(
       decoration: BoxDecoration(
@@ -214,7 +220,7 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
       ),
       child: TextFormField(
         key: Key(key),
-        inputFormatters: AppProperties.regexForDecimal,
+        inputFormatters: inputFormatters,
         initialValue: initialValue,
         onChanged: onChanged,
         textAlign: TextAlign.center,
@@ -321,9 +327,8 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
     var payload = listOfIrrigationLine.map((line){
       return line.valve.map((valve) {
         return {
-          'S_No' : line.sNo,
-          'Valve' : valve.sNo,
-          'IrrigationQuantityLimit' : valve.quantity.isEmpty ? 0 : valve.quantity.isEmpty,
+          'S_No' : valve.sNo,
+          'IrrigationQuantityLimit' : valve.quantity.isEmpty ? 0 : valve.quantity,
           'CentralFertilizerLimit' : List.generate(maximumNoOfChannel, (int channelNo){
             if(channelNo < line.centralCount){
               String val = valve.getCentralChannel(channelNo: channelNo).value;

@@ -99,11 +99,17 @@ class _FiltrationConfigurationState extends State<FiltrationConfiguration> {
                                     Container(
                                       alignment: Alignment.centerLeft,
                                       width: 250,
-                                      child: SvgPicture.asset(
-                                        '${AppConstants.svgObjectPath}objectId_24.svg',
+                                      child: Image.asset(
+                                        'assets/Images/Png/objectId_24.png',
                                         width: 30,
                                         height: 30,
                                       ),
+                                      // child: SvgPicture.asset(
+                                      //   '${AppConstants.svgObjectPath}objectId_24.svg',
+                                      //   width: 30,
+                                      //   height: 30,
+                                      //   color: Colors.red,
+                                      // ),
                                     ),
                                   if(filtrationSite.filters.length == 1)
                                     FiltrationDashboardFormation(filtrationFormation: FiltrationFormation.singleFilter, filtrationSite: filtrationSite),
@@ -345,11 +351,17 @@ class _FiltrationDashboardFormationState extends State<FiltrationDashboardFormat
           if(widget.filtrationSite.pressureOut != 0.0)
             Positioned(
               bottom: 10,
-              child: SvgPicture.asset(
-                '${AppConstants.svgObjectPath}objectId_24.svg',
+              child: Image.asset(
+                  'assets/Images/Png/objectId_24.png',
                 width: 30,
                 height: 30,
               ),
+              // child: SvgPicture.asset(
+              //   '${AppConstants.svgObjectPath}objectId_24.svg',
+              //   width: 30,
+              //   height: 30,
+              //   color: Colors.red,
+              // ),
             ),
         ],
       ),
