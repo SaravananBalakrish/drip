@@ -5,6 +5,7 @@ import 'package:mqtt_client/mqtt_browser_client.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:uuid/uuid.dart';
+import '../Constants/constants.dart';
 import '../StateManagement/mqtt_payload_provider.dart';
 import '../utils/constants.dart';
 
@@ -13,9 +14,18 @@ class MqttService {
   MqttPayloadProvider? providerState;
   MqttClient? _client;
   String? currentTopic;
+  Map<String, dynamic>? _acknowledgementPayload;
+  Map<String, dynamic>? get acknowledgementPayload => _acknowledgementPayload;
+  List<Map<String, dynamic>>? _schedulePayload;
 
+  final StreamController<Map<String, dynamic>?> _payloadController = StreamController.broadcast();
+  final StreamController<List<Map<String, dynamic>>?> _schedulePayloadController = StreamController.broadcast();
   final StreamController<String> mqttConnectionStreamController = StreamController.broadcast();
+
+  Stream<List<Map<String, dynamic>>?> get schedulePayloadStream => _schedulePayloadController.stream;
   Stream<String> get mqttConnectionStream => mqttConnectionStreamController.stream;
+  List<Map<String, dynamic>>? get schedulePayload => _schedulePayload;
+
 
   factory MqttService() {
     _instance ??= MqttService._internal();
@@ -25,6 +35,16 @@ class MqttService {
   MqttService._internal();
 
   bool get isConnected => _client?.connectionStatus?.state == MqttConnectionState.connected;
+
+  set acknowledgementPayload(Map<String, dynamic>? newPayload) {
+    _acknowledgementPayload = newPayload;
+    _payloadController.add(_acknowledgementPayload);
+  }
+
+  set schedulePayload(List<Map<String, dynamic>>? newPayload) {
+    _schedulePayload = newPayload;
+    _schedulePayloadController.add(_schedulePayload);
+  }
 
   void initializeMQTTClient({MqttPayloadProvider? state}) {
     providerState = state;
@@ -99,6 +119,10 @@ class MqttService {
       if (payloadMessage['mC'] == '2400') {
         print(payload);
         providerState?.updateReceivedPayload(payload, false);
+        acknowledgementPayload = jsonDecode(payload);
+        if (acknowledgementPayload != null && acknowledgementPayload!['mC'] == '3600') {
+          schedulePayload = Constants.dataConversionForScheduleView(acknowledgementPayload!['cM']['3601']);
+        }
       }
     } catch (e) {
       debugPrint('Error parsing MQTT payload: $e');

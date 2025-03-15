@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:oro_drip_irrigation/app/app.dart';
+import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:provider/provider.dart';
 import 'Screens/Constant/ConstantPageProvider/changeNotifier_constantProvider.dart';
 import 'modules/config_Maker/state_management/config_maker_provider.dart';
@@ -20,6 +21,7 @@ import 'flavors.dart';
 FutureOr<void> main() async {
   // debugPaintSizeEnabled = true;
   MqttManager mqttManager = MqttManager();
+  MqttService mqttService = MqttService();
   MqttPayloadProvider myMqtt = MqttPayloadProvider();
   ScheduleViewProvider mySchedule = ScheduleViewProvider();
   myMqtt.editMySchedule(mySchedule);
