@@ -1,10 +1,8 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/fertilizer_set/model/fertilizer_site_setting_model.dart';
 import 'package:oro_drip_irrigation/modules/fertilizer_set/repository/fertilizer_set_repository.dart';
-
 import '../../config_Maker/view/config_web_view.dart';
 
 class FertilizerScreen extends StatefulWidget {
