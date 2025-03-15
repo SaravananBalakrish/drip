@@ -5,7 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:oro_drip_irrigation/app/app.dart';
 import 'package:provider/provider.dart';
 import 'Screens/Constant/ConstantPageProvider/changeNotifier_constantProvider.dart';
-import 'config_maker/state_management/config_maker_provider.dart';
+import 'modules/config_Maker/state_management/config_maker_provider.dart';
 import 'StateManagement/irrigation_program_provider.dart';
 import 'StateManagement/preference_provider.dart';
 import 'StateManagement/schedule_view_provider.dart';

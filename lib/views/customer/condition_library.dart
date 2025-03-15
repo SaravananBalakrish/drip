@@ -2,7 +2,6 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
