@@ -62,7 +62,7 @@ class _LevelSensorInConstantState extends State<LevelSensorInConstant> {
             ),
             cells: [
               DataCell(Text(sensor.name, style: const TextStyle(color: Color(0xFF005B8D)))),
-              DataCell(getDropdown(sensor.sensorId, ['Primary', 'Secondary'])),
+              DataCell(getDropdown(sensor.sensorId, ['-','Primary', 'Secondary'])),
               DataCell(getDropdown(sensor.sensorId, ['Bar', 'dS/m'])),
               DataCell(getDropdown(sensor.sensorId, ['Current', 'Voltage'])),
               DataCell(getTextField(sensor.sensorId, 'min')),

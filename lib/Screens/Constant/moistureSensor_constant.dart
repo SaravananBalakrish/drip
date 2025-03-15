@@ -14,7 +14,15 @@ class MoistureSensorConstant extends StatefulWidget {
 class _MoistureSensorConstantState extends State<MoistureSensorConstant> {
   Map<String, String> selectedDropdownValues = {};
   Map<String, String> textFieldValues = {};
+  Map<String, TextEditingController> textFieldControllers = {};
 
+  @override
+  void dispose() {
+    for (var controller in textFieldControllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +34,7 @@ class _MoistureSensorConstantState extends State<MoistureSensorConstant> {
             child: DataTable2(
               columnSpacing: 12,
               horizontalMargin: 12,
-              minWidth: 600,
+              minWidth: 800,
               border: TableBorder.all(color: Colors.brown),
               headingRowColor: MaterialStateProperty.all(const Color(0xFFFDFDFD)),
 
@@ -50,7 +58,7 @@ class _MoistureSensorConstantState extends State<MoistureSensorConstant> {
                   ),
                   cells: [
                     DataCell(Text(sensor.name,style: const TextStyle(color: Color(0xFF005B8D)))),
-                    DataCell(getDropdown(sensor.objectIds, 'highLow', ['Primary', 'Secondary'])),
+                    DataCell(getDropdown(sensor.objectIds, 'highLow', ['-','Primary', 'Secondary'])),
                     DataCell(getDropdown(sensor.objectIds, 'units', ['Bar', 'dS/m'])),
                     DataCell(getDropdown(sensor.objectIds, 'base', ['Current', 'Voltage'])),
                     DataCell(getTextField(sensor.objectIds, 'min')),
@@ -82,14 +90,17 @@ class _MoistureSensorConstantState extends State<MoistureSensorConstant> {
 
   Widget getTextField(int sensorId, String category) {
     String key = '${sensorId}_$category';
-    TextEditingController controller = TextEditingController(
-      text: textFieldValues[key] ?? "0.0",
+    textFieldControllers.putIfAbsent(
+      key,
+          () => TextEditingController(text: textFieldValues[key] ?? "0.0"),
     );
 
     return TextField(
-      controller: controller,
+      controller: textFieldControllers[key],
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))],
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+      ],
       onChanged: (value) {
         setState(() {
           textFieldValues[key] = value.isEmpty ? "0.0" : value;

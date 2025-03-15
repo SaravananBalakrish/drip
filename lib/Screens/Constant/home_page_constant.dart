@@ -253,6 +253,9 @@ class _ConstantHomePageState extends State<ConstantHomePage>
                       alarm: widget.alarm,
                       controllerId: widget.controllerId,
                       userId: widget.userId,
+                      levelSensor: widget.levelSensor,
+                      moistureSensors:  widget.moistureSensors,
+                      waterMeter:  widget.waterMeter,
                     );
                   default:
                     return Center(child: Text(item.parameter));
