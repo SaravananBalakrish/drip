@@ -15,7 +15,7 @@ import '../../StateManagement/overall_use.dart';
 import '../../StateManagement/preference_provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
-import '../../view_models/customer/customer_screen_controller_view_model.dart';
+import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
 import '../NewIrrigationProgram/preview_screen.dart';
 import '../NewIrrigationProgram/program_library.dart';
 import '../NewIrrigationProgram/schedule_screen.dart';
