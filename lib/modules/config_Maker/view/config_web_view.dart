@@ -31,6 +31,7 @@ import 'config_base_page.dart';
 import 'config_mobile_view.dart';
 import 'connection.dart';
 import 'device_list.dart';
+import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
 
 
 class ConfigWebView extends StatefulWidget {
@@ -121,26 +122,26 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                         }
                     ),
                     InkWell(
-                    onHover: (value){
-                      setState(() {
-                        clearOnHover = value;
-                      });
-                    },
-                    onTap: (){
-                      configPvd.clearData();
-                    },
-                    child:  Row(
-                      spacing: 10,
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: clearOnHover ? themeData.primaryColorLight : themeData.primaryColorLight.withOpacity(0.5),
-                          radius: 20,
-                          child: SizedImageSmall(imagePath: '${AppConstants.svgObjectPath}clear.svg',color:  Colors.white,),
-                        ),
-                        const Text('Click To Clear Config', style: TextStyle(color: Colors.white),)
-                      ],
+                      onHover: (value){
+                        setState(() {
+                          clearOnHover = value;
+                        });
+                      },
+                      onTap: (){
+                        configPvd.clearData();
+                      },
+                      child:  Row(
+                        spacing: 10,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: clearOnHover ? themeData.primaryColorLight : themeData.primaryColorLight.withOpacity(0.5),
+                            radius: 20,
+                            child: SizedImageSmall(imagePath: '${AppConstants.svgObjectPath}clear.svg',color:  Colors.white,),
+                          ),
+                          const Text('Click To Clear Config', style: TextStyle(color: Colors.white),)
+                        ],
+                      ),
                     ),
-                  ),
                     InkWell(
                       onHover: (value){
                         setState(() {
@@ -153,7 +154,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                         });
                         sendToMqtt();
                         sendToHttp();
-                        },
+                      },
                       child:  Row(
                         spacing: 10,
                         children: [
@@ -180,10 +181,10 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                 sideNavigationWidget(screenWidth, screenHeight),
                 Expanded(
                   child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(10))
-                    ),
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: const BorderRadius.only(topLeft: Radius.circular(10))
+                      ),
                       child: configPvd.selectedTab == ConfigMakerTabs.deviceList
                           ? DeviceList(listOfDevices: widget.listOfDevices)
                           : configPvd.selectedTab == ConfigMakerTabs.productLimit
@@ -239,7 +240,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
 
   void payloadAlertBox(){
     showDialog(
-      barrierDismissible: false,
+        barrierDismissible: false,
         context: context,
         builder: (context){
           return StatefulBuilder(
@@ -406,9 +407,9 @@ class _ConfigWebViewState extends State<ConfigWebView> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        border: Border.all(color: color),
-        borderRadius: BorderRadius.circular(5)
+          color: color.withOpacity(0.1),
+          border: Border.all(color: color),
+          borderRadius: BorderRadius.circular(5)
       ),
       padding: const EdgeInsets.symmetric(horizontal: 10 , vertical: 5),
       child: child,
@@ -452,6 +453,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
       "isNewConfig" : '0',
       "productLimit" : listOfSampleObjectModel,
       "connectionCount" : listOfObjectModelConnection,
+      "configObject" : listOfGeneratedObject,
       "configObject" : [],
       "waterSource" : source,
       "pump" : pump,
@@ -479,6 +481,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
       return object.toJson(data: body);
     }).toList();
     var response = await ConfigMakerRepository().createUserConfigMaker(body);
+    print('body : ${jsonEncode(body)}');
     print('body configMaker: ${jsonEncode(body)}');
     print('response : ${response.body}');
   }
@@ -502,19 +505,19 @@ class _ConfigWebViewState extends State<ConfigWebView> {
       for(var i in ConfigMakerTabs.values)
         if(configPvd.masterData['categoryId'] != 2 || (![ConfigMakerTabs.deviceList].contains(i)))
           CustomSideTab(
-          width: screenWidth  > webBreakPoint ? sideNavigationTabWidth : sideNavigationTabBreakPointWidth,
-          imagePath: '${AppConstants.svgObjectPath}${getTabImage(i)}.svg',
-          title: getTabName(i),
-          selected: i == configPvd.selectedTab,
-          onTap: (){
-            updateConfigMakerTabs(
-                context: context,
-                configPvd: configPvd,
-                setState: setState,
-                selectedTab: i
-            );
-          },
-        )
+            width: screenWidth  > webBreakPoint ? sideNavigationTabWidth : sideNavigationTabBreakPointWidth,
+            imagePath: '${AppConstants.svgObjectPath}${getTabImage(i)}.svg',
+            title: getTabName(i),
+            selected: i == configPvd.selectedTab,
+            onTap: (){
+              updateConfigMakerTabs(
+                  context: context,
+                  configPvd: configPvd,
+                  setState: setState,
+                  selectedTab: i
+              );
+            },
+          )
     ];
   }
 
@@ -564,6 +567,7 @@ bool validatePayloadFromHardware(Map<String, dynamic>? payload, List<String> key
 enum HardwareAcknowledgementSate{notSent, sending, failed, success, errorOnPayload, hardwareUnknownError, programRunning}
 enum PayloadSendState{idle, start, stop}
 enum HardwareType{master, pump, economic}
+
 
 
 
