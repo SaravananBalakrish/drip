@@ -31,7 +31,6 @@ import 'config_base_page.dart';
 import 'config_mobile_view.dart';
 import 'connection.dart';
 import 'device_list.dart';
-import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
 
 
 class ConfigWebView extends StatefulWidget {
@@ -64,6 +63,8 @@ class _ConfigWebViewState extends State<ConfigWebView> {
     // TODO: implement initState
     super.initState();
     configPvd = Provider.of<ConfigMakerProvider>(context, listen: false);
+    mqttService.initializeMQTTClient();
+    mqttService.connect();
   }
 
   @override
@@ -415,6 +416,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
   }
 
   void sendToHttp()async{
+    print('sendToHttp called.....');
     var listOfSampleObjectModel = configPvd.listOfSampleObjectModel.map((object){
       return object.toJson();
     }).toList();
@@ -450,7 +452,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
       "isNewConfig" : '0',
       "productLimit" : listOfSampleObjectModel,
       "connectionCount" : listOfObjectModelConnection,
-      "configObject" : listOfGeneratedObject,
+      "configObject" : [],
       "waterSource" : source,
       "pump" : pump,
       "filterSite" : filtration,
@@ -473,8 +475,11 @@ class _ConfigWebViewState extends State<ConfigWebView> {
       "controllerReadStatus" : '0',
       "createUser" : configPvd.masterData['userId']
     };
+    body['configObject'] = configPvd.listOfGeneratedObject.map((object){
+      return object.toJson(data: body);
+    }).toList();
     var response = await ConfigMakerRepository().createUserConfigMaker(body);
-    print('body : ${jsonEncode(body)}');
+    print('body configMaker: ${jsonEncode(body)}');
     print('response : ${response.body}');
   }
 
@@ -559,3 +564,9 @@ bool validatePayloadFromHardware(Map<String, dynamic>? payload, List<String> key
 enum HardwareAcknowledgementSate{notSent, sending, failed, success, errorOnPayload, hardwareUnknownError, programRunning}
 enum PayloadSendState{idle, start, stop}
 enum HardwareType{master, pump, economic}
+
+
+
+
+
+
