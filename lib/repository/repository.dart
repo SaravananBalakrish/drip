@@ -272,5 +272,9 @@ class Repository{
     return await apiService.postRequest('/user/planning/conditionLibrary/get', body);
   }
 
+  Future<http.Response> saveConditionLibrary(body) async {
+    return await apiService.postRequest('/user/planning/conditionLibrary/create', body);
+  }
+
 }
 
