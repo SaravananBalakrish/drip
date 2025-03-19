@@ -336,5 +336,28 @@ class Repository{
     return await apiService.postRequest('/user/planning/conditionLibrary/create', body);
   }
 
+  Future<http.Response> getUserServiceRequest(body) async {
+    return await apiService.postRequest('/user/serviceRequest/get', body);
+  }
+
+  Future<http.Response> getUserServiceRequestForDealer(body) async {
+    return await apiService.postRequest('/user/serviceRequest/getForDealer', body);
+  }
+  Future<http.Response> getUserAllServiceRequestForDealer(body) async {
+    return await apiService.postRequest('/user/serviceRequest/getAllForDealer', body);
+  }
+  Future<http.Response> getAllUserAllServiceRequestForAdmin(body) async {
+    return await apiService.postRequest('/user/serviceRequest/getAllForAdmin', body);
+  }
+  Future<http.Response> createUserServiceRequest(body) async {
+    return await apiService.postRequest('/user/serviceRequest/create', body);
+  }
+  Future<http.Response> updateUserServiceRequest(body) async {
+    return await apiService.postRequest('/user/serviceRequest/update', body);
+  }
+  Future<http.Response> getUserDeviceFirmwareDetails(body) async {
+    return await apiService.postRequest('/user/deviceList/getFirmwareDetails', body);
+  }
+
 }
 

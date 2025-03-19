@@ -116,6 +116,14 @@ class MqttService {
       onMqttPayloadReceived(pt);
     });
   }
+  void topicToUnSubscribe(String topic) {
+
+    if (currentTopic != null) {
+      _client!.unsubscribe(currentTopic!);
+    }
+
+  }
+
 
   void onMqttPayloadReceived(String payload) {
     try {

@@ -79,15 +79,15 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     // ),
   ];
   static List<Widget> _widgetOptionspump = <Widget>[
-    MobDashboard(),
-    PreferenceMainScreen(
+    const MobDashboard(),
+    const PreferenceMainScreen(
       controllerId: 0,
       userId: 0,
       deviceId: "",
       customerId: 0,
       menuId: 78,
     ),
-    ViewSettings(userId: 0, controllerId: 0),
+    const ViewSettings(userId: 0, controllerId: 0),
     // PumpLogs(),
   ];
   DateTime? _lastPressedAt;
@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     if (payloadProvider.selectedSiteString == '' || widget.fromDealer) {
       if (mounted) {
         getData();
-        Future.delayed(Duration(seconds: 2), () {
+        Future.delayed(const Duration(seconds: 2), () {
           irrigationProgramProvider.updateBottomNavigation(0);
         });
         // if (!(widget.fromDealer)) {
@@ -229,7 +229,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         setState(() {
           payloadProvider.dataFetchingStatus = 2;
         });
-        Future.delayed(Duration(seconds: 10), () {
+        Future.delayed(const Duration(seconds: 10), () {
           if (payloadProvider.dataFetchingStatus != 1) {
             setState(() {
               payloadProvider.dataFetchingStatus = 3;
@@ -349,12 +349,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 onTap: _showMenuSheet,
                 child: Card(
                   color: Theme.of(context).primaryColorDark,
-                  shape: CircleBorder(),
+                  shape: const CircleBorder(),
                   elevation: 20,
                   child: Container(
                       padding: const EdgeInsets.all(8),
 
-                      child:  Icon(
+                      child:  const Icon(
                         Icons.keyboard_arrow_up,
                         size: 35,
                         color: Colors.white,
@@ -382,28 +382,28 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       context: context,
       transitionAnimationController: AnimationController(
         vsync: Navigator.of(context),
-        duration: Duration(milliseconds: 500),
-        reverseDuration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 500),
+        reverseDuration: const Duration(milliseconds: 300),
       ),
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
       ),
       builder: (BuildContext context) {
         return Consumer<OverAllUse>(
           builder: (context, overAllPvd, _) {
             return Container(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: RefreshIndicator(
                 onRefresh: fetchData,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     SizedBox(
                       height: 310,
                       child: GridView.builder(
                         itemCount: _hiddenMenu.data!.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 4,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 15,
@@ -452,7 +452,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                         progress: _controller,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                   ],
                 ),
               ),
@@ -472,10 +472,10 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       context: context,
       transitionAnimationController: AnimationController(
         vsync: Navigator.of(context),
-        duration: Duration(milliseconds: 500),
-        reverseDuration: Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 500),
+        reverseDuration: const Duration(milliseconds: 300),
       ),
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
       ),
       builder: (BuildContext context) {
@@ -495,12 +495,12 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ListTile(
                       subtitle: Text(
                         item.parameter!,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold),
                       ),
                       title: Text(
                         "STEP ${index + 1}",
-                        style: TextStyle(fontSize: 12),
+                        style: const TextStyle(fontSize: 12),
                       ),
                       leading: Container(
                         height: 40,
@@ -539,7 +539,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                       trailing: IntrinsicWidth(
                         child: Container(
                           padding:
-                          EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                          const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                           decoration: BoxDecoration(
                             color: controllerReadStatus
                                 ? Colors.green.shade50
@@ -560,7 +560,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                     ),
                     if (index != _hiddenMenu.data!.length - 1)
                       Container(
-                        margin: EdgeInsets.only(left: 35),
+                        margin: const EdgeInsets.only(left: 35),
                         height: 15,
                         width: 3,
                         decoration: BoxDecoration(
@@ -609,14 +609,14 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: color ?? [Color(0xffd2e5ee), Color(0xffcde6fc)],
+                colors: color ?? [const Color(0xffd2e5ee), const Color(0xffcde6fc)],
               ),
               boxShadow: customBoxShadow,
               border: Border.all(color: borderColor ?? Colors.grey, width: 0.3),
             ),
             child: Center(child: getIconsMenu(id!)),
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           SizedBox(
             width: 80,
             height: 30,
@@ -624,7 +624,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
               child: Text(
                 label ?? "Coming soon",
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 11),
+                style: const TextStyle(fontSize: 11),
               ),
             ),
           ),
@@ -640,11 +640,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text('Network is unreachable!!'),
+              const Text('Network is unreachable!!'),
               MaterialButton(
                 onPressed: getData,
                 color: Colors.blueGrey,
-                child: Text('RETRY', style: TextStyle(color: Colors.white)),
+                child: const Text('RETRY', style: TextStyle(color: Colors.white)),
               ),
             ],
           ),
@@ -685,7 +685,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             [1, 2].contains(overAllPvd.controllerType) ? actualIndex : index);
       },
       items: [
-        BottomNavigationBarItem(
+        const BottomNavigationBarItem(
             activeIcon: Icon(Icons.dashboard),
             label: "Dashboard",
             icon: Icon(Icons.dashboard_outlined)),
@@ -700,7 +700,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
                 ? Icons.schedule_outlined
                 : Icons.settings_outlined)),
         if ([1, 2].contains(overAllPvd.controllerType))
-          BottomNavigationBarItem(
+          const BottomNavigationBarItem(
               icon: SizedBox.shrink(), label: ''), // Placeholder
         BottomNavigationBarItem(
           icon: Icon([1, 2].contains(overAllPvd.controllerType)
@@ -713,8 +713,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           [1, 2].contains(overAllPvd.controllerType) ? "Schedule" : "View",
         ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.assessment_outlined),
-            activeIcon: Icon(Icons.assessment),
+            icon: const Icon(Icons.assessment_outlined),
+            activeIcon: const Icon(Icons.assessment),
             label: [1, 2].contains(overAllPvd.controllerType) ? "Log" : "Logs"),
       ],
     );
@@ -920,13 +920,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       76: 'assets/png_images/menuprogramque.png',
       77: 'assets/png_images/menuweather.png',
       78: 'assets/png_images/menufrost.png',
-      79: Icon(Icons.construction),
-      80: Icon(Icons.contact_page_sharp),
-      81: Icon(Icons.map),
+      79: const Icon(Icons.construction),
+      80: const Icon(Icons.contact_page_sharp),
+      81: const Icon(Icons.map),
     };
 
     final icon = icons[name];
-    return icon is String ? Image.asset(icon) : icon ?? Icon(Icons.person);
+    return icon is String ? Image.asset(icon) : icon ?? const Icon(Icons.person);
   }
 
   Future<bool> _onWillPop(BuildContext context) async {
@@ -934,13 +934,13 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       context: context,
       barrierDismissible: false,
       builder: (context) => AlertDialog(
-        title: Text("Exit"),
-        content: Text("Do you want to exit?"),
+        title: const Text("Exit"),
+        content: const Text("Do you want to exit?"),
         actions: <Widget>[
           TextButton(
             onPressed: () => exit(0),
             // onPressed: () => Navigator.of(context).pop(true),// Return true to pop the route
-            child: Text(
+            child: const Text(
               "Yes",
               style: TextStyle(
                 color: Colors.blue,
@@ -951,7 +951,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(
+            child: const Text(
               "No",
               style: TextStyle(
                 color: Colors.blue,
@@ -1038,7 +1038,7 @@ Future<void> showNavigationDialog(
                 onPressed: () {
                   Navigator.pop(dialogContext);
                 },
-                child: Text(
+                child: const Text(
                   "Stay",
                   style: TextStyle(color: Colors.red),
                 )),
@@ -1048,7 +1048,7 @@ Future<void> showNavigationDialog(
                       .updateSelectedMenu(menuId);
                   Navigator.pop(dialogContext);
                 },
-                child: Text("Go Next")),
+                child: const Text("Go Next")),
           ],
         );
       });
