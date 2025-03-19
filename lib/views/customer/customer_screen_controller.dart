@@ -8,6 +8,7 @@ import 'package:oro_drip_irrigation/views/customer/site_config.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone.dart';
 import '../../Models/customer/site_model.dart';
 import 'package:provider/provider.dart';
+import '../../Screens/Dealer/controllerverssionupdate.dart';
 import '../../Screens/ScheduleView/schedule_view_screen.dart';
 import '../../Screens/dashboard/dashboard_outerscreen.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
@@ -42,6 +43,8 @@ class CustomerScreenController extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final String _correctPassword = 'Oro@321';
+
 
     return MultiProvider(
       providers: [
@@ -241,8 +244,50 @@ class CustomerScreenController extends StatelessWidget {
                       child: Icon(Icons.mic, color: Colors.black26,),
                     )),
                     IconButton(tooltip : 'Help & Support', onPressed: (){
-
-                    }, icon: const CircleAvatar(
+                      showMenu(
+                        context: context,
+                        color: Colors.white,
+                        position: const RelativeRect.fromLTRB(100, 0, 50, 0),
+                        items: <PopupMenuEntry>[
+                        PopupMenuItem(
+                        child: Column(
+                        children: [
+                        ListTile(
+                        leading: const Icon(Icons.info_outline),
+                        title: const Text('App info'),
+                        onTap: () {
+                        Navigator.pop(context);
+                        },
+                        ),
+                        ListTile(
+                        leading: const Icon(Icons.help_outline),
+                        title: const Text('Help'),
+                        onTap: () {
+                        Navigator.pop(context);
+                        },
+                        ),
+                        ListTile(
+                        leading: const Icon(Icons.info_outline),
+                        title: const Text('Controller info'),
+                        onTap: () {
+                      Navigator.pop(context);
+                      showPasswordDialog(context, _correctPassword, userId, vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId, vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId);
+                        },
+                        ),
+                        const Divider(height: 0),
+                        ListTile(
+                        leading: const Icon(Icons.feedback_outlined),
+                        title: const Text('Send feedback'),
+                        onTap: () {
+                        Navigator.pop(context);
+                        },
+                        ),
+                        ],
+                        ),
+                        ),
+                        ],
+                        );
+                        }, icon: const CircleAvatar(
                       radius: 17,
                       backgroundColor: Colors.white,
                       child: Icon(Icons.live_help_outlined),
@@ -584,6 +629,74 @@ class CustomerScreenController extends StatelessWidget {
       ),
     );
   }
+
+  void showPasswordDialog(BuildContext context, correctPassword,userId,controllerID,imeiNumber) {
+    final TextEditingController _passwordController = TextEditingController();
+
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Enter Password'),
+          content: TextField(
+            controller: _passwordController,
+            obscureText: true,
+            decoration: InputDecoration(
+              labelText: 'Password',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                final enteredPassword = _passwordController.text;
+
+                if (enteredPassword == correctPassword) {
+                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) =>  ResetVerssion(userId: userId, controllerId: controllerID, deviceID: imeiNumber,)),
+                  );
+                } else {
+                  Navigator.of(context).pop(); // Close the dialog
+                  showErrorDialog(context);
+                }
+              },
+              child: Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Error'),
+          content: Text('Incorrect password. Please try again.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 
   List<NavigationRailDestination> getNavigationDestinations() {
     final destinations = [
