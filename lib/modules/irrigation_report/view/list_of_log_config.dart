@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/irrigation_report/repository/irrigation_repository.dart';
 import 'package:provider/provider.dart';
 
-import '../../../Screens/NewIrrigationProgram/water_and_fertilizer_screen.dart';
+import '../../IrrigationProgram/view/water_and_fertilizer_screen.dart';
 import '../../../StateManagement/overall_use.dart';
 import '../model/data_parsing_and_sorting_model.dart';
 import '../model/general_parameter_model.dart';

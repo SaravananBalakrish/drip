@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/Screens/NewIrrigationProgram/program_library.dart';
-import 'package:oro_drip_irrigation/Screens/ScheduleView/schedule_view_screen.dart';
+import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/program_library.dart';
+import 'package:oro_drip_irrigation/modules/ScheduleView/view/schedule_view_screen.dart';
 import '../flavors.dart';
 import '../utils/Theme/smart_comm_theme.dart';
 import '../utils/routes.dart';

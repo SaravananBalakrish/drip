@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/Screens/NewIrrigationProgram/program_library.dart';
+import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/program_library.dart';
 import 'package:oro_drip_irrigation/Screens/planning/fiterbackwash.dart';
 import 'package:oro_drip_irrigation/modules/calibration/view/calibration_screen.dart';
 import 'package:oro_drip_irrigation/modules/global_limit/view/global_limit_screen.dart';
 
 import '../../Constants/properties.dart';
 import '../../Screens/Constant/api_in_constant.dart';
-import '../../Screens/NewPreference/preference_main_screen.dart';
-import '../../Screens/SystemDefinitionScreen/system_definition_screen.dart';
+import '../../modules/Preferences/view/preference_main_screen.dart';
+import '../../modules/SystemDefinitions/view/system_definition_screen.dart';
 import '../../Screens/planning/frost_productionScreen.dart';
 import '../../Screens/planning/names_form.dart';
 import '../../Screens/planning/planningwatersource.dart';

@@ -3,7 +3,7 @@ import 'package:oro_drip_irrigation/modules/calibration/view/calibration_screen.
 import 'package:oro_drip_irrigation/modules/config_Maker/view/config_base_page.dart';
 import 'package:oro_drip_irrigation/modules/config_Maker/view/table_demo.dart';
 import 'package:oro_drip_irrigation/modules/global_limit/view/global_limit_screen.dart';
-import '../Screens/ScheduleView/schedule_view_screen.dart';
+import '../modules/ScheduleView/view/schedule_view_screen.dart';
 import '../modules/irrigation_report/view/list_of_log_config.dart';
 import '../modules/irrigation_report/view/standalone_log.dart';
 import '../views/screen_controller.dart';

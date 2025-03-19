@@ -5,8 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
-
+import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -666,7 +665,7 @@ class _ConditionUIState extends State<FrostMobUI>
       ]
     });
 
-    MqttManager().topicToPublishAndItsMessage('AppToFirmware/${overAllPvd.imeiNo}', payLoadFinal);
+    MqttService().topicToPublishAndItsMessage(payLoadFinal, 'AppToFirmware/${overAllPvd.imeiNo}');
 
     List<Map<String, dynamic>> frostProtection = _frostProtectionModel
         .frostProtection!

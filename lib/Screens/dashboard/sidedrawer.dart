@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart';
 import 'package:oro_drip_irrigation/utils/Theme/oro_theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';

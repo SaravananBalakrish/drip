@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:provider/provider.dart';
  import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,9 +18,8 @@ import '../../Widgets/HoursMinutesSeconds.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
-import '../NewIrrigationProgram/program_library.dart';
-import '../NewIrrigationProgram/water_and_fertilizer_screen.dart';
-import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
+import '../../modules/IrrigationProgram/view/program_library.dart';
+import '../../modules/IrrigationProgram/view/water_and_fertilizer_screen.dart';
 
 class FilterBackwashUI extends StatefulWidget {
   final int userId;
@@ -1032,7 +1032,7 @@ class _FilterBackwashUIState extends State<FilterBackwashUI>
      var getUserDetails = await repository.UpdateFilterBackwasing(body);
       var jsonDataResponse = jsonDecode(getUserDetails.body);
 
-    if (MqttManager().isConnected == true) {
+    if (MqttService().isConnected == true) {
       await validatePayloadSent(
           dialogContext: context,
           context: context,
@@ -1073,8 +1073,8 @@ class _FilterBackwashUIState extends State<FilterBackwashUI>
         {"4001": index},
       ]
     });
-    if (MqttManager().isConnected == true) {
-       MqttManager().topicToPublishAndItsMessage('AppToFirmware/${overAllPvd.imeiNo}', payLoadFinal);
+    if (MqttService().isConnected == true) {
+      MqttService().topicToPublishAndItsMessage(payLoadFinal, 'AppToFirmware/${overAllPvd.imeiNo}');
       GlobalSnackBar.show(context, 'Manual ON/OFF Send', 200);
     } else {
       GlobalSnackBar.show(context, 'MQTT is Disconnected', 201);

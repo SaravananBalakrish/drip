@@ -7,9 +7,6 @@ import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../services/mqtt_service.dart';
 import '../../utils/constants.dart';
  import 'package:intl/intl.dart';
-import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
-
-
 
 class MobCurrentProgram extends StatefulWidget {
   const MobCurrentProgram({super.key, required this.scheduledPrograms, required this.deviceId});

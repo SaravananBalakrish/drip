@@ -1,4 +1,6 @@
 
+import '../../../utils/constants.dart';
+
 class DeviceObjectModel {
   final int objectId;
   double? sNo;
@@ -10,6 +12,7 @@ class DeviceObjectModel {
   String? count;
   int? connectedObject;
   int? siteMode;
+  double? location;
 
   DeviceObjectModel({
     required this.objectId,
@@ -22,15 +25,11 @@ class DeviceObjectModel {
     this.count,
     this.connectedObject,
     this.siteMode,
+    this.location,
   });
 
-  @override
-  String toString() {
-    return '$objectName(name: $name, objectId: $objectId, connectionNo: $connectionNo, type: $type, controllerId: $controllerId, count: $count, connectedObject: $connectedObject)';
-  }
 
   factory DeviceObjectModel.fromJson(Map<String, dynamic> data) {
-    // print("deveice object model:::::$data");
     return DeviceObjectModel(
       objectId: data['objectId'],
       sNo: data['sNo'],
@@ -42,10 +41,11 @@ class DeviceObjectModel {
       count: data['count'],
       connectedObject: data['connectedObject'],
       siteMode: data['siteMode'],
+      location: data['location'] ?? 0.00,
     );
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson({dynamic data}) {
     return {
       'objectId': objectId,
       'sNo': sNo,
@@ -57,6 +57,10 @@ class DeviceObjectModel {
       'count': count,
       'connectedObject': connectedObject,
       'siteMode': siteMode,
+      if(data != null)
+        'location' : AppConstants.findLocation(data: data, objectSno: sNo!, key: 'sNo')
     };
   }
 }
+
+

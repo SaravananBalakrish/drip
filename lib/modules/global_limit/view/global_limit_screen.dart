@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,13 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/modules/global_limit/repository/global_limit_repository.dart';
-
+import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import '../../../Widgets/custom_buttons.dart';
 import '../../../Widgets/status_box.dart';
 import '../../../utils/environment.dart';
 import '../../config_Maker/view/config_web_view.dart';
 import '../model/line_in_global_limit_model.dart';
-import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
 
 
 class GlobalLimitScreen extends StatefulWidget {
@@ -31,7 +29,7 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
   late ThemeData themeData;
   late bool themeMode;
   HardwareAcknowledgementSate payloadState = HardwareAcknowledgementSate.notSent;
-  MqttManager mqttManager = MqttManager();
+  MqttService mqttService = MqttService();
   int maximumNoOfChannel = 8;
 
   @override
@@ -87,23 +85,23 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
               floatingActionButton: getFloatingActionButton(),
               body: SafeArea(
                 child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 10,),
-                        getIrrigationLine(),
-                        const SizedBox(height: 10,),
-                        Expanded(
-                          child: Container(
-                            width: MediaQuery.of(context).size.width - 20,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(width: 1, color: themeData.primaryColor.withOpacity(0.5))
-                            ),
-                            child: DataTable2(
+                    padding: const EdgeInsets.all(8.0),
+                    child: SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 10,),
+                          getIrrigationLine(),
+                          const SizedBox(height: 10,),
+                          Expanded(
+                            child: Container(
+                              width: MediaQuery.of(context).size.width - 20,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(width: 1, color: themeData.primaryColor.withOpacity(0.5))
+                              ),
+                              child: DataTable2(
                                 minWidth: 2750,
                                 fixedLeftColumns: 1,
                                 columns: [
@@ -131,7 +129,7 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
                                 dividerThickness: 1,
                                 rows: List.generate(listOfIrrigationLine[selectedLine].valve.length, (int row){
                                   return DataRow(
-                                    color: WidgetStatePropertyAll(
+                                      color: WidgetStatePropertyAll(
                                         row.isOdd ? Colors.white : themeData.primaryColorLight.withOpacity(0.1),
                                       ),
                                       cells: [
@@ -147,7 +145,7 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
                                                     listOfIrrigationLine[selectedLine].valve[row].quantity = value;
                                                   });
                                                 },
-                                              inputFormatters: AppProperties.regexForNumbers
+                                                inputFormatters: AppProperties.regexForNumbers
                                             )
                                         ),
                                         ...List.generate(maximumNoOfChannel, (int cell){
@@ -190,12 +188,12 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
                                       ]
                                   );
                                 }),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  )
+                        ],
+                      ),
+                    )
                 ),
               ),
             );
@@ -243,7 +241,7 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
       onPressed: (){
         setState(() {
           payloadState = HardwareAcknowledgementSate.notSent;
-          mqttManager.payload = null;
+          mqttService.acknowledgementPayload = null;
         });
         showDialog(
             barrierDismissible: false,
@@ -263,35 +261,31 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
                           CustomMaterialButton(
                             onPressed: ()async{
                               sendToHttp();
-                              if(mqttManager.connectionState == MqttConnectionState.connected){
-                                mqttManager.topicToSubscribe('${Environment.mqttSubscribeTopic}/${widget.userData['deviceId']}');
-                                print('subscribe successfully...........');
-                              }
                               var payload = jsonEncode(getGlobalLimitPayload());
                               int delayDuration = 10;
                               for(var delay = 0; delay < delayDuration; delay++){
                                 if(delay == 0){
                                   stateSetter((){
                                     setState((){
-                                      mqttManager.topicToPublishAndItsMessage('${Environment.mqttPublishTopic}/${widget.userData['deviceId']}', payload);
+                                      mqttService.topicToPublishAndItsMessage(payload, '${Environment.mqttPublishTopic}/${widget.userData['deviceId']}');
                                       payloadState = HardwareAcknowledgementSate.sending;
                                     });
                                   });
                                 }
                                 stateSetter((){
                                   setState((){
-                                    if(mqttManager.payload != null){
-                                      if(validatePayloadFromHardware(mqttManager.payload!, ['cC'], widget.userData['deviceId']) && validatePayloadFromHardware(mqttManager.payload!, ['cM', '4201', 'PayloadCode'], '1100')){
-                                        if(mqttManager.payload!['cM']['4201']['Code'] == '200'){
+                                    if(mqttService.acknowledgementPayload != null){
+                                      if(validatePayloadFromHardware(mqttService.acknowledgementPayload, ['cC'], widget.userData['deviceId']) && validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cM', '4201', 'PayloadCode'], '1100')){
+                                        if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '200'){
                                           payloadState = HardwareAcknowledgementSate.success;
-                                        }else if(mqttManager.payload!['cM']['4201']['Code'] == '90'){
+                                        }else if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '90'){
                                           payloadState = HardwareAcknowledgementSate.programRunning;
-                                        }else if(mqttManager.payload!['cM']['4201']['Code'] == '1'){
+                                        }else if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '1'){
                                           payloadState = HardwareAcknowledgementSate.hardwareUnknownError;
                                         }else{
                                           payloadState = HardwareAcknowledgementSate.errorOnPayload;
                                         }
-                                        mqttManager.payload == null;
+                                        mqttService.acknowledgementPayload == null;
                                       }
                                     }
                                   });

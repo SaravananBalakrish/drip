@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Models/watersource_model.dart';
@@ -11,9 +12,7 @@ import '../../StateManagement/overall_use.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
-import '../NewIrrigationProgram/program_library.dart';
-import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
-
+import '../../modules/IrrigationProgram/view/program_library.dart';
 
 class watersourceUI extends StatefulWidget {
   const watersourceUI(
@@ -801,7 +800,7 @@ class _watersourceUIState extends State<watersourceUI>
       "hardware": payLoadFinal,
       "createUser": overAllPvd.userId
     };
-    if (MqttManager().isConnected == true) {
+    if (MqttService().isConnected == true) {
       await validatePayloadSent(
           dialogContext: context,
           context: context,

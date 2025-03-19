@@ -8,7 +8,7 @@ import 'package:oro_drip_irrigation/views/customer/site_config.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone.dart';
 import '../../Models/customer/site_model.dart';
 import 'package:provider/provider.dart';
-import '../../Screens/ScheduleView/schedule_view_screen.dart';
+import '../../modules/ScheduleView/view/schedule_view_screen.dart';
 import '../../Screens/dashboard/dashboard_outerscreen.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../flavors.dart';

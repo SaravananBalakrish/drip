@@ -2,21 +2,21 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 
-import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
 import 'package:provider/provider.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../StateManagement/overall_use.dart';
 import '../../Widgets/blinking_container.dart';
-import '../NewIrrigationProgram/irrigation_program_main.dart';
-import '../NewIrrigationProgram/preview_screen.dart';
-import '../NewIrrigationProgram/schedule_screen.dart';
+import '../../modules/IrrigationProgram/view/irrigation_program_main.dart';
+import '../../modules/IrrigationProgram/view/preview_screen.dart';
+import '../../modules/IrrigationProgram/view/schedule_screen.dart';
 
 class ScheduleProgramForMobile extends StatefulWidget {
   final int selectedLine;
-  final MqttManager manager;
+  final MqttService manager;
   final String deviceId;
   final int userId;
   final int controllerId;

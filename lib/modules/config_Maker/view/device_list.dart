@@ -9,7 +9,6 @@ import '../../../Constants/properties.dart';
 import '../model/device_model.dart';
 import '../state_management/config_maker_provider.dart';
 import 'package:linked_scroll_controller/linked_scroll_controller.dart';
-import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
 
 import '../../../Widgets/custom_buttons.dart';
 import '../../../Widgets/custom_drop_down_button.dart';
@@ -70,9 +69,9 @@ class _DeviceListState extends State<DeviceList> {
               const SizedBox(height: 20,),
               Expanded(
                 child: DataTable2(
-                  minWidth: 950,
-                  headingRowColor: WidgetStatePropertyAll(themeData.colorScheme.onBackground),
-                  dataRowColor: const WidgetStatePropertyAll(Colors.white),
+                    minWidth: 950,
+                    headingRowColor: WidgetStatePropertyAll(themeData.colorScheme.onBackground),
+                    dataRowColor: const WidgetStatePropertyAll(Colors.white),
                     fixedLeftColumns: 2,
                     columns: [
                       DataColumn2(
@@ -214,15 +213,15 @@ class _DeviceListState extends State<DeviceList> {
       width:  double.infinity,
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-        color: Colors.white,
-        border: Border.all(width: 0.5, color: const Color(0xffC9C6C6)),
-        boxShadow: AppProperties.customBoxShadowLiteTheme
+          color: Colors.white,
+          border: Border.all(width: 0.5, color: const Color(0xffC9C6C6)),
+          boxShadow: AppProperties.customBoxShadowLiteTheme
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(0),
         leading: SizedImageMedium(imagePath: 'assets/Images/Png/${F.name.contains('oro') ? 'Oro' : 'SmartComm'}/category_${configPvd.masterData['categoryId']}.png'),
         title: Text('${configPvd.masterData['deviceName']}', style: themeData.textTheme.bodyLarge,),
-        subtitle: Text('${configPvd.masterData['deviceId']}', style: themeData.textTheme.bodySmall,),
+        subtitle: SelectableText('${configPvd.masterData['deviceId']}', style: themeData.textTheme.bodySmall,),
         trailing: IntrinsicWidth(
           child: CustomMaterialButton(
               onPressed: (){
@@ -239,7 +238,7 @@ class _DeviceListState extends State<DeviceList> {
                               return AlertDialog(
                                 backgroundColor: Colors.white,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(0)
+                                    borderRadius: BorderRadius.circular(0)
                                 ),
                                 title: const Text('Choose Node for Configuration Under Master',),
                                 content: SizedBox(
@@ -247,8 +246,8 @@ class _DeviceListState extends State<DeviceList> {
                                   child: DataTable(
                                     headingRowColor: WidgetStatePropertyAll(themeData.colorScheme.onBackground),
                                     dataRowColor: WidgetStatePropertyAll(themeData.colorScheme.onBackground),
-                                      columns: [
-                                        DataColumn(
+                                    columns: [
+                                      DataColumn(
                                           label: Checkbox(
                                               value: selectAllNode,
                                               onChanged: (value){
@@ -262,44 +261,44 @@ class _DeviceListState extends State<DeviceList> {
                                                 });
                                               }
                                           )
-                                        ),
-                                        DataColumn(
-                                          label: Text('MODEL NAME', style: themeData.textTheme.headlineLarge,),
-                                        ),
-                                        DataColumn(
-                                          label: Text('DEVICE ID',style: themeData.textTheme.headlineLarge,),
-                                        )
-                                      ],
-                                      rows: listOfDevices
-                                          .where((node) => node.masterId == null)
-                                          .toList()
-                                          .asMap()
-                                          .entries.map((entry){
-                                        int index = entry.key;
-                                        DeviceModel device = entry.value;
-                                        return DataRow(
-                                            cells: [
-                                              DataCell(
-                                                Checkbox(
-                                                  value: device.select,
-                                                  onChanged: (value){
-                                                    stateSetter((){
-                                                      setState(() {
-                                                        device.select = value!;
-                                                      });
+                                      ),
+                                      DataColumn(
+                                        label: Text('MODEL NAME', style: themeData.textTheme.headlineLarge,),
+                                      ),
+                                      DataColumn(
+                                        label: Text('DEVICE ID',style: themeData.textTheme.headlineLarge,),
+                                      )
+                                    ],
+                                    rows: listOfDevices
+                                        .where((node) => node.masterId == null)
+                                        .toList()
+                                        .asMap()
+                                        .entries.map((entry){
+                                      int index = entry.key;
+                                      DeviceModel device = entry.value;
+                                      return DataRow(
+                                          cells: [
+                                            DataCell(
+                                              Checkbox(
+                                                value: device.select,
+                                                onChanged: (value){
+                                                  stateSetter((){
+                                                    setState(() {
+                                                      device.select = value!;
                                                     });
-                                                  },
-                                                ),
+                                                  });
+                                                },
                                               ),
-                                              DataCell(
+                                            ),
+                                            DataCell(
                                                 Text(device.deviceName,style: themeData.textTheme.headlineSmall,)
-                                              ),
-                                              DataCell(
-                                                  Text(device.deviceId, style: TextStyle(color: themeData.primaryColor))
-                                              ),
-                                            ]
-                                        );
-                                      }).toList(),
+                                            ),
+                                            DataCell(
+                                                Text(device.deviceId, style: TextStyle(color: themeData.primaryColor))
+                                            ),
+                                          ]
+                                      );
+                                    }).toList(),
                                   ),
                                 ),
                                 actions: [

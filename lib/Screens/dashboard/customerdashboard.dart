@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:oro_drip_irrigation/Screens/dashboard/mobileschedule_program.dart';
 import 'package:oro_drip_irrigation/Screens/dashboard/sidedrawer.dart';
+import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/views/customer/node_list.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone.dart';
 import 'package:provider/provider.dart';
@@ -15,15 +16,14 @@ import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../StateManagement/overall_use.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
-import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
 import '../../utils/Theme/oro_theme.dart';
 import '../../utils/constants.dart';
 import '../../utils/shared_preferences_helper.dart';
 import '../../utils/snack_bar.dart';
 import '../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../../views/customer/home_sub_classes/irrigation_line.dart';
-import '../NewIrrigationProgram/preview_screen.dart';
-import '../NewIrrigationProgram/schedule_screen.dart';
+import '../../modules/IrrigationProgram/view/preview_screen.dart';
+import '../../modules/IrrigationProgram/view/schedule_screen.dart';
 import 'mobilecurrentprogram.dart';
 import 'mobilenext_schedule.dart';
 
@@ -42,7 +42,7 @@ class _DashboardState extends State<MobDashboard>
     with TickerProviderStateMixin {
   late MqttPayloadProvider payloadProvider;
   late OverAllUse overAllPvd;
-  MqttManager manager = MqttManager();
+  MqttService manager = MqttService();
   bool sourcePumpMode = false;
   bool irrigationLineMode = false;
   bool irrigationPumpMode = false;
@@ -509,8 +509,6 @@ class _DashboardState extends State<MobDashboard>
                                                                 /*if(selectedMasterData.config!.irrigationLine != null){
                                                             payloadProvider.editLineData(selectedMasterData.config!.irrigationLine);
                                                           }*/
-                                                                manager.topicToUnSubscribe(
-                                                                    unSubscribeTopic);
 
                                                                 print(
                                                                     "controllerType ==> ${overAllPvd.controllerType}");
@@ -674,7 +672,7 @@ class _DashboardState extends State<MobDashboard>
                                                                             payloadProvider.editSubscribeTopic('FirmwareToApp/$imeiNo');
                                                                             payloadProvider.editPublishTopic('AppToFirmware/$imeiNo');
                                                                             payloadProvider.editPublishMessage(getPublishMessage());
-                                                                            manager.topicToUnSubscribe(unSubscribeTopic);
+                                                                            // manager.topicToUnSubscribe(unSubscribeTopic);
                                                                             manager.topicToSubscribe('FirmwareToApp/${overAllPvd.imeiNo}');
                                                                             Future.delayed(const Duration(milliseconds: 300),
                                                                                 () {
@@ -946,8 +944,8 @@ class _DashboardState extends State<MobDashboard>
                                                     payloadProvider
                                                         .selectedMaster];
 
-                                            manager.topicToUnSubscribe(
-                                                'FirmwareToApp/${overAllPvd.imeiNo}');
+                                            // manager.topicToUnSubscribe(
+                                            //     'FirmwareToApp/${overAllPvd.imeiNo}');
 
                                             payloadProvider
                                                 .updateReceivedPayload(

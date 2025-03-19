@@ -4,7 +4,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:provider/provider.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
-import '../StateManagement/irrigation_program_provider.dart';
+import '../modules/IrrigationProgram/state_management/irrigation_program_provider.dart';
 import '../StateManagement/overall_use.dart';
 
 class HoursMinutesSeconds extends StatefulWidget {

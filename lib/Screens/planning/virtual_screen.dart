@@ -3,15 +3,15 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:oro_drip_irrigation/services/mqtt_manager_mobile.dart' if (dart.library.html) 'package:oro_drip_irrigation/services/mqtt_manager_web.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../StateManagement/overall_use.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
-import '../NewIrrigationProgram/program_library.dart';
+import '../../modules/IrrigationProgram/view/program_library.dart';
 
 
 class VirtualMeterScreen extends StatefulWidget {
@@ -1029,7 +1029,7 @@ class _VirtualMeterScreenState extends State<VirtualMeterScreen>
       };
 
 
-      if (MqttManager().isConnected == true) {
+      if (MqttService().isConnected == true) {
         await validatePayloadSent(
             dialogContext: context,
             context: context,

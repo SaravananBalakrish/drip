@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/StateManagement/schedule_view_provider.dart';
 
 import '../Constants/data_convertion.dart';
 import '../Models/customer/site_model.dart';
@@ -25,7 +24,6 @@ class MqttPayloadProvider with ChangeNotifier {
   // bool isWaiting = false;
   int dataFetchingStatus = 2;
   List<dynamic> unitList = [];
-  late ScheduleViewProvider mySchedule;
   //Todo : Dashboard start
   int tryingToGetPayload = 0;
 
@@ -759,13 +757,6 @@ class MqttPayloadProvider with ChangeNotifier {
     updateCentralFiltrationSite();
     updateLocalFiltrationSite();
     // updateCurrentSchedule();
-    notifyListeners();
-  }
-
-  //Todo : Dashboard stop
-
-  void editMySchedule(ScheduleViewProvider instance){
-    mySchedule = instance;
     notifyListeners();
   }
 
