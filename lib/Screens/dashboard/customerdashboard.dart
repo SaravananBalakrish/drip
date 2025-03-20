@@ -1417,7 +1417,7 @@ class _DashboardState extends State<MobDashboard>
     List<FertilizerSite> fertilizerSite = payloadProvider.fertilizerSiteMobDash;
     List<IrrigationLineData>? irrLineData = payloadProvider.irrLineDataMobDash;
 
-    var outputOnOffLiveMessage = Provider.of<MqttPayloadProvider>(context).outputOnOffLiveMessage;
+    var outputOnOffLiveMessage = Provider.of<MqttPayloadProvider>(context).outputStatusPayload;
     print('outputOnOffLiveMessage:$outputOnOffLiveMessage');
 
     List<String> filteredPumpStatus = outputOnOffLiveMessage
@@ -1660,7 +1660,7 @@ class _DashboardState extends State<MobDashboard>
                 displayFertilizerSite(context, fertilizerSite),
               IrrigationLine(
                 lineData: irrLineData,
-                pumpStationWith: 0,
+                pumpStationWith: 0, currentLineName: '',
               ),
             ],
           ),
