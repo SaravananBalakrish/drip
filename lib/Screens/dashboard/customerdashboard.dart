@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:oro_drip_irrigation/Screens/dashboard/mobileschedule_program.dart';
 import 'package:oro_drip_irrigation/Screens/dashboard/sidedrawer.dart';
+import 'package:oro_drip_irrigation/modules/Preferences/state_management/preference_provider.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/views/customer/node_list.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone.dart';
@@ -14,6 +15,7 @@ import 'package:provider/provider.dart';
 import '../../Models/customer/site_model.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../StateManagement/overall_use.dart';
+import '../../modules/IrrigationProgram/state_management/irrigation_program_provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/Theme/oro_theme.dart';
@@ -48,6 +50,7 @@ class _DashboardState extends State<MobDashboard>
   bool irrigationPumpMode = false;
   bool filtrationWidgetMode = false;
   bool fertigationWidgetMode = false;
+  bool isBottomSheet = false;
   late Timer _timer;
   int selectedTab = 0;
   int userId = 0;
@@ -93,7 +96,7 @@ class _DashboardState extends State<MobDashboard>
     await fetchUserPreferences();
     print("getData");
     // print('//////////////////////////////////////////get function called//////////////////////////');
-    if (payloadProvider.timerForIrrigationPump != null) {
+    if (payloadProvider.timerForCurrentSchedule != null) {
       setState(() {
         payloadProvider.timerForIrrigationPump!.cancel();
         payloadProvider.timerForSourcePump!.cancel();
@@ -148,8 +151,6 @@ class _DashboardState extends State<MobDashboard>
     }
   }
 
-
-
   @override
   void dispose() {
     // TODO: implement dispose
@@ -159,7 +160,7 @@ class _DashboardState extends State<MobDashboard>
 
   dynamic getPublishMessage() {
     dynamic refersh = '';
-    if (![3, 4].contains(!overAllPvd.takeSharedUserId
+    if (![2].contains(!overAllPvd.takeSharedUserId
         ? payloadProvider.listOfSite[payloadProvider.selectedSite]['master']
             [payloadProvider.selectedMaster]['categoryId']
         : payloadProvider.listOfSharedUser['devices']
@@ -654,7 +655,7 @@ class _DashboardState extends State<MobDashboard>
                                                                               payloadProvider.editLineData(payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['irrigationLine']);
                                                                             }
                                                                             payloadProvider.updateReceivedPayload(
-                                                                                jsonEncode([3, 4].contains(overAllPvd.controllerType)
+                                                                                jsonEncode([2].contains(overAllPvd.controllerType)
                                                                                     ? {
                                                                                         "mC": "LD01",
                                                                                         'cM': payloadProvider.listOfSharedUser['devices'][payloadProvider.selectedMaster]['liveMessage']
@@ -768,7 +769,7 @@ class _DashboardState extends State<MobDashboard>
                         // Modified by saravanan
                         buildPopUpMenuButton(
                             context: context,
-                            dataList: ([1, 2]
+                            dataList: ([1]
                                         .contains(overAllPvd.controllerType) &&
                                     overAllPvd.fromDealer)
                                 ? [
@@ -778,7 +779,7 @@ class _DashboardState extends State<MobDashboard>
                                     "Sent and Received",
                                     "Controller Info"
                                   ]
-                                : [1, 2].contains(overAllPvd.controllerType)
+                                : [1].contains(overAllPvd.controllerType)
                                     ? [
                                         "Standalone",
                                         "Node status",
@@ -853,7 +854,7 @@ class _DashboardState extends State<MobDashboard>
                                 showPasswordDialog(context, _correctPassword);
                               }
                             },
-                            child: ([1, 2]
+                            child: ([1]
                                         .contains(overAllPvd.controllerType) ||
                                     overAllPvd.fromDealer)
                                 ? const Padding(
@@ -861,7 +862,7 @@ class _DashboardState extends State<MobDashboard>
                                         EdgeInsets.symmetric(horizontal: 5.0),
                                     child: Icon(Icons.more_vert),
                                   )
-                                : ![1, 2].contains(overAllPvd.controllerType)
+                                : ![1].contains(overAllPvd.controllerType)
                                     ? Container()
                                     : Container())
                       ],
@@ -871,7 +872,7 @@ class _DashboardState extends State<MobDashboard>
                                         .master
                                         .length >
                                     1 ||
-                                [1, 2].contains(overAllPvd.controllerType)
+                                [1].contains(overAllPvd.controllerType)
                             : true)
                         ? Container(
                             decoration: const BoxDecoration(
@@ -949,7 +950,7 @@ class _DashboardState extends State<MobDashboard>
 
                                             payloadProvider
                                                 .updateReceivedPayload(
-                                                    jsonEncode([3, 4].contains(
+                                                    jsonEncode([2].contains(
                                                             overAllPvd
                                                                 .controllerType)
                                                         ? {
@@ -960,7 +961,7 @@ class _DashboardState extends State<MobDashboard>
                                                         : jsonEncode(
                                                             selectedMaster)),
                                                     true);
-                                            if ([3, 4].contains(
+                                            if ([2].contains(
                                                 overAllPvd.controllerType)) {
                                               payloadProvider.lastUpdate =
                                                   DateTime.parse(
@@ -1022,7 +1023,7 @@ class _DashboardState extends State<MobDashboard>
                                     ),
                                   ),
                                 ),
-                                if (![3, 4].contains(overAllPvd.controllerType))
+                                if (![2].contains(overAllPvd.controllerType))
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 5, vertical: 5),
@@ -1108,7 +1109,7 @@ class _DashboardState extends State<MobDashboard>
                                       ),
                                     ),
                                   ),
-                                if (![3, 4].contains(overAllPvd.controllerType))
+                                if (![2].contains(overAllPvd.controllerType))
                                   InkWell(
                                     onTap: () {
                                       showModalBottomSheet(
@@ -1256,7 +1257,7 @@ class _DashboardState extends State<MobDashboard>
                 Expanded(
                   child: RefreshIndicator(
                     onRefresh: onRefresh,
-                    child: [1, 2].contains(overAllPvd.controllerType)
+                    child: [1].contains(overAllPvd.controllerType)
                         ? SingleChildScrollView(
                             child: Container(
                             width: MediaQuery.of(context).size.width,
@@ -1358,7 +1359,7 @@ class _DashboardState extends State<MobDashboard>
                                   // title: Text("title"),
                                   // trailing: Text("trailing"),
                                 ),
-                                if ([3, 4].contains(overAllPvd.controllerType))
+                                if ([2].contains(overAllPvd.controllerType))
                                   Container(
                                     color: Colors.red,
                                     child: const Text(
@@ -2400,12 +2401,12 @@ class _DashboardState extends State<MobDashboard>
 
   Widget buildBottomNavigationBar() {
     return BottomNavigationBar(
-      currentIndex:  0 ,
-      // [1, 2].contains(overAllPvd.controllerType) ? !isBottomSheet ? irrigationProgramProvider.selectedIndex > 1
-      //     ? irrigationProgramProvider.selectedIndex + 1
-      //     : irrigationProgramProvider.selectedIndex
-      //     : 2
-      //     : irrigationProgramProvider.selectedIndex,
+      currentIndex:
+      [1].contains(overAllPvd.controllerType) ? !isBottomSheet ? context.read<IrrigationProgramMainProvider>().selectedIndex > 1
+          ? context.read<IrrigationProgramMainProvider>().selectedIndex + 1
+          : context.read<IrrigationProgramMainProvider>().selectedIndex
+          : 2
+          : context.read<IrrigationProgramMainProvider>().selectedIndex,
       type: BottomNavigationBarType.fixed,
       selectedItemColor: Theme.of(context).primaryColor,
       unselectedItemColor: Colors.grey,
@@ -2414,34 +2415,34 @@ class _DashboardState extends State<MobDashboard>
       backgroundColor: cardColor,
       // showUnselectedLabels: false, // Hide labels for unselected items
       onTap: (index) {
-        if([1, 2].contains(overAllPvd.controllerType)) {
+        if([1].contains(overAllPvd.controllerType)) {
           if (index == 2) return;
         }
         final actualIndex = index > 2 ? index - 1 : index;
-        // isBottomSheet = false;
-        // if([3, 4].contains(overAllPvd.controllerType) && !isBottomSheet) {
-        //   Provider.of<PreferenceProvider>(context, listen: false).getUserPreference(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: overAllPvd.controllerId);
-        // }
-        // irrigationProgramProvider.updateBottomNavigation([1, 2].contains(overAllPvd.controllerType) ? actualIndex : index);
+        isBottomSheet = false;
+        if([2].contains(overAllPvd.controllerType) && !isBottomSheet) {
+          context.read<PreferenceProvider>().getUserPreference(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: overAllPvd.controllerId);
+        }
+        context.read<IrrigationProgramMainProvider>().updateBottomNavigation([1].contains(overAllPvd.controllerType) ? actualIndex : index);
       },
       items: [
         const BottomNavigationBarItem(activeIcon: Icon(Icons.dashboard), label: "Dashboard", icon: Icon(Icons.dashboard_outlined)),
         BottomNavigationBarItem(
-            activeIcon: Icon([1, 2].contains(overAllPvd.controllerType) ? Icons.schedule : Icons.settings),
-            label: [1, 2].contains(overAllPvd.controllerType) ? "Program" : "Settings",
-            icon: Icon([1, 2].contains(overAllPvd.controllerType) ? Icons.schedule_outlined : Icons.settings_outlined)
+            activeIcon: Icon([1].contains(overAllPvd.controllerType) ? Icons.schedule : Icons.settings),
+            label: [1].contains(overAllPvd.controllerType) ? "Program" : "Settings",
+            icon: Icon([1].contains(overAllPvd.controllerType) ? Icons.schedule_outlined : Icons.settings_outlined)
         ),
-        if([1, 2].contains(overAllPvd.controllerType))
+        if([1].contains(overAllPvd.controllerType))
           const BottomNavigationBarItem(icon: SizedBox.shrink(), label: ''), // Placeholder
         BottomNavigationBarItem(
-          icon: Icon([1, 2].contains(overAllPvd.controllerType) ? Icons.calendar_month_outlined : Icons.schedule_outlined),
-          activeIcon: Icon([1, 2].contains(overAllPvd.controllerType) ? Icons.calendar_month : Icons.schedule),
-          label: [1, 2].contains(overAllPvd.controllerType) ? "Schedule" : "View",
+          icon: Icon([1].contains(overAllPvd.controllerType) ? Icons.calendar_month_outlined : Icons.schedule_outlined),
+          activeIcon: Icon([1].contains(overAllPvd.controllerType) ? Icons.calendar_month : Icons.schedule),
+          label: [1].contains(overAllPvd.controllerType) ? "Schedule" : "View",
         ),
         BottomNavigationBarItem(
             icon: const Icon(Icons.assessment_outlined),
             activeIcon: const Icon(Icons.assessment),
-            label: [1, 2].contains(overAllPvd.controllerType) ? "Log" : "Logs"
+            label: [1].contains(overAllPvd.controllerType) ? "Log" : "Logs"
         ),
       ],
     );

@@ -29,8 +29,9 @@ import 'customerdashboard.dart';
 //This is Main dashboard --
 class HomeScreen extends StatefulWidget {
   final int userId;
+  final int groupId;
   final bool fromDealer;
-  const HomeScreen({super.key, required this.userId, required this.fromDealer});
+  const HomeScreen({super.key, required this.userId, required this.fromDealer, required this.groupId});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -43,7 +44,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   // int selectIndex = 0;
   bool isBottomSheet = false;
   bool isBottomNavigation = false;
-  int userId = 53;
   int fetchcount = 0;
   int controllerId = 584;
   String imeiNo = 'B48C9D810C51';
@@ -62,35 +62,43 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   bool _isMenuOpen = false;
   var liveData;
   // TODO: bottom menu bar button in page calling
+  DateTime? _lastPressedAt;
   static const List<Widget> _widgetOptions = <Widget>[
     MobDashboard(),
     ProgramLibraryScreenNew(
       userId: 0,
       controllerId: 0,
-      deviceId: 'B48C9D810C51',
-      fromDealer: false, customerId: 0,
+      deviceId: '0',
+      fromDealer: false,
+      customerId: 0,
       groupId: 0,
       categoryId: 0,
     ),
-     ScheduleViewScreen(deviceId: '0', userId: 0, controllerId: 0, customerId: 0, groupId: 0),
+    ScheduleViewScreen(
+        deviceId: '',
+        userId: 0,
+        controllerId: 0,
+        customerId: 0,
+        groupId: 0
+    ),
     // IrrigationAndPumpLog(
     //   userId: 0,
     //   controllerId: 0,
     // ),
   ];
-  static List<Widget> _widgetOptionspump = <Widget>[
+
+  static const _widgetOptionspump = <Widget>[
     MobDashboard(),
     PreferenceMainScreen(
       controllerId: 0,
       userId: 0,
-      deviceId: "",
+      deviceId: '',
       customerId: 0,
       menuId: 78,
     ),
     ViewSettings(userId: 0, controllerId: 0),
     // PumpLogs(),
   ];
-  DateTime? _lastPressedAt;
 
   @override
   void initState() {
@@ -161,6 +169,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     }
   }
 
+
+
   // Future<void> mqttConfigureAndConnect() async {
   //   MqttPayloadProvider payloadProvider =
   //   Provider.of<MqttPayloadProvider>(context, listen: false);
@@ -189,8 +199,8 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
       final Repository repository = Repository(HttpService());
       var response = await repository.getPlanningHiddenMenu({
-        "userId":  widget.userId,
-        "controllerId": 1
+        "userId": overAllPvd.userId,
+        "controllerId": overAllPvd.controllerId
       });
 
       // Map<String, Object> body = {"userId": 15, "controllerId": 1};
@@ -213,7 +223,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   dynamic getPublishMessage() {
     dynamic refersh = '';
-    if (![3, 4].contains(!overAllPvd.takeSharedUserId
+    if (![2].contains(!overAllPvd.takeSharedUserId
         ? payloadProvider.listOfSite[payloadProvider.selectedSite]['master']
     [payloadProvider.selectedMaster]['categoryId']
         : payloadProvider.listOfSharedUser['devices']
@@ -256,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   async {
    print("getData");
   // print('//////////////////////////////////////////get function called//////////////////////////');
-  if (payloadProvider.timerForIrrigationPump != null) {
+  if (payloadProvider.timerForCurrentSchedule != null) {
   setState(() {
   payloadProvider.timerForIrrigationPump!.cancel();
   payloadProvider.timerForSourcePump!.cancel();
@@ -269,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   }
   // payloadProvider.clearData();
 
-  print("userId:$userId");
+  // print("userId:$userId");
 
   // final usernameFromPref = prefs.getString('user_role');
 // print("userIdFromPref:$userIdFromPref usernameFromPref:usernameFromPref");
@@ -277,7 +287,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   try {
   final Repository repository = Repository(HttpService());
   var getUserDetails = await repository.fetchAllMySite({
-  "userId": userId ?? 4,
+  "userId": widget.userId ?? 4,
   });
 
   final jsonData = jsonDecode(getUserDetails.body);
@@ -286,14 +296,11 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   await payloadProvider.updateDashboardPayload(jsonData);
   setState(() {
   liveData = payloadProvider.dashboardLiveInstance!.data;
-  overAllPvd.editControllerType((!overAllPvd.takeSharedUserId
-  ? liveData[payloadProvider.selectedSite]
-      .master[payloadProvider.selectedMaster]
-      .categoryId
-      : payloadProvider.listOfSharedUser['devices']
+  overAllPvd.editControllerType((!overAllPvd.takeSharedUserId ? liveData[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].categoryId : payloadProvider.listOfSharedUser['devices']
   [payloadProvider.selectedMaster]['categoryId']));
-  overAllPvd.edituserGroupId(payloadProvider.dashboardLiveInstance!
-      .data[payloadProvider.selectedSite].groupId);
+  overAllPvd.edituserGroupId(payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].groupId);
+  overAllPvd.editCustomerId(payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].groupId);
+  overAllPvd.editControllerId(payloadProvider.dashboardLiveInstance!.data[payloadProvider.selectedSite].master[payloadProvider.selectedMaster].controllerId);
   overAllPvd.editDeviceId(payloadProvider
       .dashboardLiveInstance!
       .data[payloadProvider.selectedSite]
@@ -343,7 +350,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
         alignment: Alignment.center,
         children: [
           buildBottomNavigationBar(),
-          if ([1, 2].contains(overAllPvd.controllerType))
+          if ([1].contains(overAllPvd.controllerType))
             Positioned(
               child: InkWell(
                 onTap: _showMenuSheet,
@@ -655,7 +662,7 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
 
   Widget buildBottomNavigationBar() {
     return BottomNavigationBar(
-      currentIndex: [1, 2].contains(overAllPvd.controllerType)
+      currentIndex: [1].contains(overAllPvd.controllerType)
           ? !isBottomSheet
           ? irrigationProgramProvider.selectedIndex > 1
           ? irrigationProgramProvider.selectedIndex + 1
@@ -670,19 +677,19 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
       backgroundColor: cardColor,
       // showUnselectedLabels: false, // Hide labels for unselected items
       onTap: (index) {
-        if ([1, 2].contains(overAllPvd.controllerType)) {
+        if ([1].contains(overAllPvd.controllerType)) {
           if (index == 2) return;
         }
         final actualIndex = index > 2 ? index - 1 : index;
         isBottomSheet = false;
-        if ([3, 4].contains(overAllPvd.controllerType) && !isBottomSheet) {
+        if ([2].contains(overAllPvd.controllerType) && !isBottomSheet) {
           Provider.of<PreferenceProvider>(context, listen: false)
               .getUserPreference(
-              userId: overAllPvd.userId,
+              userId: widget.userId,
               controllerId: overAllPvd.controllerId);
         }
         irrigationProgramProvider.updateBottomNavigation(
-            [1, 2].contains(overAllPvd.controllerType) ? actualIndex : index);
+            [1].contains(overAllPvd.controllerType) ? actualIndex : index);
       },
       items: [
         BottomNavigationBarItem(
@@ -690,42 +697,48 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
             label: "Dashboard",
             icon: Icon(Icons.dashboard_outlined)),
         BottomNavigationBarItem(
-            activeIcon: Icon([1, 2].contains(overAllPvd.controllerType)
+            activeIcon: Icon([1].contains(overAllPvd.controllerType)
                 ? Icons.schedule
                 : Icons.settings),
-            label: [1, 2].contains(overAllPvd.controllerType)
+            label: [1].contains(overAllPvd.controllerType)
                 ? "Program"
                 : "Settings",
-            icon: Icon([1, 2].contains(overAllPvd.controllerType)
+            icon: Icon([1].contains(overAllPvd.controllerType)
                 ? Icons.schedule_outlined
                 : Icons.settings_outlined)),
-        if ([1, 2].contains(overAllPvd.controllerType))
+        if ([1].contains(overAllPvd.controllerType))
           BottomNavigationBarItem(
               icon: SizedBox.shrink(), label: ''), // Placeholder
         BottomNavigationBarItem(
-          icon: Icon([1, 2].contains(overAllPvd.controllerType)
+          icon: Icon([1].contains(overAllPvd.controllerType)
               ? Icons.calendar_month_outlined
               : Icons.schedule_outlined),
-          activeIcon: Icon([1, 2].contains(overAllPvd.controllerType)
+          activeIcon: Icon([1].contains(overAllPvd.controllerType)
               ? Icons.calendar_month
               : Icons.schedule),
           label:
-          [1, 2].contains(overAllPvd.controllerType) ? "Schedule" : "View",
+          [1].contains(overAllPvd.controllerType) ? "Schedule" : "View",
         ),
         BottomNavigationBarItem(
             icon: Icon(Icons.assessment_outlined),
             activeIcon: Icon(Icons.assessment),
-            label: [1, 2].contains(overAllPvd.controllerType) ? "Log" : "Logs"),
+            label: [1].contains(overAllPvd.controllerType) ? "Log" : "Logs"),
       ],
     );
   }
 
   Widget buildControllerContent() {
-      return _widgetOptions[0];
-   }
+    if ([1].contains(overAllPvd.controllerType)) {
+      return _widgetOptions[irrigationProgramProvider.selectedIndex];
+    } else if ([2].contains(overAllPvd.controllerType)) {
+      return _widgetOptionspump[irrigationProgramProvider.selectedIndex];
+    } else {
+      return Container();
+    }
+  }
 
   String getAppBarTitle(int index, int controllerType) {
-    if ([1, 2].contains(controllerType)) {
+    if ([1].contains(controllerType)) {
       switch (index) {
         case 0:
           return "Dashboard";

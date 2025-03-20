@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Screens/Logs/irrigation_and_pump_log.dart';
+import 'package:oro_drip_irrigation/modules/PumpController/view/pump_dashboard_screen.dart';
 import 'package:oro_drip_irrigation/views/customer/program_schedule.dart';
 import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
 import 'package:oro_drip_irrigation/views/customer/site_config.dart';
@@ -68,7 +69,7 @@ class CustomerScreenController extends StatelessWidget {
           if(vm.isLoading){
             return const Scaffold(body: Center(child: Text('Site loading please waite....')));
           }
-          return kIsWeb ? Scaffold(
+          return Scaffold(
             appBar: AppBar(
               title:  Row(
                 children: [
@@ -170,11 +171,11 @@ class CustomerScreenController extends StatelessWidget {
                     iconDisabledColor: Colors.white,
                     focusColor: Colors.transparent,
                   ) :
-                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1?
+                 /* vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1?
                   Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.isNotEmpty?
                   vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData[0].name:
                   'Line empty', style: const TextStyle(fontSize: 17),):
-                  const SizedBox(),
+                  const SizedBox(),*/
                   const SizedBox(width: 15,),
                   Container(width: 1, height: 20, color: Colors.white54,),
                   const SizedBox(width: 5,),
@@ -211,18 +212,18 @@ class CustomerScreenController extends StatelessWidget {
                   ),
                 ),
               ),
-              actions: <Widget>[
+             /* actions: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    /*vm.currentSchedule.isNotEmpty?
+                    *//*vm.currentSchedule.isNotEmpty?
                     CircleAvatar(
                       radius: 15,
                       backgroundImage: const AssetImage('assets/gif_images/water_drop_ani.gif'),
                       backgroundColor: Colors.blue.shade100,
                     ):
                     const SizedBox(),
-                    const SizedBox(width: 10,),*/
+                    const SizedBox(width: 10,),*//*
 
                     vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.length>1? TextButton(
                       onPressed: () => vm.linePauseOrResume(iLineLiveMessage),
@@ -324,10 +325,10 @@ class CustomerScreenController extends StatelessWidget {
                     ),
                   ],),
                 const SizedBox(width: 05),
-              ],
+              ],*/
             ),
             extendBody: true,
-            body: Container(
+            body: kIsWeb ? Container(
               color: Theme.of(context).primaryColor,
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -563,15 +564,19 @@ class CustomerScreenController extends StatelessWidget {
                       height: 45,
                       child: IconButton(
                         tooltip: 'Scheduled Program details',
-                        onPressed: (){},
-                        /*onPressed: getPermissionStatusBySNo(context, 3) ? () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ScheduleViewScreen(deviceId: mySiteList[siteIndex].master[masterIndex].deviceId, userId: widget.userId, controllerId: mySiteList[siteIndex].master[masterIndex].controllerId, customerId: widget.customerId),
-                                ),
-                              );
-                            }:null,*/
+                        // onPressed: (){},
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ScheduleViewScreen(
+                              deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
+                              userId: userId,
+                              controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
+                              customerId: customerId,
+                              groupId: vm.mySiteList.data[vm.sIndex].groupId,
+                            ),
+                          ),
+                        ),
                         icon: const Icon(Icons.view_list_outlined),
                         color: Colors.white,
                         iconSize: 24.0,
@@ -633,8 +638,8 @@ class CustomerScreenController extends StatelessWidget {
                   SizedBox()
                 ],
               ),
-            ),
-          ) : HomeScreen(userId: 4,fromDealer: false,);
+            ) : PumpDashboardScreen(),
+          );
         },
       ),
     );

@@ -16,7 +16,7 @@ class MqttPayloadProvider with ChangeNotifier {
   SiteModel? _dashboardLiveInstance;
   SiteModel? get dashboardLiveInstance => _dashboardLiveInstance;
   dynamic spa = '';
-  String dashBoardPayload = '', schedulePayload = '';
+  String dashBoardPayload = '';
 
   Map<String, dynamic> pumpControllerPayload = {};
   Map<String, dynamic> preferencePayload = {};
@@ -491,10 +491,6 @@ class MqttPayloadProvider with ChangeNotifier {
 
         notifyListeners();
       }
-      else if(data.containsKey('3600') && data['3600'] != null && data['3600'].isNotEmpty){
-        // mySchedule.dataFromMqttConversion(payload);
-        schedulePayload = payload;
-      }
       /* if(data['liveSyncDate'] != null){
         String dateStr = data['liveSyncDate'];
         String timeStr = data['liveSyncTime'];
@@ -857,6 +853,5 @@ class MqttPayloadProvider with ChangeNotifier {
   }
 
   String get receivedDashboardPayload => dashBoardPayload;
-  String get receivedSchedulePayload => schedulePayload;
   MQTTConnectionState get getAppConnectionState => _appConnectionState;
 }
