@@ -219,6 +219,16 @@ class ConstantViewModel extends ChangeNotifier {
     }
   }
 
+  void pumpStationOnChange(int index, bool status){
+    userConstant.constant.pumpList![index].pumpStation = status;
+    notifyListeners();
+  }
+
+  void controlGemOnChange(int index, bool status){
+    userConstant.constant.pumpList![index].controlGem = status;
+    notifyListeners();
+  }
+
   Future<void> saveConstantData(context, int customerId, int controllerId, int createUserId) async
   {
     Future.delayed(const Duration(milliseconds: 500), () async {
@@ -232,7 +242,7 @@ class ConstantViewModel extends ChangeNotifier {
           "line": [],
           "mainValve": [],
           "valve": cnsMenu['valveList'],
-          "pump": [],
+          "pump": cnsMenu['pumpList'],
           "waterMeter": [],
           "filtration": [],
           "fertilization": [],

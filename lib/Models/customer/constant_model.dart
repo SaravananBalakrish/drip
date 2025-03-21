@@ -34,17 +34,23 @@ class ConstantData {
   final String controllerReadStatus;
   final List<GeneralMenu> generalMenu;
   final List<Valve>? valveList;
+  final List<Pump>? pumpList;
 
   ConstantData({
     required this.controllerReadStatus,
     required this.generalMenu,
     required this.valveList,
+    required this.pumpList,
   });
 
   factory ConstantData.fromJson(Map<String, dynamic> jsonConstant, List<Map<String, dynamic>> jsonConfigObject) {
 
     List<Map<String, dynamic>> valveDataList = jsonConfigObject
         .where((obj) => obj['objectId'] == 13)
+        .toList();
+
+    List<Map<String, dynamic>> pumpDataList = jsonConfigObject
+        .where((obj) => obj['objectId'] == 5)
         .toList();
 
     return ConstantData(
@@ -66,10 +72,15 @@ class ConstantData {
             GeneralMenu.fromJson({"sNo": 11, "title": "Lora Key 1", "widgetTypeId": 1, "value": "0"}),
             GeneralMenu.fromJson({"sNo": 12, "title": "Lora Key 2", "widgetTypeId": 1, "value": "0"}),
           ],
+
       valveList: (jsonConstant['valve'] as List<dynamic>?)
           ?.map((general) => Valve.fromJson(general))
           .toList() ??
           valveDataList.map((valve) => Valve.fromJson(valve)).toList(),
+
+      pumpList: (jsonConstant['pump'] as List<dynamic>?)?.isNotEmpty == true
+          ? (jsonConstant['pump'] as List<dynamic>).map((pmp) => Pump.fromJson(pmp)).toList()
+          : pumpDataList.map((pmp) => Pump.fromJson(pmp)).toList(),
     );
   }
 
@@ -78,6 +89,7 @@ class ConstantData {
       'controllerReadStatus': controllerReadStatus,
       'general': generalMenu.map((e) => e.toJson()).toList(),
       'valveList': valveList?.map((e) => e.toJson()).toList() ?? [],
+      'pumpList': pumpList?.map((e) => e.toJson()).toList() ?? [],
     };
   }
 
@@ -175,6 +187,70 @@ class Valve {
       'siteMode': siteMode,
       'txtValue': txtValue,
       'pickerVal': pickerVal,
+    };
+  }
+}
+
+class Pump {
+  final int objectId;
+  final double sNo;
+  final String name;
+  final String objectName;
+  final String type;
+  final int? controllerId;
+  final int? connectionNo;
+  final int? count;
+  final String? connectedObject;
+  final String? siteMode;
+  bool pumpStation;
+  bool controlGem;
+
+  Pump({
+    required this.objectId,
+    required this.sNo,
+    required this.name,
+    required this.objectName,
+    required this.type,
+    this.controllerId,
+    this.connectionNo,
+    this.count,
+    this.connectedObject,
+    this.siteMode,
+    required this.pumpStation,
+    required this.controlGem,
+  });
+
+  factory Pump.fromJson(Map<String, dynamic> json) {
+    return Pump(
+      objectId: json['objectId'],
+      sNo: (json['sNo'] as num).toDouble(),
+      name: json['name'],
+      objectName: json['objectName'],
+      type: json['type'],
+      controllerId: json['controllerId'],
+      connectionNo: json['connectionNo'],
+      count: json['count'],
+      connectedObject: json['connectedObject'],
+      siteMode: json['siteMode'],
+      pumpStation: json.containsKey('pumpStation') ? json['pumpStation'] : false,
+      controlGem: json.containsKey('controlGem') ? json['controlGem'] : false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'objectId': objectId,
+      'sNo': sNo,
+      'name': name,
+      'objectName': objectName,
+      'type': type,
+      'controllerId': controllerId,
+      'connectionNo': connectionNo,
+      'count': count,
+      'connectedObject': connectedObject,
+      'siteMode': siteMode,
+      'pumpStation': pumpStation,
+      'controlGem': controlGem,
     };
   }
 }
