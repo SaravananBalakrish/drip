@@ -369,6 +369,9 @@ class Repository{
   Future<http.Response> getUserDashboard(body) async {
     return await apiService.postRequest('/user/deviceList/getFirmwareDetails', body);
   }
+  Future<http.Response> getweather(body) async {
+    return await apiService.postRequest('/user/live/weather/get', body);
+  }
 
 }
 

@@ -8,6 +8,7 @@ import 'package:oro_drip_irrigation/modules/global_limit/view/global_limit_scree
 
 import '../../Constants/properties.dart';
 import '../../Screens/Constant/api_in_constant.dart';
+import '../../Screens/planning/WeatherScreen.dart';
 import '../../modules/Preferences/view/preference_main_screen.dart';
 import '../../modules/SystemDefinitions/view/system_definition_screen.dart';
 import '../../Screens/planning/frost_productionScreen.dart';
@@ -131,8 +132,8 @@ class _ProgramScheduleState extends State<ProgramSchedule> with SingleTickerProv
         return SystemDefinition(userId: widget.userId, controllerId: widget.controllerID, deviceId: widget.imeiNumber, customerId: widget.customerID,);
       // case 76:
       //   return ProgramQueueScreen(userId: widget.customerID, controllerId: widget.controllerID, cutomerId: widget.customerID, customerId: widget.customerID, deviceId: widget.imeiNumber,);
-      // case 77:
-      //   return WeatherScreen(userId: widget.customerID, controllerId: widget.controllerID,deviceID: widget.imeiNumber,initialIndex: 0,);
+      case 77:
+        return WeatherScreen(userId: widget.customerID, controllerId: widget.controllerID,deviceID: widget.imeiNumber,);
       case 78:
         return PreferenceMainScreen(userId: widget.userId, controllerId: widget.controllerID, customerId: widget.customerID, deviceId: widget.imeiNumber, menuId: 0,);
       case 79:
