@@ -1,13 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../../Models/Weather_model.dart';
 import '../../Models/weather_modelnew.dart';
-import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../modules/IrrigationProgram/view/water_and_fertilizer_screen.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
@@ -28,8 +27,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Map<String, dynamic> weatherData = {};
   late Timer _timer;
   late DateTime _currentTime;
-  late MqttPayloadProvider _mqttPayloadProvider;
-  String sunrise = '06:00 AM';
+   String sunrise = '06:00 AM';
   String sunset = '06:00 PM';
   String daylight = 'Day Light Length: 12:00:00';
   List<String> weekDayList = [
@@ -41,27 +39,14 @@ class _WeatherScreenState extends State<WeatherScreen> {
     'Sat',
     'Sun',
   ];
+  bool isLoading = false;
   int tabclickindex = 0;
   WeatherModel weatherModelinstance = WeatherModel();
   String errorMsgstatus = '';
- late WeatherData weathernewlive ;
-  final String jsonString = '''
-  {
-    "code": 200,
-    "message": "User weather live listed successfully",
-    "data": {
-      "weatherLive": {
-        "cC": "1234567890AB",
-        "cT": "12:15:00",
-        "cD": "2024-11-14",
-        "cM": {
-          "5101": "1,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255;2,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255,12.001,0.0,255"
-        },
-        "mC": "5100"
-      }
-    }
-  }
-  ''';
+  WeatherData weathernewlive = WeatherData(cC: '', cT: '', cD: '', stations: []) ;
+ late List<IrrigationLine>  weatherdatairrigationline ;
+ late List<Device>  weatherdatadevicelist ;
+ 
 
   @override
   void initState() {
@@ -88,12 +73,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    print("weather Data build:$weatherData");
-
-    _mqttPayloadProvider =
-        Provider.of<MqttPayloadProvider>(context, listen: true);
-    if (weatherData.isNotEmpty && (weatherData != null)) {
+     if (weatherData.isNotEmpty && (weatherData != null)) {
       sunrise = '${weatherData['results']['sunrise']}';
       sunset = '${weatherData['results']['sunset']}';
       daylight = 'Day Light Length: ${weatherData['results']['day_length']}';
@@ -106,7 +86,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       return DefaultTabController(
         length: weathernewlive.stations.length,
         child: Scaffold(
-          backgroundColor: Theme.of(context).primaryColor.withAlpha(1),
+          backgroundColor: Theme.of(context).primaryColor,
           body: Center(
             child: SizedBox(
               width: MediaQuery.sizeOf(context).width,
@@ -118,17 +98,17 @@ class _WeatherScreenState extends State<WeatherScreen> {
                       // controller: _tabController,
                       indicatorColor: const Color.fromARGB(255, 175, 73, 73),
                       isScrollable: true,
-                      unselectedLabelColor: Colors.grey,
-                      labelColor: Theme.of(context).primaryColor,
+                      unselectedLabelColor: Colors.white70,
+                      labelColor: Colors.white,
                       labelStyle: const TextStyle(fontWeight: FontWeight.bold),
                       tabs: [
                         for (var i = 0;
                         i < weathernewlive.stations.length;
                         i++)
                           Tab(
-                            text: 'Weather Station  ${i + 1}',
+                            text:'${deviceFind(weathernewlive.stations[i].deviceId)?.deviceName ?? 'Weather Station'}',
                           ),
-                      ],
+                       ],
                       onTap: (value) {
                         setState(() {
                           tabclickindex = value;
@@ -157,7 +137,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
   changeval(int Selectindexrow) {}
   Widget buildTab(int i) {
-    return Scaffold(body: Center(
+    String? irname = findIrrigationLine(weathernewlive.stations[i].deviceId)!;
+      return Scaffold(body: Center(
       child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             if (MediaQuery.sizeOf(context).width < 800) {
@@ -338,7 +319,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 ),
               );
             } else {
-              //WEB Screen
               return Row(
                 children: [
                   Container(
@@ -346,7 +326,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     width: 250,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
-                      color: Colors.teal.shade50,
+                      color: Colors.teal.shade100,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -452,15 +432,16 @@ class _WeatherScreenState extends State<WeatherScreen> {
                             padding:
                             EdgeInsets.only(left: 30, right: 30, bottom: 5),
                             alignment: Alignment.centerLeft,
-                            child: const Text(
-                              'Weather Sensors ',
+                            child:  Text(
+                              'Weather Sensors : $irname',
                               style: TextStyle(fontWeight: FontWeight.w900),
                             ),
                           ),
+//${findIrrigationLine(weathernewlive.stations[i].deviceId) ?? ''}
                           Expanded(
                             flex: 3,
                             child: Container(
-                              color: Colors.teal.shade50,
+                              color: Colors.teal.shade100,
                               padding:
                               EdgeInsets.only(left: 15, right: 15, bottom: 10),
                               // height: constraints.maxHeight * 0.59,
@@ -496,6 +477,33 @@ class _WeatherScreenState extends State<WeatherScreen> {
             }
           }),
     ));
+  }
+
+
+
+  Color Getcolor(String val) {
+    if (val == '1') {
+      return Colors.red.shade100;
+    } else if (val == '2') {
+      return Colors.yellow.shade100;
+    } else if (val == '3') {
+      return Colors.orange.shade100;
+    } else {
+      return Colors.white70;
+    }
+  }
+
+   Device? deviceFind(int serialNumber) {
+    return weatherdatadevicelist.where((device) => device.serialNumber == serialNumber).toList().isNotEmpty
+        ? weatherdatadevicelist.where((device) => device.serialNumber == serialNumber).first
+        : null;
+  }
+
+// Find irrigation line by controllerId using .where
+  String? findIrrigationLine(int controllerId) {
+    int? devicctrlid = deviceFind(controllerId)?.controllerId!;
+     var irrigationLine = weatherdatairrigationline.where((line) => line.weatherStation.contains(devicctrlid)).toList();
+     return irrigationLine.isNotEmpty ? irrigationLine.first.name : 'All Line';
   }
 
   Widget gaugeViewWeather(String title, int i, int index) {
@@ -681,8 +689,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     ])),
             Column(mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Min",'00','4:34:50'))),
-                Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Max",'00','12:34:50'))),
+                Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Min",'00','00:00:00'))),
+                Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Max",'00','00:00:00'))),
               ],
             ),
 
@@ -751,8 +759,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                 )),
             Column(mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Min",'00','4:34:50'))),
-                Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Max",'00','12:34:50'))),
+                Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Min",'00','00:00:00'))),
+                Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Max",'00','00:00:00'))),
               ],
             ),
           ],
@@ -842,8 +850,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                     ])),
             Column(mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Min",'00','4:34:50'))),
-                Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Max",'00','12:34:50'))),
+                Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Min",'00','00:00:00'))),
+                Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Max",'00','00:00:00'))),
               ],
             ),
           ],
@@ -1024,8 +1032,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                 positionFactor: 0.9)
                           ])
                     ])),
-            Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Min",'00','4:34:50'))),
-            Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Max",'00','12:34:50'))),
+            Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Min",'00','00:00:00'))),
+            Center(child: SizedBox(height: 20, width: 150, child: MinMAxvalues("Max",'00','00:00:00'))),
           ],
         ),
       );
@@ -1049,7 +1057,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
 
               TextSpan(
                 text: '\t\t$Mtime',
-                style: TextStyle(color: Colors.teal, fontSize: 15,fontWeight: FontWeight.w100),
+                style: TextStyle(color: Theme.of(context).primaryColorDark, fontSize: 15,fontWeight: FontWeight.w100),
               ),
 
             ],
@@ -1058,8 +1066,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       ],
     );
   }
-
-  static String degreeToDirection(String degreestr) {
+   static String degreeToDirection(String degreestr) {
     print('degreestr$degreestr');
     String cleanedString = degreestr.replaceAll('º', '').trim();
     double degree = double.parse(degreestr);
@@ -1083,8 +1090,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       return degreestr;
     }
   }
-
-  void handleAxisLabelCreated(AxisLabelCreatedArgs args) {
+   void handleAxisLabelCreated(AxisLabelCreatedArgs args) {
     if (args.text == '90') {
       args.text = 'E';
       args.labelStyle = const GaugeTextStyle(
@@ -1106,82 +1112,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       const GaugeTextStyle(color: Color(0xFFFFFFFF), fontSize: 10);
     }
   }
-  String cardValues(int checkStr, int i) {
-
-    switch (checkStr) {
-      case 0:
-        return '${weathernewlive.stations[i].sensors[0].value}';
-      case 'SoilMoisture2':
-        return '${weathernewlive.stations[i].sensors[1].value}';
-      case 'SoilMoisture3':
-        return '${weathernewlive.stations[i].sensors[2].value}';
-      case 'SoilMoisture4':
-        return '${weathernewlive.stations[i].sensors[3].value}';
-      case 'SoilTemperature':
-        return '${weathernewlive.stations[i].sensors[4].value}';
-      case 'Humidity':
-        return '${weathernewlive.stations[i].sensors[5].value}';
-      case 'Temperature':
-        return '${weathernewlive.stations[i].sensors[6].value}';
-      case 'AtmospherePressure':
-        return '${weathernewlive.stations[i].sensors[7].value}';
-      case 'Co2':
-        return '${weathernewlive.stations[i].sensors[8].value}';
-      case 'LDR':
-        return '${weathernewlive.stations[i].sensors[9].value}';
-      case 'Lux':
-        return '${weathernewlive.stations[i].sensors[10].value}';
-      case 'WindDirection':
-        return '${weathernewlive.stations[i].sensors[11].value}';
-      case 'WindSpeed':
-        return '${weathernewlive.stations[i].sensors[12].value}';
-      case 'Rainfall':
-        return '${weathernewlive.stations[i].sensors[13].value}';
-      case 'LeafWetness':
-        return '${weathernewlive.stations[i].sensors[14].value}';
-      default:
-        return '0';
-    }
-  }
-
-  String cardErrValues(String checkstr, int i) {
-
-    switch (checkstr) {
-      case 'SoilMoisture1':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].soilMoisture1Err}';
-      case 'SoilMoisture2':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].soilMoisture2Err}';
-      case 'SoilMoisture3':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].soilMoisture3Err}';
-      case 'SoilMoisture4':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].soilMoisture4Err}';
-      case 'SoilTemperature':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].soilTemperatureErr}';
-      case 'Humidity':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].humidityErr}';
-      case 'Temperature':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].temperatureErr}';
-      case 'AtmospherePressure':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].atmospherePressureErr}';
-      case 'Co2':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].co2Err}';
-      case 'LDR':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].ldrErr}';
-      case 'Lux':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].luxErr}';
-      case 'WindDirection':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].windDirectionErr}';
-      case 'WindSpeed':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].windSpeedErr}';
-      case 'Rainfall':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].rainfallErr}';
-      case 'LeafWetness':
-        return '${_mqttPayloadProvider.weatherModelinstance.data![0].WeatherSensorlist![i].leafWetnessErr}';
-      default:
-        return '0';
-    }
-  }
-  Request() {
+    Request() {
     String payLoadFinal = jsonEncode({
       "5000": [
         {"5001": ""},
@@ -1189,8 +1120,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     });
     // MqttService().topicToPublishAndItsMessage(payLoadFinal, 'AppToFirmware/${widget.deviceID}');
   }
-
-  // TODO: implement widget
+   // TODO: implement widget
   Future<void> fetchDataSunRiseSet() async {
     try {
       final response = await http.get(Uri.parse(
@@ -1213,27 +1143,39 @@ class _WeatherScreenState extends State<WeatherScreen> {
       print('Exception: $e');
     }
   }
-
-  void fetchDataLive() async {
+   void fetchDataLive() async {
     print("getData");
     try
     {
       final Repository repository = Repository(HttpService());
-      var getUserDetails = await repository.fetchAllMySite({
+      var getUserDetails = await repository.getweather({
         "userId": widget.userId ?? 4,
+        "controllerId": widget.controllerId ?? 1
+
       });
 
       final jsonData = jsonDecode(getUserDetails.body);
+      print('jsonData  fetch device  ${jsonData['data']['deviceList']}');
+      print('jsonData  fetch irrigationLine ${jsonData['data']['irrigationLine']}');
       if (jsonData['code'] == 200) {
         setState(() {
-          weathernewlive = WeatherData.fromJson(jsonDecode(jsonString));
+          weathernewlive = WeatherData.fromJson(jsonData);
+          // weatherdatairrigationline = IrrigationLine.fromJson(jsonData['data']['irrigationLine']);
+          // weatherdatadevicelist = Device.fromJson(jsonData['data']['deviceList']);
+
+
+          weatherdatairrigationline = List<IrrigationLine>.from(
+            jsonData['data']['irrigationLine'].map((data) => IrrigationLine.fromJson(data)),
+          );
+
+          // Parse devices as a List of Device objects
+          weatherdatadevicelist = List<Device>.from(
+            jsonData['data']['deviceList'].map((data) => Device.fromJson(data)),
+          );
            });
       }
      } catch (e, stackTrace) {
        print(' trace overAll getData  => ${stackTrace}');
     }
   }
-
- }
-
-
+  }

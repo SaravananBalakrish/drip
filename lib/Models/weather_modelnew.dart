@@ -16,8 +16,8 @@ class WeatherStation {
     for (int i = 1; i < parts.length - 2; i += 3) {
       try {
         final sensorSno = double.parse(parts[i]); // Sensor S_No
-        final value = double.parse(parts[i + 1]); // Sensor Value
-        final errorStatus = int.parse(parts[i + 2]); // Sensor Error Status
+        final value = double.parse(parts[i + 2]); // Sensor Value
+        final errorStatus = int.parse(parts[i + 1]); // Sensor Error Status
         sensors.add(Sensor(
           sno: sensorSno,
           value: value,
@@ -75,3 +75,47 @@ class WeatherData {
     );
   }
 }
+
+class IrrigationLine {
+  final int objectId;
+  final String name;
+  final List<int> weatherStation;
+
+  IrrigationLine({
+    required this.objectId,
+    required this.name,
+    required this.weatherStation,
+  });
+
+  factory IrrigationLine.fromJson(Map<String, dynamic> json) {
+    return IrrigationLine(
+      objectId: json['objectId'],
+      name: json['name'],
+      weatherStation: List<int>.from(json['weatherStation']),
+    );
+  }
+}
+
+class Device {
+  final int controllerId;
+  final String deviceId;
+  final String deviceName;
+  final int serialNumber;
+
+  Device({
+    required this.controllerId,
+    required this.deviceId,
+    required this.deviceName,
+    required this.serialNumber,
+  });
+
+  factory Device.fromJson(Map<String, dynamic> json) {
+    return Device(
+      controllerId: json['controllerId'],
+      deviceId: json['deviceId'],
+      deviceName: json['deviceName'],
+      serialNumber: json['serialNumber'],
+    );
+  }
+}
+
