@@ -81,7 +81,7 @@ class _ScheduleViewScreenState extends State<ScheduleViewScreen> {
       setState(() {
         configObjects = List.from(response['data']['configObject']);
 
-        if(MqttService().schedulePayload != null && !MqttService().schedulePayload![0].containsKey('message')) {
+        if(MqttService().schedulePayload != null && MqttService().schedulePayload!.isNotEmpty && !MqttService().schedulePayload![0].containsKey('message')) {
           final headUnitSnoList = MqttService().schedulePayload!.map((e) => e['HeadUnit'].toString()).toList().toSet();
           final programSnoList = MqttService().schedulePayload!.map((e) => e['ProgramS_No'].toString()).toList().toSet();
           final statusCodeList = MqttService().schedulePayload!.map((e) => e['Status']).toList().toSet();
@@ -100,7 +100,11 @@ class _ScheduleViewScreenState extends State<ScheduleViewScreen> {
     Map<String, dynamic> data = {
       "2600": {"2601": "${DateFormat('yyyy-MM-dd').format(date)},${DateFormat('yyyy-MM-dd').format(date)}"}
     };
-    MqttService().topicToPublishAndItsMessage(jsonEncode(data), '${Environment.mqttPublishTopic}/${widget.deviceId}');
+    DateTime selectedDateWithoutTime = DateTime(date.year, date.month, date.day);
+    DateTime todayWithoutTime = DateTime(today.year, today.month, today.day);
+    if (selectedDateWithoutTime.isAfter(todayWithoutTime)) {
+      MqttService().topicToPublishAndItsMessage(jsonEncode(data), '${Environment.mqttPublishTopic}/${widget.deviceId}');
+    }
   }
 
   /// Function to get user log data
@@ -124,9 +128,10 @@ class _ScheduleViewScreenState extends State<ScheduleViewScreen> {
       if (getUserScheduleLog.statusCode == 200) {
         final responseJson = getUserScheduleLog.body;
         final convertedJson = jsonDecode(responseJson);
+        print("convertedJson in the getUserScheduleLog :: $convertedJson");
         if(convertedJson["code"] == 200) {
           defaultData = convertedJson['data']['default'];
-          // print('convertedJson: ${convertedJson['data'][0]}');
+          print('convertedJson: ${convertedJson['data'][0]}');
           MqttService().schedulePayload = Constants.dataConversionForScheduleView(convertedJson['data']['log'][0]['irrigation']);
         } else {
           MqttService().schedulePayload = [{"message" : convertedJson['message']}];
@@ -214,7 +219,7 @@ class _ScheduleViewScreenState extends State<ScheduleViewScreen> {
                         return const CircularProgressIndicator();
                       }
 
-                      if (!snapshot.hasData || snapshot.data == null) {
+                      if (!snapshot.hasData || snapshot.data == null || (snapshot.data is List && snapshot.data!.isEmpty)) {
                         return const Text('No data available');
                       }
 
