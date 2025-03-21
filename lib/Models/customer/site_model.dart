@@ -382,6 +382,7 @@ class Pump {
   final dynamic count;
   int status;
   bool selected;
+  String onDelayLeft;
 
   Pump({
     required this.objectId,
@@ -394,6 +395,7 @@ class Pump {
     required this.count,
     this.status=0,
     this.selected=false,
+    this.onDelayLeft='00:00:00',
   });
 
   factory Pump.fromJson(Map<String, dynamic> json) {

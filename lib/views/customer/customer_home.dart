@@ -335,6 +335,48 @@ class DisplayPumpStation extends StatelessWidget {
             ],
           ),
         ),
+        pump.onDelayLeft != '00:00:00'? Positioned(
+          top: 40,
+          left: 7.5,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.greenAccent,
+              borderRadius: const BorderRadius.all(Radius.circular(2)),
+              border: Border.all(color: Colors.green, width: .50),
+            ),
+            width: 55,
+            child: Center(
+              child: Column(
+                children: [
+                  const Text(
+                    "On delay",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 10,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 3, right: 3),
+                    child: Divider(
+                      height: 0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Text(
+                    pump.onDelayLeft,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ):
+        const SizedBox(),
       ],
     );
   }

@@ -25,8 +25,6 @@ class CurrentProgram extends StatelessWidget {
       child: Consumer<CurrentProgramViewModel>(
         builder: (context, vm, _) {
 
-          print('vm current schedule: ${vm.currentSchedule}');
-
           var currentSchedule = Provider.of<MqttPayloadProvider>(context).currentSchedule;
           if(currentSchedule.isNotEmpty){
             WidgetsBinding.instance.addPostFrameCallback((_) {
