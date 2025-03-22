@@ -78,6 +78,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   }
 
   void setLoading(bool value) {
+    //if (!hasListeners) return;
     isLoading = value;
     notifyListeners();
   }
