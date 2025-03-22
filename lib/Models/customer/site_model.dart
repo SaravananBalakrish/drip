@@ -1041,6 +1041,13 @@ class NodeListModel{
   double sVolt;
   double batVolt;
   List<RelayStatus> rlyStatus;
+  String relayOutput;
+  String latchOutput;
+  String analogInput;
+  String digitalInput;
+
+
+
 
   NodeListModel({
     required this.controllerId,
@@ -1061,6 +1068,11 @@ class NodeListModel{
     this.sVolt = 0.0,
     this.batVolt = 0.0,
     required this.rlyStatus,
+    required this.relayOutput,
+    required this.latchOutput,
+    required this.analogInput,
+    required this.digitalInput,
+
   });
 
   factory NodeListModel.fromJson(Map<String, dynamic> json, List<ConfigObject> configObjects) {
@@ -1083,6 +1095,10 @@ class NodeListModel{
       interface: json['interface'] ?? '',
       extendControllerId: json['extendControllerId'] ?? 0,
       rlyStatus: rlyStatus,
+      relayOutput: json['relayOutput'] ?? '',
+      latchOutput: json['latchOutput'] ?? '',
+      analogInput: json['analogInput'] ?? '',
+      digitalInput: json['digitalInput'] ?? '',
     );
   }
 
@@ -1100,6 +1116,10 @@ class NodeListModel{
       'InterfaceType': interfaceTypeId,
       'interface': interface,
       'Status': status,
+      'relayOutput': relayOutput,
+      'latchOutput': latchOutput,
+      'analogInput': analogInput,
+      'digitalInput': digitalInput,
     };
   }
 }

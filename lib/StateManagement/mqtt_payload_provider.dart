@@ -89,7 +89,7 @@ class MqttPayloadProvider with ChangeNotifier {
   int wifiStrength = 0;
   String liveDateAndTime = '';
   List<String> nodeLiveMessage = [];
-  List<String> outputStatusPayload= [];
+  List<String> outputStatusPayload = [];
   List<String> currentSchedule = [];
   List<String> nextSchedule = [];
   List<String> scheduledProgram = [];
@@ -481,6 +481,7 @@ class MqttPayloadProvider with ChangeNotifier {
       // print("data from controller ::: $data");
       //live payload
       if(data['mC']=='2400'){
+        print(data['cM']);
         liveDateAndTime = '${data['cD']} ${data['cT']}';
         updateLastCommunication(liveDateAndTime);
         wifiStrength = data['cM']['WifiStrength'];

@@ -21,9 +21,10 @@ class InputOutputConnectionDetails extends StatelessWidget {
         crossAxisSpacing: 0,
         itemCount: nodes.length,
         itemBuilder: (context, index) {
-          String strInOutCount = getOutputInputCount(nodes[index].categoryName);
-          List<String> parts = strInOutCount.split('_');
-          double dynamicHeight = (int.parse(parts[0])+int.parse(parts[1]))*35+100;
+          double dynamicHeight = ((int.tryParse(nodes[index].relayOutput ?? '0') ?? 0) +
+              (int.tryParse(nodes[index].latchOutput ?? '0') ?? 0) +
+              (int.tryParse(nodes[index].analogInput ?? '0') ?? 0) +
+              (int.tryParse(nodes[index].digitalInput ?? '0') ?? 0)) * 35 + 100;
           return Tile(
             index: index,
             masterIndex: masterInx,
@@ -33,24 +34,6 @@ class InputOutputConnectionDetails extends StatelessWidget {
         },
       ),
     );
-  }
-  String getOutputInputCount(String cName) {
-    switch (cName) {
-      case 'ORO PUMP':
-        return '5_3';
-      case 'ORO PUMP PLUS':
-        return '5_12';
-      case 'ORO SMART PLUS':
-        return '16_14';
-      case 'ORO SMART'||'ORO RTU'||'ORO RTU PLUS':
-        return '8_4';
-      case 'ORO SENSE':
-        return '0_7';
-      case 'ORO LEVEL':
-        return '0_10';
-      default:
-        return '0_0';
-    }
   }
 
 }

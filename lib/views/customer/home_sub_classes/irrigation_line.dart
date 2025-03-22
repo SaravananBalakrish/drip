@@ -4,12 +4,12 @@ import '../../../Models/customer/site_model.dart';
 import '../../../utils/constants.dart';
 import '../../../view_models/customer/irrigation_line_view_model.dart';
 
-class IrrigationLine extends StatelessWidget {
+class DisplayIrrigationLine extends StatelessWidget {
   final List<IrrigationLineData>? lineData;
   final double pumpStationWith;
   final String currentLineName;
 
-  const IrrigationLine({super.key, required this.lineData, required this.pumpStationWith, required this.currentLineName});
+  const DisplayIrrigationLine({super.key, required this.lineData, required this.pumpStationWith, required this.currentLineName});
 
   @override
   Widget build(BuildContext context) {

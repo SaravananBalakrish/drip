@@ -1658,7 +1658,7 @@ class _DashboardState extends State<MobDashboard>
                 ),
               if (fertilizerSite.isNotEmpty)
                 displayFertilizerSite(context, fertilizerSite),
-              IrrigationLine(
+              DisplayIrrigationLine(
                 lineData: irrLineData,
                 pumpStationWith: 0, currentLineName: '',
               ),
