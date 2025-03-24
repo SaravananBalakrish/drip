@@ -241,7 +241,6 @@ class _CriticalAlarmInConstantState extends State<CriticalAlarmInConstant> {
         print("🟡 Updating $field to $selectedValue");
 
         provider.updateTime(index, field, selectedValue);
-
         setState(() {});  // Force UI to refresh
       },
     );
