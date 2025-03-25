@@ -90,7 +90,6 @@ class Constant extends StatelessWidget {
                     ),
                   ),
                   Expanded(
-
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TabBarView(
@@ -1124,9 +1123,6 @@ class Constant extends StatelessWidget {
                                 }).toList(),
                               ):
                               const Center(child: Text("Moisture Sensor Data not available"));
-
-
-
 
                           }
                           return Center(child: Text("${filteredItem.parameter} Screen"));

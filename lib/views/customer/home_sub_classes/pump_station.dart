@@ -2,19 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 import '../../../Models/customer/site_model.dart';
+import '../../../StateManagement/duration_notifier.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../utils/constants.dart';
 import '../../../view_models/customer/pump_station_view_model.dart';
 import 'irrigation_line.dart';
 
+
 class PumpStation extends StatelessWidget {
-  const PumpStation({super.key, required this.waterSource, required this.filterSite, required this.fertilizerSite, this.irrLineData, required this.currentLineName});
+  const PumpStation({super.key, required this.waterSource, required this.filterSite, required this.fertilizerSite, this.irrLineData, required this.currentLineName, required this.deviceId});
 
   final List<WaterSource> waterSource;
   final List<FilterSite> filterSite;
   final List<FertilizerSite> fertilizerSite;
   final List<IrrigationLineData>? irrLineData;
-  final String currentLineName;
+  final String currentLineName, deviceId;
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +26,10 @@ class PumpStation extends StatelessWidget {
         builder: (context, vm, _) {
 
           var outputStatusPayload = Provider.of<MqttPayloadProvider>(context).outputStatusPayload;
+          var pumpPayload = Provider.of<MqttPayloadProvider>(context).pumpPayload;
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (vm.shouldUpdate(outputStatusPayload)) {
-              vm.updateOutputStatus(outputStatusPayload.toList());
+            if (vm.shouldUpdate(outputStatusPayload, pumpPayload)) {
+              vm.updateOutputStatus(outputStatusPayload.toList(), pumpPayload.toList());
             }
           });
 
@@ -223,8 +226,6 @@ class PumpStation extends StatelessWidget {
                     final overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
                     final position = button.localToGlobal(Offset.zero, ancestor: overlay);
 
-                    //_popoverUpdateNotifier.value++;
-
                     bool voltKeyExists = pump.voltage.isNotEmpty;
                     //int signalStrength = voltKeyExists? int.parse(filteredPumps[index].signalStrength):0;
                     //int batteryVolt = voltKeyExists? int.parse(filteredPumps[index].battery):0;
@@ -266,7 +267,7 @@ class PumpStation extends StatelessWidget {
                       bodyBuilder: (context) {
                         //MqttPayloadProvider provider = Provider.of<MqttPayloadProvider>(context, listen: true);
                         Future.delayed(const Duration(seconds: 2));
-                        //_popoverUpdateNotifier.value++;
+                        vm.popoverUpdateNotifier.value++;
 
                         return Column(
                           mainAxisSize: MainAxisSize.min,
@@ -329,7 +330,7 @@ class PumpStation extends StatelessWidget {
                                           ],
                                         ),
                                       ),
-                                      /*int.parse(filteredPumps[index].reason)>0 && int.parse(pump.reason)!=31 ? Container(
+                                      int.parse(pump.reason)>0 && int.parse(pump.reason)!=31 ? Container(
                                         width: 315,
                                         height: 33,
                                         color: Colors.orange.shade100,
@@ -338,34 +339,20 @@ class PumpStation extends StatelessWidget {
                                             Expanded(child: Padding(
                                               padding: const EdgeInsets.only(left: 5),
                                               child: Text(
-                                                filteredPumps[index].reason == '8' && isTimeFormat(filteredPumps[index].actualValue.split('_').last)
-                                                    ? '${getContentByCode(int.parse(filteredPumps[index].reason))}, It will be restart automatically within ${filteredPumps[index].actualValue.split('_').last} (hh:mm:ss)'
-                                                    :getContentByCode(int.parse(filteredPumps[index].reason)),
+                                                pump.reason == '8' && vm.isTimeFormat(pump.actualValue.split('_').last)
+                                                    ? '${vm.getContentByCode(int.parse(pump.reason))}, It will be restart automatically within ${pump.actualValue.split('_').last} (hh:mm:ss)'
+                                                    :vm.getContentByCode(int.parse(pump.reason)),
                                                 style: const TextStyle(fontSize: 11, color: Colors.black87, fontWeight: FontWeight.normal),
                                               ),
                                             )),
-                                            (!excludedReasons.contains(filteredPumps[index].reason)) ? SizedBox(
+                                            (!PumpStationViewModel.excludedReasons.contains(pump.reason)) ? SizedBox(
                                               height:23,
                                               child: TextButton(
                                                 style: TextButton.styleFrom(
                                                   backgroundColor: Colors.redAccent.shade200,
                                                   textStyle: const TextStyle(color: Colors.white),
                                                 ),
-                                                onPressed: () {
-                                                  if(getPermissionStatusBySNo(context, 4)){
-                                                    String payload = '${filteredPumps[index].sNo},1';
-                                                    String payLoadFinal = jsonEncode({
-                                                      "6300": [{"6301": payload}]
-                                                    });
-                                                    MQTTManager().publish(payLoadFinal, 'AppToFirmware/${widget.deviceId}');
-                                                    sentUserOperationToServer('${pump.swName ?? pump.name} Reset Manually', payLoadFinal);
-                                                    showSnakeBar('Reset comment sent successfully');
-                                                    Navigator.pop(context);
-                                                  }else{
-                                                    Navigator.pop(context);
-                                                    GlobalSnackBar.show(context, 'Permission denied', 400);
-                                                  }
-                                                },
+                                                onPressed: () => vm.resetPump(context, deviceId, pump.sNo),
                                                 child: const Text('Reset', style: TextStyle(fontSize: 12, color: Colors.white),),
                                               ),
                                             ):const SizedBox(),
@@ -373,8 +360,7 @@ class PumpStation extends StatelessWidget {
                                           ],
                                         ),
                                       ):
-                                      const SizedBox(),*/
-
+                                      const SizedBox(),
                                       Container(
                                         width: 300,
                                         height: 25,
@@ -383,11 +369,11 @@ class PumpStation extends StatelessWidget {
                                           children: [
                                             const SizedBox(width:100, child: Text('Phase', style: TextStyle(color: Colors.black54),),),
                                             const Spacer(),
-                                            //CircleAvatar(radius: 7, backgroundColor: int.parse(filteredPumps[index].phase)>0? Colors.green: Colors.red.shade100,),
+                                            CircleAvatar(radius: 7, backgroundColor: int.parse(pump.phase)>0? Colors.green: Colors.red.shade100,),
                                             const VerticalDivider(color: Colors.transparent,),
-                                            //CircleAvatar(radius: 7, backgroundColor: int.parse(filteredPumps[index].phase)>1? Colors.green: Colors.red.shade100,),
+                                            CircleAvatar(radius: 7, backgroundColor: int.parse(pump.phase)>1? Colors.green: Colors.red.shade100,),
                                             const VerticalDivider(color: Colors.transparent,),
-                                            //CircleAvatar(radius: 7, backgroundColor: int.parse(filteredPumps[index].phase)>2? Colors.green: Colors.red.shade100,),
+                                            CircleAvatar(radius: 7, backgroundColor: int.parse(pump.phase)>2? Colors.green: Colors.red.shade100,),
                                           ],
                                         ),
                                       ),
@@ -1093,7 +1079,7 @@ class PumpStation extends StatelessWidget {
                       arrowHeight: 15,
                       arrowWidth: 30,
                       barrierColor: Colors.black54,
-                      //arrowDxOffset: (position.dx+25)+(0*70)-140,
+                      arrowDxOffset: (position.dx + 210)-25,
 
 
                       /*arrowDxOffset: pump.length==1?(position.dx+25)+(index*70)-140:
@@ -1171,6 +1157,127 @@ class PumpStation extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+          ),
+        ):
+        const SizedBox(),
+
+        int.tryParse(pump.reason) != null && int.parse(pump.reason) > 0 && int.parse(pump.reason)!=31
+            ? Positioned(
+          top: 1,
+          left: 37.5,
+          child: Tooltip(
+            message: vm.getContentByCode(int.parse(pump.reason)),
+            textStyle: const TextStyle(color: Colors.black54),
+            decoration: BoxDecoration(
+              color: Colors.orangeAccent,
+              borderRadius: BorderRadius.circular(5),
+            ),
+            child: const CircleAvatar(
+              radius: 11,
+              backgroundColor: Colors.deepOrangeAccent,
+              child: Icon(
+                Icons.info_outline,
+                size: 17,
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ):
+        const SizedBox(),
+
+        (pump.reason == '11'||pump.reason == '22')?
+        Positioned(
+          top: 40,
+          left: 0,
+          child: Container(
+            decoration: BoxDecoration(
+              color: pump.status==1?Colors.greenAccent:Colors.yellowAccent,
+              borderRadius: const BorderRadius.all(Radius.circular(2)),
+              border: Border.all(color: Colors.grey, width: .50),
+            ),
+            width: 67,
+            child: Center(
+              child: ValueListenableBuilder<String>(
+                valueListenable: Provider.of<DurationNotifier>(context).onDelayLeft,
+                builder: (context, value, child) {
+                  return Column(
+                    children: [
+                      Text(
+                        'Max: ${pump.actualValue}',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 3, right: 3),
+                        child: Divider(
+                          height: 0,
+                          color: Colors.grey,
+                          thickness: 0.5,
+                        ),
+                      ),
+                      Text(
+                        pump.status==1?'cRm: ${pump.setValue}':'Brk: ${pump.setValue}',
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+        ):
+        pump.reason == '8' && vm.isTimeFormat(pump.actualValue.split('_').last)?
+        Positioned(
+          top: 40,
+          left: 0,
+          child: Container(
+            decoration: BoxDecoration(
+              color: pump.status==1?Colors.greenAccent:Colors.yellowAccent,
+              borderRadius: const BorderRadius.all(Radius.circular(2)),
+              border: Border.all(color: Colors.grey, width: .50),
+            ),
+            width: 67,
+            child: Center(
+              child: ValueListenableBuilder<String>(
+                valueListenable: Provider.of<DurationNotifier>(context).onDelayLeft,
+                builder: (context, value, child) {
+                  return Column(
+                    children: [
+                      const Text(
+                        'Restart within',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.only(left: 3, right: 3),
+                        child: Divider(
+                          height: 0,
+                          color: Colors.grey,
+                          thickness: 0.5,
+                        ),
+                      ),
+                      Text(pump.actualValue.split('_').last,
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),
