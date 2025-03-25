@@ -8,11 +8,13 @@ class AddEditValveGroup extends StatefulWidget {
   final String? selectedline;
   final int? selectedgroupindex;
   final bool editcheck;
+  final int userId;
+  final int controllerId;
   final List<ValveGroup>? valveGroupdata;
   valveGroupData groupdata;
 
 
-  AddEditValveGroup({this.selectedline,this.selectedgroupindex,required this.editcheck, this.valveGroupdata, required this.groupdata});
+  AddEditValveGroup({this.selectedline,this.selectedgroupindex,required this.editcheck, this.valveGroupdata, required this.groupdata, required this.userId, required this.controllerId});
 
   @override
   _AddEditValveGroupState createState() => _AddEditValveGroupState();
@@ -169,10 +171,10 @@ class _AddEditValveGroupState extends State<AddEditValveGroup> {
 
     final Repository repository = Repository(HttpService());
     Map<String, dynamic> body = {
-      "userId": 4,
-      "controllerId": 1,
+      "userId": widget.userId,
+      "controllerId": widget.controllerId,
       "valveGroup":  widget.valveGroupdata?.map((x) => x.toJson()).toList() ?? [],
-       "createUser": 4
+       "createUser": widget.userId
     };
 
     var getUserDetails = await repository.createUserValveGroup(body);

@@ -204,6 +204,8 @@ class _GroupListScreenState extends State<GroupListScreen> {
                                       editcheck: true,
                                       selectedgroupindex: index,
                                       groupdata: _groupdata.data!,
+                                      userId: widget.userId,
+                                      controllerId: widget.controllerId,
                                     )));
                                     print('Icon Button Pressed');
                                   },
@@ -237,7 +239,7 @@ print("__groupdata.data!.defaultData.valveGroupLimit${_groupdata.data!.defaultDa
                if(_groupdata.data!.defaultData.valveGroupLimit > 0 && _groupdata.data!.valveGroup!.length < _groupdata.data!.defaultData.valveGroupLimit) {
                  Navigator.push(context, MaterialPageRoute(builder: (context) =>
                     AddEditValveGroup(
-                      editcheck: false, groupdata: _groupdata.data!,)));
+                      editcheck: false, groupdata: _groupdata.data!,userId: widget.userId,controllerId: widget.controllerId,)));
               }
               else
     {
