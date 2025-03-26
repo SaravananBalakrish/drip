@@ -100,7 +100,7 @@ class NodeListViewModel extends ChangeNotifier {
       DateFormat formatter = DateFormat('yyyy-MM-dd hh:mm a');
       return formatter.format(dateTime);
     } catch (e) {
-      return "Invalid date format";
+      return "00 00, 0000, 00:00";
     }
   }
 
