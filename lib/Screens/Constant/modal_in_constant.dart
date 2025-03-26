@@ -99,7 +99,6 @@ class Constant {
   });
 
   factory Constant.fromJson(Map<String, dynamic> json) {
-    final constantData = json['constant'] ?? {}; // Safe check for null
     return Constant(
       general: List<dynamic>.from(json['general'] ?? []),
       line: List<dynamic>.from(json['line'] ?? []),
@@ -283,21 +282,6 @@ class AlarmNew {
   }
 }
 
-
-enum Unit {
-  BAR,
-  DELTA,
-  EMPTY,
-  UNIT
-}
-
-final unitValues = EnumValues({
-  "bar": Unit.BAR,
-  "delta": Unit.DELTA,
-  "%": Unit.EMPTY,
-  "": Unit.UNIT
-});
-
 class ConfigMaker {
   List<WaterSource> waterSource;
   List<Pump> pump;
@@ -385,6 +369,7 @@ enum Type {
   EMPTY,
   THE_12, defaultType, unknown
 }
+
 final typeValues = EnumValues({
   "-": Type.EMPTY,
   "1,2": Type.THE_12
@@ -561,6 +546,7 @@ class Injector {
     };
   }
 }
+
 class EC {
   int objectId;
   double sNo;

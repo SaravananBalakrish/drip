@@ -422,18 +422,15 @@ class Constant extends StatelessWidget {
                                                                     Text(value, style: const TextStyle(fontSize: 17)),
                                                                   ],
                                                                 ),
-                                                              ))
-                                                                  .toList();
+                                                              )).toList();
                                                             },
                                                             child: Text(
                                                               vm.userConstant.constant.mainValveList![index].delay,
                                                               style: const TextStyle(fontSize: 16, color: Colors.black),
                                                             ),
                                                           )
-
                                                       ),
                                                     )
-
                                                   ]);
                                             }).toList(),
                                           )
@@ -450,7 +447,7 @@ class Constant extends StatelessWidget {
                                         left: BorderSide(color: Color(0xFFDFE0E1), width: 1),
                                         right: BorderSide(color: Color(0xFFDFE0E1), width: 1),
                                       ),
-                                      headingRowColor: MaterialStateProperty.all(const Color(0xFFFDFDFD)),
+                                      headingRowColor: WidgetStateProperty.all(const Color(0xFFFDFDFD)),
                                       columnSpacing: 12,
                                       horizontalMargin: 12,
                                       minWidth: 1020,
@@ -464,8 +461,8 @@ class Constant extends StatelessWidget {
 
                                       rows: List.generate(  vm.userConstant.constant.irrigationLineList!.length, (index) {
                                         return DataRow(
-                                            color: MaterialStateProperty.resolveWith<Color?>(
-                                                  (Set<MaterialState> states) {
+                                            color: WidgetStateProperty.resolveWith<Color?>(
+                                                  (Set<WidgetState> states) {
                                                 return index.isEven ? const Color(0xFFF6F6F6) : const Color(0xFFFDFDFD) ; // Alternating row colors
                                               },
                                             ),
@@ -554,7 +551,7 @@ class Constant extends StatelessWidget {
                                         left: BorderSide(color: Color(0xFFDFE0E1), width: 1),
                                         right: BorderSide(color: Color(0xFFDFE0E1), width: 1),
                                       ),
-                                      headingRowColor: MaterialStateProperty.all(const Color(0xFFFDFDFD)),
+                                      headingRowColor: WidgetStateProperty.all(const Color(0xFFFDFDFD)),
                                       columnSpacing: 12,
                                       horizontalMargin: 12,
                                       minWidth: 1020,
@@ -565,8 +562,8 @@ class Constant extends StatelessWidget {
 
                                       rows: List.generate( vm.userConstant.constant.waterMeterList!.length, (index) {
                                         return DataRow(
-                                            color: MaterialStateProperty.resolveWith<Color?>(
-                                                  (Set<MaterialState> states) {
+                                            color: WidgetStateProperty.resolveWith<Color?>(
+                                                  (Set<WidgetState> states) {
                                                 return index.isEven ? const Color(0xFFF6F6F6) : const Color(0xFFFDFDFD) ; // Alternating row colors
                                               },
                                             ),
@@ -621,7 +618,7 @@ class Constant extends StatelessWidget {
                                         return DataRow(
                                             color: WidgetStateProperty.resolveWith<Color?>(
                                                   (Set<WidgetState> states) {
-                                                return index.isEven ? Color(0xFFF6F6F6) : Color(0xFFFDFDFD) ; // Alternating row colors
+                                                return index.isEven ? const Color(0xFFF6F6F6) : const Color(0xFFFDFDFD) ; // Alternating row colors
                                               },
                                             ),
                                             cells: [
@@ -650,7 +647,7 @@ class Constant extends StatelessWidget {
                                                             Container(
                                                               width: 12.29,
                                                               height: 12.29,
-                                                              decoration: BoxDecoration(
+                                                              decoration: const BoxDecoration(
                                                                 color: Colors.redAccent,
                                                                 shape: BoxShape.circle,
                                                               ),

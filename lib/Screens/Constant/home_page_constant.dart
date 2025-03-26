@@ -3,7 +3,6 @@ import 'package:flutter_svg/svg.dart';
 import 'package:oro_drip_irrigation/Screens/Constant/pump_in_constant.dart';
 import 'package:oro_drip_irrigation/Screens/Constant/valve_in_constant.dart';
 import 'package:oro_drip_irrigation/Screens/Constant/watermeter_in_constant.dart';
-import 'package:provider/provider.dart';
 import 'criticalAlarm_in_constant.dart';
 import 'ec_ph_in_constant.dart';
 import 'fertilizer_in_constant.dart';
@@ -81,23 +80,13 @@ class _ConstantHomePageState extends State<ConstantHomePage>
   @override
   void initState() {
     super.initState();
-
-    // Exclude "Normal Alarm" and filter items with value == '1'
     filteredMenu = widget.constantMenu
         .where((item) => item.parameter != "Normal Alarm" && item.value == '1')
         .toList();
-
-    // Add the "Finish" parameter at the end
     filteredMenu.add(ConstantMenu(parameter: "Finish", dealerDefinitionId: 0, value: '1'));
-
-    // Set initial selected parameter
     selectedParameter = filteredMenu.firstWhere(
           (item) => item.parameter == "General",
-      orElse: () => filteredMenu.isNotEmpty
-          ? filteredMenu.first
-          : ConstantMenu(parameter: "General", dealerDefinitionId: 82, value: '1'),
-    ).parameter;
-
+      orElse: () => filteredMenu.isNotEmpty ? filteredMenu.first : ConstantMenu(parameter: "General", dealerDefinitionId: 82, value: '1'),).parameter;
     _tabController = TabController(length: filteredMenu.length, vsync: this);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -294,7 +283,7 @@ class _ConstantHomePageState extends State<ConstantHomePage>
                   default:
                     return Center(child: Text("${item.parameter} Data not available"));
                 }
-              }).toList(),
+              }),
             ],
           ),
         ),

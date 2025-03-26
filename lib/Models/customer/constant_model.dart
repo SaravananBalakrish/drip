@@ -1,6 +1,4 @@
 
-
-
 class UserConstant {
   final ConstantData constant;
   final DefaultData defaultData;
@@ -27,7 +25,7 @@ class UserConstant {
           .toList();
 
     } else {
-      print("configObject is null or missing");
+     // print("configObject is null or missing");
     }
 
     return UserConstant(
@@ -49,8 +47,6 @@ class ConstantData {
   final List<GlobalAlarmModel>? globalAlarm;
   final List<LevelSensor>? levelSensor;
   final List<MoistureSensor>? moistureSensor;
-
-
 
 
   ConstantData({
@@ -121,7 +117,6 @@ class ConstantData {
           "threshold": "0",
           "type": "Critical"
         }));
-
         globalAlarm.add(GlobalAlarmModel.fromMap({
           "name": alarmItem['name'],
           "value": false,
