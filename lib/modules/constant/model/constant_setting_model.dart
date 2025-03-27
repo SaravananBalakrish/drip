@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 class ConstantSettingModel{
   final int sNo;
   final String title;
@@ -5,7 +7,9 @@ class ConstantSettingModel{
   final String dataType;
   final bool software;
   final bool hardware;
-  dynamic value;
+  // dynamic value;
+  ValueNotifier<dynamic> value;
+
 
   ConstantSettingModel({
     required this.sNo,
@@ -25,7 +29,7 @@ class ConstantSettingModel{
         dataType: data['dataType'],
         software: data['software'],
         hardware: data['hardware'],
-        value: oldValue ?? data['value']
+        value: ValueNotifier<dynamic>(oldValue ?? data['value'])
     );
   }
 

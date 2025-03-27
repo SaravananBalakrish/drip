@@ -12,22 +12,22 @@ import '../../../StateManagement/overall_use.dart';
 import '../state_management/constant_provider.dart';
 import '../widget/find_suitable_widget.dart';
 
-class ChannelInConstant extends StatefulWidget {
+class MoistureInConstant extends StatefulWidget {
   final ConstantProvider constPvd;
   final OverAllUse overAllPvd;
-  const ChannelInConstant({super.key, required this.constPvd, required this.overAllPvd});
+  const MoistureInConstant({super.key, required this.constPvd, required this.overAllPvd});
 
   @override
-  State<ChannelInConstant> createState() => _ChannelInConstantState();
+  State<MoistureInConstant> createState() => _MoistureInConstantState();
 }
 
-class _ChannelInConstantState extends State<ChannelInConstant> {
+class _MoistureInConstantState extends State<MoistureInConstant> {
   double cellWidth = 200;
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double minWidth = (cellWidth * 2) + (widget.constPvd.defaultChannelSetting.length * cellWidth) + 50;
+    double minWidth = (cellWidth * 2) + (widget.constPvd.defaultMoistureSetting.length * cellWidth) + 50;
     Color borderColor = const Color(0xffE1E2E3);
     return DataTable2(
       border: TableBorder(
@@ -39,14 +39,14 @@ class _ChannelInConstantState extends State<ChannelInConstant> {
       minWidth: minWidth,
       fixedLeftColumns: minWidth < screenWidth ? 0 : 1,
       columns: [
-        ...['Channel', 'Location'].map((title) {
+        ...['Moisture', 'Location'].map((title) {
           return DataColumn2(
               headingRowAlignment: MainAxisAlignment.center,
               fixedWidth: cellWidth,
               label: Text(title, style: Theme.of(context).textTheme.labelLarge,textAlign: TextAlign.center, softWrap: true)
           );
         }),
-        ...widget.constPvd.defaultChannelSetting.map((defaultSetting) {
+        ...widget.constPvd.defaultMoistureSetting.map((defaultSetting) {
           return DataColumn2(
               headingRowAlignment: MainAxisAlignment.center,
               fixedWidth: cellWidth,
@@ -54,20 +54,20 @@ class _ChannelInConstantState extends State<ChannelInConstant> {
           );
         }),
       ],
-      rows: List.generate(widget.constPvd.channel.length, (row){
-        ObjectInConstantModel channel = widget.constPvd.channel[row];
+      rows: List.generate(widget.constPvd.moisture.length, (row){
+        ObjectInConstantModel moisture = widget.constPvd.moisture[row];
         return DataRow2(
             color: WidgetStatePropertyAll(
               row.isOdd ? Colors.white : const Color(0xffF8F8F8),
             ),
             cells: [
               DataCell(
-                  Center(child: Text(channel.name.toString(), textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).primaryColorLight),))
+                  Center(child: Text(moisture.name.toString(), textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).primaryColorLight),))
               ),
               DataCell(
-                  Center(child: Text(widget.constPvd.getName(channel.location),textAlign: TextAlign.center,))
+                  Center(child: Text(widget.constPvd.getName(moisture.location),textAlign: TextAlign.center,))
               ),
-              ...channel.setting.map((setting) {
+              ...moisture.setting.map((setting) {
                 return DataCell(
                     AnimatedBuilder(
                       animation: setting.value,
@@ -81,11 +81,10 @@ class _ChannelInConstantState extends State<ChannelInConstant> {
                             setting.value.value = widget.overAllPvd.getTime();
                             Navigator.pop(context);
                           },
-                          popUpItemModelList: widget.constPvd.fertilizerChannelMode,
+                          popUpItemModelList: widget.constPvd.moistureMode,
                         );
                       },
                     )
-
                 );
               }),
             ]

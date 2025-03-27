@@ -11,16 +11,16 @@ import '../../../Widgets/HoursMinutesSeconds.dart';
 import '../model/constant_setting_model.dart';
 
 
-class GeneralInConstant extends StatefulWidget {
+class GlobalAlarmInConstant extends StatefulWidget {
   final ConstantProvider constPvd;
   final OverAllUse overAllPvd;
-  const GeneralInConstant({super.key, required this.constPvd, required this.overAllPvd});
+  const GlobalAlarmInConstant({super.key, required this.constPvd, required this.overAllPvd});
 
   @override
-  State<GeneralInConstant> createState() => _GeneralInConstantState();
+  State<GlobalAlarmInConstant> createState() => _GlobalAlarmInConstantState();
 }
 
-class _GeneralInConstantState extends State<GeneralInConstant> {
+class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
   ValueNotifier<int> hoveredSno = ValueNotifier<int>(0);
 
   @override
@@ -37,13 +37,13 @@ class _GeneralInConstantState extends State<GeneralInConstant> {
         listViewBuilderOptions: ListViewBuilderOptions(
           physics: const NeverScrollableScrollPhysics(),
         ),
-        children: widget.constPvd.general.map((generalSetting){
-          return ValueListenableBuilder(
-              valueListenable: hoveredSno,
-              builder: (context, value, child){
+        children: widget.constPvd.globalAlarm.map((globalSetting){
+          return AnimatedBuilder(
+              animation: hoveredSno,
+              builder: (context, child){
                 return MouseRegion(
                   onEnter: (_){
-                    hoveredSno.value = generalSetting.sNo;
+                    hoveredSno.value = globalSetting.sNo;
                   },
                   onExit: (_){
                     hoveredSno.value = 0;
@@ -55,7 +55,7 @@ class _GeneralInConstantState extends State<GeneralInConstant> {
                         color: Colors.white,
                         boxShadow: [
                           BoxShadow(
-                              color: hoveredSno.value == generalSetting.sNo
+                              color: hoveredSno.value == globalSetting.sNo
                                   ? Theme.of(context).primaryColorLight.withOpacity(0.8)
                                   : const Color(0xff000040).withOpacity(0.25),
                               blurRadius: 4,
@@ -64,26 +64,23 @@ class _GeneralInConstantState extends State<GeneralInConstant> {
                         ]
                     ),
                     child: ListTile(
-                      title: Text(generalSetting.title, style: Theme.of(context).textTheme.labelLarge,),
+                      title: Text(globalSetting.title, style: Theme.of(context).textTheme.labelLarge,),
                       trailing: SizedBox(
                         width: 80,
-                        child: ValueListenableBuilder(
-                            valueListenable: generalSetting.value,
-                            builder: (context, value, child){
-                              return FindSuitableWidget(
-                                constantSettingModel: generalSetting,
-                                onUpdate: (value){
-                                  generalSetting.value.value = value;
-                                },
-                                onOk: (){
-                                  setState(() {
-                                    generalSetting.value.value = widget.overAllPvd.getTime();
-                                  });
-                                  Navigator.pop(context);
-                                },
-                                popUpItemModelList: [],
-                              );
-                            }
+                        child: FindSuitableWidget(
+                          constantSettingModel: globalSetting,
+                          onUpdate: (value){
+                            setState(() {
+                              globalSetting.value.value = value;
+                            });
+                          },
+                          onOk: (){
+                            setState(() {
+                              globalSetting.value.value = widget.overAllPvd.getTime();
+                            });
+                            Navigator.pop(context);
+                          },
+                          popUpItemModelList: [],
                         ),
                       ),
                     ),
@@ -91,7 +88,6 @@ class _GeneralInConstantState extends State<GeneralInConstant> {
                 );
               }
           );
-
         }).toList(),
       ),
     );

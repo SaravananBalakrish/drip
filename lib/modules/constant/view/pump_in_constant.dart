@@ -63,21 +63,23 @@ class _PumpInConstantState extends State<PumpInConstant> {
                 ),
                 ...pump.setting.map((setting) {
                   return DataCell(
-                      FindSuitableWidget(
+                    ValueListenableBuilder(
+                      valueListenable: setting.value,
+                      builder: (context, value, child){
+                        return FindSuitableWidget(
                           constantSettingModel: setting,
                           onUpdate: (value){
-                            setState(() {
-                              setting.value = value;
-                            });
+                            setting.value.value = value;
                           },
                           onOk: (){
-                            setState(() {
-                              setting.value = widget.overAllPvd.getTime();
-                            });
+                            setting.value.value = widget.overAllPvd.getTime();
                             Navigator.pop(context);
                           },
-                        popUpItemModelList: [],
-                      )
+                          popUpItemModelList: [],
+                        );
+                      },
+                    )
+
                   );
                 }),
               ]

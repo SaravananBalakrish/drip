@@ -6,16 +6,16 @@ import '../../../StateManagement/overall_use.dart';
 import '../state_management/constant_provider.dart';
 import '../widget/find_suitable_widget.dart';
 
-class FertilizerInConstant extends StatefulWidget {
+class FertilizerSiteInConstant extends StatefulWidget {
   final ConstantProvider constPvd;
   final OverAllUse overAllPvd;
-  const FertilizerInConstant({super.key, required this.constPvd, required this.overAllPvd});
+  const FertilizerSiteInConstant({super.key, required this.constPvd, required this.overAllPvd});
 
   @override
-  State<FertilizerInConstant> createState() => _FertilizerInConstantState();
+  State<FertilizerSiteInConstant> createState() => _FertilizerSiteInConstantState();
 }
 
-class _FertilizerInConstantState extends State<FertilizerInConstant> {
+class _FertilizerSiteInConstantState extends State<FertilizerSiteInConstant> {
   double cellWidth = 200;
 
   @override
@@ -58,21 +58,23 @@ class _FertilizerInConstantState extends State<FertilizerInConstant> {
               ),
               ...fertilizerSite.setting.map((setting) {
                 return DataCell(
-                    FindSuitableWidget(
-                      constantSettingModel: setting,
-                      onUpdate: (value){
-                        setState(() {
-                          setting.value = value;
-                        });
+                    AnimatedBuilder(
+                      animation: setting.value,
+                      builder: (context, child){
+                        return FindSuitableWidget(
+                          constantSettingModel: setting,
+                          onUpdate: (value){
+                            setting.value.value = value;
+                          },
+                          onOk: (){
+                            setting.value.value = widget.overAllPvd.getTime();
+                            Navigator.pop(context);
+                          },
+                          popUpItemModelList: widget.constPvd.fertilizerSiteControlFlag,
+                        );
                       },
-                      onOk: (){
-                        setState(() {
-                          setting.value = widget.overAllPvd.getTime();
-                        });
-                        Navigator.pop(context);
-                      },
-                      popUpItemModelList: widget.constPvd.fertilizerControlFlag,
                     )
+
                 );
               }),
             ]

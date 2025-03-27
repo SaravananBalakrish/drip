@@ -5,8 +5,10 @@ import 'package:oro_drip_irrigation/modules/constant/model/constant_menu_model.d
 import 'package:oro_drip_irrigation/modules/constant/model/constant_setting_type_Model.dart';
 import 'package:oro_drip_irrigation/modules/constant/state_management/constant_provider.dart';
 import 'package:oro_drip_irrigation/modules/constant/view/ec_ph_in_constant.dart';
-import 'package:oro_drip_irrigation/modules/constant/view/fertilizer_in_constant.dart';
+import 'package:oro_drip_irrigation/modules/constant/view/fertilizer_site_in_constant.dart';
+import 'package:oro_drip_irrigation/modules/constant/view/global_alarm_in_constant.dart';
 import 'package:oro_drip_irrigation/modules/constant/view/main_valve_in_constant.dart';
+import 'package:oro_drip_irrigation/modules/constant/view/normal_critical_alarm_in_constant.dart';
 import 'package:oro_drip_irrigation/modules/constant/view/pump_in_constant.dart';
 import 'package:oro_drip_irrigation/modules/constant/view/valve_in_constant.dart';
 import 'package:oro_drip_irrigation/modules/constant/view/water_meter_in_constant.dart';
@@ -21,6 +23,8 @@ import 'package:provider/provider.dart';
 import '../../../StateManagement/overall_use.dart';
 import 'channel_in_constant.dart';
 import 'general_in_constant.dart';
+import 'level_in_constant.dart';
+import 'moisture_in_constant.dart';
 
 class ConstantBasePage extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -108,11 +112,19 @@ class _ConstantBasePageState extends State<ConstantBasePage> with SingleTickerPr
       }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 87){
         return WaterMeterInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
       }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 88){
-        return FertilizerInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
+        return FertilizerSiteInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
       }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 89){
         return ChannelInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
       }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 90){
         return EcPhInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 91){
+        return MoistureInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 92){
+        return LevelInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 93){
+        return NormalCriticalInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 94){
+        return GlobalAlarmInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
       }else{
         return Text(constPvd.listOfConstantMenuModel[index].parameter);
       }
@@ -135,26 +147,29 @@ class _ConstantBasePageState extends State<ConstantBasePage> with SingleTickerPr
       controller: tabController,
       tabs: List.generate(constPvd.listOfConstantMenuModel.length, (index){
         return Tab(
-            child: ArrowTab(
-                index: index,
-                title: constPvd.listOfConstantMenuModel[index].parameter,
-                arrowTabState: constPvd.listOfConstantMenuModel[index].arrowTabState
-            )
+            child: AnimatedBuilder(
+                animation: constPvd.listOfConstantMenuModel[index].arrowTabState,
+                builder: (context, child){
+                  return ArrowTab(
+                      index: index,
+                      title: constPvd.listOfConstantMenuModel[index].parameter,
+                      arrowTabState: constPvd.listOfConstantMenuModel[index].arrowTabState.value
+                  );
+                }
+            ),
         );
       }),
       onTap: (value){
-        setState(() {
-          constPvd.listOfConstantMenuModel[value].arrowTabState = ArrowTabState.onProgress;
-          if(value > tabController.previousIndex){
-            for(var i = 0; i< value;i++){
-              constPvd.listOfConstantMenuModel[i].arrowTabState = ArrowTabState.complete;
-            }
-          }else{
-            for(var i = constPvd.listOfConstantMenuModel.length - 1; i > value;i--){
-              constPvd.listOfConstantMenuModel[i].arrowTabState = ArrowTabState.inComplete;
-            }
+        constPvd.listOfConstantMenuModel[value].arrowTabState.value = ArrowTabState.onProgress;
+        if(value > tabController.previousIndex){
+          for(var i = 0; i< value;i++){
+            constPvd.listOfConstantMenuModel[i].arrowTabState.value = ArrowTabState.complete;
           }
-        });
+        }else{
+          for(var i = constPvd.listOfConstantMenuModel.length - 1; i > value;i--){
+            constPvd.listOfConstantMenuModel[i].arrowTabState.value = ArrowTabState.inComplete;
+          }
+        }
       },
     );
   }
