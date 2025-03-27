@@ -20,10 +20,10 @@ class ConstantProvider extends ChangeNotifier{
       "valve": [],
       "pump": [],
       "waterMeter": [],
-      "filtration": [],
+      "filterSite": [],
       "fertilizerSite": [],
-      "channel": [],
-      "ecPh" : [],
+      "fertilizerChannel": [],
+      "ecPhSensor" : [],
       "analogSensor": [],
       "moistureSensor": [],
       "levelSensor": [],
@@ -32,132 +32,56 @@ class ConstantProvider extends ChangeNotifier{
       "controllerReadStatus": "0"
     },
     "default": {
-      "alarm": [
-        {
-          "sNo": 1,
-          "title": "LOW FLOW",
-          "unit": "%",
-          "value": false
-        },
-        {
-          "sNo": 2,
-          "title": "HIGH FLOW",
-          "unit": "%",
-          "value": false
-        },
-        {
-          "sNo": 3,
-          "title": "NO FLOW",
-          "unit": "",
-          "value": false
-        },
-        {
-          "sNo": 4,
-          "title": "EC HIGH",
-          "unit": "delta",
-          "value": false
-        },
-        {
-          "sNo": 5,
-          "title": "PH LOW",
-          "unit": "delta",
-          "value": false
-        },
-        {
-          "sNo": 6,
-          "title": "PH HIGH",
-          "unit": "delta",
-          "value": false
-        },
-        {
-          "sNo": 7,
-          "title": "PRESSURE LOW",
-          "unit": "bar",
-          "value": false
-        },
-        {
-          "sNo": 8,
-          "title": "PRESSURE HIGH",
-          "unit": "bar",
-          "value": false
-        },
-        {
-          "sNo": 9,
-          "title": "NO POWER SUPPLY",
-          "unit": "",
-          "value": false
-        },
-        {
-          "sNo": 10,
-          "title": "NO COMMUNICATION",
-          "unit": "",
-          "value": false
-        },
-        {
-          "sNo": 11,
-          "title": "WRONG FEEDBACK",
-          "unit": "",
-          "value": false
-        },
-        {
-          "sNo": 12,
-          "title": "SUMP EMPTY",
-          "unit": "",
-          "value": false
-        },
-        {
-          "sNo": 13,
-          "title": "TANK FULL",
-          "unit": "",
-          "value": false
-        },
-        {
-          "sNo": 14,
-          "title": "LOW BATTERY",
-          "unit": "",
-          "value": false
-        },
-        {
-          "sNo": 15,
-          "title": "EC DIFFERENCE",
-          "unit": "",
-          "value": false
-        },
-        {
-          "sNo": 16,
-          "title": "PH DIFFERENCE",
-          "unit": "",
-          "value": false
-        },
-        {
-          "sNo": 17,
-          "title": "PUMP OFF ALARM",
-          "unit": "",
-          "value": false
-        },
-        {
-          "sNo": 18,
-          "title": "PRESSURE SWITCH HIGH",
-          "unit": "",
-          "value": false
-        },
-        {
-          "sNo": 19,
-          "title": "WIRED NO COMMUNICATION",
-          "unit": "",
-          "value": false
-        }
-      ],
       "alarmOnStatus" : [
         {'sNo' : 1, 'title' : 'Ignore', 'color' : '0xffA5A5A5'},
         {'sNo' : 2, 'title' : 'Stop Irrigation', 'color' : '0xff0070D8'},
         {'sNo' : 3, 'title' : 'Stop Fertigation', 'color' : '0xffEB7C17'},
         {'sNo' : 4, 'title' : 'Skip Schedule', 'color' : '0xffE73250'},
       ],
-      "resetAfterIrrigation" : [
+      "alarmResetAfterIrrigation" : [
         {'sNo' : 1, 'title' : 'Yes', 'color' : '0xff14AE5C'},
         {'sNo' : 2, 'title' : 'No', 'color' : '0xffE73250'},
       ],
+      "mainValveMode" : [
+        {'sNo' : 1, 'title' : 'No Delay', 'color' : '0xff6B6B6B'},
+        {'sNo' : 2, 'title' : 'Open Before', 'color' : '0xff0070D8'},
+        {'sNo' : 3, 'title' : 'Open After', 'color' : '0xff14AE5C'},
+      ],
+      "fertilizerSiteControlFlag" : [
+        {'sNo' : 1, 'title' : 'Stop Faulty Fertilizer', 'color' : '0xffEB7C17'},
+        {'sNo' : 2, 'title' : 'Stop Fertigation', 'color' : '0xffE73293'},
+        {'sNo' : 3, 'title' : 'Stop Irrigation', 'color' : '0xff0070D8'},
+        {'sNo' : 4, 'title' : 'Inform Only', 'color' : '0xff14AE5C'},
+      ],
+      "fertilizerChannelMode" : [
+        {'sNo' : 1, 'title' : 'Regular', 'color' : '0xff0070D8'},
+        {'sNo' : 2, 'title' : 'Ph Control', 'color' : '0xffEB7C17'},
+        {'sNo' : 3, 'title' : 'Ec Control', 'color' : '0xffE73293'},
+        {'sNo' : 4, 'title' : 'Concentration', 'color' : '0xff14AE5C'},
+      ],
+      "filterSiteWhileBackwash": [
+        {
+          "sNo": 1,
+          "title": "Continue Irrigation",
+          "color": "0xff0070D8"
+        },
+        {
+          "sNo": 2,
+          "title": "Stop Irrigation",
+          "color": "0xffE73250"
+        },
+        {
+          "sNo": 3,
+          "title": "Stop Fertigation",
+          "color": "0xffEB7C17"
+        },
+        {
+          "sNo": 4,
+          "title": "Open Valves Only",
+          "color": "0xff14AE5C"
+        }
+      ],
+
       "globalAlarm" : [
         {"sNo":1,"title":"LowFlow","widgetTypeId":2,"dataType":"bool","value":false,"hidden":false,"software":true,"hardware":true},
         {"sNo":2,"title":"HighFlow","widgetTypeId":2,"dataType":"bool","value":false,"hidden":false,"software":true,"hardware":true},
@@ -210,11 +134,6 @@ class ConstantProvider extends ChangeNotifier{
         {"sNo":1,"title":"Mode of Operation","widgetTypeId":6,"dataType":"int","value":1,"hidden":false,"software":true,"hardware":true},
         {"sNo":2,"title":"Delay","widgetTypeId":3,"dataType":"String","value":"00:00:00","hidden":false,"software":true,"hardware":true}
       ],
-      "mainValveMode" : [
-        {'sNo' : 1, 'title' : 'No Delay', 'color' : '0xff6B6B6B'},
-        {'sNo' : 2, 'title' : 'Open Before', 'color' : '0xff0070D8'},
-        {'sNo' : 3, 'title' : 'Open After', 'color' : '0xff14AE5C'},
-      ],
       "valve" : [
         {"sNo":1,"title":"Flow Rate","widgetTypeId":1,"dataType":"int","value":0,"hidden":false,"software":true,"hardware":true}
       ],
@@ -227,25 +146,13 @@ class ConstantProvider extends ChangeNotifier{
         {"sNo":3,"title":"Booster Off Delay","widgetTypeId":3,"dataType":"String","value":"00:00:00","hidden":false,"software":true,"hardware":true},
         {"sNo":4,"title":"Fertilizer Control Flag","widgetTypeId":6,"dataType":"int","value":1,"hidden":false,"software":true,"hardware":true}
       ],
-      "fertilizerControlFlag" : [
-        {'sNo' : 1, 'title' : 'Stop Faulty Fertilizer', 'color' : '0xffEB7C17'},
-        {'sNo' : 2, 'title' : 'Stop Fertigation', 'color' : '0xffE73293'},
-        {'sNo' : 3, 'title' : 'Stop Irrigation', 'color' : '0xff0070D8'},
-        {'sNo' : 4, 'title' : 'Inform Only', 'color' : '0xff14AE5C'},
-      ],
-      "channel" : [
+      "fertilizerChannel" : [
         {"sNo":1,"title":"Flow Rate","widgetTypeId":1,"dataType":"int","value":0,"hidden":false,"software":true,"hardware":true},
         {"sNo":2,"title":"Injector Mode","widgetTypeId":6,"dataType":"int","value":1,"hidden":false,"software":true,"hardware":true},
         {"sNo":3,"title":"Ratio","widgetTypeId":1,"dataType":"int","value":0,"hidden":false,"software":true,"hardware":true},
         {"sNo":4,"title":"Shortest Pulse","widgetTypeId":1,"dataType":"int","value":0,"hidden":false,"software":true,"hardware":true}
       ],
-      "channelMode" : [
-        {'sNo' : 1, 'title' : 'Regular', 'color' : '0xff0070D8'},
-        {'sNo' : 2, 'title' : 'Ph Control', 'color' : '0xffEB7C17'},
-        {'sNo' : 3, 'title' : 'Ec Control', 'color' : '0xffE73293'},
-        {'sNo' : 4, 'title' : 'Concentration', 'color' : '0xff14AE5C'},
-      ],
-      "ecPh" : [
+      "ecPhSensor" : [
         {"sNo":1,"title":"Select","widgetTypeId":7,"dataType":"bool","value":false,"hidden":false,"software":true,"hardware":true},
         {"sNo":2,"title":"Control Cycle","widgetTypeId":3,"dataType":"String","value":"00:00:00","hidden":false,"software":true,"hardware":true},
         {"sNo":3,"title":"Delta","widgetTypeId":1,"dataType":"double","value":0.0,"hidden":false,"software":true,"hardware":true},
@@ -300,7 +207,7 @@ class ConstantProvider extends ChangeNotifier{
         },
         {
           "dealerDefinitionId": 89,
-          "parameter": "Channel",
+          "parameter": "Fertilizer Channel",
           "value": "1"
         },
         {
@@ -2361,7 +2268,7 @@ class ConstantProvider extends ChangeNotifier{
   List<ObjectInConstantModel> waterMeter = [];
   List<ObjectInConstantModel> fertilizerSite = [];
   List<ObjectInConstantModel> channel = [];
-  List<EcPhInConstantModel> ecPh = [];
+  List<EcPhInConstantModel> ecPhSensor = [];
   List<ObjectInConstantModel> moisture = [];
   List<ObjectInConstantModel> level = [];
   List<ConstantSettingModel> defaultPumpSetting = [];
@@ -2375,11 +2282,11 @@ class ConstantProvider extends ChangeNotifier{
   List<ConstantSettingModel> defaultLevelSetting = [];
   List<ConstantSettingModel> defaultNormalCriticalAlarmSetting = [];
   List<PopUpItemModel> mainValveMode = [];
-  List<PopUpItemModel> fertilizerControlFlag = [];
-  List<PopUpItemModel> channelMode = [];
+  List<PopUpItemModel> fertilizerSiteControlFlag = [];
+  List<PopUpItemModel> fertilizerChannelMode = [];
   List<PopUpItemModel> moistureMode = [];
   List<PopUpItemModel> alarmOnStatus = [];
-  List<PopUpItemModel> resetAfterIrrigation = [];
+  List<PopUpItemModel> alarmResetAfterIrrigation = [];
 
   String getName(dynamic sNo){
     var name = '';
@@ -2438,7 +2345,7 @@ class ConstantProvider extends ChangeNotifier{
         return ConstantMenuModel(
             dealerDefinitionId: menu['dealerDefinitionId'],
             parameter: menu['parameter'],
-            arrowTabState: menu['dealerDefinitionId'] == 82 ? ArrowTabState.onProgress : ArrowTabState.inComplete
+            arrowTabState: ValueNotifier(menu['dealerDefinitionId'] == 82 ? ArrowTabState.onProgress : ArrowTabState.inComplete)
         );
       }).toList();
 
@@ -2510,7 +2417,7 @@ class ConstantProvider extends ChangeNotifier{
 
       // update normal and critical
       alarmOnStatus = generatePopUpItemModel(defaultData: defaultData, keyName: 'alarmOnStatus');
-      resetAfterIrrigation = generatePopUpItemModel(defaultData: defaultData, keyName: 'resetAfterIrrigation');
+      alarmResetAfterIrrigation = generatePopUpItemModel(defaultData: defaultData, keyName: 'alarmResetAfterIrrigation');
       defaultNormalCriticalAlarmSetting = generateDefaultSetting(defaultData: defaultData, keyName: 'normalCriticalAlarm');
       normalCriticalAlarm = listOfIrrigationLineObject.map((line){
         List<dynamic> lineData = (constantOldData['normalCriticalAlarm'] as List<dynamic>).where((oldLine) => oldLine['sNo'] == line['sNo']).toList();
@@ -2560,7 +2467,7 @@ class ConstantProvider extends ChangeNotifier{
       }
 
       // update fertilizerSite
-      fertilizerControlFlag = generatePopUpItemModel(defaultData: defaultData, keyName: 'fertilizerControlFlag');
+      fertilizerSiteControlFlag = generatePopUpItemModel(defaultData: defaultData, keyName: 'fertilizerSiteControlFlag');
       defaultFertilizerSiteSetting = generateDefaultSetting(defaultData: defaultData, keyName: 'fertilizerSite');
       fertilizerSite = generateObjectInConstantModel(listOfObject: listOfFertilizerSiteObject, defaultData: defaultData, constantOldData: constantOldData, keyName: 'fertilizerSite');
       if (kDebugMode) {
@@ -2568,9 +2475,9 @@ class ConstantProvider extends ChangeNotifier{
       }
 
       // update channel
-      channelMode = generatePopUpItemModel(defaultData: defaultData, keyName: 'channelMode');
-      defaultChannelSetting = generateDefaultSetting(defaultData: defaultData, keyName: 'channel');
-      channel = generateObjectInConstantModel(listOfObject: listOfChannelObject, defaultData: defaultData, constantOldData: constantOldData, keyName: 'channel');
+      fertilizerChannelMode = generatePopUpItemModel(defaultData: defaultData, keyName: 'fertilizerChannelMode');
+      defaultChannelSetting = generateDefaultSetting(defaultData: defaultData, keyName: "fertilizerChannel");
+      channel = generateObjectInConstantModel(listOfObject: listOfChannelObject, defaultData: defaultData, constantOldData: constantOldData, keyName: "fertilizerChannel");
       if (kDebugMode) {
         print('channel updated..');
       }
@@ -2578,7 +2485,7 @@ class ConstantProvider extends ChangeNotifier{
       // update ec ph
       if(listOfFertilizerSiteObject.isNotEmpty){
         // find out and filter the fertilizer site has ec or ph
-        defaultEcPhSetting = generateDefaultSetting(defaultData: defaultData, keyName: 'ecPh');
+        defaultEcPhSetting = generateDefaultSetting(defaultData: defaultData, keyName: 'ecPhSensor');
         List<dynamic> fertilizerSiteWithEcPh = listOfFertilizerSiteObject.where((site){
           bool ecAvailable = listOfEcObject.any((ecSensor) => ecSensor['location'] == site['sNo']);
           bool phAvailable = listOfPhObject.any((phSensor) => phSensor['location'] == site['sNo']);
@@ -2588,11 +2495,11 @@ class ConstantProvider extends ChangeNotifier{
             return false;
           }
         }).toList();
-        ecPh = fertilizerSiteWithEcPh.map((site){
+        ecPhSensor = fertilizerSiteWithEcPh.map((site){
           return EcPhInConstantModel.fromJson(
               objectData: site,
-              defaultSetting: defaultData['ecPh'],
-              oldSetting: constantOldData['ecPh'],
+              defaultSetting: defaultData["ecPhSensor"],
+              oldSetting: constantOldData["ecPhSensor"],
               ec: listOfEcObject.where((ecSensor) => ecSensor['location'] == site['sNo']).toList(),
               ph: listOfPhObject.where((phSensor) => phSensor['location'] == site['sNo']).toList()
           );

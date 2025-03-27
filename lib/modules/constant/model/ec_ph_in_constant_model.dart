@@ -68,13 +68,13 @@ class EcPhInConstantModel{
     /*if generatedEcControlSensorValue is 0.0 that means no sensor selected
     so i change this value to first ec sensor if available..*/
     if(!generateEc[indexOfControlSensor].value.toString().contains('${AppConstants.ecObjectId}') && ec.isNotEmpty){
-      generateEc[indexOfControlSensor].value = ec[0]['sNo'].toString();
+      generateEc[indexOfControlSensor].value.value = ec[0]['sNo'].toString();
     }
 
     /*if generatedEcControlSensorValue is average and if ec list have not 2 sensor*/
     bool generatedEcControlSensorIsAverage = (generateEc[indexOfControlSensor].sNo.toString()).contains('+');
     if(ec.length < 2 && ec.isNotEmpty && generatedEcControlSensorIsAverage){
-      generateEc[indexOfControlSensor].value = ec[0]['sNo'].toString();
+      generateEc[indexOfControlSensor].value.value = ec[0]['sNo'].toString();
     }
 
     List<ConstantSettingModel> generatePh = defaultSetting.map((setting){
@@ -105,13 +105,13 @@ class EcPhInConstantModel{
     /*if generatedPhControlSensorValue is 0.0 that means no sensor selected
     so i change this value to first ph sensor if available..*/
     if(!generatePh[indexOfControlSensor].value.toString().contains('${AppConstants.ecObjectId}') && ph.isNotEmpty){
-      generatePh[indexOfControlSensor].value = ph[0]['sNo'].toString();
+      generatePh[indexOfControlSensor].value.value = ph[0]['sNo'].toString();
     }
 
     /*if generatedPhControlSensorValue is average and if ph list have not 2 sensor*/
     bool generatedPhControlSensorIsAverage = (generatePh[indexOfControlSensor].sNo.toString()).contains('+');
     if(ph.length < 2 && ph.isNotEmpty && generatedPhControlSensorIsAverage){
-      generatePh[indexOfControlSensor].value = ph[0]['sNo'].toString();
+      generatePh[indexOfControlSensor].value.value = ph[0]['sNo'].toString();
     }
     
     return EcPhInConstantModel(

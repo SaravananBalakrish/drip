@@ -63,21 +63,23 @@ class _WaterMeterInConstantState extends State<WaterMeterInConstant> {
               ),
               ...waterMeter.setting.map((setting) {
                 return DataCell(
-                    FindSuitableWidget(
-                      constantSettingModel: setting,
-                      onUpdate: (value){
-                        setState(() {
-                          setting.value = value;
-                        });
-                      },
-                      onOk: (){
-                        setState(() {
-                          setting.value = widget.overAllPvd.getTime();
-                        });
-                        Navigator.pop(context);
-                      },
-                      popUpItemModelList: [],
-                    )
+                  AnimatedBuilder(
+                    animation: setting.value,
+                    builder: (context, child){
+                      return FindSuitableWidget(
+                        constantSettingModel: setting,
+                        onUpdate: (value){
+                          setting.value.value = value;
+                        },
+                        onOk: (){
+                          setting.value.value = widget.overAllPvd.getTime();
+                          Navigator.pop(context);
+                        },
+                        popUpItemModelList: [],
+                      );
+                    },
+                  )
+
                 );
               }),
             ]

@@ -21,7 +21,7 @@ class GlobalAlarmInConstant extends StatefulWidget {
 }
 
 class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
-  int hoveredSno = 0;
+  ValueNotifier<int> hoveredSno = ValueNotifier<int>(0);
 
   @override
   Widget build(BuildContext context) {
@@ -38,54 +38,55 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
           physics: const NeverScrollableScrollPhysics(),
         ),
         children: widget.constPvd.globalAlarm.map((globalSetting){
-          return MouseRegion(
-            onEnter: (_){
-              setState(() {
-                hoveredSno = globalSetting.sNo;
-              });
-            },
-            onExit: (_){
-              setState(() {
-                hoveredSno = 0;
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        color: hoveredSno == globalSetting.sNo
-                            ? Theme.of(context).primaryColorLight.withOpacity(0.8)
-                            : const Color(0xff000040).withOpacity(0.25),
-                        blurRadius: 4,
-                        offset: const Offset(0, 4)
-                    )
-                  ]
-              ),
-              child: ListTile(
-                title: Text(globalSetting.title, style: Theme.of(context).textTheme.labelLarge,),
-                trailing: SizedBox(
-                  width: 80,
-                  child: FindSuitableWidget(
-                    constantSettingModel: globalSetting,
-                    onUpdate: (value){
-                      setState(() {
-                        globalSetting.value = value;
-                      });
-                    },
-                    onOk: (){
-                      setState(() {
-                        globalSetting.value = widget.overAllPvd.getTime();
-                      });
-                      Navigator.pop(context);
-                    },
-                    popUpItemModelList: [],
+          return AnimatedBuilder(
+              animation: hoveredSno,
+              builder: (context, child){
+                return MouseRegion(
+                  onEnter: (_){
+                    hoveredSno.value = globalSetting.sNo;
+                  },
+                  onExit: (_){
+                    hoveredSno.value = 0;
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                              color: hoveredSno.value == globalSetting.sNo
+                                  ? Theme.of(context).primaryColorLight.withOpacity(0.8)
+                                  : const Color(0xff000040).withOpacity(0.25),
+                              blurRadius: 4,
+                              offset: const Offset(0, 4)
+                          )
+                        ]
+                    ),
+                    child: ListTile(
+                      title: Text(globalSetting.title, style: Theme.of(context).textTheme.labelLarge,),
+                      trailing: SizedBox(
+                        width: 80,
+                        child: FindSuitableWidget(
+                          constantSettingModel: globalSetting,
+                          onUpdate: (value){
+                            setState(() {
+                              globalSetting.value.value = value;
+                            });
+                          },
+                          onOk: (){
+                            setState(() {
+                              globalSetting.value.value = widget.overAllPvd.getTime();
+                            });
+                            Navigator.pop(context);
+                          },
+                          popUpItemModelList: [],
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
+                );
+              }
           );
         }).toList(),
       ),

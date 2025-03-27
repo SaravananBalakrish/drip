@@ -20,7 +20,7 @@ class NormalCriticalInConstant extends StatefulWidget {
 }
 
 class _NormalCriticalInConstantState extends State<NormalCriticalInConstant> {
-  double cellWidth = 150;
+  double cellWidth = 200;
   int selectedIrrigationLine = 0;
 
   @override
@@ -74,43 +74,45 @@ class _NormalCriticalInConstantState extends State<NormalCriticalInConstant> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        SizedBox(
-                          height: 40,
-                          width: cellWidth,
-                          child: FindSuitableWidget(
-                            constantSettingModel: normalAlarm.setting[index],
-                            onUpdate: (value){
-                              setState(() {
-                                normalAlarm.setting[index].value = value;
-                              });
-                            },
-                            onOk: (){
-                              setState(() {
-                                normalAlarm.setting[index].value = widget.overAllPvd.getTime();
-                              });
-                              Navigator.pop(context);
-                            },
-                            popUpItemModelList: normalAlarm.setting[index].sNo == 2 ? widget.constPvd.alarmOnStatus : widget.constPvd.resetAfterIrrigation,
-                          ),
+                        AnimatedBuilder(
+                            animation: normalAlarm.setting[index].value,
+                            builder: (context, child){
+                              return SizedBox(
+                                height: 40,
+                                width: cellWidth,
+                                child: FindSuitableWidget(
+                                  constantSettingModel: normalAlarm.setting[index],
+                                  onUpdate: (value){
+                                    normalAlarm.setting[index].value.value = value;
+                                  },
+                                  onOk: (){
+                                    normalAlarm.setting[index].value.value = widget.overAllPvd.getTime();
+                                    Navigator.pop(context);
+                                  },
+                                  popUpItemModelList: normalAlarm.setting[index].sNo == 2 ? widget.constPvd.alarmOnStatus : widget.constPvd.alarmResetAfterIrrigation,
+                                ),
+                              );
+                            }
                         ),
-                        SizedBox(
-                          height: 40,
-                          width: cellWidth,
-                          child: FindSuitableWidget(
-                            constantSettingModel: criticalAlarm.setting[index],
-                            onUpdate: (value){
-                              setState(() {
-                                criticalAlarm.setting[index].value = value;
-                              });
-                            },
-                            onOk: (){
-                              setState(() {
-                                criticalAlarm.setting[index].value = widget.overAllPvd.getTime();
-                              });
-                              Navigator.pop(context);
-                            },
-                            popUpItemModelList: criticalAlarm.setting[index].sNo == 2 ? widget.constPvd.alarmOnStatus : widget.constPvd.resetAfterIrrigation,
-                          ),
+                        AnimatedBuilder(
+                            animation: criticalAlarm.setting[index].value,
+                            builder: (context, child){
+                              return SizedBox(
+                                height: 40,
+                                width: cellWidth,
+                                child: FindSuitableWidget(
+                                  constantSettingModel: criticalAlarm.setting[index],
+                                  onUpdate: (value){
+                                    criticalAlarm.setting[index].value.value = value;
+                                  },
+                                  onOk: (){
+                                    criticalAlarm.setting[index].value.value = widget.overAllPvd.getTime();
+                                    Navigator.pop(context);
+                                  },
+                                  popUpItemModelList: criticalAlarm.setting[index].sNo == 2 ? widget.constPvd.alarmOnStatus : widget.constPvd.alarmResetAfterIrrigation,
+                                ),
+                              );
+                            }
                         ),
                       ],
                     )
@@ -119,80 +121,6 @@ class _NormalCriticalInConstantState extends State<NormalCriticalInConstant> {
             ]
         );
       })
-      // rows: List.generate(widget.constPvd.ecPh.length, (row){
-      //   NormalCriticalInConstant Model fertilizerSite = widget.constPvd.ecPh[row];
-      //   return DataRow2(
-      //       specificRowHeight: fertilizerSite.setting.length == 2 ? 100 : null,
-      //       color: WidgetStatePropertyAll(
-      //         row.isOdd ? Colors.white : const Color(0xffF8F8F8),
-      //       ),
-      //       cells: [
-      //         DataCell(
-      //             Center(child: Text(fertilizerSite.name.toString(), textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).primaryColorLight),))
-      //         ),
-      //         DataCell(
-      //             Column(
-      //               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //               children: [
-      //                 if(fertilizerSite.ecPopup.isNotEmpty)
-      //                   Center(child: Text('Ec Sensor', textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).primaryColorLight),)),
-      //                 if(fertilizerSite.phPopup.isNotEmpty)
-      //                   Center(child: Text('Ph Sensor', textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).primaryColorLight),)),
-      //               ],
-      //             )
-      //         ),
-      //         ...List.generate(widget.constPvd.defaultEcPhSetting.length, (index){
-      //           return DataCell(
-      //               Column(
-      //                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      //                 children: [
-      //                   SizedBox(
-      //                     height: 40,
-      //                     width: cellWidth,
-      //                     child: FindSuitableWidget(
-      //                       constantSettingModel: fertilizerSite.setting[0][index],
-      //                       onUpdate: (value){
-      //                         setState(() {
-      //                           fertilizerSite.setting[0][index].value = value;
-      //                         });
-      //                       },
-      //                       onOk: (){
-      //                         setState(() {
-      //                           fertilizerSite.setting[0][index].value = widget.overAllPvd.getTime();
-      //                         });
-      //                         Navigator.pop(context);
-      //                       },
-      //                       popUpItemModelList: fertilizerSite.ecPopup,
-      //                     ),
-      //                   ),
-      //                   if(fertilizerSite.setting.length > 1)
-      //                     SizedBox(
-      //                       width: cellWidth,
-      //                       height: 40,
-      //                       child: FindSuitableWidget(
-      //                         constantSettingModel: fertilizerSite.setting[1][index],
-      //                         onUpdate: (value){
-      //                           setState(() {
-      //                             fertilizerSite.setting[1][index].value = value;
-      //                           });
-      //                         },
-      //                         onOk: (){
-      //                           setState(() {
-      //                             fertilizerSite.setting[1][index].value = widget.overAllPvd.getTime();
-      //                           });
-      //                           Navigator.pop(context);
-      //                         },
-      //                         popUpItemModelList: fertilizerSite.phPopup,
-      //                       ),
-      //                     ),
-      //                 ],
-      //               )
-      //           );
-      //         })
-      //       ]
-      //   );
-      // }),
-
     );
 
   }

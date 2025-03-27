@@ -24,14 +24,14 @@ class _FindSuitableWidgetState extends State<FindSuitableWidget> {
     print("widget.constantSettingModel.value : ${widget.constantSettingModel.value} - ${widget.constantSettingModel.value.runtimeType}");
     if(widget.constantSettingModel.widgetTypeId == 1){
       return CustomTextFormField(
-          value: widget.constantSettingModel.value.toString(),
+          value: widget.constantSettingModel.value.value.toString(),
           dataType: widget.constantSettingModel.dataType,
           onChanged: widget.onUpdate
       );
     }
     else if(widget.constantSettingModel.widgetTypeId == 2){
       return CustomSwitch(
-          value: widget.constantSettingModel.value,
+          value: widget.constantSettingModel.value.value,
           onChanged: widget.onUpdate
       );
     }
@@ -45,7 +45,7 @@ class _FindSuitableWidgetState extends State<FindSuitableWidget> {
                   return AlertDialog(
                     content:
                     HoursMinutesSeconds(
-                      initialTime: widget.constantSettingModel.value,
+                      initialTime: widget.constantSettingModel.value.value,
                       onPressed: widget.onOk,
                     ),
                   );
@@ -53,7 +53,7 @@ class _FindSuitableWidgetState extends State<FindSuitableWidget> {
           },
           child: Padding(
             padding: const EdgeInsets.all(5),
-            child: Text(widget.constantSettingModel.value),
+            child: Text(widget.constantSettingModel.value.value),
           ),
         ),
       );
@@ -62,14 +62,14 @@ class _FindSuitableWidgetState extends State<FindSuitableWidget> {
       return Center(
         child: CustomPopUpButton(
             popUpItemModelList: widget.popUpItemModelList,
-            selectedItemSno: widget.constantSettingModel.value,
+            selectedItemSno: widget.constantSettingModel.value.value,
           onSelected: widget.onUpdate,
         ),
       );
     }
     else if(widget.constantSettingModel.widgetTypeId == 7){
       return CustomCheckBox(
-          value: widget.constantSettingModel.value,
+          value: widget.constantSettingModel.value.value,
           onChanged: widget.onUpdate
       );
     }

@@ -69,20 +69,21 @@ class _MoistureInConstantState extends State<MoistureInConstant> {
               ),
               ...moisture.setting.map((setting) {
                 return DataCell(
-                    FindSuitableWidget(
-                      constantSettingModel: setting,
-                      onUpdate: (value){
-                        setState(() {
-                          setting.value = value;
-                        });
+                    AnimatedBuilder(
+                      animation: setting.value,
+                      builder: (context, child){
+                        return FindSuitableWidget(
+                          constantSettingModel: setting,
+                          onUpdate: (value){
+                            setting.value.value = value;
+                          },
+                          onOk: (){
+                            setting.value.value = widget.overAllPvd.getTime();
+                            Navigator.pop(context);
+                          },
+                          popUpItemModelList: widget.constPvd.moistureMode,
+                        );
                       },
-                      onOk: (){
-                        setState(() {
-                          setting.value = widget.overAllPvd.getTime();
-                        });
-                        Navigator.pop(context);
-                      },
-                      popUpItemModelList: widget.constPvd.moistureMode,
                     )
                 );
               }),

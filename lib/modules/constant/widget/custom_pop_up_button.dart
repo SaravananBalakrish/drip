@@ -11,6 +11,7 @@ class CustomPopUpButton extends StatelessWidget {
   Widget build(BuildContext context) {
     PopUpItemModel selectedPopUpItemModel = popUpItemModelList.firstWhere((item) => item.sNo == selectedItemSno);
     return PopupMenuButton(
+      tooltip: '',
       initialValue: selectedPopUpItemModel.sNo,
         onSelected: onSelected,
         itemBuilder: (context){

@@ -21,7 +21,7 @@ class GeneralInConstant extends StatefulWidget {
 }
 
 class _GeneralInConstantState extends State<GeneralInConstant> {
-  int hoveredSno = 0;
+  ValueNotifier<int> hoveredSno = ValueNotifier<int>(0);
 
   @override
   Widget build(BuildContext context) {
@@ -38,55 +38,60 @@ class _GeneralInConstantState extends State<GeneralInConstant> {
           physics: const NeverScrollableScrollPhysics(),
         ),
         children: widget.constPvd.general.map((generalSetting){
-          return MouseRegion(
-            onEnter: (_){
-              setState(() {
-                hoveredSno = generalSetting.sNo;
-              });
-            },
-            onExit: (_){
-              setState(() {
-                hoveredSno = 0;
-              });
-            },
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        color: hoveredSno == generalSetting.sNo
-                          ? Theme.of(context).primaryColorLight.withOpacity(0.8)
-                          : const Color(0xff000040).withOpacity(0.25),
-                        blurRadius: 4,
-                        offset: const Offset(0, 4)
-                    )
-                  ]
-              ),
-              child: ListTile(
-                title: Text(generalSetting.title, style: Theme.of(context).textTheme.labelLarge,),
-                trailing: SizedBox(
-                  width: 80,
-                  child: FindSuitableWidget(
-                      constantSettingModel: generalSetting,
-                      onUpdate: (value){
-                        setState(() {
-                          generalSetting.value = value;
-                        });
-                      },
-                      onOk: (){
-                        setState(() {
-                          generalSetting.value = widget.overAllPvd.getTime();
-                        });
-                        Navigator.pop(context);
-                      },
-                    popUpItemModelList: [],
+          return ValueListenableBuilder(
+              valueListenable: hoveredSno,
+              builder: (context, value, child){
+                return MouseRegion(
+                  onEnter: (_){
+                    hoveredSno.value = generalSetting.sNo;
+                  },
+                  onExit: (_){
+                    hoveredSno.value = 0;
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                              color: hoveredSno.value == generalSetting.sNo
+                                  ? Theme.of(context).primaryColorLight.withOpacity(0.8)
+                                  : const Color(0xff000040).withOpacity(0.25),
+                              blurRadius: 4,
+                              offset: const Offset(0, 4)
+                          )
+                        ]
+                    ),
+                    child: ListTile(
+                      title: Text(generalSetting.title, style: Theme.of(context).textTheme.labelLarge,),
+                      trailing: SizedBox(
+                        width: 80,
+                        child: ValueListenableBuilder(
+                            valueListenable: generalSetting.value,
+                            builder: (context, value, child){
+                              return FindSuitableWidget(
+                                constantSettingModel: generalSetting,
+                                onUpdate: (value){
+                                  generalSetting.value.value = value;
+                                },
+                                onOk: (){
+                                  setState(() {
+                                    generalSetting.value.value = widget.overAllPvd.getTime();
+                                  });
+                                  Navigator.pop(context);
+                                },
+                                popUpItemModelList: [],
+                              );
+                            }
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
+                );
+              }
           );
+
         }).toList(),
       ),
     );

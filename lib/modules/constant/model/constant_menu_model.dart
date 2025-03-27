@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
+
 import '../widget/arrow_tab.dart';
 
 class ConstantMenuModel{
   final int dealerDefinitionId;
   final String parameter;
-  ArrowTabState arrowTabState;
+  ValueNotifier<ArrowTabState> arrowTabState;
 
   ConstantMenuModel({
     required this.dealerDefinitionId,
@@ -15,7 +17,7 @@ class ConstantMenuModel{
     return ConstantMenuModel(
         dealerDefinitionId: data['dealerDefinitionId'],
         parameter: data['parameter'],
-        arrowTabState: ArrowTabState.inComplete
+        arrowTabState: ValueNotifier(ArrowTabState.inComplete)
     );
   }
 }
