@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Screens/planning/fiterbackwash.dart';
+import 'package:oro_drip_irrigation/modules/constant/view/constant_base_page.dart';
 import '../../Constants/properties.dart';
 import '../../Screens/Constant/api_in_constant.dart';
  import '../../Screens/planning/frost_productionScreen.dart';
@@ -105,8 +106,10 @@ class _ProgramScheduleState extends State<ProgramSchedule> with SingleTickerProv
         return Names(userID: widget.customerID, customerID: widget.customerID, controllerId: widget.controllerID, menuId: 0, imeiNo: widget.imeiNumber, );
       case 67:
         return PreferenceMainScreen(userId: widget.userId, controllerId: widget.controllerID, customerId: widget.customerID, deviceId: widget.imeiNumber, menuId: 0,);
+      // case 68:
+      //   return ConstantInConfig(userId: widget.customerID, deviceId: widget.imeiNumber, customerId: widget.customerID, controllerId: widget.controllerID);
       case 68:
-        return ConstantInConfig(userId: widget.customerID, deviceId: widget.imeiNumber, customerId: widget.customerID, controllerId: widget.controllerID);
+        return ConstantBasePage(userData: {'userId' : widget.customerID, 'controllerId' : widget.controllerID, 'deviceId' : widget.imeiNumber});
     // case 69:
     //   return ConditionScreen(customerId: widget.customerID, controllerId: widget.controllerID, imeiNo: widget.imeiNumber, isProgram: false, serialNumber: 0,);
       case 70:
@@ -150,7 +153,6 @@ class _ProgramScheduleState extends State<ProgramSchedule> with SingleTickerProv
                 width: double.infinity,
                 height: double.infinity,
                 child: Row(
-
                   children: [
                     Container(
                       width: constraints.maxWidth * 0.15,
@@ -214,7 +216,8 @@ class _ProgramScheduleState extends State<ProgramSchedule> with SingleTickerProv
                           width: double.infinity,
                           height: double.infinity,
                           decoration: BoxDecoration(
-                              color: const Color(0xffE6EDF5),
+                              // color: const Color(0xffE6EDF5),
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(20)),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),

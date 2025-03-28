@@ -6,6 +6,8 @@ class ObjectInConstantModel{
   final String name;
   final String objectName;
   final double location;
+  final int? controllerId;
+  final int? connectionNo;
   List<ConstantSettingModel> setting = [];
 
   ObjectInConstantModel({
@@ -14,6 +16,8 @@ class ObjectInConstantModel{
     required this.name,
     required this.objectName,
     required this.location,
+    required this.controllerId,
+    required this.connectionNo,
     required this.setting,
   });
 
@@ -28,6 +32,8 @@ class ObjectInConstantModel{
         name: objectData['name'],
         objectName: objectData['objectName'],
         location: objectData['location'],
+        controllerId: objectData['controllerId'],
+        connectionNo: objectData['connectionNo'],
         setting : defaultSetting.map((setting){
           List<dynamic> oldData = oldSetting.where((oldSetting) => oldSetting['sNo'] == setting['sNo']).toList();
           return ConstantSettingModel.fromJson(setting, oldData.firstOrNull);
@@ -42,6 +48,8 @@ class ObjectInConstantModel{
       'name' : name,
       'objectName' : objectName,
       'location' : location,
+      'controllerId' : controllerId,
+      'connectionNo' : connectionNo,
       'setting' : setting.map((setting) => setting.toJson()).toList()
     };
   }

@@ -33,6 +33,9 @@ class EcPhInConstantModel{
     required List<dynamic> ec,
     required List<dynamic> ph,
   }){
+    print("objectData : $objectData");
+    print("defaultSetting : $defaultSetting");
+    print("oldSetting : $oldSetting");
     List<PopUpItemModel> ecPopUpList= [];
     List<PopUpItemModel> phPopUpList= [];
     List<ConstantSettingModel> generateEc = defaultSetting.map((setting){
@@ -40,9 +43,11 @@ class EcPhInConstantModel{
       if(oldSetting.isNotEmpty && oldSetting.any((site) => site['sNo'] == objectData['sNo'])){
         var siteData = oldSetting.firstWhere((site) => site['sNo'] == objectData['sNo']);
         if((siteData['setting'] as List<dynamic>).isNotEmpty){
-          oldData = siteData['setting'][0];
+          oldData = (siteData['setting'][0] as List<dynamic>).where((item) => item['sNo'] == setting['sNo']).toList();
         }
       }
+      print("ConstantSettingModel setting : $setting");
+      print("ConstantSettingModel oldData : ${oldData.firstOrNull}");
       return ConstantSettingModel.fromJson(setting, oldData.firstOrNull);
     }).toList();
 
@@ -82,7 +87,7 @@ class EcPhInConstantModel{
       if(oldSetting.isNotEmpty && oldSetting.any((site) => site['sNo'] == objectData['sNo'])){
         var siteData = oldSetting.firstWhere((site) => site['sNo'] == objectData['sNo']);
         if((siteData['setting'] as List<dynamic>).length > 1){
-          oldData = siteData['setting'][1];
+          oldData = (siteData['setting'][1] as List<dynamic>).where((item) => item['sNo'] == setting['sNo']).toList();
         }
       }
       return ConstantSettingModel.fromJson(setting, oldData.firstOrNull);

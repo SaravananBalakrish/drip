@@ -306,6 +306,4 @@ class _CriticalAlarmInConstantState extends State<CriticalAlarmInConstant> {
         return Colors.black54;
     }
   }
-
-
 }

@@ -29,19 +29,20 @@ class ConstantSettingModel{
         dataType: data['dataType'],
         software: data['software'],
         hardware: data['hardware'],
-        value: ValueNotifier<dynamic>(oldValue ?? data['value'])
+        value: ValueNotifier<dynamic>(oldValue != null ? oldValue['value'] : data['value'])
+        // value: ValueNotifier<dynamic>(data['value'])
     );
   }
 
   dynamic toJson(){
     return {
       'sNo' : sNo,
-      'title' : title,
-      'widgetTypeId' : widgetTypeId,
-      'dataType' : dataType,
-      'software' : software,
-      'hardware' : hardware,
-      'value' : value,
+      // 'title' : title,
+      // 'widgetTypeId' : widgetTypeId,
+      // 'dataType' : dataType,
+      // 'software' : software,
+      // 'hardware' : hardware,
+      'value' : value.value,
     };
   }
 
