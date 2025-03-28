@@ -359,7 +359,7 @@ class Repository{
     return await apiService.postRequest('/user/serviceRequest/getAllForDealer', body);
   }
   Future<http.Response> getAllUserAllServiceRequestForAdmin(body) async {
-    return await apiService.postRequest('/user/serviceRequest/getAllForAdmin', body);
+     return await apiService.postRequest('/user/serviceRequest/getAllForAdmin', body);
   }
   Future<http.Response> createUserServiceRequest(body) async {
     return await apiService.postRequest('/user/serviceRequest/create', body);

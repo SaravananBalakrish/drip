@@ -162,7 +162,7 @@ class AdminScreenController extends StatelessWidget {
       case 3:
         return AccountSettings(userId: userId, userName: userName, mobileNo: mobileNo, emailId: emailId, customerId: userId);
       case 4:
-        return ServiceRequestAdmin();
+        return ServiceRequestAdmin(userId: userId,);
        default:
         return const SizedBox();
     }
