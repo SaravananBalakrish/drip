@@ -2,14 +2,8 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../Models/servicerequestdealermodel.dart';
-import '../../StateManagement/overall_use.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
-import '../../utils/snack_bar.dart';
-
 
 class ServiceRequestAdmin extends StatefulWidget {
    const ServiceRequestAdmin({
@@ -33,8 +27,7 @@ class _ServiceRequestAdminState extends State<ServiceRequestAdmin> {
     // TODO: implement initState
     super.initState();
     fetchData();
-    // filteredData = data;
-    // filteredData = List.from(data);
+     filteredData = List.from(data);
   }
    Future<void> fetchData() async {
      try {
@@ -44,15 +37,12 @@ class _ServiceRequestAdminState extends State<ServiceRequestAdmin> {
        if (getUserDetails.statusCode == 200) {
          setState(() {
            var jsonData1 = jsonDecode(getUserDetails.body);
-            // Check if the decoded data is a LinkedMap and cast it
-           if (jsonData1 is LinkedHashMap) {
+            if (jsonData1 is LinkedHashMap) {
              jsonData1 = Map<String, dynamic>.from(jsonData1);
            }
-            // Check if the decoded data is a map and contains the 'data' key
-           if (jsonData1 is Map<String, dynamic> && jsonData1.containsKey('data')) {
+            if (jsonData1 is Map<String, dynamic> && jsonData1.containsKey('data')) {
              var dataList = jsonData1['data'];
-              // Ensure that the data is a List of Maps
-             if (dataList is List) {
+              if (dataList is List) {
                data = List<Map<String, dynamic>>.from(dataList);
              } else {
                print("Expected 'data' to be a list but found ${dataList.runtimeType}");
@@ -184,7 +174,7 @@ class _ServiceRequestAdminState extends State<ServiceRequestAdmin> {
                   scrollDirection: Axis.horizontal,
                   physics: ScrollPhysics(),
                   child: DataTable(
-                    columns: [
+                    columns: const [
                       DataColumn(label: Text('Request ID',style: TextStyle(fontWeight: FontWeight.bold),)),
                       DataColumn(label: Text('User Name',style: TextStyle(fontWeight: FontWeight.bold),)),
                       DataColumn(label: Text('Dealer Name',style: TextStyle(fontWeight: FontWeight.bold),)),
@@ -200,8 +190,8 @@ class _ServiceRequestAdminState extends State<ServiceRequestAdmin> {
                     rows: filteredData
                         .map(
                           (item) => DataRow(
-                        color: MaterialStateProperty.resolveWith<Color?>(
-                                (Set<MaterialState> states) {
+                        color: WidgetStateProperty.resolveWith<Color?>(
+                                (Set<WidgetState> states) {
                               return getRowColor(item['status'].toString());
                             }),
                         cells: [

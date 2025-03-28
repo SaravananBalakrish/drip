@@ -177,6 +177,7 @@ class MqttService {
   }
 
   Future<void> topicToPublishAndItsMessage(String message, String topic) async{
+    debugPrint('message: $message  topic:$topic');
     final MqttClientPayloadBuilder builder = MqttClientPayloadBuilder();
     builder.addString(message);
     _client!.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!);

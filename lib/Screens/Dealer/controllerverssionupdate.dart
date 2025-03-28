@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -109,9 +110,9 @@ print('resetversion $jsondata');
         {"5701": "2"},
       ]
     };
+    MqttService().topicToPublishAndItsMessage(jsonEncode(payLoadFinal), "${Environment.mqttPublishTopic}/${mergedList[index]["deviceId"]}");
 
-    MqttService().topicToPublishAndItsMessage("AppToFirmware/${mergedList[index]["deviceId"]}", jsonEncode(payLoadFinal));
-   }
+    }
 
   Update(int index) async {
 
@@ -126,8 +127,8 @@ print('resetversion $jsondata');
       ]
     };
 
-    MqttService().topicToPublishAndItsMessage("AppToFirmware/${mergedList[index]["deviceId"]}", jsonEncode(payLoadFinal));
-    GlobalSnackBar.show(context, mqttPayloadProvider.messageFromHw, 200);
+    MqttService().topicToPublishAndItsMessage(jsonEncode(payLoadFinal), "${Environment.mqttPublishTopic}/${mergedList[index]["deviceId"]}");
+    // GlobalSnackBar.show(context, mqttPayloadProvider.messageFromHw, 200);
     // MQTTManager().publish(payLoadFinal, 'OroGemLog/${overAllPvd.imeiNo}');
   }
 
@@ -355,8 +356,10 @@ print('resetversion $jsondata');
       "createUser": widget.userId
     };
     print('body $body');
-    final response = await HttpService()
-        .postRequest("createUserSentAndReceivedMessageManually", body);
+
+
+    final Repository repository = Repository(HttpService());
+    var response = await repository.createUserSentAndReceivedMessageManually(body);
     print(response.statusCode);
     print(response.body);
 

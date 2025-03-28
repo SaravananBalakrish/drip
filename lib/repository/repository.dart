@@ -367,6 +367,8 @@ class Repository{
   Future<http.Response> updateUserServiceRequest(body) async {
     return await apiService.postRequest('/user/serviceRequest/update', body);
   }
+
+
   Future<http.Response> getUserDeviceFirmwareDetails(body) async {
     return await apiService.postRequest('/user/deviceList/getFirmwareDetails', body);
   }
