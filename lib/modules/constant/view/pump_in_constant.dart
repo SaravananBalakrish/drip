@@ -16,12 +16,12 @@ class PumpInConstant extends StatefulWidget {
 }
 
 class _PumpInConstantState extends State<PumpInConstant> {
-  double cellWidth = 200;
+  double cellWidth = 180;
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double minWidth = (cellWidth * 2) + (widget.constPvd.defaultPumpSetting.length * cellWidth) + 50;
+    double minWidth = (cellWidth * 4) + (widget.constPvd.defaultPumpSetting.length * cellWidth) + 50;
     Color borderColor = const Color(0xffE1E2E3);
     return DataTable2(
       border: TableBorder(
@@ -33,7 +33,7 @@ class _PumpInConstantState extends State<PumpInConstant> {
         minWidth: minWidth,
         fixedLeftColumns: minWidth < screenWidth ? 0 : 1,
         columns: [
-          ...['Pump', 'Location', 'Device', 'Relay No'].map((title) {
+          ...['Pump', 'Location', 'Device', 'Connection No'].map((title) {
             return DataColumn2(
               headingRowAlignment: MainAxisAlignment.center,
                 fixedWidth: cellWidth,

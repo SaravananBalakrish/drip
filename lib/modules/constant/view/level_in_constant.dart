@@ -27,7 +27,7 @@ class _LevelInConstantState extends State<LevelInConstant> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double minWidth = (cellWidth * 2) + (widget.constPvd.defaultLevelSetting.length * cellWidth) + 50;
+    double minWidth = (cellWidth * 4) + (widget.constPvd.defaultLevelSetting.length * cellWidth) + 50;
     Color borderColor = const Color(0xffE1E2E3);
     return DataTable2(
       border: TableBorder(
@@ -39,7 +39,7 @@ class _LevelInConstantState extends State<LevelInConstant> {
       minWidth: minWidth,
       fixedLeftColumns: minWidth < screenWidth ? 0 : 1,
       columns: [
-        ...['Level', 'Location'].map((title) {
+        ...['Level', 'Location', 'Device', 'Analog No'].map((title) {
           return DataColumn2(
               headingRowAlignment: MainAxisAlignment.center,
               fixedWidth: cellWidth,
@@ -66,6 +66,23 @@ class _LevelInConstantState extends State<LevelInConstant> {
               ),
               DataCell(
                   Center(child: Text(widget.constPvd.getName(level.location),textAlign: TextAlign.center,))
+              ),
+              DataCell(
+                  Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(widget.constPvd.getDeviceDetails(key: 'deviceName', controllerId: level.controllerId!),textAlign: TextAlign.center, softWrap: true, style: TextStyle(color: Theme.of(context).primaryColorLight),),
+                        Text(widget.constPvd.getDeviceDetails(key: 'deviceId', controllerId: level.controllerId!), style: TextStyle(fontWeight: FontWeight.w100, color: Colors.grey.shade700) ),
+                      ],
+                    ),
+                  )
+              ),
+              DataCell(
+                  Center(
+                    child: Text('${level.connectionNo}',textAlign: TextAlign.center, softWrap: true, ),
+                  )
               ),
               ...level.setting.map((setting) {
                 return DataCell(

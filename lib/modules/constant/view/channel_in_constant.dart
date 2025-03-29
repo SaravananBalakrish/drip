@@ -22,12 +22,12 @@ class ChannelInConstant extends StatefulWidget {
 }
 
 class _ChannelInConstantState extends State<ChannelInConstant> {
-  double cellWidth = 150;
+  double cellWidth = 180;
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double minWidth = (cellWidth * 2) + (widget.constPvd.defaultChannelSetting.length * cellWidth) + 50;
+    double minWidth = (cellWidth * 4) + (widget.constPvd.defaultChannelSetting.length * cellWidth) + 50;
     Color borderColor = const Color(0xffE1E2E3);
     return DataTable2(
       border: TableBorder(
@@ -39,7 +39,7 @@ class _ChannelInConstantState extends State<ChannelInConstant> {
       minWidth: minWidth,
       fixedLeftColumns: minWidth < screenWidth ? 0 : 1,
       columns: [
-        ...['Channel', 'Location'].map((title) {
+        ...['Channel', 'Location', 'Device', 'Connection No'].map((title) {
           return DataColumn2(
               headingRowAlignment: MainAxisAlignment.center,
               fixedWidth: cellWidth,
@@ -66,6 +66,23 @@ class _ChannelInConstantState extends State<ChannelInConstant> {
               ),
               DataCell(
                   Center(child: Text(widget.constPvd.getName(channel.location),textAlign: TextAlign.center,))
+              ),
+              DataCell(
+                  Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(widget.constPvd.getDeviceDetails(key: 'deviceName', controllerId: channel.controllerId!),textAlign: TextAlign.center, softWrap: true, style: TextStyle(color: Theme.of(context).primaryColorLight),),
+                        Text(widget.constPvd.getDeviceDetails(key: 'deviceId', controllerId: channel.controllerId!), style: TextStyle(fontWeight: FontWeight.w100, color: Colors.grey.shade700) ),
+                      ],
+                    ),
+                  )
+              ),
+              DataCell(
+                  Center(
+                    child: Text('${channel.connectionNo}',textAlign: TextAlign.center, softWrap: true, ),
+                  )
               ),
               ...channel.setting.map((setting) {
                 return DataCell(

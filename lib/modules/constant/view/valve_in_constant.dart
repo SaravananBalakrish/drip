@@ -16,12 +16,12 @@ class ValveInConstant extends StatefulWidget {
 }
 
 class _ValveInConstantState extends State<ValveInConstant> {
-  double cellWidth = 200;
+  double cellWidth = 180;
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double minWidth = (cellWidth * 2) + (widget.constPvd.defaultValveSetting.length * cellWidth) + 50;
+    double minWidth = (cellWidth * 4) + (widget.constPvd.defaultValveSetting.length * cellWidth) + 50;
     Color borderColor = const Color(0xffE1E2E3);
     return DataTable2(
       border: TableBorder(
@@ -33,7 +33,7 @@ class _ValveInConstantState extends State<ValveInConstant> {
       minWidth: minWidth,
       fixedLeftColumns: minWidth < screenWidth ? 0 : 1,
       columns: [
-        ...['Valve', 'Location'].map((title) {
+        ...['Valve', 'Location', 'Device', 'Connection No'].map((title) {
           return DataColumn2(
               headingRowAlignment: MainAxisAlignment.center,
               fixedWidth: cellWidth,
@@ -60,6 +60,23 @@ class _ValveInConstantState extends State<ValveInConstant> {
               ),
               DataCell(
                   Center(child: Text(widget.constPvd.getName(valve.location),textAlign: TextAlign.center,))
+              ),
+              DataCell(
+                  Center(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text(widget.constPvd.getDeviceDetails(key: 'deviceName', controllerId: valve.controllerId!),textAlign: TextAlign.center, softWrap: true, style: TextStyle(color: Theme.of(context).primaryColorLight),),
+                        Text(widget.constPvd.getDeviceDetails(key: 'deviceId', controllerId: valve.controllerId!), style: TextStyle(fontWeight: FontWeight.w100, color: Colors.grey.shade700) ),
+                      ],
+                    ),
+                  )
+              ),
+              DataCell(
+                  Center(
+                    child: Text('${valve.connectionNo}',textAlign: TextAlign.center, softWrap: true, ),
+                  )
               ),
               ...valve.setting.map((setting) {
                 return DataCell(
