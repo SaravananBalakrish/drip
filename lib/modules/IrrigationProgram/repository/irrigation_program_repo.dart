@@ -43,6 +43,7 @@ class IrrigationProgramRepository {
   }
 
   Future<http.Response> createUserProgram(body) async {
+    print("created program");
     return await apiService.postRequest('/user/program/create', body);
   }
 

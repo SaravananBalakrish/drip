@@ -506,6 +506,16 @@ class _PreviewScreenState extends State<PreviewScreen> {
               await irrigationProvider.programLibraryData(widget.userId, widget.controllerId);
               ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: response['message']));
               if(widget.toDashboard) {
+                Navigator.of(context).pop();
+              } else {
+                // Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProgramSchedule(customerID: widget.userId, controllerID: widget.controllerId, siteName: "", imeiNumber: widget.deviceId, userId: widget.userId, groupId: widget.groupId, categoryId: widget.categoryId,))
+                );
+              }
+             /* if(widget.toDashboard) {
                 irrigationProvider.updateBottomNavigation(0);
                 Navigator.of(context).pop();
                 // Navigator.push(
@@ -519,11 +529,11 @@ class _PreviewScreenState extends State<PreviewScreen> {
                 //   context,
                 //   MaterialPageRoute(builder: (context) => HomeScreen(userId: widget.userId, fromDealer: widget.fromDealer,)),
                 // );
-              }
+              }*/
             }
           });
         });
-        Future.delayed(const Duration(milliseconds: 300), () async {
+        /*Future.delayed(const Duration(milliseconds: 300), () async {
           final IrrigationProgramRepository repository = IrrigationProgramRepository(HttpService());
           final createUserProgram = await repository.createUserProgram(userData);
           final response = jsonDecode(createUserProgram.body);
@@ -541,7 +551,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
               );
             }
           }
-        });
+        });*/
       } catch (error) {
         ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: 'Failed to update because of $error'));
         print("Error: $error");

@@ -20,7 +20,10 @@ class AlarmInConstantModel{
         sNo: objectData['sNo'],
         title: objectData['title'],
         setting : defaultSetting.map((setting){
-          List<dynamic> oldData = oldSetting.where((oldSetting) => oldSetting['sNo'] == setting['sNo']).toList();
+          List<dynamic> oldData = [];
+          if(oldSetting.isNotEmpty){
+            oldData = oldSetting[0]['setting'].where((oldSetting) => oldSetting['sNo'] == setting['sNo']).toList();
+          }
           return ConstantSettingModel.fromJson(setting, oldData.firstOrNull);
         }).toList()
     );

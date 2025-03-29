@@ -1,18 +1,14 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../Models/servicerequestdealermodel.dart';
-import '../../StateManagement/overall_use.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
-import '../../utils/snack_bar.dart';
-
 
 class ServiceRequestAdmin extends StatefulWidget {
-  const ServiceRequestAdmin({
-    Key? key,});
+   const ServiceRequestAdmin({
+    Key? key, required this.userId,});
+ final int userId;
 
   @override
   State<ServiceRequestAdmin> createState() => _ServiceRequestAdminState();
@@ -20,55 +16,52 @@ class ServiceRequestAdmin extends StatefulWidget {
 
 class _ServiceRequestAdminState extends State<ServiceRequestAdmin> {
   // Example JSON string
-  ServiceDealerModel _serviceDealerModel = ServiceDealerModel();
-  DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+   DateFormat dateFormat = DateFormat("yyyy-MM-dd");
   List<Map<String, dynamic>> data = [];
   List<Map<String, dynamic>> filteredData = [];
   String searchQuery = '';
   String filterStatus = 'All';
   String filterRequestType = 'All';
 
-
-
   void initState() {
     // TODO: implement initState
     super.initState();
     fetchData();
-    filteredData = List.from(data);
+     filteredData = List.from(data);
   }
+   Future<void> fetchData() async {
+     try {
+       final Repository repository = Repository(HttpService());
+       var getUserDetails = await repository.getAllUserAllServiceRequestForAdmin({"userId": widget.userId});
 
-  Future<void> fetchData() async {
-    var overAllPvd = Provider.of<OverAllUse>(context,listen: false);
-    final prefs = await SharedPreferences.getInstance();
-    try{
-      final Repository repository = Repository(HttpService());
-      var getUserDetails = await repository.getAllUserAllServiceRequestForAdmin({});
-      print("getUserDetails.body ${getUserDetails.body}");
        if (getUserDetails.statusCode == 200) {
-        setState(() {
-          var jsonData1 = jsonDecode(getUserDetails.body);
+         setState(() {
+           var jsonData1 = jsonDecode(getUserDetails.body);
+            if (jsonData1 is LinkedHashMap) {
+             jsonData1 = Map<String, dynamic>.from(jsonData1);
+           }
+            if (jsonData1 is Map<String, dynamic> && jsonData1.containsKey('data')) {
+             var dataList = jsonData1['data'];
+              if (dataList is List) {
+               data = List<Map<String, dynamic>>.from(dataList);
+             } else {
+               print("Expected 'data' to be a list but found ${dataList.runtimeType}");
+              }
+           } else {
+             print("Unexpected JSON format or missing 'data' key");
+           }
 
-          if (jsonData1 is Map<String, dynamic> && jsonData1.containsKey('data')) {
-            data = List<Map<String, dynamic>>.from(jsonData1['data']);
-          } else if (jsonData1 is List) {
-             data = List<Map<String, dynamic>>.from(jsonData1);
-          } else {
-            print("Unexpected JSON format");
-          }
+           filteredData = List.from(data);
+         });
+       } else {
+         //_showSnackBar(response.body);
+       }
+     } catch (e, stackTrace) {
+       print('Error overAll getData => ${e.toString()}');
+       print('trace overAll getData  => ${stackTrace}');
+     }
+   }
 
-          filteredData = List.from(data);
-        });
-      } else {
-        //_showSnackBar(response.body);
-      }
-    }
-    catch (e, stackTrace) {
-      print(' Error overAll getData => ${e.toString()}');
-      print(' trace overAll getData  => ${stackTrace}');
-    }
-
-
-  }
 
   void updateFilters() {
     setState(() {
@@ -105,10 +98,8 @@ class _ServiceRequestAdminState extends State<ServiceRequestAdmin> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('User Service Request List'),
-      ),
+     return Scaffold(
+
       body: Column(
         children: [
           Padding(
@@ -183,7 +174,7 @@ class _ServiceRequestAdminState extends State<ServiceRequestAdmin> {
                   scrollDirection: Axis.horizontal,
                   physics: ScrollPhysics(),
                   child: DataTable(
-                    columns: [
+                    columns: const [
                       DataColumn(label: Text('Request ID',style: TextStyle(fontWeight: FontWeight.bold),)),
                       DataColumn(label: Text('User Name',style: TextStyle(fontWeight: FontWeight.bold),)),
                       DataColumn(label: Text('Dealer Name',style: TextStyle(fontWeight: FontWeight.bold),)),
@@ -199,8 +190,8 @@ class _ServiceRequestAdminState extends State<ServiceRequestAdmin> {
                     rows: filteredData
                         .map(
                           (item) => DataRow(
-                        color: MaterialStateProperty.resolveWith<Color?>(
-                                (Set<MaterialState> states) {
+                        color: WidgetStateProperty.resolveWith<Color?>(
+                                (Set<WidgetState> states) {
                               return getRowColor(item['status'].toString());
                             }),
                         cells: [

@@ -1,6 +1,8 @@
+
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -70,10 +72,10 @@ class _ResetVerssionState extends State<ResetVerssion> {
     try{
       final Repository repository = Repository(HttpService());
       var response = await repository.getUserDeviceFirmwareDetails({"userId": widget.userId});
-       if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
         setState(() {
           var jsondata = jsonDecode(response.body);
-print('resetversion $jsondata');
+          print('resetversion $jsondata');
           valAssing(jsondata['data']);
 
           MqttService().connect();
@@ -105,13 +107,13 @@ print('resetversion $jsondata');
     iconData = Icons.restart_alt;
     iconcolor = Colors.blue;
     Map<String, dynamic> payLoadFinal = {
-      "5700": [
-        {"5701": "2"},
-      ]
-    };
+      "5700":
+      {"5701": "2"},
 
-    MqttService().topicToPublishAndItsMessage("AppToFirmware/${mergedList[index]["deviceId"]}", jsonEncode(payLoadFinal));
-   }
+    };
+    MqttService().topicToPublishAndItsMessage(jsonEncode(payLoadFinal), "${Environment.mqttPublishTopic}/${mergedList[index]["deviceId"]}");
+
+  }
 
   Update(int index) async {
 
@@ -121,13 +123,12 @@ print('resetversion $jsondata');
     iconData = Icons.start;
     iconcolor = Colors.blue;
     Map<String, dynamic> payLoadFinal = {
-      "5700": [
-        {"5701": "3"},
-      ]
+      "5700":
+      {"5701": "3"},
     };
 
-    MqttService().topicToPublishAndItsMessage("AppToFirmware/${mergedList[index]["deviceId"]}", jsonEncode(payLoadFinal));
-    GlobalSnackBar.show(context, mqttPayloadProvider.messageFromHw, 200);
+    MqttService().topicToPublishAndItsMessage(jsonEncode(payLoadFinal), "${Environment.mqttPublishTopic}/${mergedList[index]["deviceId"]}");
+    // GlobalSnackBar.show(context, mqttPayloadProvider.messageFromHw, 200);
     // MQTTManager().publish(payLoadFinal, 'OroGemLog/${overAllPvd.imeiNo}');
   }
 
@@ -205,7 +206,8 @@ print('resetversion $jsondata');
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ControllerLog(
-                                      deviceID: mergedList[index]['deviceId']!),
+                                      deviceID: '${mergedList[index]['deviceId'
+                                      ]!}'),
                                 ),
                               );
                             });
@@ -355,8 +357,10 @@ print('resetversion $jsondata');
       "createUser": widget.userId
     };
     print('body $body');
-    final response = await HttpService()
-        .postRequest("createUserSentAndReceivedMessageManually", body);
+
+
+    final Repository repository = Repository(HttpService());
+    var response = await repository.createUserSentAndReceivedMessageManually(body);
     print(response.statusCode);
     print(response.body);
 
@@ -371,10 +375,10 @@ print('resetversion $jsondata');
   }
 
   status() {
+    print("status");
     if (selectindex != null) {
       Map<String, dynamic>? ctrldata = mqttPayloadProvider.messageFromHw;
-      print("ctrldata------------>$ctrldata");
-      if ((ctrldata != null && ctrldata.isNotEmpty)) {
+       if ((ctrldata != null && ctrldata.isNotEmpty)) {
         var name = ctrldata['Name'];
         // String message = ctrldata['Message'];
         var code = ctrldata['Code'];

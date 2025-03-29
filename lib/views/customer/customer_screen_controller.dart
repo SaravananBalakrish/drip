@@ -1,11 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Models/servicecustomermodel.dart';
+import 'package:oro_drip_irrigation/Screens/Dealer/sevicecustomer.dart';
 import 'package:oro_drip_irrigation/Screens/Logs/irrigation_and_pump_log.dart';
 import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/view/pump_dashboard_screen.dart';
 import 'package:oro_drip_irrigation/views/customer/program_schedule.dart';
 import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
+import 'package:oro_drip_irrigation/views/customer/site_config.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone.dart';
 import '../../Models/customer/site_model.dart';
 import 'package:provider/provider.dart';
@@ -231,7 +234,7 @@ class CustomerScreenController extends StatelessWidget {
                     const SizedBox(),
                     const SizedBox(width: 10,),
 
-                    vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.length>1? TextButton(
+                    vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.length>1 && iLineLiveMessage[0].isNotEmpty ? TextButton(
                       onPressed: () => vm.linePauseOrResume(iLineLiveMessage),
                       style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all<Color>(iLineLiveMessage.every((line) => line[1] == '1')?Colors.green: Colors.orange),
@@ -775,7 +778,7 @@ class CustomerScreenController extends StatelessWidget {
   List<NavigationRailDestination> getNavigationDestinations() {
     final destinations = [
       const NavigationRailDestination(
-        padding: EdgeInsets.only(top: 5),
+        padding: EdgeInsets.only(top: 6),
         icon: Tooltip(
           message: 'Home',
           child: Icon(Icons.home_outlined),
@@ -823,6 +826,22 @@ class CustomerScreenController extends StatelessWidget {
         selectedIcon: Icon(Icons.confirmation_num, color: Colors.white),
         label: Text(''),
       ),
+      const NavigationRailDestination(
+        icon: Tooltip(
+          message: 'Service Request',
+          child: Icon(Icons.support_agent_sharp),
+        ),
+        selectedIcon: Icon(Icons.support_agent_sharp, color: Colors.white),
+        label: Text(''),
+      ),
+      const NavigationRailDestination(
+        icon: Tooltip(
+          message: 'weather',
+          child: Icon(Icons.sunny_snowing),
+        ),
+        selectedIcon: Icon(Icons.sunny_snowing, color: Colors.white),
+        label: Text(''),
+      ),
     ];
 
     return destinations;
@@ -847,10 +866,8 @@ class CustomerScreenController extends StatelessWidget {
       case 3:
         return IrrigationAndPumpLog(userData: {'userId' : userId, 'controllerId' : controllerId});
       case 4:
-        return ControllerSettings(customerId: userId, controllerId: controllerId, adDrId: fromLogin ? 1 : 0,);
-      case 6:
-        return WeatherScreen(userId: userId, controllerId: controllerId, deviceID: '',);
-      /*case 4:
+        return ControllerSettings( userId: userId,customerId: userId, controllerId: controllerId, adDrId: fromLogin ? 1 : 0,);
+     case 5:
         return SiteConfig(
             userId: userId,
             customerId: customerId,
@@ -858,7 +875,11 @@ class CustomerScreenController extends StatelessWidget {
             masterData: masterData,
             groupId: groupId,
             groupName: groupName
-        );*/
+        );
+      case 6:
+        return TicketHomePage(userId: userId, controllerId: controllerId);
+      case 7:
+        return WeatherScreen(userId: userId, controllerId: controllerId, deviceID: deviceId,);
       default:
         return const SizedBox();
     }
