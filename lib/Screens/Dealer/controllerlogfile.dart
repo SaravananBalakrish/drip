@@ -344,9 +344,8 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
         }
 
         Map<String, dynamic> payLoadFinal = {
-          "5700": [
+          "5700":
             {"5701": "$data"},
-          ]
         };
         if (MqttService().isConnected == true) {
           await validatePayloadSent(
@@ -369,9 +368,8 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
 
         print("getlog call");
         String payLoadFinal1 = jsonEncode({
-          "5700": [
+          "5700":
             {"5701": "$data"},
-          ]
         });
 
         MqttService().topicToPublishAndItsMessage('AppToFirmware/${widget.deviceID}', payLoadFinal1);
