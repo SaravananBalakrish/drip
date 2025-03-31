@@ -161,7 +161,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   void onRefreshClicked() {
     String livePayload = '';
     Future.delayed(const Duration(milliseconds: 1000), () {
-      //payloadProvider.liveSyncCall(true);
+      payloadProvider.liveSyncCall(true);
       if(mySiteList.data[sIndex].master[mIndex].categoryId==1){
         livePayload = jsonEncode({"3000": {"3001": ""}});
       }else{
@@ -170,9 +170,6 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
       MqttService().topicToPublishAndItsMessage(livePayload, '${AppConstants.publishTopic}/${mySiteList.data[sIndex].master[mIndex].deviceId}');
     });
 
-    /*Future.delayed(const Duration(milliseconds: 6000), () {
-      //payloadProvider.liveSyncCall(false);
-    });*/
   }
 
   bool getPermissionStatusBySNo(BuildContext context, int sNo) {
