@@ -378,6 +378,10 @@ class Repository{
   Future<http.Response> getweather(body) async {
     return await apiService.postRequest('/user/live/weather/get', body);
   }
+  Future<http.Response> updateUserDeviceFirmwareDetails(body) async {
+    return await apiService.putRequest('/user/deviceList/updateFirmwareDetails', body);
+  }
+
 
 }
 
