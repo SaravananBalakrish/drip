@@ -47,21 +47,20 @@ class _ConfigBasePageState extends State<ConfigBasePage> {
       future: listOfDevices,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator()); // Loading state
+          return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}'); // Error state
+          return Text('Error: ${snapshot.error}');
         } else if (snapshot.hasData) {
           List<DeviceModel> listOfDevices = snapshot.data!;
           return screenWidth > 500 ? Material(
             child: ConfigWebView(listOfDevices: listOfDevices),
           ) : ConfigMobileView(listOfDevices: listOfDevices,);
         } else {
-          return const Text('No data'); // Shouldn't reach here normally
+          return const Text('No data');
         }
       },
     );
   }
-
 }
 
 String getTabName(ConfigMakerTabs configMakerTabs) {
