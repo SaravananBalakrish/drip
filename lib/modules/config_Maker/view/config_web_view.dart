@@ -272,7 +272,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                     ),
                   ),
                   actions: [
-                    if(payloadSendState == PayloadSendState.idle && payloadSendState == PayloadSendState.start)
+                    if(payloadSendState == PayloadSendState.idle || payloadSendState == PayloadSendState.start)
                       CustomMaterialButton( // only show cancel button when payloadState on idle and start
                         outlined: true,
                         title: 'Cancel',
@@ -295,7 +295,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                               continue payloadLoop;
                             }
                             bool mqttAttempt = true;
-                            int delayDuration = 10;
+                            int delayDuration = 30;
                             delayLoop : for(var sec = 0;sec < delayDuration;sec++){
                               if(sec == 0){
                                 payloadSendState = PayloadSendState.start;

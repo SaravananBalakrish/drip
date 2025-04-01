@@ -35,7 +35,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     4 : 25,
     5 : 2,
   };
-  int selectedConfigurationTab = 5;
+  int selectedConfigurationTab = 0;
   SelectionMode selectedSelectionMode = SelectionMode.auto;
   int selectedConnectionNo = 0;
   String selectedType = '';
@@ -47,9 +47,7 @@ class ConfigMakerProvider extends ChangeNotifier{
   double selectedSno = 0.0;
   List<DeviceModel> listOfDeviceModel = [];
   int serialNumberIncrement = 0;
-  Map<String, dynamic> masterData = {
-    "userId": 0, "customerId": 0, "controllerId": 1, "deviceId": "EDEFEADE0001", "deviceName": "Oro Gem 1", "categoryId": 1, "categoryName": "Oro Gem", "modelId": 1, "modelName": "Gem", "groupId" : 1, "groupName" : "Carrot"
-  };
+  Map<String, dynamic> masterData = {};
 
   List<DeviceObjectModel> listOfSampleObjectModel = [];
   List<DeviceObjectModel> listOfObjectModelConnection = [];
@@ -873,7 +871,7 @@ class ConfigMakerProvider extends ChangeNotifier{
             'ReferenceNumber' : findOutReferenceNumber(p1000),
             'DeviceId' : p1000.deviceId,
             'InterfaceTypeId' : p1000.interfaceTypeId,
-            'Payload' : jsonEncode({'700' : pumpPayload}),
+            'Payload' : jsonEncode({'700' : jsonEncode(pumpPayload)}),
             'SomeThing' : '4'
           }.entries.map((e) => e.value).join('+')
         }
@@ -909,7 +907,7 @@ class ConfigMakerProvider extends ChangeNotifier{
             'ReferenceNumber' : findOutReferenceNumber(p2000),
             'DeviceId' : p2000.deviceId,
             'InterfaceTypeId' : p2000.interfaceTypeId,
-            'Payload' : jsonEncode({'$pumpConfigCode' : pumpPayload}),
+            'Payload' : jsonEncode({'$pumpConfigCode' : jsonEncode(pumpPayload)}),
             'SomeThing' : '4'
           }.entries.map((e) => e.value).join('+')
         }
@@ -995,7 +993,7 @@ class ConfigMakerProvider extends ChangeNotifier{
             'ReferenceNumber' : findOutReferenceNumber(p2000),
             'DeviceId' : p2000.deviceId,
             'InterfaceTypeId' : p2000.interfaceTypeId,
-            'Payload' : jsonEncode({'$tankConfigCode' : tankPayload}),
+            'Payload' : jsonEncode({'$tankConfigCode' : jsonEncode(tankPayload)}),
             'SomeThing' : '4'
           }.entries.map((e) => e.value).join('+')
         }
