@@ -35,6 +35,10 @@ class _ConfigBasePageState extends State<ConfigBasePage> {
     // listOfDevices = configPvd.fetchData({"userId":3,"customerId":4,"controllerId":1,"deviceId":"E8FB1C3501D1","deviceName":"xMm","categoryId":1,"categoryName":"xMm","modelId":1,"modelName":"xMm1000_R","groupId":1,"groupName":"LK Demo","connectingObjectId":["1","2","3","4","1","2","3","4"]});
     // listOfDevices = configPvd.fetchData({"userId":3,"customerId":4,"controllerId":8,"deviceId":"223344AAEEFF","deviceName":"xMp","categoryId":2,"categoryName":"xMp","modelId":9,"modelName":"xMp2000GOOO","groupId":1,"groupName":"LK Demo","connectingObjectId":["5","22","24","26","40"],});
     // listOfDevices = configPvd.fetchData({"userId":3,"customerId":4,"controllerId":13,"deviceId":"E8EB1B04DB38","deviceName":"xMp","categoryId":2,"categoryName":"xMp","modelId":9,"modelName":"xMp2000GOOO","groupId":1,"groupName":"LK Demo","connectingObjectId":["5","22","24","26","40"]});
+
+    // Testing purpose
+    // listOfDevices = configPvd.fetchData({"userId":3,"customerId":8,"controllerId":23,"deviceId":"2CCF6773D07D","deviceName":"xMm","categoryId":1,"categoryName":"xMm","modelId":4,"modelName":"xMm2000ROOL","groupId":4,"groupName":"TESTING PURPOSE","connectingObjectId":["1","2","3","4","-"]});
+
     listOfDevices = configPvd.fetchData(widget.masterData);
   }
 

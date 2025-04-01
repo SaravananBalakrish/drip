@@ -64,6 +64,8 @@ class _ConfigWebViewState extends State<ConfigWebView> {
     configPvd = Provider.of<ConfigMakerProvider>(context, listen: false);
     mqttService.initializeMQTTClient();
     mqttService.connect();
+    mqttService.topicToSubscribe('${Environment.mqttSubscribeTopic}/${configPvd.masterData['deviceId']}');
+    // MqttManager().topicToPublishAndItsMessage('${Environment.mqttWebPublishTopic}/${configPvd.masterData['deviceId']}', jsonEncode(configMakerPayload));
   }
 
   @override
@@ -102,8 +104,8 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                   spacing:20,
                   children: [
                     StreamBuilder(
-                        stream: mqttService.connectionStatusController.stream,
-                        initialData: mqttService.connectionState,
+                        stream: mqttService.mqttConnectionStream,
+                        initialData: MqttConnectionState.disconnected,
                         builder: (context, snapShot){
                           return Row(
                             spacing: 10,
@@ -305,7 +307,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                                 payload['acknowledgementState'] = HardwareAcknowledgementSate.failed;
                               }
                               await Future.delayed(const Duration(seconds: 1));
-                              print("sec ${sec + 1}   -- ${payload['deviceId']}");
+                              print("${payload['hardwareType']}\n sec ${sec + 1}   -- ${payload['deviceId']} \n ${mqttService.acknowledgementPayload }");
                               if(mqttService.connectionState == MqttConnectionState.connected && mqttAttempt == true){
                                 mqttService.topicToPublishAndItsMessage(payload['payload'], '${Environment.mqttPublishTopic}/${configPvd.masterData['deviceId']}');
                                 mqttAttempt = false;
@@ -332,7 +334,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                                   }
                                   else if(payload['hardwareType'] as HardwareType == HardwareType.pump){
                                     if(mqttService.acknowledgementPayload != null){
-                                      if(validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cC'], payload['deviceIdToSend']) && validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cM'], payload['checkingCode'])){
+                                      if(validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cC'], payload['deviceId']) && validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cM'], payload['checkingCode'])){
                                         payload['acknowledgementState'] = HardwareAcknowledgementSate.success;
                                         mqttService.acknowledgementPayload = null;
                                       }
@@ -452,7 +454,6 @@ class _ConfigWebViewState extends State<ConfigWebView> {
       "productLimit" : listOfSampleObjectModel,
       "connectionCount" : listOfObjectModelConnection,
       "configObject" : listOfGeneratedObject,
-      "configObject" : [],
       "waterSource" : source,
       "pump" : pump,
       "filterSite" : filtration,
