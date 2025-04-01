@@ -22,7 +22,6 @@ class MqttService {
 
   final StreamController<Map<String, dynamic>?> _acknowledgementPayloadController = StreamController.broadcast();
   final StreamController<MqttConnectionState> mqttConnectionStreamController = StreamController.broadcast();
-  final StreamController<MqttConnectionState> connectionStatusController = StreamController.broadcast();
 
   Stream<MqttConnectionState> get mqttConnectionStream => mqttConnectionStreamController.stream;
   Stream<Map<String, dynamic>?> get payloadController => _acknowledgementPayloadController.stream;
@@ -190,6 +189,8 @@ class MqttService {
   }
 
   void onDisconnected() {
+    mqttConnectionStreamController.add(_client!.connectionStatus!.state);
+    print("mqttConnectionStreamController : ${mqttConnectionStreamController.stream}");
     debugPrint('OnDisconnected client callback - Client disconnection');
     if (_client!.connectionStatus!.returnCode == MqttConnectReturnCode.noneSpecified) {
       debugPrint('OnDisconnected callback is solicited, this is correct');
@@ -200,10 +201,10 @@ class MqttService {
 
   void onConnected() {
     assert(isConnected);
+    mqttConnectionStreamController.add(_client!.connectionStatus!.state);
     providerState?.updateMQTTConnectionState(MQTTConnectionState.connected);
     mqttConnectionStreamController.add(MqttConnectionState.connected);
     debugPrint('Mosquitto client connected....');
   }
-
 
 }

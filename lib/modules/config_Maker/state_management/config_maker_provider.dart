@@ -854,8 +854,8 @@ class ConfigMakerProvider extends ChangeNotifier{
     List<Map<String, dynamic>> listOfPumpPayload = [];
     List<int> modelIdForPump1000 = [5, 6, 7];
     List<int> modelIdForPump2000 = [8, 9, 10];
-    List<DeviceModel> listOfPump1000 = listOfDeviceModel.where((device) => modelIdForPump1000.contains(device.modelId)).toList();
-    List<DeviceModel> listOfPump2000 = listOfDeviceModel.where((device) => modelIdForPump2000.contains(device.modelId)).toList();
+    List<DeviceModel> listOfPump1000 = listOfDeviceModel.where((device) => modelIdForPump1000.contains(device.modelId) && device.masterId != null).toList();
+    List<DeviceModel> listOfPump2000 = listOfDeviceModel.where((device) => modelIdForPump2000.contains(device.modelId) && device.masterId != null).toList();
     int pumpCodeUnderGem = 5900;
     for(var p1000 in listOfPump1000){
       int pumpCount = listOfGeneratedObject.where((object) => (object.controllerId == p1000.controllerId && object.objectId == 5)).length;
@@ -886,8 +886,8 @@ class ConfigMakerProvider extends ChangeNotifier{
         'payload' : jsonEncode(payloadToSend),
         'acknowledgementState' : HardwareAcknowledgementSate.notSent,
         'selected' : true,
-        'checkingCode' : hardwareType == HardwareType.master ? '$pumpCodeUnderGem' : '$pumpConfigCode',
-        'hardwareType' : hardwareType
+        'checkingCode' : '$pumpConfigCode',
+        'hardwareType' : HardwareType.pump
       });
     }
 
@@ -920,8 +920,8 @@ class ConfigMakerProvider extends ChangeNotifier{
         'payload' : jsonEncode(payloadToSend),
         'acknowledgementState' : HardwareAcknowledgementSate.notSent,
         'selected' : true,
-        'checkingCode' : hardwareType == HardwareType.master ? '$pumpCodeUnderGem' : '$pumpConfigCode',
-        'hardwareType' : hardwareType
+        'checkingCode' : '$pumpConfigCode',
+        'hardwareType' : HardwareType.pump
       });
       List<DeviceObjectModel> listOfFloat = listOfGeneratedObject.where((object) => (object.controllerId == p2000.controllerId && object.objectId == 40)).toList();
       List<DeviceObjectModel> listOfPump = listOfGeneratedObject.where((object) => (object.controllerId == p2000.controllerId && object.objectId == 5)).toList();
@@ -1007,7 +1007,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         'acknowledgementState' : HardwareAcknowledgementSate.notSent,
         'selected' : true,
         'checkingCode' : hardwareType == HardwareType.master ? '$pumpCodeUnderGem' : '$tankConfigCode',
-        'hardwareType' : hardwareType
+        'hardwareType' : HardwareType.pump
       });
     }
 
