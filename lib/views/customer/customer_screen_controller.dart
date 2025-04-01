@@ -1,16 +1,22 @@
 import 'package:flutter/foundation.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Models/servicecustomermodel.dart';
+import 'package:oro_drip_irrigation/Screens/Dealer/sevicecustomer.dart';
 import 'package:oro_drip_irrigation/Screens/Logs/irrigation_and_pump_log.dart';
 import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
+import 'package:oro_drip_irrigation/modules/PumpController/view/pump_dashboard_screen.dart';
 import 'package:oro_drip_irrigation/views/customer/program_schedule.dart';
 import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
+import 'package:oro_drip_irrigation/views/customer/site_config.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone.dart';
 import '../../Models/customer/site_model.dart';
 import 'package:provider/provider.dart';
 import '../../Screens/Dealer/controllerverssionupdate.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../flavors.dart';
+import '../../modules/ScheduleView/view/schedule_view_screen.dart';
+import '../../modules/PumpController/view/pump_controller_home.dart';
 import '../../modules/ScheduleView/view/schedule_view_screen.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
@@ -64,7 +70,7 @@ class CustomerScreenController extends StatelessWidget {
 
           if(liveDataAndTime.isNotEmpty){
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              vm.updateLivePayload(wifiStrength, liveDataAndTime);
+               vm.updateLivePayload(wifiStrength, liveDataAndTime);
             });
           }
 
@@ -228,7 +234,7 @@ class CustomerScreenController extends StatelessWidget {
                     const SizedBox(),
                     const SizedBox(width: 10,),
 
-                    vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.length>1? TextButton(
+                    vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.length>1 && iLineLiveMessage[0].isNotEmpty ? TextButton(
                       onPressed: () => vm.linePauseOrResume(iLineLiveMessage),
                       style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all<Color>(iLineLiveMessage.every((line) => line[1] == '1')?Colors.green: Colors.orange),
@@ -378,18 +384,19 @@ class CustomerScreenController extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  NavigationRail(
-                    selectedIndex: navViewModel.selectedIndex,
-                    labelType: NavigationRailLabelType.all,
-                    elevation: 5,
-                    onDestinationSelected: (int index) {
-                      navViewModel.onDestinationSelectingChange(index);
-                    },
-                    destinations: getNavigationDestinations(),
-                  ),
+                  if(kIsWeb)
+                    NavigationRail(
+                      selectedIndex: navViewModel.selectedIndex,
+                      labelType: NavigationRailLabelType.all,
+                      elevation: 5,
+                      onDestinationSelected: (int index) {
+                        navViewModel.onDestinationSelectingChange(index);
+                      },
+                      destinations: getNavigationDestinations(),
+                    ),
                   Container(
                     width: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId==1?
-                    MediaQuery.sizeOf(context).width-140:MediaQuery.sizeOf(context).width-80,
+                    MediaQuery.sizeOf(context).width-140: MediaQuery.sizeOf(context).width <= 600 ? MediaQuery.sizeOf(context).width : MediaQuery.sizeOf(context).width - 80,
                     height: MediaQuery.sizeOf(context).height,
                     decoration: BoxDecoration(
                       color: Theme.of(context).scaffoldBackgroundColor,
@@ -397,43 +404,51 @@ class CustomerScreenController extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        lastCommunication.inMinutes >= 10 && powerSupply == 0?Container(
-                          height: 23.0,
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade300,
-                            borderRadius: const BorderRadius.only(topLeft: Radius.circular(5),topRight: Radius.circular(5)),
-                          ),
-                          child: Center(
-                            child: Text('No communication and power Supply to Controller'.toUpperCase(),
-                              style: const TextStyle(
-                                color: Colors.black87,
-                                fontSize: 12.0,
+                        if(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId==1)...[
+                          lastCommunication.inMinutes >= 10 && powerSupply == 0?Container(
+                            height: 23.0,
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade300,
+                              borderRadius: const BorderRadius.only(topLeft: Radius.circular(5),topRight: Radius.circular(5)),
+                            ),
+                            child: Center(
+                              child: Text('No communication and power Supply to Controller'.toUpperCase(),
+                                style: const TextStyle(
+                                  color: Colors.black87,
+                                  fontSize: 12.0,
+                                ),
                               ),
                             ),
-                          ),
-                        ):
-                        powerSupply == 0?Container(
-                          height: 20.0,
-                          decoration: BoxDecoration(
-                            color: Colors.red.shade300,
-                            borderRadius: const BorderRadius.only(topLeft: Radius.circular(5),topRight: Radius.circular(5)),
-                          ),
-                          child: Center(
-                            child: Text('No power Supply to Controller'.toUpperCase(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12.0,
+                          ):
+                          powerSupply == 0?Container(
+                            height: 20.0,
+                            decoration: BoxDecoration(
+                              color: Colors.red.shade300,
+                              borderRadius: const BorderRadius.only(topLeft: Radius.circular(5),topRight: Radius.circular(5)),
+                            ),
+                            child: Center(
+                              child: Text('No power Supply to Controller'.toUpperCase(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12.0,
+                                ),
                               ),
                             ),
-                          ),
-                        ):
-                        const SizedBox(),
+                          ):
+                          const SizedBox(),
+                        ],
 
                         Expanded(
-                          child: mainScreen(navViewModel.selectedIndex, vm.mySiteList.data[vm.sIndex].groupId,
-                              vm.mySiteList.data[vm.sIndex].groupName, vm.mySiteList.data[vm.sIndex].master,
+                          child: mainScreen(
+                              navViewModel.selectedIndex,
+                              vm.mySiteList.data[vm.sIndex].groupId,
+                              vm.mySiteList.data[vm.sIndex].groupName,
+                              vm.mySiteList.data[vm.sIndex].master,
                               vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
-                              vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId),
+                              vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId,
+                              vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
+                              vm.mySiteList.data[vm.sIndex].master[vm.mIndex].live?.cM
+                          ),
                         ),
                       ],
                     ),
@@ -763,7 +778,7 @@ class CustomerScreenController extends StatelessWidget {
   List<NavigationRailDestination> getNavigationDestinations() {
     final destinations = [
       const NavigationRailDestination(
-        padding: EdgeInsets.only(top: 5),
+        padding: EdgeInsets.only(top: 6),
         icon: Tooltip(
           message: 'Home',
           child: Icon(Icons.home_outlined),
@@ -813,7 +828,15 @@ class CustomerScreenController extends StatelessWidget {
       ),
       const NavigationRailDestination(
         icon: Tooltip(
-          message: 'Weather',
+          message: 'Service Request',
+          child: Icon(Icons.support_agent_sharp),
+        ),
+        selectedIcon: Icon(Icons.support_agent_sharp, color: Colors.white),
+        label: Text(''),
+      ),
+      const NavigationRailDestination(
+        icon: Tooltip(
+          message: 'weather',
           child: Icon(Icons.sunny_snowing),
         ),
         selectedIcon: Icon(Icons.sunny_snowing, color: Colors.white),
@@ -824,11 +847,18 @@ class CustomerScreenController extends StatelessWidget {
     return destinations;
   }
 
-  Widget mainScreen(int index, groupId, groupName, List<Master> masterData, int controllerId, int categoryId) {
+  Widget mainScreen(int index, groupId, groupName, List<Master> masterData, int controllerId, int categoryId, String deviceId, liveData) {
     switch (index) {
       case 0:
         return categoryId==1? CustomerHome(customerId: userId):
-        const Text('pump dashboard');
+        PumpControllerHome(
+          deviceId: deviceId,
+          liveData: liveData,
+          masterName: groupName,
+          userId: userId,
+          customerId: customerId,
+          controllerId: controllerId,
+        );
       case 1:
         return CustomerProduct(customerId: userId);
       case 2:
@@ -836,10 +866,8 @@ class CustomerScreenController extends StatelessWidget {
       case 3:
         return IrrigationAndPumpLog(userData: {'userId' : userId, 'controllerId' : controllerId});
       case 4:
-        return ControllerSettings(customerId: userId, controllerId: controllerId, adDrId: fromLogin ? 1 : 0,);
-      case 6:
-        return WeatherScreen(userId: userId, controllerId: controllerId, deviceID: '',);
-      /*case 4:
+        return ControllerSettings( userId: userId,customerId: userId, controllerId: controllerId, adDrId: fromLogin ? 1 : 0,);
+     case 5:
         return SiteConfig(
             userId: userId,
             customerId: customerId,
@@ -847,7 +875,11 @@ class CustomerScreenController extends StatelessWidget {
             masterData: masterData,
             groupId: groupId,
             groupName: groupName
-        );*/
+        );
+      case 6:
+        return TicketHomePage(userId: userId, controllerId: controllerId);
+      case 7:
+        return WeatherScreen(userId: userId, controllerId: controllerId, deviceID: deviceId,);
       default:
         return const SizedBox();
     }

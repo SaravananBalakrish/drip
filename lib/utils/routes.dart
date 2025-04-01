@@ -41,7 +41,7 @@ class Routes {
           // builder: (_) => ScheduleViewScreen(deviceId: "2CCF674C0F8A", userId: 4, controllerId: 1, customerId: 4, groupId: 1),
           // builder: (_) => ScheduleViewScreen(deviceId: "2CCF674C0F8A", userId: 4, controllerId: 1, customerId: 4, groupId: 1),
            builder: (_) => const ScreenController(),
-          settings: settings,
+          // settings: settings,
         );
       default:
         return MaterialPageRoute(

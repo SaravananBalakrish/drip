@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/Widgets/custom_buttons.dart';
 import 'package:oro_drip_irrigation/modules/constant/model/constant_menu_model.dart';
 import 'package:oro_drip_irrigation/modules/constant/model/constant_setting_type_Model.dart';
+import 'package:oro_drip_irrigation/modules/constant/repository/constant_repository.dart';
 import 'package:oro_drip_irrigation/modules/constant/state_management/constant_provider.dart';
 import 'package:oro_drip_irrigation/modules/constant/view/ec_ph_in_constant.dart';
 import 'package:oro_drip_irrigation/modules/constant/view/fertilizer_site_in_constant.dart';
@@ -50,17 +53,31 @@ class _ConstantBasePageState extends State<ConstantBasePage> with SingleTickerPr
     super.initState();
     constPvd = Provider.of<ConstantProvider>(context, listen: false);
     overAllPvd = Provider.of<OverAllUse>(context, listen: false);
-    constantResponse = getData();
+    constantResponse = getData(widget.userData);
 
   }
 
-  Future<int> getData()async{
-    await Future.delayed(const Duration(seconds: 1));
-    constPvd.updateConstant();
-    setState(() {
-      tabController = TabController(length: constPvd.listOfConstantMenuModel.length, vsync: this);
-    });
-    return 200;
+  Future<int> getData(userData)async{
+    try{
+      await Future.delayed(const Duration(seconds: 1));
+      var body = {
+        "userId": userData['userId'],
+        "controllerId": userData['controllerId'],
+      };
+      var constantResponse = await ConstantRepository().getUserConstant(body);
+      Map<String, dynamic> constantJsonData = jsonDecode(constantResponse.body);
+      var configMakerResponse = await ConstantRepository().getUserDefaultConfigMaker(body);
+      Map<String, dynamic> configMakerJsonData = jsonDecode(configMakerResponse.body);
+      constPvd.updateConstant(constantData: constantJsonData,configMakerData: configMakerJsonData);
+      setState(() {
+        tabController = TabController(length: constPvd.listOfConstantMenuModel.length, vsync: this);
+      });
+      return constantJsonData['code'];
+    }catch(e,stacktrace){
+      print('Error on getting constant data :: $e');
+      print('Stacktrace on getting constant data :: $stacktrace');
+      rethrow;
+    }
   }
 
   @override
@@ -152,34 +169,34 @@ class _ConstantBasePageState extends State<ConstantBasePage> with SingleTickerPr
 
   List<Widget> getTabBarView(){
     return List.generate(tabController.length, (index){
-      if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 82){
+      if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.generalInConstant){
         return GeneralInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
-      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 83){
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.pumpInConstant){
         return PumpInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
-      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 70){
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.filterSiteInConstant){
         return FilterSiteInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
-      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 71){
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.filterInConstant){
         return FilterInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
-      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 85){
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.mainValveInConstant){
         return MainValveInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
-      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 86){
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.valveInConstant){
         return ValveInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
-      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 87){
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.waterMeterInConstant){
         return WaterMeterInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
-      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 88){
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.fertilizerSiteInConstant){
         return FertilizerSiteInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
-      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 89){
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.fertilizerChannelInConstant){
         return ChannelInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
-      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 90){
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.ecPhInConstant){
         return EcPhInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
-      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 91){
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.moistureSensorInConstant){
         return MoistureInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
-      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 92){
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.levelSensorInConstant){
         return LevelInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
-      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 93){
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.normalCriticalInConstant){
         return NormalCriticalInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
-      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == 94){
-        return GlobalAlarmInConstant(constPvd: constPvd, overAllPvd: overAllPvd,);
+      }else if(constPvd.listOfConstantMenuModel[index].dealerDefinitionId == AppConstants.globalAlarmInConstant){
+        return GlobalAlarmInConstant(constPvd: constPvd, overAllPvd: overAllPvd, userData: widget.userData,);
       }else{
         return Text(constPvd.listOfConstantMenuModel[index].parameter);
       }

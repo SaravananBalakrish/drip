@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:mqtt_client/mqtt_client.dart';
 import 'package:provider/provider.dart';
 import '../../Models/customer/site_model.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
@@ -14,6 +15,8 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   bool isLoading = false;
   String errorMsg = '';
 
+  int selectedIndex = 0, unreadAlarmCount = 2;
+
   late SiteModel mySiteList = SiteModel(data: []);
   int sIndex = 0, mIndex = 0, lIndex = 0;
   late String myCurrentSite;
@@ -23,17 +26,27 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   int controllerId = 0;
   int wifiStrength = 0;
 
-  final mqttService = MqttService();
   late MqttPayloadProvider payloadProvider;
+  final MqttService mqttService = MqttService();
+  final BuildContext context;
+  StreamSubscription<MqttConnectionState>? mqttSubscription;
 
-  CustomerScreenControllerViewModel(context, this.repository){
+  CustomerScreenControllerViewModel(this.context, this.repository){
     fromWhere='init';
+
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       payloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
       mqttConfigureAndConnect(context);
-      mqttService.mqttConnectionStream.listen((state) {
-        onSubscribeTopic();
+
+      mqttSubscription = mqttService.mqttConnectionStream.listen((state) {
+        debugPrint("MQTT Connection State: $state");
+        if (state == MqttConnectionState.connected) {
+          debugPrint("MQTT Connected - Subscribing to topic...");
+          onSubscribeTopic();
+        }
       });
+
     });
 
   }
@@ -46,7 +59,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   void onSubscribeTopic(){
     Future.delayed(const Duration(milliseconds: 2000), () {
       print("device id :: ${mySiteList.data[sIndex].master[mIndex].deviceId}");
-      MqttService().topicToSubscribe('${AppConstants.subscribeTopic}/${mySiteList.data[sIndex].master[mIndex].deviceId}');
+      mqttService.topicToSubscribe('${AppConstants.subscribeTopic}/${mySiteList.data[sIndex].master[mIndex].deviceId}');
       onRefreshClicked();
     });
   }
@@ -161,9 +174,8 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   void onRefreshClicked() {
     String livePayload = '';
     Future.delayed(const Duration(milliseconds: 1000), () {
-      //payloadProvider.liveSyncCall(true);
-      if(mySiteList.data[sIndex].master[mIndex].categoryId==1 ||
-          mySiteList.data[sIndex].master[mIndex].categoryId==2){
+      payloadProvider.liveSyncCall(true);
+      if(mySiteList.data[sIndex].master[mIndex].categoryId==1){
         livePayload = jsonEncode({"3000": {"3001": ""}});
       }else{
         livePayload = jsonEncode({"sentSMS": "#live"});
@@ -171,9 +183,10 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
       MqttService().topicToPublishAndItsMessage(livePayload, '${AppConstants.publishTopic}/${mySiteList.data[sIndex].master[mIndex].deviceId}');
     });
 
-    /*Future.delayed(const Duration(milliseconds: 6000), () {
-      //payloadProvider.liveSyncCall(false);
-    });*/
+    Future.delayed(const Duration(milliseconds: 3000), () {
+      payloadProvider.liveSyncCall(false);
+    });
+
   }
 
   bool getPermissionStatusBySNo(BuildContext context, int sNo) {
@@ -203,6 +216,24 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     }*/
 
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+    mqttSubscription?.cancel();
+  }
+
+  void onItemTapped(int index) {
+    selectedIndex = index;
+    notifyListeners();
+  }
+
+  void onAlarmClicked() {
+    //selectedIndex = index;
+    //notifyListeners();
+  }
+
+
 
 
 }

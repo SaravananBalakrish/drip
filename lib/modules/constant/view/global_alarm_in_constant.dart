@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/preview_screen.dart';
 import 'package:oro_drip_irrigation/modules/constant/state_management/constant_provider.dart';
@@ -7,15 +9,23 @@ import 'package:oro_drip_irrigation/modules/constant/widget/find_suitable_widget
 import 'package:oro_drip_irrigation/modules/irrigation_report/model/general_parameter_model.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 
+import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../StateManagement/overall_use.dart';
 import '../../../Widgets/HoursMinutesSeconds.dart';
+import '../../../Widgets/custom_buttons.dart';
+import '../../../Widgets/status_box.dart';
+import '../../../services/mqtt_service.dart';
+import '../../../utils/environment.dart';
+import '../../config_Maker/view/config_web_view.dart';
 import '../model/constant_setting_model.dart';
+import '../repository/constant_repository.dart';
 
 
 class GlobalAlarmInConstant extends StatefulWidget {
   final ConstantProvider constPvd;
   final OverAllUse overAllPvd;
-  const GlobalAlarmInConstant({super.key, required this.constPvd, required this.overAllPvd});
+  final Map<String, dynamic> userData;
+  const GlobalAlarmInConstant({super.key, required this.constPvd, required this.overAllPvd, required this.userData});
 
   @override
   State<GlobalAlarmInConstant> createState() => _GlobalAlarmInConstantState();
@@ -23,6 +33,16 @@ class GlobalAlarmInConstant extends StatefulWidget {
 
 class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
   ValueNotifier<int> hoveredSno = ValueNotifier<int>(0);
+  HardwareAcknowledgementSate payloadState = HardwareAcknowledgementSate.notSent;
+  MqttService mqttService = MqttService();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    mqttService.initializeMQTTClient(state: null);
+    mqttService.connect();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,11 +117,173 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
             ),
             SlidingSendButton(
                 onSend: (){
-        
-            })
+                  setState(() {
+                    payloadState = HardwareAcknowledgementSate.notSent;
+                    mqttService.acknowledgementPayload = null;
+                  });
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context){
+                        return StatefulBuilder(
+                            builder: (context, stateSetter){
+                              return AlertDialog(
+                                title: Text('Send Payload', style: Theme.of(context).textTheme.labelLarge,),
+                                content: getHardwareAcknowledgementWidget(payloadState),
+                                actions: [
+                                  if(payloadState != HardwareAcknowledgementSate.sending && payloadState != HardwareAcknowledgementSate.notSent)
+                                    CustomMaterialButton(),
+                                  if(payloadState == HardwareAcknowledgementSate.notSent)
+                                    CustomMaterialButton(title: 'Cancel',outlined: true,),
+                                  if(payloadState == HardwareAcknowledgementSate.notSent)
+                                    CustomMaterialButton(
+                                      onPressed: ()async{
+                                        sendToHttp();
+                                        var payload = jsonEncode(getConstantHardwarePayload());
+                                        int delayDuration = 10;
+                                        for(var delay = 0; delay < delayDuration; delay++){
+                                          if(delay == 0){
+                                            stateSetter((){
+                                              setState((){
+                                                mqttService.topicToPublishAndItsMessage(payload, '${Environment.mqttPublishTopic}/${widget.userData['deviceId']}');
+                                                payloadState = HardwareAcknowledgementSate.sending;
+                                              });
+                                            });
+                                          }
+                                          stateSetter((){
+                                            setState((){
+                                              if(mqttService.acknowledgementPayload != null){
+                                                if(validatePayloadFromHardware(mqttService.acknowledgementPayload, ['cC'], widget.userData['deviceId']) && validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cM', '4201', 'PayloadCode'], '300')){
+                                                  if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '200'){
+                                                    payloadState = HardwareAcknowledgementSate.success;
+                                                  }else if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '90'){
+                                                    payloadState = HardwareAcknowledgementSate.programRunning;
+                                                  }else if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '1'){
+                                                    payloadState = HardwareAcknowledgementSate.hardwareUnknownError;
+                                                  }else{
+                                                    payloadState = HardwareAcknowledgementSate.errorOnPayload;
+                                                  }
+                                                  mqttService.acknowledgementPayload == null;
+                                                }
+                                              }
+                                            });
+                                          });
+                                          await Future.delayed(const Duration(seconds: 1));
+                                          if(delay == delayDuration-1){
+                                            stateSetter((){
+                                              setState((){
+                                                payloadState = HardwareAcknowledgementSate.failed;
+                                              });
+                                            });
+                                          }
+                                          if(payloadState != HardwareAcknowledgementSate.sending){
+                                            break;
+                                          }
+                                        }
+                                      },
+                                      title: 'Send',
+                                    ),
+
+                                ],
+                              );
+                            }
+                        );
+                      }
+                  );
+
+                  // print('data sending...');
+                  // sendToHttp();
+                }
+            )
           ],
         ),
       ),
     );
+  }
+
+  Map<String, dynamic> getConstantHardwarePayload(){
+    var generalPayload = widget.constPvd.getGeneralPayload();
+    print("generalPayload : $generalPayload");
+    var globalAlarmPayload = widget.constPvd.getGlobalAlarmPayload();
+    print("globalAlarmPayload : $globalAlarmPayload");
+    var levelSensorPayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.level);
+    print("levelSensorPayload : $levelSensorPayload");
+    var pumpPayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.pump);
+    print("pumpPayload : $pumpPayload");
+    var channelPayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.channel);
+    print("channelPayload : $channelPayload");
+    var fertilizerSitePayload = widget.constPvd.getFertilizerSitePayload();
+    print("fertilizerSitePayload : $fertilizerSitePayload");
+    var waterMeterPayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.waterMeter);
+    print("waterMeterPayload : $waterMeterPayload");
+    var mainValvePayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.mainValve);
+    print("mainValvePayload : $mainValvePayload");
+    var valvePayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.valve);
+    print("valvePayload : $valvePayload");
+    var normalCriticalPayload = widget.constPvd.getNormalCriticalAlarm();
+    print("normalCriticalPayload : $normalCriticalPayload");
+    var filterPayload = widget.constPvd.getFilterSitePayload();
+    print("filterPayload : $filterPayload");
+    var hardwarePayload = {
+      "300" : {
+        "301" : generalPayload,
+        "302" : mainValvePayload,
+        "303" : valvePayload,
+        "304" : waterMeterPayload,
+        "305" : channelPayload,
+        "306" : fertilizerSitePayload,
+        "307" : levelSensorPayload,
+        "308" : normalCriticalPayload,
+        "309" : pumpPayload
+      }
+    };
+    return hardwarePayload;
+  }
+
+  Widget getHardwareAcknowledgementWidget(HardwareAcknowledgementSate state){
+    print('state : $state');
+    if(state == HardwareAcknowledgementSate.notSent){
+      return const StatusBox(color:  Colors.black87,child: Text('Do you want to send payload..',),);
+    }else if(state == HardwareAcknowledgementSate.success){
+      return const StatusBox(color:  Colors.green,child: Text('Success..',),);
+    }else if(state == HardwareAcknowledgementSate.failed){
+      return const StatusBox(color:  Colors.red,child: Text('Failed..',),);
+    }else if(state == HardwareAcknowledgementSate.errorOnPayload){
+      return const StatusBox(color:  Colors.red,child: Text('Payload error..',),);
+    }else{
+      return const SizedBox(
+          width: double.infinity,
+          height: 5,
+          child: LinearProgressIndicator()
+      );
+    }
+  }
+
+  void sendToHttp()async{
+    var body = {
+      "userId" : widget.userData['userId'],
+      "controllerId" : widget.userData['controllerId'],
+      "general": widget.constPvd.general.map((setting) => setting.toJson()).toList(),
+      "waterSource": [],
+      "levelSensor": widget.constPvd.level.map((setting) => setting.toJson()).toList(),
+      "pump": widget.constPvd.pump.map((setting) => setting.toJson()).toList(),
+      "filterSite": widget.constPvd.filterSite.map((setting) => setting.toJson()).toList(),
+      "filter": widget.constPvd.filter.map((setting) => setting.toJson()).toList(),
+      "fertilizerSite": widget.constPvd.fertilizerSite.map((setting) => setting.toJson()).toList(),
+      "fertilizerChannel": widget.constPvd.channel.map((setting) => setting.toJson()).toList(),
+      "ecPhSensor": widget.constPvd.ecPhSensor.map((setting) => setting.toJson()).toList(),
+      "waterMeter": widget.constPvd.waterMeter.map((setting) => setting.toJson()).toList(),
+      "pressureSensor": [],
+      "mainValve": widget.constPvd.mainValve.map((setting) => setting.toJson()).toList(),
+      "valve": widget.constPvd.valve.map((setting) => setting.toJson()).toList(),
+      "moistureSensor": widget.constPvd.moisture.map((setting) => setting.toJson()).toList(),
+      "analogSensor": [],
+      "normalCriticalAlarm": widget.constPvd.normalCriticalAlarm.map((setting) => setting.toJson()).toList(),
+      "globalAlarm": widget.constPvd.globalAlarm.map((setting) => setting.toJson()).toList(),
+      "controllerReadStatus": "0",
+      "createUser" : widget.userData['userId']
+    };
+    var response = await ConstantRepository().createUserConstant(body);
+    print('code : $response');
   }
 }

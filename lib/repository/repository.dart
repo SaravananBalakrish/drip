@@ -302,9 +302,6 @@ class Repository{
   Future<http.Response> createUserValveGroup(body) async {
     return await apiService.postRequest('/user/planning/valveGroup/create', body);
   }
-  Future<http.Response> fetchStandAloneData(body) async {
-    return await apiService.postRequest('/user/getUserDashboardByManual', body);
-  }
 
   Future<http.Response> fetchManualOperation(body) async {
     return await apiService.postRequest('/user/manualOperation/get', body);
@@ -325,7 +322,6 @@ class Repository{
   Future<http.Response> fetchConditionLibrary(body) async {
     return await apiService.postRequest('/user/planning/conditionLibrary/get', body);
   }
-
 
   Future<http.Response> getPlanningHiddenMenu(body) async {
     return await apiService.postRequest('/user/dealerDefinition/mainMenu/get', body);
@@ -359,7 +355,7 @@ class Repository{
     return await apiService.postRequest('/user/serviceRequest/getAllForDealer', body);
   }
   Future<http.Response> getAllUserAllServiceRequestForAdmin(body) async {
-    return await apiService.postRequest('/user/serviceRequest/getAllForAdmin', body);
+     return await apiService.postRequest('/user/serviceRequest/getAllForAdmin', body);
   }
   Future<http.Response> createUserServiceRequest(body) async {
     return await apiService.postRequest('/user/serviceRequest/create', body);
@@ -367,6 +363,8 @@ class Repository{
   Future<http.Response> updateUserServiceRequest(body) async {
     return await apiService.postRequest('/user/serviceRequest/update', body);
   }
+
+
   Future<http.Response> getUserDeviceFirmwareDetails(body) async {
     return await apiService.postRequest('/user/deviceList/getFirmwareDetails', body);
   }
@@ -376,6 +374,10 @@ class Repository{
   Future<http.Response> getweather(body) async {
     return await apiService.postRequest('/user/live/weather/get', body);
   }
+  Future<http.Response> updateUserDeviceFirmwareDetails(body) async {
+    return await apiService.putRequest('/user/deviceList/updateFirmwareDetails', body);
+  }
+
 
 }
 

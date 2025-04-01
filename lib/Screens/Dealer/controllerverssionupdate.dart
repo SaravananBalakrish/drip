@@ -1,18 +1,20 @@
+
 import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../StateManagement/overall_use.dart';
+import '../../modules/IrrigationProgram/view/program_library.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../services/mqtt_service.dart';
 import '../../utils/snack_bar.dart';
 import 'controllerlogfile.dart';
-
-
 
 class ResetVerssion extends StatefulWidget {
   const ResetVerssion(
@@ -35,6 +37,10 @@ class _ResetVerssionState extends State<ResetVerssion> {
   int checkrst = 0;
   int? selectindex;
   int checkupdatediable = 0;
+  TextEditingController frequency1Controller = TextEditingController();
+  TextEditingController frequency2Controller = TextEditingController();
+  TextEditingController sf1Controller = TextEditingController();
+  TextEditingController sf2Controller = TextEditingController();
 
   valAssing(List<dynamic> data) {
     mergedList = [];
@@ -56,6 +62,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
           'categoryName': device['categoryName'],
           'modelId': device['modelId'],
           'modelName': device['modelName'],
+          'loraFrequency': device['loraFrequency'],
           'latestVersion': device['latestVersion'] ?? '',
           'currentVersion': device['currentVersion'] ?? '',
           'status': 'Status',
@@ -65,16 +72,13 @@ class _ResetVerssionState extends State<ResetVerssion> {
   }
 
   Future<void> fetchData() async {
-    var overAllPvd = Provider.of<OverAllUse>(context,listen: false);
-    final prefs = await SharedPreferences.getInstance();
-    try{
+     try{
       final Repository repository = Repository(HttpService());
       var response = await repository.getUserDeviceFirmwareDetails({"userId": widget.userId});
-       if (response.statusCode == 200) {
+      if (response.statusCode == 200) {
         setState(() {
           var jsondata = jsonDecode(response.body);
-print('resetversion $jsondata');
-          valAssing(jsondata['data']);
+           valAssing(jsondata['data']);
 
           MqttService().connect();
         });
@@ -105,13 +109,13 @@ print('resetversion $jsondata');
     iconData = Icons.restart_alt;
     iconcolor = Colors.blue;
     Map<String, dynamic> payLoadFinal = {
-      "5700": [
-        {"5701": "2"},
-      ]
-    };
+      "5700":
+      {"5701": "2"},
 
-    MqttService().topicToPublishAndItsMessage("AppToFirmware/${mergedList[index]["deviceId"]}", jsonEncode(payLoadFinal));
-   }
+    };
+    MqttService().topicToPublishAndItsMessage(jsonEncode(payLoadFinal), "${Environment.mqttPublishTopic}/${mergedList[index]["deviceId"]}");
+
+  }
 
   Update(int index) async {
 
@@ -121,13 +125,12 @@ print('resetversion $jsondata');
     iconData = Icons.start;
     iconcolor = Colors.blue;
     Map<String, dynamic> payLoadFinal = {
-      "5700": [
-        {"5701": "3"},
-      ]
+      "5700":
+      {"5701": "3"},
     };
 
-    MqttService().topicToPublishAndItsMessage("AppToFirmware/${mergedList[index]["deviceId"]}", jsonEncode(payLoadFinal));
-    GlobalSnackBar.show(context, mqttPayloadProvider.messageFromHw, 200);
+    MqttService().topicToPublishAndItsMessage(jsonEncode(payLoadFinal), "${Environment.mqttPublishTopic}/${mergedList[index]["deviceId"]}");
+    // GlobalSnackBar.show(context, mqttPayloadProvider.messageFromHw, 200);
     // MQTTManager().publish(payLoadFinal, 'OroGemLog/${overAllPvd.imeiNo}');
   }
 
@@ -205,12 +208,28 @@ print('resetversion $jsondata');
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => ControllerLog(
-                                      deviceID: mergedList[index]['deviceId']!),
+                                      deviceID: '${mergedList[index]['deviceId'
+                                      ]!}'),
                                 ),
                               );
                             });
                           },
                           icon: Icon(Icons.arrow_circle_right_outlined),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: IconButton(
+                            style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colors.teal.shade100)),
+                            onPressed: () {
+                              setState(() {
+                                _showFrequencyDialog(context, index, true);
+
+                              });
+                            },
+                            icon: Icon(Icons.settings_applications),
+                          ),
                         ),
                       ],
                     ),
@@ -354,11 +373,10 @@ print('resetversion $jsondata');
       "messageStatus": msgstatus,
       "createUser": widget.userId
     };
-    print('body $body');
-    final response = await HttpService()
-        .postRequest("createUserSentAndReceivedMessageManually", body);
-    print(response.statusCode);
-    print(response.body);
+
+
+    final Repository repository = Repository(HttpService());
+    var response = await repository.createUserSentAndReceivedMessageManually(body);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
@@ -371,10 +389,9 @@ print('resetversion $jsondata');
   }
 
   status() {
-    if (selectindex != null) {
+     if (selectindex != null) {
       Map<String, dynamic>? ctrldata = mqttPayloadProvider.messageFromHw;
-      print("ctrldata------------>$ctrldata");
-      if ((ctrldata != null && ctrldata.isNotEmpty)) {
+       if ((ctrldata != null && ctrldata.isNotEmpty)) {
         var name = ctrldata['Name'];
         // String message = ctrldata['Message'];
         var code = ctrldata['Code'];
@@ -415,8 +432,7 @@ print('resetversion $jsondata');
           // checkupdatediable = 0;
           // selectindex = null;
         }
-        print("mergedList------>$mergedList");
-      }
+       }
     }
   }
 
@@ -433,6 +449,84 @@ print('resetversion $jsondata');
       checkupdatediable = 1;
       _showDialogcheck(context, "Update", index);
     });
+  }
+  String formatNumber(String input) {
+    if (input.isEmpty) {
+      return '0,0';
+    }
+    if (!input.contains('.')) {
+      input += '.0';
+    }
+    double number = double.parse(input);
+    number *= 10;
+    String result = number.toStringAsFixed(0);
+    while (result.length < 4) {
+      result = '0' + result;
+    }
+    String firstPart = result.substring(0, 2);
+    String secondPart = result.substring(2, 4);
+    return '$firstPart,$secondPart';
+  }
+
+  FrequnceAll() async {
+
+    String firstfreequnce1 = formatNumber(frequency1Controller.text);
+    String firstfreequnce2 = formatNumber(frequency2Controller.text);
+    String sf1 = sf1Controller.text;
+    String sf2 = sf2Controller.text;
+    sf1 = sf1.isEmpty ? "0" : sf1;
+    sf2 = sf2.isEmpty ? "0" : sf2;
+    Map<String, dynamic> payLoadFinal = {
+      "6500": [
+        {"6501": "$firstfreequnce1,$sf1,$firstfreequnce2,$sf2"},
+      ]
+    };
+    Map<String, dynamic> body = {
+      "userId": widget.userId,
+      "controllerId": widget.controllerId,
+      "loraFrequency":
+      '${frequency1Controller.text},${sf1Controller.text},${frequency2Controller.text},${sf2Controller.text}',
+      "modifyUser": widget.userId
+    };
+
+    final Repository repository = Repository(HttpService());
+    var response = await repository.updateUserDeviceFirmwareDetails(body);
+
+     if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+       if (data["code"] == 200) {
+        _showSnackBar(data["message"]);
+      } else {
+        _showSnackBar(data["message"]);
+      }
+    }
+
+
+    MqttService().topicToPublishAndItsMessage('${frequency1Controller.text},${sf1Controller.text},${frequency2Controller.text},${sf2Controller.text}', 'AppToFirmware/${mergedList[selectindex ?? 0]["deviceId"]}');
+     fetchData();
+  }
+  bool _isValidFrequency(String freq) {
+    final regex = RegExp(r'^\d{1,3}\.\d$');
+    return regex.hasMatch(freq);
+  }
+  void _showErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: const Text('Please enter valid frequencies.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showDialogcheck(BuildContext context, String update, int index) {
@@ -462,6 +556,179 @@ print('resetversion $jsondata');
       },
     );
   }
+  void _showFrequencyDialog(BuildContext context,int index,bool plusTrue) {
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+         String loravalue =  mergedList[index]['loraFrequency'] ?? '';
+
+        if( loravalue.isNotEmpty)
+        {
+          List<String> splitValues = loravalue.split(',');
+          frequency1Controller.text = splitValues[0];
+          sf1Controller.text = splitValues[1];
+          frequency2Controller.text = splitValues[2];
+          sf2Controller.text = splitValues[3];
+        }
+        else
+        {
+          frequency1Controller.text = '';
+          sf1Controller.text = '';
+          frequency2Controller.text = '';
+          sf2Controller.text = '';
+        }
+        return AlertDialog(
+          title: const Text('LoRa Frequency'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: frequency1Controller,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        decoration:  const InputDecoration(
+                          hintText: 'Enter LoRa Frequency 1 (000.0)',
+                          labelText: "LoRa Frequency 1 ",
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(
+                              r'^\d{1,3}(\.\d{0,1})?$|^99(\.0)?$|^99\.9$')),
+                        ],
+                      ),
+                      TextField(
+                        controller: sf1Controller,
+
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        decoration:  const InputDecoration(
+                          hintText: 'Enter SF value (7-12)',
+                          labelText: "SF value ",
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(
+                            r'^(0|1|2|7|8|9|10|11|12)$', // Regex to allow values between 7 and 12 (no decimal)
+                          )),
+                        ],
+                      ),
+                      SizedBox(),
+                      Row(children: [ Spacer(),TextButton(
+                        onPressed: () {
+
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                        TextButton(
+                          onPressed: () {
+                            String freq1 = frequency1Controller.text;
+                            String sf1 = sf1Controller.text;
+                            bool isValidFreq1 = _isValidFrequency(freq1) && sf1.isNotEmpty;
+                            if(isValidFreq1)
+                            {
+                              FrequnceAll();
+                              Navigator.of(context).pop();
+                            }
+                            else {
+                              _showErrorDialog(context);
+                            }
+                          },
+                          child: const Text('Send'),
+                        ),],)
+
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              plusTrue ? Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: frequency2Controller,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        decoration:  const InputDecoration(
+                          hintText: 'Enter LoRa Frequency 2 (000.0)',
+                          labelText: "LoRa Frequency 2",
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'^\d{1,3}(\.\d{0,1})?$|^99(\.0)?$|^99\.9$')),
+                        ],
+                      ),
+                      TextField(
+                        controller: sf2Controller,
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        decoration:  const InputDecoration(
+                          hintText: 'Enter SF value (7-12)',
+                          labelText: 'SF value ',
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(
+                            r'^(0|1|2|7|8|9|10|11|12)$', // Regex to allow values between 7 and 12 (no decimal)
+                          )),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ) :  const SizedBox(),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                String freq1 = frequency1Controller.text;
+                String freq2 = frequency2Controller.text;
+                String sf1 = sf1Controller.text;
+                String sf2 = sf2Controller.text;
+
+                bool isValidFreq1 = _isValidFrequency(freq1) && sf1.isNotEmpty;
+                bool isValidFreq2 = _isValidFrequency(freq2) && sf2.isNotEmpty;
+
+                if (plusTrue)
+                {
+                  if(isValidFreq1 && isValidFreq2)
+                  {
+                    FrequnceAll();
+                    Navigator.of(context).pop();
+                  }
+                  else {
+                    _showErrorDialog(context);
+                  }
+                } else {
+
+                  if(isValidFreq1)
+                  {
+                    FrequnceAll();
+                    Navigator.of(context).pop();
+                  }
+                  else {
+                    _showErrorDialog(context);
+                  }
+                }
+
+
+              },
+              child: const Text('Send'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }
 
 class BlinkingText extends StatefulWidget {

@@ -96,13 +96,13 @@ class WidgetSetting {
   factory WidgetSetting.fromJson(Map<String, dynamic> json) {
     final rtcData = json['value'];
     List<RtcTimeSetting>? rtcSettings;
-    if (rtcData is List<dynamic> && json['title'] == "RTC TIMER") {
+    if (rtcData is List<dynamic> && json['title'].toString().toUpperCase() == "RTC TIMER") {
       rtcSettings = rtcData.map((rtcItem) {
         return RtcTimeSetting.fromJson(rtcItem);
       }).toList();
     }
 
-    if (json['title'] == "2 PHASE" || json['title'] == "AUTO RESTART 2 PHASE") {
+    if (json['title'].toString().toUpperCase() == "2 PHASE" || json['title'].toString().toUpperCase() == "AUTO RESTART 2 PHASE") {
       if(json['value'] is bool) {
         json['value'] = List<bool>.filled(3, false);
       }
@@ -189,7 +189,7 @@ class SettingList {
       var value2 = setting.firstWhere((element) => element.serialNumber == 2).value == true ? 1 : 0;
       result.add("$value1");
       result.add("$value2");
-    } else if (type == 210) {
+    } else if (type == 207) {
       var value1 = setting.firstWhere((element) => element.serialNumber == 1).value;
       var value2 = setting.firstWhere((element) => element.serialNumber == 2).value;
       var value3 = setting.firstWhere((element) => element.serialNumber == 3).value;
@@ -207,16 +207,18 @@ class IndividualPumpSetting {
   double sNo;
   String name;
   int pumpType;
-  dynamic deviceId;
+  int controllerId;
+  // dynamic deviceId;
   bool controlGem;
-  String? output;
+  int? output;
   List<SettingList> settingList;
 
   IndividualPumpSetting({
     required this.sNo,
     required this.name,
     required this.pumpType,
-    required this.deviceId,
+    required this.controllerId,
+    // required this.deviceId,
     required this.controlGem,
     required this.settingList,
     required this.output,
@@ -229,10 +231,11 @@ class IndividualPumpSetting {
         sNo: json["sNo"],
         name: json["name"],
         pumpType: json["pumpType"],
-        deviceId: json["deviceId"],
+        controllerId: json["controllerId"],
+        // deviceId: json["deviceId"],
         controlGem: json["controlGem"] ?? false,
         settingList: settingsList,
-        output: json['output']
+        output: json['connectionNo']
     );
   }
 
@@ -241,7 +244,7 @@ class IndividualPumpSetting {
       "sNo": sNo,
       "name": name,
       "type": pumpType,
-      "deviceId": deviceId,
+      // "deviceId": deviceId,
       "controlGem": controlGem,
       "settingList": settingList.map((e) => e.toJson()).toList(),
       "output": output
@@ -299,7 +302,7 @@ class CommonPumpSetting {
         categoryId: json["categoryId"] ?? 0,
         deviceId: json["deviceId"],
         deviceName: json["deviceName"],
-        serialNumber: json['serialNumber'],
+        serialNumber: json['serialNumber'] ?? 0,
         referenceNumber: json['referenceNumber'] ?? 0,
         interfaceTypeId: json['interfaceTypeId'] ?? 0,
         settingList: settingsList

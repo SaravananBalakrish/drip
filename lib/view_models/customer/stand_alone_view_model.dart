@@ -24,7 +24,9 @@ class StandAloneViewModel extends ChangeNotifier {
   final TextEditingController _secondsController = TextEditingController();
   final TextEditingController flowLiter = TextEditingController();
 
+
   List<ProgramModel> programList = [];
+  late StandAloneModel standAloneData;
   bool visibleLoading = false;
   int ddCurrentPosition = 0;
   int serialNumber = 0;
@@ -101,6 +103,7 @@ class StandAloneViewModel extends ChangeNotifier {
       final response = await repository.fetchUserManualOperation(body);
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
+        print(response.body);
         if (jsonResponse['data'] != null){
           try{
             dynamic data = jsonResponse['data'];
@@ -159,12 +162,9 @@ class StandAloneViewModel extends ChangeNotifier {
   }
 
 
-  Future<void> fetchStandAloneSelection(int sNo, value) async {
+  Future<void> fetchStandAloneSelection(int sNo, int cIndex) async {
 
-    int newIndex = programList.indexOf(value!);
-    if (newIndex != -1) {
-      ddCurrentPosition = newIndex;
-    }
+    ddCurrentPosition = cIndex;
 
     Map<String, Object> body = {
       "userId": customerId,
@@ -173,16 +173,17 @@ class StandAloneViewModel extends ChangeNotifier {
     };
 
     try {
-      var response = await repository.fetchStandAloneData(body);
+      var response = await repository.fetchManualOperation(body);
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         print(response.body);
         if (jsonResponse['data'] != null) {
           dynamic data = jsonResponse['data'];
-          StandAloneModel dashBoardData = StandAloneModel.fromJson(data);
+          standAloneData = StandAloneModel.fromJson(data);
+          print(standAloneData.sequence);
 
           if(ddCurrentPosition==0){
-            for (var item in dashBoardData.selection) {
+            for (var item in standAloneData.selection) {
               int serialNo = item.sNo.toInt();
 
               if (serialNo == 5) {
@@ -427,12 +428,20 @@ class StandAloneViewModel extends ChangeNotifier {
           strSldBoosterPumpSrlNo = '',
           strSldSelectorSrlNo = '';
 
-      /*if(config.pump.isNotEmpty){
-        strSldSourcePumpSrlNo = getSelectedRelaySrlNo(config.pump);
-      }*/
-
       if (configData.pump.isNotEmpty) {
         strSldPumpSrlNo = getSelectedRelaySrlNo(configData.pump);
+      }
+
+      if(configData.filterSite.isNotEmpty){
+        for(int i=0; i<configData.filterSite.length; i++){
+          String concatenatedString = getSelectedRelaySrlNo(configData.filterSite[i].filters);
+          if(concatenatedString.isNotEmpty){
+            strSldCtrlFilterSrlNo += '${concatenatedString}_';
+          }
+        }
+        if (strSldCtrlFilterSrlNo.isNotEmpty && strSldCtrlFilterSrlNo.endsWith('_')) {
+          strSldCtrlFilterSrlNo = strSldCtrlFilterSrlNo.replaceRange(strSldCtrlFilterSrlNo.length - 1, strSldCtrlFilterSrlNo.length, '');
+        }
       }
 
       for (var line in configData.lineData) {

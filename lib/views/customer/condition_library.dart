@@ -11,9 +11,10 @@ import '../../view_models/customer/condition_library_view_model.dart';
 
 class ConditionLibrary extends StatelessWidget {
   const ConditionLibrary(this.customerId, this.controllerId, this.userId,
-      {super.key});
+      {super.key, required this.deviceId});
 
   final int customerId, controllerId, userId;
+  final String deviceId;
 
   @override
   Widget build(BuildContext context) {
@@ -263,28 +264,20 @@ class ConditionLibrary extends StatelessWidget {
                                                 :
                                             'Select more than one conditions',
                                             onSelected: (String selectedValue) {
-                                              vm.componentOnChange(
-                                                  selectedValue, index);
+                                              vm.componentOnChange(selectedValue, index);
                                             },
-                                            itemBuilder: (
-                                                BuildContext context) {
+                                            itemBuilder: (BuildContext context) {
                                               return vm.conditionLibraryData
                                                   .conditionLibrary
-                                                  .condition[index].type ==
-                                                  'Sensor' ?
-                                              vm.conditionLibraryData
-                                                  .defaultData.sensors.map<
-                                                  PopupMenuEntry<String>>((
-                                                  sensor) {
+                                                  .condition[index].type == 'Sensor' ?
+                                              vm.conditionLibraryData.defaultData.sensors.map<PopupMenuEntry<String>>((sensor) {
                                                 return PopupMenuItem<String>(
                                                   value: sensor.name,
                                                   height: 35,
                                                   child: Text(sensor.name),
                                                 );
                                               }).toList() :
-                                              vm.conditionLibraryData
-                                                  .defaultData.program.map<
-                                                  PopupMenuEntry<String>>((
+                                              vm.conditionLibraryData.defaultData.program.map<PopupMenuEntry<String>>((
                                                   program) {
                                                 return PopupMenuItem<String>(
                                                   value: program.name,
@@ -984,7 +977,7 @@ class ConditionLibrary extends StatelessWidget {
                   color: Colors.green,
                   textColor: Colors.white,
                   onPressed: () => vm.saveConditionLibrary(
-                      context, customerId, controllerId, userId),
+                      context, customerId, controllerId, userId, deviceId),
                   child: const Text('Save'),
                 ),
               ],
