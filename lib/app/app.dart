@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/program_library.dart';
 import 'package:oro_drip_irrigation/modules/ScheduleView/view/schedule_view_screen.dart';
+import '../Screens/planning/google_map_showlist.dart';
 import '../flavors.dart';
 import '../modules/config_Maker/view/config_base_page.dart';
 import '../modules/constant/view/constant_base_page.dart';
@@ -31,12 +32,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode = false;
 
+    bool isDarkMode = false;
     return FutureBuilder<String>(
       future: getInitialRoute(),
       builder: (context, snapshot) {
         return MaterialApp(
+
           debugShowCheckedModeBanner: false,
           theme: F.appFlavor!.name.contains('oro') ? OroTheme.lightTheme : SmartCommTheme.lightTheme,
           darkTheme: F.appFlavor!.name.contains('oro') ? OroTheme.darkTheme : SmartCommTheme.darkTheme,
@@ -57,10 +59,10 @@ Widget navigateToInitialScreen(String route) {
       return const LoginScreen();
     case Routes.dashboard:
       // return const ConfigBasePage(masterData: {});
-      // return ConstantBasePage(userData: {"userId" : 4, "controllerId": 1, "deviceId":"2CCF674C0F8A" },);      // return const ConfigBasePage(masterData: {});
       // return ScheduleViewScreen(deviceId: "2CCF674C0F8A", userId: 4, controllerId: 1, customerId: 4, groupId: 1);
       // return ProgramLibraryScreenNew(userId: 4, controllerId: 1, deviceId: '2CCF674C0F8A', fromDealer: false, customerId: 4,);
      return const ScreenController();
+
     default:
       return const SplashScreen();
   }
