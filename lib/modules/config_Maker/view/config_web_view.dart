@@ -56,6 +56,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
   List<Map<String, dynamic>> listOfPayload = [];
   PayloadSendState payloadSendState = PayloadSendState.idle;
   MqttService mqttService = MqttService();
+  bool isDataSaved = false;
 
   @override
   void initState() {
@@ -76,128 +77,165 @@ class _ConfigWebViewState extends State<ConfigWebView> {
     themeMode = themeData.brightness == Brightness.light;
   }
 
+  void _onPopInvokedWithResult(bool didPop, dynamic result) async {
+    if (didPop) return; // If already popped, do nothing
+
+    if (!isDataSaved) {
+      bool? shouldLeave = await showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Alert"),
+          content: const Text("Do you really want to leave?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false), // Stay on page
+              child: const Text("Cancel"),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true); // Allow popping the page
+              },
+              child: const Text("Leave"),
+            ),
+          ],
+        ),
+      );
+
+      if (shouldLeave == true) {
+        Navigator.of(context).pop(result);
+      }
+    } else {
+      Navigator.of(context).pop(result);
+    }
+  }
+
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     bool themeMode = themeData.brightness == Brightness.light;
-    return Material(
-      color: themeData.primaryColorDark.withOpacity(themeMode ? 1.0 : 0.2),
-      child: Column(
-        children: [
-          SizedBox(
-            height: 50,
-            width: double.infinity,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                TitleWithBackButton(
-                  onPressed: (){
-                    Navigator.pop(context);
-                  },
-                  title: 'Config Maker',
-
-                  // titleWidth: screenWidth * sideNavigationTabRatio,
-                  titleWidth: sideNavigationTabWidth,
-                ),
-                Row(
-                  spacing:20,
-                  children: [
-                    StreamBuilder(
-                        stream: mqttService.mqttConnectionStream,
-                        initialData: MqttConnectionState.disconnected,
-                        builder: (context, snapShot){
-                          return Row(
-                            spacing: 10,
-                            children: [
-                              CircleAvatar(
-                                backgroundColor: mqttService.connectionState == MqttConnectionState.connected ? Colors.greenAccent : Colors.red,
-                                radius: 20,
-                                child: const Icon(Icons.computer, color: Colors.white,),
-                              ),
-                              Text('MQTT ${mqttService.connectionState.name}', style: const TextStyle(color: Colors.white),)
-
-                            ],
-                          );
-                        }
-                    ),
-                    InkWell(
-                      onHover: (value){
-                        setState(() {
-                          clearOnHover = value;
-                        });
-                      },
-                      onTap: (){
-                        configPvd.clearData();
-                      },
-                      child:  Row(
-                        spacing: 10,
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: clearOnHover ? themeData.primaryColorLight : themeData.primaryColorLight.withOpacity(0.5),
-                            radius: 20,
-                            child: SizedImageSmall(imagePath: '${AppConstants.svgObjectPath}clear.svg',color:  Colors.white,),
-                          ),
-                          const Text('Click To Clear Config', style: TextStyle(color: Colors.white),)
-                        ],
-                      ),
-                    ),
-                    InkWell(
-                      onHover: (value){
-                        setState(() {
-                          sendOnHover = value;
-                        });
-                      },
-                      onTap: (){
-                        setState(() {
-                          payloadSendState = PayloadSendState.idle;
-                        });
-                        sendToMqtt();
-                        sendToHttp();
-                      },
-                      child:  Row(
-                        spacing: 10,
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: sendOnHover ? themeData.primaryColorLight : themeData.primaryColorLight.withOpacity(0.5),
-                            radius: 20,
-                            child: SizedImageSmall(imagePath: '${AppConstants.svgObjectPath}send.svg',color:  Colors.white,),
-                          ),
-                          const Text('Click To Send Config', style: TextStyle(color: Colors.white),)
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 10,)
-                  ],
-                ),
-
-
-              ],
-            ),
-          ),
-          Expanded(
-            child: Row(
-              children: [
-                sideNavigationWidget(screenWidth, screenHeight),
-                Expanded(
-                  child: Container(
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: const BorderRadius.only(topLeft: Radius.circular(10))
-                      ),
-                      child: configPvd.selectedTab == ConfigMakerTabs.deviceList
-                          ? DeviceList(listOfDevices: widget.listOfDevices)
-                          : configPvd.selectedTab == ConfigMakerTabs.productLimit
-                          ? ProductLimit(listOfDevices: widget.listOfDevices,configPvd: configPvd,)
-                          : configPvd.selectedTab == ConfigMakerTabs.connection
-                          ? Connection(configPvd: configPvd,) : SiteConfigure(configPvd: configPvd)
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: _onPopInvokedWithResult,
+      child: Material(
+        color: themeData.primaryColorDark.withOpacity(themeMode ? 1.0 : 0.2),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 50,
+              width: double.infinity,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TitleWithBackButton(
+                    onPressed: (){
+                      Navigator.pop(context);
+                    },
+                    title: 'Config Maker',
+      
+                    // titleWidth: screenWidth * sideNavigationTabRatio,
+                    titleWidth: sideNavigationTabWidth,
                   ),
-                )
-
-              ],
+                  Row(
+                    spacing:20,
+                    children: [
+                      StreamBuilder(
+                          stream: mqttService.mqttConnectionStream,
+                          initialData: MqttConnectionState.disconnected,
+                          builder: (context, snapShot){
+                            return Row(
+                              spacing: 10,
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: mqttService.connectionState == MqttConnectionState.connected ? Colors.greenAccent : Colors.red,
+                                  radius: 20,
+                                  child: const Icon(Icons.computer, color: Colors.white,),
+                                ),
+                                Text('MQTT ${mqttService.connectionState.name}', style: const TextStyle(color: Colors.white),)
+      
+                              ],
+                            );
+                          }
+                      ),
+                      InkWell(
+                        onHover: (value){
+                          setState(() {
+                            clearOnHover = value;
+                          });
+                        },
+                        onTap: (){
+                          configPvd.clearData();
+                        },
+                        child:  Row(
+                          spacing: 10,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: clearOnHover ? themeData.primaryColorLight : themeData.primaryColorLight.withOpacity(0.5),
+                              radius: 20,
+                              child: SizedImageSmall(imagePath: '${AppConstants.svgObjectPath}clear.svg',color:  Colors.white,),
+                            ),
+                            const Text('Click To Clear Config', style: TextStyle(color: Colors.white),)
+                          ],
+                        ),
+                      ),
+                      InkWell(
+                        onHover: (value){
+                          setState(() {
+                            sendOnHover = value;
+                          });
+                        },
+                        onTap: (){
+                          setState(() {
+                            payloadSendState = PayloadSendState.idle;
+                          });
+                          sendToMqtt();
+                          sendToHttp();
+                        },
+                        child:  Row(
+                          spacing: 10,
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: sendOnHover ? themeData.primaryColorLight : themeData.primaryColorLight.withOpacity(0.5),
+                              radius: 20,
+                              child: SizedImageSmall(imagePath: '${AppConstants.svgObjectPath}send.svg',color:  Colors.white,),
+                            ),
+                            const Text('Click To Send Config', style: TextStyle(color: Colors.white),)
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 10,)
+                    ],
+                  ),
+      
+      
+                ],
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              child: Row(
+                children: [
+                  sideNavigationWidget(screenWidth, screenHeight),
+                  Expanded(
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: const BorderRadius.only(topLeft: Radius.circular(10))
+                        ),
+                        child: configPvd.selectedTab == ConfigMakerTabs.deviceList
+                            ? DeviceList(listOfDevices: widget.listOfDevices)
+                            : configPvd.selectedTab == ConfigMakerTabs.productLimit
+                            ? ProductLimit(listOfDevices: widget.listOfDevices,configPvd: configPvd,)
+                            : configPvd.selectedTab == ConfigMakerTabs.connection
+                            ? Connection(configPvd: configPvd,) : SiteConfigure(configPvd: configPvd)
+                    ),
+                  )
+      
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -472,7 +510,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
           'extendControllerId' : device.extendControllerId,
         };
       }).toList(),
-      "hardware" : {},
+      "hardware" : listOfPayload,
       "controllerReadStatus" : '0',
       "createUser" : configPvd.masterData['userId']
     };

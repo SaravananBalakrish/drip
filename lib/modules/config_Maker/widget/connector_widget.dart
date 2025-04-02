@@ -48,21 +48,22 @@ class ConnectorWidget extends StatelessWidget {
           },
           child: Row(
             children: [
-              Container(
-                width: 20,
-                height: 20,
+              AnimatedContainer(
+                width: selectedConnector ? 23 : 20,
+                height: selectedConnector ? 23 : 20,
                 padding: const EdgeInsets.all(4),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(2),
                     color: selectedConnector ? Theme.of(context).primaryColorDark : themeMode ? Colors.black : Colors.grey.shade400,
                 ),
+                duration: const Duration(milliseconds: 200),
                 child: Center(
                   child: Container(
                     width: double.infinity,
                     height: double.infinity,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(2),
-                        color: selectedConnector ? Colors.white : (object != null ? color : Colors.grey.shade200)
+                        color: selectedConnector ? Theme.of(context).primaryColorLight : (object != null ? color : Colors.grey.shade200)
                     ),
                   ),
                 ),

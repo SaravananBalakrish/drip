@@ -16,7 +16,7 @@ import '../view/connection.dart';
 
 class ConfigMakerProvider extends ChangeNotifier{
   double ratio = 1.0;
-  ConfigMakerTabs selectedTab = ConfigMakerTabs.siteConfigure;
+  ConfigMakerTabs selectedTab = ConfigMakerTabs.deviceList;
   Map<String, dynamic> configMakerDataFromHttp = {};
   Map<String, dynamic> defaultDataFromHttp = {};
   Map<int, String> configurationTab = {
@@ -405,6 +405,7 @@ class ConfigMakerProvider extends ChangeNotifier{
   }
 
   void updateSelectedConnectionNoAndItsType(int no, String type){
+    print("no : $no, type : $type");
     selectedConnectionNo = no;
     selectedType = type;
     notifyListeners();

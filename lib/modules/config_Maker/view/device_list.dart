@@ -114,7 +114,13 @@ class _DeviceListState extends State<DeviceList> {
                               Text('${index + 1}', style: themeData.textTheme.headlineSmall),
                             ),
                             DataCell(
-                              Text(device.deviceName, style: themeData.textTheme.headlineSmall),
+                              Column(
+                                children: [
+                                  Text(device.deviceName, style: themeData.textTheme.headlineSmall),
+                                  Text(device.modelName, style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black54)),
+                                ],
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              ),
                             ),
                             DataCell(
                               SelectableText(device.deviceId, style: TextStyle(color: themeData.primaryColorDark),),
@@ -292,7 +298,13 @@ class _DeviceListState extends State<DeviceList> {
                                               ),
                                             ),
                                             DataCell(
-                                                Text(device.deviceName,style: themeData.textTheme.headlineSmall,)
+                                                Column(
+                                                  children: [
+                                                    Text(device.deviceName,style: themeData.textTheme.headlineSmall,),
+                                                    Text(device.modelName, style: const TextStyle(fontWeight: FontWeight.normal, color: Colors.black54)),
+                                                  ],
+                                                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                )
                                             ),
                                             DataCell(
                                                 SelectableText(device.deviceId, style: TextStyle(color: themeData.primaryColor))
