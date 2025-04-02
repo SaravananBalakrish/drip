@@ -93,7 +93,8 @@ class _ConnectionState extends State<Connection> {
                         getAvailableDeviceCategory(),
                         const SizedBox(height: 8,),
                         getModelBySelectedCategory(),
-                        const SizedBox(height: 10,),
+                        const SizedBox(height: 5,),
+                        Text(selectedDevice.modelName),
                         // if(selectedDevice.categoryId == 4)
                         //   WeatherGridListTile( configPvd: widget.configPvd, device: selectedDevice)
                         SingleChildScrollView(
@@ -166,6 +167,7 @@ class _ConnectionState extends State<Connection> {
                           ),
                         ),
                         const SizedBox(height: 20,),
+                        Center(child: getSelectionCategory()),
                         if(widget.configPvd.selectedSelectionMode == SelectionMode.auto)
                           ...getAutoSelection(selectedDevice)
                         else
@@ -185,6 +187,35 @@ class _ConnectionState extends State<Connection> {
     );
   }
 
+  Widget getSelectionCategory(){
+    return SegmentedButton<SelectionMode>(
+      style: ButtonStyle(
+          shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)))
+      ),
+      segments: [
+        getButtonSegment(SelectionMode.auto, "Automatic"),
+        getButtonSegment(SelectionMode.manual, "Manual"),
+      ],
+      selected: {widget.configPvd.selectedSelectionMode},
+      onSelectionChanged: (Set<SelectionMode> newSelection) {
+        setState(() {
+          widget.configPvd.selectedSelectionMode = newSelection.first;
+        });
+      },
+    );
+  }
+
+  ButtonSegment<SelectionMode> getButtonSegment(SelectionMode value, String title){
+    return ButtonSegment<SelectionMode>(
+        value: value,
+        label: Container(
+          width: 100,
+          padding: const EdgeInsets.all(15.0),
+          child: Text(title, style: const TextStyle(fontSize: 14),),
+        )
+    );
+  }
+
   List<Widget> getManualSelection(DeviceModel selectedDevice){
     return [
       const Text('Select Object To Connect', style: AppProperties.normalBlackBoldTextStyle,),
@@ -197,11 +228,11 @@ class _ConnectionState extends State<Connection> {
           physics: const NeverScrollableScrollPhysics(),
         ),
         children: widget.configPvd.listOfGeneratedObject
-            .where((object) => object.type == widget.configPvd.selectedType
-            && selectedDevice.connectingObjectId.contains(object.objectId)
+            .where((object) => selectedDevice.connectingObjectId.contains(object.objectId)
             && object.controllerId == null || (object.controllerId == selectedDevice.controllerId && object.connectionNo == widget.configPvd.selectedConnectionNo))
-            .toList()
+            .toList().where((object) => object.type == widget.configPvd.selectedType)
             .map((object){
+              print("object name : ${object.name}  type : ${object.type} widget.configPvd.selectedType : ${widget.configPvd.selectedType}");
           bool isSelected = object.controllerId == selectedDevice.controllerId
               && object.type == widget.configPvd.selectedType
               && object.connectionNo == widget.configPvd.selectedConnectionNo;

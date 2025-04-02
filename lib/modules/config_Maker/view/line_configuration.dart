@@ -134,11 +134,18 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                     if(availability(42))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.powerSupply], parameterType: LineParameter.powerSupply, objectId: 42, objectName: 'Power Supply', validateAllLine: true, singleSelection: true),
                                     if(availability(23))
-                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureSwitch], parameterType: LineParameter.pressureSwitch, objectId: 23, objectName: 'Power Switch', validateAllLine: true, singleSelection: true),
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureSwitch], parameterType: LineParameter.pressureSwitch, objectId: 23, objectName: 'Pressure Switch', validateAllLine: true, singleSelection: true,),
                                     if(availability(24))
-                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureIn], parameterType: LineParameter.pressureIn, objectId: 24, objectName: 'Pressure In', validateAllLine: true, singleSelection: true, listOfObject: widget.configPvd.listOfGeneratedObject.where((object) => (object.objectId == 24 && !widget.configPvd.pump.any((pump) => [pump.pressureIn,pump.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureOut)).toList()),
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureIn], parameterType: LineParameter.pressureIn, objectId: 24, objectName: 'Pressure In', validateAllLine: true, singleSelection: true,
+                                          listOfObject: widget.configPvd.listOfGeneratedObject
+                                              .where((object) => (object.objectId == 24 && !widget.configPvd.pump.any((pump) => [pump.pressureIn,pump.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureOut))
+                                              .where((object) => (!widget.configPvd.filtration.any((filterSite) => [filterSite.pressureIn,filterSite.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureOut))
+                                              .toList()),
                                     if(availability(24))
-                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureOut], parameterType: LineParameter.pressureOut, objectId: 24, objectName: 'Pressure Out', validateAllLine: true, singleSelection: true, listOfObject: widget.configPvd.listOfGeneratedObject.where((object) => (object.objectId == 24 && !widget.configPvd.pump.any((pump) => [pump.pressureIn,pump.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureIn)).toList()),
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureOut], parameterType: LineParameter.pressureOut, objectId: 24, objectName: 'Pressure Out', validateAllLine: true, singleSelection: true,
+                                          listOfObject: widget.configPvd.listOfGeneratedObject.where((object) => (object.objectId == 24 && !widget.configPvd.pump.any((pump) => [pump.pressureIn,pump.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureIn))
+                                              .where((object) => (!widget.configPvd.filtration.any((filterSite) => [filterSite.pressureIn,filterSite.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureOut))
+                                              .toList()),
                                     if(availability(3))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.centralFertilization], parameterType: LineParameter.centralFertilization, objectId: 3, objectName: 'Central Fertilization', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.fertilization.where((site) => (site.siteMode == 1)).toList().map((site) => site.commonDetails).toList()),
                                     if(availability(3))
@@ -147,14 +154,6 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.centralFiltration], parameterType: LineParameter.centralFiltration, objectId: 4, objectName: 'Central Filtration', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.filtration.where((site) => (site.siteMode == 1)).toList().map((site) => site.commonDetails).toList()),
                                     if(availability(4))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.localFiltration], parameterType: LineParameter.localFiltration, objectId: 4, objectName: 'Local Filtration', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.filtration.where((site) => (site.siteMode == 2)).toList().map((site) => site.commonDetails).toList()),
-                                    if(availability(3))
-                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.centralFertilization], parameterType: LineParameter.centralFertilization, objectId: 3, objectName: 'Central Fertilization', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.fertilization.cast<FertilizationModel>().where((site) => (site.siteMode == 1)).toList().map((site) => site.commonDetails).toList()),
-                                    if(availability(3))
-                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.localFertilization], parameterType: LineParameter.localFertilization, objectId: 3, objectName: 'Local Fertilization', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.fertilization.cast<FertilizationModel>().where((site) => (site.siteMode == 2)).toList().map((site) => site.commonDetails).toList()),
-                                    if(availability(4))
-                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.centralFiltration], parameterType: LineParameter.centralFiltration, objectId: 4, objectName: 'Central Filtration', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.filtration.cast<FiltrationModel>().where((site) => (site.siteMode == 1)).toList().map((site) => site.commonDetails).toList()),
-                                    if(availability(4))
-                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.localFiltration], parameterType: LineParameter.localFiltration, objectId: 4, objectName: 'Local Filtration', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.filtration.cast<FiltrationModel>().where((site) => (site.siteMode == 2)).toList().map((site) => site.commonDetails).toList()),
                                   ],
                                 ),
                               ),
@@ -453,6 +452,11 @@ class _LineConfigurationState extends State<LineConfiguration> {
     bool singleSelection = false,
     List<DeviceObjectModel>? listOfObject
   }){
+    if(listOfObject != null){
+      if(listOfObject.isEmpty){
+        return Container();
+      }
+    }
     return InkWell(
       onTap: (){
         setState(() {
@@ -541,7 +545,18 @@ class _LineConfigurationState extends State<LineConfiguration> {
             : parameter == LineParameter.soilTemperature
             ? line.soilTemperature
             : parameter == LineParameter.humidity
-            ? line.humidity : line.co2;
+            ? line.humidity
+            : parameter == LineParameter.waterMeter
+            ? [line.waterMeter]
+            : parameter == LineParameter.powerSupply
+            ? [line.powerSupply]
+            : parameter == LineParameter.pressureSwitch
+            ? [line.pressureSwitch]
+            : parameter == LineParameter.pressureIn
+            ? [line.pressureIn]
+            : parameter == LineParameter.pressureOut
+            ? [line.pressureOut]
+            : line.co2;
         assigned.addAll(lineParameter);
       }
     }

@@ -234,7 +234,8 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
         "306" : fertilizerSitePayload,
         "307" : levelSensorPayload,
         "308" : normalCriticalPayload,
-        "309" : pumpPayload
+        "309" : pumpPayload,
+        "310" : filterPayload,
       }
     };
     return hardwarePayload;
