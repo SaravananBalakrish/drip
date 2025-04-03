@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-
 import '../Constants/data_convertion.dart';
 import '../Models/Weather_model.dart';
 import '../Models/customer/site_model.dart';
@@ -93,6 +92,7 @@ class MqttPayloadProvider with ChangeNotifier {
   List<String> nodeLiveMessage = [];
   List<String> outputStatusPayload = [];
   List<String> pumpPayload = [];
+  List<String> filterPayload = [];
   List<String> currentSchedule = [];
   List<String> nextSchedule = [];
   List<String> scheduledProgram = [];
@@ -484,9 +484,11 @@ class MqttPayloadProvider with ChangeNotifier {
         liveDateAndTime = '${data['cD']} ${data['cT']}';
         updateLastCommunication(liveDateAndTime);
         wifiStrength = data['cM']['WifiStrength'];
+        powerSupply = data['cM']['PowerSupply'];
         updateNodeLiveMessage(data['cM']['2401'].split(";"));
         updateOutputStatusPayload(data['cM']['2402'].split(";"));
         updatePumpStatusPayload(data['cM']['2404'].split(";"));
+        updateFilterStatusPayload(data['cM']['2406'].split(";"));
         updateLineLiveMessage(data['cM']['2405'].split(";"));
         updateCurrentProgram(data['cM']['2408'].split(";"));
         updateNextProgram(data['cM']['2409'].split(";"));
@@ -660,6 +662,12 @@ class MqttPayloadProvider with ChangeNotifier {
   void updatePumpStatusPayload(List<String> message) {
     pumpPayload = message;
   }
+
+  void updateFilterStatusPayload(List<String> message) {
+    filterPayload = message;
+  }
+
+
 
   void updateCurrentProgram(List<String> program) {
     currentSchedule = program;
