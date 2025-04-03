@@ -126,7 +126,7 @@ class DealerDefinitionInConfigState extends State<DealerDefinitionInConfig> {
                     Map<String, Object> body = {
                       "userId": widget.customerId,
                       "controllerId": widget.controllerId,
-                      "dealerDefinition": sendData,
+                      "dealerDefinition": data.dealerDefinition,
                       "createUser": widget.userId
                     };
                     var getUserDetails = await repository.createdealerDefinition(body);

@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/program_library.dart';
-import 'package:oro_drip_irrigation/modules/ScheduleView/view/schedule_view_screen.dart';
-import '../Screens/planning/google_map_showlist.dart';
+import '../Screens/planning/test.dart';
 import '../flavors.dart';
-import '../modules/config_Maker/view/config_base_page.dart';
-import '../modules/constant/view/constant_base_page.dart';
 import '../utils/Theme/smart_comm_theme.dart';
 import '../utils/routes.dart';
 import '../utils/shared_preferences_helper.dart';
 import '../utils/Theme/oro_theme.dart';
-import '../views/customer/program_schedule.dart';
 import '../views/login_screen.dart';
 import '../views/screen_controller.dart';
 import '../views/splash_screen.dart';
@@ -57,10 +52,9 @@ Widget navigateToInitialScreen(String route) {
       // return ProgramLibraryScreenNew(userId: 4, controllerId: 1, deviceId: '2CCF674C0F8A', fromDealer: false, customerId: 4,);
       return const LoginScreen();
     case Routes.dashboard:
-      // return const ConfigBasePage(masterData: {});
-      // return ScheduleViewScreen(deviceId: "2CCF674C0F8A", userId: 4, controllerId: 1, customerId: 4, groupId: 1);
-      // return ProgramLibraryScreenNew(userId: 4, controllerId: 1, deviceId: '2CCF674C0F8A', fromDealer: false, customerId: 4,);
-     return const ScreenController();
+       // return MyGifPage();
+       // return GroupListScreen(userId: 8, controllerId: 23, deviceId: '2CCF6773D07D',);
+      return const ScreenController();
 
     default:
       return const SplashScreen();
