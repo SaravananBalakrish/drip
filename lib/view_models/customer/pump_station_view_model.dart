@@ -147,8 +147,26 @@ class PumpStationViewModel extends ChangeNotifier {
   void updateFilterStatus(List<FilterSite> mvFilterSite, List<dynamic> filterStatus, List<dynamic> filterPayload) {
 
     print('kamaraj');
-    for (var filters in mvFilterSite) {
-      for (var filter in filters.filters) {
+    for (var filterSite in mvFilterSite) {
+
+      var matchedEntry = filterPayload.firstWhere(
+            (entry) => entry.split(',')[0] == filterSite.sNo.toString(),
+        orElse: () => '',
+      );
+
+      List<String> filterData = matchedEntry.split(',');
+      if(filterData[1]!='0' && filterData[1]!='-1' && filterData[1]!='-2'){
+        filterSite.filters[int.parse(filterData[1])-1].onDelayLeft = filterData[2];
+      }
+
+      int? status = getStatus(filterStatus, filterSite.filters[int.parse(filterData[1])-1].sNo);
+      if (status != null) {
+        filterSite.filters[int.parse(filterData[1])-1].status = status;
+      } else {
+        print("Serial Number ${filterSite.filters[int.parse(filterData[1])-1].sNo} not found");
+      }
+
+      /*for (var filter in filterSite.filters) {
 
         var matchedEntry = filterPayload.firstWhere(
               (entry) => entry.split(',')[0] == filter.sNo.toString(),
@@ -173,7 +191,7 @@ class PumpStationViewModel extends ChangeNotifier {
         } else {
           print("Serial Number ${filter.sNo} not found");
         }
-      }
+      }*/
     }
   }
 

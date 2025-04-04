@@ -75,7 +75,7 @@ class PumpStation extends StatelessWidget {
                     ):
                     Column(
                       children: [
-                        vm.grandTotal > 17 ?
+                        vm.grandTotal*80 > MediaQuery.sizeOf(context).width ?
                         ScrollConfiguration(
                           behavior: const ScrollBehavior(),
                           child: SingleChildScrollView(
@@ -87,7 +87,6 @@ class PumpStation extends StatelessWidget {
                         DisplayIrrigationLine(lineData: vm.mvIrrLineData, pumpStationWith: 0, currentLineName: currentLineName,),
                       ],
                     ),
-
                   ],
                 ),
               ):
@@ -1636,6 +1635,7 @@ class PumpStation extends StatelessWidget {
                                       height: 70,
                                       child: AppConstants.getAsset('filter', filterSite[i].filters[flIndex].status,''),
                                     ),
+
                                     filterSite[i].filters[flIndex].onDelayLeft != '00:00:00' &&
                                         Formatters().isValidTimeFormat(filterSite[i].filters[flIndex].onDelayLeft)?
                                     Positioned(
@@ -1655,7 +1655,7 @@ class PumpStation extends StatelessWidget {
                                               Consumer<DurationNotifierPump>(
                                                 builder: (context, durationNotifier, _) {
                                                   return Center(
-                                                    child: Text(filterSite[i].filters[flIndex].onDelayLeft,
+                                                    child: Text(durationNotifier.onDelayLeft,
                                                       style: const TextStyle(
                                                         color: Colors.black,
                                                         fontSize: 10,

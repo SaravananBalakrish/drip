@@ -88,7 +88,7 @@ class MobileScreenController extends StatelessWidget {
                     ),
                     if (vm.unreadAlarmCount > 0)
                       Positioned(
-                        right: 10,
+                        right: 5,
                         top: 10,
                         child: Container(
                           padding: const EdgeInsets.all(4),
@@ -113,54 +113,7 @@ class MobileScreenController extends StatelessWidget {
                       ),
                   ],
                 ),
-                PopupMenuButton<String>(
-                  onSelected: (String value) {
-                    switch (value) {
-                      case 'app info':
-                        //vm.onSettingsClicked();
-                        break;
-                      case 'profile':
-                        //vm.onHelpClicked();
-                        break;
-                      case 'logout':
-                        //vm.onLogoutClicked();
-                        break;
-                    }
-                  },
-                  icon: const Icon(Icons.more_vert, color: Colors.white), // 3-dot menu icon
-                  itemBuilder: (BuildContext context) => [
-                    const PopupMenuItem<String>(
-                      value: 'app info',
-                      child: Row(
-                        children: [
-                          Icon(Icons.info_outline, color: Colors.black54),
-                          SizedBox(width: 8),
-                          Text('Settings'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'profile',
-                      child: Row(
-                        children: [
-                          Icon(Icons.person_pin_outlined, color: Colors.black54),
-                          SizedBox(width: 8),
-                          Text('Profile'),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem<String>(
-                      value: 'logout',
-                      child: Row(
-                        children: [
-                          Icon(Icons.exit_to_app, color: Colors.red),
-                          SizedBox(width: 8),
-                          Text('Logout', style: TextStyle(color: Colors.red)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                const SizedBox(width: 16),
               ],
               bottom: PreferredSize(
                 preferredSize: const Size.fromHeight(50),
@@ -304,13 +257,140 @@ class MobileScreenController extends StatelessWidget {
                 ),
               ),
             ),
+            drawer: Drawer(
+              shape: const RoundedRectangleBorder(),
+              surfaceTintColor: Colors.white,
+              child: Column(
+                children: [
+                  DrawerHeader(
+                    decoration: BoxDecoration(color: Theme.of(context).primaryColor),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                Text(customerName, style: const TextStyle(color: Colors.white)),
+                                Text(mobileNo, style: const TextStyle(color: Colors.white, fontSize: 14)),
+                                Text(emailId, style: const TextStyle(color: Colors.white, fontSize: 14)),
+                                const SizedBox(height: 20),
+                                const Text("Version 1.0.0", style: TextStyle(color: Colors.white54)),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 75,
+                            height: 75,
+                            child: CircleAvatar(),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.account_circle_outlined, color: Theme.of(context).primaryColor),
+                    title: const Text("Profile", style: TextStyle(fontWeight: FontWeight.bold)),
+                    trailing: const Icon(Icons.arrow_forward_rounded),
+                    onTap: () {},
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40, right: 25),
+                    child: Divider(height: 0, color: Colors.grey.shade300),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.info_outline, color: Theme.of(context).primaryColor),
+                    title: const Text("App Info", style: TextStyle(fontWeight: FontWeight.bold)),
+                    trailing: const Icon(Icons.arrow_forward_rounded),
+                    onTap: () {},
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40, right: 25),
+                    child: Divider(height: 0, color: Colors.grey.shade300),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.help_outline, color: Theme.of(context).primaryColor),
+                    title: const Text("Help", style: TextStyle(fontWeight: FontWeight.bold)),
+                    trailing: const Icon(Icons.arrow_forward_rounded),
+                    onTap: () {},
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40, right: 25),
+                    child: Divider(height: 0, color: Colors.grey.shade300),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.feedback_outlined, color: Theme.of(context).primaryColor),
+                    title: const Text("Send Feedback", style: TextStyle(fontWeight: FontWeight.bold)),
+                    trailing: const Icon(Icons.arrow_forward_rounded),
+                    onTap: () {},
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40, right: 25),
+                    child: Divider(height: 0, color: Colors.grey.shade300),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.support_agent_sharp, color: Theme.of(context).primaryColor),
+                    title: const Text("Service Request", style: TextStyle(fontWeight: FontWeight.bold)),
+                    trailing: const Icon(Icons.arrow_forward_rounded),
+                    onTap: () {},
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40, right: 25),
+                    child: Divider(height: 0, color: Colors.grey.shade300),
+                  ),
+                  ListTile(
+                    leading: Icon(Icons.devices, color: Theme.of(context).primaryColor),
+                    title: const Text("All my devices", style: TextStyle(fontWeight: FontWeight.bold)),
+                    trailing: const Icon(Icons.arrow_forward_rounded),
+                    onTap: () {},
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 40, right: 25),
+                    child: Divider(height: 0, color: Colors.grey.shade300),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(left: 16, top: 16, right: 16),
+                    child: TextButton.icon(
+                      onPressed: () {},
+                      icon: const Icon(Icons.logout, color: Colors.red),
+                      label: const Text("Logout", style: TextStyle(color: Colors.red, fontSize: 17)),
+                      style: TextButton.styleFrom(
+                        alignment: Alignment.centerLeft,
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                      ),
+                    ),
+                  ),
+
+                  const Spacer(), // Pushes the version/logo to the bottom
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 60,
+                          child: Image.asset('assets/png/company_logo.png'),
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
             floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
             bottomNavigationBar: BottomNavigationBar(
+              backgroundColor: Colors.white,
+              type: BottomNavigationBarType.fixed,
+              elevation: 10,
+              selectedFontSize: 14,
+              unselectedFontSize: 12,
               currentIndex: vm.selectedIndex,
               onTap: vm.onItemTapped,
               selectedItemColor: Theme.of(context).primaryColorLight,
               unselectedItemColor: Colors.grey,
-              type: BottomNavigationBarType.fixed,
               items: const [
                 BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
                 BottomNavigationBarItem(icon: Icon(Icons.list), label: "Scheduled Program"),
@@ -479,6 +559,7 @@ class MobileScreenController extends StatelessWidget {
                 ],
               ),
             ),
+
           );
         
         },
