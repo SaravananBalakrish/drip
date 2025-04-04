@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/config_Maker/view/config_base_page.dart';
-import '../Screens/planning/test.dart';
 import '../flavors.dart';
 import '../utils/Theme/smart_comm_theme.dart';
 import '../utils/routes.dart';
