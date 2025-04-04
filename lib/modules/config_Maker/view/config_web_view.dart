@@ -541,7 +541,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
   List<Widget> getSideNavigationTab(screenWidth){
     return [
       for(var i in ConfigMakerTabs.values)
-        if(configPvd.masterData['categoryId'] != 2 || (![ConfigMakerTabs.deviceList].contains(i)))
+        if(validateTab(i))
           CustomSideTab(
             width: screenWidth  > webBreakPoint ? sideNavigationTabWidth : sideNavigationTabBreakPointWidth,
             imagePath: '${AppConstants.svgObjectPath}${getTabImage(i)}.svg',
@@ -557,6 +557,22 @@ class _ConfigWebViewState extends State<ConfigWebView> {
             },
           )
     ];
+  }
+
+  bool validateTab(ConfigMakerTabs tab){
+    bool display = false;
+    if(AppConstants.pumpWithValveModelList.contains(configPvd.masterData['modelId'])){
+      if(tab.name == ConfigMakerTabs.productLimit.name){
+        display = true;
+      }
+    }else if(AppConstants.pumpModelList.contains(configPvd.masterData['modelId'])){
+      if(tab.name != ConfigMakerTabs.deviceList.name){
+        display = true;
+      }
+    }else{
+      display = true;
+    }
+    return display;
   }
 
   String getTabImage(ConfigMakerTabs configMakerTabs) {
