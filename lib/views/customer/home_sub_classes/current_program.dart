@@ -211,11 +211,8 @@ class CurrentProgram extends StatelessWidget {
                                     SizedBox(height: 6),
                                     Text('Current Zone', style: TextStyle(color: Colors.black54)),
                                     SizedBox(height: 3),
-                                    Text('Zone Name', style: TextStyle(color: Colors.black54)),
-                                    SizedBox(height: 3),
-                                    Text('RTC', style: TextStyle(color: Colors.black54)),
-                                    SizedBox(height: 3),
-                                    Text('Cyclic', style: TextStyle(color: Colors.black54)),
+
+                                    Text('RTC & Cyclic', style: TextStyle(color: Colors.black54)),
                                     SizedBox(height: 3),
                                     Text('Start Time', style: TextStyle(color: Colors.black54)),
                                   ],
@@ -233,10 +230,6 @@ class CurrentProgram extends StatelessWidget {
                                     Text(':'),
                                     SizedBox(height: 3),
                                     Text(':'),
-                                    SizedBox(height: 3),
-                                    Text(':'),
-                                    SizedBox(height: 3),
-                                    Text(':'),
                                   ],
                                 ),
                               ),
@@ -246,17 +239,10 @@ class CurrentProgram extends StatelessWidget {
                                   children: [
                                     Text('${getProgramNameById(int.parse(values[0]))} - ${getContentByCode(int.parse(values[17]))}'),
                                     const SizedBox(height: 6),
-                                    Text('${values[10]}/${values[9]}'),
+                                    Text('${values[10]}/${values[9]} - ${getProgramNameById(int.parse(values[0])) == 'StandAlone - Manual'? '--'
+                                        : getSequenceName(int.parse(values[0]), values[1]) ?? '--'}'),
                                     const SizedBox(height: 3),
-                                    Text(
-                                      getProgramNameById(int.parse(values[0])) == 'StandAlone - Manual'
-                                          ? '--'
-                                          : getSequenceName(int.parse(values[0]), values[1]) ?? '--',
-                                    ),
-                                    const SizedBox(height: 3),
-                                    Text(formatRtcValues(values[6], values[5])),
-                                    const SizedBox(height: 3),
-                                    Text(formatRtcValues(values[8],values[7])),
+                                    Text('${formatRtcValues(values[6], values[5])} - ${formatRtcValues(values[8],values[7])}'),
                                     const SizedBox(height: 3),
                                     Text(convert24HourTo12Hour(values[11])),
                                   ], // Use values

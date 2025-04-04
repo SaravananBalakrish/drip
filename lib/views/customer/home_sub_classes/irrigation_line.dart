@@ -54,7 +54,7 @@ class DisplayIrrigationLine extends StatelessWidget {
 
           int crossAxisCount = (screenWidth / 105).floor().clamp(1, double.infinity).toInt();
           int rowCount = (valveWidgets.length / crossAxisCount).ceil();
-          double itemHeight = 72;
+          double itemHeight = 75;
           double gridHeight = rowCount * (itemHeight + 5);
 
 
