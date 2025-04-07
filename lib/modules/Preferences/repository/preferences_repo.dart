@@ -27,4 +27,8 @@ class PreferenceRepository {
   Future<http.Response> checkPassword(body) async {
     return await apiService.postRequest('/user/check', body);
   }
+
+  Future<http.Response> getUserPreferenceValveSetting(body) async {
+    return await apiService.postRequest('/user/preference/valveSetting/get', body);
+  }
 }

@@ -532,7 +532,7 @@ class MobileScreenController extends StatelessWidget {
                       ),
                     ),
                   ):
-                  powerSupply == 0? Container(
+                  (powerSupply == 0 && vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1)? Container(
                     height: 20.0,
                     decoration: BoxDecoration(
                       color: Colors.red.shade300,

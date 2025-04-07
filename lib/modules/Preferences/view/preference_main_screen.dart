@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
+import 'package:oro_drip_irrigation/modules/Preferences/view/valve_settings.dart';
 import 'package:oro_drip_irrigation/modules/Preferences/view/view_config.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
@@ -228,9 +229,11 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     if(preferenceProvider.commonPumpSettings != null && preferenceProvider.commonPumpSettings!.isNotEmpty) {
       if(oroPumpList.isEmpty) {
         for(var i = 0; i < preferenceProvider.commonPumpSettings!.length; i++){
+          print("commonPumpSettings device id: ${preferenceProvider.commonPumpSettings![i].deviceId}");
           oroPumpList.add(preferenceProvider.commonPumpSettings![i].deviceId);
         }
         selectedOroPumpList = oroPumpList;
+        print("selectedOroPumpList initiallhy ::$selectedOroPumpList");
       }
     }
     if(preferenceProvider.generalData != null && preferenceProvider.commonPumpSettings != null){
@@ -256,7 +259,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                     segmentTitles: const {
                                       0: 'Common setting',
                                       1: 'Individual setting',
-                                      2: 'Calibration'
+                                      2: 'Calibration',
+                                      // 3: "Valve setting"
                                     },
                                     groupValue: selectedSetting,
                                     onChanged: (value) {
@@ -365,8 +369,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                       constraints: constraints,
                                       pumpIndex: pumpSettingIndex
                                   )
-                              // for(var index = 0; index < (selectedSetting == 0 ? preferenceProvider.commonPumpSettings!.length : preferenceProvider.individualPumpSetting!.length); index++)
-                              //   Text("${index+1}")
+                              else if(selectedSetting == 3)
+                                  const ValveSettings()
                             ],
                           )
                       ),
@@ -542,12 +546,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                   } else {
                     List common = preferenceProvider.commonPumpSettings!.where((element) =>
                         element.settingList.any((e) => e.changed == true)).toList().map((e) =>e.deviceId).toList();
-                    List individual = preferenceProvider.commonPumpSettings!
-                        .where((element) => element.settingList.any((e) => e.changed == true))
-                        .where((ele) => preferenceProvider.individualPumpSetting!
-                        .any((element) => element.controllerId == ele.controllerId))
-                        .map((e) => e.deviceId)
-                        .toList();
+                    List individual = preferenceProvider.individualPumpSetting!.where((element) =>
+                        element.settingList.any((e) => e.changed == true)).toList().map((e) =>e.deviceId).toList();;
                     if(preferenceProvider.commonPumpSettings!.any((element) => element.settingList.any((e) => e.changed == true)) || preferenceProvider.individualPumpSetting!.any((element) => element.settingList.any((e) => e.changed == true))) {
                       selectedOroPumpList.clear();
                       if(selectedOroPumpList.isEmpty) {
@@ -626,7 +626,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                       CommonPumpSetting? matchingCommonPump;
                       try {
                         matchingCommonPump = preferenceProvider.commonPumpSettings!
-                            .firstWhere((common) => common.controllerId == element.controllerId);
+                            .firstWhere((common) => common.deviceId == element.deviceId);
                       } catch (e) {
                         matchingCommonPump = null;
                       }
@@ -646,7 +646,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     );
   }
 
-  Widget buildSettingsCategory({required BuildContext context, required List settingList, required BoxConstraints constraints, required int pumpIndex}) {
+  Widget buildSettingsCategory({required BuildContext context, required List<SettingList> settingList, required BoxConstraints constraints, required int pumpIndex}) {
     try {
       if(viewConfig) {
         return ViewConfig(
@@ -853,14 +853,14 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         Column(
           children: [
             for (int index = 0; index < preferenceProvider.individualPumpSetting!
-                .where((e) => e.controllerId == preferenceProvider.commonPumpSettings![pumpIndex].controllerId).length; index++)
+                .where((e) => e.deviceId == preferenceProvider.commonPumpSettings![pumpIndex].deviceId).length; index++)
               SwitchListTile(
                   secondary: const SizedBox(
                     width: 40,
                     height: 40,
                   ),
                   title: Text(preferenceProvider.individualPumpSetting!
-                      .where((e) => e.controllerId == preferenceProvider.commonPumpSettings![pumpIndex].controllerId)
+                      .where((e) => e.deviceId == preferenceProvider.commonPumpSettings![pumpIndex].deviceId)
                       .elementAt(index)
                       .name),
                   value: settingList[categoryIndex].setting[settingIndex].value[index],
@@ -956,7 +956,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     return settingList[categoryIndex].setting[settingIndex].value;
   }
 
-  void onChangeValue(int categoryIndex, int settingIndex, List settingList, bool newValue) {
+  void onChangeValue(int categoryIndex, int settingIndex, List settingList, newValue) {
     setState(() {
       if(settingList[categoryIndex].type == 206) {
         if (settingList[categoryIndex].setting[settingIndex].serialNumber == 15 ||
@@ -1231,12 +1231,12 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         : getPayload(isToGem: isToGem, sendAll: true).split("?")[0].split(';')
         : payloadParts;
 
+    print('getPayload :: ${getPayload(isToGem: isToGem, sendAll: true).split("?")[0].split(';')}');
     try {
-      if(preferenceProvider.passwordValidationCode != 200 && isToGem) {
+      /*if(preferenceProvider.passwordValidationCode != 200 && isToGem) {
         mqttService.topicToPublishAndItsMessage(jsonEncode(payloadForSlave), '${Environment.mqttPublishTopic}/${widget.deviceId}');
-      }
+      }*/
       bool isLevelSettingChanged = preferenceProvider.individualPumpSetting!.any((pump) => pump.settingList.any((setting) => setting.type == 207 && setting.changed));
-
       bool isAnyOtherChanged = preferenceProvider.commonPumpSettings!.any((pump) => pump.settingList.any((setting) => setting.changed));
 
       if([1].contains(preferenceProvider.generalData!.categoryId)) {
@@ -1271,7 +1271,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
               if(key.contains("200")) preferenceProvider.commonPumpSettings![oroPumpIndex].settingList[1].controllerReadStatus = "0";
               int pumpIndex = 0;
               for (var individualPump in preferenceProvider.individualPumpSetting ?? []) {
-                if (preferenceProvider.commonPumpSettings![oroPumpIndex].controllerId == individualPump.controllerId) {
+                if (preferenceProvider.commonPumpSettings![oroPumpIndex].deviceId == individualPump.deviceId) {
                   if(individualPump.output != null) {
                     pumpIndex = individualPump.output;
                   } else {
@@ -1331,6 +1331,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
           'calibrationSetting': preferenceProvider.calibrationSetting?.map((item) => item.toJson()).toList(),
           'commonPumps': preferenceProvider.commonPumpSettings?.map((item) => item.toJson()).toList(),
           'hardware': payloadForSlave,
+          'valveSetting': preferenceProvider.valveSettings?.setting.map((e) => e.toJson()).toList() ?? [],
           'controllerReadStatus': preferenceProvider.generalData!.controllerReadStatus
         });
       });
@@ -1367,13 +1368,17 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
 
   String getPayload({required bool isToGem, required bool sendAll}) {
     List<String> result = [];
+    print("getPayload in the function :: ${preferenceProvider.individualPumpSetting!.length}");
     for (var commonSetting in preferenceProvider.commonPumpSettings!) {
+      print("getPayload in the function :: ${preferenceProvider.individualPumpSetting!.length}");
       List<String> temp = [];
       int oroPumpSerialNumber = commonSetting.serialNumber;
       String deviceId = commonSetting.deviceId;
       int categoryId = commonSetting.categoryId;
       int interfaceType = commonSetting.interfaceTypeId;
       int referenceNumber = commonSetting.referenceNumber;
+      print("selectedOroPumpList :: $selectedOroPumpList");
+      print("Device id: $deviceId");
       if(selectedOroPumpList.contains(deviceId)) {
         for (var settingCategory in commonSetting.settingList) {
           if (!sendAll ? ([204].contains(settingCategory.type) && settingCategory.changed) : [204].contains(settingCategory.type)) {
@@ -1386,10 +1391,11 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         }
 
         int pumpIndex = 0;
-        for (var individualPump in preferenceProvider.individualPumpSetting ?? []) {
-          // print("individualPump deviceId ==> ${individualPump.deviceId}");
-          // print("commonSetting deviceId ==> ${commonSetting.deviceId}");
-          if (commonSetting.controllerId == individualPump.controllerId) {
+        print("individualPumpSetting :: ${preferenceProvider.individualPumpSetting!.length}");
+        for(var individualPump in preferenceProvider.individualPumpSetting ?? []) {
+          print("individualPump deviceId ==> ${individualPump.deviceId}");
+          print("commonSetting deviceId ==> ${commonSetting.deviceId}");
+          if (commonSetting.deviceId == individualPump.deviceId) {
             List<String> currentConfigList = [];
             List<String> delayConfigList = [];
             List<String> rtcConfigList = [];
@@ -1462,7 +1468,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
 
         int pumpIndex = 0;
         for (var individualPump in preferenceProvider.individualPumpSetting ?? []) {
-          if (commonSetting.controllerId == individualPump.controllerId) {
+          if (commonSetting.deviceId == individualPump.deviceId) {
             List<String> currentConfigList = [];
             List<String> delayConfigList = [];
             List<String> rtcConfigList = [];
@@ -1490,7 +1496,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                   break;
                 case 205:
                   if (!sendAll ? (individualPumpSetting.controllerReadStatus == "0") : true) {
-                    int index = preferenceProvider.individualPumpSetting!.indexWhere((e) => e.controllerId == commonSetting.controllerId);
+                    int index = preferenceProvider.individualPumpSetting!.indexWhere((e) => e.deviceId == commonSetting.deviceId);
                     final payload = jsonEncode({"600-$pumpIndex": jsonEncode({"sentSms": 'scheduleconfig,$pumpIndex,${getSettingValue(individualPumpSetting, controlToOroGem: preferenceProvider.individualPumpSetting![index].controlGem)}'})});
                     scheduleConfigList.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId": payload);
                   }
@@ -1691,128 +1697,138 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       },
     );
   }
+}
 
-  Widget buildCustomListTileWidget({
-    required BuildContext context,
-    required String title,
-    String? subTitle,
-    bool showTrailing = true,
-    required int widgetType,
-    dynamic value,
-    void Function(dynamic newValue)? onValueChange,
-    required Widget leading,
-    bool conditionToShow = true,
-    required bool hidden,
-    bool enabled = true,
-    required List<TextInputFormatter> inputFormatters,
-    required List<String> dataList
-  }) {
-    Widget customWidget;
-    switch(widgetType) {
-      case 1:case 4:
-      customWidget = SizedBox(
-        width: 80,
-        child: TextFormField(
-          key: Key(title),
-          enabled: enabled,
-          initialValue: value is String ? value : "",
-          textAlign: TextAlign.center,
-          keyboardType: TextInputType.number,
-          inputFormatters: inputFormatters,
-          decoration: const InputDecoration(
-            hintText: "000",
-            contentPadding: EdgeInsets.symmetric(vertical: 5),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(8),),
-                borderSide: BorderSide.none
-            ),
-            fillColor: cardColor,
-            filled: true,
-            // errorText: errorText
+Widget buildCustomListTileWidget({
+  required BuildContext context,
+  required String title,
+  String? subTitle,
+  bool showTrailing = true,
+  required int widgetType,
+  dynamic value,
+  void Function(dynamic newValue)? onValueChange,
+  required Widget leading,
+  bool conditionToShow = true,
+  required bool hidden,
+  bool enabled = true,
+  required List<TextInputFormatter> inputFormatters,
+  required List<String> dataList
+}) {
+  Widget customWidget;
+  switch(widgetType) {
+    case 1:case 4:
+    customWidget = SizedBox(
+      width: 80,
+      child: TextFormField(
+        key: Key(title),
+        enabled: enabled,
+        initialValue: value is String ? value : "",
+        textAlign: TextAlign.center,
+        keyboardType: TextInputType.number,
+        inputFormatters: inputFormatters,
+        decoration: const InputDecoration(
+          hintText: "000",
+          contentPadding: EdgeInsets.symmetric(vertical: 5),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8),),
+              borderSide: BorderSide.none
           ),
-          onChanged: (newValue) {
-            onValueChange?.call(newValue);
-          },
+          fillColor: cardColor,
+          filled: true,
+          // errorText: errorText
         ),
-      );
-      break;
-      case 2:
+        onChanged: (newValue) {
+          onValueChange?.call(newValue);
+        },
+      ),
+    );
+    break;
+    case 2:
+     /* if(value.toString().contains(",")) {
+        customWidget = Row(
+          children: [
+            SizedBox(
+              child: CustomNativeTimePicker(
+                initialValue: value.toString().split(",")[0],
+                is24HourMode: true,
+                onChanged: (newValue) {
+                  enabled ? onValueChange?.call(newValue) : null;
+                },
+              ),
+            ),
+            const SizedBox(width: 10,),
+            Switch(
+              value: value.toString().split(",")[1] == '1',
+              onChanged: (newValue) {
+                if(enabled) onValueChange?.call(newValue ? '1' : '0');
+              },
+            ),
+          ],
+        );
+      }else {
         customWidget = Switch(
           value: enabled ? (value != "" ? value : false) ?? false : false,
           onChanged: (newValue) {
             if(enabled) onValueChange?.call(newValue);
           },
         );
-        break;
-      case 3:
-        customWidget = enabled ? CustomNativeTimePicker(
-          initialValue: value is String ? value : "",
-          is24HourMode: true,
-          onChanged: (newValue) {
-            enabled ? onValueChange?.call(newValue) : null;
-          },
-        ) : Text(value,  overflow: TextOverflow.ellipsis,
-          textAlign: TextAlign.right,
-          style: const TextStyle(fontSize: 14),);
-        break;
-    /* case 4:
+      }*/
+      customWidget = Switch(
+        value: enabled ? (value != "" ? value : false) ?? false : false,
+        onChanged: (newValue) {
+          if(enabled) onValueChange?.call(newValue);
+        },
+      );
+      break;
+    case 3:
+      customWidget = enabled ? CustomNativeTimePicker(
+        initialValue: value is String ? value : "00:00:00",
+        is24HourMode: true,
+        onChanged: (newValue) {
+          print("newValue :: $newValue");
+          enabled ? onValueChange?.call(newValue) : null;
+        },
+      ) : Text(value,  overflow: TextOverflow.ellipsis,
+        textAlign: TextAlign.right,
+        style: const TextStyle(fontSize: 14),);
+      break;
+    case 6:
       customWidget = SizedBox(
         width: 80,
-        child: TextFormField(
-          enabled: enabled,
-          initialValue: value is String ? value : "",
-          textAlign: TextAlign.center,
-          decoration: InputDecoration(
-              hintText: "000",
-              contentPadding: const EdgeInsets.symmetric(vertical: 5),
-              border: InputBorder.none,
-              fillColor: cardColor
-            // errorText: errorText
-          ),
-          onChanged: (newValue) {
-            onValueChange?.call(newValue);
-          },
+        child: Text(
+          value ?? "Wait",
+          overflow: TextOverflow.ellipsis,
+          textAlign: TextAlign.right,
+          style: const TextStyle(fontSize: 14),
         ),
       );
-      break;*/
-      case 6:
-        customWidget = SizedBox(
-          width: 80,
-          child: Text(
-            value ?? "Wait",
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.right,
-            style: const TextStyle(fontSize: 14),
-          ),
-        );
-        break;
-      case 7:
-        customWidget = SizedBox(
-          width: 80,
-          child: buildPopUpMenuButton(context: context, dataList: dataList, onSelected: (newValue) {
-            if(enabled) onValueChange?.call(newValue);
-          }, child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 5), decoration: BoxDecoration(color: cardColor, borderRadius: BorderRadius.circular(5)),
-            child: Text(value, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16),),)),
-        );
-        break;
-      default:
-        customWidget = Text('Unsupported Widget Type: $widgetType');
-        break;
-    }
-    return Visibility(
-      visible: !hidden,
-      child: CustomAnimatedSwitcher(
-        condition: conditionToShow,
-        child: ListTile(
-          contentPadding: subTitle != null ? const EdgeInsets.symmetric(horizontal: 10) : const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          horizontalTitleGap: 20,
-          leading: IntrinsicWidth(child: leading),
-          title: Text(title),
-          subtitle: subTitle != null ? Text(subTitle) : null,
-          trailing: showTrailing ? IntrinsicWidth(child: customWidget) : null,
-        ),
-      ),
-    );
+      break;
+    case 7:
+      customWidget = SizedBox(
+        width: 80,
+        child: buildPopUpMenuButton(context: context, dataList: dataList, onSelected: (newValue) {
+          if(enabled) onValueChange?.call(newValue);
+        }, child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 5), decoration: BoxDecoration(color: cardColor, borderRadius: BorderRadius.circular(5)),
+          child: Text(value, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16),),)),
+      );
+      break;
+    default:
+      customWidget = Text('Unsupported Widget Type: $widgetType');
+      break;
   }
+  return Visibility(
+    visible: !hidden,
+    child: CustomAnimatedSwitcher(
+      condition: conditionToShow,
+      child: ListTile(
+        contentPadding: subTitle != null ? const EdgeInsets.symmetric(horizontal: 10) : const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        horizontalTitleGap: 20,
+        leading: IntrinsicWidth(child: leading),
+        title: Text(title),
+        subtitle: subTitle != null ? Text(subTitle) : null,
+        trailing: showTrailing ? IntrinsicWidth(child: customWidget) : null,
+      ),
+    ),
+  );
 }

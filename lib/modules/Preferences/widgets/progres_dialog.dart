@@ -276,13 +276,18 @@ class _PayloadProgressDialogState extends State<PayloadProgressDialog> {
       ),
       actions: [
         FilledButton(
-          onPressed: isAllProcessed ? (isAllSent ? () => Navigator.of(context).pop() : handleRetry) : () {
+          onPressed: () {
             breakLoop = true;
             Navigator.of(context).pop();
           },
-          child: Text(isAllProcessed ? (isAllSent ? "OK" : "Retry") : "Cancel"),
+          child: const Text("Cancel"),
         ),
-        if (!isSending)
+        if (isAllProcessed && !isAllSent)
+          FilledButton(
+            onPressed: handleRetry,
+            child: const Text("Retry"),
+          ),
+        if (!isSending && !isAllProcessed)
           FilledButton(
             onPressed: _processPayloads,
             child: const Text("Send"),

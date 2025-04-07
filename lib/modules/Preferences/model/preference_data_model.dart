@@ -208,7 +208,7 @@ class IndividualPumpSetting {
   String name;
   int pumpType;
   int controllerId;
-  // dynamic deviceId;
+  dynamic deviceId;
   bool controlGem;
   int? output;
   List<SettingList> settingList;
@@ -218,7 +218,7 @@ class IndividualPumpSetting {
     required this.name,
     required this.pumpType,
     required this.controllerId,
-    // required this.deviceId,
+    required this.deviceId,
     required this.controlGem,
     required this.settingList,
     required this.output,
@@ -232,7 +232,7 @@ class IndividualPumpSetting {
         name: json["name"],
         pumpType: json["pumpType"],
         controllerId: json["controllerId"],
-        // deviceId: json["deviceId"],
+        deviceId: json["deviceId"],
         controlGem: json["controlGem"] ?? false,
         settingList: settingsList,
         output: json['connectionNo']
