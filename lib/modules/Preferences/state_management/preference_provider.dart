@@ -47,6 +47,9 @@ class PreferenceProvider extends ChangeNotifier {
   List<SettingList>? defaultCalibration;
   List<SettingList>? get defaultCalibrationData => defaultCalibration;
 
+  SettingList? _valveSettings;
+  SettingList? get valveSettings => _valveSettings;
+
   int passwordValidationCode = 0;
 
   void updateValidationCode() {
@@ -102,6 +105,23 @@ class PreferenceProvider extends ChangeNotifier {
         final result = jsonDecode(response.body);
         try {
           calibrationSetting = List.from(result['data'].map((json) => CommonPumpSetting.fromJson(json)));
+        } catch(error) {
+          print(error);
+        }
+      } else {
+        print("response.body ${response.body}");
+      }
+    } catch(error, stackTrace) {
+      print("Error parsing setting data: $error");
+      print("Stack trace setting data: $stackTrace");
+    }
+    try {
+      final response = await repository.getUserPreferenceValveSetting(userData);
+      print("getUserPreferenceValveSetting :: ${response.body}");
+      if(response.statusCode == 200) {
+        final result = jsonDecode(response.body);
+        try {
+          _valveSettings = SettingList.fromJson(Map<String, dynamic>.from(result['data']));
         } catch(error) {
           print(error);
         }
