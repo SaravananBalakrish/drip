@@ -175,8 +175,9 @@ class MqttService {
       if (acknowledgementPayload != null && acknowledgementPayload!['mC'] == '3600') {
         schedulePayload = Constants.dataConversionForScheduleView(acknowledgementPayload!['cM']['3601']);
       }
-    } catch (e) {
+    } catch (e, stackTrace) {
       debugPrint('Error parsing MQTT payload: $e');
+      debugPrint('StackTrace parsing MQTT payload: $stackTrace');
     }
   }
 
