@@ -398,7 +398,7 @@ class MobileScreenController extends StatelessWidget {
                   child: PopupMenuButton<String>(
                     onSelected: (String value) {
                       switch (value) {
-                        case 'option1':
+                        case 'Node Status':
                           Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -413,8 +413,16 @@ class MobileScreenController extends StatelessWidget {
                             ),
                           );
                           break;
-                        case 'option2':
-                          print("Option 2 selected");
+                        case 'Sent & Received':
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SentAndReceived(
+                                customerId: userId,
+                                controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
+                              ),
+                            ),
+                          );
                           break;
                         case 'option3':
                           print("Option 3 selected");
@@ -426,7 +434,7 @@ class MobileScreenController extends StatelessWidget {
                     icon: const Icon(Icons.menu, color: Colors.white),
                     itemBuilder: (BuildContext context) => [
                       const PopupMenuItem<String>(
-                        value: 'option1',
+                        value: 'Node Status',
                         child: Row(
                           children: [
                             Icon(Icons.format_list_numbered, color: Colors.black54),
@@ -476,7 +484,7 @@ class MobileScreenController extends StatelessWidget {
                         ),
                       ),
                       const PopupMenuItem<String>(
-                        value: 'option6',
+                        value: 'Sent & Received',
                         child: Row(
                           children: [
                             Icon(Icons.question_answer_outlined, color: Colors.black54),
