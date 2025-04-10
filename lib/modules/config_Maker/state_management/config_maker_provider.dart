@@ -888,7 +888,7 @@ class ConfigMakerProvider extends ChangeNotifier{
             'DeviceId' : p1000.deviceId,
             'InterfaceTypeId' : p1000.interfaceTypeId,
             'Payload' : jsonEncode({'700' : jsonEncode(pumpPayload)}),
-            'SomeThing' : '3'
+            'SomeThing' : '4'
           }.entries.map((e) => e.value).join('+')
         }
       };
@@ -1083,7 +1083,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         'payload' : jsonEncode(payload),
         'acknowledgementState' : HardwareAcknowledgementSate.notSent,
         'selected' : true,
-        'checkingCode' : pumpConfigCode,
+        'checkingCode' : '$pumpConfigCode',
         'hardwareType' : HardwareType.pumpWithValve
       });
     }

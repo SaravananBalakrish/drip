@@ -109,10 +109,7 @@ class _ProgramScheduleState extends State<ProgramSchedule> with SingleTickerProv
         return Names(userID: widget.customerID, customerID: widget.customerID, controllerId: widget.controllerID, menuId: 0, imeiNo: widget.imeiNumber, );
       case 67:
         return PreferenceMainScreen(userId: widget.userId, controllerId: widget.controllerID, customerId: widget.customerID, deviceId: widget.imeiNumber, menuId: 0,);
-      // case 68:
-      //   return ConstantInConfig(userId: widget.customerID, deviceId: widget.imeiNumber, customerId: widget.customerID, controllerId: widget.controllerID);
       case 68:
-        // return ConstantBasePage(userData: {'userId' : widget.customerID, 'controllerId' : widget.controllerID, 'deviceId' : widget.imeiNumber});
         return ConstantBasePage(userData: {"userId" : widget.customerID, "controllerId": widget.controllerID, "deviceId":widget.imeiNumber, "modelId":widget.modelId, "deviceName": widget.deviceName,"categoryId":widget.categoryId,"categoryName":widget.categoryName});
     // case 69:
     //   return ConditionScreen(customerId: widget.customerID, controllerId: widget.controllerID, imeiNo: widget.imeiNumber, isProgram: false, serialNumber: 0,);
@@ -139,13 +136,11 @@ class _ProgramScheduleState extends State<ProgramSchedule> with SingleTickerProv
       default:
         return const Center(child: Text('id'));
     }
-
   }
 
 
   @override
   Widget build(BuildContext context) {
-    //var fertSetPvd = Provider.of<FertilizerSetProvider>(context, listen: true);
     return Scaffold(
       backgroundColor: const Color(0xFF03464F),
       body:

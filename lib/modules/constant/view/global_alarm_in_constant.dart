@@ -221,16 +221,21 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
     print("normalCriticalPayload : $normalCriticalPayload");
     var filterPayload = widget.constPvd.getFilterSitePayload();
     print("filterPayload : $filterPayload");
+    bool isGem = AppConstants.gemModelList.contains(widget.constPvd.userData['modelId']);
     var hardwarePayload = {
       "300" : {
         "301" : generalPayload,
-        "302" : mainValvePayload,
+        if(isGem)
+          "302" : mainValvePayload,
         "303" : valvePayload,
         "304" : waterMeterPayload,
         "305" : channelPayload,
-        "306" : fertilizerSitePayload,
-        "307" : levelSensorPayload,
-        "308" : normalCriticalPayload,
+        if(isGem)
+          "306" : fertilizerSitePayload,
+        if(isGem)
+          "307" : levelSensorPayload,
+        if(isGem)
+          "308" : normalCriticalPayload,
         "309" : pumpPayload,
         "310" : filterPayload,
       }

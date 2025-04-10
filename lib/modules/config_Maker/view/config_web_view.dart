@@ -371,7 +371,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                                       }
                                     }
                                   }
-                                  else if(payload['hardwareType'] as HardwareType == HardwareType.pump){
+                                  else if([HardwareType.pump, HardwareType.pumpWithValve].contains(payload['hardwareType'] as HardwareType)){
                                     if(mqttService.acknowledgementPayload != null){
                                       if(validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cC'], payload['deviceId']) && validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cM'], payload['checkingCode'])){
                                         payload['acknowledgementState'] = HardwareAcknowledgementSate.success;

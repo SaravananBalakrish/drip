@@ -466,15 +466,27 @@ class ConstantProvider extends ChangeNotifier{
 
   String getFilterSitePayload(){
     return filterSite.map((site){
+      List<ObjectInConstantModel> filterList = filter.where((filter) {
+        return filter.location == site.sNo;
+      }).toList();
+      String ecoGemFilterSetting =
+          '${filterList.isNotEmpty ? filterList[0].setting[0].value : ''}'
+          ',${filterList.length > 1 ? filterList[1].setting[0].value : ''}';
+
+      bool isGem = AppConstants.gemModelList.contains(userData['modelId']);
+      var siteSno = isGem ? site.sNo : site.sNo.toString().split('.').join(',');
       return [
-        site.sNo,
-        filter.where((filter) {
-          return filter.location == site.sNo;
-        }).map((filter){
-          return filter.setting.map((setting){
-            return payloadValidate(setting.value.value);
-          }).first;
-        }).join('_'),
+        siteSno,
+        //filter setting when gem
+        if(AppConstants.gemModelList.contains(userData['modelId']))
+          filterList.map((filter){
+            return filter.setting.map((setting){
+              return payloadValidate(setting.value.value);
+            }).first;
+          }).join('_'),
+        //filter setting when eco gem
+        if(AppConstants.ecoGemModelList.contains(userData['modelId']))
+          ecoGemFilterSetting,
         ...site.setting.where((setting){
           return AppConstants.gemModelList.contains(userData['modelId']) ?  setting.gemPayload : setting.ecoGemPayload;
         }).map((setting){
