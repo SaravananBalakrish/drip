@@ -17,15 +17,10 @@ class Environment {
     'smartComm' : {
       'apiUrl': 'http://52.172.214.208:5000/api/v1',
       'apiKey': 'prod-api-key',
-      // 'mqttWebUrl': 'ws://13.235.254.21:9001/mqtt',
-      // 'mqttMobileUrl': '13.235.254.21',
       'mqttWebUrl': 'ws://52.172.214.208:9001/mqtt',
       'mqttMobileUrl': '52.172.214.208',
-      // 'publishTopic': 'AppToHardware',
-      // 'subscribeTopic': 'HardwareToApp',
       'publishTopic': 'AppToFirmware',
       'subscribeTopic': 'FirmwareToApp',
-      // 'mqttWebPort': 8083,
       'mqttWebPort': 9001,
       'mqttMobilePort': 1883,
     },
@@ -53,5 +48,4 @@ class Environment {
   static String get mqttSubscribeTopic => config[F.name]?['subscribeTopic'] ?? '';
   static String get mqttPublishTopic => config[F.name]?['publishTopic'] ?? '';
   static String get mqttLogTopic => 'OroGemLog';
-
 }
