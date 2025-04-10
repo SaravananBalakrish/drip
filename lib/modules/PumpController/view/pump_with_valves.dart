@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:popover/popover.dart';
 
+import '../../../Constants/constants.dart';
+import '../model/pump_controller_data_model.dart';
 import '../widget/custom_countdown_timer.dart';
 
 class PumpWithValves extends StatelessWidget {
-  const PumpWithValves({super.key});
+  final PumpValveModel valveData;
+  const PumpWithValves({super.key, required this.valveData});
 
   @override
   Widget build(BuildContext context) {
@@ -53,31 +56,42 @@ class PumpWithValves extends StatelessWidget {
               spacing: 20,
               runSpacing: 20,
               children: [
-                for(int i = 0; i < 10; i++)
+                for(int i = 0; i < valveData.valves.length; i++)
                   Column(
                     children: [
                       Builder(
-                        builder: (valveContext) => InkWell(
-                          onTap: () => _showDetails(i, valveContext),
-                          child: Image.asset(
-                            'assets/png/valve_gray.png',
-                            height: 40,
-                            color: i < 2 ? Colors.grey.shade100 : i > 5 ? Colors.greenAccent : Colors.deepOrange,
-                            colorBlendMode: BlendMode.modulate,
-                          ),
-                        ),
+                        builder: (valveContext) {
+                          final valveItem = valveData.valves['V${i+1}']!;
+                          return InkWell(
+                            onTap: () => _showDetails(i, valveContext),
+                            child: Image.asset(
+                              'assets/png/valve_gray.png',
+                              height: 40,
+                              color: valveItem.status == '1'
+                                  ? Colors.greenAccent
+                                  : valveItem.status == '0'
+                                  ? Colors.grey.shade100
+                                  : valveItem.status == '2'
+                                  ? Colors.redAccent
+                                  : Colors.deepOrange,
+                              // color: i < 2 ? Colors.grey.shade100 : i > 5 ? Colors.greenAccent : Colors.deepOrange,
+                              colorBlendMode: BlendMode.modulate,
+                            ),
+                          );
+                        },
                       ),
                       Text('Valve ${i+1}', style: Theme.of(context).textTheme.titleSmall,),
-                      IntrinsicWidth(
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(4)
-                            ),
-                              padding: const EdgeInsets.symmetric(horizontal: 5),
-                              child: const CountdownTimerWidget(initialSeconds: 30,)
-                          )
-                      )
+                      if(valveData.valves['V${i+1}']!.status == '1')
+                        IntrinsicWidth(
+                            child: Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.grey),
+                                    borderRadius: BorderRadius.circular(4)
+                                ),
+                                padding: const EdgeInsets.symmetric(horizontal: 5),
+                                child: CountdownTimerWidget(initialSeconds: Constants.parseTime(valveData.remainingTime).inSeconds)
+                            )
+                        )
                     ],
                   )
               ],
@@ -113,8 +127,8 @@ class PumpWithValves extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Text('Valve ${i+1}'),
-        Text('Set : 00:00:30'),
-        Text('Actual : 00:00:10')
+        Text('Set : ${valveData.valves['V${i+1}']!.duration}'),
+        // Text('Actual : 00:00:10')
       ],
     );
   }

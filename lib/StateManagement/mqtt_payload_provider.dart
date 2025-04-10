@@ -527,7 +527,7 @@ class MqttPayloadProvider with ChangeNotifier {
         }
         }
 
-           if(data.containsKey("cM") && (data["cM"] as Map).containsKey("6601")){
+           if(data.containsKey("cM") && data["cM"] is! List && (data["cM"] as Map).containsKey("6601")){
               if(ctrllogtimecheck != data['cT']){
                sheduleLog += "\n";
                sheduleLog += data['cM']['6601'];
@@ -535,7 +535,7 @@ class MqttPayloadProvider with ChangeNotifier {
              }
 
            }
-          if(data.containsKey("cM") && (data["cM"] as Map).containsKey("6602")){
+          if(data.containsKey("cM") && data["cM"] is! List && (data["cM"] as Map).containsKey("6602")){
 
             if(ctrllogtimecheck != data['cT']) {
               uardLog += "\n";
@@ -543,7 +543,7 @@ class MqttPayloadProvider with ChangeNotifier {
               ctrllogtimecheck = data['cT'];
             }
           }
-          if(data.containsKey("cM") && (data["cM"] as Map).containsKey("6603")){
+          if(data.containsKey("cM") && data["cM"] is! List && (data["cM"] as Map).containsKey("6603")){
              if(ctrllogtimecheck != data['cT']) {
               uard0Log += "\n";
               uard0Log += data['cM']['6603'];
@@ -551,7 +551,7 @@ class MqttPayloadProvider with ChangeNotifier {
             }
 
           }
-          if(data.containsKey("cM") && (data["cM"] as Map).containsKey("6604")){
+          if(data.containsKey("cM") && data["cM"] is! List && (data["cM"] as Map).containsKey("6604")){
              if(ctrllogtimecheck != data['cT']) {
               uard4Log += "\n";
               uard4Log += data['cM']['6604'];

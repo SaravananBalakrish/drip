@@ -25,7 +25,7 @@ class Environment {
       'subscribeTopic': 'HardwareToApp',
       // 'publishTopic': 'AppToFirmware',
       // 'subscribeTopic': 'FirmwareToApp',
-      'mqttWebPort': 9001,
+      'mqttWebPort': 8083,
       'mqttMobilePort': 1883,
     },
     'oroProduction': {

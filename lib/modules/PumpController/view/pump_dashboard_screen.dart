@@ -307,8 +307,10 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                     const SizedBox(height: 15,),
                     for(var index = 0; index < int.parse(snapshot.data!.numberOfPumps); index++)
                       buildNewPumpDetails(index: index, pumpData: snapshot.data!,),
-                    /*const PumpWithValves(),
-                    const SizedBox(height: 20,),*/
+                    PumpWithValves(valveData: snapshot.data!.pumps.firstWhere(
+                          (pump) => pump is PumpValveModel,
+                    ) as PumpValveModel),
+                    const SizedBox(height: 20,),
                   ],
                 ),
               );

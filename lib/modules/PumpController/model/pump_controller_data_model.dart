@@ -186,8 +186,8 @@ class ValveData {
 
   factory ValveData.fromRaw(String raw) {
     final parts = raw.split(',');
-    final duration = '${parts[0]}:${parts[1]}';
-    final status = parts[2];
+    final duration = parts[0];
+    final status = parts[1];
     return ValveData(duration: duration, status: status);
   }
 
