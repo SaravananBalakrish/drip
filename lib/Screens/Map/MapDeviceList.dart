@@ -1,8 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
+import 'MapAddObject.dart';
 import 'googlemap_model.dart';
 
 class DeviceListScreen extends StatefulWidget {
@@ -11,8 +14,9 @@ class DeviceListScreen extends StatefulWidget {
 }
 
 class _DeviceListScreenState extends State<DeviceListScreen> {
-  // Sample JSON data (from the one you shared)
-  final Map<String, dynamic> jsonString = {
+
+
+   final Map<String, dynamic> jsonString = {
     "code": 200,
     "message": "User object listed successfully",
     "data": {
@@ -586,109 +590,96 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
       }
     }
   };
+  late MqttPayloadProvider mqttPayloadProvider;
 
   MapConfigModel _mapConfigModel = MapConfigModel();
   @override
   void initState() {
     super.initState();
-    _mapConfigModel = MapConfigModel.fromJson(jsonString);
+    mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchData();
+    });
+
   }
 
   Future<void> fetchData() async {
-    try {
-      final Repository repository = Repository(HttpService());
-      var getUserDetails = await repository.getUserFilterBackwasing({
-        "userId": 23, //widget.userId,
-        "controllerId": 8 //widget.controllerId
-      });
-      // final jsonData = jsonDecode(getUserDetails.body);
-      if (getUserDetails.statusCode == 200) {
-        setState(() {
-          var jsonData = jsonDecode(getUserDetails.body);
-          _mapConfigModel = MapConfigModel.fromJson(jsonData);
-        });
-      } else {
-        //_showSnackBar(response.body);
-      }
-    } catch (e, stackTrace) {
-      print(' Error overAll getData => ${e.toString()}');
-      print(' trace overAll getData  => ${stackTrace}');
-    }
+    setState(() {
+      mqttPayloadProvider.updateMapData(jsonString);
+     });
+
   }
 
-  @override
-  Widget build(BuildContext context) {
-    print(
-        "_mapConfigModel.data?.deviceList!.length${_mapConfigModel.data?.deviceList!.length}");
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Device List'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Wrap(
-          spacing: 10.0,
-          runSpacing: 10.0,
-          children: List.generate(
-            _mapConfigModel.data?.deviceList?.length ?? 0,  // Total number of devices
-                (index) {
-              final device = _mapConfigModel.data?.deviceList![index];
-              return Card(
-                margin: const EdgeInsets.all(8.0),
-                elevation: 8,
-                shadowColor: Colors.blue,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: Image.asset('assets/png/map.png'),
-                        onPressed: () {
-                         },
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            '${device?.deviceName}(${device?.connectedObject!.length})',
-                            style: const TextStyle(
-                              fontSize: 18.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8.0),
-                          Text(
-                            'Device ID: ${device?.deviceId}',
-                            style: const TextStyle(
-                              fontSize: 16.0,
-                            ),
-                          ),
-                          Text(
-                            'Model: ${device?.modelName}',
-                            style: const TextStyle(
-                              fontSize: 16.0,
-                            ),
-                          ),
-                          Text(
-                            'Category: ${device?.categoryName}',
-                            style: const TextStyle(
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ],
-                      ),
+   @override
+   Widget build(BuildContext context) {
+     return Consumer<MqttPayloadProvider>(
+       builder: (context, mqttProvider, _) {
+         final deviceList = mqttProvider.mapModelInstance.data?.deviceList;
 
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ),
-    );
-  }
+         if (deviceList == null || deviceList.isEmpty) {
+           return Scaffold(
+             appBar: AppBar(title: const Text('Device List')),
+             body: const Center(child: Text('Map Device list is empty')),
+           );
+         }
+
+         return Scaffold(
+           appBar: AppBar(title: const Text('Device List')),
+           body: Padding(
+             padding: const EdgeInsets.all(10.0),
+             child: Wrap(
+               spacing: 10.0,
+               runSpacing: 10.0,
+               children: List.generate(deviceList.length, (index) {
+                 final device = deviceList[index];
+
+                 return InkWell(
+                   onTap: () {
+                     Navigator.of(context).push(MaterialPageRoute(
+                       builder: (context) => MapScreen(index: index),
+                     ));
+                   },
+                   child: Card(
+                     margin: const EdgeInsets.all(8.0),
+                     elevation: 8,
+                     shadowColor: Colors.blue,
+                     shape: RoundedRectangleBorder(
+                       borderRadius: BorderRadius.circular(10.0),
+                     ),
+                     child: Padding(
+                       padding: const EdgeInsets.all(16.0),
+                       child: Row(
+                         children: [
+                           IconButton(
+                             icon: Image.asset('assets/png/map.png'),
+                             onPressed: () {},
+                           ),
+                           Column(
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               Text(
+                                 '${device.deviceName ?? "Unknown"} (${device.connectedObject?.length ?? 0})',
+                                 style: const TextStyle(
+                                   fontSize: 18.0,
+                                   fontWeight: FontWeight.bold,
+                                 ),
+                               ),
+                               const SizedBox(height: 8.0),
+                               Text('Device ID: ${device.deviceId ?? "-"}'),
+                               Text('Model: ${device.modelName ?? "-"}'),
+                               Text('Category: ${device.categoryName ?? "-"}'),
+                             ],
+                           ),
+                         ],
+                       ),
+                     ),
+                   ),
+                 );
+               }),
+             ),
+           ),
+         );
+       },
+     );
+   }
 }

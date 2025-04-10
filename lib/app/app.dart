@@ -56,7 +56,7 @@ Widget navigateToInitialScreen(String route) {
       return const LoginScreen();
     case Routes.dashboard:
        return DeviceListScreen();
-       return MapScreen();
+       // return MapScreen();
        // return GroupListScreen(userId: 8, controllerId: 23, deviceId: '2CCF6773D07D',);
       // return const ScreenController();
 

@@ -7,17 +7,19 @@ import 'package:intl/intl.dart';
 import '../Constants/data_convertion.dart';
 import '../Models/Weather_model.dart';
 import '../Models/customer/site_model.dart';
+import '../Screens/Map/googlemap_model.dart';
 
 enum MQTTConnectionState { connected, disconnected, connecting }
 
 class MqttPayloadProvider with ChangeNotifier {
-  MQTTConnectionState _appConnectionState = MQTTConnectionState.disconnected;
+   MQTTConnectionState _appConnectionState = MQTTConnectionState.disconnected;
   // SiteModel dashboardLiveInstance = SiteModel(data: data);
   SiteModel? _dashboardLiveInstance;
   SiteModel? get dashboardLiveInstance => _dashboardLiveInstance;
   dynamic spa = '';
   String dashBoardPayload = '', schedulePayload = '';
   WeatherModel weatherModelinstance = WeatherModel();
+  MapConfigModel mapModelInstance = MapConfigModel();
 
   Map<String, dynamic> pumpControllerPayload = {};
   List viewSettingsList = [];
@@ -96,6 +98,12 @@ class MqttPayloadProvider with ChangeNotifier {
   // List<FertilizerSite> fertilizerSiteMobDash = [];
   // List<IrrigationLineData>? irrLineDataMobDash = [];
 
+
+  void updateMapData(data){
+    print("updateMapData $data");
+     mapModelInstance = MapConfigModel.fromJson(data);
+    notifyListeners();
+  }
 
   void editSensorLogData(data){
     sensorLogData = data;
