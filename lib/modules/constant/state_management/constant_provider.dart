@@ -365,6 +365,9 @@ class ConstantProvider extends ChangeNotifier{
     if(value is bool){
       return value ? 1 : 0;
     }else if(value is String){
+      if(value.contains(':')){
+        return value.split(':').join(',');
+      }
       return value.isEmpty ? 0 : value;
     }else{
       return value;
@@ -385,8 +388,10 @@ class ConstantProvider extends ChangeNotifier{
 
   String getObjectInConstantPayload(List<ObjectInConstantModel> object){
     return object.map((object){
+      bool isGem = AppConstants.gemModelList.contains(userData['modelId']);
+      var objectSno = isGem ? object.sNo : object.sNo.toString().split('.').join(',');
       return [
-        object.sNo,
+        objectSno,
         ...object.setting.where((setting){
           return AppConstants.gemModelList.contains(userData['modelId']) ?  setting.gemPayload : setting.ecoGemPayload;
         }).map((setting){
@@ -470,8 +475,8 @@ class ConstantProvider extends ChangeNotifier{
         return filter.location == site.sNo;
       }).toList();
       String ecoGemFilterSetting =
-          '${filterList.isNotEmpty ? filterList[0].setting[0].value : ''}'
-          ',${filterList.length > 1 ? filterList[1].setting[0].value : ''}';
+          '${payloadValidate(filterList.isNotEmpty ? filterList[0].setting[0].value.value : '')}'
+          ',${payloadValidate(filterList.length > 1 ? filterList[1].setting[0].value.value : '')}';
 
       bool isGem = AppConstants.gemModelList.contains(userData['modelId']);
       var siteSno = isGem ? site.sNo : site.sNo.toString().split('.').join(',');

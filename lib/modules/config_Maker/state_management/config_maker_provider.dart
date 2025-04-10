@@ -750,9 +750,24 @@ class ConfigMakerProvider extends ChangeNotifier{
 
   String getObjectPayload() {
     List<dynamic> objectPayload = [];
+    List<DeviceObjectModel> objectListToSend = [];
+    if(AppConstants.ecoGemModelList.contains(masterData['modelId'])){
+      List<DeviceObjectModel> valveList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.valveObjectId).toList();
+      List<DeviceObjectModel> filterList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.filterObjectId).toList();
+      List<DeviceObjectModel> boosterList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.boosterObjectId).toList();
+      List<DeviceObjectModel> channelList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.channelObjectId).toList();
+      objectListToSend = [
+        ...valveList,
+        ...filterList,
+        ...boosterList,
+        ...channelList,
+      ];
+    }else{
+      objectListToSend = listOfGeneratedObject;
+    }
 
-    for (var i = 0; i < listOfGeneratedObject.length; i++) {
-      var object = listOfGeneratedObject[i];
+    for (var i = 0; i < objectListToSend.length; i++) {
+      var object = objectListToSend[i];
       if(object.connectionNo != 0 && object.connectionNo != null){
         print(object.toJson());
         var controller = listOfDeviceModel.firstWhere((e) => e.controllerId == object.controllerId);
