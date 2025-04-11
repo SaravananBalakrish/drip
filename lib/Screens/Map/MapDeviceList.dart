@@ -12,6 +12,16 @@ import 'devicelocationchange.dart';
 import 'googlemap_model.dart';
 
 class DeviceListScreen extends StatefulWidget {
+  const DeviceListScreen(
+      {Key? key,
+        required this.userId,
+        required this.customerId,
+        required this.controllerId,
+        required this.imeiNo})
+      : super(key: key);
+  final int userId, customerId, controllerId;
+  final String imeiNo;
+
   @override
   _DeviceListScreenState createState() => _DeviceListScreenState();
 }

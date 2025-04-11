@@ -34,8 +34,7 @@ class PumpStation extends StatelessWidget {
           waterSource, filterSite, fertilizerSite, irrLineData, currentLineName)..getSensorHourlyData(customerId, controllerId),
       child: Consumer<PumpStationViewModel>(
         builder: (context, vm, _) {
-
-          var outputStatusPayload = Provider.of<MqttPayloadProvider>(context).outputOnOffPayload;
+           var outputStatusPayload = Provider.of<MqttPayloadProvider>(context).outputOnOffPayload;
           var inputPayload = Provider.of<MqttPayloadProvider>(context).inputPayload;
           var pumpPayload = Provider.of<MqttPayloadProvider>(context).pumpPayload;
           var filterPayload = Provider.of<MqttPayloadProvider>(context).filterPayload;
@@ -443,23 +442,23 @@ class PumpStation extends StatelessWidget {
                                           width: 315,
                                           height: 35,
                                           color: Colors.white,
-                                          child: Row(
+                                          child: const Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              const SizedBox(width: 8,),
+                                              SizedBox(width: 8,),
                                               Text.rich(
                                                 TextSpan(
                                                   text: 'Version : ',
-                                                  style: const TextStyle(color: Colors.black54),
+                                                  style: TextStyle(color: Colors.black54),
                                                   children: [
 
                                                   ],
                                                 ),
                                               ),
-                                              const Spacer(),
+                                              Spacer(),
 
 
-                                              const SizedBox(width: 8,),
+                                              SizedBox(width: 8,),
                                             ],
                                           ),
                                         ),

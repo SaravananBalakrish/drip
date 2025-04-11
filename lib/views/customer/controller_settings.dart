@@ -6,6 +6,7 @@ import 'package:oro_drip_irrigation/Screens/Dealer/dealer_definition.dart';
 import 'package:oro_drip_irrigation/view_models/customer/controller_settings_view_model.dart';
 import 'package:oro_drip_irrigation/views/customer/condition_library.dart';
 import 'package:provider/provider.dart';
+import '../../Screens/Map/MapDeviceList.dart';
 import '../../Screens/planning/frost_productionScreen.dart';
 import '../../Screens/planning/names_form.dart';
 import '../../Screens/planning/valve_group_screen.dart';
@@ -143,6 +144,13 @@ class ControllerSettings extends StatelessWidget {
                             );
                           case 'Dealer Definition':
                             return DealerDefinitionInConfig(
+                              userId: userId,
+                              customerId: customerId,
+                              controllerId: controllerId,
+                              imeiNo: deviceId,
+                            );
+                          case 'Geography':
+                            return DeviceListScreen(
                               userId: userId,
                               customerId: customerId,
                               controllerId: controllerId,
