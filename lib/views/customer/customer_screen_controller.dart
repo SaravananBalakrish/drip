@@ -488,8 +488,8 @@ class CustomerScreenController extends StatelessWidget {
                               vm.mySiteList.data[vm.sIndex].master,
                               vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
                               vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId,
-                              vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
-                              vm.mySiteList.data[vm.sIndex].master[vm.mIndex].live?.cM
+                              vm.mIndex,
+                              vm.sIndex
                           ),
                         ),
                       ],
@@ -892,18 +892,20 @@ class CustomerScreenController extends StatelessWidget {
     return destinations;
   }
 
-  Widget mainScreen(int index, groupId, groupName, List<Master> masterData, int controllerId, int categoryId, String deviceId, liveData) {
+  Widget mainScreen(int index, groupId, groupName, List<Master> masterData, int controllerId, int categoryId, int masterIndex, int siteIndex) {
     switch (index) {
       case 0:
         return categoryId==1?
         CustomerHome(customerId: userId, controllerId: controllerId):
         PumpControllerHome(
-          deviceId: deviceId,
-          liveData: liveData,
+          deviceId: masterData[masterIndex].deviceId,
+          liveData: masterData[masterIndex].live!.cM,
           masterName: groupName,
           userId: userId,
           customerId: customerId,
           controllerId: controllerId,
+          siteIndex: siteIndex,
+          masterIndex: masterIndex,
         );
       case 1:
         return CustomerProduct(customerId: userId);
@@ -912,7 +914,7 @@ class CustomerScreenController extends StatelessWidget {
       case 3:
         return IrrigationAndPumpLog(userData: {'userId' : userId, 'controllerId' : controllerId});
       case 4:
-        return ControllerSettings( userId: userId,customerId: userId, controllerId: controllerId, adDrId: fromLogin ? 1 : 0, deviceId: deviceId);
+        return ControllerSettings( userId: userId,customerId: userId, controllerId: controllerId, adDrId: fromLogin ? 1 : 0, deviceId: masterData[masterIndex].deviceId);
      case 5:
         return SiteConfig(
             userId: userId,
@@ -925,7 +927,7 @@ class CustomerScreenController extends StatelessWidget {
       case 6:
         return TicketHomePage(userId: userId, controllerId: controllerId);
       case 7:
-        return WeatherScreen(userId: userId, controllerId: controllerId, deviceID: deviceId,);
+        return WeatherScreen(userId: userId, controllerId: controllerId, deviceID: masterData[masterIndex].deviceId,);
       default:
         return const SizedBox();
     }
