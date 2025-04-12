@@ -943,8 +943,11 @@ class IrrigationLineData {
   final List<MoistureSensorModel> moistureSensor;
 
 
-  final double? centralFiltration;
+  final double? cFilterSNo;
   //final double? localFiltration;
+
+  final double? cFertilizerSNo;
+
   final List<Valve> valves;
 
 
@@ -963,8 +966,11 @@ class IrrigationLineData {
     required this.waterMeter,
     required this.moistureSensor,
 
-    required this.centralFiltration,
+    required this.cFilterSNo,
     //required this.localFiltration,
+
+    required this.cFertilizerSNo,
+
     required this.valves,
   });
 
@@ -975,6 +981,15 @@ class IrrigationLineData {
         cFilterSNo = (json['centralFiltration'] as num).toDouble();
       } else if (json['centralFiltration'] is Map && json['centralFiltration'].containsKey('sNo')) {
         cFilterSNo = json['centralFiltration']['sNo'];
+      }
+    }
+
+    double cFertilizerSNo = 0.0;
+    if (json['centralFertilization'] != null && json['centralFertilization'].toString().trim().isNotEmpty) {
+      if (json['centralFertilization'] is int) {
+        cFertilizerSNo = (json['centralFertilization'] as num).toDouble();
+      } else if (json['centralFertilization'] is Map && json['centralFertilization'].containsKey('sNo')) {
+        cFertilizerSNo = json['centralFertilization']['sNo'];
       }
     }
 
@@ -1062,7 +1077,9 @@ class IrrigationLineData {
           .map((e) => Pump.fromJson(e))
           .toList(),
 
-      centralFiltration: cFilterSNo,
+      cFilterSNo: cFilterSNo,
+
+      cFertilizerSNo: cFertilizerSNo,
 
       valves: (json['valve'] as List).map((v) {
         final valve = v as Map<String, dynamic>;
@@ -1238,9 +1255,11 @@ class LiveMessage {
   factory LiveMessage.fromJson(Map<String, dynamic> json) {
     return LiveMessage(
       cC: json['cC'],
-      cM: json['cM'] is Map<String, dynamic>
+      cM: json['cM'] is Map<String, dynamic> ? Map<String, dynamic>.from(json['cM'])
+          : <String, dynamic> {},
+      /*cM: json['cM'] is Map<String, dynamic>
           ? Map<String, dynamic>.from(json['cM'])
-          : (json['cM'] is List ? json['mC'] == 'LD01' ? PumpControllerData.fromJson(json, "cM", 2) : <String, dynamic>{} : <String, dynamic>{}),
+          : (json['cM'] is List ? json['mC'] == 'LD01' ? PumpControllerData.fromJson(json, "cM", 2) : <String, dynamic>{} : <String, dynamic>{}),*/
       cD: json['cD'],
       cT: json['cT'],
       mC: json['mC'],
@@ -1367,6 +1386,7 @@ class ProgramList {
   final String programType;
   final List<Sequence> sequence;
   final String selectedSchedule;
+  final List<dynamic> irrigationLine;
 
   String startDate;
   String endDate;
@@ -1388,6 +1408,7 @@ class ProgramList {
     required this.programType,
     required this.sequence,
     required this.selectedSchedule,
+    required this.irrigationLine,
 
     this.startDate ="-",
     this.endDate ="-",
@@ -1413,6 +1434,7 @@ class ProgramList {
           .map((e) => Sequence.fromJson(e))
           .toList(),
       selectedSchedule: json['selectedSchedule'] ?? '',
+      irrigationLine: json['irrigationLine'] ?? [],
     );
   }
 
@@ -1425,6 +1447,7 @@ class ProgramList {
       'programType': programType,
       'sequence': sequence.map((e) => e.toJson()).toList(),
       'selectedSchedule': selectedSchedule,
+      'irrigationLine': irrigationLine,
     };
   }
 
