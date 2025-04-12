@@ -2,6 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Screens/Dealer/sevicecustomer.dart';
 import 'package:oro_drip_irrigation/Screens/Logs/irrigation_and_pump_log.dart';
+import 'package:oro_drip_irrigation/Screens/Map/MapDeviceList.dart';
+import 'package:oro_drip_irrigation/Screens/Map/MapValveLocationChange.dart';
 import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
 import 'package:oro_drip_irrigation/views/customer/program_schedule.dart';
 import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
@@ -887,6 +889,14 @@ class CustomerScreenController extends StatelessWidget {
         selectedIcon: Icon(Icons.sunny_snowing, color: Colors.white),
         label: Text(''),
       ),
+      const NavigationRailDestination(
+        icon: Tooltip(
+          message: 'Geography',
+          child: Icon(Icons.map_outlined),
+        ),
+        selectedIcon: Icon(Icons.map_outlined, color: Colors.white),
+        label: Text(''),
+      ),
     ];
 
     return destinations;
@@ -928,6 +938,8 @@ class CustomerScreenController extends StatelessWidget {
         return TicketHomePage(userId: userId, controllerId: controllerId);
       case 7:
         return WeatherScreen(userId: userId, controllerId: controllerId, deviceID: masterData[masterIndex].deviceId,);
+      case 8:
+        return DeviceListScreen(userId: userId, customerId: customerId, controllerId: controllerId, imeiNo: masterData[masterIndex].deviceId);
       default:
         return const SizedBox();
     }
