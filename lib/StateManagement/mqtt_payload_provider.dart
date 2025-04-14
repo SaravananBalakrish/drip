@@ -100,7 +100,7 @@ class MqttPayloadProvider with ChangeNotifier {
   List<String> fertilizerPayload = [];
   List<String> currentSchedule = [];
   List<String> nextSchedule = [];
-  List<String> scheduledProgram = [];
+  List<String> scheduledProgramPayload = [];
   List<String> lineLiveMessage = [];
 
   // List<WaterSource> waterSourceMobDash = [];
@@ -650,7 +650,7 @@ class MqttPayloadProvider with ChangeNotifier {
   }
 
   void updateScheduledProgram(List<String> program) {
-    scheduledProgram = program;
+    scheduledProgramPayload = program;
   }
 
   void saveUnits(List<dynamic> units) {
