@@ -699,6 +699,8 @@ class MobileScreenController extends StatelessWidget {
             userId: userId,
             customerId: customerId,
             controllerId: controllerId,
+            siteIndex: siteIndex,
+            masterIndex: masterIndex,
           );
         case 1:
           return CustomerProduct(customerId: userId);
