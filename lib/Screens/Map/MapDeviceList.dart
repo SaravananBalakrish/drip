@@ -8,7 +8,6 @@ import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
 import 'CustomerMap.dart';
 import 'MapValveLocationChange.dart';
-import 'connectedObject.dart';
 import 'devicelocationchange.dart';
 import 'googlemap_model.dart';
 
@@ -30,7 +29,7 @@ class DeviceListScreen extends StatefulWidget {
 class _DeviceListScreenState extends State<DeviceListScreen> {
 
 
-   late MqttPayloadProvider mqttPayloadProvider;
+  late MqttPayloadProvider mqttPayloadProvider;
 
   MapConfigModel _mapConfigModel = MapConfigModel();
 
@@ -87,7 +86,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
            );
          }
           return Scaffold(
-           appBar: AppBar(title: const Text('Map Device List')),
+           appBar: AppBar(title: const Text('Map Device List'),automaticallyImplyLeading: false),
            body: SingleChildScrollView(
              child: Padding(
                padding: const EdgeInsets.all(10.0),
@@ -132,7 +131,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                        return InkWell(
                          onTap: () {
                            Navigator.of(context).push(MaterialPageRoute(
-                             builder: (context) => MapScreenConnectedObjects(selectindex: index),
+                             builder: (context) => MapScreen(index: index),
                            ));
                          },
                          child: Card(
@@ -195,8 +194,9 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
    }
 
    updateMapLocation() async {
+
      final Repository repository = Repository(HttpService());
-     var data = mqttPayloadProvider.mapModelInstance.data?.toJson();
+var data = mqttPayloadProvider.mapModelInstance.data?.toJson();
      Map<String, dynamic> body = {
        "userId": widget.userId,
        "controllerId": widget.controllerId,

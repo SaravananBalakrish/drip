@@ -19,26 +19,46 @@ class CustomerHome extends StatelessWidget {
     final viewModel = Provider.of<CustomerScreenControllerViewModel>(context);
 
     List<FilterSite> filteredFilterSite = [];
+    List<FertilizerSite> filteredFertilizerSite = [];
+    List<WaterSource> filteredWaterSource = [];
 
-    final waterSources = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.waterSource;
+    final allWaterSources = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.waterSource;
     final allFilterSite = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.filterSite;
-    final fertilizerSite = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.fertilizerSite;
+    final allFertilizerSite = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.fertilizerSite;
     final lineData = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.lineData;
     final scheduledProgram = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].programList;
 
     var onRefresh = Provider.of<MqttPayloadProvider>(context).onRefresh;
 
     if(viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.lineData[viewModel.lIndex].name=='All irrigation line'){
+      filteredWaterSource = allWaterSources;
       filteredFilterSite = allFilterSite;
+      filteredFertilizerSite = allFertilizerSite;
     }else{
       final filteredLineData = viewModel.mySiteList.data[viewModel.sIndex]
           .master[viewModel.mIndex].config.lineData
           .where((line) => line.name == viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.lineData[viewModel.lIndex].name)
           .toList();
 
+      filteredWaterSource = allWaterSources;
+
+      /*filteredWaterSource = allWaterSources.where((ws) {
+        if (ws.inletPump.isNotEmpty && ws.outletPump.isNotEmpty) {
+          return ws.outletPump.any((op) =>
+              filteredLineData[0].irrigationPump.any((ip) => ip.sNo == op.sNo));
+        }
+        return false;
+      }).toList();*/
+
+
       filteredFilterSite = viewModel.mySiteList.data[viewModel.sIndex]
           .master[viewModel.mIndex].config.filterSite
-          .where((filterSite) => filterSite.sNo == filteredLineData[0].centralFiltration)
+          .where((filterSite) => filterSite.sNo == filteredLineData[0].cFilterSNo)
+          .toList();
+
+      filteredFertilizerSite = viewModel.mySiteList.data[viewModel.sIndex]
+          .master[viewModel.mIndex].config.fertilizerSite
+          .where((fertilizerSite) => fertilizerSite.sNo == filteredLineData[0].cFertilizerSNo)
           .toList();
     }
 
@@ -62,12 +82,14 @@ class CustomerHome extends StatelessWidget {
               deviceId: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].deviceId,
               customerId: customerId,
               controllerId: controllerId,
+              currentLineSNo: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.lineData[viewModel.lIndex].sNo,
             ),
           PumpStation(
-            waterSource: waterSources,
+            key: ValueKey(filteredFilterSite.map((e) => e.sNo).join(',')),
+            waterSource: filteredWaterSource,
             irrLineData: lineData,
             filterSite: filteredFilterSite,
-            fertilizerSite: fertilizerSite,
+            fertilizerSite: filteredFertilizerSite,
             currentLineName: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.lineData[viewModel.lIndex].name,
             deviceId: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].deviceId,
             customerId: customerId,
@@ -79,6 +101,7 @@ class CustomerHome extends StatelessWidget {
               deviceId: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].deviceId,
               customerId: customerId,
               controllerId: controllerId,
+              currentLineSNo: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.lineData[viewModel.lIndex].sNo,
             ),
           NextSchedule(scheduledPrograms: scheduledProgram),
           if (kIsWeb && scheduledProgram.isNotEmpty)
@@ -88,6 +111,7 @@ class CustomerHome extends StatelessWidget {
               controllerId: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].controllerId,
               deviceId: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].deviceId,
               customerId: customerId,
+              currentLineSNo: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.lineData[viewModel.lIndex].sNo,
             ),
           const SizedBox(height: 8),
         ],
