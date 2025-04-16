@@ -25,14 +25,17 @@ class Group {
   final int groupId;
   final String groupName;
   final List<Master> master;
+  final List<MasterControllerModel> masterController;
 
-  Group({required this.groupId, required this.groupName, required this.master});
+  Group({required this.groupId, required this.groupName, required this.master, required this.masterController});
 
   factory Group.fromJson(Map<String, dynamic> json) {
     return Group(
       groupId: json['userGroupId'],
       groupName: json['groupName'],
+      masterController: List<MasterControllerModel>.from(json['master'].map((x) => MasterControllerModel.fromJson(x))),
       master: List<Master>.from(json['master'].map((x) => Master.fromJson(x))),
+
     );
   }
 
@@ -44,6 +47,145 @@ class Group {
     };
   }
 }
+
+class MasterControllerModel {
+  final int controllerId;
+  final String deviceId;
+  final String deviceName;
+  final int categoryId;
+  final String categoryName;
+  final int modelId;
+  final String modelName;
+  final List<Unit> units;
+  final List<IrrigationLineFinal> irrigationLine;
+
+  MasterControllerModel({
+    required this.controllerId,
+    required this.deviceId,
+    required this.deviceName,
+    required this.categoryId,
+    required this.categoryName,
+    required this.modelId,
+    required this.modelName,
+    required this.units,
+    required this.irrigationLine,
+  });
+
+  factory MasterControllerModel.fromJson(Map<String, dynamic> json) {
+
+    final config = json['config'] ?? json;
+
+    final configObjectsRaw = config['configObject'] as List;
+    final irrigationLinesRaw = config['irrigationLine'] as List;
+    final waterSourcesRaw = config['waterSource'] as List? ?? [];
+
+    List<ConfigObject> configObjects = configObjectsRaw
+        .map((item) => ConfigObject.fromJson(item))
+        .toList();
+
+    List<WaterSourceModel> waterSources = waterSourcesRaw
+        .map((item) => WaterSourceModel.fromJson(item))
+        .toList();
+
+    List<IrrigationLineFinal> irrigationLines = irrigationLinesRaw
+        .map((item) => IrrigationLineFinal.fromJson(item))
+        .toList();
+
+    for (var line in irrigationLines) {
+      line.resolveReferences(configObjects, waterSources);
+    }
+
+    return MasterControllerModel(
+      controllerId: json['controllerId'] ?? 0,
+      deviceId: json['deviceId'] ?? '',
+      deviceName: json['deviceName'] ?? '',
+      categoryId: json['categoryId'] ?? 0,
+      categoryName: json['categoryName'] ?? '',
+      modelId: json['modelId'] ?? 0,
+      modelName: json['modelName'] ?? '',
+      units: json['units'] != null
+          ? List<Unit>.from(json['units'].map((x) => Unit.fromJson(x)))
+          : [],
+      irrigationLine: irrigationLines,
+    );
+  }
+}
+
+class IrrigationLineFinal {
+  final double sNo;
+  final String name;
+  final List<double> sourcePump;
+  final List<double> irrigationPump;
+  final List<double> valve;
+
+  List<WaterSourceModel> lineWaterSources = [];
+  List<ConfigObject> valveObjects = [];
+
+  IrrigationLineFinal({
+    required this.sNo,
+    required this.name,
+    required this.sourcePump,
+    required this.irrigationPump,
+    required this.valve,
+  });
+
+  factory IrrigationLineFinal.fromJson(Map<String, dynamic> json) {
+    return IrrigationLineFinal(
+      sNo: json['sNo']?.toDouble() ?? 0,
+      name: json['name'] ?? '',
+      sourcePump: List<double>.from(json['sourcePump'].map((e) => e.toDouble())),
+      irrigationPump: List<double>.from(json['irrigationPump'].map((e) => e.toDouble())),
+      valve: List<double>.from(json['valve'].map((e) => e.toDouble())),
+    );
+  }
+
+  void resolveReferences(List<ConfigObject> configObjects, List<WaterSourceModel> waterSources) {
+    valveObjects = configObjects.where((obj) => valve.contains(obj.sNo)).toList();
+
+    lineWaterSources.clear();
+
+    for (var ws in waterSources) {
+      bool hasSourcePump = ws.outletPump.any((pump) => sourcePump.contains(pump));
+      bool hasIrrigationPump = ws.outletPump.any((pump) => irrigationPump.contains(pump));
+
+      if (hasSourcePump || hasIrrigationPump) {
+        ws.allPump = configObjects.where((obj) => ws.outletPump.contains(obj.sNo)).toList();
+        lineWaterSources.add(ws);
+      }
+    }
+
+    lineWaterSources = {
+      for (var ws in lineWaterSources) ws.sNo: ws
+    }.values.toList();
+
+  }
+
+}
+
+class WaterSourceModel {
+  final double sNo;
+  final String name;
+  final List<double> inletPump;
+  final List<double> outletPump;
+  List<ConfigObject> allPump = [];
+
+  WaterSourceModel({
+    required this.sNo,
+    required this.name,
+    required this.inletPump,
+    required this.outletPump,
+  });
+
+  factory WaterSourceModel.fromJson(Map<String, dynamic> json) {
+    return WaterSourceModel(
+      sNo: (json['sNo'] as num).toDouble(),
+      name: json['name'] ?? '',
+      inletPump: List<double>.from((json['inletPump'] ?? []).map((e) => (e as num).toDouble())),
+      outletPump: List<double>.from((json['outletPump'] ?? []).map((e) => (e as num).toDouble())),
+    );
+  }
+}
+
 
 class Master {
   final int controllerId;
@@ -190,23 +332,35 @@ class ConfigObject {
   final int objectId;
   final double sNo;
   final String name;
-  final int? connectionNo;
   final String objectName;
-  final String type;
   final int? controllerId;
-  final int? count;
   final double? location;
+  int status;
+  bool selected;
+  String onDelayLeft;
+  String voltage;
+  String current;
+  String reason;
+  String setValue;
+  String actualValue;
+  String phase;
 
   ConfigObject({
     required this.objectId,
     required this.sNo,
     required this.name,
-    this.connectionNo,
     required this.objectName,
-    required this.type,
     this.controllerId,
-    this.count,
     required this.location,
+    this.status=0,
+    this.selected=false,
+    this.onDelayLeft='00:00:00',
+    this.voltage='0_0_0',
+    this.current='0_0_0',
+    this.reason='0',
+    this.setValue='0',
+    this.actualValue='0',
+    this.phase='0',
   });
 
   factory ConfigObject.fromJson(Map<String, dynamic> json) {
@@ -214,11 +368,8 @@ class ConfigObject {
       objectId: json['objectId'],
       sNo: (json['sNo'] as num).toDouble(),
       name: json['name'],
-      connectionNo: json['connectionNo'],
       objectName: json['objectName'],
-      type: json['type'],
       controllerId: json['controllerId'],
-      count: json['count'],
       location: (json['location'] is! double ? 0.0 : json['location']) ?? 0.0,
     );
   }
@@ -228,11 +379,8 @@ class ConfigObject {
       'objectId': objectId,
       'sNo': sNo,
       'name': name,
-      'connectionNo': connectionNo,
       'objectName': objectName,
-      'type': type,
       'controllerId': controllerId,
-      'count': count,
       'location': location,
     };
   }

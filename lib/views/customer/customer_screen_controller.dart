@@ -5,6 +5,7 @@ import 'package:oro_drip_irrigation/Screens/Logs/irrigation_and_pump_log.dart';
 import 'package:oro_drip_irrigation/Screens/Map/MapDeviceList.dart';
 import 'package:oro_drip_irrigation/Screens/Map/MapValveLocationChange.dart';
 import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
+import 'package:oro_drip_irrigation/views/customer/home_view.dart';
 import 'package:oro_drip_irrigation/views/customer/program_schedule.dart';
 import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
 import 'package:oro_drip_irrigation/views/customer/site_config.dart';
@@ -921,7 +922,8 @@ class CustomerScreenController extends StatelessWidget {
   Widget mainScreen(int index, groupId, groupName, List<Master> masterData, int controllerId, int categoryId, int masterIndex, int siteIndex) {
     switch (index) {
       case 0:
-        return categoryId==1?
+        return categoryId==1 ?
+        /*HomeView(customerId: customerId, controllerId: controllerId)*/
         CustomerHome(customerId: userId, controllerId: controllerId):
         PumpControllerHome(
           deviceId: masterData[masterIndex].deviceId,
