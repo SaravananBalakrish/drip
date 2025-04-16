@@ -48,7 +48,6 @@ class PumpStation extends StatelessWidget {
               if(inputPayload.isNotEmpty){
                 vm.updateInputStatus(inputPayload.toList());
               }
-
             }
           });
 
@@ -1175,37 +1174,32 @@ class PumpStation extends StatelessWidget {
             ),
             width: 67,
             child: Center(
-              child: ValueListenableBuilder<String>(
-                valueListenable: Provider.of<DurationNotifier>(context).onDelayLeft,
-                builder: (context, value, child) {
-                  return Column(
-                    children: [
-                      const Text(
-                        'Restart within',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(left: 3, right: 3),
-                        child: Divider(
-                          height: 0,
-                          color: Colors.grey,
-                          thickness: 0.5,
-                        ),
-                      ),
-                      Text(pump.actualValue.split('_').last,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontSize: 9,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  );
-                },
+              child: Column(
+                children: [
+                  const Text(
+                    'Restart within',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 3, right: 3),
+                    child: Divider(
+                      height: 0,
+                      color: Colors.grey,
+                      thickness: 0.5,
+                    ),
+                  ),
+                  Text(pump.actualValue.split('_').last,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 9,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

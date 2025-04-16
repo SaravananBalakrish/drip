@@ -30,7 +30,8 @@ class CustomerHome extends StatelessWidget {
 
     var onRefresh = Provider.of<MqttPayloadProvider>(context).onRefresh;
 
-    if(viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.lineData[viewModel.lIndex].name=='All irrigation line'){
+    if(viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].config.lineData.length==1 ||
+        viewModel.myCurrentIrrLine=='All irrigation line'){
       filteredWaterSource = allWaterSources;
       filteredFilterSite = allFilterSite;
       filteredFertilizerSite = allFertilizerSite;
