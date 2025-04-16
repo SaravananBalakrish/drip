@@ -724,7 +724,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     selectedInjector = 0;
     sequence = [];
     radio = 'set individual';
-    apiData = {};
     recipe = [];
     constantSetting = {};
     fertilizerSet = [];
@@ -1238,6 +1237,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     var generateNew = [];
     var central = [];
     var local = [];
+    print("apiData : $apiData");
     for(var site in apiData['fertilizerSite']){
       if(site['siteMode'] == 1){
         central.add(site);
@@ -1781,8 +1781,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                 ph.text = recipe[selectedIndex]['phValue'];
               }
               for(var channel = 0;channel < recipe[selectedIndex]['channel'].length;channel++){
-                var channelOnOff = recipe[selectedIndex]['channel'][channel]['active'] ? 1 : 0;
-                sequenceData[selectedGroup][segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][channel]['onOff'] = channelOnOff;
+                sequenceData[selectedGroup][segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][channel]['onOff'] = recipe[selectedIndex]['channel'][channel]['active'] == 1;
                 sequenceData[selectedGroup][segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][channel]['method'] = recipe[selectedIndex]['channel'][channel]['method'];
                 sequenceData[selectedGroup][segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][channel]['timeValue'] = recipe[selectedIndex]['channel'][channel]['timeValue'];
                 sequenceData[selectedGroup][segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][channel]['quantityValue'] = recipe[selectedIndex]['channel'][channel]['quantityValue'];

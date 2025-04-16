@@ -1,6 +1,5 @@
 
 class DataConvert{
-
   //TODO: string time into integer seconds
   int parseTimeString(String timeString) {
     List<String> parts = timeString.split(':');
@@ -64,5 +63,4 @@ class DataConvert{
 
     return totalLiters;
   }
-
 }
