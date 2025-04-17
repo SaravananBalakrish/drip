@@ -123,6 +123,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   }
 
   void masterOnChanged(categoryName, model, index){
+    print("index :: $index");
    /* int masterIdx = mySiteList.data[sIndex].master.indexWhere((master)=>
     master.categoryName == categoryName && master.modelName == model);*/
     int masterIdx = int.parse(index);
