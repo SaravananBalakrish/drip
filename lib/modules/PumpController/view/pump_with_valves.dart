@@ -110,12 +110,13 @@ class PumpWithValves extends StatelessWidget {
             child: Column(
               spacing: 10,
               children: [
+                // const SizedBox(height: 5,),
                 if (valveData.cyclicRestartLimit != '0') ...[
                   ValveCycleWidget(
                     valveData: valveData,
+                    deviceId: provider.mySiteList.data[provider.sIndex].master[provider.mIndex].deviceId,
                   )
                 ],
-                const SizedBox(height: 5,),
                 GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -176,38 +177,6 @@ class PumpWithValves extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _infoTile({required String title, required Widget child}) {
-    return Container(
-      width: 100,
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        border: Border.all(color: Colors.grey.shade300),
-        borderRadius: BorderRadius.circular(8),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
-          )
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.black54,
-            ),
-          ),
-          const SizedBox(height: 6),
-          IntrinsicWidth(child: child),
-        ],
-      ),
     );
   }
 

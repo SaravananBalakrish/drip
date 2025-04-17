@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/services/mqtt_service.dart';
+import 'package:oro_drip_irrigation/utils/environment.dart';
 import '../../../Constants/constants.dart';
 import '../model/pump_controller_data_model.dart';
 import '../widget/custom_countdown_timer.dart';
 
 class ValveCycleWidget extends StatefulWidget {
   final PumpValveModel valveData;
+  final String deviceId;
 
-  const ValveCycleWidget({super.key, required this.valveData});
+  const ValveCycleWidget({super.key, required this.valveData, required this.deviceId});
 
   @override
   State<ValveCycleWidget> createState() => _ValveCycleWidgetState();
@@ -64,6 +69,7 @@ class _ValveCycleWidgetState extends State<ValveCycleWidget>
           // border: Border.all(color: Colors.grey.shade200),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -117,6 +123,47 @@ class _ValveCycleWidgetState extends State<ValveCycleWidget>
                   ),
                 );
               },
+            ),
+            const SizedBox(height: 6),
+            SizedBox(
+              height: 25,
+              child: FilledButton(
+                style: ButtonStyle(
+                  backgroundColor: WidgetStateProperty.all(Colors.red),
+                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                  )),
+                  maximumSize: WidgetStateProperty.all(const Size(100, 40)),
+                  padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 10, vertical: 5)),
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: const Text('Confirmation'),
+                      content: const Text('Are you sure! you want to proceed to reset cycle?'),
+                      actions: [
+                        MaterialButton(
+                          color: Colors.redAccent,
+                          textColor: Colors.white,
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Cancel'),
+                        ),
+                        MaterialButton(
+                          color: Theme.of(context).primaryColor,
+                          textColor: Colors.white,
+                          onPressed: () {
+                            MqttService().topicToPublishAndItsMessage(jsonEncode({'sentSms': 'resetcycle'}), '${Environment.mqttPublishTopic}/${widget.deviceId}');
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Yes'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: Text('Reset cycle', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),),
+              ),
             ),
           ],
         ),
