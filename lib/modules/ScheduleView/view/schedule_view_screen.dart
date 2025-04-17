@@ -262,14 +262,6 @@ class _ScheduleViewScreenState extends State<ScheduleViewScreen> {
               "2701": "${listToMqtt.join(";").toString()};"
             }
           };
-          var userData = {
-            "userId": widget.userId,
-            "controllerId": widget.controllerId,
-            "modifyUser": widget.customerId,
-            "sequence": convertedList,
-            "scheduleDate": DateFormat('yyyy-MM-dd').format(date),
-            "hardware": dataToHardware
-          };
           try {
             validatePayloadSent(
                 dialogContext: context,
@@ -978,7 +970,8 @@ class _ScheduleViewScreenState extends State<ScheduleViewScreen> {
                                 decoration: const InputDecoration(
                                     suffixText: "%"
                                 ),
-                                onChanged: (newValue){
+                                onChanged: (newValue){},
+                                onSaved: (newValue) {
                                   setState(() {
                                     var temp = scheduleItem["ScaleFactor"].toString();
                                     scheduleItem["ScaleFactor"] = newValue != '' ? newValue : scheduleItem["ScaleFactor"];
