@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
+import 'MapDeviceList.dart';
 import 'googlemap_model.dart';
 
 class MapScreenall extends StatefulWidget {
@@ -45,7 +44,6 @@ class _MapScreenallState extends State<MapScreenall> {
   late BitmapDescriptor markerInjector;
   late BitmapDescriptor markerSensor;
   late BitmapDescriptor markerPump;
-
   late BitmapDescriptor markerxMm1;
   late BitmapDescriptor markerXMp1;
   late BitmapDescriptor markerXMh1;
@@ -74,28 +72,26 @@ class _MapScreenallState extends State<MapScreenall> {
   }
 
   Future<void> _loadMarkerIcons() async {
-    markerGray = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markergray.png',);
-    markerGreen = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)), 'assets/png/markergreen.png',);
-    markerRed = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerred.png',);
-    markerSensor = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markersensor.png',);
-    markerAgitator = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)), 'assets/png/markeragitator.png',);
-    markerBlue = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerblue.png',);
-    markerInjector = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerinjector.png',);
-    markerFert = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)), 'assets/png/markerfertilizer.png',);
-    markerFilter = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerfilter.png',);
-    markerPump = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerpump.png',);
-
-    markerxMm1 = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxmm.png',);
-    markerXMp1 = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxmp.png',);
-    markerXMh1 = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxmh.png',);
-    markerXMr1 = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxmr.png',);
-    markerXMs1 = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxms.png',);
-    markerXMw1 = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxmw.png',);
-    markerXMl1 = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxml.png',);
-    markerXMe1 = await BitmapDescriptor.fromAssetImage(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxme.png',);
+     markerGray = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markergray.png',);
+    markerGreen = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)), 'assets/png/markergreen.png',);
+    markerRed = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerred.png',);
+    markerSensor = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markersensor.png',);
+    markerAgitator = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)), 'assets/png/markeragitator.png',);
+    markerBlue = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerblue.png',);
+    markerInjector = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerinjector.png',);
+    markerFert = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)), 'assets/png/markerfertilizer.png',);
+    markerFilter = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerfilter.png',);
+    markerPump = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerpump.png',);
+    markerxMm1 = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxmm.png',);
+    markerXMp1 = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxmp.png',);
+    markerXMh1 = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxmh.png',);
+    markerXMr1 = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxmr.png',);
+    markerXMs1 = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxms.png',);
+    markerXMw1 = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxmw.png',);
+    markerXMl1 = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxml.png',);
+    markerXMe1 = await BitmapDescriptor.asset(const ImageConfiguration(size: Size(48, 48)),'assets/png/markerxme.png',);
 
    }
-
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -191,9 +187,6 @@ class _MapScreenallState extends State<MapScreenall> {
   }
 
   BitmapDescriptor _getMarkerIcon(int? status,String type) {
-
-
-    print('type:-->$type');
    if( type.contains('Valve')) {
      switch (status) {
       case 1:
@@ -203,14 +196,11 @@ class _MapScreenallState extends State<MapScreenall> {
       default:
         return markerGray;
     }
-    }
-   else if( type.contains('fertilizer')) {
+    } else if( type.contains('fertilizer')) {
           return markerFert;
-    }
-   else if( type.contains('Filter')) {
+    }else if( type.contains('Filter')) {
      return markerFilter;
-   }
-   else if( type.contains('Agitator')) {
+   } else if( type.contains('Agitator')) {
      return markerAgitator;
    } else if( type.contains('Pump')) {
      return markerPump;
@@ -218,8 +208,7 @@ class _MapScreenallState extends State<MapScreenall> {
      return markerSensor;
    }else if( type.contains('Injector')) {
      return markerInjector;
-   }
-   else if( type.contains('xMm')) {
+   }else if( type.contains('xMm')) {
      return markerxMm1;
    }else if( type.contains('xMe')) {
      return markerXMe1;
@@ -268,7 +257,18 @@ class _MapScreenallState extends State<MapScreenall> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Geography')),
+      appBar: AppBar(title: const Text('Geography'),
+        actions: [
+        IconButton(
+          icon: Icon(Icons.map_outlined),
+          onPressed: () {
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => DeviceListScreen(userId: widget.userId, customerId: widget.customerId, controllerId: widget.controllerId, imeiNo: widget.imeiNo,),
+            ));
+          },
+          tooltip: 'Edit',
+        ),
+      ],),
       body: GoogleMap(
         onMapCreated: _onMapCreated,
         initialCameraPosition: CameraPosition(

@@ -95,16 +95,16 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                     Row(
                       children: [
                         ///MapScreenall
-                        TextButton.icon(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => MapScreenall(userId: widget.userId, customerId: widget.customerId, controllerId: widget.controllerId, imeiNo: widget.imeiNo,),
-                            ));
-                          },
-
-                          icon: Icon(Icons.edit_location_alt,color: Colors.white,),
-                          label: Text('all'),
-                        ),
+                        // TextButton.icon(
+                        //   onPressed: () {
+                        //     Navigator.of(context).push(MaterialPageRoute(
+                        //       builder: (context) => MapScreenall(userId: widget.userId, customerId: widget.customerId, controllerId: widget.controllerId, imeiNo: widget.imeiNo,),
+                        //     ));
+                        //   },
+                        //
+                        //   icon: Icon(Icons.edit_location_alt,color: Colors.white,),
+                        //   label: Text('all'),
+                        // ),
                         Spacer(),
                         TextButton.icon(
                          onPressed: () {
