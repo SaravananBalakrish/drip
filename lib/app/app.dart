@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/config_Maker/view/config_base_page.dart';
 import '../Screens/Map/MapDeviceList.dart';
+import '../Screens/Map/allAreaBoundry.dart';
+import '../Screens/Map/areaboundry.dart';
 import '../flavors.dart';
 import '../modules/constant/view/constant_base_page.dart';
 import '../utils/Theme/smart_comm_theme.dart';
@@ -56,9 +58,9 @@ Widget navigateToInitialScreen(String route) {
       // return ProgramLibraryScreenNew(userId: 4, controllerId: 1, deviceId: '2CCF674C0F8A', fromDealer: false, customerId: 4,);
       return const LoginScreen();
     case Routes.dashboard:
-      // return ConstantBasePage(userData: {"userId":8,"customerId":8,"controllerId":115,"deviceId":"866308064396","deviceName":"xMm","categoryId":1,"categoryName":"xMm","modelId":3,"modelName":"xMm1000ROOE","groupId":4,"groupName":"TESTING PURPOSE","connectingObjectId":["1","2","3","4","13","14","22","23","24","26","40","41"]});
-      // return ConfigBasePage(masterData: {});
-       // return GroupListScreen(userId: 8, controllerId: 23, deviceId: '2CCF6773D07D',);
+       return MapScreenAllArea();
+       return MapScreenArea();
+
       return const ScreenController();
 
     default:
