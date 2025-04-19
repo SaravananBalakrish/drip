@@ -122,22 +122,18 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     }
   }
 
-  void masterOnChanged(categoryName, model){
-    int masterIdx = mySiteList.data[sIndex].master.indexWhere((master)=>
-    master.categoryName == categoryName && master.modelName == model);
-    if (masterIdx != -1 && mySiteList.data[sIndex].master.length > 1) {
-      mIndex = masterIdx;
+  void masterOnChanged(index){
+    if (mySiteList.data[sIndex].master.length > 1) {
+      mIndex = index;
       lIndex = 0;
       fromWhere='master';
-      updateMaster(sIndex, masterIdx, 0);
+      updateMaster(sIndex, index, 0);
       onSubscribeTopic();
     }
   }
 
-  void lineOnChanged(lineName){
-    int lInx = mySiteList.data[sIndex].master[mIndex].config.lineData.indexWhere((line)
-    => line.name == lineName);
-    if (lInx != -1 && mySiteList.data[sIndex].master[mIndex].config.lineData.length > 1) {
+  void lineOnChanged(int lInx){
+    if (mySiteList.data[sIndex].master[mIndex].irrigationLine.length > 1) {
       lIndex = lInx;
       fromWhere='line';
       updateMasterLine(sIndex, mIndex, lInx);
@@ -164,8 +160,8 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   }
 
   void updateMasterLine(sIdx, mIdx, lIdx){
-    if(mySiteList.data[sIdx].master[mIdx].config.lineData.isNotEmpty){
-      myCurrentIrrLine = mySiteList.data[sIdx].master[mIdx].config.lineData[lIdx].name;
+    if(mySiteList.data[sIdx].master[mIdx].irrigationLine.isNotEmpty){
+      myCurrentIrrLine = mySiteList.data[sIdx].master[mIdx].irrigationLine[lIdx].name;
       notifyListeners();
     }
   }

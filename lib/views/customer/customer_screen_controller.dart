@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Screens/Dealer/sevicecustomer.dart';
 import 'package:oro_drip_irrigation/Screens/Logs/irrigation_and_pump_log.dart';
 import 'package:oro_drip_irrigation/Screens/Map/MapDeviceList.dart';
-import 'package:oro_drip_irrigation/Screens/Map/MapValveLocationChange.dart';
 import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
-import 'package:oro_drip_irrigation/views/customer/home_view.dart';
 import 'package:oro_drip_irrigation/views/customer/program_schedule.dart';
 import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
 import 'package:oro_drip_irrigation/views/customer/site_config.dart';
@@ -128,7 +126,7 @@ class CustomerScreenController extends StatelessWidget {
                   Container(width: 1,height: 20, color: Colors.white54,),
                   const SizedBox(width: 5,),
 
-                  vm.mySiteList.data[vm.sIndex].master.length>1? PopupMenuButton<Map<String, String>>(
+                  vm.mySiteList.data[vm.sIndex].master.length>1? PopupMenuButton<int>(
                     color: Theme.of(context).primaryColorLight,
                     tooltip: 'master controller',
                     child: MaterialButton(
@@ -145,39 +143,32 @@ class CustomerScreenController extends StatelessWidget {
                     itemBuilder: (context) {
                       return List.generate(vm.mySiteList.data[vm.sIndex].master.length, (index) {
                         final master = vm.mySiteList.data[vm.sIndex].master[index];
-                        return PopupMenuItem<Map<String, String>>(
-                          value: {
-                            'category': master.categoryName,
-                            'model': master.modelName,
-                          },
+                        return PopupMenuItem<int>(
+                          value: index,
                           child: Row(
                             children: [
                               const Icon(Icons.home_max_sharp, size: 20, color: Colors.white),
                               const SizedBox(width: 8),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      master.categoryName,
-                                      style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
-                                    ),
-                                    Text(
-                                      master.modelName,
-                                      style: const TextStyle(fontSize: 12, color: Colors.white54),
-                                    ),
-                                  ],
-                                ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    master.categoryName,
+                                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                                  ),
+                                  Text(
+                                    master.modelName,
+                                    style: const TextStyle(fontSize: 12, color: Colors.white54),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         );
                       });
                     },
-                    onSelected: (selected) {
-                      final category = selected['category']!;
-                      final model = selected['model']!;
-                      vm.masterOnChanged(category, model);
+                    onSelected: (index) {
+                      vm.masterOnChanged(index); // ✅ Pass only the index
                     },
                   ):
                   Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
@@ -193,25 +184,35 @@ class CustomerScreenController extends StatelessWidget {
                   const SizedBox(width: 5,): const SizedBox(),
 
                   vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1 &&
-                      vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.length>1?
-                  DropdownButton(
+                      vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.length>1?
+                  DropdownButton<int>(
                     underline: Container(),
-                    items: (vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData ?? []).map((line) {
-                      return DropdownMenuItem(
-                        value: line.name,
-                        child: Text(line.name, style: const TextStyle(color: Colors.white, fontSize: 17),),
-                      );
-                    }).toList(),
-                    onChanged: (lineName) => vm.lineOnChanged(lineName),
-                    value: vm.myCurrentIrrLine,
+                    items: List.generate(
+                      vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.length, (index) {
+                        final line = vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine[index];
+                        return DropdownMenuItem<int>(
+                          value: index,
+                          child: Text(
+                            line.name,
+                            style: const TextStyle(color: Colors.white, fontSize: 17),
+                          ),
+                        );
+                      },
+                    ),
+                    onChanged: (selectedIndex) {
+                      if (selectedIndex != null) {
+                        vm.lineOnChanged(selectedIndex); // Pass index to your function
+                      }
+                    },
+                    value: vm.lIndex,
                     dropdownColor: Theme.of(context).primaryColorLight,
                     iconEnabledColor: Colors.white,
                     iconDisabledColor: Colors.white,
                     focusColor: Colors.transparent,
                   ) :
                   vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1?
-                  Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.isNotEmpty?
-                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData[0].name:
+                  Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.isNotEmpty?
+                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine[0].name:
                   'Line empty', style: const TextStyle(fontSize: 17),):
                   const SizedBox(),
 
@@ -275,7 +276,7 @@ class CustomerScreenController extends StatelessWidget {
 
                     const SizedBox(width: 10,),
 
-                    vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config.lineData.length>1 && iLineLiveMessage[0].isNotEmpty ? TextButton(
+                    vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.length>1 && iLineLiveMessage[0].isNotEmpty ? TextButton(
                       onPressed: () => vm.linePauseOrResume(iLineLiveMessage),
                       style: ButtonStyle(
                         backgroundColor: WidgetStateProperty.all<Color>(iLineLiveMessage.every((line) => line[1] == '1')?Colors.green: Colors.orange),
@@ -739,7 +740,7 @@ class CustomerScreenController extends StatelessWidget {
                                         controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
                                         customerId: customerId,
                                         deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
-                                        callbackFunction: callbackFunction, userId: userId, config: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].config,);
+                                        callbackFunction: callbackFunction, userId: userId, masterData: vm.mySiteList.data[vm.sIndex].master[vm.mIndex]);
                                     },
                                   ),
                                 ),
@@ -919,11 +920,10 @@ class CustomerScreenController extends StatelessWidget {
     return destinations;
   }
 
-  Widget mainScreen(int index, groupId, groupName, List<Master> masterData, int controllerId, int categoryId, int masterIndex, int siteIndex) {
+  Widget mainScreen(int index, groupId, groupName, List<MasterControllerModel> masterData, int controllerId, int categoryId, int masterIndex, int siteIndex) {
     switch (index) {
       case 0:
         return categoryId==1 ?
-        /*HomeView(customerId: customerId, controllerId: controllerId)*/
         CustomerHome(customerId: userId, controllerId: controllerId):
         PumpControllerHome(
           deviceId: masterData[masterIndex].deviceId,

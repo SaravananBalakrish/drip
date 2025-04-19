@@ -166,75 +166,52 @@ class MobileScreenController extends StatelessWidget {
                               width: 1, height: 20, color: Colors.white54),
                           const SizedBox(width: 5),
 
-                          vm.mySiteList.data[vm.sIndex].master.length > 1
-                              ? PopupMenuButton<Map<String, String>>(
-                            color: Theme
-                                .of(context)
-                                .primaryColorLight,
+                          vm.mySiteList.data[vm.sIndex].master.length > 1? PopupMenuButton<int>(
+                            color: Theme.of(context).primaryColorLight,
                             tooltip: 'master controller',
                             child: MaterialButton(
                               onPressed: null,
                               textColor: Colors.white,
                               child: Row(
                                 children: [
-                                  Text(vm.mySiteList.data[vm.sIndex].master[vm
-                                      .mIndex].categoryName),
+                                  Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName),
                                   const SizedBox(width: 3),
-                                  const Icon(Icons.arrow_drop_down,
-                                      color: Colors.white),
+                                  const Icon(Icons.arrow_drop_down, color: Colors.white),
                                 ],
                               ),
                             ),
                             itemBuilder: (context) {
-                              return List.generate(
-                                  vm.mySiteList.data[vm.sIndex].master.length, (
-                                  index) {
-                                final master = vm.mySiteList.data[vm.sIndex]
-                                    .master[index];
-                                return PopupMenuItem<Map<String, String>>(
-                                  value: {
-                                    'category': master.categoryName,
-                                    'model': master.modelName,
-                                  },
+                              return List.generate(vm.mySiteList.data[vm.sIndex].master.length, (index) {
+                                final master = vm.mySiteList.data[vm.sIndex].master[index];
+                                return PopupMenuItem<int>(
+                                  value: index,
                                   child: Row(
                                     children: [
-                                      const Icon(Icons.home_max_sharp, size: 20,
-                                          color: Colors.white),
+                                      const Icon(Icons.home_max_sharp, size: 20, color: Colors.white),
                                       const SizedBox(width: 8),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment
-                                              .start,
-                                          children: [
-                                            Text(
-                                              master.categoryName,
-                                              style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white),
-                                            ),
-                                            Text(
-                                              master.modelName,
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.white54),
-                                            ),
-                                          ],
-                                        ),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            master.categoryName,
+                                            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+                                          ),
+                                          Text(
+                                            master.modelName,
+                                            style: const TextStyle(fontSize: 12, color: Colors.white54),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
                                 );
                               });
                             },
-                            onSelected: (selected) {
-                              final category = selected['category']!;
-                              final model = selected['model']!;
-                              vm.masterOnChanged(category, model);
+                            onSelected: (index) {
+                              vm.masterOnChanged(index); // ✅ Pass only the index
                             },
-                          )
-                              :
-                          Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex]
-                              .categoryName,
+                          ):
+                          Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
                             style: const TextStyle(fontSize: 12),),
 
                           const SizedBox(width: 15),
@@ -245,26 +222,29 @@ class MobileScreenController extends StatelessWidget {
                           vm.mySiteList.data[vm.sIndex].master[vm.mIndex]
                               .categoryId == 1 &&
                               vm.mySiteList.data[vm.sIndex].master[vm.mIndex]
-                                  .config.lineData.length > 1
-                              ? DropdownButton(
+                                  .irrigationLine.length > 1
+                              ? DropdownButton<int>(
                             underline: Container(),
-                            items: (vm.mySiteList.data[vm.sIndex].master[vm
-                                .mIndex].config.lineData ?? [])
-                                .map((line) {
-                              return DropdownMenuItem(
-                                value: line.name,
-                                child: Text(
-                                  line.name,
-                                  style: const TextStyle(
-                                      color: Colors.white, fontSize: 17),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (lineName) => vm.lineOnChanged(lineName),
-                            value: vm.myCurrentIrrLine,
-                            dropdownColor: Theme
-                                .of(context)
-                                .primaryColorLight,
+                            items: List.generate(
+                              vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.length,
+                                  (index) {
+                                final line = vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine[index];
+                                return DropdownMenuItem<int>(
+                                  value: index,
+                                  child: Text(
+                                    line.name,
+                                    style: const TextStyle(color: Colors.white, fontSize: 17),
+                                  ),
+                                );
+                              },
+                            ),
+                            onChanged: (selectedIndex) {
+                              if (selectedIndex != null) {
+                                vm.lineOnChanged(selectedIndex); // Pass index to your function
+                              }
+                            },
+                            value: vm.lIndex,
+                            dropdownColor: Theme.of(context).primaryColorLight,
                             iconEnabledColor: Colors.white,
                             iconDisabledColor: Colors.white,
                             focusColor: Colors.transparent,
@@ -273,9 +253,9 @@ class MobileScreenController extends StatelessWidget {
                               .categoryId == 1
                               ? Text(
                             vm.mySiteList.data[vm.sIndex].master[vm.mIndex]
-                                .config.lineData.isNotEmpty
+                                .irrigationLine.isNotEmpty
                                 ? vm.mySiteList.data[vm.sIndex].master[vm
-                                .mIndex].config.lineData[0].name
+                                .mIndex].irrigationLine[0].name
                                 : 'Line empty',
                             style: const TextStyle(fontSize: 15),
                           )
@@ -641,7 +621,7 @@ class MobileScreenController extends StatelessWidget {
                           .deviceId,
                       customerId: customerId,
                       currentLineSNo: vm.mySiteList.data[vm.sIndex].master[vm
-                          .mIndex].config.lineData[vm.lIndex].sNo,
+                          .mIndex].irrigationLine[vm.lIndex].sNo,
                     ) :
                     ControllerSettings(customerId: customerId,
                       controllerId: vm.mySiteList.data[vm.sIndex].master[vm
@@ -687,7 +667,7 @@ class MobileScreenController extends StatelessWidget {
     );
   }
 
-  Widget mainScreen(int index, groupId, groupName, List<Master> masterData, int controllerId, int categoryId, int masterIndex, int siteIndex) {
+  Widget mainScreen(int index, groupId, groupName, List<MasterControllerModel> masterData, int controllerId, int categoryId, int masterIndex, int siteIndex) {
 
       switch (index) {
         case 0:
