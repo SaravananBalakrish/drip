@@ -58,10 +58,7 @@ Widget navigateToInitialScreen(String route) {
       // return ProgramLibraryScreenNew(userId: 4, controllerId: 1, deviceId: '2CCF674C0F8A', fromDealer: false, customerId: 4,);
       return const LoginScreen();
     case Routes.dashboard:
-       return MapScreenAllArea();
-       return MapScreenArea();
-
-      return const ScreenController();
+       return const ScreenController();
 
     default:
       return const SplashScreen();
