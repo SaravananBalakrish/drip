@@ -278,25 +278,45 @@ class CustomerScreenController extends StatelessWidget {
 
                     const SizedBox(width: 10,),
 
-                    vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.length>1 && iLineLiveMessage[0].isNotEmpty ? TextButton(
-                      onPressed: () => vm.linePauseOrResume(iLineLiveMessage),
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all<Color>(iLineLiveMessage.every((line) => line[1] == '1')?Colors.green: Colors.orange),
-                        shape: WidgetStateProperty.all<OutlinedBorder>(
-                          RoundedRectangleBorder(borderRadius: BorderRadius.circular(5),),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          iLineLiveMessage.every((line) => line[1] == '1')
-                              ? const Icon(Icons.play_arrow_outlined, color: Colors.black)
-                              : const Icon(Icons.pause, color: Colors.black),
-                          const SizedBox(width: 5),
-                          Text(iLineLiveMessage.every((line) => line[1] == '1') ? 'RESUME ALL LINE' : 'PAUSE ALL LINE',
-                              style: const TextStyle(color: Colors.black)),
-                        ],
-                      ),
+                    (iLineLiveMessage.isNotEmpty &&
+                        vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.length > 1)?
+                    Builder(
+                      builder: (context) {
+                        bool allPaused = iLineLiveMessage.every((line) {
+                          final parts = line.split(',');
+                          return parts.length > 1 && parts[1] == '1';
+                        });
+
+                        return TextButton(
+                          onPressed: () => vm.linePauseOrResume(
+                            iLineLiveMessage,
+                            customerId,
+                            vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
+                          ),
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStateProperty.all<Color>(
+                              allPaused ? Colors.green : Colors.orange,
+                            ),
+                            shape: WidgetStateProperty.all<OutlinedBorder>(
+                              RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                allPaused ? Icons.play_arrow_outlined : Icons.pause,
+                                color: Colors.black,
+                              ),
+                              const SizedBox(width: 5),
+                              Text(
+                                allPaused ? 'RESUME ALL LINE' : 'PAUSE ALL LINE',
+                                style: const TextStyle(color: Colors.black),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ):
                     const SizedBox(),
 

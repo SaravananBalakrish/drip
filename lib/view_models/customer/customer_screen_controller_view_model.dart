@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../Models/customer/site_model.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../repository/repository.dart';
+import '../../services/http_service.dart';
 import '../../services/mqtt_service.dart';
 import '../../utils/constants.dart';
 
@@ -23,7 +24,6 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   late String myCurrentMaster;
   String fromWhere = '';
   String myCurrentIrrLine= 'No Line Available';
-  int controllerId = 0;
   int wifiStrength = 0;
 
   late MqttPayloadProvider payloadProvider;
@@ -225,7 +225,6 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
 
       }
     }
-
   }
 
 
@@ -233,27 +232,26 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     return true;
   }
 
-  void linePauseOrResume(var lineLiveMgs) {
+  void linePauseOrResume(var lineLiveMgs, int customerId, int controllerId) {
     String strPRPayload = '';
-
-    for (int i = 0; i <lineLiveMgs.length; i++) {
-      if (lineLiveMgs.every((line) => line[1] == '1')) {
-        strPRPayload += '${lineLiveMgs[i].split(',')[0]},0;';
-      } else {
-        strPRPayload += '${lineLiveMgs[i].split(',')[0]},1;';
-      }
+    bool allPaused = lineLiveMgs.every((line) => line.split(',')[1] == '1');
+    for (int i = 0; i < lineLiveMgs.length; i++) {
+      final parts = lineLiveMgs[i].split(',');
+      final id = parts[0];
+      final newValue = allPaused ? '0' : '1';
+      strPRPayload += '$id,$newValue;';
     }
+
     String payloadFinal = jsonEncode({
       "4900": {"4901": strPRPayload}
     });
 
     MqttService().topicToPublishAndItsMessage(payloadFinal, '${AppConstants.publishTopic}/${mySiteList.data[sIndex].master[mIndex].deviceId}');
-
-    /*if (payload.payloadIrrLine.every((record) => record.irrigationPauseFlag == 1)) {
-      sentToServer('Resumed all line', payloadFinal);
+    if (allPaused) {
+      sendToServer('Resumed all line', payloadFinal, customerId, controllerId);
     } else {
-      sentToServer('Paused all line', payloadFinal);
-    }*/
+      sendToServer('Paused all line', payloadFinal, customerId, controllerId);
+    }
 
   }
 
@@ -272,5 +270,19 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     //selectedIndex = index;
     //notifyListeners();
   }
+
+  void sendToServer(String msg, String data, int customerId, int controllerId) async
+  {
+    Map<String, Object> body = {"userId": customerId, "controllerId": controllerId, "messageStatus": msg, "hardware": jsonDecode(data), "createUser": customerId};
+    final response = await Repository(HttpService()).createUserSentAndReceivedMessageManually(body);
+    if (response.statusCode == 200) {
+      print(response.body);
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
+  int controllerId = 0;
+  int customerId = 0;
 
 }

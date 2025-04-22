@@ -76,7 +76,8 @@ class ConditionLibrary extends StatelessWidget {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text('Condition ${index + 1}',
+                                  Text(vm.conditionLibraryData.conditionLibrary
+                                      .condition[index].name,
                                       style: const TextStyle(fontSize: 15)),
                                   Text(vm.conditionLibraryData.conditionLibrary
                                       .condition[index].rule,
@@ -110,6 +111,9 @@ class ConditionLibrary extends StatelessWidget {
                                   ),
                                 ),
                               ),
+                              IconButton(tooltip:'Remove condition', onPressed: (){
+
+                              }, icon: const Icon(Icons.remove_circle_outline, color: Colors.red,))
                             ],
                           ),
                           const Divider(height: 0),
