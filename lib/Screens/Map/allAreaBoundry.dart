@@ -3,7 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:oro_drip_irrigation/Screens/Map/MapAreaModel.dart';
-
+import 'package:label_marker/label_marker.dart';
+import 'package:widget_to_marker/widget_to_marker.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import 'areaboundry.dart';
@@ -90,7 +91,7 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
 
 
   void _updatePolygons() {
-    setState(() {
+    setState(() async {
       _polygons.clear();
       _markers.clear();
 
@@ -106,7 +107,7 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
               polygonId: PolygonId(valve.name),
               points: valve.area,
               strokeColor: strokeColor,
-              strokeWidth: 3,
+              strokeWidth: 1,
               fillColor: valve.status == 1 ? Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3),
             ),
           );
@@ -115,12 +116,28 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
 
           _markers.add(
             Marker(
+              visible: true,
               markerId: MarkerId(valve.name),
               position: center,
               infoWindow: InfoWindow(title: valve.name),
-              icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+                icon: await TextOnImage(text: valve.name).toBitmapDescriptor(
+              logicalSize: const Size(150, 150),
+              imageSize: const Size(300, 400),
+            ),
+
             ),
           );
+
+          // LabelMarker labelMarker = LabelMarker(
+          //   label: valve.name,
+          //   markerId: MarkerId(valve.name),
+          //   position: center,
+          //   backgroundColor: Colors.white,
+          //   textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
+          // );
+          //
+          // _markers.add(labelMarker as Marker);
+
         }
       }
     });
@@ -193,6 +210,32 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
         polygons: _polygons,
         markers: _markers,
       ),
+    );
+  }
+}
+class TextOnImage extends StatelessWidget {
+  const TextOnImage({
+    super.key,
+    required this.text,
+  });
+  final String text;
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        const Image(
+          image: AssetImage(
+            "assets/png/textmarker.png",
+          ),
+          height: 50,
+          width: 100,
+        ),
+        Text(
+          text,
+          style: const TextStyle(color: Colors.black),
+        )
+      ],
     );
   }
 }

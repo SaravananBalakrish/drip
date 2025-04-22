@@ -114,7 +114,7 @@ ValveResponseModel valveResponseModelFromJson(String str) =>
 
  class Valve {
   final String name;
-  final List<LatLng> area;
+  late final List<LatLng> area;
   int status;
   final int objectId;
   final double sNo;
