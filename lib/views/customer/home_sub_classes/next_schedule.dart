@@ -34,7 +34,7 @@ class NextSchedule extends StatelessWidget {
                     ),
                     borderRadius: const BorderRadius.all(Radius.circular(5)),
                   ),
-                  height:(nextSchedule.length * 40) + 55,
+                  height:(nextSchedule.length * 45) + 50,
                   child: Padding(
                     padding: const EdgeInsets.all(1.0),
                     child: DataTable2(

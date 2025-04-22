@@ -115,7 +115,12 @@ class MqttPayloadProvider with ChangeNotifier {
    final Map<String, String> _filterOnOffStatusMap = {};
    final Map<String, String> _filterOtherDetailMap = {};
 
+   final Map<String, String> _channelOnOffStatusMap = {};
+   final Map<String, String> _channelOtherDetailMap = {};
+
    final Map<String, String> _valveOnOffStatusMap = {};
+
+   final Map<String, String> _sensorValueMap = {};
 
 
   void updateMapData(data){
@@ -493,7 +498,9 @@ class MqttPayloadProvider with ChangeNotifier {
     try {
       // Todo : Dashboard payload start
       Map<String, dynamic> data = payload.isNotEmpty? jsonDecode(payload) : {};
-      print('\ncheck contain ${data.containsKey('6603')}');
+      //print('\ncheck contain ${data.containsKey('6603')}');
+      final prettyJson = const JsonEncoder.withIndent('  ').convert(data);
+      print('Live Payload:\n$prettyJson');
       //live payload
       if(data['mC']=='2400'){
          //liveSyncCall(false);
@@ -510,8 +517,10 @@ class MqttPayloadProvider with ChangeNotifier {
 
         updateAllPumpPayloads(data['cM']['2402'].split(";"), data['cM']['2404'].split(";"));
         updateFilterSitePayloads(data['cM']['2402'].split(";"), data['cM']['2406'].split(";"));
+        updateFertilizerSitePayloads(data['cM']['2402'].split(";"), data['cM']['2407'].split(";"));
 
         updateValveStatus(data['cM']['2402'].split(";"));
+        updateSensorValue(data['cM']['2403'].split(";"));
 
         updateFilterStatusPayload(data['cM']['2406'].split(";"));
         updateFertilizerStatusPayload(data['cM']['2407'].split(";"));
@@ -676,8 +685,25 @@ class MqttPayloadProvider with ChangeNotifier {
        final sNo = parts[0];
        _filterOtherDetailMap[sNo] = entry;
      }
-
    }
+
+   void updateFertilizerSitePayloads(List<String> channelOnOffPayload, List<String> channelOtherPayload) {
+     for (final entry in channelOnOffPayload) {
+       if (!entry.startsWith('10.')) continue;
+       final parts = entry.split(',');
+       if (parts.isEmpty || parts[0].isEmpty) continue;
+       final sNo = parts[0];
+       _channelOnOffStatusMap[sNo] = entry;
+     }
+
+     for (final entry in channelOtherPayload) {
+       final parts = entry.split(',');
+       if (parts.isEmpty || parts[0].isEmpty) continue;
+       final sNo = parts[0];
+       _channelOtherDetailMap[sNo] = entry;
+     }
+   }
+
 
    void updateValveStatus(List<String> valveOnOffPayload) {
      for (final entry in valveOnOffPayload) {
@@ -686,6 +712,15 @@ class MqttPayloadProvider with ChangeNotifier {
        if (parts.isEmpty || parts[0].isEmpty) continue;
        final sNo = parts[0];
        _valveOnOffStatusMap[sNo] = entry;
+     }
+   }
+
+   void updateSensorValue(List<String> sensorValuePayload) {
+     for (final entry in sensorValuePayload) {
+       final parts = entry.split(',');
+       if (parts.isEmpty || parts[0].isEmpty) continue;
+       final sNo = parts[0];
+       _sensorValueMap[sNo] = entry;
      }
    }
 
@@ -732,7 +767,12 @@ class MqttPayloadProvider with ChangeNotifier {
    String? getFilterOnOffStatus(String sNo) => _filterOnOffStatusMap[sNo];
    String? getFilterOtherData(String sNo) => _filterOtherDetailMap[sNo];
 
+   String? getChannelOnOffStatus(String sNo) => _channelOnOffStatusMap[sNo];
+   String? getChannelOtherData(String sNo) => _channelOtherDetailMap[sNo];
+
    String? getValveOnOffStatus(String sNo) => _valveOnOffStatusMap[sNo];
+
+   String? getSensorUpdatedValve(String sNo) => _sensorValueMap[sNo];
 
 
   String get receivedDashboardPayload => dashBoardPayload;
