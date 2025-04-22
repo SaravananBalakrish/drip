@@ -1,3 +1,4 @@
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -34,6 +35,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
   final Set<Marker> _markers = {};
   Map<String, Valve> _valves = {};
   Valve? selectedValve;
+  final TextEditingController _searchController = TextEditingController();
 
   ValveResponseModel _valveResponseModel = ValveResponseModel();
 
@@ -42,7 +44,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
   void initState() {
     super.initState();
     fetchData();
-   }
+  }
 
   Future<void> fetchData() async {
     print('fetchData');
@@ -99,6 +101,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
     return jsonList;
   }
   Future<void> _sendSelectedValveToServer() async {
+    await _saveValveArea();
     try {
 
       List<Map<String, dynamic>> jsondata = convertValvesToJson();
@@ -113,10 +116,10 @@ class _MapScreenAreaState extends State<MapScreenArea> {
       };
       print('\n body:$body');
 
-        final Repository repository = Repository(HttpService());
-         final response = await repository.updategeographyArea(body);
-        if (response.statusCode != 200) {
-          print('Failed to send valve : ${response.body}');
+      final Repository repository = Repository(HttpService());
+      final response = await repository.updategeographyArea(body);
+      if (response.statusCode != 200) {
+        print('Failed to send valve : ${response.body}');
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -130,8 +133,48 @@ class _MapScreenAreaState extends State<MapScreenArea> {
     }
   }
 
+  void _searchLocation() {
+    try {
+      final input = _searchController.text.trim();
+      final extracted = extractCoordinates(input);
+      final coords = extracted.split(',');
 
+      if (coords.length == 2) {
+        final lat = double.parse(coords[0].trim());
+        final long = double.parse(coords[1].trim());
+        _mapController.moveCamera(
+          CameraUpdate.newLatLng(
+            LatLng(lat, long),
+          ),
+        );
+        // _updateMarker(lat, long);
+      } else {
+        throw Exception('Invalid coordinate format');
+      }
+    } catch (_) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Enter coordinates as "lat, long" (e.g., 11.1326952, 76.9767822)'),
+        ),
+      );
+    }
+  }
 
+  String extractCoordinates(String input) {
+    final regExp = RegExp(r"@(-?\d+\.\d+),(-?\d+\.\d+)");
+    final match = regExp.firstMatch(input);
+
+    if (match != null) {
+      return '${match.group(1)},${match.group(2)}';
+    }
+
+    var coords = input.split(",");
+    if (coords.length == 2) {
+      return '${coords[0].trim()},${coords[1].trim()}';
+    }
+
+    return "Invalid coordinates format.";
+  }
   void _updatePolygons() {
     setState(() {
       _polygons.clear();
@@ -143,7 +186,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
             polygonId: PolygonId(valve.name),
             points: valve.area,
             strokeColor: valve.status == 1 ? Colors.green : Colors.red,
-            strokeWidth: 2,
+            strokeWidth: 1,
             fillColor: valve.status == 1 ? Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3),
           ));
         }
@@ -189,7 +232,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
     }
   }
 
-  void _saveValveArea() {
+  Future<void> _saveValveArea() async {
     if (selectedValve != null) {
       setState(() {
         _valves[selectedValve!.name] = selectedValve!;
@@ -201,7 +244,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
     }
   }
 
-  void _clearLastPoint() {
+  void _undo() {
     if (selectedValve != null && selectedValve!.area.isNotEmpty) {
       setState(() {
         selectedValve!.area.removeLast();
@@ -250,14 +293,37 @@ class _MapScreenAreaState extends State<MapScreenArea> {
       appBar: AppBar(
         title: const Text('Map Area with Valves'),
         actions: [
-          IconButton(icon: const Icon(Icons.undo), onPressed: _clearLastPoint),
+          IconButton(icon: const Icon(Icons.undo), onPressed: _undo),
           IconButton(icon: const Icon(Icons.clear), onPressed: _clearBoundary),
           IconButton(icon: const Icon(Icons.save), onPressed: _saveValveArea),
-          IconButton(icon: const Icon(Icons.cloud_upload), onPressed: _sendSelectedValveToServer),
+          IconButton(icon: const Icon(Icons.send), onPressed: _sendSelectedValveToServer),
         ],
       ),
       body: Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: const InputDecoration(
+                      hintText: 'Search Area (e.g., 11.1326952, 76.9767822)',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: _searchLocation,
+                  child: const Text(
+                    'Search',
+                    style: TextStyle(color: Colors.blue),
+                  ),
+                ),
+              ],
+            ),
+          ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
