@@ -50,6 +50,7 @@ class ConditionLibrary {
 }
 
 class Condition {
+  int sNo;
   String name;
   bool status;
   String type;
@@ -63,6 +64,7 @@ class Condition {
   String alertMessage;
 
   Condition({
+    required this.sNo,
     required this.name,
     required this.status,
     required this.type,
@@ -78,6 +80,7 @@ class Condition {
 
   factory Condition.fromJson(Map<String, dynamic> json) {
     return Condition(
+      sNo: json['sNo'] ?? 0,
       name: json['name'] ?? '',
       status: json['status'] ?? false,
       type: json['type'] ?? '',
@@ -94,6 +97,7 @@ class Condition {
 
   Map<String, dynamic> toJson() {
     return {
+      "sNo": sNo,
       "name": name,
       "status": status,
       "type": type,

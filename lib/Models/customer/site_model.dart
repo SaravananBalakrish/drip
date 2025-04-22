@@ -213,6 +213,7 @@ class WaterSourceModel {
   final bool isWaterInAndOut;
   final List<double> outletPumpSno;
   final List<PumpModel> pumpObjects;
+  final List<SensorModel> level;
 
   WaterSourceModel({
     required this.sNo,
@@ -220,15 +221,26 @@ class WaterSourceModel {
     required this.isWaterInAndOut,
     required this.outletPumpSno,
     required this.pumpObjects,
+    required this.level,
   });
 
   factory WaterSourceModel.fromJson(Map<String, dynamic> json, List<ConfigObject> configObjects) {
 
     final pumpSNoSet = ((json['outletPump'] as List?) ?? []).map((e) => e).toSet();
-
     final pumps = configObjects
         .where((obj) => pumpSNoSet.contains(obj.sNo))
         .map(PumpModel.fromConfigObject)
+        .toList();
+
+    final levelSNoSet = (json['level'] is List)
+        ? (json['level'] as List).map((e) => (e as num).toDouble()).toSet()
+        : (json['level'] is num)
+        ? {(json['level'] as num).toDouble()}
+        : <double>{};
+
+    final levelSensor = configObjects
+        .where((obj) => levelSNoSet.contains(obj.sNo))
+        .map(SensorModel.fromConfigObject)
         .toList();
 
     return WaterSourceModel(
@@ -237,6 +249,7 @@ class WaterSourceModel {
       isWaterInAndOut: (json['inletPump'] as List).isNotEmpty,
       outletPumpSno: List<double>.from(json['outletPump'].map((e) => e.toDouble())),
       pumpObjects: pumps,
+      level: levelSensor,
     );
   }
 
@@ -343,7 +356,6 @@ class IrrigationLineModel {
     }
 
     centralFilterSite = cFilterSite;
-
     centralFertilizerSite = cFertilizerSite;
 
   }
@@ -411,6 +423,7 @@ class ConfigObject {
   final String objectName;
   final int? controllerId;
   final double? location;
+  final int? connectionNo;
   int status;
   bool selected;
   String onDelayLeft;
@@ -428,6 +441,7 @@ class ConfigObject {
     required this.objectName,
     this.controllerId,
     required this.location,
+    required this.connectionNo,
     this.status=0,
     this.selected=false,
     this.onDelayLeft='00:00:00',
@@ -447,6 +461,7 @@ class ConfigObject {
       objectName: json['objectName'],
       controllerId: json['controllerId'],
       location: (json['location'] is! double ? 0.0 : json['location']) ?? 0.0,
+      connectionNo: json['connectionNo'],
     );
   }
 
@@ -458,6 +473,7 @@ class ConfigObject {
       'objectName': objectName,
       'controllerId': controllerId,
       'location': location,
+      'connectionNo': connectionNo,
     };
   }
 }

@@ -77,8 +77,7 @@ class FertilizerSiteView extends StatelessWidget {
                             ),
                             width: 45,
                             height: 22,
-
-                          ) :
+                          ):
                           const SizedBox(),
                         ),
                         Positioned(
@@ -97,7 +96,8 @@ class FertilizerSiteView extends StatelessWidget {
                     itemCount: fertilizerSite.channel.length,
                     itemBuilder: (BuildContext context, int index) {
                       return ChannelWidget(channel: fertilizerSite.channel[index], cIndex: index,
-                        channelLength: fertilizerSite.channel.length, agitator:  fertilizerSite.agitator);
+                        channelLength: fertilizerSite.channel.length,
+                        agitator:  fertilizerSite.agitator, siteSno: fertilizerSite.sNo.toString(),);
                     },
                   ),
                 ),
@@ -257,14 +257,16 @@ class ChannelWidget extends StatelessWidget {
   final Channel channel;
   final int cIndex, channelLength;
   final List<Agitator> agitator;
-  const ChannelWidget({super.key, required this.channel, required this.cIndex, required this.channelLength, required this.agitator});
+  final String siteSno;
+  const ChannelWidget({super.key, required this.channel, required this.cIndex,
+    required this.channelLength, required this.agitator, required this.siteSno});
 
   @override
   Widget build(BuildContext context) {
     return Selector<MqttPayloadProvider, Tuple2<String?, String?>>(
       selector: (_, provider) => Tuple2(
-        provider.getFilterOnOffStatus(channel.sNo.toString()),
-        provider.getFilterOtherData(channel.sNo.toString()),
+        provider.getChannelOnOffStatus(channel.sNo.toString()),
+        provider.getChannelOtherData(channel.sNo.toString()),
       ),
       builder: (_, data, __) {
         final status = data.item1;
@@ -276,8 +278,13 @@ class ChannelWidget extends StatelessWidget {
         }
 
         final otherParts = other?.split(',') ?? [];
-        if (otherParts.length >= 8) {
-          //channel.onDelayLeft = otherParts[2];
+        if (otherParts.isNotEmpty) {
+          channel.frtMethod = otherParts[1];
+          channel.duration = otherParts[2];
+          channel.completedDrQ = otherParts[3];
+          channel.onTime = otherParts[4];
+          channel.offTime = otherParts[5];
+          channel.flowRateLpH = otherParts[6];
         }
 
         return SizedBox(

@@ -104,6 +104,7 @@ class NodeList extends StatelessWidget {
                       child: ListView.builder(
                         itemCount: vm.nodeList.length,
                         itemBuilder: (context, index) {
+                          print(vm.nodeList);
                           return ExpansionTile(
                             trailing: Row(
                               mainAxisSize: MainAxisSize.min,

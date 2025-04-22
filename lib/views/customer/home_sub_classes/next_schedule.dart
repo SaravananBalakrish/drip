@@ -1,5 +1,4 @@
 import 'package:data_table_2/data_table_2.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -34,7 +33,7 @@ class NextSchedule extends StatelessWidget {
                     ),
                     borderRadius: const BorderRadius.all(Radius.circular(5)),
                   ),
-                  height:(nextSchedule.length * 40) + 55,
+                  height:(nextSchedule.length * 45) + 50,
                   child: Padding(
                     padding: const EdgeInsets.all(1.0),
                     child: DataTable2(
@@ -166,20 +165,19 @@ class NextSchedule extends StatelessWidget {
 
 }
 
-  String? getSequenceNameById(ProgramList program, String sequenceId) {
-    try {
-      return program.sequence.firstWhere((seq) => seq.sNo == sequenceId).name;
-    } catch (e) {
-      return null;
-    }
+String? getSequenceNameById(ProgramList program, String sequenceId) {
+  try {
+    return program.sequence.firstWhere((seq) => seq.sNo == sequenceId).name;
+  } catch (e) {
+    return null;
   }
+}
 
-  String convert24HourTo12Hour(String timeString) {
-    if(timeString=='-'){
-      return '-';
-    }
-    final parsedTime = DateFormat('HH:mm:ss').parse(timeString);
-    final formattedTime = DateFormat('hh:mm a').format(parsedTime);
-    return formattedTime;
+String convert24HourTo12Hour(String timeString) {
+  if(timeString=='-'){
+    return '-';
   }
-
+  final parsedTime = DateFormat('HH:mm:ss').parse(timeString);
+  final formattedTime = DateFormat('hh:mm a').format(parsedTime);
+  return formattedTime;
+}

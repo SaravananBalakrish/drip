@@ -6,7 +6,6 @@ import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
 import '../../Models/customer/site_model.dart';
 import 'package:provider/provider.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
-import '../../modules/IrrigationProgram/view/program_library.dart';
 import '../../modules/PumpController/model/pump_controller_data_model.dart';
 import '../../modules/PumpController/view/node_settings.dart';
 import '../../modules/PumpController/view/pump_controller_home.dart';
@@ -234,7 +233,6 @@ class MobileScreenController extends StatelessWidget {
                           ):
                           Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
                             style: const TextStyle(fontSize: 12),),
-
                           const SizedBox(width: 15),
                           Container(
                               width: 1, height: 20, color: Colors.white54),
@@ -693,7 +691,8 @@ class MobileScreenController extends StatelessWidget {
 
     switch (index) {
       case 0:
-        return categoryId==1? CustomerHome(customerId: userId, controllerId: controllerId):
+        return categoryId==1? CustomerHome(customerId: userId, controllerId: controllerId,
+          deviceId: masterData[masterIndex].deviceId,):
         isChanged ? PumpControllerHome(
           deviceId: masterData[masterIndex].deviceId,
           liveData: masterData[masterIndex].live!.cM as PumpControllerData,

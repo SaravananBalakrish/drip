@@ -27,28 +27,42 @@ class ConditionLibraryViewModel extends ChangeNotifier {
 
   ConditionLibraryViewModel(this.repository);
 
-  Future<void> getConditionLibraryData(int customerId, int controllerId) async
-  {
+  Future<void> getConditionLibraryData(int customerId, int controllerId) async {
     setLoading(true);
+
     Future.delayed(const Duration(milliseconds: 500), () async {
       try {
-        var response = await repository.fetchConditionLibrary({"userId": customerId,"controllerId": controllerId});
+        var response = await repository.fetchConditionLibrary({
+          "userId": customerId,
+          "controllerId": controllerId,
+        });
+
         if (response.statusCode == 200) {
           final jsonData = jsonDecode(response.body);
+
           if (jsonData["code"] == 200) {
             conditionLibraryData = ConditionLibraryModel.fromJson(jsonData['data']);
-            vtTEVControllers = List.generate(conditionLibraryData.conditionLibrary.condition.length, (index) => TextEditingController());
-            amTEVControllers = List.generate(conditionLibraryData.conditionLibrary.condition.length, (index) => TextEditingController());
+
+            conditionLibraryData.conditionLibrary.condition.sort((a, b) => (a.sNo).compareTo(b.sNo));
+
+            // Initialize controllers
+            vtTEVControllers = List.generate(
+              conditionLibraryData.conditionLibrary.condition.length,
+                  (index) => TextEditingController(),
+            );
+            amTEVControllers = List.generate(
+              conditionLibraryData.conditionLibrary.condition.length,
+                  (index) => TextEditingController(),
+            );
             connectedTo = List.generate(5, (index) => []);
           }
         }
       } catch (error) {
-        debugPrint('Error fetching language list: $error');
+        debugPrint('Error fetching condition library: $error');
       } finally {
         setLoading(false);
       }
     });
-
   }
 
   void conTypeOnChange(String type, int index){
@@ -149,9 +163,23 @@ class ConditionLibraryViewModel extends ChangeNotifier {
   }
 
   void createNewCondition() {
+    List<int> existingSerials = conditionLibraryData.conditionLibrary.condition
+        .map((c) => c.sNo ?? 0)
+        .toList()
+      ..sort();
+
+    int newSerial = 1;
+    for (int i = 0; i < existingSerials.length; i++) {
+      if (existingSerials[i] != i + 1) {
+        newSerial = i + 1;
+        break;
+      }
+      newSerial = existingSerials.length + 1;
+    }
 
     Condition newCondition = Condition(
-      name: "Condition ${conditionLibraryData.conditionLibrary.condition.length+1}",
+      sNo: newSerial,
+      name: "Condition $newSerial",
       status: false,
       type: "Sensor",
       rule: "--",
@@ -165,8 +193,16 @@ class ConditionLibraryViewModel extends ChangeNotifier {
     );
 
     conditionLibraryData.conditionLibrary.condition.add(newCondition);
-    vtTEVControllers = List.generate(conditionLibraryData.conditionLibrary.condition.length, (index) => TextEditingController());
-    amTEVControllers = List.generate(conditionLibraryData.conditionLibrary.condition.length, (index) => TextEditingController());
+
+    vtTEVControllers = List.generate(
+      conditionLibraryData.conditionLibrary.condition.length,
+          (index) => TextEditingController(),
+    );
+    amTEVControllers = List.generate(
+      conditionLibraryData.conditionLibrary.condition.length,
+          (index) => TextEditingController(),
+    );
+
     notifyListeners();
   }
 
@@ -183,20 +219,17 @@ class ConditionLibraryViewModel extends ChangeNotifier {
       print(conditionLibraryData.conditionLibrary.toJson());
 
       List<Map<String, dynamic>> payloadList = [];
-      int index = 0;
 
       for (var condition in conditionLibraryData.conditionLibrary.condition) {
-
         payloadList.add({
-          'sNo': index + 1,
-          'status': condition.status ? 1:0,
+          'sNo': condition.sNo ?? 0,
+          'status': condition.status ? 1 : 0,
           'delayTime': formatTime(condition.delayTime),
           'notify': 1,
           'category': condition.type,
-          'operator': condition.threshold =='Higher than'? 4: condition.threshold =='Lower than'?5:6,
+          'operator': condition.threshold == 'Higher than'? 4 :
+          condition.threshold == 'Lower than'? 5 : 6,
         });
-
-        index++;
       }
 
       String payloadString = payloadList.map((e) => e.values.join(',')).join(';');
@@ -206,7 +239,6 @@ class ConditionLibraryViewModel extends ChangeNotifier {
         "1000": {"1001": payloadString}
       });
       MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
-
 
       var response = await repository.saveConditionLibrary(body);
       if (response.statusCode == 200) {
