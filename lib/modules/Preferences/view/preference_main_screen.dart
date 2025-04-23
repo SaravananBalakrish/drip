@@ -4,10 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
+import 'package:oro_drip_irrigation/app.dart';
 import 'package:oro_drip_irrigation/modules/Preferences/view/valve_settings.dart';
 import 'package:oro_drip_irrigation/modules/Preferences/view/view_config.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
+import 'package:oro_drip_irrigation/view_models/customer/customer_screen_controller_view_model.dart';
 import 'package:provider/provider.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../Widgets/custom_animated_switcher.dart';
@@ -166,7 +168,8 @@ final otherCalibrationIcons = [
 class PreferenceMainScreen extends StatefulWidget {
   final int userId, controllerId, customerId, menuId;
   final String deviceId;
-  const PreferenceMainScreen({super.key, required this.userId, required this.controllerId, required this.deviceId, required this.customerId, required this.menuId});
+  final CustomerScreenControllerViewModel vm;
+  const PreferenceMainScreen({super.key, required this.userId, required this.controllerId, required this.deviceId, required this.customerId, required this.menuId, required this.vm});
 
   @override
   State<PreferenceMainScreen> createState() => _PreferenceMainScreenState();
@@ -248,8 +251,23 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     }
     if(preferenceProvider.generalData != null && preferenceProvider.commonPumpSettings != null){
       return Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: PreferredSize(preferredSize: const Size(0, 0), child: Container()),
+        // backgroundColor: Colors.transparent,
+        appBar: MediaQuery.of(context).size.width <= 500
+            ? AppBar(
+          title: const Text("Preference"),
+          actions: [
+            FilledButton(
+                onPressed: (){
+                  setState(() {
+                    viewConfig = !viewConfig;
+                  });
+                },
+                child: const Text('View')
+            ),
+            const SizedBox(width: 10,)
+          ],
+        )
+            : PreferredSize(preferredSize: const Size(0, 0), child: Container()),
         body: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
               return Container(
@@ -351,14 +369,15 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                               Expanded(
                                 child: _getDefaultTabController(),
                               ),
-                            IconButton(
-                                onPressed: (){
-                                  setState(() {
-                                    viewConfig = !viewConfig;
-                                  });
-                                },
-                                icon: Icon(Icons.remove_red_eye_outlined, color: Theme.of(context).primaryColor,)
-                            ),
+                            if(MediaQuery.of(context).size.width > 500)
+                              IconButton(
+                                  onPressed: (){
+                                    setState(() {
+                                      viewConfig = !viewConfig;
+                                    });
+                                  },
+                                  icon: Icon(Icons.remove_red_eye_outlined, color: Theme.of(context).primaryColor,)
+                              ),
                           ],
                         ),
                       ),
@@ -394,7 +413,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                       pumpIndex: pumpSettingIndex
                                   )
                               else if(selectedSetting == 3)
-                                const ValveSettings()
+                                ValveSettings(vm: widget.vm,)
                               else if(selectedSetting == 4)
                                 const MoistureSettings()
                             ],

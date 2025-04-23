@@ -52,10 +52,9 @@ class MobileScreenController extends StatelessWidget {
 
           int wifiStrength = mqttProvider.wifiStrength;
           String liveDataAndTime = mqttProvider.liveDateAndTime;
-          var iLineLiveMessage = mqttProvider.lineLiveMessage;
-          Duration lastCommunication = mqttProvider.lastCommunication;
           int powerSupply = mqttProvider.powerSupply;
           var currentSchedule = mqttProvider.currentSchedule;
+          bool isLiveSynced = mqttProvider.isLiveSynced;
 
 
           if (liveDataAndTime.isNotEmpty) {
@@ -118,24 +117,43 @@ class MobileScreenController extends StatelessWidget {
                         ),
                     ],
                   ),
-                if(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].nodeList.isNotEmpty && vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 2 && [48, 49].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId))
+                if(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 2)...[
+                  if(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].nodeList.isNotEmpty
+                      && [48, 49].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId))
+                    IconButton(
+                        onPressed: (){
+                          showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return NodeSettings(
+                                  userId: userId,
+                                  controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
+                                  customerId: customerId,
+                                  nodeList: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].nodeList,
+                                  deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
+                                );
+                              }
+                          );
+                        },
+                        icon: const Icon(Icons.settings_remote)
+                    ),
                   IconButton(
                       onPressed: (){
-                        showModalBottomSheet(
-                            context: context,
-                            builder: (context) {
-                              return NodeSettings(
-                                userId: userId,
-                                controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
-                                customerId: customerId,
-                                nodeList: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].nodeList,
-                                deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
-                              );
-                            }
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                SentAndReceived(
+                                  customerId: userId,
+                                  controllerId: vm.mySiteList.data[vm.sIndex]
+                                      .master[vm.mIndex].controllerId,
+                                ),
+                          ),
                         );
                       },
-                      icon: const Icon(Icons.settings_remote)
+                      icon: const Icon(Icons.question_answer_outlined)
                   ),
+                ],
                 const SizedBox(width: 16),
               ],
               bottom: PreferredSize(
@@ -574,46 +592,50 @@ class MobileScreenController extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  lastCommunication.inMinutes >= 10 && powerSupply == 0
-                      ? Container(
-                    height: 23.0,
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade300,
-                      borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(5),
-                          topRight: Radius.circular(5)),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'No communication and power Supply to Controller'
-                            .toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.black87,
-                          fontSize: 12.0,
+                  if (vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1) ...[
+                    if (!isLiveSynced)
+                      Container(
+                        height: 20.0,
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade300,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(5),
+                            topRight: Radius.circular(5),
+                          ),
                         ),
-                      ),
-                    ),
-                  )
-                      :
-                  (powerSupply == 0 &&
-                      vm.mySiteList.data[vm.sIndex].master[vm.mIndex]
-                          .categoryId == 1) ? Container(
-                    height: 20.0,
-                    decoration: BoxDecoration(
-                      color: Colors.red.shade300,
-                      borderRadius: const BorderRadius.only(topLeft: Radius
-                          .circular(5), topRight: Radius.circular(5)),
-                    ),
-                    child: Center(
-                      child: Text('No power Supply to Controller'.toUpperCase(),
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12.0,
+                        child: const Center(
+                          child: Text(
+                            'NO COMMUNICATION TO CONTROLLER',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12.0,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ) :
-                  const SizedBox(),
+                      )
+                    else if (powerSupply == 0)
+                      Container(
+                        height: 23.0,
+                        decoration: BoxDecoration(
+                          color: Colors.red.shade300,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(5),
+                            topRight: Radius.circular(5),
+                          ),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'NO POWER SUPPLY TO CONTROLLER',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 12.0,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      const SizedBox(),
+                  ],
 
                   Expanded(
                     child: vm.selectedIndex == 0 ?
@@ -628,7 +650,8 @@ class MobileScreenController extends StatelessWidget {
                             .categoryId,
                         vm.mIndex,
                         vm.sIndex,
-                      vm.isChanged
+                      vm.isChanged,
+                      vm
                     ) :
                     vm.selectedIndex == 1 ?
                     ScheduledProgram(
@@ -649,7 +672,9 @@ class MobileScreenController extends StatelessWidget {
                       adDrId: fromLogin ? 1 : 0,
                       userId: userId,
                       deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex]
-                          .deviceId,),
+                          .deviceId,
+                      vm: vm,
+                    ),
                   ),
                 ],
               ),
@@ -687,7 +712,7 @@ class MobileScreenController extends StatelessWidget {
     );
   }
 
-  Widget mainScreen(int index, groupId, groupName, List<MasterControllerModel> masterData, int controllerId, int categoryId, int masterIndex, int siteIndex, bool isChanged) {
+  Widget mainScreen(int index, groupId, groupName, List<MasterControllerModel> masterData, int controllerId, int categoryId, int masterIndex, int siteIndex, bool isChanged, CustomerScreenControllerViewModel vm) {
 
     switch (index) {
       case 0:
@@ -702,6 +727,8 @@ class MobileScreenController extends StatelessWidget {
           controllerId: controllerId,
           siteIndex: siteIndex,
           masterIndex: masterIndex,
+          adDrId: fromLogin ? 1 : 0,
+          vm: vm,
         ) : const Scaffold(
           body: Center(
             child: Column(
@@ -722,7 +749,7 @@ class MobileScreenController extends StatelessWidget {
         return IrrigationAndPumpLog(userData: {'userId' : userId, 'controllerId' : controllerId});
       case 4:
         return ControllerSettings(customerId: customerId, controllerId: controllerId,
-          adDrId: fromLogin ? 1 : 0, userId: userId, deviceId: '',);
+          adDrId: fromLogin ? 1 : 0, userId: userId, deviceId: '', vm: vm,);
       case 6:
         return WeatherScreen(userId: userId, controllerId: controllerId, deviceID: '',);
 

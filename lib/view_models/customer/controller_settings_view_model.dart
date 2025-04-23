@@ -29,6 +29,8 @@ class ControllerSettingsViewModel extends ChangeNotifier {
     {'title': 'Calibration', 'icon': Icons.compass_calibration_outlined},
     {'title': 'Dealer Definition', 'icon': Icons.person_outline},
     {'title': 'View Settings', 'icon': Icons.remove_red_eye_outlined},
+    {'title': 'Geography', 'icon': Icons.map_outlined},
+    {'title': 'Geography Area', 'icon': Icons.map_sharp},
   ];
 
   ControllerSettingsViewModel(this.repository);
@@ -53,6 +55,10 @@ class ControllerSettingsViewModel extends ChangeNotifier {
 
           filteredSettingList = allSettings.where((setting) {
             if (setting['title'] == 'General') return true;
+             else if (setting['title'] == 'Dealer Definition') return true;
+             else if (setting['title'] == 'Geography') return true;
+             else if (setting['title'] == 'Geography Area') return true;
+
             return availableTitles.contains(setting['title']);
           }).toList();
         }

@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/Preferences/view/preference_main_screen.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/view/pump_dashboard_screen.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/widget/custom_outline_button.dart';
+import 'package:oro_drip_irrigation/view_models/customer/customer_screen_controller_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../../views/customer/controller_settings.dart';
 import '../../Logs/view/power_graph_screen.dart';
 import '../../Logs/view/pump_log.dart';
 import '../../Logs/view/pump_logs_home.dart';
@@ -22,6 +24,8 @@ class PumpControllerHome extends StatefulWidget {
   final int controllerId;
   final int siteIndex;
   final int masterIndex;
+  final int adDrId;
+  final CustomerScreenControllerViewModel vm;
 
   const PumpControllerHome({
     super.key,
@@ -33,6 +37,8 @@ class PumpControllerHome extends StatefulWidget {
     required this.controllerId,
     required this.siteIndex,
     required this.masterIndex,
+    required this.adDrId,
+    required this.vm,
   });
 
   @override
@@ -207,12 +213,21 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
           siteIndex: widget.siteIndex,
           masterIndex: widget.masterIndex,
         ),
-        PreferenceMainScreen(
+        /*PreferenceMainScreen(
           userId: widget.userId,
           controllerId: widget.controllerId,
           deviceId: widget.deviceId,
           customerId: widget.customerId,
           menuId: 0,
+          vm: widget.vm,
+        ),*/
+        ControllerSettings(
+          userId: widget.userId,
+          controllerId: widget.controllerId,
+          deviceId: widget.deviceId,
+          customerId: widget.customerId,
+          adDrId: widget.adDrId,
+          vm: widget.vm,
         ),
         PumpLogsHome(userId: widget.userId, controllerId: widget.controllerId),
       ],
@@ -293,11 +308,12 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
         selectedWidget = PumpVoltageLogScreen(userId: widget.userId, controllerId: widget.controllerId);
       case 3:
         selectedWidget =  PreferenceMainScreen(
-            userId: widget.userId,
-            controllerId: widget.controllerId,
-            deviceId: widget.deviceId,
-            customerId: widget.customerId,
-            menuId: 0
+          userId: widget.userId,
+          controllerId: widget.controllerId,
+          deviceId: widget.deviceId,
+          customerId: widget.customerId,
+          menuId: 0,
+          vm: widget.vm,
         );
       default:
         selectedWidget;

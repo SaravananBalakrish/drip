@@ -8,12 +8,12 @@ import '../../../view_models/customer/customer_screen_controller_view_model.dart
 import '../../IrrigationProgram/view/schedule_screen.dart';
 
 class ValveSettings extends StatelessWidget {
-  const ValveSettings({super.key});
+  final CustomerScreenControllerViewModel vm;
+  const ValveSettings({super.key, required this.vm});
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.read<CustomerScreenControllerViewModel>();
-    final valves = provider.mySiteList.data[provider.sIndex].master[provider.mIndex].configObjects.where((e) => e.objectId == 13).toList();
+    final valves = vm.mySiteList.data[vm.sIndex].master[vm.mIndex].configObjects.where((e) => e.objectId == 13).toList();
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Column(
