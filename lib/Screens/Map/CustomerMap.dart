@@ -187,7 +187,9 @@ class _MapScreenallState extends State<MapScreenall> {
   }
 
   BitmapDescriptor _getMarkerIcon(int? status,String type) {
+
    if( type.contains('Valve')) {
+     print('_getMarkerIcon Status:$status');
      switch (status) {
       case 1:
         return markerGreen;

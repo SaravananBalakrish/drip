@@ -3,7 +3,8 @@ import 'dart:convert';
 MapConfigModel mapConfigModelFromJson(String str) =>
     MapConfigModel.fromJson(json.decode(str));
 
-String mapConfigModelToJson(MapConfigModel data) => json.encode(data.toJson());
+String mapConfigModelToJson(MapConfigModel data) =>
+    json.encode(data.toJson());
 
 class MapConfigModel {
   int? code;
@@ -20,7 +21,7 @@ class MapConfigModel {
       MapConfigModel(
         code: json["code"],
         message: json["message"],
-        data: json["data"] == null ? null : Data.fromJson(json["data"], ""),
+        data: json["data"] == null ? null : Data.fromJson(json["data"]),
       );
 
   Map<String, dynamic> toJson() => {
@@ -39,14 +40,16 @@ class Data {
     this.liveMessage,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json, String serialNumber) =>
-      Data(
-        deviceList: json["deviceList"] == null
-            ? []
-            : List<DeviceList>.from(
-            json["deviceList"]!.map((x) => DeviceList.fromJson(x, serialNumber))),
-        liveMessage: json["liveMessage"] == null ? null : json["liveMessage"],
-      );
+  factory Data.fromJson(Map<String, dynamic> json) {
+    final liveMsg = json["liveMessage"];
+    return Data(
+      deviceList: json["deviceList"] == null
+          ? []
+          : List<DeviceList>.from(
+          json["deviceList"]!.map((x) => DeviceList.fromJson(x, liveMsg))),
+      liveMessage: liveMsg,
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "deviceList": deviceList == null
@@ -81,7 +84,8 @@ class DeviceList {
     this.serialNumber,
   });
 
-  factory DeviceList.fromJson(Map<String, dynamic> json, String serialNumber) =>
+  factory DeviceList.fromJson(
+      Map<String, dynamic> json, Map<String, dynamic>? liveMessage) =>
       DeviceList(
         controllerId: json["controllerId"],
         deviceId: json["deviceId"],
@@ -89,11 +93,13 @@ class DeviceList {
         siteName: json["siteName"],
         categoryName: json["categoryName"],
         modelName: json["modelName"],
-        geography: Geography.fromJson(json["geography"] ?? {}, serialNumber),
+        geography: Geography.fromJson(
+            json["geography"] ?? {}, '${json["serialNumber"]}', liveMessage),
         connectedObject: json["connectedObject"] == null
             ? []
-            : List<ConnectedObject>.from(
-            json["connectedObject"]!.map((x) => ConnectedObject.fromJson(x, serialNumber))),
+            : List<ConnectedObject>.from(json["connectedObject"]!
+            .map((x) => ConnectedObject.fromJson(
+            x, '${json["serialNumber"]}', liveMessage))),
         referenceNumber: json["referenceNumber"],
         serialNumber: json["serialNumber"],
       );
@@ -135,7 +141,8 @@ class ConnectedObject {
     this.status,
   });
 
-  factory ConnectedObject.fromJson(Map<String, dynamic> json, String serialNumber) =>
+  factory ConnectedObject.fromJson(Map<String, dynamic> json,
+      String serialNumber, Map<String, dynamic>? liveMessage) =>
       ConnectedObject(
         objectId: json["objectId"],
         sNo: json["sNo"]?.toDouble(),
@@ -144,7 +151,7 @@ class ConnectedObject {
         location: json["location"],
         lat: json["lat"]?.toDouble(),
         long: json["long"]?.toDouble(),
-        status: getValueOfStatus(serialNumber),
+        status: getValueOfStatus('${json["sNo"]}', liveMessage),
       );
 
   Map<String, dynamic> toJson() => {
@@ -170,11 +177,12 @@ class Geography {
     this.status,
   });
 
-  factory Geography.fromJson(Map<String, dynamic> json, String serialNumber) =>
+  factory Geography.fromJson(Map<String, dynamic> json, String serialNumber,
+      Map<String, dynamic>? liveMessage) =>
       Geography(
-        lat: json["lat"]?.toDouble() ?? null,
-        long: json["long"]?.toDouble() ?? null,
-        status: getValueOfStatus(serialNumber)  ?? null,  // Pass serialNumber to get the status
+        lat: json["lat"]?.toDouble(),
+        long: json["long"]?.toDouble(),
+        status: getValueOfStatus(serialNumber, liveMessage),
       );
 
   Map<String, dynamic> toJson() => {
@@ -184,35 +192,34 @@ class Geography {
   };
 }
 
-int getValueOfStatus(String serialNumber) {
-  Map<String, dynamic>? liveMessage = Data().liveMessage;
+int getValueOfStatus(String serialNumber, Map<String, dynamic>? liveMessage) {
+  print('getValueOfStatus call');
+  print('serialNumber: $serialNumber');
+  print('liveMessage: $liveMessage');
+
   try {
-    // Null and empty check for liveMessage
-    if (liveMessage == null || liveMessage.isEmpty) {
-      return 0; // Return a default value if liveMessage is null or empty
+    if (liveMessage == null || liveMessage['cM'] == null) {
+      return 0;
     }
 
-    Map<String, dynamic> cM = liveMessage['cM'] as Map<String, dynamic>;
+    final cM = liveMessage['cM'] as Map<String, dynamic>;
+    final data = cM['2402'] as String?;
 
-    // Iterate over the keys in the map
-    for (String key in cM.keys) {
-      if (key.startsWith('24')) {
-        String data = cM[key] as String;
-        List<String> values = data.split(';');
+    if (data == null || data.isEmpty) {
+      return 0;
+    }
 
-        // Iterate over the values and check if the serialNumber matches
-        for (int i = 0; i < values.length; i++) {
-          if (values[i].startsWith(serialNumber)) {
-            List<String> parts = values[i].split(',');
-            return int.parse(parts[1]);
-          }
-        }
+    final values = data.split(';');
+    for (final value in values) {
+      if (value.startsWith(serialNumber)) {
+        final parts = value.split(',');
+        return int.parse(parts[1]);
       }
     }
 
-    return 7; // Default status if serialNumber is not found
+    return 0;
   } catch (e) {
-    print('Error parsing data: $e');
-    return 7; // Return 0 in case of error
+    print('Error parsing status for $serialNumber: $e');
+    return 0;
   }
 }
