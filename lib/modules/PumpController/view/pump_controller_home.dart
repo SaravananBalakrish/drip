@@ -221,14 +221,12 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
           menuId: 0,
           vm: widget.vm,
         ),*/
-        ControllerSettings(
+        /*ControllerSettings(
           userId: widget.userId,
-          controllerId: widget.controllerId,
-          deviceId: widget.deviceId,
           customerId: widget.customerId,
           adDrId: widget.adDrId,
-          vm: widget.vm,
-        ),
+          masterController: [],
+        )*/
         PumpLogsHome(userId: widget.userId, controllerId: widget.controllerId),
       ],
       onPageChanged: (index) {
