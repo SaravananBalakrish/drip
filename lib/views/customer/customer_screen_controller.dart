@@ -984,7 +984,6 @@ class CustomerScreenController extends StatelessWidget {
         return ControllerSettings(
             userId: userId,
             customerId: userId,
-            adDrId: fromLogin ? 1 : 0,
           masterController: masterData[masterIndex],
         );
       case 5:
