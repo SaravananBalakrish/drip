@@ -272,6 +272,7 @@ class _MapScreenallState extends State<MapScreenall> {
         ),
       ],),
       body: GoogleMap(
+        mapType: MapType.hybrid,
         onMapCreated: _onMapCreated,
         initialCameraPosition: CameraPosition(
           target: _center,
