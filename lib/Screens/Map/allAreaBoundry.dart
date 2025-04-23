@@ -1,23 +1,24 @@
 import 'dart:convert';
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:oro_drip_irrigation/Screens/Map/MapAreaModel.dart';
-import 'package:label_marker/label_marker.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import 'areaboundry.dart';
 
 class MapScreenAllArea extends StatefulWidget {
-  const MapScreenAllArea({Key? key,
-      required this.userId,
-  required this.customerId,
-  required this.controllerId,
-  required this.imeiNo})
-: super(key: key);
-final int userId, customerId, controllerId;
-final String imeiNo;
+  const MapScreenAllArea({
+    Key? key,
+    required this.userId,
+    required this.customerId,
+    required this.controllerId,
+    required this.imeiNo,
+  }) : super(key: key);
+
+  final int userId, customerId, controllerId;
+  final String imeiNo;
 
   @override
   State<MapScreenAllArea> createState() => _MapScreenAllAreaState();
@@ -25,6 +26,8 @@ final String imeiNo;
 
 class _MapScreenAllAreaState extends State<MapScreenAllArea> {
   late GoogleMapController _mapController;
+  final Completer<GoogleMapController> _controllerCompleter = Completer();
+  bool _isLoading = true;  // To track loading state
 
   static const CameraPosition _initialPosition = CameraPosition(
     target: LatLng(11.1387361, 76.9764367),
@@ -53,93 +56,85 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
     fetchData();
   }
 
-
   Future<void> fetchData() async {
-    print('fetchData');
-    try{
-      final Repository repository = Repository(HttpService());
-      var getUserDetails = await repository.getgeographyArea({
+    print('Fetching geography data...');
+    try {
+      final repository = Repository(HttpService());
+      final response = await repository.getgeographyArea({
         "userId": widget.userId,
-        "controllerId" : widget.controllerId
+        "controllerId": widget.controllerId,
       });
-      print('getUserDetails${getUserDetails.body.runtimeType}');
-      // final jsonData = jsonDecode(getUserDetails.body);
-      if (getUserDetails.statusCode == 200) {
-        setState(() {
-          var jsonData = getUserDetails.body;
-          print('jsonData${jsonData.runtimeType}');
 
-          final mapAreaModel = valveResponseModelFromJson(jsonData);
-          setState(() {
-            _valves = {
-              for (var mapobject in mapAreaModel.data?.valveGeographyArea ?? [])
-                mapobject.name!: Valve.fromMapobject(mapobject, mapAreaModel.data?.liveMessage)
-            };
-            _updatePolygons();
-          });
-         });
+      if (response.statusCode == 200) {
+        final mapAreaModel = valveResponseModelFromJson(response.body);
+
+        _valves = {
+          for (var mapobject in mapAreaModel.data?.valveGeographyArea ?? [])
+            mapobject.name!: Valve.fromMapobject(mapobject, mapAreaModel.data?.liveMessage),
+        };
+
+        await _updatePolygons();
       } else {
-        //_showSnackBar(response.body);
+        print('Failed to load data: ${response.statusCode}');
       }
-    }
-    catch (e, stackTrace) {
-       print(' Error overAll getData => ${e.toString()}');
-      print(' trace overAll getData  => ${stackTrace}');
+    } catch (e, stackTrace) {
+      print('Error fetching data: $e');
+      print('StackTrace: $stackTrace');
+    } finally {
+      setState(() {
+        _isLoading = false;  // Set loading to false once data is fetched
+      });
     }
   }
 
+  Future<void> _updatePolygons() async {
+    final Set<Polygon> newPolygons = {};
+    final Set<Marker> newMarkers = {};
+    int colorIndex = 0;
 
+    for (var valve in _valves.values) {
+      if (valve.area.length >= 3) {
+        final strokeColor = _areaColors[colorIndex % _areaColors.length];
+        colorIndex++;
 
-  void _updatePolygons() {
-    setState(() async {
-      _polygons.clear();
-      _markers.clear();
+        newPolygons.add(
+          Polygon(
+            polygonId: PolygonId(valve.name),
+            points: valve.area,
+            strokeColor: strokeColor,
+            strokeWidth: 1,
+            fillColor: valve.status == 1
+                ? Colors.green.withOpacity(0.3)
+                : Colors.red.withOpacity(0.3),
+          ),
+        );
 
-      int colorIndex = 0;
+        final center = _getPolygonCenter(valve.area);
 
-      for (var valve in _valves.values) {
-        if (valve.area.length >= 3) {
-          final strokeColor = _areaColors[colorIndex % _areaColors.length];
-          colorIndex++;
+        final markerIcon = await TextOnImage(text: valve.name).toBitmapDescriptor(
+          logicalSize: const Size(150, 150),
+          imageSize: const Size(300, 400),
+        );
 
-          _polygons.add(
-            Polygon(
-              polygonId: PolygonId(valve.name),
-              points: valve.area,
-              strokeColor: strokeColor,
-              strokeWidth: 1,
-              fillColor: valve.status == 1 ? Colors.green.withOpacity(0.3) : Colors.red.withOpacity(0.3),
-            ),
-          );
-
-          final center = _getPolygonCenter(valve.area);
-
-          _markers.add(
-            Marker(
-              visible: true,
-              markerId: MarkerId(valve.name),
-              position: center,
-              infoWindow: InfoWindow(title: valve.name),
-                icon: await TextOnImage(text: valve.name).toBitmapDescriptor(
-              logicalSize: const Size(150, 150),
-              imageSize: const Size(300, 400),
-            ),
-
-            ),
-          );
-
-          // LabelMarker labelMarker = LabelMarker(
-          //   label: valve.name,
-          //   markerId: MarkerId(valve.name),
-          //   position: center,
-          //   backgroundColor: Colors.white,
-          //   textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
-          // );
-          //
-          // _markers.add(labelMarker as Marker);
-
-        }
+        newMarkers.add(
+          Marker(
+            markerId: MarkerId(valve.name),
+            position: center,
+            infoWindow: InfoWindow(title: valve.name),
+            icon: markerIcon,
+            visible: true,
+          ),
+        );
       }
+    }
+
+    setState(() {
+      _polygons
+        ..clear()
+        ..addAll(newPolygons);
+      _markers
+        ..clear()
+        ..addAll(newMarkers);
     });
   }
 
@@ -153,12 +148,14 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
     return LatLng(lat / points.length, lng / points.length);
   }
 
-  void _zoomToValves() {
+  Future<void> _zoomToValves() async {
     if (_valves.isEmpty) return;
     final allPoints = _valves.values.expand((v) => v.area).toList();
     if (allPoints.isEmpty) return;
+
     final bounds = _calculateBounds(allPoints);
-    _mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+    final controller = await _controllerCompleter.future;
+    controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
   }
 
   LatLngBounds _calculateBounds(List<LatLng> points) {
@@ -166,10 +163,10 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
     double minLng = points[0].longitude, maxLng = points[0].longitude;
 
     for (var point in points) {
-      if (point.latitude < minLat) minLat = point.latitude;
-      if (point.latitude > maxLat) maxLat = point.latitude;
-      if (point.longitude < minLng) minLng = point.longitude;
-      if (point.longitude > maxLng) maxLng = point.longitude;
+      minLat = point.latitude < minLat ? point.latitude : minLat;
+      maxLat = point.latitude > maxLat ? point.latitude : maxLat;
+      minLng = point.longitude < minLng ? point.longitude : minLng;
+      maxLng = point.longitude > maxLng ? point.longitude : maxLng;
     }
 
     return LatLngBounds(
@@ -190,51 +187,70 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
           ),
           IconButton(
             icon: const Icon(Icons.edit_location_alt),
-            onPressed: (){
+            onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (context) => MapScreenArea(userId: widget.userId, customerId: widget.customerId, controllerId: widget.controllerId, imeiNo: widget.imeiNo,),
+                builder: (context) => MapScreenArea(
+                  userId: widget.userId,
+                  customerId: widget.customerId,
+                  controllerId: widget.controllerId,
+                  imeiNo: widget.imeiNo,
+                ),
               ));
             },
           ),
         ],
       ),
-      body: GoogleMap(
-        initialCameraPosition: _initialPosition,
-        onMapCreated: (GoogleMapController controller) {
-          _mapController = controller;
-          if (_valves.isNotEmpty) {
-            _zoomToValves();
-          }
-        },
-        mapType: MapType.hybrid,
-        polygons: _polygons,
-        markers: _markers,
+      body: Stack(
+        children: [
+          GoogleMap(
+            initialCameraPosition: _initialPosition,
+            onMapCreated: (controller) {
+              _mapController = controller;
+              _controllerCompleter.complete(controller);
+              if (_valves.isNotEmpty) {
+                _zoomToValves();
+              }
+            },
+            mapType: MapType.hybrid,
+            polygons: _polygons,
+            markers: _markers,
+          ),
+          if (_isLoading)
+            Center(
+              child: CircularProgressIndicator(backgroundColor: Colors.red,),
+            ),
+        ],
       ),
     );
   }
 }
+
 class TextOnImage extends StatelessWidget {
   const TextOnImage({
-    super.key,
+    Key? key,
     required this.text,
-  });
+  }) : super(key: key);
+
   final String text;
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       alignment: Alignment.center,
       children: [
         const Image(
-          image: AssetImage(
-            "assets/png/textmarker.png",
-          ),
+          image: AssetImage("assets/png/textmarker.png"),
           height: 50,
           width: 100,
         ),
         Text(
           text,
-          style: const TextStyle(color: Colors.black),
-        )
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.center,
+        ),
       ],
     );
   }
