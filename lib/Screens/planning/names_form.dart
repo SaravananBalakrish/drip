@@ -220,7 +220,7 @@ class _NamesState extends State<Names> {
                       controller: _controllers[originalIndex],
                       inputFormatters: [
                         LengthLimitingTextInputFormatter(15),
-                        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s.]')),
+                         FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9.!@#$%^&*()_+\-=\[\]{}|;:"<>,.?/`~]'))
                       ],
                       onChanged: (val) {
                         setState(() {
