@@ -90,8 +90,8 @@ class Condition {
       threshold: json['threshold'] ?? '',
       value: json['value'] ?? '',
       reason: json['reason'] ?? '',
-      delayTime: json['delay time'] ?? '',
-      alertMessage: json['alert message'] ?? '',
+      delayTime: json['delayTime'] ?? '',
+      alertMessage: json['alertMessage'] ?? '',
     );
   }
 
@@ -107,8 +107,8 @@ class Condition {
       "threshold": threshold,
       "value": value,
       "reason": reason,
-      "delay time": delayTime,
-      "alert message": alertMessage,
+      "delayTime": delayTime,
+      "alertMessage": alertMessage,
     };
   }
 }
