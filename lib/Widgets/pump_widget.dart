@@ -120,52 +120,7 @@ class PumpWidget extends StatelessWidget {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                           backgroundColor: WidgetStateProperty.all(Colors.transparent),
                         ),
-                        child: kIsWeb && pump.status == 1?
-                        SizedBox(
-                          width: 70,
-                          height: 70,
-                          child: Stack(
-                            children: [
-                              GifImageWeb(imagePath: 'assets/gif/dp_irr_pump_g.gif'),
-                              Positioned.fill(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    showPopover(
-                                      context: buttonContext,
-                                      bodyBuilder: (context) {
-                                        return ValueListenableBuilder<int>(
-                                          valueListenable: popoverUpdateNotifier,
-                                          builder: (context, _, __) {
-                                            return Material(
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  hasVoltage
-                                                      ? _buildVoltagePopoverContent(context, voltages, columns)
-                                                      : _buildManualControlButtons(context),
-                                                  if (isSourcePump) _buildBottomControlButtons(context),
-                                                ],
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                      onPop: () => print('Popover was popped!'),
-                                      direction: PopoverDirection.bottom,
-                                      width: 325,
-                                      arrowHeight: 15,
-                                      arrowWidth: 30,
-                                    );
-                                  },
-                                  child: MouseRegion(
-                                    cursor: SystemMouseCursors.click,
-                                    child: Container(color: Colors.transparent),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ) :
+                        child:
                         SizedBox(
                           width: 70,
                           height: 70,

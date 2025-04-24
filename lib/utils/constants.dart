@@ -1,9 +1,5 @@
-import 'dart:convert';
-import 'dart:ui_web' as ui;
-import 'dart:html' as html;
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import '../modules/config_Maker/view/config_web_view.dart';
 import 'environment.dart';
 
 enum UserRole { admin, dealer, subUser }
@@ -626,6 +622,7 @@ class AppConstants {
 
 }
 
+/*
 class GifImageWeb extends StatelessWidget {
   final String imagePath;
   final double width;
@@ -656,4 +653,4 @@ class GifImageWeb extends StatelessWidget {
       child: HtmlElementView(viewType: viewId),
     );
   }
-}
+}*/
