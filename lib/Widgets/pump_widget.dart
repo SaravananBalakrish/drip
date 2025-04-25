@@ -99,7 +99,7 @@ class PumpWidget extends StatelessWidget {
                                       children: [
                                         hasVoltage
                                             ? _buildVoltagePopoverContent(context, voltages, columns)
-                                            : _buildManualControlButtons(context),
+                                            : Container(),
                                         if (isSourcePump) _buildBottomControlButtons(context),
                                       ],
                                     ),
@@ -320,10 +320,10 @@ class PumpWidget extends StatelessWidget {
                     "6300": {"6301": payload}
                   });
                   print('${AppConstants.publishTopic}/$deviceId');
-                  MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
-                  sentUserOperationToServer('${pump.name} Reset Manually', payLoadFinal);
-                  GlobalSnackBar.show(context, 'Reset comment sent successfully', 200);
-                  Navigator.pop(context);
+                  //MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+                  //sentUserOperationToServer('${pump.name} Reset Manually', payLoadFinal);
+                  //GlobalSnackBar.show(context, 'Reset comment sent successfully', 200);
+                  //Navigator.pop(context);
                 },
                 child: const Text('Reset',
                     style: TextStyle(fontSize: 12, color: Colors.white)),
@@ -414,32 +414,6 @@ class PumpWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildManualControlButtons(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        const SizedBox(height: 8),
-        MaterialButton(
-          color: Colors.green,
-          textColor: Colors.white,
-          onPressed: () {
-            // Start logic
-          },
-          child: const Text('Start Manually'),
-        ),
-        const SizedBox(height: 8),
-        MaterialButton(
-          color: Colors.redAccent,
-          textColor: Colors.white,
-          onPressed: () {
-            // Stop logic
-          },
-          child: const Text('Stop Manually'),
-        ),
-        const SizedBox(height: 8),
-      ],
-    );
-  }
 
   Widget _buildBottomControlButtons(BuildContext context) {
     return Padding(

@@ -243,10 +243,15 @@ class WaterSourceModel {
         .map(SensorModel.fromConfigObject)
         .toList();
 
+    final sourceCount = configObjects
+        .where((obj) => obj.objectId == 1)
+        .length;
+
+
     return WaterSourceModel(
       sNo: json['sNo']?.toDouble() ?? 0,
       name: json['name'],
-      isWaterInAndOut: (json['inletPump'] as List).isNotEmpty,
+      isWaterInAndOut: ((json['inletPump'] as List).isNotEmpty || sourceCount == 1),
       outletPumpSno: List<double>.from(json['outletPump'].map((e) => e.toDouble())),
       pumpObjects: pumps,
       level: levelSensor,
