@@ -6,12 +6,15 @@ import 'package:provider/provider.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../utils/snack_bar.dart';
 import '../../view_models/customer/node_list_view_model.dart';
+import 'hourly_log/node_hourly_logs.dart';
+import 'hourly_log/sensor_hourly_logs.dart';
 
 class NodeList extends StatelessWidget {
-  const NodeList({super.key, required this.customerId, required this.userId, required this.controllerId, required this.deviceId, required this.deviceName, required this.nodes});
+  const NodeList({super.key, required this.customerId, required this.userId, required this.controllerId, required this.deviceId, required this.deviceName, required this.nodes, required this.configObjects});
   final int userId, controllerId, customerId;
   final String deviceId, deviceName;
   final List<NodeListModel> nodes;
+  final List<ConfigObject> configObjects;
 
   @override
   Widget build(BuildContext context) {
@@ -367,12 +370,25 @@ class NodeList extends StatelessWidget {
     return [
       IconButton(
         tooltip: 'Hourly Power Logs for the Node',
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context,
+            MaterialPageRoute(
+              builder: (context) => NodeHourlyLogs(userId: customerId, controllerId: controllerId, nodes: nodes),
+            ),
+          );
+        },
         icon: Icon(Icons.power_outlined, color: iconColor),
       ),
       IconButton(
         tooltip: 'Hourly Sensor Logs',
-        onPressed: () {},
+        onPressed: () {
+          Navigator.push(context,
+            MaterialPageRoute(
+              builder: (context) => SensorHourlyLogs(userId: customerId, controllerId: controllerId,
+                configObjects: configObjects,),
+            ),
+          );
+        },
         icon: Icon(Icons.settings_input_antenna, color: iconColor),
       ),
       if (!isWeb) const SizedBox(width: 8),

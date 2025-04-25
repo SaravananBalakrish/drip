@@ -533,7 +533,8 @@ class MobileScreenController extends StatelessWidget {
                                       .master[vm.mIndex].categoryName,
                                   controllerId: vm.mySiteList.data[vm.sIndex]
                                       .master[vm.mIndex].controllerId,
-                                  userId: userId,
+                                  userId: userId, configObjects: vm.mySiteList.data[vm.sIndex]
+                                    .master[vm.mIndex].configObjects,
                                 ),
                           ),
                         );

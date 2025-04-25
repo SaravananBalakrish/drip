@@ -655,7 +655,8 @@ class CustomerScreenController extends StatelessWidget {
                                               return NodeList(customerId: customerId, nodes: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].nodeList,
                                                 deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
                                                 deviceName: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
-                                                controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId, userId: userId,);
+                                                controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId, userId: userId,
+                                                configObjects: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].configObjects);
                                             },
                                           ),
                                         ),
