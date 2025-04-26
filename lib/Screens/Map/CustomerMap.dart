@@ -260,7 +260,7 @@ class _MapScreenallState extends State<MapScreenall> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Geography'),automaticallyImplyLeading: kIsWeb ? false:true,
+      appBar: AppBar(title: const Text('Geography'),
         actions: [
         IconButton(
           icon: Icon(Icons.map_outlined),

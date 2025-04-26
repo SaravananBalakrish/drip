@@ -815,7 +815,55 @@ class CustomerScreenController extends StatelessWidget {
                               hoverColor: Theme.of(context).primaryColorLight,
                             ),
                           ),
-                        ]),
+
+                           const SizedBox(height: 15),
+                          Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.transparent
+                            ),
+                            width: 45,
+                            height: 45,
+                            child: IconButton(
+                              tooltip: 'Geography',
+                               onPressed: () {
+                                Navigator.push(context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MapScreenall(userId: userId, customerId: customerId,controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId, imeiNo: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,),
+                                  ),
+                                );
+                              },
+                              icon: const Icon(Icons.map_outlined),
+                              color: Colors.white,
+                              iconSize: 24.0,
+                              hoverColor: Theme.of(context).primaryColorLight,
+                            ),
+                          ),
+                           const SizedBox(height: 15),
+           Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: Colors.transparent
+                            ),
+                            width: 45,
+                            height: 45,
+                            child: IconButton(
+                              onPressed: () {
+                                Navigator.push(context,
+                                  MaterialPageRoute(
+                                    builder: (context) => MapScreenAllArea(userId: userId, customerId: customerId,controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId, imeiNo: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,),
+                                  ),
+                                );
+                              },
+
+                              tooltip: 'Area',
+                              icon: const Icon(Icons.map),
+                              color: Colors.white,
+                              iconSize: 24.0,
+                              hoverColor: Theme.of(context).primaryColorLight,
+                            ),
+                          ),
+                         ]),
                   ):
                   const SizedBox()
                 ],
@@ -956,28 +1004,15 @@ class CustomerScreenController extends StatelessWidget {
       ),
       const NavigationRailDestination(
         icon: Tooltip(
-          message: 'weather',
+          message: 'Weather',
           child: Icon(Icons.sunny_snowing),
         ),
-        selectedIcon: Icon(Icons.sunny_snowing, color: Colors.white),
+        selectedIcon: Icon(Icons.wb_sunny_rounded, color: Colors.white),
         label: Text(''),
       ),
-      const NavigationRailDestination(
-        icon: Tooltip(
-          message: 'Geography',
-          child: Icon(Icons.map_outlined),
-        ),
-        selectedIcon: Icon(Icons.map_outlined, color: Colors.white),
-        label: Text(''),
-      ),
-      const NavigationRailDestination(
-        icon: Tooltip(
-          message: 'Area',
-          child: Icon(Icons.map),
-        ),
-        selectedIcon: Icon(Icons.map, color: Colors.white),
-        label: Text(''),
-      ),
+
+
+
     ];
 
     return destinations;
