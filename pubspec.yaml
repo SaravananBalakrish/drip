@@ -122,6 +122,13 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
 flavorizr:
+  app:
+    android:
+      flavorDimensions: "flavor-type" # <-- Recommended to define this globally
+    ios:
+      targets:
+        Runner:
+          bundleId: "com.example"
   flavors:
     oroDevelopment:
       app:
