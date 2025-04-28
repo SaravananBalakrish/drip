@@ -915,7 +915,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         'deviceId' : p1000.deviceId,
         'deviceIdToSend' : deviceIdToSend,
         'payload' : jsonEncode(payloadToSend),
-        'acknowledgementState' : HardwareAcknowledgementSate.notSent,
+        'acknowledgementState' : HardwareAcknowledgementState.notSent,
         'selected' : true,
         'checkingCode' : '$pumpConfigCode',
         'hardwareType' : HardwareType.pump
@@ -955,7 +955,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         'deviceId' : p2000.deviceId,
         'deviceIdToSend' : deviceIdToSend,
         'payload' : jsonEncode(payloadToSend),
-        'acknowledgementState' : HardwareAcknowledgementSate.notSent,
+        'acknowledgementState' : HardwareAcknowledgementState.notSent,
         'selected' : true,
         'checkingCode' : '$pumpConfigCode',
         'hardwareType' : HardwareType.pump
@@ -1053,7 +1053,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         'deviceIdToSend' : deviceIdToSend,
         'deviceId' : p2000.deviceId,
         'payload' : jsonEncode(payloadToSendForTankConfig),
-        'acknowledgementState' : HardwareAcknowledgementSate.notSent,
+        'acknowledgementState' : HardwareAcknowledgementState.notSent,
         'selected' : true,
         'checkingCode' : '$tankConfigCode',
         'hardwareType' : HardwareType.pump
@@ -1106,7 +1106,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         'deviceIdToSend' : device.deviceId,
         'deviceId' : device.deviceId,
         'payload' : jsonEncode(payload),
-        'acknowledgementState' : HardwareAcknowledgementSate.notSent,
+        'acknowledgementState' : HardwareAcknowledgementState.notSent,
         'selected' : true,
         'checkingCode' : '$pumpConfigCode',
         'hardwareType' : HardwareType.pumpWithValve

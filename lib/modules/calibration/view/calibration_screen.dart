@@ -24,7 +24,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
   late Future<List<SensorCategoryModel>> listOfSensorCategoryModel;
   late Map<String, dynamic> defaultData;
   Set<int> selectedTab = {0};
-  HardwareAcknowledgementSate payloadState = HardwareAcknowledgementSate.notSent;
+  HardwareAcknowledgementState payloadState = HardwareAcknowledgementState.notSent;
   MqttService mqttService = MqttService();
 
   @override
@@ -239,7 +239,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
     return FloatingActionButton(
       onPressed: (){
         setState(() {
-          payloadState = HardwareAcknowledgementSate.notSent;
+          payloadState = HardwareAcknowledgementState.notSent;
           mqttService.acknowledgementPayload = null;
         });
         showDialog(
@@ -252,11 +252,11 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                       title: Text('Send Payload', style: Theme.of(context).textTheme.labelLarge,),
                       content: getHardwareAcknowledgementWidget(payloadState),
                       actions: [
-                        if(payloadState != HardwareAcknowledgementSate.sending && payloadState != HardwareAcknowledgementSate.notSent)
+                        if(payloadState != HardwareAcknowledgementState.sending && payloadState != HardwareAcknowledgementState.notSent)
                           CustomMaterialButton(),
-                        if(payloadState == HardwareAcknowledgementSate.notSent)
+                        if(payloadState == HardwareAcknowledgementState.notSent)
                           CustomMaterialButton(title: 'Cancel',outlined: true,),
-                        if(payloadState == HardwareAcknowledgementSate.notSent)
+                        if(payloadState == HardwareAcknowledgementState.notSent)
                           CustomMaterialButton(
                             onPressed: ()async{
                               sendToHttp(sensorCategoryModel);
@@ -267,7 +267,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                                   stateSetter((){
                                     setState((){
                                       mqttService.topicToPublishAndItsMessage(payload, '${Environment.mqttPublishTopic}/${widget.userData['deviceId']}');
-                                      payloadState = HardwareAcknowledgementSate.sending;
+                                      payloadState = HardwareAcknowledgementState.sending;
                                     });
                                   });
                                 }
@@ -276,13 +276,13 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                                     if(mqttService.acknowledgementPayload != null){
                                       if(validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cC'], widget.userData['deviceId']) && validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cM', '4201', 'PayloadCode'], '4600')){
                                         if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '200'){
-                                          payloadState = HardwareAcknowledgementSate.success;
+                                          payloadState = HardwareAcknowledgementState.success;
                                         }else if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '90'){
-                                          payloadState = HardwareAcknowledgementSate.programRunning;
+                                          payloadState = HardwareAcknowledgementState.programRunning;
                                         }else if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '1'){
-                                          payloadState = HardwareAcknowledgementSate.hardwareUnknownError;
+                                          payloadState = HardwareAcknowledgementState.hardwareUnknownError;
                                         }else{
-                                          payloadState = HardwareAcknowledgementSate.errorOnPayload;
+                                          payloadState = HardwareAcknowledgementState.errorOnPayload;
                                         }
                                         mqttService.acknowledgementPayload == null;
                                       }
@@ -293,11 +293,11 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                                 if(delay == delayDuration-1){
                                   stateSetter((){
                                     setState((){
-                                      payloadState = HardwareAcknowledgementSate.failed;
+                                      payloadState = HardwareAcknowledgementState.failed;
                                     });
                                   });
                                 }
-                                if(payloadState != HardwareAcknowledgementSate.sending){
+                                if(payloadState != HardwareAcknowledgementState.sending){
                                   break;
                                 }
                               }
@@ -345,15 +345,15 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
     return calibrationPayload;
   }
   
-  Widget getHardwareAcknowledgementWidget(HardwareAcknowledgementSate state){
+  Widget getHardwareAcknowledgementWidget(HardwareAcknowledgementState state){
     print('state : $state');
-    if(state == HardwareAcknowledgementSate.notSent){
+    if(state == HardwareAcknowledgementState.notSent){
       return const StatusBox(color:  Colors.black87,child: Text('Do you want to send payload..',),);
-    }else if(state == HardwareAcknowledgementSate.success){
+    }else if(state == HardwareAcknowledgementState.success){
       return const StatusBox(color:  Colors.green,child: Text('Success..',),);
-    }else if(state == HardwareAcknowledgementSate.failed){
+    }else if(state == HardwareAcknowledgementState.failed){
       return const StatusBox(color:  Colors.red,child: Text('Failed..',),);
-    }else if(state == HardwareAcknowledgementSate.errorOnPayload){
+    }else if(state == HardwareAcknowledgementState.errorOnPayload){
       return const StatusBox(color:  Colors.red,child: Text('Payload error..',),);
     }else{
       return const SizedBox(

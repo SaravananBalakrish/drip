@@ -218,6 +218,7 @@ class _ConstantBasePageState extends State<ConstantBasePage> with SingleTickerPr
       indicator: const BoxDecoration(),
       controller: tabController,
       tabs: List.generate(constPvd.listOfConstantMenuModel.length, (index){
+        print("tab name : ${constPvd.listOfConstantMenuModel[index].parameter}");
         return Tab(
             child: AnimatedBuilder(
                 animation: constPvd.listOfConstantMenuModel[index].arrowTabState,

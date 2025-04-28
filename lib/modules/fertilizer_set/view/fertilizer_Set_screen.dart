@@ -31,7 +31,7 @@ class _FertilizerSetScreenState extends State<FertilizerSetScreen> {
   int selectedFertilizerSite = 0;
   late ThemeData themeData;
   late bool themeMode;
-  HardwareAcknowledgementSate payloadState = HardwareAcknowledgementSate.notSent;
+  HardwareAcknowledgementState payloadState = HardwareAcknowledgementState.notSent;
   List<Map<String, dynamic>> popUpItemList = [
     {'name' : 'Select', 'mode' : SelectMode.select},
     {'name' : 'unSelect', 'mode' : SelectMode.unSelect},
@@ -263,7 +263,7 @@ class _FertilizerSetScreenState extends State<FertilizerSetScreen> {
     return FloatingActionButton(
       onPressed: (){
         setState(() {
-          payloadState = HardwareAcknowledgementSate.notSent;
+          payloadState = HardwareAcknowledgementState.notSent;
         });
         showDialog(
             barrierDismissible: false,
@@ -275,23 +275,23 @@ class _FertilizerSetScreenState extends State<FertilizerSetScreen> {
                       title: Text('Send Payload', style: Theme.of(context).textTheme.labelLarge,),
                       content: getHardwareAcknowledgementWidget(payloadState),
                       actions: [
-                        if(payloadState != HardwareAcknowledgementSate.sending && payloadState != HardwareAcknowledgementSate.notSent)
+                        if(payloadState != HardwareAcknowledgementState.sending && payloadState != HardwareAcknowledgementState.notSent)
                           CustomMaterialButton(),
-                        if(payloadState == HardwareAcknowledgementSate.notSent)
+                        if(payloadState == HardwareAcknowledgementState.notSent)
                           CustomMaterialButton(title: 'Cancel',outlined: true,),
-                        if(payloadState == HardwareAcknowledgementSate.notSent)
+                        if(payloadState == HardwareAcknowledgementState.notSent)
                           CustomMaterialButton(
                             onPressed: ()async{
                               stateSetter((){
                                 setState(() {
-                                  payloadState = HardwareAcknowledgementSate.sending;
+                                  payloadState = HardwareAcknowledgementState.sending;
                                 });
                               });
                               sendToHttp();
                               await Future.delayed(const Duration(seconds: 1));
                               stateSetter((){
                                 setState(() {
-                                  payloadState = HardwareAcknowledgementSate.success;
+                                  payloadState = HardwareAcknowledgementState.success;
                                 });
                               });
                             },
@@ -320,15 +320,15 @@ class _FertilizerSetScreenState extends State<FertilizerSetScreen> {
     print('response fertilizerSet : ${response.body}');
   }
 
-  Widget getHardwareAcknowledgementWidget(HardwareAcknowledgementSate state){
+  Widget getHardwareAcknowledgementWidget(HardwareAcknowledgementState state){
     print('state : $state');
-    if(state == HardwareAcknowledgementSate.notSent){
+    if(state == HardwareAcknowledgementState.notSent){
       return const StatusBox(color:  Colors.black87,child: Text('Do you want to send payload..',),);
-    }else if(state == HardwareAcknowledgementSate.success){
+    }else if(state == HardwareAcknowledgementState.success){
       return const StatusBox(color:  Colors.green,child: Text('Success..',),);
-    }else if(state == HardwareAcknowledgementSate.failed){
+    }else if(state == HardwareAcknowledgementState.failed){
       return const StatusBox(color:  Colors.red,child: Text('Failed..',),);
-    }else if(state == HardwareAcknowledgementSate.errorOnPayload){
+    }else if(state == HardwareAcknowledgementState.errorOnPayload){
       return const StatusBox(color:  Colors.red,child: Text('Payload error..',),);
     }else{
       return const SizedBox(
