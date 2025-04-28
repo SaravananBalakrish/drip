@@ -7,6 +7,7 @@ import 'package:oro_drip_irrigation/view_models/customer/customer_screen_control
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../../../Models/customer/site_model.dart';
 import '../../../views/customer/controller_settings.dart';
 import '../../Logs/view/power_graph_screen.dart';
 import '../../Logs/view/pump_log.dart';
@@ -16,29 +17,29 @@ import '../model/pump_controller_data_model.dart';
 import '../state_management/pump_controller_provider.dart';
 
 class PumpControllerHome extends StatefulWidget {
-  final String deviceId;
+/*  final String deviceId;
   final dynamic liveData;
-  final String masterName;
+  final String masterName;*/
   final int userId;
   final int customerId;
-  final int controllerId;
+/*  final int controllerId;
   final int siteIndex;
   final int masterIndex;
-  final int adDrId;
-  final CustomerScreenControllerViewModel vm;
+  final CustomerScreenControllerViewModel vm;*/
+  final MasterControllerModel masterData;
 
   const PumpControllerHome({
     super.key,
-    required this.deviceId,
+/*    required this.deviceId,
     this.liveData,
-    required this.masterName,
+    required this.masterName,*/
     required this.userId,
     required this.customerId,
-    required this.controllerId,
+/*    required this.controllerId,
     required this.siteIndex,
     required this.masterIndex,
-    required this.adDrId,
-    required this.vm,
+    required this.vm,*/
+    required this.masterData,
   });
 
   @override
@@ -145,14 +146,15 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
                       height: constraints.maxHeight - (constraints.maxHeight * 0.1),
                       width: 400,
                       child: PumpDashboardScreen(
-                        deviceId: widget.deviceId,
+/*                        deviceId: widget.deviceId,
                         liveData: widget.liveData,
-                        masterName: widget.masterName,
+                        masterName: widget.masterName,*/
                         userId: widget.userId,
                         customerId: widget.customerId,
-                        controllerId: widget.controllerId,
+                   /*     controllerId: widget.controllerId,
                         siteIndex: widget.siteIndex,
-                        masterIndex: widget.masterIndex,
+                        masterIndex: widget.masterIndex,*/
+                        masterData: widget.masterData,
                       ),
                     ),
                     if(_selectedIndex != 3)
@@ -204,30 +206,16 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
       controller: _pageController,
       children: [
         PumpDashboardScreen(
-          deviceId: widget.deviceId,
-          liveData: widget.liveData as PumpControllerData,
-          masterName: widget.masterName,
           userId: widget.userId,
           customerId: widget.customerId,
-          controllerId: widget.controllerId,
-          siteIndex: widget.siteIndex,
-          masterIndex: widget.masterIndex,
+          masterData: widget.masterData,
         ),
-        /*PreferenceMainScreen(
-          userId: widget.userId,
-          controllerId: widget.controllerId,
-          deviceId: widget.deviceId,
-          customerId: widget.customerId,
-          menuId: 0,
-          vm: widget.vm,
-        ),*/
-        /*ControllerSettings(
+        ControllerSettings(
           userId: widget.userId,
           customerId: widget.customerId,
-          adDrId: widget.adDrId,
-          masterController: [],
-        )*/
-        PumpLogsHome(userId: widget.userId, controllerId: widget.controllerId),
+          masterController: widget.masterData,
+        ),
+        PumpLogsHome(userId: widget.userId, controllerId: widget.masterData.controllerId),
       ],
       onPageChanged: (index) {
         setState(() {
@@ -280,11 +268,11 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
     final provider = context.read<PumpControllerProvider>();
     switch(_selectedIndex) {
       case 0:
-        await provider.getUserPumpLog(widget.userId, widget.controllerId, 0);
+        await provider.getUserPumpLog(widget.userId, widget.masterData.controllerId, 0);
       case 1:
-        await provider.getPumpControllerData(userId: widget.userId, controllerId: widget.controllerId, nodeControllerId: 0);
+        await provider.getPumpControllerData(userId: widget.userId, controllerId: widget.masterData.controllerId, nodeControllerId: 0);
       case 2:
-        await provider.getUserVoltageLog(userId: widget.userId, controllerId: widget.controllerId, nodeControllerId: 0);
+        await provider.getUserVoltageLog(userId: widget.userId, controllerId: widget.masterData.controllerId, nodeControllerId: 0);
       default:
         (){};
     }
@@ -299,19 +287,16 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
     Widget selectedWidget = const Center(child: Text('Coming soon'),);
     switch(_selectedIndex) {
       case 0:
-        selectedWidget =  PumpLogScreen(userId: widget.userId, controllerId: widget.controllerId);
+        selectedWidget =  PumpLogScreen(userId: widget.userId, controllerId: widget.masterData.controllerId);
       case 1:
-        selectedWidget =  PowerGraphScreen(userId: widget.userId, controllerId: widget.controllerId);
+        selectedWidget =  PowerGraphScreen(userId: widget.userId, controllerId: widget.masterData.controllerId);
       case 2:
-        selectedWidget = PumpVoltageLogScreen(userId: widget.userId, controllerId: widget.controllerId);
+        selectedWidget = PumpVoltageLogScreen(userId: widget.userId, controllerId: widget.masterData.controllerId);
       case 3:
         selectedWidget =  PreferenceMainScreen(
           userId: widget.userId,
-          controllerId: widget.controllerId,
-          deviceId: widget.deviceId,
           customerId: widget.customerId,
-          menuId: 0,
-          vm: widget.vm,
+          masterData: widget.masterData,
         );
       default:
         selectedWidget;

@@ -6,6 +6,7 @@ import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
 import '../../Models/customer/site_model.dart';
 import 'package:provider/provider.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
+import '../../modules/IrrigationProgram/view/program_library.dart';
 import '../../modules/PumpController/model/pump_controller_data_model.dart';
 import '../../modules/PumpController/view/node_settings.dart';
 import '../../modules/PumpController/view/pump_controller_home.dart';
@@ -552,8 +553,41 @@ class MobileScreenController extends StatelessWidget {
                           ),
                         );
                         break;
-                      case 'option3':
-                        print("Option 3 selected");
+                      case 'Program':
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  return ProgramLibraryScreenNew(
+                                    customerId: customerId,
+                                    controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
+                                    deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
+                                    userId: userId,
+                                    groupId: vm.mySiteList.data[vm.sIndex].groupId,
+                                    categoryId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId,
+                                    modelId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId,
+                                    deviceName: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceName,
+                                    categoryName: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
+                                  );
+                                }
+                            )
+                        );
+                        break;
+                      case 'option4':
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (BuildContext context) {
+                                  return ScheduleViewScreen(
+                                    deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
+                                    userId: userId,
+                                    controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
+                                    customerId: customerId,
+                                    groupId: vm.mySiteList.data[vm.sIndex].groupId,
+                                  );
+                                }
+                            )
+                        );
                         break;
                     }
                   },
@@ -570,7 +604,7 @@ class MobileScreenController extends StatelessWidget {
                         Icons.settings_input_component_outlined,
                         'I/O\nConnection\ndetails'),
                     _buildPopupItem(
-                        context, 'option3', Icons.list_alt, 'Program'),
+                        context, 'Program', Icons.list_alt, 'Program'),
                     _buildPopupItem(
                         context, 'option4', Icons.view_list_outlined,
                         'Scheduled\nprogram\ndetails'),
@@ -669,7 +703,7 @@ class MobileScreenController extends StatelessWidget {
                     ) :
                     ControllerSettings(customerId: customerId,
                       userId: userId,
-                      masterController: vm.mySiteList.data[vm.sIndex].master[vm.mIndex], vm: vm,
+                      masterController: vm.mySiteList.data[vm.sIndex].master[vm.mIndex],
                   ),
                   ),
                 ],
@@ -715,16 +749,9 @@ class MobileScreenController extends StatelessWidget {
         return categoryId==1? CustomerHome(customerId: userId, controllerId: controllerId,
           deviceId: masterData[masterIndex].deviceId,):
         isChanged ? PumpControllerHome(
-          deviceId: masterData[masterIndex].deviceId,
-          liveData: masterData[masterIndex].live!.cM as PumpControllerData,
-          masterName: groupName,
           userId: userId,
           customerId: customerId,
-          controllerId: controllerId,
-          siteIndex: siteIndex,
-          masterIndex: masterIndex,
-          adDrId: fromLogin ? 1 : 0,
-          vm: vm,
+          masterData: masterData[masterIndex],
         ) : const Scaffold(
           body: Center(
             child: Column(
@@ -748,7 +775,6 @@ class MobileScreenController extends StatelessWidget {
           customerId: customerId,
           userId: userId,
           masterController: masterData[masterIndex],
-          vm: vm,
         );
       case 6:
         return WeatherScreen(userId: userId, controllerId: controllerId, deviceID: '',);

@@ -62,30 +62,132 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
     mqttPayloadProvider =  Provider.of<MqttPayloadProvider>(context);
     overAllPvd = Provider.of<OverAllUse>(context,listen: false);
     String programName = doneProvider.programName == ''? "Program ${doneProvider.programCount}" : doneProvider.programName;
+    final isEcoGem = [3].contains(widget.modelId);
 
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           return Column(
             children: [
+              const SizedBox(height: 20,),
               Expanded(
                 child: Container(
                   margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05, vertical: MediaQuery.of(context).size.width * 0.025),
                   child: ListView(
                     children: [
-                      for(var index = 0; index < (widget.isIrrigationProgram ? 4 : 3); index++)
+                      for(var index = 0; index < ((widget.isIrrigationProgram && !isEcoGem) ? 4 : 3); index++)
                         Column(
                           children: [
                             buildListTile(
                               padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width > 1200 ? 8 : 0),
                               context: context,
-                              title: ['Program Name', 'Priority', 'Valve Off Delay', 'Scale factor'][index].toUpperCase(),
-                              subTitle: [tempProgramName != '' ? tempProgramName : widget.serialNumber == 0
+                              title: isEcoGem ? ['Program Name', 'Valve Off Delay', 'Scale factor'][index].toUpperCase()
+                                  : ['Program Name', 'Priority', 'Valve Off Delay', 'Scale factor'][index].toUpperCase(),
+                              subTitle: isEcoGem ? [tempProgramName != '' ? tempProgramName : widget.serialNumber == 0
+                                  ? "Program ${doneProvider.programCount}"
+                                  : doneProvider.programDetails!.programName.isNotEmpty ? programName : doneProvider.programDetails!.defaultProgramName,
+                                'Set valve off delay', 'Adjust duration or flow'][index]
+                                  : [tempProgramName != '' ? tempProgramName : widget.serialNumber == 0
                                   ? "Program ${doneProvider.programCount}"
                                   : doneProvider.programDetails!.programName.isNotEmpty ? programName : doneProvider.programDetails!.defaultProgramName,
                                 'Prioritize the program to run', 'Set valve off delay', 'Adjust duration or flow'][index],
                               textColor: Colors.black,
-                              icon: [Icons.drive_file_rename_outline_rounded, Icons.priority_high, Icons.timer_outlined, Icons.safety_check][index],
-                              trailing: [
+                              icon: isEcoGem
+                                  ? [Icons.drive_file_rename_outline_rounded, Icons.timer_outlined, Icons.safety_check][index]
+                                  : [Icons.drive_file_rename_outline_rounded, Icons.priority_high, Icons.timer_outlined, Icons.safety_check][index],
+                              trailing: isEcoGem ? [
+                                InkWell(
+                                  child: Icon(Icons.drive_file_rename_outline_rounded, color: Theme.of(context).primaryColor,),
+                                  onTap: () {
+                                    _textEditingController.text = widget.serialNumber == 0
+                                        ? "Program ${doneProvider.programCount}"
+                                        : doneProvider.programDetails!.programName.isNotEmpty ? programName : doneProvider.programDetails!.defaultProgramName;
+                                    _textEditingController.selection = TextSelection(
+                                      baseOffset: 0,
+                                      extentOffset: _textEditingController.text.length,
+                                    );
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        title: const Text("Edit program name"),
+                                        content: Form(
+                                          key: _formKey,
+                                          child: TextFormField(
+                                            autofocus: true,
+                                            controller: _textEditingController,
+                                            // onChanged: (newValue) => tempProgramName = newValue,
+                                            inputFormatters: [
+                                              LengthLimitingTextInputFormatter(20),
+                                              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s.]'))
+                                            ],
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return "Name cannot be empty";
+                                              } else if (doneProvider.programLibrary!.program.any((element) => element.programName == value)) {
+                                                return "Name already exists";
+                                              } else {
+                                                setState(() {
+                                                  tempProgramName = value;
+                                                });
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () => Navigator.of(ctx).pop(),
+                                            child: const Text("CANCEL", style: TextStyle(color: Colors.red),),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              if (_formKey.currentState!.validate()) {
+                                                doneProvider.updateProgramName(tempProgramName, 'programName');
+                                                Navigator.of(ctx).pop();
+                                              }
+                                            },
+                                            child: const Text("OKAY", style: TextStyle(color: Colors.green),),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                                CustomNativeTimePicker(
+                                  initialValue: doneProvider.delayBetweenZones != "" ? doneProvider.delayBetweenZones : "00:00:00",
+                                  is24HourMode: false,
+                                  style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                  onChanged: (newTime){
+                                    doneProvider.updateProgramName(newTime, 'delayBetweenZones');
+                                  },
+                                ),
+                                IntrinsicWidth(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        child: TextFormField(
+                                          initialValue: doneProvider.adjustPercentage != "" ? doneProvider.adjustPercentage : "100",
+                                          decoration: const InputDecoration(
+                                            hintText: '0%',
+                                          ),
+                                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.deny(RegExp('[^0-9]')),
+                                            LengthLimitingTextInputFormatter(5),
+                                          ],
+                                          onChanged: (newValue){
+                                            doneProvider.updateProgramName(newValue, 'adjustPercentage');
+                                          },
+                                        ),
+                                      ),
+                                      Text("%", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
+                                    ],
+                                  ),
+                                )
+                              ][index]
+                                  : [
                                 InkWell(
                                   child: Icon(Icons.drive_file_rename_outline_rounded, color: Theme.of(context).primaryColor,),
                                   onTap: () {
@@ -196,7 +298,6 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
               if(!(widget.isIrrigationProgram))
                 SlidingSendButton(
                   onSend: (){
-                    // doneProvider.programLibraryData(widget.userId, widget.controllerId);
                     sendFunction();
                   },
                 ),

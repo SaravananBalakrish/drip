@@ -28,12 +28,10 @@ class ControllerSettings extends StatelessWidget {
     required this.customerId,
     required this.userId,
     required this.masterController,
-    required this.vm,
   });
 
   final int customerId, userId;
   final MasterControllerModel masterController;
-  final CustomerScreenControllerViewModel vm;
 
 
   @override
@@ -157,11 +155,8 @@ class ControllerSettings extends StatelessWidget {
       case 'Preference':
         return PreferenceMainScreen(
           userId: userId,
-          controllerId: masterController.controllerId,
-          deviceId: masterController.deviceId,
           customerId: customerId,
-          menuId: 0,
-          vm : vm,
+          masterData: masterController,
         );
       case 'Constant':
         return ConstantBasePage(userData: {

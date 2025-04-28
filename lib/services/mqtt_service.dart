@@ -174,7 +174,9 @@ class MqttService {
       if (acknowledgementPayload != null && acknowledgementPayload!['mC'] == '3600') {
         schedulePayload = Constants.dataConversionForScheduleView(acknowledgementPayload!['cM']['3601']);
       }
-      providerState?.updateReceivedPayload(payload, false);
+      if(payloadMessage['mC'] != "SMS" && payloadMessage['mC'] != "LD01" && payloadMessage['mC'] != "3600") {
+        providerState?.updateReceivedPayload(payload, true);
+      }
     } catch (e, stackTrace) {
       debugPrint('Error parsing MQTT payload: $e');
       debugPrint('StackTrace parsing MQTT payload: $stackTrace');
