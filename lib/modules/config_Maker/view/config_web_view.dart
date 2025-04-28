@@ -266,7 +266,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
           'deviceId' : configPvd.masterData['deviceId'],
           'deviceIdToSend' : configPvd.masterData['deviceId'],
           'payload' : jsonEncode(configMakerPayload),
-          'acknowledgementState' : HardwareAcknowledgementSate.notSent,
+          'acknowledgementState' : HardwareAcknowledgementState.notSent,
           'selected' : true,
           'checkingCode' : '100',
           'hardwareType' : HardwareType.master
@@ -298,7 +298,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(payload['deviceId']),
-                                payloadAcknowledgementWidget(payload['acknowledgementState'] as HardwareAcknowledgementSate),
+                                payloadAcknowledgementWidget(payload['acknowledgementState'] as HardwareAcknowledgementState),
                               ],
                             ),
                             value: payload['selected'],
@@ -342,10 +342,10 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                             delayLoop : for(var sec = 0;sec < delayDuration;sec++){
                               if(sec == 0){
                                 payloadSendState = PayloadSendState.start;
-                                payload['acknowledgementState'] = HardwareAcknowledgementSate.sending;
+                                payload['acknowledgementState'] = HardwareAcknowledgementState.sending;
                               }
                               if(sec == delayDuration - 1){
-                                payload['acknowledgementState'] = HardwareAcknowledgementSate.failed;
+                                payload['acknowledgementState'] = HardwareAcknowledgementState.failed;
                               }
                               await Future.delayed(const Duration(seconds: 1));
                               print("${payload['hardwareType']}\n sec ${sec + 1}   -- ${payload['deviceId']} \n ${mqttService.acknowledgementPayload }");
@@ -360,14 +360,14 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                                     if(mqttService.acknowledgementPayload != null){
                                       if(validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cC'], payload['deviceIdToSend']) && validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cM', '4201', 'PayloadCode'], payload['checkingCode'])){
                                         if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '200'){
-                                          payload['acknowledgementState'] = HardwareAcknowledgementSate.success;
+                                          payload['acknowledgementState'] = HardwareAcknowledgementState.success;
                                         }else if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '90'){
-                                          payload['acknowledgementState'] = HardwareAcknowledgementSate.programRunning;
+                                          payload['acknowledgementState'] = HardwareAcknowledgementState.programRunning;
                                         }else if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '1'){
-                                          payload['acknowledgementState'] = HardwareAcknowledgementSate.hardwareUnknownError;
+                                          payload['acknowledgementState'] = HardwareAcknowledgementState.hardwareUnknownError;
                                           print('successfully!! update status for ${payload['title']}  and its code : ${mqttService.acknowledgementPayload!['cM']['4201']['Code']} -- ${payload['acknowledgementState']}');
                                         }else{
-                                          payload['acknowledgementState'] = HardwareAcknowledgementSate.errorOnPayload;
+                                          payload['acknowledgementState'] = HardwareAcknowledgementState.errorOnPayload;
                                         }
                                         mqttService.acknowledgementPayload = null;
                                       }
@@ -376,7 +376,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                                   else if([HardwareType.pump, HardwareType.pumpWithValve].contains(payload['hardwareType'] as HardwareType)){
                                     if(mqttService.acknowledgementPayload != null){
                                       if(validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cC'], payload['deviceId']) && validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cM'], payload['checkingCode'])){
-                                        payload['acknowledgementState'] = HardwareAcknowledgementSate.success;
+                                        payload['acknowledgementState'] = HardwareAcknowledgementState.success;
                                         mqttService.acknowledgementPayload = null;
                                       }
                                     }
@@ -384,7 +384,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
 
                                 });
                               });
-                              if((payload['acknowledgementState'] as HardwareAcknowledgementSate) != HardwareAcknowledgementSate.sending){
+                              if((payload['acknowledgementState'] as HardwareAcknowledgementState) != HardwareAcknowledgementState.sending){
                                 break delayLoop;
                               }
                             }
@@ -412,25 +412,25 @@ class _ConfigWebViewState extends State<ConfigWebView> {
     );
   }
 
-  Widget payloadAcknowledgementWidget(HardwareAcknowledgementSate state){
+  Widget payloadAcknowledgementWidget(HardwareAcknowledgementState state){
     print('state : ${state.name}');
     late Color color;
-    if(state == HardwareAcknowledgementSate.notSent){
+    if(state == HardwareAcknowledgementState.notSent){
       color = Colors.grey;
       return statusBox(color, Text('not sent', style: TextStyle(color: color, fontSize: 12),));
-    }else if(state == HardwareAcknowledgementSate.failed){
+    }else if(state == HardwareAcknowledgementState.failed){
       color = Colors.red;
       return statusBox(color, Text('failed...', style: TextStyle(color: color, fontSize: 12),));
-    }else if(state == HardwareAcknowledgementSate.success){
+    }else if(state == HardwareAcknowledgementState.success){
       color = Colors.green;
       return statusBox(color, Text('success...', style: TextStyle(color: color, fontSize: 12),));
-    }else if(state == HardwareAcknowledgementSate.programRunning){
+    }else if(state == HardwareAcknowledgementState.programRunning){
       color = Colors.red;
       return statusBox(color, Text('Failed - Program Running...', style: TextStyle(color: color, fontSize: 12),));
-    }else if(state == HardwareAcknowledgementSate.errorOnPayload){
+    }else if(state == HardwareAcknowledgementState.errorOnPayload){
       color = Colors.red;
       return statusBox(color, Text('Error on payload...', style: TextStyle(color: color, fontSize: 12),));
-    }else if(state == HardwareAcknowledgementSate.hardwareUnknownError){
+    }else if(state == HardwareAcknowledgementState.hardwareUnknownError){
       color = Colors.red;
       return statusBox(color, Text('Unknown error...', style: TextStyle(color: color, fontSize: 12),));
     }else{
@@ -625,6 +625,6 @@ bool validatePayloadFromHardware(Map<String, dynamic>? payload, List<String> key
   return condition;
 }
 
-enum HardwareAcknowledgementSate{notSent, sending, failed, success, errorOnPayload, hardwareUnknownError, programRunning}
+enum HardwareAcknowledgementState{notSent, sending, failed, success, errorOnPayload, hardwareUnknownError, programRunning}
 enum PayloadSendState{idle, start, stop}
 enum HardwareType{master, pump, economic, pumpWithValve}

@@ -26,21 +26,20 @@ class NormalCriticalAlarmModel{
     required List<dynamic> globalAlarm,
     required Map<String, dynamic>? oldSetting,
   }){
-    // print();
     return NormalCriticalAlarmModel(
         objectId: objectData['objectId'],
         sNo: objectData['sNo'],
         name: objectData['name'],
         objectName: objectData['objectName'],
         location: objectData['location'],
-        normal: globalAlarm.map((alarm){
+        normal: globalAlarm.where((setting) => setting['ecoGemDisplay']).map((alarm){
           return AlarmInConstantModel.fromJson(
               objectData: alarm,
               defaultSetting: defaultSetting,
               oldSetting: oldSetting == null ? [] : (oldSetting['normal'] as List<dynamic>).where((item) => item['sNo'] == alarm['sNo']).toList()
           );
         }).toList(),
-        critical: globalAlarm.map((alarm){
+        critical: globalAlarm.where((setting) => setting['ecoGemDisplay']).map((alarm){
           return AlarmInConstantModel.fromJson(
               objectData: alarm,
               defaultSetting: defaultSetting,
@@ -65,5 +64,4 @@ class NormalCriticalAlarmModel{
       }).toList(),
     };
   }
-
 }
