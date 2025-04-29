@@ -5,6 +5,7 @@ import 'package:oro_drip_irrigation/modules/constant/model/constant_setting_mode
 import 'package:oro_drip_irrigation/modules/constant/model/constant_setting_type_Model.dart';
 import 'package:oro_drip_irrigation/modules/constant/model/ec_ph_in_constant_model.dart';
 import 'package:oro_drip_irrigation/modules/constant/model/object_in_constant_model.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 
 import '../../../StateManagement/overall_use.dart';
 import '../state_management/constant_provider.dart';
@@ -59,10 +60,11 @@ class _NormalCriticalInConstantState extends State<NormalCriticalInConstant> {
                       }),
                     ],
                     rows: List.generate(widget.constPvd.normalCriticalAlarm[selectedIrrigationLine.value].normal.length, (row){
+                      print("row : $row");
                       AlarmInConstantModel normalAlarm = widget.constPvd.normalCriticalAlarm[selectedIrrigationLine.value].normal[row];
                       AlarmInConstantModel criticalAlarm = widget.constPvd.normalCriticalAlarm[selectedIrrigationLine.value].critical[row];
                       return DataRow2(
-                          specificRowHeight: 100,
+                          specificRowHeight: AppConstants.ecoGemModelList.contains(widget.constPvd.userData['modelId']) ? 50 : 100,
                           color: WidgetStatePropertyAll(
                             row.isOdd ? Colors.white : const Color(0xffF8F8F8),
                           ),
@@ -72,7 +74,8 @@ class _NormalCriticalInConstantState extends State<NormalCriticalInConstant> {
                                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Center(child: Text(normalAlarm.title, textAlign: TextAlign.center, style: TextStyle(color: Colors.orange.shade500),)),
-                                    Center(child: Text(normalAlarm.title, textAlign: TextAlign.center, style: TextStyle(color: Colors.red.shade500),)),
+                                    if(!AppConstants.ecoGemModelList.contains(widget.constPvd.userData['modelId']))
+                                      Center(child: Text(normalAlarm.title, textAlign: TextAlign.center, style: TextStyle(color: Colors.red.shade500),)),
                                   ],
                                 )
                             ),
@@ -107,7 +110,7 @@ class _NormalCriticalInConstantState extends State<NormalCriticalInConstant> {
                                             );
                                           }
                                       ),
-                                      if(criticalAlarm.setting[index].common == null)
+                                      if(criticalAlarm.setting[index].common == null && !AppConstants.ecoGemModelList.contains(widget.constPvd.userData['modelId']))
                                         AnimatedBuilder(
                                             animation: criticalAlarm.setting[index].value,
                                             builder: (context, child){

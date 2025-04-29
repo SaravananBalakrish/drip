@@ -1,4 +1,6 @@
 
+import 'package:oro_drip_irrigation/utils/constants.dart';
+
 import 'alarm_in_constant_model.dart';
 
 class NormalCriticalAlarmModel{
@@ -25,22 +27,23 @@ class NormalCriticalAlarmModel{
     required List<dynamic> defaultSetting,
     required List<dynamic> globalAlarm,
     required Map<String, dynamic>? oldSetting,
+    required Map<String, dynamic> userData,
   }){
-    // print();
+    bool isEcoGem = AppConstants.ecoGemModelList.contains(userData['modelId']);
     return NormalCriticalAlarmModel(
         objectId: objectData['objectId'],
         sNo: objectData['sNo'],
         name: objectData['name'],
         objectName: objectData['objectName'],
         location: objectData['location'],
-        normal: globalAlarm.map((alarm){
+        normal: globalAlarm.where((setting) => (isEcoGem ?  setting['ecoGemDisplay'] : setting['gemDisplay'])).map((alarm){
           return AlarmInConstantModel.fromJson(
               objectData: alarm,
               defaultSetting: defaultSetting,
               oldSetting: oldSetting == null ? [] : (oldSetting['normal'] as List<dynamic>).where((item) => item['sNo'] == alarm['sNo']).toList()
           );
         }).toList(),
-        critical: globalAlarm.map((alarm){
+        critical: globalAlarm.where((setting) => (isEcoGem ?  setting['ecoGemDisplay'] : setting['gemDisplay'])).map((alarm){
           return AlarmInConstantModel.fromJson(
               objectData: alarm,
               defaultSetting: defaultSetting,
@@ -65,5 +68,4 @@ class NormalCriticalAlarmModel{
       }).toList(),
     };
   }
-
 }

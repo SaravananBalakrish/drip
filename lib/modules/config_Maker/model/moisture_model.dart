@@ -24,4 +24,8 @@ class MoistureModel{
     });
     return commonInfo;
   }
+
+  void updateObjectIdIfDeletedInProductLimit(List<double> objectIdToBeDeleted){
+    valves = valves.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+  }
 }

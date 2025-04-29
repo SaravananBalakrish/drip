@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/app.dart';
 import 'package:oro_drip_irrigation/modules/constant/state_management/constant_provider.dart';
 import 'package:oro_drip_irrigation/modules/constant/widget/find_suitable_widget.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
@@ -28,7 +29,7 @@ class GlobalAlarmInConstant extends StatefulWidget {
 
 class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
   ValueNotifier<int> hoveredSno = ValueNotifier<int>(0);
-  HardwareAcknowledgementSate payloadState = HardwareAcknowledgementSate.notSent;
+  HardwareAcknowledgementState payloadState = HardwareAcknowledgementState.notSent;
   MqttService mqttService = MqttService();
 
   @override
@@ -115,7 +116,7 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
             SlidingSendButton(
                 onSend: (){
                   setState(() {
-                    payloadState = HardwareAcknowledgementSate.notSent;
+                    payloadState = HardwareAcknowledgementState.notSent;
                     mqttService.acknowledgementPayload = null;
                   });
                   showDialog(
@@ -128,11 +129,11 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
                                 title: Text('Send Payload', style: Theme.of(context).textTheme.labelLarge,),
                                 content: getHardwareAcknowledgementWidget(payloadState),
                                 actions: [
-                                  if(payloadState != HardwareAcknowledgementSate.sending && payloadState != HardwareAcknowledgementSate.notSent)
+                                  if(payloadState != HardwareAcknowledgementState.sending && payloadState != HardwareAcknowledgementState.notSent)
                                     CustomMaterialButton(),
-                                  if(payloadState == HardwareAcknowledgementSate.notSent)
+                                  if(payloadState == HardwareAcknowledgementState.notSent)
                                     CustomMaterialButton(title: 'Cancel',outlined: true,),
-                                  if(payloadState == HardwareAcknowledgementSate.notSent)
+                                  if(payloadState == HardwareAcknowledgementState.notSent)
                                     CustomMaterialButton(
                                       onPressed: ()async{
                                         sendToHttp();
@@ -143,7 +144,7 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
                                             stateSetter((){
                                               setState((){
                                                 mqttService.topicToPublishAndItsMessage(payload, '${Environment.mqttPublishTopic}/${widget.userData['deviceId']}');
-                                                payloadState = HardwareAcknowledgementSate.sending;
+                                                payloadState = HardwareAcknowledgementState.sending;
                                               });
                                             });
                                           }
@@ -152,13 +153,13 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
                                               if(mqttService.acknowledgementPayload != null){
                                                 if(validatePayloadFromHardware(mqttService.acknowledgementPayload, ['cC'], widget.userData['deviceId']) && validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cM', '4201', 'PayloadCode'], '300')){
                                                   if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '200'){
-                                                    payloadState = HardwareAcknowledgementSate.success;
+                                                    payloadState = HardwareAcknowledgementState.success;
                                                   }else if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '90'){
-                                                    payloadState = HardwareAcknowledgementSate.programRunning;
+                                                    payloadState = HardwareAcknowledgementState.programRunning;
                                                   }else if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '1'){
-                                                    payloadState = HardwareAcknowledgementSate.hardwareUnknownError;
+                                                    payloadState = HardwareAcknowledgementState.hardwareUnknownError;
                                                   }else{
-                                                    payloadState = HardwareAcknowledgementSate.errorOnPayload;
+                                                    payloadState = HardwareAcknowledgementState.errorOnPayload;
                                                   }
                                                   mqttService.acknowledgementPayload == null;
                                                 }
@@ -169,11 +170,11 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
                                           if(delay == delayDuration-1){
                                             stateSetter((){
                                               setState((){
-                                                payloadState = HardwareAcknowledgementSate.failed;
+                                                payloadState = HardwareAcknowledgementState.failed;
                                               });
                                             });
                                           }
-                                          if(payloadState != HardwareAcknowledgementSate.sending){
+                                          if(payloadState != HardwareAcknowledgementState.sending){
                                             break;
                                           }
                                         }
@@ -187,9 +188,6 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
                         );
                       }
                   );
-
-                  // print('data sending...');
-                  // sendToHttp();
                 }
             )
           ],
@@ -217,7 +215,7 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
     print("mainValvePayload : $mainValvePayload");
     var valvePayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.valve);
     print("valvePayload : $valvePayload");
-    var normalCriticalPayload = widget.constPvd.getNormalCriticalAlarm();
+    var normalCriticalPayload = AppConstants.ecoGemModelList.contains(widget.userData['modelId']) ? widget.constPvd.getNormalCriticalAlarmForEcoGem() : widget.constPvd.getNormalCriticalAlarm();
     print("normalCriticalPayload : $normalCriticalPayload");
     var filterPayload = widget.constPvd.getFilterSitePayload();
     print("filterPayload : $filterPayload");
@@ -243,15 +241,15 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
     return hardwarePayload;
   }
 
-  Widget getHardwareAcknowledgementWidget(HardwareAcknowledgementSate state){
+  Widget getHardwareAcknowledgementWidget(HardwareAcknowledgementState state){
     print('state : $state');
-    if(state == HardwareAcknowledgementSate.notSent){
+    if(state == HardwareAcknowledgementState.notSent){
       return const StatusBox(color:  Colors.black87,child: Text('Do you want to send payload..',),);
-    }else if(state == HardwareAcknowledgementSate.success){
+    }else if(state == HardwareAcknowledgementState.success){
       return const StatusBox(color:  Colors.green,child: Text('Success..',),);
-    }else if(state == HardwareAcknowledgementSate.failed){
+    }else if(state == HardwareAcknowledgementState.failed){
       return const StatusBox(color:  Colors.red,child: Text('Failed..',),);
-    }else if(state == HardwareAcknowledgementSate.errorOnPayload){
+    }else if(state == HardwareAcknowledgementState.errorOnPayload){
       return const StatusBox(color:  Colors.red,child: Text('Payload error..',),);
     }else{
       return const SizedBox(

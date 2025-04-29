@@ -4,16 +4,16 @@ import 'package:oro_drip_irrigation/modules/Preferences/model/preference_data_mo
 import 'package:oro_drip_irrigation/modules/Preferences/state_management/preference_provider.dart';
 import 'package:provider/provider.dart';
 
-import '../../../view_models/customer/customer_screen_controller_view_model.dart';
+import '../../../Models/customer/site_model.dart';
 import '../../IrrigationProgram/view/schedule_screen.dart';
 
 class ValveSettings extends StatelessWidget {
-  final CustomerScreenControllerViewModel vm;
-  const ValveSettings({super.key, required this.vm});
+  final MasterControllerModel masterData;
+  const ValveSettings({super.key, required this.masterData});
 
   @override
   Widget build(BuildContext context) {
-    final valves = vm.mySiteList.data[vm.sIndex].master[vm.mIndex].configObjects.where((e) => e.objectId == 13).toList();
+    final valves = masterData.configObjects.where((e) => e.objectId == 13).toList();
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       child: Column(

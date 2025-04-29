@@ -4,6 +4,7 @@ import 'package:oro_drip_irrigation/Screens/Dealer/sevicecustomer.dart';
 import 'package:oro_drip_irrigation/Screens/Logs/irrigation_and_pump_log.dart';
 import 'package:oro_drip_irrigation/Screens/Map/MapDeviceList.dart';
 import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
+import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/program_library.dart';
 import 'package:oro_drip_irrigation/views/customer/program_schedule.dart';
 import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
 import 'package:oro_drip_irrigation/views/customer/site_config.dart';
@@ -714,12 +715,12 @@ class CustomerScreenController extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => ProgramSchedule(
-                                      customerID: customerId,
-                                      controllerID: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
-                                      siteName: vm.mySiteList.data[vm.sIndex].groupName,
-                                      imeiNumber: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
-                                      userId: userId, groupId: vm.mySiteList.data[vm.sIndex].groupId,
+                                    builder: (context) => ProgramLibraryScreenNew(
+                                      customerId: customerId,
+                                      controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
+                                      deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
+                                      userId: userId,
+                                      groupId: vm.mySiteList.data[vm.sIndex].groupId,
                                       categoryId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId,
                                       modelId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId,
                                       deviceName: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceName,
@@ -1024,16 +1025,16 @@ class CustomerScreenController extends StatelessWidget {
         return categoryId==1 ?
         CustomerHome(customerId: userId, controllerId: controllerId, deviceId: masterData[masterIndex].deviceId):
         isChanged ? PumpControllerHome(
-          deviceId: masterData[masterIndex].deviceId,
+      /*    deviceId: masterData[masterIndex].deviceId,
           liveData: masterData[masterIndex].live!.cM as PumpControllerData,
-          masterName: groupName,
+          masterName: masterData[masterIndex].deviceName,*/
           userId: userId,
           customerId: customerId,
-          controllerId: controllerId,
+          masterData: masterData[masterIndex],
+      /*    controllerId: controllerId,
           siteIndex: siteIndex,
           masterIndex: masterIndex,
-          adDrId: fromLogin ? 1 : 0,
-          vm: vm,
+          vm: vm,*/
         ) : const Scaffold(
           body: Center(
             child: Column(
@@ -1057,7 +1058,6 @@ class CustomerScreenController extends StatelessWidget {
             userId: userId,
             customerId: userId,
           masterController: masterData[masterIndex],
-          vm: vm,
         );
       case 5:
         return SiteConfig(

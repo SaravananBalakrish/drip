@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
-import 'package:oro_drip_irrigation/app.dart';
 import 'package:oro_drip_irrigation/modules/Preferences/view/valve_settings.dart';
 import 'package:oro_drip_irrigation/modules/Preferences/view/view_config.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/view_models/customer/customer_screen_controller_view_model.dart';
 import 'package:provider/provider.dart';
+import '../../../Models/customer/site_model.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../Widgets/custom_animated_switcher.dart';
 import '../../IrrigationProgram/view/schedule_screen.dart';
@@ -166,10 +166,9 @@ final otherCalibrationIcons = [
 ];
 
 class PreferenceMainScreen extends StatefulWidget {
-  final int userId, controllerId, customerId, menuId;
-  final String deviceId;
-  final CustomerScreenControllerViewModel vm;
-  const PreferenceMainScreen({super.key, required this.userId, required this.controllerId, required this.deviceId, required this.customerId, required this.menuId, required this.vm});
+  final int userId, customerId;
+  final MasterControllerModel masterData;
+  const PreferenceMainScreen({super.key, required this.userId, required this.customerId, required this.masterData});
 
   @override
   State<PreferenceMainScreen> createState() => _PreferenceMainScreenState();
@@ -196,7 +195,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     // TODO: implement initState
     preferenceProvider = Provider.of<PreferenceProvider>(context, listen: false);
     mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
-    preferenceProvider.getUserPreference(userId: widget.customerId, controllerId: widget.controllerId).then((_) {
+    preferenceProvider.getUserPreference(userId: widget.customerId, controllerId: widget.masterData.controllerId, modelId: widget.masterData.modelId).then((_) {
       tabController1 = TabController(
           length: preferenceProvider.commonPumpSettings?.length ?? 0,
           vsync: this
@@ -413,7 +412,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                       pumpIndex: pumpSettingIndex
                                   )
                               else if(selectedSetting == 3)
-                                ValveSettings(vm: widget.vm,)
+                                ValveSettings(masterData: widget.masterData,)
                               else if(selectedSetting == 4)
                                 const MoistureSettings()
                             ],
@@ -653,7 +652,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                     final viewConfig = {"5900": {
                       "5901": "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload2+$categoryId",
                       }};
-                    mqttService.topicToPublishAndItsMessage(jsonEncode(viewConfig), "${Environment.mqttPublishTopic}/${widget.deviceId}");
+                    mqttService.topicToPublishAndItsMessage(jsonEncode(viewConfig), "${Environment.mqttPublishTopic}/${widget.masterData}");
                   }
                 },
                 tabs: [
@@ -1259,7 +1258,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     breakLoop = false;
     Map<String, dynamic> userData = {
       "userId": widget.customerId,
-      "controllerId": widget.controllerId,
+      "controllerId": widget.masterData.controllerId,
       "createUser": widget.userId
     };
 
@@ -1297,7 +1296,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             },
             payload: payloadForSlave,
             payloadCode: "400",
-            deviceId: widget.deviceId
+            deviceId: widget.masterData.deviceId
         );
       }
 
@@ -1350,7 +1349,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                 : payloadForGem,
             isToGem: isToGem,
             mqttService: mqttService,
-            deviceId: widget.deviceId,
+            deviceId: widget.masterData.deviceId,
           );
           if(getFailedPayload(sendAll: false, isToGem: [1].contains(preferenceProvider.generalData!.categoryId)).split(';').where((part) => part.isNotEmpty).toList().isEmpty) {
             preferenceProvider.generalData!.controllerReadStatus = "1";

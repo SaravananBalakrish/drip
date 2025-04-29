@@ -19,6 +19,13 @@ class PumpModel{
     this.pumpType = 1,
   });
 
+  void updateObjectIdIfDeletedInProductLimit(List<double> objectIdToBeDeleted){
+    level = objectIdToBeDeleted.contains(level) ? 0.0 : level;
+    waterMeter = objectIdToBeDeleted.contains(waterMeter) ? 0.0 : waterMeter;
+    pressureIn = objectIdToBeDeleted.contains(pressureIn) ? 0.0 : pressureIn;
+    pressureOut = objectIdToBeDeleted.contains(pressureOut) ? 0.0 : pressureOut;
+  }
+
   factory PumpModel.fromJson(dynamic data){
     DeviceObjectModel deviceObjectModel = DeviceObjectModel.fromJson(data);
     return PumpModel(

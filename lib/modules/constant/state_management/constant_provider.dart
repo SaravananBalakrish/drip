@@ -126,7 +126,6 @@ class ConstantProvider extends ChangeNotifier{
             arrowTabState: ValueNotifier(menu['dealerDefinitionId'] == AppConstants.generalInConstant ? ArrowTabState.onProgress : ArrowTabState.inComplete)
         );
       }).toList();
-
       if(AppConstants.ecoGemModelList.contains(userData['modelId'])){
         listOfConstantMenuModel = listOfConstantMenuModel.where((menuModel){
           if(menuModel.dealerDefinitionId == AppConstants.levelSensorInConstant){
@@ -137,12 +136,13 @@ class ConstantProvider extends ChangeNotifier{
             return checkAnySettingAvailable(defaultSetting: defaultEcPhSetting);
           }else if(menuModel.dealerDefinitionId == AppConstants.mainValveInConstant){
             return checkAnySettingAvailable(defaultSetting: defaultMainValveSetting);
-          }else if(menuModel.dealerDefinitionId == AppConstants.normalCriticalInConstant){
-            return checkAnySettingAvailable(defaultSetting: defaultNormalCriticalAlarmSetting);
           }else{
             return true;
           }
         }).toList();
+      }
+      for(var menu in listOfConstantMenuModel){
+        print("constant menu :::: ${menu.parameter}");
       }
 
       //update object
@@ -227,7 +227,8 @@ class ConstantProvider extends ChangeNotifier{
             objectData: line,
             defaultSetting: defaultData['normalCriticalAlarm'],
             globalAlarm: defaultData['globalAlarm'],
-            oldSetting: lineData.firstOrNull
+            oldSetting: lineData.firstOrNull,
+          userData: userData
         );
       }).toList();
       if (kDebugMode) {
@@ -464,6 +465,25 @@ class ConstantProvider extends ChangeNotifier{
             }),
             line.normal[alarmIndex].title,
 
+          ].join(','),
+        );
+      }
+    }
+    return payloadList.join(';');
+  }
+
+  String getNormalCriticalAlarmForEcoGem(){
+    List<dynamic> payloadList = [];
+    for(var line in normalCriticalAlarm){
+      for(var alarmIndex = 0;alarmIndex < line.normal.length;alarmIndex++){
+        payloadList.add(
+          [
+            line.normal[alarmIndex].sNo,
+            ...line.normal[alarmIndex].setting.where((setting){
+              return ((AppConstants.gemModelList.contains(userData['modelId']) ?  setting.gemPayload : setting.ecoGemPayload) && setting.common == null);
+            }).map((setting){
+              return payloadValidate(setting.value.value);
+            }),
           ].join(','),
         );
       }

@@ -221,30 +221,30 @@ class ConfigMakerProvider extends ChangeNotifier{
             listOfGeneratedObject.add(
                 deviceObjectModel
             );
-            if(deviceObjectModel.objectId == 4){
+            if(deviceObjectModel.objectId == AppConstants.filterSiteObjectId){
               filtration.add(
                   FiltrationModel(
                       commonDetails: deviceObjectModel,
                       filters: []
                   )
               );
-            }else if(deviceObjectModel.objectId == 3){
+            }else if(deviceObjectModel.objectId == AppConstants.fertilizerSiteObjectId){
               fertilization.add(
                   FertilizationModel(commonDetails: deviceObjectModel, channel: [], boosterPump: [], agitator: [], selector: [], ec: [], ph: [])
               );
-            }else if(deviceObjectModel.objectId == 1){
+            }else if(deviceObjectModel.objectId == AppConstants.sourceObjectId){
               source.add(
                   SourceModel(commonDetails: deviceObjectModel, inletPump: [], outletPump: [], valves: [])
               );
-            }else if(deviceObjectModel.objectId == 5){
+            }else if(deviceObjectModel.objectId == AppConstants.pumpObjectId){
               pump.add(
                   PumpModel(commonDetails: deviceObjectModel)
               );
-            }else if(deviceObjectModel.objectId == 25){
+            }else if(deviceObjectModel.objectId == AppConstants.moistureObjectId){
               moisture.add(
                   MoistureModel(commonDetails: deviceObjectModel, valves: [])
               );
-            }else if(deviceObjectModel.objectId == 2){
+            }else if(deviceObjectModel.objectId == AppConstants.irrigationLineObjectId){
               line.add(
                   IrrigationLineModel(commonDetails: deviceObjectModel, source: [], sourcePump: [], irrigationPump: [], valve: [], mainValve: [], fan: [], fogger: [], pesticides: [], heater: [], screen: [], vent: [], moisture: [], temperature: [], soilTemperature: [], humidity: [], co2: [], weatherStation: [])
               );
@@ -262,6 +262,24 @@ class ConfigMakerProvider extends ChangeNotifier{
           source.removeWhere((e) => filteredList.contains(e.commonDetails.sNo));
           moisture.removeWhere((e) => filteredList.contains(e.commonDetails.sNo));
           line.removeWhere((e) => filteredList.contains(e.commonDetails.sNo));
+
+          /* this process is to delete object from sites while delete operation in product limit */
+          for(var filterSite in filtration){
+            filterSite.updateObjectIdIfDeletedInProductLimit(filteredList);
+          }
+          for(var fertilizerSite in fertilization){
+            fertilizerSite.updateObjectIdIfDeletedInProductLimit(filteredList);
+          }
+          for(var src in source){
+            src.updateObjectIdIfDeletedInProductLimit(filteredList);
+          }
+          for(var ms in moisture){
+            ms.updateObjectIdIfDeletedInProductLimit(filteredList);
+          }
+          for(var il in line){
+            il.updateObjectIdIfDeletedInProductLimit(filteredList);
+          }
+          /* this process is to delete object from sites while delete operation in product limit */
         }
       }
     }
@@ -272,6 +290,7 @@ class ConfigMakerProvider extends ChangeNotifier{
       print('generated :: ${object.toJson()}');
     }
   }
+
 
   void updateObjectConnection(DeviceObjectModel selectedConnectionObject,int newCount){
     print('selectedConnectionObject  ${selectedConnectionObject.toJson()}');
@@ -309,17 +328,22 @@ class ConfigMakerProvider extends ChangeNotifier{
     if(newCount > oldCount){   // adding
       // ------------- validate ec, ph and pressure switch for category 6----------------------------
       if(selectedDevice.categoryId == 6){
-        int ph = 28;
-        if(selectedConnectionObject.objectId == ph && selectedDevice.modelId == 33){
-          selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [5,6].contains(connectionNo)).toList();
-        }
-        int ec = 27;
-        if(selectedConnectionObject.objectId == ec && selectedDevice.modelId == 33){
-          selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [7,8].contains(connectionNo)).toList();
-        }
-        int pressureSwitch = 23;
-        if(selectedConnectionObject.objectId == pressureSwitch && selectedDevice.modelId == 33){
-          selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [5].contains(connectionNo)).toList();
+        if(selectedConnectionObject.type == '3'){
+          /* validate while analog object connection */
+          int ph = AppConstants.phObjectId;
+          if(selectedConnectionObject.objectId == ph && selectedDevice.modelId == 33){
+            selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [5,6].contains(connectionNo)).toList();
+          }
+          int ec = AppConstants.ecObjectId;
+          if(selectedConnectionObject.objectId == ec && selectedDevice.modelId == 33){
+            selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [7,8].contains(connectionNo)).toList();
+          }
+        }else if(selectedConnectionObject.type == '4'){
+          /* validate while digital object connection */
+          int pressureSwitch = AppConstants.pressureSwitchObjectId;
+          if(selectedConnectionObject.objectId == pressureSwitch){
+            selectedModelDefaultConnectionList = selectedModelDefaultConnectionList.where((connectionNo) => [4].contains(connectionNo)).toList();
+          }
         }
       }
 
@@ -915,7 +939,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         'deviceId' : p1000.deviceId,
         'deviceIdToSend' : deviceIdToSend,
         'payload' : jsonEncode(payloadToSend),
-        'acknowledgementState' : HardwareAcknowledgementSate.notSent,
+        'acknowledgementState' : HardwareAcknowledgementState.notSent,
         'selected' : true,
         'checkingCode' : '$pumpConfigCode',
         'hardwareType' : HardwareType.pump
@@ -955,7 +979,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         'deviceId' : p2000.deviceId,
         'deviceIdToSend' : deviceIdToSend,
         'payload' : jsonEncode(payloadToSend),
-        'acknowledgementState' : HardwareAcknowledgementSate.notSent,
+        'acknowledgementState' : HardwareAcknowledgementState.notSent,
         'selected' : true,
         'checkingCode' : '$pumpConfigCode',
         'hardwareType' : HardwareType.pump
@@ -1053,7 +1077,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         'deviceIdToSend' : deviceIdToSend,
         'deviceId' : p2000.deviceId,
         'payload' : jsonEncode(payloadToSendForTankConfig),
-        'acknowledgementState' : HardwareAcknowledgementSate.notSent,
+        'acknowledgementState' : HardwareAcknowledgementState.notSent,
         'selected' : true,
         'checkingCode' : '$tankConfigCode',
         'hardwareType' : HardwareType.pump
@@ -1106,7 +1130,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         'deviceIdToSend' : device.deviceId,
         'deviceId' : device.deviceId,
         'payload' : jsonEncode(payload),
-        'acknowledgementState' : HardwareAcknowledgementSate.notSent,
+        'acknowledgementState' : HardwareAcknowledgementState.notSent,
         'selected' : true,
         'checkingCode' : '$pumpConfigCode',
         'hardwareType' : HardwareType.pumpWithValve

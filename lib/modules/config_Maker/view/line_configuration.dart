@@ -137,11 +137,13 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                           listOfObject: widget.configPvd.listOfGeneratedObject
                                               .where((object) => (object.objectId == 24 && !widget.configPvd.pump.any((pump) => [pump.pressureIn,pump.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureOut))
                                               .where((object) => (!widget.configPvd.filtration.any((filterSite) => [filterSite.pressureIn,filterSite.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureOut))
+                                              .where((object) => (!widget.configPvd.line.any((line) => line.commonDetails.sNo != selectedIrrigationLine.commonDetails.sNo && [line.pressureIn,line.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureOut))
                                               .toList()),
                                     if(availability(24))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureOut], parameterType: LineParameter.pressureOut, objectId: 24, objectName: 'Pressure Out', validateAllLine: true, singleSelection: true,
                                           listOfObject: widget.configPvd.listOfGeneratedObject.where((object) => (object.objectId == 24 && !widget.configPvd.pump.any((pump) => [pump.pressureIn,pump.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureIn))
-                                              .where((object) => (!widget.configPvd.filtration.any((filterSite) => [filterSite.pressureIn,filterSite.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureOut))
+                                              .where((object) => (!widget.configPvd.filtration.any((filterSite) => [filterSite.pressureIn,filterSite.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureIn))
+                                              .where((object) => (!widget.configPvd.line.any((line) => line.commonDetails.sNo != selectedIrrigationLine.commonDetails.sNo && [line.pressureIn,line.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureIn))
                                               .toList()),
                                     if(availability(3))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.centralFertilization], parameterType: LineParameter.centralFertilization, objectId: 3, objectName: 'Central Fertilization', validateAllLine: false, singleSelection: true, listOfObject: widget.configPvd.fertilization.where((site) => (site.siteMode == 1)).toList().map((site) => site.commonDetails).toList()),

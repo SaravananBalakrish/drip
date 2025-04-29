@@ -12,6 +12,7 @@ import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 
+import '../../../Models/customer/site_model.dart';
 import '../../../Screens/dashboard/wave_view.dart';
 import '../../../Widgets/sized_image.dart';
 import '../../../flavors.dart';
@@ -24,20 +25,13 @@ import '../widget/custom_countdown_timer.dart';
 import '../widget/custom_gauge.dart';
 
 class PumpDashboardScreen extends StatefulWidget {
-  final String deviceId;
-  final String masterName;
-  final dynamic liveData;
-  final int userId, customerId, controllerId, siteIndex, masterIndex;
+  final int userId, customerId;
+  final MasterControllerModel masterData;
   const PumpDashboardScreen({
     super.key,
-    required this.deviceId,
-    required this.liveData,
-    required this.masterName,
     required this.userId,
     required this.customerId,
-    required this.controllerId,
-    required this.siteIndex,
-    required this.masterIndex
+    required this.masterData
   });
 
   @override
@@ -69,7 +63,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
     )..repeat(reverse: true);
     _controller.addListener(() {setState(() {});});
     _controller.repeat();
-    mqttService.pumpDashboardPayload = widget.liveData;
+    mqttService.pumpDashboardPayload = widget.masterData.live?.cM as PumpControllerData;
     _animation2 = Tween<double>(begin: 1.0, end: 0.0).animate(_controller2);
     if(mounted){
       getLive();
@@ -85,7 +79,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
   }
 
   Future<void> liveRequest() async{
-    mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "#live"}), "${Environment.mqttPublishTopic}/${widget.deviceId}");
+    mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "#live"}), "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}");
   }
 
   Future<void> getLive() async{
@@ -188,7 +182,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   spacing: 5,
                                   children: [
-                                    Text(widget.masterName, style: themeData.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),),
+                                    Text(widget.masterData.deviceName, style: themeData.textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold),),
                                     Badge(
                                       alignment: const Alignment(-3.5, -1),
                                       smallSize: 0.1,
@@ -204,7 +198,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   spacing: 5,
                                   children: [
-                                    SelectableText(widget.deviceId, style: themeData.textTheme.titleSmall!.copyWith(fontWeight: FontWeight.normal, fontSize: 12),),
+                                    SelectableText(widget.masterData.deviceId, style: themeData.textTheme.titleSmall!.copyWith(fontWeight: FontWeight.normal, fontSize: 12),),
                                     ([30, 31].contains(snapshot.data!.pumps[0].reasonCode)) ?
                                     Container(
                                       decoration: BoxDecoration(
@@ -334,13 +328,13 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                     const SizedBox(height: 15,),
                     for(var index = 0; index < int.parse(snapshot.data!.numberOfPumps); index++)
                       buildNewPumpDetails(index: index, pumpData: snapshot.data!,),
-                    if([48,49].contains(context.read<CustomerScreenControllerViewModel>().mySiteList.data[widget.siteIndex].master[widget.masterIndex].modelId))
+                    if([48,49].contains(widget.masterData.modelId))
                       PumpWithValves(
                         valveData: snapshot.data!.pumps.firstWhere((pump) => pump is PumpValveModel) as PumpValveModel,
                         dataFetchingStatus: snapshot.data!.dataFetchingStatus,
                         userId: widget.userId,
                         customerId: widget.customerId,
-                        controllerId: widget.controllerId,
+                        controllerId: widget.masterData.controllerId,
                       ),
                     const SizedBox(height: 20,),
                   ],
@@ -375,8 +369,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
   }
 
   Widget buildNewPumpDetails({required int index, required PumpControllerData pumpData}) {
-    final provider = context.read<CustomerScreenControllerViewModel>();
-    final pumps = provider.mySiteList.data[widget.siteIndex].master[widget.masterIndex].configObjects.where((e) => e.objectId == 5).toList();
+    final pumps = widget.masterData.configObjects.where((e) => e.objectId == 5).toList();
     try {
       final pumpItem = pumpData.pumps[index];
       if(![0, 30, 31].contains(pumpItem.reasonCode) && pumpItem.reason.contains('off') && !pumpItem.reason.contains('auto mobile key')) {
@@ -441,7 +434,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                       margin: const EdgeInsets.symmetric(horizontal: 15),
                       child: Text(
                         (pumpData.pumps.firstWhere((pump) => pump is PumpValveModel) as PumpValveModel).cycleCompletedFlag == '1'
-                            ? "Turned off due to Cycles completed"
+                            ? "Turned off due to Cycles completed".toUpperCase()
                             : pumpItem.reasonCode == 0
                             ? (pumpItem.status == 1 ? "Turned on through the mobile" : "Turned off through the mobile").toUpperCase()
                             : pumpItem.reason.toUpperCase(),
@@ -491,12 +484,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                   if(pumpItem.reasonCode != 30 && pumpItem.reasonCode != 31)
                     SizedBox(
                       width: double.maxFinite,
-                      // color: pumpItem.reasonCode == 0
-                      //     ? (pumpItem.status == 1
-                      //     ? Colors.green.shade50
-                      //     : Colors.red.shade50)
-                      //     : (pumpItem.reason.contains('on') ? Colors.green.shade50 : Colors.red.shade50),
-                      // padding: const EdgeInsets.all(8),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -582,12 +569,14 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                       // const SizedBox(width: 10,),
                       Stack(
                         children: [
-                          pumpData.pumps[index].status == 1 ? Image.asset(
-                              'assets/gif/Run-motor.gif',
-                          ) : SvgPicture.asset(
-                            'assets/SVGPicture/Pump.svg',
-                            color: pumpData.pumps[index].status == 2 ? Colors.orange : null,
-                            colorBlendMode: BlendMode.modulate,
+                          Image.asset(
+                            pumpData.pumps[index].status == 1
+                                ? 'assets/gif/runningmotor.gif'
+                                : pumpData.pumps[index].status == 3
+                                ? 'assets/png/faultmotor.png'
+                                : pumpData.pumps[index].status == 2
+                                ? 'assets/png/readymotor.png'
+                                : 'assets/png/idealmotor.png',
                           ),
                           /*getTypesOfPump(
                               mode: pumpData.pumps[index].status,
@@ -867,13 +856,13 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
         setState(() => pumpData.pumps[index].status = 2);
         var data = {
           "userId": widget.userId,
-          "controllerId": widget.controllerId,
+          "controllerId": widget.masterData.controllerId,
           "data": {"sentSms": "motor${index+1}$command"},
           "messageStatus": "Motor${index+1} $label",
           "createUser": widget.userId,
           "hardware": {"sentSms": "motor${index+1}$command"},
         };
-        await mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "motor${index+1}$command"}), "${Environment.mqttPublishTopic}/${widget.deviceId}",);
+        await mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "motor${index+1}$command"}), "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}",);
         await repository.createUserSentAndReceivedMessageManually(data);
         await Future.delayed(Duration(seconds: delay));
         liveRequest();
