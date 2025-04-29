@@ -22,6 +22,18 @@ class FertilizationModel{
     required this.ph,
   });
 
+  void updateObjectIdIfDeletedInProductLimit(List<double> objectIdToBeDeleted){
+    ec = ec.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    ph = ph.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    selector = selector.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    agitator = agitator.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    boosterPump = boosterPump.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    channel = channel.where((objectId) => !objectIdToBeDeleted.contains(objectId.sNo)).toList();
+    for(var ch in channel){
+      ch.updateObjectIdIfDeletedInProductLimit(objectIdToBeDeleted);
+    }
+  }
+
   factory FertilizationModel.fromJson(data){
     DeviceObjectModel deviceObjectModel = DeviceObjectModel.fromJson(data);
     print('from json in fertilization');
@@ -66,6 +78,11 @@ class Injector{
       level: intOrDoubleValidate(data['level'])
     );
   }
+
+  void updateObjectIdIfDeletedInProductLimit(List<double> objectIdToBeDeleted){
+    level = objectIdToBeDeleted.contains(level) ? 0.0 : level;
+  }
+
 
   Map<String, dynamic> toJson(){
     return {

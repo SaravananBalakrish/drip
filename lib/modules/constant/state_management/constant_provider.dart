@@ -227,7 +227,8 @@ class ConstantProvider extends ChangeNotifier{
             objectData: line,
             defaultSetting: defaultData['normalCriticalAlarm'],
             globalAlarm: defaultData['globalAlarm'],
-            oldSetting: lineData.firstOrNull
+            oldSetting: lineData.firstOrNull,
+          userData: userData
         );
       }).toList();
       if (kDebugMode) {

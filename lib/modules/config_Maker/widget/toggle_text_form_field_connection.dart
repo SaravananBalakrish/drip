@@ -56,21 +56,25 @@ class _ToggleTextFormFieldForConnectionState extends State<ToggleTextFormFieldFo
             print('oldCount :: $oldCount  newCount :: $newCount    maxLimit :: $countLimitFromProductLimit  mappingBalanceType :: ${mappingBalanceType[widget.object.type]!}  balancePossibleCountToConfigure :: $balancePossibleCountToConfigure');
             if(newCount == oldCount){
               //  don't do anything....
-            }else if(newCount > countLimitFromProductLimit && newCount <= balancePossibleCountToConfigure){ // validate non configured to configure count
+            }else if(newCount > countLimitFromProductLimit && newCount <= balancePossibleCountToConfigure){
+              // validate non configured to configure count
               print('111111111');
-              bool updateOthers = updateConnectionForFixedInputs(oldCount: oldCount, newCount: newCount, countLimitFromProductLimit: countLimitFromProductLimit);
+              int validateCount = newCount < countLimitFromProductLimit ? newCount : countLimitFromProductLimit;
+              bool updateOthers = updateConnectionForFixedInputs(oldCount: oldCount, newCount: validateCount, countLimitFromProductLimit: countLimitFromProductLimit);
               if(updateOthers){
                 print('no ph,ec');
-                widget.configPvd.updateObjectConnection(widget.object, newCount);
+                widget.configPvd.updateObjectConnection(widget.object, validateCount);
               }
-            }else if(increasingCount != null && increasingCount <= balancePossibleCountToConfigure){  // only update if there is place to configure
+            }else if(increasingCount != null && increasingCount <= balancePossibleCountToConfigure){
+              // only update if there is place to configure
               print('22222222');
               bool updateOthers = updateConnectionForFixedInputs(oldCount: oldCount, newCount: newCount, countLimitFromProductLimit: countLimitFromProductLimit);
               if(updateOthers){
                 print('no ph,ec');
                 widget.configPvd.updateObjectConnection(widget.object, oldCount + increasingCount);
               }
-            }else if(increasingCount != null && increasingCount >= balancePossibleCountToConfigure){  // only update max object possible to configure
+            }else if(increasingCount != null && increasingCount >= balancePossibleCountToConfigure){
+              // only update max object possible to configure
               print('3333333333');
               bool updateOthers = updateConnectionForFixedInputs(oldCount: oldCount, newCount: newCount, countLimitFromProductLimit: countLimitFromProductLimit);
               if(updateOthers){
@@ -146,11 +150,7 @@ class _ToggleTextFormFieldForConnectionState extends State<ToggleTextFormFieldFo
       return false;
     }else if(widget.object.objectId == pressureSwitch){
       print('updating pressureSwitch');
-      int updateCount = newCount > 1
-          ? 1
-          : (newCount > countLimitFromProductLimit
-          ? countLimitFromProductLimit
-          : newCount);
+      int updateCount = newCount > 1 ? 1 : newCount;
       widget.configPvd.updateObjectConnection(widget.object, updateCount);
       return false;
     }
@@ -161,7 +161,6 @@ class _ToggleTextFormFieldForConnectionState extends State<ToggleTextFormFieldFo
     List<DeviceObjectModel> listOfObject = widget.configPvd.listOfGeneratedObject.where((object) => object.controllerId == widget.selectedDevice.controllerId && object.type == type).toList();
     return listOfObject.length;
   }
-
 
   @override
   void dispose() {
@@ -178,7 +177,6 @@ class _ToggleTextFormFieldForConnectionState extends State<ToggleTextFormFieldFo
       }
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -224,6 +222,4 @@ class _ToggleTextFormFieldForConnectionState extends State<ToggleTextFormFieldFo
       ),
     );
   }
-
-
 }

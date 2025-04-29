@@ -188,9 +188,6 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
                         );
                       }
                   );
-
-                  // print('data sending...');
-                  // sendToHttp();
                 }
             )
           ],

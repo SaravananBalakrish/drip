@@ -126,7 +126,7 @@ class _MoistureConfigurationState extends State<MoistureConfiguration> {
                     context: context,
                     title: 'Select Valve',
                     singleSelection: false,
-                    listOfObject: widget.configPvd.listOfGeneratedObject.where((object) => object.objectId == 13).toList(),
+                    listOfObject: widget.configPvd.listOfGeneratedObject.where((object) => object.objectId == AppConstants.valveObjectId).toList(),
                     onPressed: (){
                       setState(() {
                         widget.configPvd.updateSelectionInMoisture(moistureSensor.commonDetails.sNo!,);

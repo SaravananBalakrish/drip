@@ -23,6 +23,15 @@ class SourceModel {
     required this.valves,
   });
 
+  void updateObjectIdIfDeletedInProductLimit(List<double> objectIdToBeDeleted){
+    inletPump = inletPump.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    outletPump = outletPump.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    valves = valves.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    level = objectIdToBeDeleted.contains(level) ? 0.0 : level;
+    topFloat = objectIdToBeDeleted.contains(topFloat) ? 0.0 : topFloat;
+    bottomFloat = objectIdToBeDeleted.contains(bottomFloat) ? 0.0 : bottomFloat;
+  }
+
   factory SourceModel.fromJson(data){
     DeviceObjectModel deviceObjectModel = DeviceObjectModel.fromJson(data);
 

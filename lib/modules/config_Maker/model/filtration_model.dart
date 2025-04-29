@@ -30,6 +30,13 @@ class FiltrationModel {
     );
   }
 
+  void updateObjectIdIfDeletedInProductLimit(List<double> objectIdToBeDeleted){
+    filters = filters.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    pressureIn = objectIdToBeDeleted.contains(pressureIn) ? 0.0 : pressureIn;
+    pressureOut = objectIdToBeDeleted.contains(pressureOut) ? 0.0 : pressureOut;
+    backWashValve = objectIdToBeDeleted.contains(backWashValve) ? 0.0 : backWashValve;
+  }
+
   Map<String, dynamic> toJson(){
     var commonInfo = commonDetails.toJson();
     commonInfo.addAll({

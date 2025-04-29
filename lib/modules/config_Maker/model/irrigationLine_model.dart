@@ -60,6 +60,8 @@ class IrrigationLineModel{
     required this.weatherStation,
   });
 
+
+
   factory IrrigationLineModel.fromJson(data){
     DeviceObjectModel deviceObjectModel = DeviceObjectModel.fromJson(data);
 
@@ -125,6 +127,34 @@ class IrrigationLineModel{
       'weatherStation' : weatherStation,
     });
     return commonInfo;
+  }
+
+  void updateObjectIdIfDeletedInProductLimit(List<double> objectIdToBeDeleted){
+    source = source.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    sourcePump = sourcePump.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    irrigationPump = irrigationPump.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    valve = valve.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    mainValve = mainValve.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    fan = fan.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    fogger = fogger.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    pesticides = pesticides.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    heater = heater.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    screen = screen.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    vent = vent.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    moisture = moisture.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    temperature = temperature.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    soilTemperature = soilTemperature.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    humidity = humidity.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    co2 = co2.where((objectId) => !objectIdToBeDeleted.contains(objectId)).toList();
+    centralFiltration = objectIdToBeDeleted.contains(centralFiltration) ? 0.0 : centralFiltration;
+    localFiltration = objectIdToBeDeleted.contains(localFiltration) ? 0.0 : localFiltration;
+    centralFertilization = objectIdToBeDeleted.contains(centralFertilization) ? 0.0 : centralFertilization;
+    localFertilization = objectIdToBeDeleted.contains(localFertilization) ? 0.0 : localFertilization;
+    powerSupply = objectIdToBeDeleted.contains(powerSupply) ? 0.0 : powerSupply;
+    pressureSwitch = objectIdToBeDeleted.contains(pressureSwitch) ? 0.0 : pressureSwitch;
+    waterMeter = objectIdToBeDeleted.contains(waterMeter) ? 0.0 : waterMeter;
+    pressureIn = objectIdToBeDeleted.contains(pressureIn) ? 0.0 : pressureIn;
+    pressureOut = objectIdToBeDeleted.contains(pressureOut) ? 0.0 : pressureOut;
   }
 }
 
