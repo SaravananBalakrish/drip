@@ -319,11 +319,11 @@ class PumpWidget extends StatelessWidget {
                   String payLoadFinal = jsonEncode({
                     "6300": {"6301": payload}
                   });
-                  print('${AppConstants.publishTopic}/$deviceId');
-                  //MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
-                  //sentUserOperationToServer('${pump.name} Reset Manually', payLoadFinal);
-                  //GlobalSnackBar.show(context, 'Reset comment sent successfully', 200);
-                  //Navigator.pop(context);
+                  //print('${AppConstants.publishTopic}/$deviceId');
+                  MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+                  sentUserOperationToServer('${pump.name} Reset Manually', payLoadFinal);
+                  GlobalSnackBar.show(context, 'Reset comment sent successfully', 200);
+                  Navigator.pop(context);
                 },
                 child: const Text('Reset',
                     style: TextStyle(fontSize: 12, color: Colors.white)),
