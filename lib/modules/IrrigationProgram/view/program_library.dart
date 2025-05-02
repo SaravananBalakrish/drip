@@ -476,6 +476,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                                   }
                                 });
                               }
+                              await saveProgramDetails(programItem, dataToMqtt);
                               await Future.delayed(const Duration(seconds: 1), () async{
                                 await irrigationProgramMainProvider.programLibraryData(widget.customerId,  widget.controllerId);
                               });
@@ -487,18 +488,8 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                           } else {
                             showConfirmationDialog(programItem, "delete");
                           }
-                          // showConfirmationDialog(programItem, "delete");
                         },
                       ),
-                      // const SizedBox(width: 10,),
-                      // buildIconActionWidget(
-                      //     icon: Icons.remove_red_eye,
-                      //     iconColor: Theme.of(context).primaryColor,
-                      //     containerColor: const Color(0xffE0FFF7),
-                      //     toolTip: "View program",
-                      //     onTap: () => navigateToIrrigationProgram(programItem)
-                      // ),
-                      // CircleAvatar(radius: 6,backgroundColor: programItem.controllerReadStatus == "1" ? Colors.green : Colors.red,)
                     ],
                   ),
               ],
@@ -1225,6 +1216,6 @@ void showAlertDialog({required String message, Widget? child, required BuildCont
   );
 }
 
-void showSnackBar({required String message, required BuildContext context}) {
-  ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: message, color: Colors.red,));
+void showSnackBar({required String message, required BuildContext context, Color color = Colors.red}) {
+  ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: message, color: color,));
 }

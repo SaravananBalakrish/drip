@@ -47,8 +47,11 @@ class PreferenceProvider extends ChangeNotifier {
   List<SettingList>? defaultCalibration;
   List<SettingList>? get defaultCalibrationData => defaultCalibration;
 
-  SettingList? _valveSettings;
-  SettingList? get valveSettings => _valveSettings;
+  SettingList? _standaloneSettings;
+  SettingList? get standaloneSettings => _standaloneSettings;
+
+  SettingList? _programSettings;
+  SettingList? get programSettings => _programSettings;
 
   SettingList? _moistureSettings;
   SettingList? get moistureSettings => _moistureSettings;
@@ -101,25 +104,64 @@ class PreferenceProvider extends ChangeNotifier {
       print("Error parsing setting data: $error");
       print("Stack trace setting data: $stackTrace");
     }
-    if([48,49].contains(modelId)){
+    /*if([48,49].contains(modelId)){
       try {
         final response = await repository.getUserPreferenceValveSetting(userData);
         if(response.statusCode == 200) {
-          final result = jsonDecode(response.body);
+          final result = programSettings;
+          // final result = jsonDecode(response.body);
           _valveSettings = SettingList.fromJson(Map<String, dynamic>.from(result['data']['valveSetting']));
           _moistureSettings = SettingList.fromJson(Map<String, dynamic>.from(result['data']['moistureSetting']));
           if(_valveSettings != null) {
-            if(_valveSettings!.setting[4].value) {
-              _mode = "Manual";
-            } else {
-              _mode = "Duration";
-            }
+            getMode();
           }
         }
       } catch(error, stackTrace) {
         print("Error parsing setting data: $error");
         print("Stack trace setting data: $stackTrace");
       }
+    }*/
+    notifyListeners();
+  }
+
+  Future<void> getStandAloneSettings({
+    required int userId,
+    required int controllerId,
+    required int selectedIndex
+  }) async {
+
+    final userData = {
+      "userId": userId,
+      "controllerId": controllerId
+    };
+
+    try {
+      final standAloneResponse = await repository.getUserPreferenceValveStandaloneSetting(userData);
+      if(standAloneResponse.statusCode == 200) {
+        // final result = standAloneSettingsSample;
+        final result = jsonDecode(standAloneResponse.body);
+        _standaloneSettings = SettingList.fromJson(Map<String, dynamic>.from(result['data']));
+      }
+      final response = await repository.getUserPreferenceValveSetting(userData);
+      if(response.statusCode == 200) {
+        // final result = programSettings;
+        final result = jsonDecode(response.body);
+        _programSettings = SettingList.fromJson(Map<String, dynamic>.from(result['data']['valveSetting']));
+        _moistureSettings = SettingList.fromJson(Map<String, dynamic>.from(result['data']['moistureSetting']));
+      }
+      notifyListeners();
+
+    } catch(error, stackTrace) {
+      print("Error parsing setting data: $error");
+      print("Stack trace setting data: $stackTrace");
+    }
+  }
+
+  void getMode() {
+    if(_standaloneSettings!.setting[4].value) {
+      _mode = "Manual";
+    } else {
+      _mode = "Duration";
     }
     notifyListeners();
   }
@@ -213,7 +255,7 @@ class PreferenceProvider extends ChangeNotifier {
     notifyListeners();
   }
   void updateSettingValue(String title, String newValue) {
-    final setting = valveSettings?.setting.firstWhere((e) => e.title == title);
+    final setting = standaloneSettings?.setting.firstWhere((e) => e.title == title);
     if (setting != null) {
       if (setting.value.toString().contains(',')) {
         final parts = setting.value.split(',');
@@ -244,7 +286,7 @@ class PreferenceProvider extends ChangeNotifier {
   }
 
   void updateSwitchValue(String title, bool newValue) {
-    final setting = valveSettings?.setting.firstWhere((e) => e.title == title);
+    final setting = standaloneSettings?.setting.firstWhere((e) => e.title == title);
     if (setting != null) {
       if (setting.value.toString().contains(',')) {
         final parts = setting.value.split(',');
@@ -252,13 +294,13 @@ class PreferenceProvider extends ChangeNotifier {
       } else {
         setting.value = newValue;
 
-        if(setting.serialNumber == 5) {
+       /* if(setting.serialNumber == 5) {
           if(setting.value) {
             _mode = "Manual";
           } else {
             _mode = "Duration";
           }
-        }
+        }*/
       }
       notifyListeners();
     }
