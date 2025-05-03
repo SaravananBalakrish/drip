@@ -82,7 +82,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
           const Center(
               child: Text('Currently No Weather Data Available...')),
           TextButton.icon(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context) => WebViewExample(userid: widget.userId,controllerid: widget.controllerId,)));
+            // kIsWeb ? Navigator.push(context, MaterialPageRoute(builder: (context) => WeatherScreenExternal(userid: widget.userId,controllerid: widget.controllerId,))) : null ;
           }, label: Text('Click To Open External Weather Data')),
 
         ],
@@ -98,7 +98,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: 40,
+                    // height: 40,
                     child: TabBar(
                       // controller: _tabController,
                       indicatorColor: const Color.fromARGB(255, 175, 73, 73),
