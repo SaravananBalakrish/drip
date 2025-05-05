@@ -81,9 +81,9 @@ class _WeatherScreenState extends State<WeatherScreen> {
         children: [
           const Center(
               child: Text('Currently No Weather Data Available...')),
-          TextButton.icon(onPressed: (){
+        /*  TextButton.icon(onPressed: (){
             Navigator.push(context, MaterialPageRoute(builder: (context) => WebViewExample(userid: widget.userId,controllerid: widget.controllerId,)));
-          }, label: Text('Click To Open External Weather Data')),
+          }, label: Text('Click To Open External Weather Data')),*/
 
         ],
       );
