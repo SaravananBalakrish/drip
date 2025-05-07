@@ -386,10 +386,12 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                             physics: const NeverScrollableScrollPhysics(),
                             children: [
                               if(viewConfig)
-                                ViewConfig(
-                                  userId: widget.userId,
-                                  isLora: preferenceProvider.commonPumpSettings![tabController1.index].interfaceTypeId == 1,
-                                )
+                                for(int i = 0; i < tabController1.length; i++)
+                                  ViewConfig(
+                                    userId: widget.userId,
+                                    isLora: preferenceProvider.commonPumpSettings![tabController1.index].interfaceTypeId == 1,
+                                    modelId: widget.masterData.modelId,
+                                  )
                               else if(selectedSetting == 0)
                                 for(var commonSettingIndex = 0; commonSettingIndex < preferenceProvider.commonPumpSettings!.length; commonSettingIndex++)
                                   buildSettingsCategory(

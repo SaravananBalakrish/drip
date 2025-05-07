@@ -9,6 +9,7 @@ import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/view/pump_with_valves.dart';
 import 'package:oro_drip_irrigation/repository/repository.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 
@@ -328,13 +329,13 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                     const SizedBox(height: 15,),
                     for(var index = 0; index < int.parse(snapshot.data!.numberOfPumps); index++)
                       buildNewPumpDetails(index: index, pumpData: snapshot.data!,),
-                    if([48,49].contains(widget.masterData.modelId))
+                    if(AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId))
                       PumpWithValves(
                         valveData: snapshot.data!.pumps.firstWhere((pump) => pump is PumpValveModel) as PumpValveModel,
                         dataFetchingStatus: snapshot.data!.dataFetchingStatus,
                         userId: widget.userId,
                         customerId: widget.customerId,
-                        controllerId: widget.masterData.controllerId,
+                        masterData: widget.masterData,
                       ),
                     const SizedBox(height: 20,),
                   ],

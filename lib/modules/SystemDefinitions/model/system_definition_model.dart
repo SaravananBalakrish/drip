@@ -170,29 +170,4 @@ class PowerOffRecoveryModel {
       'selectedOption': selectedOption,
     };
   }
-
-  String getOptionCode(option) {
-    if (option.contains("Reset") && option.contains("Queue") && option.contains("Irrigation")) {
-      return "${1},${1},${1}";
-    } else if (option.contains("Reset") && option.contains("Queue")) {
-      return "${1},${1},${0}";
-    } else if (option.contains("Reset") && option.contains("Irrigation")) {
-      return "${1},${0},${1}";
-    } else if (option.contains("Queue") && option.contains("Irrigation")) {
-      return "${0},${1},${1}";
-    } else if (option.contains("Reset")) {
-      return "${1},${0},${0}";
-    } else if (option.contains("Queue")) {
-      return "${0},${1},${0}";
-    } else if (option.contains("Irrigation")) {
-      return "${0},${0},${1}";
-    } else {
-      return "${0},${0},${0}";
-    }
-  }
-
-  String toMqtt() {
-    return '${duration != "00:00" ? "$duration:00" : "00:00:00"},'
-        '${getOptionCode(selectedOption)}';
-  }
 }
