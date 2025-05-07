@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/modules/Logs/view/pump_log.dart';
 import 'package:oro_drip_irrigation/modules/Logs/view/voltage_log.dart';
+import '../../../Models/customer/site_model.dart';
 import 'power_graph_screen.dart';
 
 class PumpList extends StatefulWidget {
   final List pumpList;
   final int userId;
-  final int controllerId;
-  const PumpList({super.key, required this.pumpList, required this.userId, required this.controllerId});
+  final MasterControllerModel masterData;
+  const PumpList({super.key, required this.pumpList, required this.userId, required this.masterData});
 
   @override
   State<PumpList> createState() => _PumpListState();
@@ -58,9 +59,9 @@ class _PumpListState extends State<PumpList> {
                             backgroundColor: [const Color(0xffFFF0E5), const Color(0xffFFDEDC), const Color(0xffEFFFFB)][i],
                             icon: [Icons.schedule, Icons.auto_graph, Icons.electric_bolt][i],
                             onPressed: [
-                              () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PowerGraphScreen(userId: widget.userId, controllerId: widget.controllerId, nodeControllerId: pumpItem['controllerId'],))),
-                              () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PumpLogScreen(userId: widget.userId, controllerId: widget.controllerId, nodeControllerId: pumpItem['controllerId'],))),
-                              () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PumpVoltageLogScreen(userId: widget.userId, controllerId: widget.controllerId, nodeControllerId: pumpItem['controllerId'],))),
+                              () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PowerGraphScreen(userId: widget.userId, controllerId: widget.masterData.controllerId, nodeControllerId: pumpItem['controllerId'],))),
+                              () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PumpLogScreen(userId: widget.userId, controllerId: widget.masterData.controllerId, nodeControllerId: pumpItem['controllerId'], masterData: widget.masterData,))),
+                              () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PumpVoltageLogScreen(userId: widget.userId, controllerId: widget.masterData.controllerId, nodeControllerId: pumpItem['controllerId'],))),
                             ][i]
                         ),
                     ],

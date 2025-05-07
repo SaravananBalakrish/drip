@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
+import '../../Models/customer/site_model.dart';
 import '../../modules/Logs/repository/log_repos.dart';
 import '../../modules/Logs/view/pump_list.dart';
 import '../../modules/irrigation_report/view/list_of_log_config.dart';
@@ -10,7 +11,8 @@ import '../../services/http_service.dart';
 
 class IrrigationAndPumpLog extends StatefulWidget {
   final Map<String, dynamic> userData;
-  const IrrigationAndPumpLog({super.key, required this.userData});
+  final MasterControllerModel masterData;
+  const IrrigationAndPumpLog({super.key, required this.userData, required this.masterData});
 
   @override
   State<IrrigationAndPumpLog> createState() => _IrrigationAndPumpLogState();
@@ -74,7 +76,10 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
                           ListOfLogConfig(userData: widget.userData,),
                           StandaloneLog(userData: widget.userData,),
                           if(pumpList.isNotEmpty)
-                            PumpList(pumpList: pumpList, userId: widget.userData['userId'], controllerId: widget.userData['controllerId'],)
+                            PumpList(
+                              pumpList: pumpList, userId: widget.userData['userId'],
+                              masterData: widget.masterData,
+                            )
                           else
                             Container()
                         ]

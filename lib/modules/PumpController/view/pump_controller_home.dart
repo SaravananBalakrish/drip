@@ -219,16 +219,11 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
             masterData: widget.masterData,
             selectedIndex: _selectedIndex,
           ),
-          /*PreferenceMainScreen(
-            userId: widget.userId,
-            customerId: widget.customerId,
-            masterData: widget.masterData,
-            selectedIndex: _selectedIndex,
-          ),*/
         ],
         PumpLogsHome(
             userId: widget.userId,
-            controllerId: widget.masterData.controllerId
+            controllerId: widget.masterData.controllerId,
+          masterData: widget.masterData,
         ),
         ControllerSettings(
           userId: widget.userId,
@@ -312,7 +307,11 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
     Widget selectedWidget = const Center(child: Text('Coming soon'),);
     switch(_selectedIndex) {
       case 0:
-        selectedWidget =  PumpLogScreen(userId: widget.userId, controllerId: widget.masterData.controllerId);
+        selectedWidget = PumpLogScreen(
+          userId: widget.userId,
+          controllerId: widget.masterData.controllerId,
+          masterData: widget.masterData,
+        );
       case 1:
         if(isPumpWithValveModel) {
           selectedWidget = StandAloneSettings(

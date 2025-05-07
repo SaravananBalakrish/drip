@@ -415,17 +415,19 @@ class AdditionalData {
 }
 
 class NewAlarmData{
-  String name;
-  String unit;
+  final int sNo;
+  final String name;
+  final String unit;
   bool value;
 
-  NewAlarmData({required this.name, required this.unit, required this.value});
+  NewAlarmData({required this.name, required this.unit, required this.value, required this.sNo});
 
   factory NewAlarmData.fromJson(Map<String, dynamic> json) {
     return NewAlarmData(
         name: json['title'],
         unit: json['unit'],
-        value: json['value'] ?? false
+        value: json['value'] ?? false,
+        sNo: json['sNo']
     );
   }
 
@@ -433,7 +435,8 @@ class NewAlarmData{
     return {
       "name": name,
       "unti": unit,
-      "value": value
+      "value": value,
+      "sNo": sNo,
     };
   }
 }
