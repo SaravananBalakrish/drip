@@ -50,7 +50,7 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
 
   @override
   Widget build(BuildContext context) {
-    final valves = widget.masterData.configObjects.where((e) => e.objectId == 13).toList();
+    final valves = widget.masterData.configObjects.where((e) => e.objectId == 13).map((ele) => ele.name).toList();
     return Scaffold(
       body: Consumer<PreferenceProvider>(
         builder: (context, provider, child) {
@@ -86,7 +86,7 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
     );
   }
 
-  Widget _buildValveSettings(BuildContext context, List valves, PreferenceProvider provider) {
+  Widget _buildValveSettings(BuildContext context, List<String> valves, PreferenceProvider provider) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -127,11 +127,11 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
               children: widget.selectedIndex == 1
                   ? List.generate(
                 valves.length + 1,
-                    (i) => _buildSettingTile(context, provider.standaloneSettings!.setting[i]),
+                    (i) => _buildSettingTile(context, provider.standaloneSettings!.setting[i], valves, i-1),
               )
                   : List.generate(
                 valves.length + 4,
-                    (i) => _buildSettingTile(context, provider.programSettings!.setting[i]),
+                    (i) => _buildSettingTile(context, provider.programSettings!.setting[i], valves, i-4),
               ),
             ),
           ),
@@ -140,7 +140,7 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
     );
   }
 
-  Widget _buildSettingTile(BuildContext context, WidgetSetting setting) {
+  Widget _buildSettingTile(BuildContext context, WidgetSetting setting, List<String> titles, int index) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -150,13 +150,15 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
       child: widget.selectedIndex == 1
           ? SwitchListTile(
         contentPadding: EdgeInsets.zero,
-        title: Text(setting.title),
+        title: Text(widget.selectedIndex == 1
+            ? setting.serialNumber == 1 ? setting.title : titles[index]
+            : [1,2,3,4].contains(setting.serialNumber) ? setting.title : titles[index]),
         value: setting.value,
         onChanged: (value) => setState(() => setting.value = value),
       )
           : ListTile(
         contentPadding: EdgeInsets.zero,
-        title: Text(setting.title),
+        title: Text([1,2,3,4].contains(setting.serialNumber) ? setting.title : titles[index]),
         trailing: _buildTrailingWidget(context, setting),
       ),
     );

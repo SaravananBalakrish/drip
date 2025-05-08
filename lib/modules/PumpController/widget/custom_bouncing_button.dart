@@ -12,7 +12,7 @@ class BounceEffectButton extends StatefulWidget {
   });
 
   @override
-  _BounceEffectButtonState createState() => _BounceEffectButtonState();
+  State<BounceEffectButton> createState() => _BounceEffectButtonState();
 }
 
 class _BounceEffectButtonState extends State<BounceEffectButton> with SingleTickerProviderStateMixin {
@@ -57,12 +57,14 @@ class _BounceEffectButtonState extends State<BounceEffectButton> with SingleTick
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(30),
           ),
-          color: widget.textColor,
-          elevation: 10,
+          color: widget.onTap != null ? widget.textColor : Colors.grey,
+          elevation: widget.onTap != null ? 10 : 0,
           child: Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              child: Icon(Icons.power_settings_new_rounded, color: Colors.white,
+              child: Icon(
+                Icons.power_settings_new_rounded,
+                color: Colors.white,
                 shadows: [
                   Shadow(
                     offset: const Offset(2, 2),
@@ -71,21 +73,6 @@ class _BounceEffectButtonState extends State<BounceEffectButton> with SingleTick
                   ),
                 ],
               ),
-              // child: Text(
-              //   widget.label,
-              //   style: TextStyle(
-              //     color: Colors.white,
-              //     fontWeight: FontWeight.bold,
-              //     fontSize: 18,
-              //     shadows: [
-              //       Shadow(
-              //         offset: const Offset(2, 2),
-              //         blurRadius: 6,
-              //         color: Colors.black.withOpacity(0.3),
-              //       ),
-              //     ],
-              //   ),
-              // ),
             ),
           ),
         ),

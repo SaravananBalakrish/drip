@@ -39,7 +39,7 @@ android {
         }
         oroProduction {
             dimension "flavor-type"
-            applicationId "com.example.oroProduction"
+            applicationId "com.example.oro_drip_irrigation"
             resValue "string", "app_name", "ORO"
         }
         smartComm {
