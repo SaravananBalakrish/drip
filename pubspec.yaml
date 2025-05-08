@@ -144,7 +144,7 @@ flavorizr:
       app:
         name: "ORO"
       android:
-        applicationId: "com.example.oroProduction"
+        applicationId: "com.example.oro_drip_irrigation"
     #      ios:
     #        bundleId: "com.example.apple"
     smartComm:
