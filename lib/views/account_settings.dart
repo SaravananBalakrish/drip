@@ -429,6 +429,7 @@ class AccountSettings extends StatelessWidget {
                 children: [
                   const SizedBox(height: 20),
                   IntlPhoneField(
+                    focusNode:  FocusNode(),
                     decoration: InputDecoration(
                       labelText: null,
                       border: const OutlineInputBorder(
@@ -450,7 +451,7 @@ class AccountSettings extends StatelessWidget {
                     onChanged: (phone) {
                       print(phone.completeNumber);
                     },
-                    onCountryChanged: (country) => viewModel.countryCode = country.dialCode, needTofocus: null, SuffixIcon: null,
+                    onCountryChanged: (country) => viewModel.countryCode = country.dialCode,
                   ),
                   Form(
                     key: viewModel.formKey,

@@ -199,6 +199,7 @@ class LoginScreen extends StatelessWidget {
                                   textAlign: TextAlign.center),
                             ),
                             IntlPhoneField(
+                              focusNode:  FocusNode(),
                               decoration: InputDecoration(
                                 labelText: 'Mobile Number',
                                 border: const OutlineInputBorder(
@@ -220,7 +221,7 @@ class LoginScreen extends StatelessWidget {
                               onChanged: (phone) {
                                 print(phone.completeNumber);
                               },
-                              onCountryChanged: (country) => viewModel.countryCode = country.dialCode, needTofocus: null, SuffixIcon: null,
+                              onCountryChanged: (country) => viewModel.countryCode = country.dialCode,
                             ),
                             const SizedBox(height: 15),
                             TextField(
@@ -308,6 +309,7 @@ class LoginScreen extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IntlPhoneField(
+                                focusNode:  FocusNode(),
                                 decoration: InputDecoration(
                                   labelText: null,
                                   border: const OutlineInputBorder(
@@ -330,8 +332,6 @@ class LoginScreen extends StatelessWidget {
                                   print(phone.completeNumber);
                                 },
                                 onCountryChanged: (country) => viewModel.countryCode = country.dialCode,
-                                needTofocus: null,
-                                SuffixIcon: null,
                               ),
                               const SizedBox(height: 15),
                               TextField(
