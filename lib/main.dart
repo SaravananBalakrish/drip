@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:az_notification_hub/az_notification_hub.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/app/app.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/state_management/pump_controller_provider.dart';
@@ -30,36 +31,40 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 FutureOr<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    // Initialize Firebase
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+  if(!kIsWeb){
+    try {
+      // Initialize Firebase
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
 
-    // Request notification permissions
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    await messaging.requestPermission(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
+      // Request notification permissions
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
+      await messaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
 
-    // Initialize local notifications
-    const AndroidInitializationSettings initializationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-    final InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-    );
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+      // Initialize local notifications
+      const AndroidInitializationSettings initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
+      final InitializationSettings initializationSettings = InitializationSettings(
+        android: initializationSettingsAndroid,
+      );
+      await flutterLocalNotificationsPlugin.initialize(initializationSettings);
 
-    // Set up Firebase background message handler
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+      // Set up Firebase background message handler
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    // Start Azure Notification Hub
-    await AzureNotificationHub.instance.start();
-  } catch (e) {
-    debugPrint('Initialization error: $e');
+      // Start Azure Notification Hub
+      await AzureNotificationHub.instance.start();
+    } catch (e) {
+      debugPrint('Initialization error: $e');
+    }
   }
+
+
 
   final mqttService = MqttService();
   final myMqtt = MqttPayloadProvider();

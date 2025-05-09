@@ -1,4 +1,5 @@
 import 'package:az_notification_hub/az_notification_hub.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -25,8 +26,10 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    NotificationServiceCall().initialize();
-    _configureFirebaseMessaging();
+    if(!kIsWeb){
+      NotificationServiceCall().initialize();
+      _configureFirebaseMessaging();
+    }
   }
 
   void _configureFirebaseMessaging() {

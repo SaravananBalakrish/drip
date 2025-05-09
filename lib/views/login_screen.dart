@@ -329,7 +329,9 @@ class LoginScreen extends StatelessWidget {
                                 onChanged: (phone) {
                                   print(phone.completeNumber);
                                 },
-                                onCountryChanged: (country) => viewModel.countryCode = country.dialCode, needTofocus: null, SuffixIcon: null,
+                                onCountryChanged: (country) => viewModel.countryCode = country.dialCode,
+                                needTofocus: null,
+                                SuffixIcon: null,
                               ),
                               const SizedBox(height: 15),
                               TextField(
