@@ -154,9 +154,6 @@ class _ConstantBasePageState extends State<ConstantBasePage> with SingleTickerPr
   }
 
   void updateTabs(index){
-    print('index : $index');
-    print('tabController.previousIndex : ${tabController.previousIndex}');
-    print('tabController.index : ${tabController.index}');
     constPvd.listOfConstantMenuModel[index].arrowTabState.value = ArrowTabState.onProgress;
     for(var i = 0; i< index;i++){
       constPvd.listOfConstantMenuModel[i].arrowTabState.value = ArrowTabState.complete;
@@ -207,9 +204,9 @@ class _ConstantBasePageState extends State<ConstantBasePage> with SingleTickerPr
     return TabBar(
       overlayColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
         if (states.contains(WidgetState.hovered)) {
-          return Colors.transparent; // Color when tab is hovered (Web/Desktop)
+          return Colors.transparent;
         }
-        return null; // Default behavior (no overlay)
+        return null;
       }),
       tabAlignment: TabAlignment.start,
       dividerHeight: 0,
@@ -218,7 +215,6 @@ class _ConstantBasePageState extends State<ConstantBasePage> with SingleTickerPr
       indicator: const BoxDecoration(),
       controller: tabController,
       tabs: List.generate(constPvd.listOfConstantMenuModel.length, (index){
-        print("tab name : ${constPvd.listOfConstantMenuModel[index].parameter}");
         return Tab(
             child: AnimatedBuilder(
                 animation: constPvd.listOfConstantMenuModel[index].arrowTabState,
