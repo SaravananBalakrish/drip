@@ -90,7 +90,9 @@ void selectionDialogBox({
                 child: Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: listOfObject.map((object){
+                  children: listOfObject
+                      .where((object) => object.controllerId != null)
+                      .map((object){
                     return InkWell(
                       onTap: (){
                         if(!singleSelection){
