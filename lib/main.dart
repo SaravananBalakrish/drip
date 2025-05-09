@@ -8,8 +8,6 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'Constants/notifications_service.dart';
 import 'Screens/Constant/ConstantPageProvider/changeNotifier_constantProvider.dart';
 import 'firebase_options.dart';
 import 'modules/IrrigationProgram/state_management/irrigation_program_provider.dart';
