@@ -451,7 +451,7 @@ class AccountSettings extends StatelessWidget {
                     onChanged: (phone) {
                       print(phone.completeNumber);
                     },
-                    onCountryChanged: (country) => viewModel.countryCode = country.dialCode,
+                    onCountryChanged: (country) => viewModel.countryCode = country.dialCode, needTofocus: null, SuffixIcon: null,
                   ),
                   Form(
                     key: viewModel.formKey,

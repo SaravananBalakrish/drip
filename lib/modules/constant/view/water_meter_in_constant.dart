@@ -77,8 +77,8 @@ class _WaterMeterInConstantState extends State<WaterMeterInConstant> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text(widget.constPvd.getDeviceDetails(key: 'deviceName', controllerId: waterMeter.controllerId!),textAlign: TextAlign.center, softWrap: true, style: TextStyle(color: Theme.of(context).primaryColorLight),),
-                        Text(widget.constPvd.getDeviceDetails(key: 'deviceId', controllerId: waterMeter.controllerId!), style: TextStyle(fontWeight: FontWeight.w100, color: Colors.grey.shade700) ),
+                        Text(widget.constPvd.getDeviceDetails(key: 'deviceName', controllerId: waterMeter.controllerId),textAlign: TextAlign.center, softWrap: true, style: TextStyle(color: Theme.of(context).primaryColorLight),),
+                        Text(widget.constPvd.getDeviceDetails(key: 'deviceId', controllerId: waterMeter.controllerId), style: TextStyle(fontWeight: FontWeight.w100, color: Colors.grey.shade700) ),
                       ],
                     ),
                   )

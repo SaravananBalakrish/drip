@@ -56,7 +56,6 @@ class ConstantProvider extends ChangeNotifier{
         name = n['name'];
       }
     }
-    print("name : $name");
     return name.isEmpty ? 'Location N/A' : name;
   }
 
@@ -107,7 +106,12 @@ class ConstantProvider extends ChangeNotifier{
       print("configMakerData : ${jsonEncode(configMakerData)}");
       constantDataFromHttp = constantData['data'];
       userData = userDataAndMasterData;
-      configObjectDataFromHttp = configMakerData['data']['configObject'];
+      configObjectDataFromHttp = (configMakerData['data']['configObject'] as List<dynamic>).where((object) => object['controllerId'] != null || [
+        AppConstants.filterSiteObjectId,
+        AppConstants.fertilizerSiteObjectId,
+        AppConstants.irrigationLineObjectId,
+      ].contains(object['objectId'])).toList();
+
       Map<String, dynamic> defaultData = constantDataFromHttp['default'];
       deviceList = defaultData['nodeList'];
       if(AppConstants.ecoGemModelList.contains(userData['modelId'])){
@@ -216,6 +220,7 @@ class ConstantProvider extends ChangeNotifier{
       alarmOnStatus = generatePopUpItemModel(defaultData: defaultData, keyName: 'alarmOnStatus');
       alarmResetAfterIrrigation = generatePopUpItemModel(defaultData: defaultData, keyName: 'alarmResetAfterIrrigation');
       defaultNormalCriticalAlarmSetting = generateDefaultSetting(defaultData: defaultData, keyName: 'normalCriticalAlarm');
+      print("listOfIrrigationLineObject : $listOfIrrigationLineObject");
       normalCriticalAlarm = listOfIrrigationLineObject.map((line){
         print("constantOldData['normalCriticalAlarm'] : ${constantOldData}");
         List<dynamic> lineData = (constantOldData['normalCriticalAlarm'] as List<dynamic>).where((oldLine) => oldLine['sNo'] == line['sNo']).toList();
