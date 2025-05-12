@@ -3,21 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import '../../repository/repository.dart';
+import '../../services/bluetooth_manager.dart';
 import '../../services/http_service.dart';
 import '../../view_models/customer/general_setting_view_model.dart';
 
 
-class GeneralSetting extends StatelessWidget {
+class GeneralSetting extends StatefulWidget {
   const GeneralSetting({super.key, required this.customerId, required this.controllerId, required this.userId});
   final int customerId, controllerId, userId;
 
   @override
+  State<GeneralSetting> createState() => _GeneralSettingState();
+}
+
+class _GeneralSettingState extends State<GeneralSetting> {
+  @override
   Widget build(BuildContext context) {
+
     return ChangeNotifierProvider(
       create: (_) => GeneralSettingViewModel(Repository(HttpService()))
-        ..getControllerInfo(customerId, controllerId)
-        ..getSubUserList(customerId)
-        ..getNotificationList(customerId, controllerId)
+        ..getControllerInfo(widget.customerId, widget.controllerId)
+        ..getSubUserList(widget.customerId)
+        ..getNotificationList(widget.customerId, widget.controllerId)
         ..getLanguage(),
       child: Consumer<GeneralSettingViewModel>(
         builder: (context, viewModel, _) {
@@ -122,38 +129,71 @@ class GeneralSetting extends StatelessWidget {
                       ),
                     if(index==6)
                       ListTile(
-                        title: const Text('App Theme Color'),
-                        leading: const Icon(Icons.color_lens_outlined),
-                        trailing: DropdownButton<String>(
-                          underline: Container(),
-                          value: viewModel.selectedTheme,
-                          hint: const Text('Select your theme color'),
-                          onChanged: (String? newValue) {
-                            if (newValue != null) {
-                              /*setState(() {
-                                                        selectedTheme = newValue;
-                                                      });*/
-                            }
-                          },
-                          items: viewModel.themeColors.entries
-                              .map<DropdownMenuItem<String>>((entry) {
-                            return DropdownMenuItem<String>(
-                              value: entry.key,
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 20,
-                                    height: 20,
-                                    color: entry.value,
-                                    margin:
-                                    const EdgeInsets.only(right: 8),
-                                  ),
-                                  Text(entry.key),
-                                ],
-                              ),
+                        title: const Text('Communication mode'),
+                        leading: const Icon(Icons.network_ping),
+                       /* trailing: viewModel.selectedMode=='Http & Mqtt'?
+                        DropdownButton<String>(
+                          value: viewModel.selectedMode,
+                          hint: const Text('select a communication mode'),
+                          items: viewModel.communicationMode.map((String value) {
+                            return DropdownMenuItem(
+                              value: value,
+                              child: Text(value),
                             );
                           }).toList(),
-                        ),
+                          onChanged: (value) => viewModel.onChangeCommunicationMode(value!),
+                        ):
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            DropdownButton<String>(
+                              value: viewModel.selectedMode,
+                              hint: const Text('select a communication mode'),
+                              items: viewModel.communicationMode.map((String value) {
+                                return DropdownMenuItem(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                              onChanged: (value) => viewModel.onChangeCommunicationMode(value!),
+                            ),
+                            IconButton(onPressed:(){
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: ListTile(title: const Text('Search bluetooth devices'),
+                                        trailing: IconButton(
+                                          icon: const Icon(Icons.search, color: Colors.white),
+                                          onPressed: manager.getDevices,
+                                        )),
+                                    content: SizedBox(
+                                      width: 400,
+                                      child: Column(
+                                        children: [
+                                          ...manager.pairedDevices.map((d) => ListTile(
+                                            title: Text(d.device.name ?? '----'),
+                                            subtitle: Text(d.device.address),
+                                            trailing: TextButton(
+                                              onPressed: () {},
+                                              child: Text(d.isConnected ? 'Connected' : 'Connect'),
+                                            ),
+                                          )),
+                                        ],
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text('Close'),
+                                        onPressed: () => Navigator.of(context).pop(),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              );
+                            }, icon: Icon(Icons.list))
+                          ],
+                        ),*/
                       ),
                     if(index==7)
                       ListTile(
@@ -245,6 +285,7 @@ class GeneralSetting extends StatelessWidget {
   }
 
   Widget generalSetting(BuildContext context, GeneralSettingViewModel viewModel){
+
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -362,40 +403,73 @@ class GeneralSetting extends StatelessWidget {
                       flex: 1,
                       child: Column(
                         children: [
-                          ListTile(
-                            title: const Text('App Theme Color'),
-                            leading: const Icon(Icons.color_lens_outlined),
-                            trailing: DropdownButton<String>(
-                              underline: Container(),
-                              value: viewModel.selectedTheme,
-                              hint: const Text('Select your theme color'),
-                              onChanged: (String? newValue) {
-                                if (newValue != null) {
-                                  /*setState(() {
-                                                        selectedTheme = newValue;
-                                                      });*/
-                                }
-                              },
-                              items: viewModel.themeColors.entries
-                                  .map<DropdownMenuItem<String>>((entry) {
-                                return DropdownMenuItem<String>(
-                                  value: entry.key,
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 20,
-                                        height: 20,
-                                        color: entry.value,
-                                        margin:
-                                        const EdgeInsets.only(right: 8),
-                                      ),
-                                      Text(entry.key),
-                                    ],
-                                  ),
+                          /*ListTile(
+                            title: const Text('Communication mode'),
+                            leading: const Icon(Icons.network_ping),
+                            trailing: viewModel.selectedMode=='Http & Mqtt'?
+                            DropdownButton<String>(
+                              value: viewModel.selectedMode,
+                              hint: const Text('select a communication mode'),
+                              items: viewModel.communicationMode.map((String value) {
+                                return DropdownMenuItem(
+                                  value: value,
+                                  child: Text(value),
                                 );
                               }).toList(),
+                              onChanged: (value) => viewModel.onChangeCommunicationMode(value!),
+                            ):
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                DropdownButton<String>(
+                                  value: viewModel.selectedMode,
+                                  hint: const Text('select a communication mode'),
+                                  items: viewModel.communicationMode.map((String value) {
+                                    return DropdownMenuItem(
+                                      value: value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) => viewModel.onChangeCommunicationMode(value!),
+                                ),
+                                IconButton(onPressed:(){
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: ListTile(title: const Text('Search bluetooth devices'),
+                                            trailing: IconButton(
+                                          icon: const Icon(Icons.search, color: Colors.white),
+                                          onPressed: null,
+                                        )),
+                                        content: SizedBox(
+                                          width: 400,
+                                          child: Column(
+                                            children: [
+                                              *//*...devices.map((d) => ListTile(
+                                                title: Text(d.device.name ?? '----'),
+                                                subtitle: Text(d.device.address),
+                                                trailing: TextButton(
+                                                  onPressed: () {},
+                                                  child: Text(d.isConnected ? 'Connected' : 'Connect'),
+                                                ),
+                                              )),*//*
+                                            ],
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            child: const Text('Close'),
+                                            onPressed: () => Navigator.of(context).pop(),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                }, icon: Icon(Icons.list))
+                              ],
                             ),
-                          ),
+                          ),*/
                           Divider(color: Colors.grey.shade200,),
                           ListTile(
                             title: const Text('UTC'),
@@ -502,7 +576,7 @@ class GeneralSetting extends StatelessWidget {
                   style:
                   TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ),
-                trailing: userId != 0
+                trailing: widget.userId != 0
                     ? IconButton(
                     tooltip: 'Add new sub user',
                     onPressed: () async {
@@ -628,5 +702,4 @@ class GeneralSetting extends StatelessWidget {
       },
     );*/
   }
-
 }

@@ -4,6 +4,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 import '../../../Models/customer/site_model.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
@@ -219,7 +220,7 @@ class ScheduledProgram extends StatelessWidget {
                                             String payLoadFinal = jsonEncode({
                                               "2900": {"2901": payload}
                                             });
-                                            MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+                                            MqttService().topicToPublishAndItsMessage(payLoadFinal, '${Environment.mqttPublishTopic}/$deviceId');
                                             sentUserOperationToServer(
                                               '${filteredScheduleProgram[index].programName} ${getDescription(int.parse(filteredScheduleProgram[index].prgOnOff))}',
                                               payLoadFinal,
@@ -257,7 +258,7 @@ class ScheduledProgram extends StatelessWidget {
                                                   String payLoadFinal = jsonEncode({
                                                     "2900": {"2901": payload}
                                                   });
-                                                  MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+                                                  MqttService().topicToPublishAndItsMessage(payLoadFinal, '${Environment.mqttPublishTopic}/$deviceId');
                                                   sentUserOperationToServer(
                                                     '${filteredScheduleProgram[index].programName} ${getDescription(int.parse(filteredScheduleProgram[index].prgPauseResume))}',
                                                     payLoadFinal,
@@ -329,7 +330,7 @@ class ScheduledProgram extends StatelessWidget {
                                             String payLoadFinal = jsonEncode({
                                               "6700": {"6701": payload}
                                             });
-                                            MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+                                            MqttService().topicToPublishAndItsMessage(payLoadFinal, '${Environment.mqttPublishTopic}/$deviceId');
                                             sentUserOperationToServer(
                                               '${filteredScheduleProgram[index].programName} ${'Changed to $selectedItem'}',
                                               payLoadFinal,
@@ -539,7 +540,7 @@ class ScheduledProgram extends StatelessWidget {
                                   String payLoadFinal = jsonEncode({
                                     "2900": {"2901": payload}
                                   });
-                                  MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+                                  MqttService().topicToPublishAndItsMessage(payLoadFinal, '${Environment.mqttPublishTopic}/$deviceId');
                                   sentUserOperationToServer('${program.programName} ${getDescription(int.parse(program.prgOnOff))}', payLoadFinal);
                                   GlobalSnackBar.show(context, 'Comment sent successfully', 200);
                                 } else {
@@ -559,7 +560,7 @@ class ScheduledProgram extends StatelessWidget {
                                 String payLoadFinal = jsonEncode({
                                   "2900": {"2901": payload}
                                 });
-                                MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+                                MqttService().topicToPublishAndItsMessage(payLoadFinal, '${Environment.mqttPublishTopic}/$deviceId');
                                 sentUserOperationToServer('${program.programName} ${getDescription(int.parse(program.prgPauseResume))}', payLoadFinal);
                                 GlobalSnackBar.show(context, 'Comment sent successfully', 200);
                               } else {
@@ -591,7 +592,7 @@ class ScheduledProgram extends StatelessWidget {
                                     String payLoadFinal = jsonEncode({
                                       "6700": {"6701": payload}
                                     });
-                                    MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+                                    MqttService().topicToPublishAndItsMessage(payLoadFinal, '${Environment.mqttPublishTopic}/$deviceId');
                                     sentUserOperationToServer('${program.programName} Changed to $selectedItem', payLoadFinal);
                                     GlobalSnackBar.show(context, 'Comment sent successfully', 200);
                                     Navigator.pop(context);

@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 import '../../../Models/customer/site_model.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
@@ -182,24 +183,32 @@ class CurrentProgram extends StatelessWidget {
   }
 
   Widget buildMobileCard(BuildContext context, List<String> schedule) {
-    return Card(
-      color: Colors.green.shade50,
-      margin: EdgeInsets.zero,
-      shape: const RoundedRectangleBorder(),
-      child: Column(
-        children: List.generate(schedule.length, (index) {
-          List<String> values = schedule[index].split(',');
-          return Column(
-            children: [
-              buildScheduleRow(context, values),
-              if (index != schedule.length - 1) const Padding(
-                padding: EdgeInsets.only(left: 10, right: 8),
-                child: Divider(height: 2),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 9, top: 8),
+          child: Container(
+            width: MediaQuery.sizeOf(context).width-15,
+            height: 22,
+            color: Colors.green.shade300,
+            child: const Padding(
+              padding: EdgeInsets.only(left: 8),
+              child: Text(
+                'CURRENT SCHEDULE',
+                textAlign: TextAlign.start,
+                style: TextStyle(color: Colors.black54, fontSize: 15),
               ),
-            ],
-          );
-        }),
-      ),
+            ),
+          ),
+        ),
+        Column(
+          children: List.generate(schedule.length, (index) {
+            List<String> values = schedule[index].split(',');
+            return buildScheduleRow(context, values);
+          }),
+        ),
+      ],
     );
   }
 
@@ -213,7 +222,7 @@ class CurrentProgram extends StatelessWidget {
           String payLoadFinal = jsonEncode({
             "800": {"801": '0,0,0,0,0'}
           });
-          MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+          MqttService().topicToPublishAndItsMessage(payLoadFinal, '${Environment.mqttPublishTopic}/$deviceId');
           sentUserOperationToServer('${getProgramNameById(int.parse(values[0]))} Stopped manually', payLoadFinal);
           GlobalSnackBar.show(context, 'Comment sent successfully', 200);
         }: null,
@@ -229,7 +238,7 @@ class CurrentProgram extends StatelessWidget {
             "3900": {"3901": '0,${values[3]},${values[0]},'
                 '${values[1]},,,,,,,,,0,'}
           });
-          MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+          MqttService().topicToPublishAndItsMessage(payLoadFinal, '${Environment.mqttPublishTopic}/$deviceId');
           sentUserOperationToServer('${getProgramNameById(int.parse(values[0]))} Stopped manually', payLoadFinal);
           GlobalSnackBar.show(context, 'Comment sent successfully', 200);
 
@@ -245,7 +254,7 @@ class CurrentProgram extends StatelessWidget {
           String payLoadFinal = jsonEncode({
             "3700": {"3701": payload}
           });
-          MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+          MqttService().topicToPublishAndItsMessage(payLoadFinal, '${Environment.mqttPublishTopic}/$deviceId');
           sentUserOperationToServer('${getProgramNameById(int.parse(values[0]))} - ${getSequenceName(int.parse(values[0]), values[1])} skipped manually', payLoadFinal);
           GlobalSnackBar.show(context, 'Comment sent successfully', 200);
         } : null,
@@ -257,123 +266,138 @@ class CurrentProgram extends StatelessWidget {
 
   Widget buildScheduleRow(BuildContext context, List<String> values) {
     final programName = getProgramNameById(int.parse(values[0]));
-    return Row(
-      children: [
-        const SizedBox(width: 8),
-        const SizedBox(
-          width: 95,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Name', style: TextStyle(color: Colors.black45)),
-              SizedBox(height: 2),
-              Text('Reason', style: TextStyle(color: Colors.black45)),
-              SizedBox(height: 2),
-              Text('Current Zone', style: TextStyle(color: Colors.black45)),
-              SizedBox(height: 2),
-              Text('RTC & Cyclic', style: TextStyle(color: Colors.black45)),
-              SizedBox(height: 2),
-              Text('Start Time', style: TextStyle(color: Colors.black45)),
-              SizedBox(height: 2),
-              Text('Set (Dur/Flw)', style: TextStyle(color: Colors.black45)),
-            ],
-          ),
-        ),
-        const SizedBox(
-          width: 10,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(':'),
-              SizedBox(height: 2),
-              Text(':'),
-              SizedBox(height: 2),
-              Text(':'),
-              SizedBox(height: 2),
-              Text(':'),
-              SizedBox(height: 2),
-              Text(':'),
-              SizedBox(height: 2),
-              Text(':'),
-            ],
-          ),
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 6),
-              Text(programName),
-              const SizedBox(height: 4),
-              Text(getContentByCode(int.parse(values[17])), style: const TextStyle(color: Colors.black54)),
-              const SizedBox(height: 1),
-              Text('${values[10]}/${values[9]} - ${programName == 'StandAlone - Manual' ? '--' : 
-              getSequenceName(int.parse(values[0]), values[1]) ?? '--'}'),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 70,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 3),
-                        Text('${formatRtcValues(values[6], values[5])} - ${formatRtcValues(values[8], values[7])}'),
-                        const SizedBox(height: 3),
-                        Text(convert24HourTo12Hour(values[11])),
-                        const SizedBox(height: 3),
-                        Text(
-                          programName == 'StandAlone - Manual' && (values[3] == '00:00:00' || values[3] == '0')
-                              ? 'Timeless'
-                              : values[3],
-                        ),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: Container(
-                      width: 1,
-                      height: 50,
-                      color: Colors.black12,
-                    ),
-                  ),
-                  const Spacer(),
-                  Column(
-                    children: [
-                      const Text('Remaining', style: TextStyle(color: Colors.black45)),
-                      Padding(
-                        padding: const EdgeInsets.only(top:2, bottom: 5),
-                        child: Container(
-                          width: 75,
-                          height: 1,
-                          color: Colors.black12,
-                        ),
+    return Padding(
+      padding: const EdgeInsets.only(left: 5, right: 8),
+      child: Card(
+        margin: const EdgeInsets.only(left: 4.5, bottom: 5),
+        color: Colors.white,
+        child: Row(
+          children: [
+            Container(
+              width: 3,
+              height: 125,
+              color: Colors.green.shade300,
+            ),
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width - 28,
+              height: 125,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8, top: 5),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: '$programName - ',
+                              style: const TextStyle(color:Colors.black, fontWeight: FontWeight.bold, fontSize: 15),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: programName == 'StandAlone - Manual' ? '--' :
+                                  getSequenceName(int.parse(values[0]), values[1]) ?? '--',
+                                  style: const TextStyle(fontWeight: FontWeight.normal, color: Colors.blue),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Text(getContentByCode(int.parse(values[17])), style: const TextStyle(color: Colors.black54)),
+                          const SizedBox(height: 5),
+                          RichText(
+                            text: TextSpan(
+                              text: 'Started at         :  ',
+                              style: const TextStyle(color:Colors.black, fontWeight: FontWeight.normal),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: convert24HourTo12Hour(values[11]),
+                                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          RichText(
+                            text: TextSpan(
+                              text: 'Current Zone   :  ',
+                              style: const TextStyle(color:Colors.black, fontWeight: FontWeight.normal),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '${values[10]} of ${values[9]}',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          RichText(
+                            text: TextSpan(
+                              text: 'Rtc & Cyclic     :  ',
+                              style: const TextStyle(color:Colors.black, fontWeight: FontWeight.normal),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: '${formatRtcValues(values[6], values[5])} - ${formatRtcValues(values[8], values[7])}',
+                                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          RichText(
+                            text: TextSpan(
+                              text: 'Set Value         :  ',
+                              style: const TextStyle(color:Colors.black, fontWeight: FontWeight.normal),
+                              children: <TextSpan>[
+                                TextSpan(
+                                  text: programName == 'StandAlone - Manual' && (values[3] == '00:00:00' || values[3] == '0')
+                                      ? 'Timeless'
+                                      : values[3],
+                                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      Center(child: Text(
-                        getProgramNameById(int.parse(values[0])) == 'StandAlone - Manual' &&
-                            (values[3] == '00:00:00' || values[3] == '0')
-                            ? '----'
-                            : values[4],
-                        style: const TextStyle(fontSize: 20),
-                      )),
-                    ],
-                  ),
-                  const Spacer(),
-                  Container(
-                    width: 1,
-                    height: 50,
-                    color: Colors.black12,
-                  ),
-                  const Spacer(),
-                  buildActionButton(context, values),
-                  const Spacer(),
-                ],
+                    ),
+                    SizedBox(
+                      width: 130,
+                      child: Column(
+                        children: [
+                          const Spacer(),
+                          Column(
+                            children: [
+                              const Text('Remaining', style: TextStyle(color: Colors.black45)),
+                              Padding(
+                                padding: const EdgeInsets.only(top:2, bottom: 5),
+                                child: Container(
+                                  width: 75,
+                                  height: 1,
+                                  color: Colors.black12,
+                                ),
+                              ),
+                              Center(child: Text(
+                                getProgramNameById(int.parse(values[0])) == 'StandAlone - Manual' &&
+                                    (values[3] == '00:00:00' || values[3] == '0')
+                                    ? '----'
+                                    : values[4],
+                                style: const TextStyle(fontSize: 20),
+                              )),
+                            ],
+                          ),
+                          const Spacer(),
+                          buildActionButton(context, values),
+                          const Spacer(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 3),
-            ],
-          ),
-        )
-      ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
