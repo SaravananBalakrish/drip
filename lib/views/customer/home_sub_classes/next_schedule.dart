@@ -125,39 +125,52 @@ class NextSchedule extends StatelessWidget {
   }
 
   Widget buildMobileCard(BuildContext context, List<String> nxtSchedule) {
-    return Card(
-      color: Colors.orange.shade50,
-      margin: EdgeInsets.zero,
-      shape: const RoundedRectangleBorder(),
-      child: Column(
-        children: List.generate(nxtSchedule.length, (index) {
-          List<String> values = nxtSchedule[index].split(',');
-          return Column(
-            children: [
-              buildNextScheduleRow(context, values),
-              if (index != nxtSchedule.length - 1) const Padding(
-                padding: EdgeInsets.only(left: 10, right: 8),
-                child: Divider(height: 2),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 9, top: 3),
+          child: Container(
+            width: MediaQuery.sizeOf(context).width-15,
+            height: 22,
+            color: Colors.orange.shade200,
+            child: const Padding(
+              padding: EdgeInsets.only(left: 8),
+              child: Text(
+                'NEXT IN QUEUE',
+                textAlign: TextAlign.start,
+                style: TextStyle(color: Colors.black54, fontSize: 15),
               ),
-            ],
-          );
-        }),
-      ),
+            ),
+          ),
+        ),
+        Column(
+          children: List.generate(nxtSchedule.length, (index) {
+            List<String> values = nxtSchedule[index].split(',');
+            return buildNextScheduleRow(context, values);
+          }),
+        ),
+      ],
     );
   }
 
   Widget buildNextScheduleRow(BuildContext context, List<String> values) {
     final programName = getProgramNameById(int.parse(values[0]));
     return Padding(
-      padding: const EdgeInsets.only(left: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 2),
-          const Text('NEXT IN QUEUE'),
-          Row(
-            children: [
-              const SizedBox(
+      padding: const EdgeInsets.only(left: 5, right: 8),
+      child: Card(
+        margin: const EdgeInsets.only(left: 4.5, bottom: 5),
+        color: Colors.white,
+        child: Row(
+          children: [
+            Container(
+              width: 3,
+              height: 70,
+              color: Colors.orange.shade200,
+            ),
+            const Padding(
+              padding: EdgeInsets.only(left: 8),
+              child: SizedBox(
                 width: 170,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,36 +184,36 @@ class NextSchedule extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(
-                width: 10,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(':'),
-                    SizedBox(height: 2),
-                    Text(':'),
-                    SizedBox(height: 2),
-                    Text(':'),
-                    SizedBox(height: 2),
-                  ],
-                ),
+            ),
+            const SizedBox(
+              width: 10,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(':'),
+                  SizedBox(height: 2),
+                  Text(':'),
+                  SizedBox(height: 2),
+                  Text(':'),
+                  SizedBox(height: 2),
+                ],
               ),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('$programName - ${scheduledPrograms[0].selectedSchedule}'),
-                    const SizedBox(height: 1),
-                    Text('${values[7]} - ${getSequenceName(int.parse(values[0]), values[1]) ?? '--'}'),
-                    const SizedBox(height: 3),
-                    Text('${convert24HourTo12Hour(values[6])} - ${values[3]}'),
-                    SizedBox(height: 2),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ],
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('$programName - ${scheduledPrograms[0].selectedSchedule}'),
+                  const SizedBox(height: 1),
+                  Text('${values[7]} - ${getSequenceName(int.parse(values[0]), values[1]) ?? '--'}'),
+                  const SizedBox(height: 3),
+                  Text('${convert24HourTo12Hour(values[6])} - ${values[3]}'),
+                  SizedBox(height: 2),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

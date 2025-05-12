@@ -16,13 +16,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
 
   final List<LanguageList> languageList = <LanguageList>[];
 
-  String selectedTheme = '0xFF036673';
-  Map<String, Color> themeColors = {
-    '0xFF036673': const Color(0xFF036673),
-    'Blue': Colors.blue,
-    'Green': Colors.green,
-    'Yellow': Colors.yellow,
-  };
 
   List<Map<String, dynamic>> subUsers = [];
 

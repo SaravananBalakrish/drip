@@ -64,6 +64,7 @@ dependencies:
   flutter_local_notifications: ^19.1.0
   firebase_messaging: ^15.2.5
   intl_phone_field: ^3.2.0
+  bluetooth_classic: ^0.0.3
 
 dev_dependencies:
   flutter_test:

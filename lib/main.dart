@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 
 import 'package:oro_drip_irrigation/app/app.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/state_management/pump_controller_provider.dart';
+import 'package:oro_drip_irrigation/services/bluetooth_manager.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:provider/provider.dart';
 import 'Constants/notifi_service.dart';
@@ -40,6 +41,7 @@ FutureOr<void> main() async {
         ChangeNotifierProvider(create: (_) => ConstantProviderMani()),
         ChangeNotifierProvider(create: (_) => ConstantProvider()),
         ChangeNotifierProvider(create: (_) => PumpControllerProvider()),
+        ChangeNotifierProvider(create: (_) => BluetoothManager()),
       ],
       child: MyApp(),
       

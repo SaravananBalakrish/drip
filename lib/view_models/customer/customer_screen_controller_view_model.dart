@@ -9,6 +9,7 @@ import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../services/mqtt_service.dart';
 import '../../utils/constants.dart';
+import '../../utils/environment.dart';
 
 class CustomerScreenControllerViewModel extends ChangeNotifier {
 
@@ -32,6 +33,15 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   StreamSubscription<MqttConnectionState>? mqttSubscription;
 
   bool programRunning = false;
+
+  String? selectedMode;
+  String? selectedDevice;
+
+  List<String> pairedDevices = [
+    'Device A',
+    'Device B',
+    'Device C',
+  ];
 
   CustomerScreenControllerViewModel(this.context, this.repository){
     fromWhere='init';
@@ -64,7 +74,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   void onSubscribeTopic(){
     Future.delayed(const Duration(milliseconds: 2000), () {
       print("device id :: ${mySiteList.data[sIndex].master[mIndex].deviceId}");
-      mqttService.topicToSubscribe('${AppConstants.subscribeTopic}/${mySiteList.data[sIndex].master[mIndex].deviceId}');
+      mqttService.topicToSubscribe('${Environment.mqttSubscribeTopic}/${mySiteList.data[sIndex].master[mIndex].deviceId}');
       onRefreshClicked();
     });
   }
@@ -206,7 +216,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     int attempts = 0;
     bool responseReceived = false;
     final deviceId = mySiteList.data[sIndex].master[mIndex].deviceId;
-    final topic = '${AppConstants.publishTopic}/$deviceId';
+    final topic = '${Environment.mqttPublishTopic}/$deviceId';
 
     if (mySiteList.data[sIndex].master[mIndex].categoryId == 1) {
       livePayload = jsonEncode({"3000": {"3001": ""}});
@@ -263,7 +273,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
       "4900": {"4901": strPRPayload}
     });
 
-    MqttService().topicToPublishAndItsMessage(payloadFinal, '${AppConstants.publishTopic}/${mySiteList.data[sIndex].master[mIndex].deviceId}');
+    MqttService().topicToPublishAndItsMessage(payloadFinal, '${Environment.mqttPublishTopic}/${mySiteList.data[sIndex].master[mIndex].deviceId}');
     if (allPaused) {
       sendToServer('Resumed all line', payloadFinal, customerId, controllerId);
     } else {

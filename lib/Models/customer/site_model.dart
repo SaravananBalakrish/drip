@@ -51,12 +51,13 @@ class MasterControllerModel {
   final String categoryName;
   final int modelId;
   final String modelName;
-  final List<Unit> units;
-  final List<IrrigationLineModel> irrigationLine;
+  List<ConfigObject> configObjects;
   List<NodeListModel> nodeList;
+  //List<WaterSourceModel> waterSources = [];
+  final List<IrrigationLineModel> irrigationLine;
   List<ProgramList> programList;
   late final LiveMessage? live;
-  List<ConfigObject> configObjects;
+  final List<Unit> units;
 
 
   MasterControllerModel({
@@ -163,7 +164,7 @@ class MasterControllerModel {
     for (var line in irrigationLines) {
       final matchedFilterSite = filterSiteMap[line.centralFiltration];
       final matchedFertilizerSite = fertilizerSiteMap[line.centralFertilization];
-      line.linkReferences(configObjects, waterSources, matchedFilterSite, matchedFertilizerSite);
+      line.linkReferences(waterSources, matchedFilterSite, matchedFertilizerSite);
     }
 
     return MasterControllerModel(
@@ -390,7 +391,7 @@ class IrrigationLineModel {
     );
   }
 
-  void linkReferences(List<ConfigObject> configObjects, List<WaterSourceModel> wtrSources,
+  void linkReferences(List<WaterSourceModel> wtrSources,
       FilterSiteModel? cFilterSite, FertilizerSiteModel? cFertilizerSite) {
 
     waterSources.clear();

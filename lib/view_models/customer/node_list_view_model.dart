@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 import '../../Models/customer/site_model.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
@@ -183,7 +184,7 @@ class NodeListViewModel extends ChangeNotifier {
       String payLoadFinal = jsonEncode({
         "2300": {"2301": ""}
       });
-      MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+      MqttService().topicToPublishAndItsMessage(payLoadFinal, '${Environment.mqttPublishTopic}/$deviceId');
       sentToServer('Set serial for all nodes comment sent successfully', payLoadFinal, customerId, controllerId, userId );
     });
   }
@@ -193,7 +194,7 @@ class NodeListViewModel extends ChangeNotifier {
       String payLoadFinal = jsonEncode({
         "4500": {"4501": ""}
       });
-      MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+      MqttService().topicToPublishAndItsMessage(payLoadFinal, '${Environment.mqttPublishTopic}/$deviceId');
       sentToServer('Test Communication comment sent successfully', payLoadFinal, customerId, controllerId, userId);
     });
   }
@@ -203,7 +204,7 @@ class NodeListViewModel extends ChangeNotifier {
       String payLoadFinal = jsonEncode({
         "2300": {"2301": "${nodeList[index].serialNumber}"}
       });
-      MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+      MqttService().topicToPublishAndItsMessage(payLoadFinal, '${Environment.mqttPublishTopic}/$deviceId');
       sentToServer('Serial set for the ${nodeList[index].deviceName} all Relay', payLoadFinal, customerId, controllerId, userId);
     });
   }
