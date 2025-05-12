@@ -83,8 +83,8 @@ class _ChannelInConstantState extends State<ChannelInConstant> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Text(widget.constPvd.getDeviceDetails(key: 'deviceName', controllerId: channel.controllerId!),textAlign: TextAlign.center, softWrap: true, style: TextStyle(color: Theme.of(context).primaryColorLight),),
-                        Text(widget.constPvd.getDeviceDetails(key: 'deviceId', controllerId: channel.controllerId!), style: TextStyle(fontWeight: FontWeight.w100, color: Colors.grey.shade700) ),
+                        Text(widget.constPvd.getDeviceDetails(key: 'deviceName', controllerId: channel.controllerId),textAlign: TextAlign.center, softWrap: true, style: TextStyle(color: Theme.of(context).primaryColorLight),),
+                        Text(widget.constPvd.getDeviceDetails(key: 'deviceId', controllerId: channel.controllerId), style: TextStyle(fontWeight: FontWeight.w100, color: Colors.grey.shade700) ),
                       ],
                     ),
                   )

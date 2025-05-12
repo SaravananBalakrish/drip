@@ -1,18 +1,20 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/modules/Logs/view/valve_log.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/state_management/pump_controller_provider.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
 
+import '../../../Models/customer/site_model.dart';
 import '../../Preferences/widgets/custom_segmented_control.dart';
 import '../widgets/custom_calendar_mobile.dart';
 import '../widgets/time_line2.dart';
 
 class PumpLogScreen extends StatefulWidget {
-  final int userId;
-  final int controllerId;
-  final int nodeControllerId;
-  const PumpLogScreen({super.key, required this.userId, required this.controllerId, this.nodeControllerId = 0});
+  final int userId,controllerId, nodeControllerId;
+  final MasterControllerModel masterData;
+  const PumpLogScreen({super.key, required this.userId, required this.controllerId, this.nodeControllerId = 0, required this.masterData});
 
   @override
   State<PumpLogScreen> createState() => _PumpLogScreenState();
@@ -96,21 +98,29 @@ class _PumpLogScreenState extends State<PumpLogScreen> {
                 itemBuilder: (context, index) {
                   if(watchProvider.pumpLogData.isNotEmpty) {
                     final logData = watchProvider.pumpLogData[index];
+                    if(AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId)) {
+                      return ValveLog(events: logData.motor1, masterData: widget.masterData,);
+                    }
                     return Timeline2(
                       events: selectedIndex == 1 ? logData.motor2 : selectedIndex == 2 ? logData.motor3 : logData.motor1,
                     );
                   } else {
-                    return Center(child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(readProvider.message),
-                        FilledButton(onPressed: (){
-                          readProvider.getUserPumpLog(widget.userId, widget.controllerId, widget.nodeControllerId);
-                        }, child: const Text("Reload"))
-                      ],
-                    ));
-                  };
+                    return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(readProvider.message),
+                            FilledButton(
+                                onPressed: (){
+                                  readProvider.getUserPumpLog(widget.userId, widget.controllerId, widget.nodeControllerId);
+                                },
+                                child: const Text("Reload")
+                            )
+                          ],
+                        )
+                    );
+                  }
                 },
               )
             ),

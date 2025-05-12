@@ -7,6 +7,7 @@ import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 
 import '../../../Constants/constants.dart';
+import '../../../Models/customer/site_model.dart';
 import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
 import '../../../view_models/customer/customer_screen_controller_view_model.dart';
@@ -17,13 +18,14 @@ import 'cycle_details.dart';
 class PumpWithValves extends StatelessWidget {
   final PumpValveModel valveData;
   final int dataFetchingStatus;
-  final int userId, customerId, controllerId;
-  const PumpWithValves({super.key, required this.valveData, required this.dataFetchingStatus, required this.userId, required this.customerId, required this.controllerId});
+  final int userId, customerId;
+  final MasterControllerModel masterData;
+  const PumpWithValves({super.key, required this.valveData, required this.dataFetchingStatus, required this.userId, required this.customerId, required this.masterData});
 
   @override
   Widget build(BuildContext context) {
     final provider = context.read<CustomerScreenControllerViewModel>();
-    final valves = provider.mySiteList.data[provider.sIndex].master[provider.mIndex].configObjects.where((e) => e.objectId == 13).toList();
+    final valves = masterData.configObjects.where((e) => e.objectId == 13).toList();
     final moistureSensors = provider.mySiteList.data[provider.sIndex].master[provider.mIndex].configObjects.where((e) => e.objectId == 25).toList();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,41 +61,6 @@ class PumpWithValves extends StatelessWidget {
                 ),
               ],
             ),
-           /* const Spacer(),
-              PopupMenuButton(
-                tooltip: "Select the valve to change",
-                itemBuilder: (BuildContext context) {
-                  return [
-                    for(int i = 0; i < valves.length; i++)
-                      PopupMenuItem(
-                        onTap: dataFetchingStatus == 1 ? () async{
-                          final Repository repository = Repository(HttpService());
-                          final Map<String, dynamic> payload = {"sentSms": "changeto,${i+1}"};
-                          MqttService().topicToPublishAndItsMessage(
-                              jsonEncode(payload),
-                              '${Environment.mqttPublishTopic}/${provider.mySiteList.data[provider.sIndex].master[provider.mIndex].deviceId}'
-                          );
-                          Map<String, dynamic> body = {
-                            "userId": userId,
-                            "controllerId": controllerId,
-                            "hardware": payload,
-                            "messageStatus": "Change to successfully for ${valves[i].name}",
-                            "createUser": userId
-                          };
-                          await repository.createUserSentAndReceivedMessageManually(body);
-                        } : null,
-                        child: Text(valves[i].name),
-                      ),
-                  ];
-                },
-                child: Row(
-                  spacing: 5,
-                  children: [
-                    const Text("Change To"),
-                    Icon(Icons.change_circle, color: Theme.of(context).primaryColorDark, size: 25,),
-                  ],
-                ),
-              ),*/
             const SizedBox(width: 10)
           ],
         ),
@@ -130,7 +97,7 @@ class PumpWithValves extends StatelessWidget {
                     deviceId: provider.mySiteList.data[provider.sIndex].master[provider.mIndex].deviceId,
                     userId: userId,
                     customerId: customerId,
-                    controllerId: controllerId,
+                    controllerId: masterData.controllerId,
                     dataFetchingStatus: dataFetchingStatus,
                   ),
                   // SizedBox(height: 10,),
@@ -151,7 +118,7 @@ class PumpWithValves extends StatelessWidget {
                               );
                               Map<String, dynamic> body = {
                                 "userId": userId,
-                                "controllerId": controllerId,
+                                "controllerId": masterData.controllerId,
                                 "hardware": payload,
                                 "messageStatus": "Change to successfully for ${valves[i].name}",
                                 "createUser": userId

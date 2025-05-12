@@ -65,6 +65,11 @@ dependencies:
   firebase_messaging: ^15.2.5
   intl_phone_field: ^3.2.0
   bluetooth_classic: ^0.0.3
+  az_notification_hub: ^1.1.2
+  flutter_dotenv: ^5.2.1
+  path_provider: ^2.1.5
+  url_launcher: ^6.3.1
+  package_info_plus: ^8.3.0
 
 dev_dependencies:
   flutter_test:
@@ -100,6 +105,7 @@ flutter:
     - assets/mob_dashboard/
     - assets/gif/
     - assets/gif/dp_irr_pump_g.gif
+    - assets/.env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -145,7 +151,7 @@ flavorizr:
       app:
         name: "ORO"
       android:
-        applicationId: "com.example.oroProduction"
+        applicationId: "com.example.oro_drip_irrigation"
     #      ios:
     #        bundleId: "com.example.apple"
     smartComm:

@@ -433,7 +433,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void removeSingleObjectFromConfigureToConfigure(DeviceObjectModel object){
+  void removeSingleObjectFromConfigureToNotConfigure(DeviceObjectModel object){
     for(var generatedObject in listOfGeneratedObject){
       if(generatedObject.sNo == object.sNo){
         generatedObject.controllerId = null;
@@ -515,11 +515,9 @@ class ConfigMakerProvider extends ChangeNotifier{
         listOfSelectedSno.clear();
       }
     }
-
   }
 
   void updateSelectionInLine(double sNo, LineParameter parameter){
-    print("parameter :: $parameter");
     listOfSelectedSno.sort();
     for(var irrigationLine in line){
       if(irrigationLine.commonDetails.sNo == sNo){
@@ -641,7 +639,6 @@ class ConfigMakerProvider extends ChangeNotifier{
         }
       }
     }
-
     notifyListeners();
   }
 
@@ -797,7 +794,8 @@ class ConfigMakerProvider extends ChangeNotifier{
         ...boosterList,
         ...channelList,
       ];
-    } else{
+    }
+    else{
       objectListToSend = listOfGeneratedObject;
     }
 
@@ -1119,13 +1117,12 @@ class ConfigMakerProvider extends ChangeNotifier{
       "DeviceRunningNumber": findOutReferenceNumber(deviceModel),
       "DeviceId": deviceModel.deviceId,
       "InterfaceType": deviceModel.interfaceTypeId,
-      "ExtendNode": deviceModel.extendControllerId ?? '',
     }.entries.map((e) => e.value).join(",");
   }
 
   String formDevicePayloadIfThereNot(){
-    return List.generate(6, (index){
-      return '';
+    return List.generate(5, (index){
+      return '0';
     }).join(',');
   }
 
@@ -1139,8 +1136,10 @@ class ConfigMakerProvider extends ChangeNotifier{
       int valveCount = listOfGeneratedObject.where((object) => object.objectId == AppConstants.valveObjectId).length;
       int moistureCount = listOfGeneratedObject.where((object) => object.objectId == AppConstants.moistureObjectId).length;
       int soilTemperatureCount = listOfGeneratedObject.where((object) => object.objectId == AppConstants.soilTemperatureObjectId).length;
-      List<DeviceModel> nodeForValve = listOfDeviceModel.where((device) => ![...AppConstants.pumpWithValveModelList, ...AppConstants.senseModelList].contains(device.modelId)).toList();
-      List<DeviceModel> nodeForMoisture = listOfDeviceModel.where((device) => AppConstants.senseModelList.contains(device.modelId)).toList();
+      List<DeviceModel> nodeForValve = listOfDeviceModel.where((device) => ![...AppConstants.pumpWithValveModelList, ...AppConstants.senseModelList].contains(device.modelId))
+          .where((device) => device.masterId != null).toList();
+      List<DeviceModel> nodeForMoisture = listOfDeviceModel.where((device) => AppConstants.senseModelList.contains(device.modelId))
+          .where((device) => device.masterId != null).toList();
       var payload = {
         "sentSms":"ecoconfig,"
             "$pumpCount,"
@@ -1149,6 +1148,7 @@ class ConfigMakerProvider extends ChangeNotifier{
             "$soilTemperatureCount,"
             "${nodeForValve.isNotEmpty ? formDevicePayloadIfThere(nodeForValve[0]) : formDevicePayloadIfThereNot()},"
             "${nodeForMoisture.isNotEmpty ? formDevicePayloadIfThere(nodeForMoisture[0]) : formDevicePayloadIfThereNot()}"};
+
       listOfPumpPayload.add({
         'title' : '${device.deviceName}(pump and valve)',
         'deviceIdToSend' : device.deviceId,

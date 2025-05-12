@@ -24,7 +24,7 @@ class _NodeSettingsState extends State<NodeSettings> {
       children: [
         const SizedBox(height: 15,),
         CustomSegmentedControl(
-            segmentTitles: {
+            segmentTitles: const {
               0: "Node details",
               1: "Node settings",
             },

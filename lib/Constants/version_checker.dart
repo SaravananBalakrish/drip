@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -25,7 +26,7 @@ class VersionChecker {
     }
   }
 
-  Future<String?] getCurrentVersion() async {
+  Future<String?> getCurrentVersion() async {
     try {
       final packageInfo = await PackageInfo.fromPlatform();
       return packageInfo.version;
