@@ -2,6 +2,7 @@ C/C++ Structured LogW
 U
 SC:\Users\niaga\flutter\packages\flutter_tools\gradle\src\main\groovy\CMakeLists.txtC
 A
+<<<<<<< HEAD
 ?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	Öæšœë2§ ÿà²Ô2d
 b
 `D:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\additional_project_files.txt	Öæšœë2 àÜ®™ë2a
@@ -26,3 +27,29 @@ X
 VD:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\prefab_config.json	Öæšœë2( ðÜ®™ë2_
 ]
 [D:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\symbol_folder_index.txt	Öæšœë2R ðÜ®™ë2
+=======
+?com.android.build.gradle.internal.cxx.io.EncodedFileFingerPrint	±ø¸ë2§ ÿà²Ô2d
+b
+`D:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\additional_project_files.txt	±ø¸ë2 àÜ®™ë2a
+_
+]D:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\android_gradle_build.json	±ø¸ë2¨ àÜ®™ë2f
+d
+bD:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\android_gradle_build_mini.json	±ø¸ë2ƒ àÜ®™ë2S
+Q
+OD:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\build.ninja	±ø¸ë2‹Ô ÙÛ®™ë2W
+U
+SD:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\build.ninja.txt	±ø¸ë2\
+Z
+XD:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\build_file_index.txt	±ø¸ë2S ðÜ®™ë2]
+[
+YD:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\compile_commands.json	±ø¸ë2	a
+_
+]D:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\compile_commands.json.bin	±ø¸ë2
+g
+e
+cD:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\metadata_generation_command.txt	±ø¸ë2º àÜ®™ë2Z
+X
+VD:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\prefab_config.json	±ø¸ë2( ðÜ®™ë2_
+]
+[D:\FlutterProjects\drip\android\app\.cxx\Debug\b6c1p1a5\armeabi-v7a\symbol_folder_index.txt	±ø¸ë2R ðÜ®™ë2
+>>>>>>> kamaraj

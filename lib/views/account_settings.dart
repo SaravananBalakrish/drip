@@ -429,6 +429,7 @@ class AccountSettings extends StatelessWidget {
                 children: [
                   const SizedBox(height: 20),
                   IntlPhoneField(
+                    focusNode:  FocusNode(),
                     decoration: InputDecoration(
                       labelText: null,
                       border: const OutlineInputBorder(
