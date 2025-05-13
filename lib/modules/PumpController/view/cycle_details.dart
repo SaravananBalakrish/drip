@@ -90,57 +90,6 @@ class _ValveCycleWidgetState extends State<ValveCycleWidget> {
             ),
           ),
           const SizedBox(height: 6),
-         /* if(widget.dataFetchingStatus == 1)
-            SizedBox(
-              height: 25,
-              child: FilledButton(
-                style: ButtonStyle(
-                  backgroundColor: WidgetStateProperty.all(Colors.red),
-                  shape: WidgetStateProperty.all(RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
-                  )),
-                  maximumSize: WidgetStateProperty.all(const Size(100, 40)),
-                  padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 10, vertical: 5)),
-                ),
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (_) => AlertDialog(
-                      title: const Text('Confirmation'),
-                      content: const Text('Are you sure! you want to proceed to reset cycle?'),
-                      actions: [
-                        MaterialButton(
-                          color: Colors.redAccent,
-                          textColor: Colors.white,
-                          onPressed: () => Navigator.of(context).pop(),
-                          child: const Text('Cancel'),
-                        ),
-                        MaterialButton(
-                          color: Theme.of(context).primaryColor,
-                          textColor: Colors.white,
-                          onPressed: () async{
-                            final Repository repository = Repository(HttpService());
-                            final payLoadFinal = {'sentSms': 'resetcycle'};
-                            MqttService().topicToPublishAndItsMessage(jsonEncode(payLoadFinal), '${Environment.mqttPublishTopic}/${widget.deviceId}');
-                            Map<String, dynamic> body = {
-                              "userId": widget.userId,
-                              "controllerId": widget.controllerId,
-                              "hardware": payLoadFinal,
-                              "messageStatus": "Cycle reset successfully",
-                              "createUser": widget.userId
-                            };
-                            final result = await repository.createUserSentAndReceivedMessageManually(body);
-                            Navigator.of(context).pop();
-                          },
-                          child: const Text('Yes'),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-                child: Text('Reset cycle', style: Theme.of(context).textTheme.bodySmall!.copyWith(color: Colors.white),),
-              ),
-            ),*/
         ],
       ),
     );

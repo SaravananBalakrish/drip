@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
@@ -320,7 +318,6 @@ class PumpWidget extends StatelessWidget {
                     String payLoadFinal = jsonEncode({
                       "6300": {"6301": payload}
                     });
-                    //print('${AppConstants.publishTopic}/$deviceId');
                     MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
                     sentUserOperationToServer('${pump.name} Reset Manually', payLoadFinal);
                     GlobalSnackBar.show(context, 'Reset comment sent successfully', 200);

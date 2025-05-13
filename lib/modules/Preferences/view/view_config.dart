@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 
@@ -11,9 +12,9 @@ import '../model/preference_data_model.dart';
 import '../state_management/preference_provider.dart';
 
 class ViewConfig extends StatefulWidget {
-  final int userId;
+  final int userId, modelId;
   final bool isLora;
-  const ViewConfig({super.key, required this.userId,required this.isLora});
+  const ViewConfig({super.key, required this.userId,required this.isLora, required this.modelId});
 
   @override
   State<ViewConfig> createState() => _ViewConfigState();
@@ -53,15 +54,12 @@ class _ViewConfigState extends State<ViewConfig> {
       }
     });
 
-    if ([1].contains(preferenceProvider.generalData!.categoryId)) {
+    if (AppConstants.gemModelList.contains(widget.modelId)) {
       final pump = preferenceProvider.commonPumpSettings![preferenceProvider.selectedTabIndex];
       final payload = jsonEncode({"sentSms": "viewconfig,${index + 1}"});
       final payload2 = jsonEncode({"0": payload});
       final viewConfig = {
-        "5900": [
-          {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${pump.categoryId}"},
-          {"5902": "${widget.userId}"}
-        ]
+        "5900": {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${pump.categoryId}"}
       };
       // print("published data ${pump.deviceId}");
       mqttService.topicToPublishAndItsMessage(jsonEncode(viewConfig), "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");

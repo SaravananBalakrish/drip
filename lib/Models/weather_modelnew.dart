@@ -96,21 +96,21 @@ class IrrigationLine {
   }
 }
 
-class Device {
+class DeviceW {
   final int controllerId;
   final String deviceId;
   final String deviceName;
   final int serialNumber;
 
-  Device({
+  DeviceW({
     required this.controllerId,
     required this.deviceId,
     required this.deviceName,
     required this.serialNumber,
   });
 
-  factory Device.fromJson(Map<String, dynamic> json) {
-    return Device(
+  factory DeviceW.fromJson(Map<String, dynamic> json) {
+    return DeviceW(
       controllerId: json['controllerId'],
       deviceId: json['deviceId'],
       deviceName: json['deviceName'],

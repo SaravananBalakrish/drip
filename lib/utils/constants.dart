@@ -138,8 +138,8 @@ class AppConstants {
   static int mqttWebPort = Environment.mqttWebPort;
   static int mqttMobilePort = Environment.mqttMobilePort;
 
-  static const String publishTopic = 'AppToFirmware';
-  static const String subscribeTopic = 'FirmwareToApp';
+  static String publishTopic = Environment.mqttPublishTopic;
+  static String subscribeTopic = Environment.mqttSubscribeTopic;
 
   static const String appTitle = 'ORO DRIP IRRIGATION';
   static const String appShortContent = 'Drip irrigation is a type of watering system used in agriculture, gardening, and landscaping to efficiently deliver water directly to the roots of plants.';
@@ -308,6 +308,9 @@ class AppConstants {
     }
 
     if (imagePathFinal.contains('.gif')) {
+      return Image.network(
+        'http://52.172.214.208:5000/gif/dp_irr_pump_g.gif',
+      );
       return Image.asset(
         '$gifPath$imagePathFinal',
         key: UniqueKey(),

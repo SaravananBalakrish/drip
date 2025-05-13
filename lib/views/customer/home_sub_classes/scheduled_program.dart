@@ -1,13 +1,12 @@
 import 'dart:convert';
-
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../Models/customer/site_model.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
+import '../../../modules/IrrigationProgram/view/irrigation_program_main.dart';
 import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
 import '../../../services/mqtt_service.dart';
@@ -15,11 +14,18 @@ import '../../../utils/constants.dart';
 import '../../../utils/snack_bar.dart';
 
 class ScheduledProgram extends StatelessWidget {
-  const ScheduledProgram({super.key, required this.userId, required this.scheduledPrograms, required this.controllerId, required this.deviceId, required this.customerId, required this.currentLineSNo});
-  final int userId, customerId, controllerId;
-  final String deviceId;
+  const ScheduledProgram({super.key, required this.userId,
+    required this.scheduledPrograms, required this.controllerId,
+    required this.deviceId, required this.customerId,
+    required this.currentLineSNo, required this.groupId,
+    required this.categoryId, required this.modelId,
+    required this.deviceName, required this.categoryName});
+
+  final int userId, customerId, controllerId, groupId, categoryId, modelId;
+  final String deviceId, deviceName, categoryName;
   final List<ProgramList> scheduledPrograms;
   final double currentLineSNo;
+
 
   @override
   Widget build(BuildContext context) {
@@ -180,18 +186,18 @@ class ScheduledProgram extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                /*filteredScheduleProgram[index].startCondition.condition.isNotEmpty ||
-                                    filteredScheduleProgram[index].stopCondition.condition.isNotEmpty?
+                                filteredScheduleProgram[index].conditions.isNotEmpty?
                                 IconButton(
                                   tooltip: 'view condition',
                                   onPressed: () {
-                                    showAutoUpdateDialog(context,
-                                      filteredScheduleProgram[index].serialNumber,
+                                    showConditionDialog(context,
+                                      filteredScheduleProgram[index].programName,
+                                      filteredScheduleProgram[index].conditions,
                                     );
                                   },
                                   icon: const Icon(Icons.visibility_outlined, color: Colors.teal,),
                                 ):
-                                const SizedBox(),*/
+                                const SizedBox(),
                               ],
                             )),
                             DataCell(Center(child: Text('${filteredScheduleProgram[index].sequence.length}'))),
@@ -206,7 +212,6 @@ class ScheduledProgram extends StatelessWidget {
                                       color: int.parse(filteredScheduleProgram[index].prgOnOff) >= 0? isStop?Colors.red: isBypass?Colors.orange :Colors.green : Colors.grey.shade300,
                                       textColor: Colors.white,
                                       onPressed: () {
-
                                         if(getPermissionStatusBySNo(context, 3)){
                                           if (int.parse(filteredScheduleProgram[index].prgOnOff) >= 0) {
                                             String payload = '${filteredScheduleProgram[index].serialNumber},${filteredScheduleProgram[index].prgOnOff}';
@@ -233,20 +238,38 @@ class ScheduledProgram extends StatelessWidget {
                                   MaterialButton(
                                     color: getButtonName(int.parse(filteredScheduleProgram[index].prgPauseResume)) == 'Pause' ? Colors.orange : Colors.yellow,
                                     textColor: getButtonName(int.parse(filteredScheduleProgram[index].prgPauseResume)) == 'Pause' ? Colors.white : Colors.black,
-                                    onPressed: () {
-                                      if(getPermissionStatusBySNo(context, 3)){
-                                        String payload = '${filteredScheduleProgram[index].serialNumber},${filteredScheduleProgram[index].prgPauseResume}';
-                                        String payLoadFinal = jsonEncode({
-                                          "2900": {"2901": payload}
-                                        });
-                                        MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
-                                        sentUserOperationToServer(
-                                          '${filteredScheduleProgram[index].programName} ${getDescription(int.parse(filteredScheduleProgram[index].prgPauseResume))}',
-                                          payLoadFinal,
-                                        );
-                                      }else{
-                                        GlobalSnackBar.show(context, 'Permission denied', 400);
-                                      }
+                                    onPressed: () async {
+                                      final confirmed = await showDialog<bool>(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text('Are you sure ! you want to ${getButtonName(int.parse(filteredScheduleProgram[index].prgPauseResume))} the ${filteredScheduleProgram[index].programName}'),
+                                          actions: [
+                                            TextButton(
+                                              child: const Text('Cancel'),
+                                              onPressed: () => Navigator.pop(context, false),
+                                            ),
+                                            TextButton(
+                                              child: const Text('Yes'),
+                                              onPressed: () {
+                                                if(getPermissionStatusBySNo(context, 3)){
+                                                  String payload = '${filteredScheduleProgram[index].serialNumber},${filteredScheduleProgram[index].prgPauseResume}';
+                                                  String payLoadFinal = jsonEncode({
+                                                    "2900": {"2901": payload}
+                                                  });
+                                                  MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+                                                  sentUserOperationToServer(
+                                                    '${filteredScheduleProgram[index].programName} ${getDescription(int.parse(filteredScheduleProgram[index].prgPauseResume))}',
+                                                    payLoadFinal,
+                                                  );
+                                                }else{
+                                                  GlobalSnackBar.show(context, 'Permission denied', 400);
+                                                }
+                                                Navigator.pop(context, true);
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      );
 
                                     },
                                     child: Text(getButtonName(int.parse(filteredScheduleProgram[index].prgPauseResume))),
@@ -263,22 +286,31 @@ class ScheduledProgram extends StatelessWidget {
                                         } else {
                                           prgType = 'Agitator Program';
                                         }
-                                        /*if (siteData.master[masterInx].conditionLibraryCount > 0) {
-                                      conditionL = true;
-                                    }*/
-                                        /* Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => IrrigationProgram(
-                                          deviceId: siteData.master[masterInx].deviceId,
-                                          userId: siteData.customerId,
-                                          controllerId: siteData.master[masterInx].controllerId,
-                                          serialNumber: filteredScheduleProgram[index].sNo,
-                                          programType: prgType,
-                                          conditionsLibraryIsNotEmpty: conditionL,
-                                        ),
-                                      ),
-                                    );*/
+
+                                        if (filteredScheduleProgram[index].conditions.isNotEmpty) {
+                                          conditionL = true;
+                                        }
+
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => IrrigationProgram(
+                                              deviceId: deviceId,
+                                              userId: userId,
+                                              controllerId: controllerId,
+                                              serialNumber: scheduledPrograms[index].serialNumber,
+                                              programType: prgType,
+                                              conditionsLibraryIsNotEmpty: conditionL,
+                                              fromDealer: false,
+                                              groupId: groupId,
+                                              categoryId: categoryId,
+                                              customerId: customerId,
+                                              modelId: modelId,
+                                              deviceName: deviceName,
+                                              categoryName: categoryName,
+                                            ),
+                                          ),
+                                        );
                                       }
                                     },
                                     itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -405,28 +437,46 @@ class ScheduledProgram extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              Row(
                                 children: [
-                                  Text(program.programName),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: LinearProgressIndicator(
-                                          value: program.programStatusPercentage / 100.0,
-                                          borderRadius: const BorderRadius.all(Radius.circular(3)),
-                                          color: Colors.blue.shade300,
-                                          backgroundColor: Colors.grey.shade200,
-                                          minHeight: 3,
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(program.programName),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: LinearProgressIndicator(
+                                                value: program.programStatusPercentage / 100.0,
+                                                borderRadius: const BorderRadius.all(Radius.circular(3)),
+                                                color: Colors.blue.shade300,
+                                                backgroundColor: Colors.grey.shade200,
+                                                minHeight: 3,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 7),
+                                            Text(
+                                              '${program.programStatusPercentage}%',
+                                              style: const TextStyle(fontSize: 12, color: Colors.black45),
+                                            ),
+                                          ],
                                         ),
-                                      ),
-                                      const SizedBox(width: 7),
-                                      Text(
-                                        '${program.programStatusPercentage}%',
-                                        style: const TextStyle(fontSize: 12, color: Colors.black45),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
+                                  filteredScheduleProgram[index].conditions.isNotEmpty?
+                                  IconButton(
+                                    tooltip: 'view condition',
+                                    onPressed: () {
+                                      showConditionDialog(context,
+                                        filteredScheduleProgram[index].programName,
+                                        filteredScheduleProgram[index].conditions,
+                                      );
+                                    },
+                                    icon: const Icon(Icons.visibility_outlined, color: Colors.teal,),
+                                  ):
+                                  const SizedBox(),
                                 ],
                               ),
                               Text(filteredScheduleProgram[index].selectedSchedule, style: const TextStyle(fontSize: 11)),
@@ -518,8 +568,7 @@ class ScheduledProgram extends StatelessWidget {
                             child: Text(getButtonName(int.parse(program.prgPauseResume))),
                           ),
                           const SizedBox(width: 5),
-                          getPermissionStatusBySNo(context, 3)
-                              ? PopupMenuButton<String>(
+                          getPermissionStatusBySNo(context, 3)? PopupMenuButton<String>(
                             icon: const Icon(Icons.more_vert),
                             onSelected: (String result) {
                               if (result == 'Edit program') {
@@ -659,17 +708,37 @@ class ScheduledProgram extends StatelessWidget {
     return codeDescriptionMap[code] ?? 'Code not found';
   }
 
-  void showAutoUpdateDialog(BuildContext context, int prmSNo) {
+  void showConditionDialog(BuildContext context, String prgName,  List<ConditionModel> conditions) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return Container();
-        /*return ConditionDialog(
-          prmSNo: prmSNo,
-        );*/
+        return AlertDialog(
+          title: Text(conditions.length>1?'Conditions of $prgName':'Condition of $prgName', style: const TextStyle(fontSize: 17)),
+          content: SizedBox(
+            width: 400,
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: conditions.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(conditions[index].title,
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  subtitle: Text(conditions[index].value.rule, style: const TextStyle(color: Colors.black54)),
+                );
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        );
       },
     );
   }
+
 
   String getContentByCode(int code) {
     return GemProgramStartStopReasonCode.fromCode(code).content;

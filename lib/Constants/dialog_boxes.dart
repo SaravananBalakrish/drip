@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
 
 import '../modules/config_Maker/model/device_object_model.dart';
@@ -90,7 +91,14 @@ void selectionDialogBox({
                 child: Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: listOfObject.map((object){
+                  children: listOfObject
+                      .where((object) {
+                        if(AppConstants.ecoGemModelList.contains(configPvd.masterData['modelId']) && object.objectId == AppConstants.pumpObjectId){
+                          return true;
+                        }else{
+                          return object.controllerId != null;
+                        }
+                      }).map((object){
                     return InkWell(
                       onTap: (){
                         if(!singleSelection){

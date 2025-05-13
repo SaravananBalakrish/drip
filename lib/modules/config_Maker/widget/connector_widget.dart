@@ -40,7 +40,7 @@ class ConnectorWidget extends StatelessWidget {
         InkWell(
           onDoubleTap: configPvd.selectedSelectionMode == SelectionMode.auto ? null :  (){
             if(object != null){
-              configPvd.removeSingleObjectFromConfigureToConfigure(object);
+              configPvd.removeSingleObjectFromConfigureToNotConfigure(object);
             }
           },
           onTap: configPvd.selectedSelectionMode == SelectionMode.auto ? null : (){

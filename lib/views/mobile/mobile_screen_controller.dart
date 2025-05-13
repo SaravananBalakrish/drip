@@ -1,3 +1,4 @@
+import 'package:bluetooth_classic/models/device.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Models/servicecustomermodel.dart';
 import 'package:oro_drip_irrigation/Screens/Dealer/sevicecustomer.dart';
@@ -12,6 +13,7 @@ import '../../modules/IrrigationProgram/view/program_library.dart';
 import '../../modules/PumpController/view/node_settings.dart';
 import '../../modules/PumpController/view/pump_controller_home.dart';
 import '../../repository/repository.dart';
+import '../../services/bluetooth_manager.dart';
 import '../../services/http_service.dart';
 import '../../utils/formatters.dart';
 import '../../utils/routes.dart';
@@ -34,9 +36,7 @@ class MobileScreenController extends StatelessWidget {
   final String customerName, mobileNo, emailId;
   final bool fromLogin;
 
-  void callbackFunction(message)
-  {
-
+  void callbackFunction(message){
   }
 
   @override
@@ -76,9 +76,7 @@ class MobileScreenController extends StatelessWidget {
           }
 
           return Scaffold(
-            backgroundColor: Theme
-                .of(context)
-                .scaffoldBackgroundColor,
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: AppBar(
               title: Image.asset(
                 width: 140,
@@ -86,7 +84,7 @@ class MobileScreenController extends StatelessWidget {
                 fit: BoxFit.fitWidth,
               ),
               actions: [
-                if(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId != 2)
+                if(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId != 2)...[
                   Stack(
                     children: [
                       IconButton(
@@ -123,6 +121,7 @@ class MobileScreenController extends StatelessWidget {
                         ),
                     ],
                   ),
+                ],
                 if(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 2)...[
                   if(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].nodeList.isNotEmpty
                       && [48, 49].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId))
@@ -524,135 +523,157 @@ class MobileScreenController extends StatelessWidget {
             ) : null,
             floatingActionButton: vm.mySiteList.data[vm.sIndex].master[vm
                 .mIndex].categoryId == 1 ?
-            FloatingActionButton(
-              onPressed: null,
-              backgroundColor: Theme
-                  .of(context)
-                  .primaryColor,
-              child: PopupMenuButton<String>(
-                  onSelected: (String value) {
-                    switch (value) {
-                      case 'Node Status':
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                NodeList(
-                                  customerId: customerId,
-                                  nodes: vm.mySiteList.data[vm.sIndex].master[vm
-                                      .mIndex].nodeList,
-                                  deviceId: vm.mySiteList.data[vm.sIndex]
-                                      .master[vm.mIndex].deviceId,
-                                  deviceName: vm.mySiteList.data[vm.sIndex]
-                                      .master[vm.mIndex].categoryName,
-                                  controllerId: vm.mySiteList.data[vm.sIndex]
-                                      .master[vm.mIndex].controllerId,
-                                  userId: userId, configObjects: vm.mySiteList.data[vm.sIndex]
-                                    .master[vm.mIndex].configObjects,
-                                ),
-                          ),
-                        );
-                        break;
-
-                      case 'I/O Connection':
-                        Navigator.push(context,
-                          MaterialPageRoute(
-                            builder: (context) => InputOutputConnectionDetails(masterInx: vm.mIndex,
-                                nodes: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].nodeList),
-                          ),
-                        );
-                        break;
-
-                      case 'Sent & Received':
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                SentAndReceived(
-                                  customerId: userId,
-                                  controllerId: vm.mySiteList.data[vm.sIndex]
-                                      .master[vm.mIndex].controllerId,
-                                ),
-                          ),
-                        );
-                        break;
-                      case 'Program':
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) {
-                                  return ProgramLibraryScreenNew(
-                                    customerId: customerId,
-                                    controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
-                                    deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
-                                    userId: userId,
-                                    groupId: vm.mySiteList.data[vm.sIndex].groupId,
-                                    categoryId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId,
-                                    modelId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId,
-                                    deviceName: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceName,
-                                    categoryName: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
-                                  );
-                                }
-                            )
-                        );
-                        break;
-                      case 'ScheduleView':
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) {
-                                  return ScheduleViewScreen(
-                                    deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
-                                    userId: userId,
-                                    controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
-                                    customerId: customerId,
-                                    groupId: vm.mySiteList.data[vm.sIndex].groupId,
-                                  );
-                                }
-                            )
-                        );
-                        break;
-
-                      case 'Manual':
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (BuildContext context) {
-                                  return StandAlone(siteId: vm.mySiteList.data[vm.sIndex].groupId,
-                                      controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                FloatingActionButton(
+                  onPressed: null,
+                  backgroundColor: Theme.of(context).primaryColorLight,
+                  child: PopupMenuButton<String>(
+                      onSelected: (String value) {
+                        switch (value) {
+                          case 'Node Status':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    NodeList(
                                       customerId: customerId,
-                                      deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
-                                      callbackFunction: callbackFunction, userId: userId, masterData: vm.mySiteList.data[vm.sIndex].master[vm.mIndex]);
-                                }
-                            )
-                        );
-                        break;
+                                      nodes: vm.mySiteList.data[vm.sIndex].master[vm
+                                          .mIndex].nodeList,
+                                      deviceId: vm.mySiteList.data[vm.sIndex]
+                                          .master[vm.mIndex].deviceId,
+                                      deviceName: vm.mySiteList.data[vm.sIndex]
+                                          .master[vm.mIndex].categoryName,
+                                      controllerId: vm.mySiteList.data[vm.sIndex]
+                                          .master[vm.mIndex].controllerId,
+                                      userId: userId, configObjects: vm.mySiteList.data[vm.sIndex]
+                                        .master[vm.mIndex].configObjects,
+                                    ),
+                              ),
+                            );
+                            break;
 
+                          case 'I/O Connection':
+                            Navigator.push(context,
+                              MaterialPageRoute(
+                                builder: (context) => InputOutputConnectionDetails(masterInx: vm.mIndex,
+                                    nodes: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].nodeList),
+                              ),
+                            );
+                            break;
 
-                    }
-                  },
-                  offset: const Offset(0, -180),
-                  color: Colors.white,
-                  icon: const Icon(Icons.menu, color: Colors.white),
-                  itemBuilder: (BuildContext context) =>
-                  [
-                    _buildPopupItem(
-                        context, 'Node Status', Icons.format_list_numbered,
-                        'Node Status'),
-                    _buildPopupItem(context, 'I/O Connection',
-                        Icons.settings_input_component_outlined,
-                        'I/O\nConnection\ndetails'),
-                    _buildPopupItem(
-                        context, 'Program', Icons.list_alt, 'Program'),
-                    _buildPopupItem(
-                        context, 'ScheduleView', Icons.view_list_outlined,
-                        'Scheduled\nprogram\ndetails'),
-                    _buildPopupItem(
-                        context, 'Manual', Icons.touch_app_outlined, 'Manual'),
-                    _buildPopupItem(context, 'Sent & Received',
-                        Icons.question_answer_outlined, 'Sent &\nReceived'),
-                  ]
-              ),
+                          case 'Sent & Received':
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    SentAndReceived(
+                                      customerId: userId,
+                                      controllerId: vm.mySiteList.data[vm.sIndex]
+                                          .master[vm.mIndex].controllerId,
+                                    ),
+                              ),
+                            );
+                            break;
+                          case 'Program':
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return ProgramLibraryScreenNew(
+                                        customerId: customerId,
+                                        controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
+                                        deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
+                                        userId: userId,
+                                        groupId: vm.mySiteList.data[vm.sIndex].groupId,
+                                        categoryId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId,
+                                        modelId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId,
+                                        deviceName: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceName,
+                                        categoryName: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
+                                      );
+                                    }
+                                )
+                            );
+                            break;
+                          case 'ScheduleView':
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return ScheduleViewScreen(
+                                        deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
+                                        userId: userId,
+                                        controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
+                                        customerId: customerId,
+                                        groupId: vm.mySiteList.data[vm.sIndex].groupId,
+                                      );
+                                    }
+                                )
+                            );
+                            break;
+
+                          case 'Manual':
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                      return StandAlone(siteId: vm.mySiteList.data[vm.sIndex].groupId,
+                                          controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
+                                          customerId: customerId,
+                                          deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
+                                          callbackFunction: callbackFunction, userId: userId, masterData: vm.mySiteList.data[vm.sIndex].master[vm.mIndex]);
+                                    }
+                                )
+                            );
+                            break;
+                        }
+                      },
+                      offset: const Offset(0, -180),
+                      color: Colors.blueGrey.shade50,
+                      icon: const Icon(Icons.menu, color: Colors.white),
+                      itemBuilder: (BuildContext context) =>
+                      [
+                        _buildPopupItem(
+                            context, 'Node Status', Icons.format_list_numbered,
+                            'Node Status'),
+                        _buildPopupItem(context, 'I/O Connection',
+                            Icons.settings_input_component_outlined,
+                            'I/O\nConnection\ndetails'),
+                        _buildPopupItem(
+                            context, 'Program', Icons.list_alt, 'Program'),
+                        _buildPopupItem(
+                            context, 'ScheduleView', Icons.view_list_outlined,
+                            'Scheduled\nprogram\ndetails'),
+                        _buildPopupItem(
+                            context, 'Manual', Icons.touch_app_outlined, 'Manual'),
+                        _buildPopupItem(context, 'Sent & Received',
+                            Icons.question_answer_outlined, 'Sent &\nReceived'),
+                      ]
+                  ),
+                ),
+                const SizedBox(height: 10),
+                FloatingActionButton(
+                  backgroundColor: Theme.of(context).primaryColorLight,
+                  onPressed: ()=>_showBottomSheet(context, vm),
+                  tooltip: 'Second Action',
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Icon(vm.wifiStrength == 0? Icons.wifi_off:
+                      vm.wifiStrength >= 1 && vm.wifiStrength <= 20 ? Icons.network_wifi_1_bar_outlined:
+                      vm.wifiStrength >= 21 && vm.wifiStrength <= 40 ? Icons.network_wifi_2_bar_outlined:
+                      vm.wifiStrength >= 41 && vm.wifiStrength <= 60 ? Icons.network_wifi_3_bar_outlined:
+                      vm.wifiStrength >= 61 && vm.wifiStrength <= 80 ? Icons.network_wifi_3_bar_outlined:
+                      Icons.wifi, color: Colors.white,),
+                      Text('${vm.wifiStrength} %',style: const TextStyle(fontSize: 11.0, color: Colors.white70),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ) : null,
             body: RefreshIndicator(
               onRefresh: () => _handleRefresh(vm),
@@ -738,6 +759,11 @@ class MobileScreenController extends StatelessWidget {
                         customerId: customerId,
                         currentLineSNo: vm.mySiteList.data[vm.sIndex].master[vm
                             .mIndex].irrigationLine[vm.lIndex].sNo,
+                        groupId: vm.mySiteList.data[vm.sIndex].groupId,
+                        categoryId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId,
+                        modelId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId,
+                        deviceName: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceName,
+                        categoryName: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
                       ) :
                       ControllerSettings(customerId: customerId,
                         userId: userId,
@@ -785,7 +811,6 @@ class MobileScreenController extends StatelessWidget {
   }
 
   Widget mainScreen(int index, groupId, groupName, List<MasterControllerModel> masterData, int controllerId, int categoryId, int masterIndex, int siteIndex, bool isChanged, CustomerScreenControllerViewModel vm) {
-
     switch (index) {
       case 0:
         return categoryId==1? CustomerHome(customerId: userId, controllerId: controllerId,
@@ -811,7 +836,7 @@ class MobileScreenController extends StatelessWidget {
       case 2:
         return SentAndReceived(customerId: userId, controllerId: controllerId);
       case 3:
-        return IrrigationAndPumpLog(userData: {'userId' : userId, 'controllerId' : controllerId});
+        return IrrigationAndPumpLog(userData: {'userId' : userId, 'controllerId' : controllerId}, masterData: masterData[masterIndex],);
       case 4:
         return ControllerSettings(
           customerId: customerId,
@@ -824,6 +849,95 @@ class MobileScreenController extends StatelessWidget {
       default:
         return const SizedBox();
     }
+  }
+
+  void _showBottomSheet(BuildContext context, CustomerScreenControllerViewModel vm) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return StatefulBuilder(builder: (context, setModalState) {
+          final manager = Provider.of<BluetoothManager>(context);
+          return Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Wrap(
+              children: [
+                const Text(
+                  "Controller Communication Mode",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                ListTile(
+                  leading: const Icon(Icons.wifi),
+                  title: const Text("Wi-Fi / MQTT"),
+                  trailing: vm.selectedMode == 'mqtt'
+                      ? Icon(Icons.check, color: Theme.of(context).primaryColorLight)
+                      : null,
+                  onTap: () {
+                    setModalState(() {
+                      vm.selectedMode = 'mqtt';
+                      vm.selectedDevice = null;
+                    });
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.bluetooth),
+                  title: const Text("Bluetooth"),
+                  trailing: vm.selectedMode == 'bluetooth'
+                      ? Icon(Icons.check, color: Theme.of(context).primaryColorLight)
+                      : null,
+                  onTap: () {
+                    setModalState(() {
+                      vm.selectedMode = 'bluetooth';
+                      vm.selectedDevice = null;
+                    });
+                  },
+                ),
+                if (vm.selectedMode == 'bluetooth') ...[
+                  const Divider(),
+                  ListTile(
+                    dense: true,
+                    visualDensity: VisualDensity.compact,
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text("Select Paired Device", style: TextStyle(fontWeight: FontWeight.bold)),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.search, color: Colors.black),
+                      onPressed: () => manager.getDevices(),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  ...manager.pairedDevices.map((d) {
+                    return ListTile(
+                      title: Text(d.device.name ??''),
+                      subtitle: Text(d.device.address),
+                      trailing: TextButton(
+                        onPressed:() => d.status == Device.disconnected ?
+                        manager.connectToDevice(d) : null,
+                        child: d.isConnected? const Icon(Icons.check, color: Colors.blue) :
+                        const Text('Connect'),
+                      ),
+                      /*trailing: vm.selectedDevice == d.device.name
+                          ? const Icon(Icons.check, color: Colors.blue)
+                          : null,*/
+                     /* onTap: () {
+                        d.status == Device.disconnected ?
+                        manager.connectToDevice(d) : null;
+                        *//*setModalState(() {
+                          vm.selectedDevice = d.device.name;
+                        });*//*
+                      },*/
+                    );
+                  }).toList()
+                ],
+              ],
+            ),
+          );
+        });
+      },
+    );
   }
 
 }

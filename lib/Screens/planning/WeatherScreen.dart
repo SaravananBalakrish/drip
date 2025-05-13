@@ -47,7 +47,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
   String errorMsgstatus = '';
   WeatherData weathernewlive = WeatherData(cC: '', cT: '', cD: '', stations: []) ;
   late List<IrrigationLine>  weatherdatairrigationline ;
-  late List<Device>  weatherdatadevicelist ;
+  late List<DeviceW>  weatherdatadevicelist ;
 
 
   @override
@@ -536,7 +536,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
   }
 
-  Device? deviceFind(int serialNumber) {
+  DeviceW? deviceFind(int serialNumber) {
     return weatherdatadevicelist.where((device) => device.serialNumber == serialNumber).toList().isNotEmpty
         ? weatherdatadevicelist.where((device) => device.serialNumber == serialNumber).first
         : null;
@@ -1213,8 +1213,8 @@ class _WeatherScreenState extends State<WeatherScreen> {
           );
 
           // Parse devices as a List of Device objects
-          weatherdatadevicelist = List<Device>.from(
-            jsonData['data']['deviceList'].map((data) => Device.fromJson(data)),
+          weatherdatadevicelist = List<DeviceW>.from(
+            jsonData['data']['deviceList'].map((data) => DeviceW.fromJson(data)),
           );
         });
       }

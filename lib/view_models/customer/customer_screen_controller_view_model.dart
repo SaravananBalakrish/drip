@@ -33,6 +33,15 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
 
   bool programRunning = false;
 
+  String? selectedMode;
+  String? selectedDevice;
+
+  List<String> pairedDevices = [
+    'Device A',
+    'Device B',
+    'Device C',
+  ];
+
   CustomerScreenControllerViewModel(this.context, this.repository){
     fromWhere = 'init';
     payloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
