@@ -23,6 +23,9 @@ class Environment {
       'subscribeTopic': 'FirmwareToApp',
       'mqttWebPort': 9001,
       'mqttMobilePort': 1883,
+      'sftpIpAddress': '54.179.114.89',
+      'sftpPort': 22,
+      'privateKeyPath': 'assets/ssh/smartComm/id_rsa',
     },
     'oroProduction': {
       'apiUrl': 'http://13.235.254.21:5000/api/v1',
@@ -49,4 +52,8 @@ class Environment {
   static String get mqttPublishTopic => config[F.name]?['publishTopic'] ?? '';
 
   static String get mqttLogTopic => 'OroGemLog';
+
+  static String get sftpIpAddress => config[F.name]?['sftpIpAddress'] ?? '';
+  static int get sftpPort => config[F.name]?['sftpPort'] ?? 0;
+  static String get privateKeyPath => config[F.name]?['privateKeyPath'] ?? '';
 }
