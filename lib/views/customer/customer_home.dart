@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:oro_drip_irrigation/Screens/Constant/modal_in_constant.dart';
 import 'package:oro_drip_irrigation/views/customer/home_sub_classes/current_program.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
@@ -40,44 +41,7 @@ class CustomerHome extends StatelessWidget {
         ? irrigationLines.where((line) => line.name != viewModel.myCurrentIrrLine).toList()
         : irrigationLines.where((line) => line.name == viewModel.myCurrentIrrLine).toList();
 
-
-    final waterSources = {
-      for (var source in linesToDisplay.expand((line) => line.waterSources)) source.sNo: source
-    }.values.toList();
-
-    final filterSite = {
-      for (var line in linesToDisplay)
-        if (line.centralFilterSite != null) line.centralFilterSite!.sNo : line.centralFilterSite!
-    }.values.toList();
-
-    final fertilizerSite = {
-      for (var line in linesToDisplay)
-        if (line.centralFertilizerSite != null) line.centralFertilizerSite!.sNo : line.centralFertilizerSite!
-    }.values.toList();
-
-
-    int totalWaterSources = waterSources.length;
-    int totalOutletPumps = waterSources.fold(0, (sum, source) => sum + source.pumpObjects.length);
-
-    int totalFilters = filterSite.fold(0, (sum, site) => sum + (site.filters.length));
-    int totalPressureIn = filterSite.fold(0, (sum, site) => sum + (site.pressureIn!=null ? 1 : 0));
-    int totalPressureOut = filterSite.fold(0, (sum, site) => sum + (site.pressureOut!=null ? 1 : 0));
-
-    int totalBoosterPump = fertilizerSite.fold(0, (sum, site) => sum + (site.boosterPump.length));
-    int totalChannels = fertilizerSite.fold(0, (sum, site) => sum + (site.channel.length));
-    int totalAgitators = fertilizerSite.fold(0, (sum, site) => sum + (site.agitator.length));
-
-    final totalValveCount = linesToDisplay.fold<int>(0,
-          (previous, line) => previous + line.valveObjects.length,
-    );
-
-    int grandTotal = totalWaterSources + totalOutletPumps +
-        totalFilters + totalPressureIn + totalPressureOut +
-        totalBoosterPump + totalChannels + totalAgitators;
-
-    return kIsWeb
-        ? _buildWebLayout(context, grandTotal, waterSources, filterSite, fertilizerSite, linesToDisplay, totalValveCount, scheduledProgram)
-        : _buildMobileLayout(context, grandTotal, waterSources, filterSite, fertilizerSite, linesToDisplay, totalValveCount, scheduledProgram);
+    return _buildWebLayoutNew(context, linesToDisplay, scheduledProgram, viewModel);
   }
 
   Widget displayLinearProgressIndicator() {
@@ -92,11 +56,8 @@ class CustomerHome extends StatelessWidget {
     );
   }
 
-  Widget _buildWebLayout(
-      BuildContext context, grandTotal, List<WaterSourceModel> waterSources, filterSite,
-      fertilizerSite, linesToDisplay, totalValveCount, scheduledProgram) {
-
-    final viewModel = context.read<CustomerScreenControllerViewModel>();
+  Widget _buildWebLayoutNew(BuildContext context, List<IrrigationLineModel> irrigationLine,
+      scheduledProgram, CustomerScreenControllerViewModel viewModel) {
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
@@ -106,9 +67,40 @@ class CustomerHome extends StatelessWidget {
         children: [
           context.watch<MqttPayloadProvider>().onRefresh ? displayLinearProgressIndicator() : const SizedBox(),
 
-          (fertilizerSite.isEmpty && (grandTotal < 7 && totalValveCount < 25))
-              ? buildWidgetInHorizontal(context, waterSources, filterSite, fertilizerSite, linesToDisplay, grandTotal, false)
-              : buildWidgetInVertical(context, waterSources, filterSite, fertilizerSite, linesToDisplay, false),
+          ...irrigationLine.map((line) => Padding(
+            padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
+            child: Container(
+                width: MediaQuery.sizeOf(context).width,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                    color: Colors.grey.shade400,
+                    width: 0.5,
+                  ),
+                  borderRadius: const BorderRadius.all(Radius.circular(5)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(3.0),
+                  child: Column(
+                    children: [
+                      irrigationLine.length != 1 ? SizedBox(
+                        width: MediaQuery.sizeOf(context).width,
+                        child: Text(
+                          line.name,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.black54),
+                        ),
+                      ):
+                      const SizedBox(),
+                      irrigationLine.length != 1 ?
+                      const Divider(height: 5, color: Colors.black12) :
+                      const SizedBox(),
+                      buildIrrigationLine(context, line, viewModel.customerId, viewModel.controllerId),
+                    ],
+                  ),
+                ),
+            ),
+          )),
 
           CurrentProgram(
             scheduledPrograms: scheduledProgram,
@@ -132,198 +124,361 @@ class CustomerHome extends StatelessWidget {
               deviceName: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].deviceName,
               categoryName: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].categoryName,
             ),
-
           const SizedBox(height: 8),
         ],
       ),
     );
   }
 
-  Widget _buildMobileLayout(
-      BuildContext context, grandTotal, waterSources, filterSite,
-      fertilizerSite, linesToDisplay, totalValveCount, scheduledProgram) {
+  Widget buildIrrigationLine(BuildContext context,
+      IrrigationLineModel irrLine, int customerId, int controllerId){
 
-    final viewModel = context.read<CustomerScreenControllerViewModel>();
+    final inletWaterSources = {
+      for (var source in irrLine.inletSources) source.sNo: source
+    }.values.toList();
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          context.watch<MqttPayloadProvider>().onRefresh ? displayLinearProgressIndicator() : const SizedBox(),
-          CurrentProgram(
-            scheduledPrograms: scheduledProgram,
-            deviceId: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].deviceId,
-            customerId: customerId,
-            controllerId: controllerId,
-            currentLineSNo: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].irrigationLine[viewModel.lIndex].sNo,
-          ),
-          NextSchedule(scheduledPrograms: scheduledProgram),
-          buildWidgetInVertical(context, waterSources, filterSite, fertilizerSite, linesToDisplay, true),
-          const SizedBox(height: 8),
-        ],
-      ),
+    final outletWaterSources = {
+      for (var source in irrLine.outletSources) source.sNo: source
+    }.values.toList();
+
+    final filterSite = {
+      if (irrLine.centralFilterSite != null) irrLine.centralFilterSite!.sNo : irrLine.centralFilterSite!
+    }.values.toList();
+
+    final fertilizerSite = {
+      if (irrLine.centralFertilizerSite != null) irrLine.centralFertilizerSite!.sNo : irrLine.centralFertilizerSite!
+    }.values.toList();
+
+    return SourcesAndFFWithLineObjects(
+      inletWaterSources: inletWaterSources,
+      outletWaterSources: outletWaterSources,
+      filterSite: filterSite,
+      fertilizerSite: fertilizerSite,
+      valves: irrLine.valveObjects,
+      prsSwitch: irrLine.prsSwitch,
+      pressureIn: irrLine.pressureIn,
+      pressureOut: irrLine.pressureOut,
+      waterMeter: irrLine.waterMeter,
+      customerId: customerId,
+      controllerId: controllerId,
+      containerWidth: MediaQuery.sizeOf(context).width,
+      isMobile: false,
+      deviceId: deviceId,
     );
-  }
 
-  Widget buildWidgetInHorizontal(BuildContext context, waterSources, filterSite, fertilizerSite,
-      List<IrrigationLineModel> linesToDisplay, int grandTotal, bool isMobile){
+    int totalInletPumps = inletWaterSources.fold(0, (sum, source) => sum + source.outletPump.length);
+    int totalOutletPumps = outletWaterSources.fold(0, (sum, source) => sum + source.outletPump.length);
+
+    int totalFilters = filterSite.fold(0, (sum, site) => sum + (site.filters.length));
+    int totalPressureIn = filterSite.fold(0, (sum, site) => sum + (site.pressureIn!=null ? 1 : 0));
+    int totalPressureOut = filterSite.fold(0, (sum, site) => sum + (site.pressureOut!=null ? 1 : 0));
+
+    int totalBoosterPump = fertilizerSite.fold(0, (sum, site) => sum + (site.boosterPump.length));
+    int totalChannels = fertilizerSite.fold(0, (sum, site) => sum + (site.channel.length));
+    int totalAgitators = fertilizerSite.fold(0, (sum, site) => sum + (site.agitator.length));
+
+    int grandTotal = inletWaterSources.length + outletWaterSources.length +
+        totalInletPumps + totalOutletPumps + totalFilters + totalPressureIn +
+        totalPressureOut + totalBoosterPump + totalChannels + totalAgitators;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        SizedBox(
+        /*SizedBox(
             width: (grandTotal*70) + 20,
             child: PumpStationWidget(waterSources: waterSources, filterSite: filterSite, fertilizerSite: fertilizerSite, isLineRight: true,
-              deviceId: deviceId, customerId: customerId, controllerId: controllerId, isMobile: isMobile,)
-        ),
-        ...linesToDisplay.map((lineObjects) => Padding(
-          padding: const EdgeInsets.only(top: 8),
-          child: Container(
-              width: MediaQuery.sizeOf(context).width - ((grandTotal*70) + 168),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                  color: Colors.grey.shade400,
-                  width: 0.5,
-                ),
-                borderRadius: const BorderRadius.only(
-                  topRight:Radius.circular(5),
-                  topLeft: Radius.circular(0),
-                  bottomLeft: Radius.circular(0),
-                  bottomRight: Radius.circular(5),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(3.0),
-                child: LineObjects(valves: lineObjects.valveObjects, prsSwitch: lineObjects.prsSwitch,
-                  pressureIn: lineObjects.pressureIn, waterMeter: lineObjects.waterMeter,
-                  customerId: customerId, controllerId: controllerId,
-                  containerWidth: MediaQuery.sizeOf(context).width - ((grandTotal*70) + 168),
-                  isMobile: isMobile, pressureOut: lineObjects.pressureOut),
-              )
-          ),
-        )),
+              deviceId: deviceId, customerId: customerId, controllerId: controllerId, isMobile: false,)
+        ),*/
+        /*LineObjects(
+          valves: irrLine.valveObjects,
+          prsSwitch: irrLine.prsSwitch,
+          pressureIn: irrLine.pressureIn,
+          waterMeter: irrLine.waterMeter,
+          customerId: customerId,
+          controllerId: controllerId,
+          containerWidth: 1000,
+          isMobile: false,
+          pressureOut: irrLine.pressureOut,
+        ),*/
       ],
     );
   }
 
-  Widget buildWidgetInVertical(BuildContext context, waterSources, filterSite, fertilizerSite,
-      List<IrrigationLineModel> linesToDisplay, bool isMobile)
-  {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        double containerWidth = 0.0;
+}
 
-        if(linesToDisplay.length == 1 || isMobile){
-          containerWidth = constraints.maxWidth;
-        }else{
-          containerWidth = (constraints.maxWidth/linesToDisplay.length);
-        }
+class SourcesAndFFWithLineObjects extends StatelessWidget {
+  final int customerId, controllerId;
+  final String deviceId;
+  final List<WaterSourceModel> inletWaterSources;
+  final List<WaterSourceModel> outletWaterSources;
+  final List<FilterSiteModel> filterSite;
+  final List<FertilizerSiteModel> fertilizerSite;
+  final List<ValveModel> valves;
+  final List<SensorModel> prsSwitch;
+  final List<SensorModel> pressureIn;
+  final List<SensorModel> pressureOut;
+  final List<SensorModel> waterMeter;
+  final double containerWidth;
+  final bool isMobile;
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            PumpStationWidget(
-              waterSources: waterSources,
-              filterSite: filterSite,
-              fertilizerSite: fertilizerSite,
-              isLineRight: false,
-              deviceId: deviceId,
-              customerId: customerId,
-              controllerId: controllerId,
-              isMobile: isMobile,
-            ),
-            isMobile? Column(
-              children: linesToDisplay.map((lineObjects) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
-                  child: SizedBox(
-                    width: containerWidth,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10, bottom: 2),
-                          child: Text(
-                            lineObjects.name,
-                            textAlign: TextAlign.start,
-                            style: const TextStyle(color: Colors.black54, fontSize: 16),
-                          ),
-                        ),
-                        LineObjects(
-                          valves: lineObjects.valveObjects,
-                          prsSwitch: lineObjects.prsSwitch,
-                          pressureIn: lineObjects.pressureIn,
-                          waterMeter: lineObjects.waterMeter,
-                          customerId: customerId,
-                          controllerId: controllerId,
-                          containerWidth: containerWidth,
-                          isMobile: isMobile,
-                          pressureOut: lineObjects.pressureOut,
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-            ):
-            Wrap(
-              children: linesToDisplay.map((lineObjects) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 8, top: 8),
-                  child: SizedBox(
-                    width: containerWidth-12,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: Colors.grey.shade400,
-                          width: 0.5,
-                        ),
-                        borderRadius: const BorderRadius.all(Radius.circular(5)),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 5, top: 5),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            linesToDisplay.length != 1?SizedBox(
-                              width: constraints.maxWidth,
-                              child: Text(
-                                lineObjects.name,
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(color: Colors.black54),
-                              ),
-                            ):
-                            const SizedBox(),
-                            linesToDisplay.length != 1?
-                            const Divider(height: 5, color: Colors.black12):
-                            const SizedBox(),
-                            LineObjects(
-                              valves: lineObjects.valveObjects,
-                              prsSwitch: lineObjects.prsSwitch,
-                              pressureIn: lineObjects.pressureIn,
-                              waterMeter: lineObjects.waterMeter,
-                              customerId: customerId,
-                              controllerId: controllerId,
-                              containerWidth: containerWidth,
-                              isMobile: isMobile,
-                              pressureOut: lineObjects.pressureOut,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ],
-        );
-      },
+  const SourcesAndFFWithLineObjects({
+    super.key,
+    required this.inletWaterSources,
+    required this.outletWaterSources,
+    required this.filterSite,
+    required this.fertilizerSite,
+    required this.valves,
+    required this.prsSwitch,
+    required this.pressureIn,
+    required this.pressureOut,
+    required this.waterMeter,
+    required this.customerId,
+    required this.controllerId,
+    required this.deviceId,
+    required this.containerWidth,
+    required this.isMobile,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final allItems = [
+      if (inletWaterSources.isNotEmpty)
+        ..._buildWaterSource(context, inletWaterSources, true, true,fertilizerSite.isNotEmpty? true:false),
+
+      if (outletWaterSources.isNotEmpty)
+        ..._buildWaterSource(context, outletWaterSources, inletWaterSources.isNotEmpty? true : false, false,fertilizerSite.isNotEmpty?true:false),
+
+      if (filterSite.isNotEmpty)
+        ..._buildFilter(context, filterSite),
+
+      if (fertilizerSite.isNotEmpty)
+        ..._buildFertilizer(context, fertilizerSite),
+
+      ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch.png'),
+      ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor.png'),
+      ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter.png'),
+      ...valves.map((valve) => ValveWidget(valve: valve,customerId: customerId, controllerId: controllerId)),
+      ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor.png'),
+    ];
+
+    return Align(
+      alignment: Alignment.topLeft,
+      child: Wrap(
+        alignment: WrapAlignment.start,
+        spacing: 0,
+        runSpacing: 0,
+        children: allItems,
+      ),
     );
+
+  }
+
+
+  List<Widget> _buildWaterSource(BuildContext context, List<WaterSourceModel> waterSources,
+      bool isAvailInlet, bool isInlet, bool isAvailFertilizer) {
+    final List<Widget> gridItems = [];
+    for (int index = 0; index < waterSources.length; index++) {
+      final source = waterSources[index];
+      gridItems.add(Padding(
+        padding: EdgeInsets.only(top: isAvailFertilizer? 39:0),
+        child: _buildSourceColumn(context, source, index, waterSources.length, isAvailInlet, isInlet),
+      ));
+      gridItems.addAll(source.outletPump.map((pump) => Padding(
+        padding: EdgeInsets.only(top: isAvailFertilizer? 39:0),
+        child: PumpWidget(
+          pump: pump,
+          isSourcePump: isInlet,
+          deviceId: deviceId,
+          customerId: customerId,
+          controllerId: controllerId,
+          isMobile: false,
+        ),
+      )));
+    }
+    return gridItems;
+  }
+
+  Widget _buildSourceColumn(BuildContext context, WaterSourceModel source,
+      int index, int total, bool isAvailInlet, bool isInletSource) {
+
+    String position = isInletSource ? (index == 0) ? 'First' : 'Center':
+    (index == 0 && isAvailInlet) ? 'Last' : (index == 0 && !isAvailInlet)? 'First':
+    (index == total - 1)? 'Last' : 'Center';
+
+    final bool hasLevel = source.level.isNotEmpty;
+
+
+    return SizedBox(
+      width: 70,
+      height: 100,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 70,
+            height: 70,
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: source.name=='BORE'?
+                  AppConstants.getAsset(source.name, 0, position):
+                  AppConstants.getAsset('source', 0, position),
+                ),
+                if (hasLevel) ...[
+                  Positioned(
+                    top: 50,
+                    left: 2,
+                    right: 2,
+                    child: Consumer<MqttPayloadProvider>(
+                      builder: (_, provider, __) {
+                        final sensorUpdate = provider.getSensorUpdatedValve(source.level[0].sNo.toString());
+                        final statusParts = sensorUpdate?.split(',') ?? [];
+
+                        if (statusParts.length > 1) {
+                          source.level.first.value = statusParts[1];
+                        }
+
+                        return Container(
+                          height: 17,
+                          decoration: BoxDecoration(
+                            color: Colors.yellow,
+                            borderRadius: BorderRadius.circular(2),
+                            border: Border.all(color: Colors.grey, width: 0.5),
+                          ),
+                          child: Center(
+                            child: Text(
+                              MyFunction().getUnitByParameter(context, 'Level Sensor', source.level.first.value.toString()) ?? '',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  Positioned(
+                    top: 33,
+                    left: 18,
+                    right: 18,
+                    child: Consumer<MqttPayloadProvider>(
+                      builder: (_, provider, __) {
+                        final sensorUpdate = provider.getSensorUpdatedValve(source.level[0].sNo.toString());
+                        final statusParts = sensorUpdate?.split(',') ?? [];
+
+                        if (statusParts.length > 2) {
+                          source.level.first.value = statusParts[2];
+                        }
+
+                        return Container(
+                          height: 17,
+                          decoration: BoxDecoration(
+                            color: Colors.yellow,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey, width: 0.5),
+                          ),
+                          child: Center(
+                            child: Text(
+                              '${source.level.first.value}%',
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        );
+
+                      },
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          Text(
+            source.name,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 10, color: Colors.black54),
+          ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _buildSensorItems(List<SensorModel> sensors, String type, String imagePath) {
+    return sensors.map((sensor) {
+      return SensorWidget(
+        sensor: sensor,
+        sensorType: type,
+        imagePath: imagePath,
+        customerId: customerId,
+        controllerId: controllerId,
+      );
+    }).toList();
+  }
+
+  List<Widget> _buildFilter(BuildContext context, List<FilterSiteModel> filterSite) {
+    return filterSite.expand((site) => [
+      if (site.pressureIn != null)
+        Padding(
+          padding: const EdgeInsets.only(top: 39),
+          child: PressureSensorWidget(sensor: site.pressureIn!),
+        ),
+      ...site.filters.map((filter) => Padding(
+        padding: const EdgeInsets.only(top: 39),
+        child: FilterWidget(filter: filter, siteSno: filter.sNo.toString()),
+      )),
+      if (site.pressureOut != null)
+        Padding(
+          padding: const EdgeInsets.only(top: 39),
+          child: PressureSensorWidget(sensor: site.pressureOut!),
+        ),
+    ]).toList();
+  }
+
+  List<Widget> _buildFertilizer(BuildContext context, List<FertilizerSiteModel> fertilizerSite) {
+    return List.generate(fertilizerSite.length, (siteIndex) {
+      final site = fertilizerSite[siteIndex];
+      final widgets = <Widget>[];
+
+      if (siteIndex != 0) {
+        widgets.add(SizedBox(
+          width: 4.5,
+          height: 120,
+          child: Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 42),
+                child: VerticalDivider(width: 0, color: Colors.grey.shade300,),
+              ),
+              const SizedBox(width: 4.5,),
+              Padding(
+                padding: const EdgeInsets.only(top: 45),
+                child: VerticalDivider(width: 0, color: Colors.grey.shade300,),
+              ),
+            ],
+          ),
+        ));
+      }
+      widgets.add(BoosterWidget(fertilizerSite: site));
+
+      for (int channelIndex = 0; channelIndex < site.channel.length; channelIndex++) {
+        final channel = site.channel[channelIndex];
+        widgets.add(ChannelWidget(
+          channel: channel,
+          cIndex: channelIndex,
+          channelLength: site.channel.length,
+          agitator: site.agitator,
+          siteSno: site.sNo.toString(),
+        ));
+      }
+
+      return widgets;
+    }).expand((item) => item).toList().cast<Widget>(); // 👈 Cast the final list
   }
 }
 
@@ -399,224 +554,34 @@ class LineObjects extends StatelessWidget {
   }
 }
 
-class PumpStationWidget extends StatelessWidget {
+class BuildInletSource extends StatelessWidget {
   final List<WaterSourceModel> waterSources;
-  final List<FilterSiteModel> filterSite;
-  final List<FertilizerSiteModel> fertilizerSite;
-  final bool isLineRight;
   final String deviceId;
   final int customerId, controllerId;
-  final bool isMobile;
 
-  const PumpStationWidget({
+  const BuildInletSource({
     super.key,
     required this.waterSources,
-    required this.filterSite,
-    required this.fertilizerSite,
-    required this.isLineRight,
     required this.deviceId,
     required this.customerId,
     required this.controllerId,
-    required this.isMobile,
   });
 
   @override
   Widget build(BuildContext context) {
     final List<Widget> gridItems = [];
 
-    final sortedWaterSources = List<WaterSourceModel>.from(waterSources)
-      ..sort((a, b) {
-        if (a.isWaterInAndOut == b.isWaterInAndOut) return 0;
-        return a.isWaterInAndOut ? 1 : -1;
-      });
-
-    for (int index = 0; index < sortedWaterSources.length; index++) {
-      final source = sortedWaterSources[index];
-      gridItems.add(_buildSourceColumn(context, source, index, sortedWaterSources.length));
-      for (final pump in source.pumpObjects) {
+    for (int index = 0; index < waterSources.length; index++) {
+      final source = waterSources[index];
+      gridItems.add(_buildSourceColumn(context, source, index, waterSources.length));
+      for (final pump in source.outletPump) {
         gridItems.add(PumpWidget(pump: pump, isSourcePump: !source.isWaterInAndOut, deviceId: deviceId,
-          customerId: customerId, controllerId: controllerId, isMobile: isMobile,));
+          customerId: customerId, controllerId: controllerId, isMobile: false));
       }
     }
 
-    int totalFilters = filterSite.fold(0, (sum, site) => sum + (site.filters.length));
-    int totalPressureIn = filterSite.fold(0, (sum, site) => sum + (site.pressureIn!=null ? 1 : 0));
-    int totalPressureOut = filterSite.fold(0, (sum, site) => sum + (site.pressureOut!=null ? 1 : 0));
-    int totalBoosterPump = fertilizerSite.fold(0, (sum, site) => sum + (site.boosterPump.length));
-    int totalChannels = fertilizerSite.fold(0, (sum, site) => sum + (site.channel.length));
-    int totalAgitators = fertilizerSite.fold(0, (sum, site) => sum + (site.agitator.length));
-
-    int ffGrandTotal = totalFilters + totalPressureIn + totalPressureOut +
-        totalBoosterPump + totalChannels + totalAgitators;
-
-
-    return isMobile? Padding(
-      padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 10, bottom: 2),
-            child: Text(
-              'PUMP STATION',
-              textAlign: TextAlign.start,
-              style: TextStyle(color: Colors.black54, fontSize: 16),
-            ),
-          ),
-          Card(
-            color: Colors.white,
-            surfaceTintColor: Colors.white,
-            child: GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: (MediaQuery.sizeOf(context).width / 85).round(),
-                mainAxisSpacing: 0,
-                crossAxisSpacing: 0,
-                childAspectRatio: isMobile? 1.0 : 1.30,
-              ),
-              itemCount: gridItems.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(left: 3, right: 3),
-                  child: gridItems[index],
-                );
-              },
-            ),
-          ),
-          if(ffGrandTotal < 6 && filterSite.isNotEmpty && fertilizerSite.isNotEmpty)...[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  children: [
-                    filterSite.isNotEmpty? const Padding(
-                      padding: EdgeInsets.only(left: 5, bottom: 2, top: 5),
-                      child: Text(
-                        'FILTER SITE',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(color: Colors.black54, fontSize: 16),
-                      ),
-                    ):
-                    const SizedBox(),
-                    filterSite.isNotEmpty? Card(
-                      color: Colors.white,
-                      surfaceTintColor: Colors.white,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8, bottom: 2, right: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              for(int fIndex=0; fIndex<filterSite.length; fIndex++)
-                                FilterSiteView(filterSite: filterSite[fIndex]),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ):
-                    const SizedBox(),
-                  ],
-                ),
-                Column(
-                  children: [
-                    fertilizerSite.isNotEmpty? const Padding(
-                      padding: EdgeInsets.only(left: 8, bottom: 2, top: 5),
-                      child: Text(
-                        'FERTILIZER SITE',
-                        textAlign: TextAlign.start,
-                        style: TextStyle(color: Colors.black54, fontSize: 16),
-                      ),
-                    ):
-                    const SizedBox(),
-                    fertilizerSite.isNotEmpty? Card(
-                      color: Colors.white,
-                      surfaceTintColor: Colors.white,
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 8, bottom: 2, right: 8),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              for(int siteIndex=0; siteIndex<fertilizerSite.length; siteIndex++)
-                                FertilizerSiteView(fertilizerSite: fertilizerSite[siteIndex], siteIndex: siteIndex),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ):
-                    const SizedBox(),
-                  ],
-                )
-              ],
-            )
-          ] else...[
-            filterSite.isNotEmpty? const Padding(
-              padding: EdgeInsets.only(left: 5, bottom: 2, top: 5),
-              child: Text(
-                'FILTER SITE',
-                textAlign: TextAlign.start,
-                style: TextStyle(color: Colors.black54, fontSize: 16),
-              ),
-            ):
-            const SizedBox(),
-            filterSite.isNotEmpty? Card(
-              color: Colors.white,
-              surfaceTintColor: Colors.white,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 8, bottom: 2, right: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for(int fIndex=0; fIndex<filterSite.length; fIndex++)
-                        FilterSiteView(filterSite: filterSite[fIndex]),
-                    ],
-                  ),
-                ),
-              ),
-            ):
-            const SizedBox(),
-            fertilizerSite.isNotEmpty? const Padding(
-              padding: EdgeInsets.only(left: 8, bottom: 2, top: 5),
-              child: Text(
-                'FERTILIZER SITE',
-                textAlign: TextAlign.start,
-                style: TextStyle(color: Colors.black54, fontSize: 16),
-              ),
-            ):
-            const SizedBox(),
-            fertilizerSite.isNotEmpty? Card(
-              color: Colors.white,
-              surfaceTintColor: Colors.white,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: const EdgeInsets.only(top: 8, bottom: 2, right: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for(int siteIndex=0; siteIndex<fertilizerSite.length; siteIndex++)
-                        FertilizerSiteView(fertilizerSite: fertilizerSite[siteIndex], siteIndex: siteIndex),
-                    ],
-                  ),
-                ),
-              ),
-            ):
-            const SizedBox(),
-          ]
-        ],
-      ),
-    ):
-    Padding(
-      padding: EdgeInsets.only(left: 8, top: 8, right: isLineRight? 0:8),
+    return Padding(
+      padding: EdgeInsets.only(left: 8, top: 8, right: 0),
       child: Container(
         width: MediaQuery.sizeOf(context).width,
         decoration: BoxDecoration(
@@ -626,10 +591,10 @@ class PumpStationWidget extends StatelessWidget {
             width: 0.5,
           ),
           borderRadius: BorderRadius.only(
-            topRight: isLineRight? const Radius.circular(0) : const Radius.circular(5),
+            topRight: const Radius.circular(0),
             topLeft: const Radius.circular(5),
             bottomLeft: const Radius.circular(5),
-            bottomRight:  isLineRight? const Radius.circular(0) : const Radius.circular(5),
+            bottomRight: const Radius.circular(0),
           ),
         ),
         child: ScrollConfiguration(
@@ -637,13 +602,13 @@ class PumpStationWidget extends StatelessWidget {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Padding(
-              padding: EdgeInsets.only(left: 8, right: isLineRight ? 0 : 8),
+              padding: EdgeInsets.only(left: 8, right: 8),
               child: Row(
                 children: [
                   Row(
                     children: gridItems.map<Widget>((item) {
                       return Padding(
-                        padding: EdgeInsets.only(top: fertilizerSite.isNotEmpty? 27: 10),
+                        padding: EdgeInsets.only(top: 10),
                         child: SizedBox(
                           width: 70,
                           height: 100,
@@ -652,25 +617,7 @@ class PumpStationWidget extends StatelessWidget {
                       );
                     }).toList(),
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for(int fIndex=0; fIndex<filterSite.length; fIndex++)
-                        Padding(
-                          padding: EdgeInsets.only(top: fertilizerSite.isNotEmpty? 35: 10),
-                          child: FilterSiteView(filterSite: filterSite[fIndex]),
-                        ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      for(int siteIndex=0; siteIndex<fertilizerSite.length; siteIndex++)
-                        FertilizerSiteView(fertilizerSite: fertilizerSite[siteIndex], siteIndex: siteIndex),
-                    ],
-                  )
+
                 ],
               ),
             ),
@@ -696,22 +643,22 @@ class PumpStationWidget extends StatelessWidget {
 
     return SizedBox(
       width: 70,
-      height: isMobile? 75 : 100,
+      height: 70,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           SizedBox(
             width: 70,
-            height: isMobile ? 55:70,
+            height: 55,
             child: Stack(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: isMobile? 8:0),
+                  padding: EdgeInsets.only(left: 0),
                   child: AppConstants.getAsset('source', 0, position),
                 ),
                 if (hasLevel) ...[
                   Positioned(
-                    top: isMobile ? 37 : 50,
+                    top: 50,
                     left: 2,
                     right: 2,
                     child: Consumer<MqttPayloadProvider>(
@@ -745,7 +692,7 @@ class PumpStationWidget extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    top: isMobile ? 5 : 33,
+                    top: 33,
                     left: 18,
                     right: 18,
                     child: Consumer<MqttPayloadProvider>(
@@ -821,7 +768,8 @@ class SensorWidget extends StatelessWidget {
         }
 
         return SizedBox(
-          width: 85,
+          width: 70,
+          height: 100,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -994,7 +942,7 @@ class SensorWidget extends StatelessWidget {
                 ),
               ] else ...[
                 SizedBox(
-                  width: 85,
+                  width: 70,
                   height: 40,
                   child: Image.asset(
                     imagePath,
@@ -1093,7 +1041,8 @@ class ValveWidget extends StatelessWidget {
         bool hasMoisture = valve.moistureSensors.isNotEmpty;
 
         return SizedBox(
-          width: 85,
+          width: 70,
+          height: 100,
           child: Stack(
             alignment: Alignment.center,
             children: [
