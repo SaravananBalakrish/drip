@@ -169,9 +169,7 @@ class PressureSensorWidget extends StatelessWidget {
           child : Stack(
             children: [
               Center(
-                child: kIsWeb
-                    ? Image.asset('assets/png/dp_prs_sensor.png')
-                    : Image.asset('assets/png/pressure_sensor.png', width: 35),
+                child: Image.asset('assets/png/dp_prs_sensor.png'),
               ),
               Positioned(
                 top: 42,
