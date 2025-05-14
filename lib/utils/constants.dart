@@ -160,6 +160,7 @@ class AppConstants {
   static const String pngPath = "assets/png/";
   static const String gifPath = "assets/gif/";
 
+  static const String boreWell = "dp_bore_well.png";
   static const String sumpFirst = "dp_sump_first.png";
   static const String sumpCenter = "dp_sump_center.png";
   static const String sumpLast = "dp_sump_last.png";
@@ -282,6 +283,9 @@ class AppConstants {
   static Widget getAsset(String imageKey, int status, String type) {
     String imagePathFinal;
     switch (imageKey) {
+      case 'BORE':
+        imagePathFinal = _getBoreWellImagePath();
+        break;
       case 'source':
         imagePathFinal = _getSourceImagePath(type);
         break;
@@ -308,16 +312,22 @@ class AppConstants {
     }
 
     if (imagePathFinal.contains('.gif')) {
-      return Image.network(
-        'http://52.172.214.208:5000/gif/dp_irr_pump_g.gif',
-      );
       return Image.asset(
         '$gifPath$imagePathFinal',
         key: UniqueKey(),
-        fit: BoxFit.contain,
+        fit: BoxFit.fill,
       );
     }
-    return Image.asset('$pngPath$imagePathFinal');
+    return Image.asset(
+      '$pngPath$imagePathFinal',
+      width: double.infinity,
+      height: double.infinity,
+      fit: BoxFit.fill,
+    );
+  }
+
+  static String _getBoreWellImagePath() {
+    return boreWell;
   }
 
   static String _getSourceImagePath(String position) {
