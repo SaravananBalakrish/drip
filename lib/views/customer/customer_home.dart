@@ -69,36 +69,27 @@ class CustomerHome extends StatelessWidget {
 
           ...irrigationLine.map((line) => Padding(
             padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
-            child: Container(
-                width: MediaQuery.sizeOf(context).width,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(
-                    color: Colors.grey.shade400,
-                    width: 0.5,
+            child: Column(
+              children: [
+                irrigationLine.length != 1 ? SizedBox(
+                  width: MediaQuery.sizeOf(context).width,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 8, bottom: 3),
+                    child: Text(
+                      line.name,
+                      textAlign: TextAlign.left,
+                      style: const TextStyle(color: Colors.black87, fontSize: 16),
+                    ),
                   ),
-                  borderRadius: const BorderRadius.all(Radius.circular(5)),
+                ):
+                const SizedBox(),
+
+                Card(
+                    color: Colors.white,
+                    elevation: 0.5,
+                    child: buildIrrigationLine(context, line, viewModel.customerId, viewModel.controllerId)
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(3.0),
-                  child: Column(
-                    children: [
-                      irrigationLine.length != 1 ? SizedBox(
-                        width: MediaQuery.sizeOf(context).width,
-                        child: Text(
-                          line.name,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.black54),
-                        ),
-                      ):
-                      const SizedBox(),
-                      irrigationLine.length != 1 ?
-                      const Divider(height: 5, color: Colors.black12) :
-                      const SizedBox(),
-                      buildIrrigationLine(context, line, viewModel.customerId, viewModel.controllerId),
-                    ],
-                  ),
-                ),
+              ],
             ),
           )),
 
@@ -256,10 +247,10 @@ class SourcesAndFFWithLineObjects extends StatelessWidget {
         ..._buildFertilizer(context, fertilizerSite),
 
       ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch.png'),
-      ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor.png'),
+      ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png'),
       ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter.png'),
       ...valves.map((valve) => ValveWidget(valve: valve,customerId: customerId, controllerId: controllerId)),
-      ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor.png'),
+      ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png'),
     ];
 
     return Align(
@@ -281,11 +272,11 @@ class SourcesAndFFWithLineObjects extends StatelessWidget {
     for (int index = 0; index < waterSources.length; index++) {
       final source = waterSources[index];
       gridItems.add(Padding(
-        padding: EdgeInsets.only(top: isAvailFertilizer? 39:0),
+        padding: EdgeInsets.only(top: isAvailFertilizer? 39:8),
         child: _buildSourceColumn(context, source, index, waterSources.length, isAvailInlet, isInlet),
       ));
       gridItems.addAll(source.outletPump.map((pump) => Padding(
-        padding: EdgeInsets.only(top: isAvailFertilizer? 39:0),
+        padding: EdgeInsets.only(top: isAvailFertilizer? 39:8),
         child: PumpWidget(
           pump: pump,
           isSourcePump: isInlet,
@@ -769,7 +760,7 @@ class SensorWidget extends StatelessWidget {
 
         return SizedBox(
           width: 70,
-          height: 100,
+          height: 93,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -777,8 +768,8 @@ class SensorWidget extends StatelessWidget {
                 Stack(
                   children: [
                     SizedBox(
-                      width: 85,
-                      height: 40,
+                      width: 70,
+                      height: 65,
                       child: TextButton(
                         onPressed: () async {
 
@@ -909,13 +900,13 @@ class SensorWidget extends StatelessWidget {
                         ),
                         child: Image.asset(
                           imagePath,
-                          width: 35,
-                          height: 35,
+                          width: 70,
+                          height: 70,
                         ),
                       ),
                     ),
                     Positioned(
-                      top: 0,
+                      top: 48,
                       left: sensorType == 'Pressure Sensor'? 10:1,
                       right: sensorType == 'Pressure Sensor'? 10:1,
                       child: Container(
@@ -943,11 +934,11 @@ class SensorWidget extends StatelessWidget {
               ] else ...[
                 SizedBox(
                   width: 70,
-                  height: 40,
+                  height: 70,
                   child: Image.asset(
                     imagePath,
-                    width: 40,
-                    height: 40,
+                    width: 70,
+                    height: 70,
                   ),
                 ),
               ],
@@ -1052,11 +1043,10 @@ class ValveWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   SizedBox(
-                    width: 35,
-                    height: 35,
+                    width: 70,
+                    height: 70,
                     child: AppConstants.getAsset('valve', valve.status, ''),
                   ),
-                  const SizedBox(height: 4),
                   Text(
                     valve.name,
                     textAlign: TextAlign.center,
@@ -1066,8 +1056,8 @@ class ValveWidget extends StatelessWidget {
               ),
               if (hasMoisture)
                 Positioned(
-                  top: 0,
-                  left: 47,
+                  top: 10,
+                  left: 33,
                   child: TextButton(
                     onPressed: () async {
 
@@ -1180,8 +1170,8 @@ class ValveWidget extends StatelessWidget {
                         arrowHeight: 15,
                         arrowWidth: 30,
                         barrierColor: Colors.black54,
-                        arrowDxOffset: 23,
-                        arrowDyOffset: -25,
+                        arrowDxOffset: 15,
+                        arrowDyOffset: -55,
                       );
                     },
                     style: ButtonStyle(
