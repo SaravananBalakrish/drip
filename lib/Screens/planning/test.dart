@@ -62,7 +62,7 @@ class _MyAppgifState extends State<MyAppgif> with TickerProviderStateMixin {
                 const Text('Loop Gif package:'),
                 const SizedBox(height: 10),
                 Gif(
-                  image: const AssetImage("assets/gif/dp_irr_pump_g.gif"),
+                  image: const AssetImage("assets/gif/newmotor.gif"),
                   controller: controller,
                   onFetchCompleted: () {
                     final upper = controller.upperBound;
@@ -81,7 +81,7 @@ class _MyAppgifState extends State<MyAppgif> with TickerProviderStateMixin {
                 const Text('Normal:'),
                 const SizedBox(height: 10),
                 Image.asset(
-                  "assets/gif/dp_irr_pump_g.gif",
+                  "assets/gif/testinggif.gif",
                   height: 100,
                   width: 100,
                 ),
@@ -95,8 +95,7 @@ class _MyAppgifState extends State<MyAppgif> with TickerProviderStateMixin {
                 // ),
                 const Text('LK Network Image:'),
                 const SizedBox(height: 10),
-                Image.network(
-                  'http://52.172.214.208:5000/gif/dp_irr_pump_g.gif',
+                Image.network('https://mir-s3-cdn-cf.behance.net/project_modules/1400/091089194042773.661d38a331980.gif',
                   height: 100,
                   width: 200,
                   fit: BoxFit.contain,
@@ -104,19 +103,7 @@ class _MyAppgifState extends State<MyAppgif> with TickerProviderStateMixin {
                     if (loadingProgress == null) return child;
                     return const CircularProgressIndicator();
                   },
-                  errorBuilder: (context, error, stackTrace) {
-                    print('Network GIF error: $error\nStackTrace: $stackTrace');
-                    // Fallback to local asset if network fails
-                    return Image.asset(
-                      "assets/gif/dp_irr_pump_g.gif",
-                      height: 100,
-                      width: 200,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Text('Failed to load fallback GIF');
-                      },
-                    );
-                  },
+
                 ),
               ],
             ),
