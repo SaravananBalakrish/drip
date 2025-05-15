@@ -892,7 +892,7 @@ class MobileScreenController extends StatelessWidget {
                     });
                   },
                 ),
-                if (vm.selectedMode == 'bluetooth') ...[
+                if (vm.selectedMode == 1) ...[
                   const Divider(),
                   ListTile(
                     dense: true,
