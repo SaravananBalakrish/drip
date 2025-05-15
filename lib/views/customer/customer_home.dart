@@ -243,11 +243,14 @@ class SourcesAndFFWithLineObjects extends StatelessWidget {
       if (fertilizerSite.isNotEmpty)
         ..._buildFertilizer(context, fertilizerSite),
 
-      ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch_wj.png'),
-      ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png'),
-      ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter_wj.png'),
-      ...valves.map((valve) => ValveWidget(valve: valve,customerId: customerId, controllerId: controllerId)),
-      ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png'),
+      ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch_wj.png', fertilizerSite.isNotEmpty),
+      ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png',fertilizerSite.isNotEmpty),
+      ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter_wj.png',fertilizerSite.isNotEmpty),
+      ...valves.map((valve) => Padding(
+        padding: EdgeInsets.only(top: fertilizerSite.isNotEmpty? 30:0),
+        child: ValveWidget(valve: valve,customerId: customerId, controllerId: controllerId),
+      )),
+      ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png',fertilizerSite.isNotEmpty),
     ];
 
     return Align(
@@ -269,11 +272,11 @@ class SourcesAndFFWithLineObjects extends StatelessWidget {
     for (int index = 0; index < waterSources.length; index++) {
       final source = waterSources[index];
       gridItems.add(Padding(
-        padding: EdgeInsets.only(top: isAvailFertilizer? 39:8),
+        padding: EdgeInsets.only(top: isAvailFertilizer? 38.5:8),
         child: _buildSourceColumn(context, source, index, waterSources.length, isAvailInlet, isInlet),
       ));
       gridItems.addAll(source.outletPump.map((pump) => Padding(
-        padding: EdgeInsets.only(top: isAvailFertilizer? 39:8),
+        padding: EdgeInsets.only(top: isAvailFertilizer? 38.5:8),
         child: PumpWidget(
           pump: pump,
           isSourcePump: isInlet,
@@ -397,14 +400,17 @@ class SourcesAndFFWithLineObjects extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildSensorItems(List<SensorModel> sensors, String type, String imagePath) {
+  List<Widget> _buildSensorItems(List<SensorModel> sensors, String type, String imagePath, bool isAvailFertilizer) {
     return sensors.map((sensor) {
-      return SensorWidget(
-        sensor: sensor,
-        sensorType: type,
-        imagePath: imagePath,
-        customerId: customerId,
-        controllerId: controllerId,
+      return Padding(
+        padding: EdgeInsets.only(top: isAvailFertilizer? 30:0),
+        child: SensorWidget(
+          sensor: sensor,
+          sensorType: type,
+          imagePath: imagePath,
+          customerId: customerId,
+          controllerId: controllerId,
+        ),
       );
     }).toList();
   }
@@ -413,16 +419,16 @@ class SourcesAndFFWithLineObjects extends StatelessWidget {
     return filterSite.expand((site) => [
       if (site.pressureIn != null)
         Padding(
-          padding: const EdgeInsets.only(top: 39),
+          padding: const EdgeInsets.only(top: 38.5),
           child: PressureSensorWidget(sensor: site.pressureIn!),
         ),
       ...site.filters.map((filter) => Padding(
-        padding: const EdgeInsets.only(top: 39),
+        padding: const EdgeInsets.only(top: 38.5),
         child: FilterWidget(filter: filter, siteSno: filter.sNo.toString()),
       )),
       if (site.pressureOut != null)
         Padding(
-          padding: const EdgeInsets.only(top: 39),
+          padding: const EdgeInsets.only(top: 38.5),
           child: PressureSensorWidget(sensor: site.pressureOut!),
         ),
     ]).toList();
@@ -1225,6 +1231,7 @@ class ValveWidget extends StatelessWidget {
         "fromDate": date,
         "toDate": date,
       };
+      print(body);
 
       final response = await Repository(HttpService()).fetchSensorHourlyData(body);
       if (response.statusCode == 200) {
