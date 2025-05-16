@@ -65,6 +65,7 @@ dependencies:
   firebase_messaging: ^15.2.5
   intl_phone_field: ^3.2.0
   bluetooth_classic: ^0.0.3
+  flutter_blue_plus: ^1.35.5
   az_notification_hub: ^1.1.2
   flutter_dotenv: ^5.2.1
   path_provider: ^2.1.5
@@ -72,6 +73,7 @@ dependencies:
   package_info_plus: ^8.3.0
   dartssh2: ^2.11.0
   flutter_launcher_icons: ^0.14.3
+
 
 dev_dependencies:
   flutter_test:

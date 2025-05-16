@@ -69,6 +69,7 @@ class HttpService
       'Content-Type': 'application/json',
       'auth_token': token?.isNotEmpty == true ? token! : 'default_token',
     };
+
     var body = json.encode(bodyData);
     return await http.delete(Uri.parse('${AppConstants.apiUrl}$endpoint'),
         headers : headers,
