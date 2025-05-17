@@ -85,7 +85,7 @@ class CustomerHome extends StatelessWidget {
                 Card(
                     color: Colors.white,
                     elevation: 0.5,
-                    child: buildIrrigationLine(context, line, viewModel.customerId, viewModel.controllerId)
+                    child: buildIrrigationLine(context, line, customerId, controllerId)
                 ),
               ],
             ),
@@ -155,11 +155,11 @@ class CustomerHome extends StatelessWidget {
                   ),
                 ):
                 const SizedBox(),
-
                 Card(
+                  margin: EdgeInsets.zero,
                     color: Colors.white,
                     elevation: 0.5,
-                    child: buildIrrigationLine(context, line, viewModel.customerId, viewModel.controllerId)
+                    child: buildIrrigationLine(context, line, customerId, controllerId)
                 ),
               ],
             ),
@@ -284,41 +284,128 @@ class PumpStationWithLine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final allItems = [
-      if (inletWaterSources.isNotEmpty)
-        ..._buildWaterSource(context, inletWaterSources, true, true,fertilizerSite.isNotEmpty? true:false),
 
-      if (outletWaterSources.isNotEmpty)
-        ..._buildWaterSource(context, outletWaterSources, inletWaterSources.isNotEmpty? true : false, false,fertilizerSite.isNotEmpty?true:false),
+    if(kIsWeb)
+    {
+      final allItems = [
+        if (inletWaterSources.isNotEmpty)
+          ..._buildWaterSource(context, inletWaterSources, true, true,fertilizerSite.isNotEmpty? true:false),
 
-      if (filterSite.isNotEmpty)
-        ..._buildFilter(context, filterSite),
+        if (outletWaterSources.isNotEmpty)
+          ..._buildWaterSource(context, outletWaterSources, inletWaterSources.isNotEmpty? true : false, false,fertilizerSite.isNotEmpty?true:false),
 
-      if (fertilizerSite.isNotEmpty)
-        ..._buildFertilizer(context, fertilizerSite),
+        if (filterSite.isNotEmpty)
+          ..._buildFilter(context, filterSite, fertilizerSite.isNotEmpty),
 
-      ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch_wj.png', fertilizerSite.isNotEmpty),
-      ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png', fertilizerSite.isNotEmpty),
-      ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter_wj.png', fertilizerSite.isNotEmpty),
-      ...valves.map((valve) => Padding(
-        padding: EdgeInsets.only(top: fertilizerSite.isNotEmpty?30:0),
-        child: ValveWidget(valve: valve,customerId: customerId, controllerId: controllerId),
-      )),
-      ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png', fertilizerSite.isNotEmpty),
-    ];
+        if (fertilizerSite.isNotEmpty)
+          ..._buildFertilizer(context, fertilizerSite),
 
-    return Align(
-      alignment: Alignment.topLeft,
-      child: Wrap(
-        alignment: WrapAlignment.start,
-        spacing: 0,
-        runSpacing: 0,
-        children: allItems,
-      ),
-    );
+        ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch_wj.png', fertilizerSite.isNotEmpty),
+        ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png', fertilizerSite.isNotEmpty),
+        ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter_wj.png', fertilizerSite.isNotEmpty),
+        ...valves.map((valve) => Padding(
+          padding: EdgeInsets.only(top: fertilizerSite.isNotEmpty? 30 : 0),
+          child: ValveWidget(valve: valve,customerId: customerId, controllerId: controllerId),
+        )),
+        ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png', fertilizerSite.isNotEmpty),
+      ];
+      return Align(
+        alignment: Alignment.topLeft,
+        child: Wrap(
+          alignment: WrapAlignment.start,
+          spacing: 0,
+          runSpacing: 0,
+          children: allItems,
+        ),
+      );
+    }
+    else{
+      if(fertilizerSite.isEmpty){
+        final allItems = [
+          if (inletWaterSources.isNotEmpty)
+            ..._buildWaterSource(context, inletWaterSources, true, true, false),
 
+          if (outletWaterSources.isNotEmpty)
+            ..._buildWaterSource(context, outletWaterSources, inletWaterSources.isNotEmpty? true : false, false, false),
+
+          if (filterSite.isNotEmpty)
+            ..._buildFilter(context, filterSite, false),
+
+          ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch_wj.png', false),
+          ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png', false),
+          ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter_wj.png', false),
+          ...valves.map((valve) => ValveWidget(valve: valve,customerId: customerId, controllerId: controllerId)),
+          ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png', false),
+        ];
+        return Align(
+          alignment: Alignment.topLeft,
+          child: Wrap(
+            alignment: WrapAlignment.start,
+            spacing: 0,
+            runSpacing: 0,
+            children: allItems,
+          ),
+        );
+      }else{
+        final wsAndFilterItems = [
+          if (inletWaterSources.isNotEmpty)
+            ..._buildWaterSource(context, inletWaterSources, true, true, false),
+
+          if (outletWaterSources.isNotEmpty)
+            ..._buildWaterSource(context, outletWaterSources, inletWaterSources.isNotEmpty? true : false, false, false),
+
+          if (filterSite.isNotEmpty)
+            ..._buildFilter(context, filterSite, false),
+        ];
+
+        final fertilizerItems = [
+          ..._buildFertilizer(context, fertilizerSite),
+        ];
+
+        final lineItems = [
+          ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch_wj.png', false),
+          ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png', false),
+          ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter_wj.png', false),
+          ...valves.map((valve) => ValveWidget(valve: valve,customerId: customerId, controllerId: controllerId)),
+          ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png', false),
+        ];
+
+        return Column(
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: Wrap(
+                alignment: WrapAlignment.start,
+                spacing: 0,
+                runSpacing: 0,
+                children: wsAndFilterItems,
+              ),
+            ),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Wrap(
+                alignment: WrapAlignment.start,
+                spacing: 0,
+                runSpacing: 0,
+                children: fertilizerItems,
+              ),
+            ),
+            Align(
+              alignment: Alignment.topLeft,
+              child: Wrap(
+                alignment: WrapAlignment.start,
+                spacing: 0,
+                runSpacing: 0,
+                children: lineItems,
+              ),
+            ),
+          ],
+        );
+      }
+
+
+    }
   }
-
 
   List<Widget> _buildWaterSource(BuildContext context, List<WaterSourceModel> waterSources,
       bool isAvailInlet, bool isInlet, bool isAvailFertilizer) {
@@ -469,20 +556,20 @@ class PumpStationWithLine extends StatelessWidget {
     }).toList();
   }
 
-  List<Widget> _buildFilter(BuildContext context, List<FilterSiteModel> filterSite) {
+  List<Widget> _buildFilter(BuildContext context, List<FilterSiteModel> filterSite, bool isFertAvail) {
     return filterSite.expand((site) => [
       if (site.pressureIn != null)
         Padding(
-          padding: const EdgeInsets.only(top: 38.5),
+          padding: EdgeInsets.only(top: isFertAvail? 38.5:8),
           child: PressureSensorWidget(sensor: site.pressureIn!),
         ),
       ...site.filters.map((filter) => Padding(
-        padding: const EdgeInsets.only(top: 38.5),
+        padding: EdgeInsets.only(top: isFertAvail? 38.5:8),
         child: FilterWidget(filter: filter, siteSno: filter.sNo.toString()),
       )),
       if (site.pressureOut != null)
         Padding(
-          padding: const EdgeInsets.only(top: 38.5),
+          padding: EdgeInsets.only(top: isFertAvail? 38.5:8),
           child: PressureSensorWidget(sensor: site.pressureOut!),
         ),
     ]).toList();

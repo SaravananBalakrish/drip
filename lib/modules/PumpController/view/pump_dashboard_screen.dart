@@ -858,7 +858,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
           "hardware": {"sentSms": "motor${index+1}$command"},
         };
         await mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "motor${index+1}$command"}), "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}",);
-        await repository.createUserSentAndReceivedMessageManually(data);
+        await repository.sendManualOperationToServer(data);
         await Future.delayed(Duration(seconds: delay));
         liveRequest();
       } : null,

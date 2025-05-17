@@ -51,10 +51,9 @@ class MasterControllerModel {
   final String categoryName;
   final int modelId;
   final String modelName;
-  final int? communicationMode;
+  int? communicationMode;
   List<ConfigObject> configObjects;
   List<NodeListModel> nodeList;
-  //List<WaterSourceModel> waterSources = [];
   final List<IrrigationLineModel> irrigationLine;
   List<ProgramList> programList;
   late final LiveMessage? live;

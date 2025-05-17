@@ -4,8 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:provider/provider.dart';
 import '../../Models/customer/site_model.dart';
+import '../../StateManagement/customer_provider.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../repository/repository.dart';
+import '../../services/communication_service.dart';
 import '../../services/http_service.dart';
 import '../../services/mqtt_service.dart';
 import '../../utils/constants.dart';
@@ -21,7 +23,6 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   late SiteModel mySiteList = SiteModel(data: []);
   int sIndex = 0, mIndex = 0, lIndex = 0;
   late String myCurrentSite;
-  late String myCurrentMaster;
   String fromWhere = '';
   String myCurrentIrrLine= 'No Line Available';
   int wifiStrength = 0;
@@ -32,9 +33,6 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   StreamSubscription<MqttConnectionState>? mqttSubscription;
 
   bool programRunning = false;
-
-  int? selectedMode;
-  String? selectedDevice;
 
   List<String> pairedDevices = [
     'Device A',
@@ -78,7 +76,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     });
   }
 
-  Future<void> getAllMySites(context, customerId) async {
+  Future<void> getAllMySites(context, int customerId) async {
     setLoading(true);
     try {
       Map<String, dynamic> body = {"userId": customerId};
@@ -90,10 +88,12 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
           mySiteList = SiteModel.fromJson(jsonData);
 
           updateSite(sIndex, mIndex, 0);
-          //updateMaster(sIndex, mIndex, 0);
           payloadProvider.saveUnits(Unit.toJsonList(mySiteList.data[0].master[0].units));
-
           var live = mySiteList.data[sIndex].master[mIndex].live;
+
+          final customerProvider = Provider.of<CustomerProvider>(context, listen: false);
+          customerProvider.updateCustomerInfo(customerId: customerId);
+          customerProvider.updateControllerCommunicationMode(cmmMode: mySiteList.data[sIndex].master[mIndex].communicationMode!);
 
           if (live != null) {
             String liveJson = jsonEncode(live);
@@ -135,9 +135,6 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   bool isChanged = true;
 
   void masterOnChanged(index) async{
-    /* int masterIdx = mySiteList.data[sIndex].master.indexWhere((master)=>
-    master.categoryName == categoryName && master.modelName == model);*/
-
     if (mySiteList.data[sIndex].master.length > 1) {
       mIndex = index;
       lIndex = 0;
@@ -165,8 +162,11 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   }
 
   void updateMaster(sIdx, mIdx, lIdx){
-    myCurrentMaster = mySiteList.data[sIdx].master[mIdx].categoryName;
-    selectedMode = mySiteList.data[sIdx].master[mIdx].communicationMode;
+    final customerProvider = Provider.of<CustomerProvider>(context, listen: false);
+    customerProvider.updateControllerInfo(
+        controllerId: mySiteList.data[sIdx].master[mIdx].controllerId,
+        device: mySiteList.data[sIdx].master[mIdx].deviceId);
+
     //subscribeCurrentMaster(sIdx, mIdx);
     if(mySiteList.data[sIdx].master[mIdx].categoryId == 1){
       updateMasterLine(sIdx, mIdx, lIdx);
@@ -208,22 +208,35 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   }
 
   Future<void>  onRefreshClicked() async {
-    if (mqttService.connectionState != MqttConnectionState.connected) {
-      mqttConnectionCallbackMethod();
-      return;
-    }
 
     String livePayload = '';
-    int attempts = 0;
-    bool responseReceived = false;
-    final deviceId = mySiteList.data[sIndex].master[mIndex].deviceId;
-    final topic = '${AppConstants.publishTopic}/$deviceId';
-
     if (mySiteList.data[sIndex].master[mIndex].categoryId == 1) {
       livePayload = jsonEncode({"3000": {"3001": ""}});
     } else {
       livePayload = jsonEncode({"sentSms": "#live"});
     }
+
+    payloadProvider.liveSyncCall(true);
+    final result = await context.read<CommunicationService>().sendCommand(serverMsg:'', payload: livePayload);
+    if (result['http'] == true) {
+      debugPrint("Payload sent to Server");
+    }
+    if (result['mqtt'] == true) {
+      debugPrint("Payload sent to MQTT Box");
+    }
+    if (result['bluetooth'] == true) {
+      debugPrint("Payload sent via Bluetooth");
+    }
+    await Future.delayed(const Duration(milliseconds: 1000));
+    payloadProvider.liveSyncCall(false);
+
+    /*if (mqttService.connectionState != MqttConnectionState.connected) {
+      mqttConnectionCallbackMethod();
+      return;
+    }
+
+    int attempts = 0;
+    bool responseReceived = false;
 
     payloadProvider.liveSyncCall(true);
     payloadProvider.isLiveSynced = true;
@@ -253,14 +266,14 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
       payloadProvider.isLiveSynced = false;
     }
 
-    payloadProvider.liveSyncCall(false);
+    payloadProvider.liveSyncCall(false);*/
   }
 
   bool getPermissionStatusBySNo(BuildContext context, int sNo) {
     return true;
   }
 
-  void linePauseOrResume(var lineLiveMgs, int customerId, int controllerId) {
+  Future<void> linePauseOrResume(var lineLiveMgs) async {
     String strPRPayload = '';
     bool allPaused = lineLiveMgs.every((line) => line.split(',')[1] == '1');
     for (int i = 0; i < lineLiveMgs.length; i++) {
@@ -274,13 +287,39 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
       "4900": {"4901": strPRPayload}
     });
 
-    MqttService().topicToPublishAndItsMessage(payloadFinal, '${AppConstants.publishTopic}/${mySiteList.data[sIndex].master[mIndex].deviceId}');
-    if (allPaused) {
-      sendToServer('Resumed all line', payloadFinal, customerId, controllerId);
-    } else {
-      sendToServer('Paused all line', payloadFinal, customerId, controllerId);
+    final result = await context.read<CommunicationService>().sendCommand(
+        serverMsg: allPaused? 'Resumed all line':'Paused all line', payload: payloadFinal);
+    if (result['http'] == true) {
+      debugPrint("Payload sent to Server");
+    }
+    if (result['mqtt'] == true) {
+      debugPrint("Payload sent to MQTT Box");
+    }
+    if (result['bluetooth'] == true) {
+      debugPrint("Payload sent via Bluetooth");
     }
 
+  }
+
+  Future<void> updateCommunicationMode(int communicationMode, int customerId) async {
+    try {
+      Map<String, dynamic> body = {
+        "userId": customerId,
+        "controllerId": mySiteList.data[sIndex].master[mIndex].controllerId,
+        "communicationMode": communicationMode,
+        "modifyUser": customerId
+      };
+      final response = await repository.updateControllerCommunicationMode(body);
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        if (jsonData["code"] == 200) {
+          final customerProvider = Provider.of<CustomerProvider>(context, listen: false);
+          customerProvider.updateControllerCommunicationMode(cmmMode: communicationMode);
+        }
+      }
+    } catch (error) {
+      errorMsg = 'Error fetching site list: $error';
+    }
   }
 
   @override
@@ -298,19 +337,5 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     //selectedIndex = index;
     //notifyListeners();
   }
-
-  void sendToServer(String msg, String data, int customerId, int controllerId) async
-  {
-    Map<String, Object> body = {"userId": customerId, "controllerId": controllerId, "messageStatus": msg, "hardware": jsonDecode(data), "createUser": customerId};
-    final response = await Repository(HttpService()).createUserSentAndReceivedMessageManually(body);
-    if (response.statusCode == 200) {
-      print(response.body);
-    } else {
-      throw Exception('Failed to load data');
-    }
-  }
-
-  int controllerId = 0;
-  int customerId = 0;
 
 }

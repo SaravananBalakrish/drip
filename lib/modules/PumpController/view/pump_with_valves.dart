@@ -123,7 +123,7 @@ class PumpWithValves extends StatelessWidget {
                                 "messageStatus": "Change to successfully for ${valves[i].name}",
                                 "createUser": userId
                               };
-                              await repository.createUserSentAndReceivedMessageManually(body);
+                              await repository.sendManualOperationToServer(body);
                             } : null,
                             child: Text(valves[i].name),
                           ),
