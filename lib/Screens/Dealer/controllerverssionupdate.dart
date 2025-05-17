@@ -393,7 +393,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
 
 
     final Repository repository = Repository(HttpService());
-    var response = await repository.createUserSentAndReceivedMessageManually(body);
+    var response = await repository.sendManualOperationToServer(body);
 
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);

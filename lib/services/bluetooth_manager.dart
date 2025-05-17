@@ -23,6 +23,7 @@ class BluetoothManager with ChangeNotifier {
 
   List<CustomDevice> get pairedDevices => _devices;
   Uint8List get receivedData => _data;
+  bool get isConnected => connectedDevice != null;
 
   BluetoothManager() {
     _listenToEvents();
@@ -30,12 +31,21 @@ class BluetoothManager with ChangeNotifier {
 
   void _listenToEvents() {
     initPermissions();
+
     _bluetoothClassicPlugin.onDeviceStatusChanged().listen((status) {
       for (var d in _devices) {
-        d.status = (d.device.address == _connectedAddress) ? status : BluDevice.disconnected;
+        if (d.device.address == _connectedAddress) {
+          d.status = status;
+          if (status == BluDevice.disconnected) {
+            _connectedAddress = null;
+          }
+        } else {
+          d.status = BluDevice.disconnected;
+        }
       }
       notifyListeners();
     });
+
 
     _bluetoothClassicPlugin.onDeviceDataReceived().listen((event) {
       _data = Uint8List.fromList([..._data, ...event]);
@@ -47,31 +57,42 @@ class BluetoothManager with ChangeNotifier {
     await _bluetoothClassicPlugin.initPermissions();
   }
 
+
   Future<void> getDevices() async {
     var res = await _bluetoothClassicPlugin.getPairedDevices();
     _devices = res.map((e) => CustomDevice(device: e)).toList();
     notifyListeners();
   }
 
-  Future<void> connectToDevice(CustomDevice customDevice) async {
-    try {
-      _connectedAddress = customDevice.device.address;
-      customDevice.status = Device.connecting;
-      notifyListeners();
 
-      try {
-        await _bluetoothClassicPlugin
-            .connect(customDevice.device.address, "00001101-0000-1000-8000-00805f9b34fb")
-            .timeout(const Duration(seconds: 5));
-      } catch (e) {
-        customDevice.status = BluDevice.disconnected;
-        notifyListeners();
-        debugPrint("Connection error: $e");
-      }
+  Future<void> connectToDevice(CustomDevice customDevice) async {
+    _connectedAddress = customDevice.device.address;
+    customDevice.status = BluDevice.connecting;
+    notifyListeners();
+
+    try {
+      await _bluetoothClassicPlugin.connect(
+          customDevice.device.address,
+          "00001101-0000-1000-8000-00805f9b34fb"
+      ).timeout(const Duration(seconds: 5));
+
+      customDevice.status = BluDevice.connected;
     } catch (e) {
-      customDevice.status = Device.disconnected;
-      notifyListeners();
-      print("Connection failed: $e");
+      customDevice.status = BluDevice.disconnected;
+      _connectedAddress = null;
+    }
+
+    notifyListeners();
+  }
+
+
+  CustomDevice? get connectedDevice {
+    try {
+      return _devices.firstWhere((device) =>
+      device.device.address == _connectedAddress && device.isConnected,
+      );
+    } catch (e) {
+      return null;
     }
   }
 

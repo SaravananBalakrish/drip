@@ -463,7 +463,7 @@ class PumpWidget extends StatelessWidget {
   void sentUserOperationToServer(String msg, String data) async
   {
     Map<String, Object> body = {"userId": customerId, "controllerId": controllerId, "messageStatus": msg, "hardware": jsonDecode(data), "createUser": customerId};
-    final response = await Repository(HttpService()).createUserSentAndReceivedMessageManually(body);
+    final response = await Repository(HttpService()).sendManualOperationToServer(body);
     if (response.statusCode == 200) {
       print(response.body);
     } else {
