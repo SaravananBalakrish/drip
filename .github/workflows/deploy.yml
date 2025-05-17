@@ -2,7 +2,7 @@ name: Build & Deploy to Play Store
 
 on:
   push:
-    branches: [main]
+    branches: [saravanan]
     tags:
       - '*'
 jobs:
