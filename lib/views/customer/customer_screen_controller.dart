@@ -2,10 +2,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Screens/Dealer/sevicecustomer.dart';
 import 'package:oro_drip_irrigation/Screens/Logs/irrigation_and_pump_log.dart';
-import 'package:oro_drip_irrigation/Screens/Map/MapDeviceList.dart';
 import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/program_library.dart';
-import 'package:oro_drip_irrigation/views/customer/program_schedule.dart';
 import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
 import 'package:oro_drip_irrigation/views/customer/site_config.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone.dart';
@@ -17,7 +15,6 @@ import '../../Screens/Map/allAreaBoundry.dart';
 import '../../Screens/planning/FactoryReset.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../flavors.dart';
-import '../../modules/PumpController/model/pump_controller_data_model.dart';
 import '../../modules/PumpController/view/node_settings.dart';
 import '../../modules/ScheduleView/view/schedule_view_screen.dart';
 import '../../modules/PumpController/view/pump_controller_home.dart';
@@ -58,7 +55,8 @@ class CustomerScreenController extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => NavRailViewModel()),
         ChangeNotifierProvider(
-          create: (_) => CustomerScreenControllerViewModel(context, Repository(HttpService()))..getAllMySites(context, customerId),
+          create: (_) => CustomerScreenControllerViewModel(context, Repository(HttpService()))
+            ..getAllMySites(context, customerId),
         ),
       ],
       child: Consumer2<NavRailViewModel, CustomerScreenControllerViewModel>(
@@ -289,11 +287,7 @@ class CustomerScreenController extends StatelessWidget {
                         });
 
                         return TextButton(
-                          onPressed: () => vm.linePauseOrResume(
-                            iLineLiveMessage,
-                            customerId,
-                            vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
-                          ),
+                          onPressed: () => vm.linePauseOrResume(iLineLiveMessage),
                           style: ButtonStyle(
                             backgroundColor: WidgetStateProperty.all<Color>(
                               allPaused ? Colors.green : Colors.orange,

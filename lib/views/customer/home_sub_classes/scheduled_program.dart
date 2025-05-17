@@ -746,7 +746,7 @@ class ScheduledProgram extends StatelessWidget {
 
   Future<void> sentToServer(String msg, dynamic payLoad, int userId, int controllerId, int customerId) async {
     Map<String, Object> body = {"userId": customerId, "controllerId": controllerId, "messageStatus": msg.isNotEmpty ? msg : 'Just sent without changes', "data": payLoad, "hardware": payLoad, "createUser": userId};
-    final response = await Repository(HttpService()).createUserSentAndReceivedMessageManually(body);
+    final response = await Repository(HttpService()).sendManualOperationToServer(body);
     if (response.statusCode == 200) {
       print(response.body);
     } else {
@@ -757,7 +757,7 @@ class ScheduledProgram extends StatelessWidget {
   void sentUserOperationToServer(String msg, String data) async
   {
     Map<String, Object> body = {"userId": customerId, "controllerId": controllerId, "messageStatus": msg, "hardware": jsonDecode(data), "createUser": userId};
-    final response = await Repository(HttpService()).createUserSentAndReceivedMessageManually(body);
+    final response = await Repository(HttpService()).sendManualOperationToServer(body);
     if (response.statusCode == 200) {
       print(response.body);
     } else {
