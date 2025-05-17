@@ -128,19 +128,16 @@ class NextSchedule extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 9, top: 3),
-          child: Container(
-            width: MediaQuery.sizeOf(context).width-15,
-            height: 22,
-            color: Colors.orange.shade200,
-            child: const Padding(
-              padding: EdgeInsets.only(left: 8),
-              child: Text(
-                'NEXT IN QUEUE',
-                textAlign: TextAlign.start,
-                style: TextStyle(color: Colors.black54, fontSize: 15),
-              ),
+        Container(
+          width: MediaQuery.sizeOf(context).width,
+          height: 22,
+          color: Colors.orange.shade200,
+          child: const Padding(
+            padding: EdgeInsets.only(left: 8),
+            child: Text(
+              'NEXT IN QUEUE',
+              textAlign: TextAlign.start,
+              style: TextStyle(color: Colors.black54, fontSize: 15),
             ),
           ),
         ),
@@ -156,64 +153,56 @@ class NextSchedule extends StatelessWidget {
 
   Widget buildNextScheduleRow(BuildContext context, List<String> values) {
     final programName = getProgramNameById(int.parse(values[0]));
-    return Padding(
-      padding: const EdgeInsets.only(left: 5, right: 8),
-      child: Card(
-        margin: const EdgeInsets.only(left: 4.5, bottom: 5),
-        color: Colors.white,
-        child: Row(
-          children: [
-            Container(
-              width: 3,
-              height: 70,
-              color: Colors.orange.shade200,
-            ),
-            const Padding(
-              padding: EdgeInsets.only(left: 8),
-              child: SizedBox(
-                width: 170,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Program Name & Method', style: TextStyle(color: Colors.black45)),
-                    SizedBox(height: 2),
-                    Text('Next Zone & Name', style: TextStyle(color: Colors.black45)),
-                    SizedBox(height: 2),
-                    Text('Start time & Set (Dur/Flw)', style: TextStyle(color: Colors.black45)),
-                    SizedBox(height: 2),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(
-              width: 10,
+    return Card(
+      margin: const EdgeInsets.only(bottom: 5),
+      color: Colors.white,
+      child: Row(
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(left: 10),
+            child: SizedBox(
+              width: 170,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(':'),
+                  Text('Program Name & Method', style: TextStyle(color: Colors.black45)),
                   SizedBox(height: 2),
-                  Text(':'),
+                  Text('Next Zone & Name', style: TextStyle(color: Colors.black45)),
                   SizedBox(height: 2),
-                  Text(':'),
+                  Text('Start time & Set (Dur/Flw)', style: TextStyle(color: Colors.black45)),
                   SizedBox(height: 2),
                 ],
               ),
             ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('$programName - ${scheduledPrograms[0].selectedSchedule}'),
-                  const SizedBox(height: 1),
-                  Text('${values[7]} - ${getSequenceName(int.parse(values[0]), values[1]) ?? '--'}'),
-                  const SizedBox(height: 3),
-                  Text('${convert24HourTo12Hour(values[6])} - ${values[3]}'),
-                  SizedBox(height: 2),
-                ],
-              ),
-            )
-          ],
-        ),
+          ),
+          const SizedBox(
+            width: 10,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(':'),
+                SizedBox(height: 2),
+                Text(':'),
+                SizedBox(height: 2),
+                Text(':'),
+                SizedBox(height: 2),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('$programName - ${scheduledPrograms[0].selectedSchedule}'),
+                const SizedBox(height: 1),
+                Text('${values[7]} - ${getSequenceName(int.parse(values[0]), values[1]) ?? '--'}'),
+                const SizedBox(height: 3),
+                Text('${convert24HourTo12Hour(values[6])} - ${values[3]}'),
+                SizedBox(height: 2),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }

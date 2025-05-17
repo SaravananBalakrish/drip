@@ -196,15 +196,21 @@ class CurrentProgram extends StatelessWidget {
             ),
           ),
         ),
-        Column(
-          children: List.generate(schedule.length * 2 - 1, (index) {
-            if (index.isEven) {
-              List<String> values = schedule[index ~/ 2].split(',');
-              return buildScheduleRow(context, values);
-            } else {
-              return const Divider(height: 1, color: Colors.grey);
-            }
-          }),
+        Container(
+          color: Colors.white,
+          child: Column(
+            children: List.generate(schedule.length * 2 - 1, (index) {
+              if (index.isEven) {
+                List<String> values = schedule[index ~/ 2].split(',');
+                return buildScheduleRow(context, values);
+              } else {
+                return const Padding(
+                  padding: EdgeInsets.only(left: 8, right: 8),
+                  child: Divider(height: 1, color: Colors.grey),
+                );
+              }
+            }),
+          ),
         ),
       ],
     );
@@ -266,116 +272,183 @@ class CurrentProgram extends StatelessWidget {
     final programName = getProgramNameById(int.parse(values[0]));
     return SizedBox(
       width: MediaQuery.sizeOf(context).width,
-      height: 125,
+      height: 143,
       child: Padding(
-        padding: const EdgeInsets.only(left: 8, top: 5),
-        child: Row(
+        padding: const EdgeInsets.only(left: 8),
+        child: Column(
           children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            SizedBox(
+              width: MediaQuery.sizeOf(context).width,
+              height: 35,
+              child: Row(
                 children: [
-                  RichText(
-                    text: TextSpan(
-                      text: '$programName - ',
-                      style: const TextStyle(color:Colors.black, fontWeight: FontWeight.bold, fontSize: 15),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: programName == 'StandAlone - Manual' ? '--' :
-                          getSequenceName(int.parse(values[0]), values[1]) ?? '--',
-                          style: const TextStyle(fontWeight: FontWeight.normal, color: Colors.blue),
-                        ),
+                  const Padding(
+                    padding: EdgeInsets.only(left: 3),
+                    child: SizedBox(
+                      width: 110,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Name & Method', style: TextStyle(color: Colors.black45)),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(':'),
                       ],
                     ),
                   ),
-                  Text(getContentByCode(int.parse(values[17])), style: const TextStyle(color: Colors.black54)),
-                  const SizedBox(height: 5),
-                  RichText(
-                    text: TextSpan(
-                      text: 'Started at         :  ',
-                      style: const TextStyle(color:Colors.black, fontWeight: FontWeight.normal),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: convert24HourTo12Hour(values[11]),
-                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                        ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('$programName - ${scheduledPrograms[0].selectedSchedule}'),
+                        Text(getContentByCode(int.parse(values[17])), style: const TextStyle(fontSize: 11, color: Colors.black54),),
                       ],
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  RichText(
-                    text: TextSpan(
-                      text: 'Current Zone   :  ',
-                      style: const TextStyle(color:Colors.black, fontWeight: FontWeight.normal),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: '${values[10]} of ${values[9]}',
-                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  RichText(
-                    text: TextSpan(
-                      text: 'Rtc & Cyclic     :  ',
-                      style: const TextStyle(color:Colors.black, fontWeight: FontWeight.normal),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: '${formatRtcValues(values[6], values[5])} - ${formatRtcValues(values[8], values[7])}',
-                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  RichText(
-                    text: TextSpan(
-                      text: 'Set Value         :  ',
-                      style: const TextStyle(color:Colors.black, fontWeight: FontWeight.normal),
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: programName == 'StandAlone - Manual' && (values[3] == '00:00:00' || values[3] == '0')
-                              ? 'Timeless'
-                              : values[3],
-                          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-                        ),
-                      ],
-                    ),
-                  ),
+                  )
                 ],
               ),
             ),
-            SizedBox(
-              width: 130,
-              child: Column(
-                children: [
-                  const Spacer(),
-                  Column(
+            Row(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 3),
+                  child: SizedBox(
+                    width: 110,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Current Zone', style: TextStyle(color: Colors.black45)),
+                        SizedBox(height: 2),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Remaining', style: TextStyle(color: Colors.black45)),
-                      Padding(
-                        padding: const EdgeInsets.only(top:2, bottom: 5),
-                        child: Container(
-                          width: 75,
-                          height: 1,
-                          color: Colors.black12,
-                        ),
-                      ),
-                      Center(child: Text(
-                        getProgramNameById(int.parse(values[0])) == 'StandAlone - Manual' &&
-                            (values[3] == '00:00:00' || values[3] == '0')
-                            ? '----'
-                            : values[4],
-                        style: const TextStyle(fontSize: 20),
-                      )),
+                      Text(':'),
+                      SizedBox(height: 2),
                     ],
                   ),
-                  const Spacer(),
-                  buildActionButton(context, values),
-                  const Spacer(),
-                ],
-              ),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(programName == 'StandAlone - Manual' ? '--' :
+                      getSequenceName(int.parse(values[0]), values[1]) ?? '--',),
+                      const SizedBox(height: 3),
+                    ],
+                  ),
+                )
+              ],
+            ),
+            Row(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(left: 3),
+                  child: SizedBox(
+                    width: 110,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Started at', style: TextStyle(color: Colors.black45)),
+                        SizedBox(height: 2),
+                        Text('Current Zone', style: TextStyle(color: Colors.black45)),
+                        SizedBox(height: 2),
+                        Text('Rtc & Cyclic', style: TextStyle(color: Colors.black45)),
+                        SizedBox(height: 2),
+                        Text('Set Value', style: TextStyle(color: Colors.black45)),
+                        SizedBox(height: 2),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(
+                  width: 10,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(':'),
+                      SizedBox(height: 2),
+                      Text(':'),
+                      SizedBox(height: 2),
+                      Text(':'),
+                      SizedBox(height: 2),
+                      Text(':'),
+                      SizedBox(height: 2),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: Row(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(convert24HourTo12Hour(values[11])),
+                          const SizedBox(height: 2),
+                          Text('${values[10]} of ${values[9]}'),
+                          const SizedBox(height: 1),
+                          Text('${formatRtcValues(values[6], values[5])} - ${formatRtcValues(values[8], values[7])}'),
+                          const SizedBox(height: 3),
+                          Text(programName == 'StandAlone - Manual' && (values[3] == '00:00:00' || values[3] == '0')
+                              ? 'Timeless'
+                              : values[3]),
+                          const SizedBox(height: 2),
+                        ],
+                      ),
+                      SizedBox(
+                        width: 225,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Spacer(),
+                            Container(
+                              width: 1,
+                              height: 70,
+                              color: Colors.black26,
+                            ),
+                            const Spacer(),
+                            Column(
+                              children: [
+                                const Text('Remaining', style: TextStyle(color: Colors.black45)),
+                                Padding(
+                                  padding: const EdgeInsets.only(top:2, bottom: 5),
+                                  child: Container(
+                                    width: 75,
+                                    height: 1,
+                                    color: Colors.black12,
+                                  ),
+                                ),
+                                Center(child: Text(
+                                  getProgramNameById(int.parse(values[0])) == 'StandAlone - Manual' &&
+                                      (values[3] == '00:00:00' || values[3] == '0')
+                                      ? '----'
+                                      : values[4],
+                                  style: const TextStyle(fontSize: 20),
+                                )),
+                              ],
+                            ),
+                            const Spacer(),
+                            buildActionButton(context, values),
+                            const Spacer(),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -444,7 +517,7 @@ class CurrentProgram extends StatelessWidget {
   void sentUserOperationToServer(String msg, String data) async
   {
     Map<String, Object> body = {"userId": customerId, "controllerId": controllerId, "messageStatus": msg, "hardware": jsonDecode(data), "createUser": customerId};
-    final response = await Repository(HttpService()).createUserSentAndReceivedMessageManually(body);
+    final response = await Repository(HttpService()).sendManualOperationToServer(body);
     if (response.statusCode == 200) {
       print(response.body);
     } else {

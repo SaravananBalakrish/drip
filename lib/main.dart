@@ -1,18 +1,19 @@
 import 'dart:async';
 import 'package:az_notification_hub/az_notification_hub.dart';
+import 'package:bluetooth_classic/bluetooth_classic.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/state_management/pump_controller_provider.dart';
-import 'package:oro_drip_irrigation/services/ble_service.dart';
 import 'package:oro_drip_irrigation/services/bluetooth_manager.dart';
+import 'package:oro_drip_irrigation/services/communication_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'Screens/Constant/ConstantPageProvider/changeNotifier_constantProvider.dart';
-import 'Screens/planning/test.dart';
 import 'app/app.dart';
+import 'StateManagement/customer_provider.dart';
 import 'firebase_options.dart';
 import 'modules/IrrigationProgram/state_management/irrigation_program_provider.dart';
 import 'modules/Preferences/state_management/preference_provider.dart';
@@ -28,9 +29,7 @@ final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterL
 // Background message handler for Firebase
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  if (kDebugMode) {
-    print("Handling a background message: ${message.messageId}");
-  }
+  print("Handling a background message: ${message.messageId}");
 }
 
 FutureOr<void> main() async {
@@ -64,10 +63,13 @@ FutureOr<void> main() async {
 
       // Start Azure Notification Hub
       await AzureNotificationHub.instance.start();
+
     } catch (e) {
       debugPrint('Initialization error: $e');
     }
   }
+
+
 
   final mqttService = MqttService();
   final myMqtt = MqttPayloadProvider();
@@ -75,6 +77,7 @@ FutureOr<void> main() async {
   runApp(
     MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => CustomerProvider()),
         ChangeNotifierProvider(create: (_) => ConfigMakerProvider()),
         ChangeNotifierProvider(create: (_) => IrrigationProgramMainProvider()),
         ChangeNotifierProvider(create: (_) => myMqtt),
@@ -84,10 +87,22 @@ FutureOr<void> main() async {
         ChangeNotifierProvider(create: (_) => ConstantProviderMani()),
         ChangeNotifierProvider(create: (_) => ConstantProvider()),
         ChangeNotifierProvider(create: (_) => PumpControllerProvider()),
-        ChangeNotifierProvider(create: (_) => BluetoothManager()),
-        ChangeNotifierProvider(create: (_) => BleService()),
+
+        if (!kIsWeb)
+          ChangeNotifierProvider<BluetoothManager>(create: (_) => BluetoothManager(),),
+
+        ProxyProvider2<BluetoothManager?, CustomerProvider, CommunicationService>(
+          update: (BuildContext context, BluetoothManager? bluetooth, CustomerProvider customer, CommunicationService? previous) {
+            return CommunicationService(
+              mqttService: mqttService,
+              bluetoothManager: bluetooth,
+              customerProvider: customer,
+            );
+          },
+        ),
+
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }

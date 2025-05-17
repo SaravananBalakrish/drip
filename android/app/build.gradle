@@ -55,6 +55,35 @@ android {
     compileSdk = 35
     ndkVersion = flutter.ndkVersion
 
+    signingConfigs {
+        release {
+            if (System.getenv("CI")) {
+                // Use the base64-encoded keystore for CI
+                def keystoreBase64 = System.getenv("KEYSTORE_BASE64")
+                def keystoreFile = file("$buildDir/keystore/release-key.jks")
+
+                // Decode base64 and save the keystore file to disk for CI
+                /*doLast {
+                    new File("$buildDir/keystore").mkdirs() // Ensure the directory exists
+                    if (!keystoreFile.exists()) {
+                        keystoreFile.write(new String(Base64.decoder.decode(keystoreBase64), "UTF-8"))
+                    }
+                }*/
+
+                storeFile keystoreFile
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
+            } else {
+                // Local development configuration (this can stay as it is)
+                storeFile file("D:\\drip\\android\\app\\release-key.jks")
+                storePassword = "Oro@321"
+                keyAlias = "upload"
+                keyPassword = "Oro@321"
+            }
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -73,7 +102,8 @@ android {
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = flutterVersionCode.toInteger()
+        versionCode = 3
+//        versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }
 
@@ -81,7 +111,7 @@ android {
         release {
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.release
         }
     }
 }

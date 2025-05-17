@@ -383,7 +383,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
     final phase = pumpItem.phase;
     final otherTripCondition = [13, 14, 1, 2].contains(pumpItem.reasonCode);
     final tripCondition = voltageTripCondition || currentTripCondition || otherTripCondition;
-    final remainingTimeCondition = mqttService.connectionState == MqttConnectionState.connected && (pumpItem.maximumRunTimeRemaining != "00:00:00"
+    final remainingTimeCondition = mqttService.isConnected && (pumpItem.maximumRunTimeRemaining != "00:00:00"
         && pumpItem.maximumRunTimeRemaining != "")
         && !tripCondition
         && (pumpItem.status == 1);
@@ -858,7 +858,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
           "hardware": {"sentSms": "motor${index+1}$command"},
         };
         await mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "motor${index+1}$command"}), "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}",);
-        await repository.createUserSentAndReceivedMessageManually(data);
+        await repository.sendManualOperationToServer(data);
         await Future.delayed(Duration(seconds: delay));
         liveRequest();
       } : null,

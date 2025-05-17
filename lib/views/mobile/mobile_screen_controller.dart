@@ -1,6 +1,5 @@
 import 'package:bluetooth_classic/models/device.dart';
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/Models/servicecustomermodel.dart';
 import 'package:oro_drip_irrigation/Screens/Dealer/sevicecustomer.dart';
 import 'package:oro_drip_irrigation/Screens/Logs/irrigation_and_pump_log.dart';
 import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
@@ -8,6 +7,7 @@ import 'package:oro_drip_irrigation/modules/ScheduleView/view/schedule_view_scre
 import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
 import '../../Models/customer/site_model.dart';
 import 'package:provider/provider.dart';
+import '../../StateManagement/customer_provider.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../flavors.dart';
 import '../../modules/IrrigationProgram/view/program_library.dart';
@@ -56,6 +56,8 @@ class MobileScreenController extends StatelessWidget {
       child: Consumer2<NavRailViewModel, CustomerScreenControllerViewModel>(
         builder: (context, navViewModel, vm, _) {
           final mqttProvider = Provider.of<MqttPayloadProvider>(context);
+          final commMode = Provider.of<CustomerProvider>(context).controllerCommMode;
+          final manager = Provider.of<BluetoothManager>(context);
 
           int wifiStrength = mqttProvider.wifiStrength;
           String liveDataAndTime = mqttProvider.liveDateAndTime;
@@ -86,7 +88,7 @@ class MobileScreenController extends StatelessWidget {
                 fit: BoxFit.fitWidth,
               ):
               Image.asset(
-                width: 100,
+                width: 160,
                 "assets/png/lk_logo_white.png",
                 fit: BoxFit.fitWidth,
               ),
@@ -663,10 +665,13 @@ class MobileScreenController extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 FloatingActionButton(
-                  backgroundColor: Theme.of(context).primaryColorLight,
-                  onPressed: ()=>_showBottomSheet(context, vm),
+                  backgroundColor: commMode == 1? Theme.of(context).primaryColorLight:
+                  (commMode == 2 && manager.isConnected) ?
+                  Theme.of(context).primaryColorLight : Colors.redAccent,
+                  onPressed: ()=>_showBottomSheet(context, vm, vm.mySiteList.data[vm.sIndex].master[vm
+                      .mIndex].controllerId),
                   tooltip: 'Second Action',
-                  child: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].communicationMode == 1?
+                  child: commMode == 1?
                   Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -680,8 +685,8 @@ class MobileScreenController extends StatelessWidget {
                       Text('${vm.wifiStrength} %',style: const TextStyle(fontSize: 11.0, color: Colors.white70),
                       ),
                     ],
-                  ):
-                  const Icon(Icons.bluetooth,
+                  ) :
+                  Icon((commMode == 2 && manager.isConnected)?Icons.bluetooth:Icons.bluetooth_disabled,
                   color: Colors.white),
                 ),
               ],
@@ -840,7 +845,8 @@ class MobileScreenController extends StatelessWidget {
       case 2:
         return SentAndReceived(customerId: userId, controllerId: controllerId);
       case 3:
-        return IrrigationAndPumpLog(userData: {'userId' : userId, 'controllerId' : controllerId}, masterData: masterData[masterIndex],);
+        return IrrigationAndPumpLog(userData: {'userId' : userId, 'controllerId' : controllerId},
+          masterData: masterData[masterIndex]);
       case 4:
         return ControllerSettings(
           customerId: customerId,
@@ -855,7 +861,7 @@ class MobileScreenController extends StatelessWidget {
     }
   }
 
-  void _showBottomSheet(BuildContext context, CustomerScreenControllerViewModel vm) {
+  void _showBottomSheet(BuildContext context, CustomerScreenControllerViewModel vm, controllerId) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -865,6 +871,7 @@ class MobileScreenController extends StatelessWidget {
       builder: (_) {
         return StatefulBuilder(builder: (context, setModalState) {
           final manager = Provider.of<BluetoothManager>(context);
+          final commMode = Provider.of<CustomerProvider>(context).controllerCommMode;
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Wrap(
@@ -877,64 +884,54 @@ class MobileScreenController extends StatelessWidget {
                 ListTile(
                   leading: const Icon(Icons.wifi),
                   title: const Text("Wi-Fi / MQTT"),
-                  trailing: vm.selectedMode == 1
+                  trailing: commMode == 1
                       ? Icon(Icons.check, color: Theme.of(context).primaryColorLight)
                       : null,
                   onTap: () {
-                    setModalState(() {
-                      vm.selectedMode = 1;
-                      vm.selectedDevice = null;
-                    });
+                    vm.updateCommunicationMode(1, customerId);
                   },
                 ),
                 ListTile(
                   leading: const Icon(Icons.bluetooth),
                   title: const Text("Bluetooth"),
-                  trailing: vm.selectedMode == 2
+                  trailing: commMode == 2
                       ? Icon(Icons.check, color: Theme.of(context).primaryColorLight)
                       : null,
                   onTap: () {
-                    setModalState(() {
-                      vm.selectedMode = 2;
-                      vm.selectedDevice = null;
-                    });
+                    vm.updateCommunicationMode(2, customerId);
                   },
                 ),
-                if (vm.selectedMode == 2) ...[
+                if (commMode == 2) ...[
                   const Divider(),
                   ListTile(
                     dense: true,
                     visualDensity: VisualDensity.compact,
                     contentPadding: EdgeInsets.zero,
-                    title: const Text("Connect System Paired Device", style: TextStyle(fontWeight: FontWeight.bold)),
+                    title: const Text("Connect Mobile Paired Controller",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                     trailing: IconButton(
-                      icon: const Icon(Icons.search, color: Colors.black),
+                      icon: const Icon(Icons.refresh_outlined, color: Colors.black),
                       onPressed: () => manager.getDevices(),
                     ),
                   ),
                   const SizedBox(height: 10),
-                  ...manager.pairedDevices.map((d) {
-                    return ListTile(
-                      title: Text(d.device.name ??''),
-                      subtitle: Text(d.device.address),
-                      trailing: TextButton(
-                        onPressed:() => d.status == Device.disconnected ?
-                        manager.connectToDevice(d) : null,
-                        child: d.isConnected? const Icon(Icons.check, color: Colors.blue) :
-                        const Text('Connect'),
-                      ),
-                      /*trailing: vm.selectedDevice == d.device.name
-                          ? const Icon(Icons.check, color: Colors.blue)
-                          : null,*/
-                     /* onTap: () {
-                        d.status == Device.disconnected ?
-                        manager.connectToDevice(d) : null;
-                        *//*setModalState(() {
-                          vm.selectedDevice = d.device.name;
-                        });*//*
-                      },*/
-                    );
-                  }).toList()
+                  if(manager.pairedDevices.isNotEmpty)...[
+                    ...manager.pairedDevices.map((d) {
+                      return ListTile(
+                        title: Text(d.device.name ??''),
+                        subtitle: Text(d.device.address),
+                        trailing: TextButton(
+                          onPressed:() => d.status == Device.disconnected?
+                          manager.connectToDevice(d) : null,
+                          child: d.isConnected? const Text('Connected', style: TextStyle(color: Colors.green)) :
+                          const Text('Connect'),
+                        ),
+                      );
+                    })
+                  ]else...[
+                    const Center(child: Text('Make sure your phone is paired with the controller, then tap the refresh icon to try again',
+                    style: TextStyle(fontSize: 12, color: Colors.black38)))
+                  ]
                 ],
               ],
             ),
