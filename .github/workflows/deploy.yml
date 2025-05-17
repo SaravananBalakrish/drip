@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          fetch-depth: 0  # Full clone
+          fetch-depth: 0
 
       - name: List files for debugging
         run: ls -R lib/models/
@@ -30,24 +30,45 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Clear Flutter cache
+        run: flutter clean
+
       - name: Decode keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/release-key.jks
+          mkdir -p build/keystore
+          echo "$KEYSTORE_BASE64" | base64 --decode > build/keystore/release-key.jks
+
+      - name: Verify keystore file
+        run: |
+          ls -R build/keystore/
+          cat android/key.properties || echo "No key.properties file"
+          echo "CI env: $CI"
+          echo "KEYSTORE_BASE64 is set: ${KEYSTORE_BASE64:+set}"
+          echo "KEYSTORE_PASSWORD is set: ${KEYSTORE_PASSWORD:+set}"
+          echo "KEY_ALIAS is set: ${KEY_ALIAS:+set}"
+          echo "KEY_PASSWORD is set: ${KEY_PASSWORD:+set}"
 
       - name: Create key.properties
         run: |
           echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-          echo "storeFile=release-key.jks" >> android/key.properties
+          echo "storeFile=../build/keystore/release-key.jks" >> android/key.properties
 
       - name: Build AAB (oroProduction flavor)
-        run: flutter build appbundle --flavor oroProduction -t lib/main_oroProduction.dart
+        env:
+          CI: true
+        run: flutter build appbundle --flavor oroProduction -t lib/main_oroProduction.dart --stacktrace --verbose
 
       - name: Upload to Play Store (Internal testing)
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_JSON }}
-          packageName: com.example.oro_drip_irrigation
+          packageName: com.niagaraautomations.oroDripirrigation
           releaseFiles: build/app/outputs/bundle/oroProductionRelease/app-oroProduction-release.aab
           track: internal
