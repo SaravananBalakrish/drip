@@ -34,27 +34,17 @@ jobs:
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/release-key.jks
 
-      - name: Verify keystore file
-        run: |
-          ls -R build/keystore/
-          cat android/key.properties || echo "No key.properties file"
-          echo "CI env: $CI"
-          echo "KEYSTORE_BASE64 is set: ${KEYSTORE_BASE64:+set}"
-          echo "KEYSTORE_PASSWORD is set: ${KEYSTORE_PASSWORD:+set}"
-          echo "KEY_ALIAS is set: ${KEY_ALIAS:+set}"
-          echo "KEY_PASSWORD is set: ${KEY_PASSWORD:+set}"
-
       - name: Create key.properties
         run: |
           echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-          echo "storeFile=../build/keystore/release-key.jks" >> android/key.properties
+          echo "storeFile=keystore.jks" >> android/key.properties
 
       - name: Build AAB (oroProduction flavor)
         env:
           CI: true
-        run: flutter build appbundle --flavor oroProduction -t lib/main_oroProduction.dart
+          run: flutter build appbundle --flavor oroProduction -t lib/main_oroProduction.dart
 
       - name: Upload to Play Store (Internal testing)
         uses: r0adkll/upload-google-play@v1

@@ -1382,13 +1382,13 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
           'controllerReadStatus': preferenceProvider.generalData!.controllerReadStatus,
         });
       });
-      if(resultFromDialog) {
+      // if(resultFromDialog) {
         await Future.delayed(Duration.zero, () async {
           final createUserPreference = await repository.createUserPreference(userData);
           final message = jsonDecode(createUserPreference.body);
           await showSnackBar(message: message['message']);
         });
-      }
+      // }
 
 
     } catch (error, stackTrace) {

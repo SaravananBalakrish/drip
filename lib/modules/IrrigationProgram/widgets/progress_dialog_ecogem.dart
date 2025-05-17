@@ -112,7 +112,7 @@ class _EcoGemProgressDialogState extends State<EcoGemProgressDialog> {
       );
 
       bool isAcknowledged = false;
-      const int maxWaitTime = 30;
+      const int maxWaitTime = 40;
       int elapsedTime = 0;
 
       await for (var mqttMessage in widget.mqttService.payloadController.timeout(

@@ -180,13 +180,13 @@ class SettingList {
 
     if ([202].contains(type)) {
       var value1 = setting.firstWhere((element) => element.serialNumber == 1).value;
-      var value2 = setting.firstWhere((element) => element.serialNumber == 12).value == true ? 1 : 0;
+     /* var value2 = setting.firstWhere((element) => element.serialNumber == 12).value == true ? 1 : 0;
       var value3 = setting.firstWhere((element) => element.serialNumber == 13).rtcSettings!.map((e) => e.onTime).toList().join('_');
-      var value4 = setting.firstWhere((element) => element.serialNumber == 13).rtcSettings!.map((e) => e.offTime).toList().join('_');
+      var value4 = setting.firstWhere((element) => element.serialNumber == 13).rtcSettings!.map((e) => e.offTime).toList().join('_');*/
       result.add("${value1 == "" ? "00:00:00" : value1}");
-      result.add("$value2");
+      /*result.add("$value2");
       result.add(value3);
-      result.add(value4);
+      result.add(value4);*/
     } else if ([205].contains(type)) {
       var value1 = setting.firstWhere((element) => element.serialNumber == 1).value == true ? 1 : 0;
       var value2 = setting.firstWhere((element) => element.serialNumber == 2).value == true ? 1 : 0;
