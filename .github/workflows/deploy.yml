@@ -63,7 +63,7 @@ jobs:
       - name: Build AAB (oroProduction flavor)
         env:
           CI: true
-        run: flutter build appbundle --flavor oroProduction -t lib/main_oroProduction.dart --stacktrace --verbose
+        run: flutter build appbundle --flavor oroProduction -t lib/main_oroProduction.dart
 
       - name: Upload to Play Store (Internal testing)
         uses: r0adkll/upload-google-play@v1
