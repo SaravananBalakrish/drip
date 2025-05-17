@@ -40,6 +40,7 @@ android {
     ndkVersion = flutter.ndkVersion
 
     signingConfigs {
+        println "Build directory: $buildDir/keystore/release-key.jks"
         release {
             if (System.getenv("CI")) {
                 // Use the base64-encoded keystore for CI
