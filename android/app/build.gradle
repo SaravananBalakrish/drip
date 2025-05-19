@@ -50,7 +50,6 @@ android {
                 keyAlias = System.getenv("KEY_ALIAS")
                 keyPassword = System.getenv("KEY_PASSWORD")
             } else {
-                // Local development configuration
                 storeFile file("D:\\drip\\android\\app\\release-key.jks")
                 storePassword = "Oro@321"
                 keyAlias = "upload"
