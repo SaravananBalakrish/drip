@@ -1199,7 +1199,7 @@ class AlarmListItems extends StatelessWidget {
             onPressed: () async {
               String finalPayload =  values[0];
               String payLoadFinal = jsonEncode({
-                "4100": [{"4101": finalPayload}]
+                "4100": {"4101": finalPayload}
               });
 
               final result = await context.read<CommunicationService>().sendCommand(
@@ -1215,6 +1215,8 @@ class AlarmListItems extends StatelessWidget {
               if (result['bluetooth'] == true) {
                 debugPrint("Payload sent via Bluetooth");
               }
+
+              Navigator.pop(context);
 
             },
             child: const Text('Reset'),
