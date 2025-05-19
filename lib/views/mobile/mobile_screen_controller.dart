@@ -64,12 +64,13 @@ class MobileScreenController extends StatelessWidget {
           int powerSupply = mqttProvider.powerSupply;
           var currentSchedule = mqttProvider.currentSchedule;
           bool isLiveSynced = mqttProvider.isLiveSynced;
+          var iLineLiveMessage = mqttProvider.lineLiveMessage;
 
 
           if (liveDataAndTime.isNotEmpty) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               vm.updateLivePayload(
-                  wifiStrength, liveDataAndTime, currentSchedule);
+                  wifiStrength, liveDataAndTime, currentSchedule, iLineLiveMessage);
             });
           }
 

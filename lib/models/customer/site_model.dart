@@ -279,6 +279,7 @@ class IrrigationLineModel {
   final List<SensorModel> pressureIn;
   final List<SensorModel> pressureOut;
   final List<SensorModel> waterMeter;
+  int? linePauseFlag;
 
   IrrigationLineModel({
     required this.sNo,
@@ -292,6 +293,7 @@ class IrrigationLineModel {
     required this.pressureIn,
     required this.pressureOut,
     required this.waterMeter,
+    this.linePauseFlag = 0,
   });
 
   factory IrrigationLineModel.fromJson(Map<String, dynamic> json, List<ConfigObject> configObjects, var moistureSensorRaw, List<WaterSourceModel> waterSources) {
@@ -383,7 +385,6 @@ class IrrigationLineModel {
       name: json['name'] ?? '',
       centralFiltration: (json['centralFiltration'] as num?)?.toDouble(),
       centralFertilization: (json['centralFertilization'] as num?)?.toDouble(),
-
       inletSources: matchedInletSources,
       outletSources: matchedOutLetSources,
       valveObjects: valves,

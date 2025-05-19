@@ -12,6 +12,7 @@ import '../../Models/customer/site_model.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../Widgets/pump_widget.dart';
 import '../../repository/repository.dart';
+import '../../services/communication_service.dart';
 import '../../services/http_service.dart';
 import '../../utils/constants.dart';
 import '../../utils/my_function.dart';
@@ -57,35 +58,89 @@ class CustomerHome extends StatelessWidget {
 
   Widget _buildWebLayout(BuildContext context, List<IrrigationLineModel> irrigationLine,
       scheduledProgram, CustomerScreenControllerViewModel viewModel) {
+
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
+
           context.watch<MqttPayloadProvider>().onRefresh ? displayLinearProgressIndicator() : const SizedBox(),
 
           ...irrigationLine.map((line) => Padding(
-            padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
+            padding: const EdgeInsets.only(left: 8, right: 8, top:8, bottom: 5),
             child: Column(
               children: [
-                irrigationLine.length != 1 ? SizedBox(
-                  width: MediaQuery.sizeOf(context).width,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8, bottom: 3),
-                    child: Text(
-                      line.name,
-                      textAlign: TextAlign.left,
-                      style: const TextStyle(color: Colors.black87, fontSize: 16),
-                    ),
-                  ),
-                ):
-                const SizedBox(),
-
-                Card(
+                Container(
+                  decoration: BoxDecoration(
                     color: Colors.white,
-                    elevation: 0.5,
-                    child: buildIrrigationLine(context, line, customerId, controllerId)
+                    border: Border.all(
+                      color: Colors.grey.shade400,
+                      width: 0.5,
+                    ),
+                    borderRadius: const BorderRadius.all(Radius.circular(5)),
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width,
+                        height: 40,
+                        child: Card(
+                          color: Colors.white,
+                          elevation: 1,
+                          surfaceTintColor: Colors.white,
+                          margin: EdgeInsets.zero,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(5),
+                              topRight: Radius.circular(5),
+                            ),
+                          ),
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 16),
+                              Text(
+                                line.name,
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(color: Colors.black87, fontSize: 16, fontWeight: FontWeight.bold),
+                              ),
+                              const Spacer(),
+                              MaterialButton(
+                                color: line.linePauseFlag==0? Colors.orangeAccent : Colors.green,
+                                textColor: Colors.black87,
+                                onPressed: () async {
+                                  String payLoadFinal = jsonEncode({
+                                    "4900": [{
+                                      "4901": "${line.sNo}, ${line.linePauseFlag==0?1:0}",
+                                    }]
+                                  });
+                                  final result = await context.read<CommunicationService>().sendCommand(payload: payLoadFinal,
+                                      serverMsg: line.linePauseFlag==0 ? 'Paused the ${line.name}' : 'Resumed the ${line.name}');
+                                  if (result['http'] == true) {
+                                    debugPrint("Payload sent to Server");
+                                  }
+                                  if (result['mqtt'] == true) {
+                                    debugPrint("Payload sent to MQTT Box");
+                                  }
+                                  if (result['bluetooth'] == true) {
+                                    debugPrint("Payload sent via Bluetooth");
+                                  }
+                                },
+                                child: Text(
+                                  line.linePauseFlag==0?'PAUSE THE LINE':
+                                  'RESUME THE LINE',
+                                  style: const TextStyle(color: Colors.black54),
+                                ),
+                              ),
+                              const SizedBox(width: 10)
+                            ],
+                          ),
+                        ),
+                      ),
+                      buildIrrigationLine(context, line, customerId, controllerId),
+                    ],
+                  ),
                 ),
               ],
             ),
