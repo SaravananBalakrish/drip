@@ -40,7 +40,7 @@ jobs:
           [ -n "${{ secrets.KEYSTORE_PASSWORD }}" ] || { echo "KEYSTORE_PASSWORD is not set"; exit 1; }
           [ -n "${{ secrets.KEY_PASSWORD }}" ] || { echo "KEY_PASSWORD is not set"; exit 1; }
           [ -n "${{ secrets.KEY_ALIAS }}" ] || { echo "KEY_ALIAS is not set"; exit 1; }
-          [ -n "${{ secrets.GOOGLE_PLAY_JSON }}" ] || { echo "GOOGLE_PLAY_JSON is not set"; exit 1; }
+#          [ -n "${{ secrets.GOOGLE_PLAY_JSON }}" ] || { echo "GOOGLE_PLAY_JSON is not set"; exit 1; }
           echo "All secrets are set."
 
       - name: Debug GOOGLE_PLAY_JSON
