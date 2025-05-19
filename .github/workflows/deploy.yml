@@ -33,11 +33,11 @@ jobs:
       - name: Verify secrets existence
         run: |
           echo "Checking if secrets are set..."
-          if [ -z "${{ secrets.KEYSTORE_BASE64 }}" ]; then echo "KEYSTORE_BASE64 is not set"; exit 1; fi
-          if [ -z "${{ secrets.KEYSTORE_PASSWORD }}" ]; then echo "KEYSTORE_PASSWORD is not set"; exit 1; fi
-          if [ -z "${{ secrets.KEY_PASSWORD }}" ]; then echo "KEY_PASSWORD is not set"; exit 1; fi
-          if [ -z "${{ secrets.KEY_ALIAS }}" ]; then echo "KEY_ALIAS is not set"; exit 1; fi
-          if [ -z "${{ secrets.GOOGLE_PLAY_JSON }}" ]; then echo "GOOGLE_PLAY_JSON is not set"; exit 1; fi
+          [ -n "${{ secrets.KEYSTORE_BASE64 }}" ] || { echo "KEYSTORE_BASE64 is not set"; exit 1; }
+          [ -n "${{ secrets.KEYSTORE_PASSWORD }}" ] || { echo "KEYSTORE_PASSWORD is not set"; exit 1; }
+          [ -n "${{ secrets.KEY_PASSWORD }}" ] || { echo "KEY_PASSWORD is not set"; exit 1; }
+          [ -n "${{ secrets.KEY_ALIAS }}" ] || { echo "KEY_ALIAS is not set"; exit 1; }
+          [ -n "${{ secrets.GOOGLE_PLAY_JSON }}" ] || { echo "GOOGLE_PLAY_JSON is not set"; exit 1; }
           echo "All secrets are set."
 
       - name: Decode keystore
@@ -51,6 +51,13 @@ jobs:
           ls -l android/app/release-key.jks
           if [ ! -s android/app/release-key.jks ]; then echo "Keystore file is empty or not created"; exit 1; fi
           echo "Keystore file exists and is non-empty."
+
+      - name: Validate keystore integrity
+        run: |
+          keytool -list -keystore android/app/release-key.jks -storepass "${{ secrets.KEYSTORE_PASSWORD }}" -keypass "${{ secrets.KEY_PASSWORD }}" -alias "${{ secrets.KEY_ALIAS }}" || { echo "Invalid keystore or credentials"; exit 1; }
+          echo "Keystore is valid."
+        env:
+          JAVA_HOME: /Users/runner/.jabba/jdk/adopt@1.8.0-292
 
       - name: Debug keystore path
         run: |
@@ -74,7 +81,7 @@ jobs:
       - name: Build AAB (oroProduction flavor)
         env:
           CI: true
-        run: flutter build appbundle --flavor oroProduction -t lib/main_oroProduction.dart
+        run: flutter build appbundle --flavor oroProduction -t lib/main_oroProduction.dart --stacktrace --debug
 
       - name: Verify Google Play JSON
         run: |

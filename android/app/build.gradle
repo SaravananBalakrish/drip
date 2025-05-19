@@ -44,7 +44,11 @@ android {
         release {
             if (System.getenv("CI")) {
                 // Use the base64-encoded keystore for CI
-                def keystoreFile = file("${System.getenv('GITHUB_WORKSPACE')}/android/app/release-key.jks")
+                def keystorePath = "${System.getenv('GITHUB_WORKSPACE')}/android/app/release-key.jks"
+                def keystoreFile = file(keystorePath)
+                if (!keystoreFile.exists()) {
+                    throw new GradleException("Keystore file not found at: ${keystorePath}")
+                }
                 storeFile keystoreFile
                 storePassword System.getenv("KEYSTORE_PASSWORD")
                 keyAlias System.getenv("KEY_ALIAS")
