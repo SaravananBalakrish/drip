@@ -32,18 +32,19 @@ jobs:
 
       - name: Decode keystore
         run: |
-          mkdir -p build/app/keystore
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > build/app/keystore/release-key.jks
+          mkdir -p android/app
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/release-key.jks
+          chmod 644 android/app/release-key.jks
 
       - name: Verify keystore file
-        run: ls -l build/app/keystore/release-key.jks
+        run: ls -l android/app/release-key.jks
 
       - name: Create key.properties
         run: |
           echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-          echo "storeFile=release-key.jks" >> android/key.properties
+          echo "storeFile=../../build/app/keystore/release-key.jks" >> android/key.properties
 
       - name: Build AAB (oroProduction flavor)
         env:
