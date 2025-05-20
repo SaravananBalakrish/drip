@@ -13,9 +13,14 @@ jobs:
     environment: ORO IntelliIrrigate Deployment
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          java-version: '17'
+          distribution: 'zulu'
+
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -23,6 +28,7 @@ jobs:
           channel: stable
           flutter-version: 3.27.3
           architecture: x64
+      - run: flutter --version
 
       - name: Install dependencies
         run: flutter pub get
@@ -81,7 +87,7 @@ jobs:
       - name: Build AAB (oroProduction flavor)
         env:
           CI: true
-        run: flutter build appbundle --flavor oroProduction -t lib/main_oroProduction.dart --stacktrace --debug
+        run: flutter build appbundle --flavor oroProduction -t lib/main_oroProduction.dart --build-name=1.0.0 --build-number=2
 
       - name: Verify Google Play JSON
         run: |
