@@ -47,6 +47,10 @@ android {
 
     signingConfigs {
         println "Store Password: ${storePassword}" // Don't use in production, just debug
+        println "Store file: ${file("/home/runner/work/drip/drip/android/app/release-key.jks")}"
+        println "KEYSTORE_PASSWORD: ${System.getenv("KEYSTORE_PASSWORD")}"
+        println "KEY_ALIAS: ${System.getenv("KEY_ALIAS")}"
+        println "KEY_PASSWORD: ${System.getenv("KEY_PASSWORD")}"
 
         release {
             if (System.getenv("CI")) {
