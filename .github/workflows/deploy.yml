@@ -83,7 +83,7 @@ jobs:
       - name: Build AAB (oroProduction flavor)
         env:
           CI: true
-        run: flutter build appbundle --release --flavor oroProduction -t lib/main_oroProduction.dart --build-name=1.0.0 --build-number=2 --stacktrace --no-tree-shake-icons
+        run: flutter build appbundle --release --flavor oroProduction -t lib/main_oroProduction.dart
 
       - name: Verify AAB file
         run: |
