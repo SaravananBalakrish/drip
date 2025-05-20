@@ -46,13 +46,10 @@ android {
     ndkVersion = flutter.ndkVersion
 
     signingConfigs {
+        println "Store Password: ${storePassword}" // Don't use in production, just debug
+
         release {
-            if (keyPropertiesFile.exists()) {
-                storeFile file(keyProperties['storeFile'])
-                storePassword keyProperties['storePassword']
-                keyAlias keyProperties['keyAlias']
-                keyPassword keyProperties['keyPassword']
-            } else if (System.getenv("CI")) {
+            if (System.getenv("CI")) {
                 storeFile file("/home/runner/work/drip/drip/android/app/release-key.jks")
                 storePassword System.getenv("KEYSTORE_PASSWORD")
                 keyAlias System.getenv("KEY_ALIAS")
