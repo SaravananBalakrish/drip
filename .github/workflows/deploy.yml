@@ -30,12 +30,6 @@ jobs:
           architecture: x64
       - run: flutter --version
 
-      - name: Install dependencies
-        run: flutter pub get
-
-      - name: Clear Flutter cache
-        run: flutter clean
-
       - name: Verify secrets existence
         run: |
           echo "Checking if secrets are set..."
@@ -83,6 +77,12 @@ jobs:
           cat android/key.properties
           if [ ! -s android/key.properties ]; then echo "key.properties file is empty or not created"; exit 1; fi
           echo "key.properties file created successfully."
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Clear Flutter cache
+        run: flutter clean
 
       - name: Build AAB (oroProduction flavor)
         env:
