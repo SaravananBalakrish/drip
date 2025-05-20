@@ -11,6 +11,12 @@ if (localPropertiesFile.exists()) {
     localProperties.load(localPropertiesFile.newDataInputStream())
 }
 
+def keyProperties = new Properties()
+def keyPropertiesFile = rootProject.file('android/key.properties')
+if (keyPropertiesFile.exists()) {
+    keyProperties.load(keyPropertiesFile.newDataInputStream())
+}
+
 def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: "1"
 def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: "1.0"
 
@@ -40,9 +46,13 @@ android {
     ndkVersion = flutter.ndkVersion
 
     signingConfigs {
-        println "Build directory: ${rootProject.projectDir}/release-key.jks"
         release {
-            if (System.getenv("CI")) {
+            if (keyPropertiesFile.exists()) {
+                storeFile file(keyProperties['storeFile'])
+                storePassword keyProperties['storePassword']
+                keyAlias keyProperties['keyAlias']
+                keyPassword keyProperties['keyPassword']
+            } else if (System.getenv("CI")) {
                 storeFile file("/home/runner/work/drip/drip/android/app/release-key.jks")
                 storePassword System.getenv("KEYSTORE_PASSWORD")
                 keyAlias System.getenv("KEY_ALIAS")

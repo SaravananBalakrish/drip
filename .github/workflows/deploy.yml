@@ -9,14 +9,14 @@ on:
 jobs:
   build:
     name: Build & Release AAB (oroProduction)
-    runs-on: ubuntu-latest # Switched to ubuntu-latest for cost efficiency
+    runs-on: ubuntu-latest
     environment: ORO IntelliIrrigate Deployment
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup JDK
-        uses: actions/setup-java@v4 # Fixed to use setup-java
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'zulu'
@@ -80,13 +80,18 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Clear Flutter cache
-        run: flutter clean
+      - name: Clear caches
+        run: |
+          flutter clean
+          rm -rf ~/.gradle/caches
+          ./android/gradlew --stop
+          ./android/gradlew clean
 
       - name: Build AAB (oroProduction flavor)
         env:
           CI: true
-        run: flutter build appbundle --release --flavor oroProduction -t lib/main_oroProduction.dart
+        run: flutter build appbundle --release --flavor oroProduction -t lib/main_oroProduction.dart --build-name=1.0.0 --build-number=2 --stacktrace --no-tree-shake-icons
+
       - name: Verify AAB file
         run: |
           ls -l build/app/outputs/bundle/oroProductionRelease/app-oroProduction-release.aab
