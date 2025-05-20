@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "smartcomm-6f42b",
+  "private_key_id": "eec245bd54b3dca1172da9a0aee60f8e2cbd693f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC7RavBRZrbDN2r\n31vy0IKlECFhjK8A0ji3u6wdsDrBGqcbnw1OrvBIMMxzanqiMNbVih5vR1LdcH2b\nq25ThWgAyUc9ms3nx/IooNPKDCGCKMG48jRPl8qxKw69FmwDBCtxNyjP6W6B2ezQ\n76GsQA4QrcnCVYWNnoi1ThGJD34InwxaZVBLtcr8ySEsFtzGivqZXnu4JVF9VNdA\nGol1/8JS12f2yVmLDcYF6q9pxHh9G0hClkNSrMa9AzwXSby3hdBZEeE3ehjIFdHD\nzbdAB0sAPXLc0IggGUSZrRoGAqTLEiD/4qNkB+jlxaq0q1m8+gnKugEMgfo5JyWw\nUa4zFB53AgMBAAECggEAFThFx/adH2kLzSfYAWGDDDURsz3/rnYjmx4W2J5Zafwd\nJ1IUbfAApg1xfTp5fttN3JBz9mP8jb7rXLJGJAyfxkcIXYCnCDZtyBDBLsnFGjyI\nBu7a4pHuk7ivSNm7j3PvgDqh0z0+GlSZMuuURDJV5anrjKuoIG3wS6r27bLlsxAw\nlwd/6J/Msp31Aq3hKfJTVxxIqpNtjQrUcgppyEbrlqRYwJPrA2jc82W0aKUIsOtY\n8ljzaJfiaXkqIKQdTBefLHsi4OHbwptjqaYKSo0MuFjCFZU0AzK++2KozdCFzbbC\nq+RT2agg5ulpL+5YsUcma6sWEqmqYUgFYubvNUYU0QKBgQD3TZ7Ylu4I7fmOJSFp\nipdrj99Rv9d6e6Q7lYTIgqgBPiPrsmic44+PWePSIcpWiiwWHf/peDt0VEfvr/In\npTZH4/Qq+2HElx+dymVffM45zoAE3zWhFG7D+YRiMcTyWU9c5OOqH9oD48ZLOgEp\nxwq/uWwXTw6PBNl+svfJRaF8ZQKBgQDB25zt4ICydiPFeXLwYP5Wy7u1AZvQgmaT\no3Quwl3B2rgOimelTe9pehYtYq3DJgXQqZbpNa8QT6ZIjKJSqyJl6VmUczoo4GRe\n9hu+rhQ0p2Gley6Zz6fx+Ekd2q0g46RHOFU8Nt+NM9XdDeHxpUWws42yqPuNk4FW\n6RHXRNP7qwKBgQDrUY/Z9twv4Qo7CPffLsJg1nkgl9SZNveSvvanuTPWYuPZTl2f\nFCYxuM5A0Ghxqm7C6O7voLmqOtxspdZdhSa+h5l6INPqNgcepU2K6/5sISPN/vtP\n+Fph3pbqvQLzvKn48c/0vPQ+CUpRoLMkpsKCpxTEpTRsQKgYmIGRotFDxQKBgCnh\nFb/V9jeXihbJK+l+KrP5g22REWY0JZDTiO/pEXQlmgmaINX3RjdVJqFbZgp4ll0D\nphRvgohVjKizqQWO7vlxNeb6FaBrCYPySwAgf0D4wAGN4P1dfPyrFLCcYzZttzmj\nk9ZUTGsmvZbpvtwDRlDsGTp1gxKMwS5TX4VP2zPNAoGATNPED7fbaf4W7sK+fV4a\nopwrmUSAj5b4xIww71jmibk3kvf+sspZUnVIse0timuuN6jVt7D/XzS2sPdrKoTd\nRO3pGKpkw53uwdu5GNtcHNCxKm1wTDaYUwYZc8uz8wjpVScYOHte5klpbXQxonrc\n5Z6glgcYpAuKE+w1IV1qofk=\n-----END PRIVATE KEY-----\n",
+  "client_email": "oro-intelliirrigate@smartcomm-6f42b.iam.gserviceaccount.com",
+  "client_id": "116710392073021944759",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/oro-intelliirrigate%40smartcomm-6f42b.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

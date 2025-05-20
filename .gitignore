@@ -46,3 +46,4 @@ app.*.map.json
 /android/key.properties
 /android/app/release-key.jks
 notification.env
+google-play.json
