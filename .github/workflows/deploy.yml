@@ -87,9 +87,6 @@ jobs:
       - name: Clear caches
         run: |
           flutter clean
-          rm -rf ~/.gradle/caches
-          ./android/gradlew --stop
-          ./android/gradlew clean
 
       - name: Configure Gradle properties
         run: |
