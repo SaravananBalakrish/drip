@@ -75,7 +75,10 @@ jobs:
         run: |
           echo "Creating key.properties..."
           mkdir -p android
-          echo -e "storePassword=${{ secrets.KEYSTORE_PASSWORD }}\nkeyPassword=${{ secrets.KEY_PASSWORD }}\nkeyAlias=${{ secrets.KEY_ALIAS }}\nstoreFile=app/release-key.jks" > android/key.properties
+          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" > android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+          echo "storeFile=app/release-key.jks" >> android/key.properties
           cat android/key.properties
           ls -l android/key.properties
           if [ ! -s android/key.properties ]; then echo "key.properties file is empty or not created"; exit 1; fi
@@ -96,14 +99,11 @@ jobs:
           flutter clean
           rm -rf ~/.gradle/caches
 
-      - name: Create gradle.properties (if needed)
+      - name: Create gradle.properties
         run: |
           echo "android.useAndroidX=true" >> android/gradle.properties
           echo "android.enableJetifier=true" >> android/gradle.properties
-
-      - name: Configure Gradle properties
-        run: |
-          echo "org.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8 -Dorg.gradle.vfs.watch=false" > android/gradle.properties
+          echo "org.gradle.jvmargs=-Xmx4g -Dfile.encoding=UTF-8 -Dorg.gradle.vfs.watch=false" >> android/gradle.properties
           cat android/gradle.properties
 
       - name: Build AAB (oroProduction flavor)

@@ -52,20 +52,24 @@ android {
     signingConfigs {
         release {
             if (System.getenv("CI")) {
-                if (keyPropertiesFile.exists() && keyProperties['storeFile'] && keyProperties['storePassword'] && keyProperties['keyAlias'] && keyProperties['keyPassword']) {
-                    def storeFilePath = "${projectDir}/${keyProperties['storeFile']}"
-                    println "CI environment: Attempting to load storeFile at ${storeFilePath}"
-                    if (file(storeFilePath).exists()) {
-                        storeFile file(storeFilePath)
-                        storePassword keyProperties['storePassword']
-                        keyAlias keyProperties['keyAlias']
-                        keyPassword keyProperties['keyPassword']
-                        println "CI environment: Successfully configured signing with storeFile ${storeFilePath}"
+                if (keyPropertiesFile.exists()) {
+                    if (keyProperties['storeFile'] && keyProperties['storePassword'] && keyProperties['keyAlias'] && keyProperties['keyPassword']) {
+                        def storeFilePath = "${projectDir}/${keyProperties['storeFile']}"
+                        println "CI environment: Attempting to load storeFile at ${storeFilePath}"
+                        if (file(storeFilePath).exists()) {
+                            storeFile file(storeFilePath)
+                            storePassword keyProperties['storePassword']
+                            keyAlias keyProperties['keyAlias']
+                            keyPassword keyProperties['keyPassword']
+                            println "CI environment: Successfully configured signing with storeFile ${storeFilePath}"
+                        } else {
+                            throw new GradleException("Keystore file not found at: ${storeFilePath}")
+                        }
                     } else {
-                        throw new GradleException("Keystore file not found at: ${storeFilePath}")
+                        throw new GradleException("key.properties is missing required properties at: ${keyPropertiesFile.absolutePath}, Content: ${keyProperties}")
                     }
                 } else {
-                    throw new GradleException("key.properties is missing or incomplete in CI environment. Found at: ${keyPropertiesFile.absolutePath}, Content: ${keyProperties}")
+                    throw new GradleException("key.properties file not found at: ${keyPropertiesFile.absolutePath}")
                 }
             } else {
                 println "Local environment: Using hardcoded signing configuration"
