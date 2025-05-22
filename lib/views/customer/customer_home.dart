@@ -391,15 +391,11 @@ class PumpStationWithLine extends StatelessWidget {
         final index = entry.key;
         final valve = entry.value;
         final isLastValve = index == valves.length - 1;
-
-        return Padding(
-          padding: EdgeInsets.only(top: fertilizerSite.isNotEmpty ? 30 : 0),
-          child: ValveWidget(
-            valve: valve,
-            customerId: customerId,
-            controllerId: controllerId,
-            isLastValve: isLastValve && pressureOut.isEmpty,
-          ),
+        return ValveWidget(
+          valve: valve,
+          customerId: customerId,
+          controllerId: controllerId,
+          isLastValve: isLastValve && pressureOut.isEmpty,
         );
       }).toList();
 
@@ -429,7 +425,27 @@ class PumpStationWithLine extends StatelessWidget {
           alignment: WrapAlignment.start,
           spacing: 0,
           runSpacing: 0,
-          children: allItems,
+          children: allItems.asMap().entries.map<Widget>((entry) {
+            final index = entry.key;
+            final item = entry.value;
+            if(fertilizerSite.isNotEmpty){
+              int itemsPerRow = ((MediaQuery.sizeOf(context).width - 140) / 70).floor();
+
+              if (item is ValveWidget && index < itemsPerRow) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: item,
+                );
+              }
+              else{
+                return item;
+              }
+            }
+            else{
+              return item;
+            }
+
+          }).toList(),
         ),
       );
     }
@@ -541,8 +557,6 @@ class PumpStationWithLine extends StatelessWidget {
           ],
         );
       }
-
-
     }
   }
 
@@ -1220,6 +1234,7 @@ class SensorWidget extends StatelessWidget {
     return result;
   }
 }
+
 
 class ValveWidget extends StatelessWidget {
   final ValveModel valve;
