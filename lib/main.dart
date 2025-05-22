@@ -4,6 +4,7 @@ import 'package:bluetooth_classic/bluetooth_classic.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/state_management/pump_controller_provider.dart';
+import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/state_management/ble_service.dart';
 import 'package:oro_drip_irrigation/services/bluetooth_manager.dart';
 import 'package:oro_drip_irrigation/services/communication_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
@@ -89,7 +90,10 @@ FutureOr<void> main() async {
         ChangeNotifierProvider(create: (_) => PumpControllerProvider()),
 
         if (!kIsWeb)
-          ChangeNotifierProvider<BluetoothManager>(create: (_) => BluetoothManager(),),
+          ...[
+            ChangeNotifierProvider<BluetoothManager>(create: (_) => BluetoothManager(),),
+            ChangeNotifierProvider<BleProvider>(create: (_) => BleProvider(),),
+          ],
 
         ProxyProvider2<BluetoothManager?, CustomerProvider, CommunicationService>(
           update: (BuildContext context, BluetoothManager? bluetooth, CustomerProvider customer, CommunicationService? previous) {

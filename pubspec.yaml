@@ -101,7 +101,9 @@ flutter:
     - assets/Images/Filtration/
     - assets/Images/Png/
     - assets/Images/Png/Oro/
+    - assets/Images/Svg/Oro/
     - assets/Images/Png/SmartComm/
+    - assets/Images/Svg/SmartComm/
     - assets/png/
     - assets/svg_images/
     - assets/SVGPicture/

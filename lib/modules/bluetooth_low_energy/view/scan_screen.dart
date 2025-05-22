@@ -7,6 +7,7 @@ import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/utils/snackbar.
 import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/widget/scan_result_tile.dart';
 import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/widget/system_service_tile.dart';
 
+import '../state_management/ble_service.dart';
 import 'device_screen.dart';
 
 
@@ -23,12 +24,19 @@ class _ScanScreenState extends State<ScanScreen> {
   bool _isScanning = false;
   late StreamSubscription<List<ScanResult>> _scanResultsSubscription;
   late StreamSubscription<bool> _isScanningSubscription;
+  late BleProvider bleService;
+
 
   @override
   void initState() {
     super.initState();
-
     _scanResultsSubscription = FlutterBluePlus.scanResults.listen((results) {
+      print("results ::::: ${results}");
+      for(var result in results){
+        var adv = result.advertisementData;
+        print("adv.advName :: ${adv.advName}");
+        print("result.device.remoteId :: ${result.device.remoteId}");
+      }
       if (mounted) {
         setState(() => _scanResults = results);
       }
@@ -161,7 +169,9 @@ class _ScanScreenState extends State<ScanScreen> {
   }
 
   Iterable<Widget> _buildScanResultTiles() {
-    return _scanResults.map((r) => ScanResultTile(result: r, onTap: () => onConnectPressed(r.device)));
+    return _scanResults
+        .where((r) => r.device.platformName.contains('NIA_'))
+        .map((r) => ScanResultTile(result: r, onTap: () => onConnectPressed(r.device)));
   }
 
   @override
@@ -169,9 +179,13 @@ class _ScanScreenState extends State<ScanScreen> {
     return ScaffoldMessenger(
       key: Snackbar.snackBarKeyB,
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Find Devices'),
-          actions: [buildScanButton(), const SizedBox(width: 15)],
+        // appBar: AppBar(
+        //   title: const Text('Find Devices'),
+        //   actions: [buildScanButton(), const SizedBox(width: 15)],
+        // ),
+        floatingActionButton: FloatingActionButton(
+            onPressed: !FlutterBluePlus.isScanningNow ? onScanPressed : null,
+          child: FlutterBluePlus.isScanningNow ? buildSpinner() : const Text('SCAN'),
         ),
         body: RefreshIndicator(
           onRefresh: onRefresh,

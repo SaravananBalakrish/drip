@@ -115,7 +115,12 @@ class NodeList extends StatelessWidget {
                                 vm.nodeList[index].rlyStatus.any((rly) => rly.status == 2 || rly.status == 3)? const Icon(Icons.warning, color: Colors.orangeAccent):
                                 InkWell(
                                   onTap: (){
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => NodeConnectionPage()));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => NodeConnectionPage(
+                                      masterData: {
+                                        'deviceId' : vm.nodeList[index].deviceId,
+                                        'deviceName' : vm.nodeList[index].deviceName
+                                      },
+                                    )));
                                   },
                                     child: const Icon(Icons.info_outline,)
                                 ),
