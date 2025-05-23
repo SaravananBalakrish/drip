@@ -1197,6 +1197,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                           children: [
                             for(var i = 0; i < preferenceProvider.commonPumpSettings!.length; i++)
                               CheckboxListTile(
+                                dense: false,
+                                  contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                                   title: Text(preferenceProvider.commonPumpSettings![i].deviceName),
                                   subtitle: Text(preferenceProvider.commonPumpSettings![i].deviceId),
                                   value: selectedOroPumpList.contains(preferenceProvider.commonPumpSettings![i].deviceId),
@@ -1382,13 +1384,11 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
           'controllerReadStatus': preferenceProvider.generalData!.controllerReadStatus,
         });
       });
-      if(resultFromDialog) {
-        await Future.delayed(Duration.zero, () async {
-          final createUserPreference = await repository.createUserPreference(userData);
-          final message = jsonDecode(createUserPreference.body);
-          await showSnackBar(message: message['message']);
-        });
-      }
+      await Future.delayed(Duration.zero, () async {
+        final createUserPreference = await repository.createUserPreference(userData);
+        final message = jsonDecode(createUserPreference.body);
+        await showSnackBar(message: message['message']);
+      });
 
 
     } catch (error, stackTrace) {

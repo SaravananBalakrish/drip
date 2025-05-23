@@ -667,7 +667,23 @@ class MobileScreenController extends StatelessWidget {
               ],
             ) : null,
 
-            body: RefreshIndicator(
+            body: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 2 ?
+            vm.isChanged ? PumpControllerHome(
+              userId: userId,
+              customerId: customerId,
+              masterData: vm.mySiteList.data[vm.sIndex].master[vm.mIndex],
+            ) : const Scaffold(
+              body: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Please wait...'),
+                    SizedBox(height: 10),
+                    CircularProgressIndicator(),
+                  ],
+                ),
+              ),
+            ) : RefreshIndicator(
               onRefresh: () => _handleRefresh(vm),
               child: Container(
                 decoration: BoxDecoration(
