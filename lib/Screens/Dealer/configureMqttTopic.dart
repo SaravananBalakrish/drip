@@ -19,21 +19,20 @@ class ConfigureMqtt extends StatefulWidget {
 class _ConfigureMqttState extends State<ConfigureMqtt> {
   late MqttPayloadProvider mqttPayloadProvider;
   List<Map<String, dynamic>> configs = [];
-  List<String> projectNames = [];
-  String? selectedProject;
+  int? selectedIndex;
   bool isLoading = true;
   String errorMessage = '';
+  String? formattedConfig;
 
   @override
   void initState() {
     super.initState();
     mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
-
     fetchData();
   }
 
   Future<void> fetchData() async {
-    final url = Uri.parse('http://13.235.254.21:9000/getConfigs'); // Your API URL
+    final url = Uri.parse('http://13.235.254.21:9000/getConfigs');
 
     try {
       final response = await http.get(url, headers: {'Content-Type': 'application/json'});
@@ -41,12 +40,7 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final List<dynamic> rawConfigs = data['data'];
-
-        // Save configs as List<Map>
         configs = rawConfigs.cast<Map<String, dynamic>>();
-
-        // Extract unique project names
-        projectNames = configs.map((c) => c['PROJECT_NAME'] as String).toSet().toList();
 
         setState(() {
           isLoading = false;
@@ -69,103 +63,92 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
     final projectName = config['PROJECT_NAME'] ?? '';
 
     if (projectName == 'ORO') {
-       return
-        '${config['MQTT_IP'] ?? '-'},'
-            '${config['MQTT_USER_NAME'] ?? '-'},'
-            '${config['MQTT_PASSWORD'] ?? '-'},'
-            '${config['MQTT_PORT'] ?? '-'},'
-            '${config['HTTP_URL'] ?? '-'},'
-            '${config['STATIC_IP'] ?? '-'},'
-            '${config['SUBNET_MASK'] ?? '-'},'
-            '${config['DEFAULT_GATEWAY'] ?? '-'},'
-            '${config['DNS_SERVER'] ?? '-'},'
-            '${config['FTP_IP'] ?? '-'},'
-            '${config['FTP_USER_NAME'] ?? '-'},'
-            '${config['FTP_PASSWORD'] ?? '-'},'
-            '${config['FTP_PORT'] ?? '-'},'
-            '${config['MQTT_FRONTEND_TOPIC'] ?? '-'},'
-            '${config['MQTT_HARDWARE_TOPIC'] ?? '-'},'
-            '${config['MQTT_SERVER_TOPIC'] ?? '-'}'
-             ';';
+      return '${config['MQTT_IP'] ?? '-'},'
+          '${config['MQTT_USER_NAME'] ?? '-'},'
+          '${config['MQTT_PASSWORD'] ?? '-'},'
+          '${config['MQTT_PORT'] ?? '-'},'
+          '${config['HTTP_URL'] ?? '-'},'
+          '${config['STATIC_IP'] ?? '-'},'
+          '${config['SUBNET_MASK'] ?? '-'},'
+          '${config['DEFAULT_GATEWAY'] ?? '-'},'
+          '${config['DNS_SERVER'] ?? '-'},'
+          '${config['FTP_IP'] ?? '-'},'
+          '${config['FTP_USER_NAME'] ?? '-'},'
+          '${config['FTP_PASSWORD'] ?? '-'},'
+          '${config['FTP_PORT'] ?? '-'},'
+          '${config['MQTT_FRONTEND_TOPIC'] ?? '-'},'
+          '${config['MQTT_HARDWARE_TOPIC'] ?? '-'},'
+          '${config['MQTT_SERVER_TOPIC'] ?? '-'}';
     } else {
-      // Format for other projects - full list
-      return
-        '${config['MQTT_IP'] ?? '-'},'
-            '${config['MQTT_USER_NAME'] ?? '-'},'
-            '${config['MQTT_PASSWORD'] ?? '-'},'
-            '${config['MQTT_PORT'] ?? '-'},'
-            '${config['HTTP_URL'] ?? '-'},'
-            '${config['STATIC_IP'] ?? '-'},'
-            '${config['SUBNET_MASK'] ?? '-'},'
-            '${config['DEFAULT_GATEWAY'] ?? '-'},'
-            '${config['DNS_SERVER'] ?? '-'},'
-            '${config['FTP_IP'] ?? '-'},'
-            '${config['FTP_USER_NAME'] ?? '-'},'
-            '${config['FTP_PASSWORD'] ?? '-'},'
-            '${config['FTP_PORT'] ?? '-'},'
-            '${config['MQTT_FRONTEND_TOPIC'] ?? '-'},'
-            '${config['MQTT_HARDWARE_TOPIC'] ?? '-'},'
-            '${config['MQTT_SERVER_TOPIC'] ?? '-'},'
-            '${config['SFTP_IP'] ?? '-'},'
-            '${config['SFTP_USER_NAME'] ?? '-'},'
-            '${config['SFTP_PASSWORD'] ?? '-'},'
-            '${config['SFTP_PORT'] ?? '-'},'
-            '${config['MQTTS_PORT'] ?? '-'},'
-            '${config['MQTTS_STATUS'] ?? '-'},'
-            '${config['REVERSE_SSH_BROKER_NAME'] ?? '-'},'
-            '${config['REVERSE_SSH_PORT'] ?? '-'}'
-            ';';
+      return '${config['MQTT_IP'] ?? '-'},'
+          '${config['MQTT_USER_NAME'] ?? '-'},'
+          '${config['MQTT_PASSWORD'] ?? '-'},'
+          '${config['MQTT_PORT'] ?? '-'},'
+          '${config['HTTP_URL'] ?? '-'},'
+          '${config['STATIC_IP'] ?? '-'},'
+          '${config['SUBNET_MASK'] ?? '-'},'
+          '${config['DEFAULT_GATEWAY'] ?? '-'},'
+          '${config['DNS_SERVER'] ?? '-'},'
+          '${config['FTP_IP'] ?? '-'},'
+          '${config['FTP_USER_NAME'] ?? '-'},'
+          '${config['FTP_PASSWORD'] ?? '-'},'
+          '${config['FTP_PORT'] ?? '-'},'
+          '${config['MQTT_FRONTEND_TOPIC'] ?? '-'},'
+          '${config['MQTT_HARDWARE_TOPIC'] ?? '-'},'
+          '${config['MQTT_SERVER_TOPIC'] ?? '-'},'
+          '${config['SFTP_IP'] ?? '-'},'
+          '${config['SFTP_USER_NAME'] ?? '-'},'
+          '${config['SFTP_PASSWORD'] ?? '-'},'
+          '${config['SFTP_PORT'] ?? '-'},'
+          '${config['MQTTS_PORT'] ?? '-'},'
+          '${config['MQTTS_STATUS'] ?? '-'},'
+          '${config['REVERSE_SSH_BROKER_NAME'] ?? '-'},'
+          '${config['REVERSE_SSH_PORT'] ?? '-'}';
     }
   }
 
   void sendSelectedProject() {
-    if (selectedProject == null) {
+    if (selectedIndex == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please select a project")),
       );
       return;
     }
 
-    // Find the config for selected project (assuming first match)
-    final config = configs.firstWhere(
-          (c) => c['PROJECT_NAME'] == selectedProject,
-      orElse: () => {},
-    );
-
-    if (config.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Config not found for project $selectedProject")),
-      );
-      return;
-    }
-
-    final formatted = formatConfig(config);
+    final selectedConfig = configs[selectedIndex!];
+    final formatted = formatConfig(selectedConfig);
 
     final payload = {
-      "5700": {"5701": formatted},
+      "6100": {"6101": formatted},
     };
-    print('jsonEncode(payload)${jsonEncode(payload)}');
+
+    print("Selected config index: $selectedIndex");
+    print("Sending config for project: ${selectedConfig['PROJECT_NAME']}");
+    print("Formatted: $formatted");
+    print('jsonEncode(payload): ${jsonEncode(payload)}');
+
+    // Uncomment this when ready to send
     MqttService().topicToPublishAndItsMessage(
       jsonEncode(payload),
       "${Environment.mqttPublishTopic}/${widget.deviceID}",
     );
-    print("Sending to device ${widget.deviceID}: $formatted");
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text("Sending to ${widget.deviceID}: $formatted")),
+      SnackBar(content: Text("Sent to ${widget.deviceID}: $formatted")),
     );
-
-    // TODO: Actually send this string to device via your method
   }
-  void Updatecode() {
+
+  void updateCode() {
     final payload = {
       "5700": {"5701": "28"},
     };
-     MqttService().topicToPublishAndItsMessage(
+
+    MqttService().topicToPublishAndItsMessage(
       jsonEncode(payload),
       "${Environment.mqttPublishTopic}/${widget.deviceID}",
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -181,22 +164,46 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
             : Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            DropdownButton<String>(
-              value: selectedProject,
+            DropdownButton<int>(
+              value: selectedIndex,
               isExpanded: true,
               hint: const Text('Select Project'),
-              items: projectNames.map((name) {
-                return DropdownMenuItem(
-                  value: name,
-                  child: Text(name),
+              items: List.generate(configs.length, (index) {
+                final config = configs[index];
+                return DropdownMenuItem<int>(
+                  value: index,
+                  child: Text('${config['PROJECT_NAME']} - ${config['SERVER_NAME']}'),
                 );
-              }).toList(),
-              onChanged: (value) {
+              }),
+              onChanged: (index) {
                 setState(() {
-                  selectedProject = value;
+                  selectedIndex = index;
+                  formattedConfig = index != null
+                      ? formatConfig(configs[index])
+                      : null;
                 });
               },
             ),
+            const SizedBox(height: 20),
+            if (formattedConfig != null)
+              Container(
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Text(
+                    formattedConfig!,
+                    style: const TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -212,14 +219,13 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: Colors.blue,
+                    backgroundColor: Colors.green,
                   ),
-                  onPressed: Updatecode,
+                  onPressed: updateCode,
                   child: const Text('Update HW Code'),
                 ),
               ],
             ),
-
           ],
         ),
       ),
