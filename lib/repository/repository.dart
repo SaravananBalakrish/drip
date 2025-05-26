@@ -417,6 +417,8 @@ class Repository{
   Future<http.Response> updategeographyArea(body) async {
     return await apiService.putRequest('/user/deviceList/valveGeographyArea/update', body);
   }
-
+  Future<http.Response> getMqttConfigure() async {
+    return await apiService.getRequest('http://13.235.254.21:9000/getConfigs',type: "MQTTCONFIG");
+  }
 }
 

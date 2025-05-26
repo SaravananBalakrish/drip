@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 import '../../StateManagement/mqtt_payload_provider.dart';
@@ -16,38 +17,128 @@ class ConfigureMqtt extends StatefulWidget {
 }
 
 class _ConfigureMqttState extends State<ConfigureMqtt> {
-  final Map<String, TextEditingController> _controllers = {};
-  Map<String, dynamic> dynamicData = {};
   late MqttPayloadProvider mqttPayloadProvider;
-  bool _isInitialized = false;
+  List<Map<String, dynamic>> configs = [];
+  int? selectedIndex;
+  bool isLoading = true;
+  String errorMessage = '';
+  String? formattedConfig;
 
   @override
   void initState() {
     super.initState();
-    _publishInitialUpdate();
+    mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
+    fetchData();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (!_isInitialized) {
-      mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: true);
+  Future<void> fetchData() async {
+    final url = Uri.parse('http://13.235.254.21:9000/getConfigs');
 
-      if (mqttPayloadProvider.mqttUpdateSettings.isNotEmpty) {
-        _initializeControllers(mqttPayloadProvider.mqttUpdateSettings);
+    try {
+      final response = await http.get(url, headers: {'Content-Type': 'application/json'});
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final List<dynamic> rawConfigs = data['data'];
+        configs = rawConfigs.cast<Map<String, dynamic>>();
+
+        setState(() {
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          errorMessage = 'Failed to load configs: ${response.statusCode}';
+          isLoading = false;
+        });
       }
-
-      _isInitialized = true;
+    } catch (e) {
+      setState(() {
+        errorMessage = 'Error fetching data: $e';
+        isLoading = false;
+      });
     }
   }
 
-  void _initializeControllers(Map<String, dynamic> settings) {
-    dynamicData = Map<String, dynamic>.from(settings);
-    dynamicData.forEach((key, value) {
-      _controllers[key] = TextEditingController(text: value?.toString() ?? '-');
-    });
+  String formatConfig(Map<String, dynamic> config) {
+    final projectName = config['PROJECT_NAME'] ?? '';
+
+    if (projectName == 'ORO') {
+      return '${config['MQTT_IP'] ?? '-'},'
+          '${config['MQTT_USER_NAME'] ?? '-'},'
+          '${config['MQTT_PASSWORD'] ?? '-'},'
+          '${config['MQTT_PORT'] ?? '-'},'
+          '${config['HTTP_URL'] ?? '-'},'
+          '${config['STATIC_IP'] ?? '-'},'
+          '${config['SUBNET_MASK'] ?? '-'},'
+          '${config['DEFAULT_GATEWAY'] ?? '-'},'
+          '${config['DNS_SERVER'] ?? '-'},'
+          '${config['FTP_IP'] ?? '-'},'
+          '${config['FTP_USER_NAME'] ?? '-'},'
+          '${config['FTP_PASSWORD'] ?? '-'},'
+          '${config['FTP_PORT'] ?? '-'},'
+          '${config['MQTT_FRONTEND_TOPIC'] ?? '-'},'
+          '${config['MQTT_HARDWARE_TOPIC'] ?? '-'},'
+          '${config['MQTT_SERVER_TOPIC'] ?? '-'}';
+    } else {
+      return '${config['MQTT_IP'] ?? '-'},'
+          '${config['MQTT_USER_NAME'] ?? '-'},'
+          '${config['MQTT_PASSWORD'] ?? '-'},'
+          '${config['MQTT_PORT'] ?? '-'},'
+          '${config['HTTP_URL'] ?? '-'},'
+          '${config['STATIC_IP'] ?? '-'},'
+          '${config['SUBNET_MASK'] ?? '-'},'
+          '${config['DEFAULT_GATEWAY'] ?? '-'},'
+          '${config['DNS_SERVER'] ?? '-'},'
+          '${config['FTP_IP'] ?? '-'},'
+          '${config['FTP_USER_NAME'] ?? '-'},'
+          '${config['FTP_PASSWORD'] ?? '-'},'
+          '${config['FTP_PORT'] ?? '-'},'
+          '${config['MQTT_FRONTEND_TOPIC'] ?? '-'},'
+          '${config['MQTT_HARDWARE_TOPIC'] ?? '-'},'
+          '${config['MQTT_SERVER_TOPIC'] ?? '-'},'
+          '${config['SFTP_IP'] ?? '-'},'
+          '${config['SFTP_USER_NAME'] ?? '-'},'
+          '${config['SFTP_PASSWORD'] ?? '-'},'
+          '${config['SFTP_PORT'] ?? '-'},'
+          '${config['MQTTS_PORT'] ?? '-'},'
+          '${config['MQTTS_STATUS'] ?? '-'},'
+          '${config['REVERSE_SSH_BROKER_NAME'] ?? '-'},'
+          '${config['REVERSE_SSH_PORT'] ?? '-'}';
+    }
   }
-  void Updatecode() {
+
+  void sendSelectedProject() {
+    if (selectedIndex == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please select a project")),
+      );
+      return;
+    }
+
+    final selectedConfig = configs[selectedIndex!];
+    final formatted = formatConfig(selectedConfig);
+
+    final payload = {
+      "6100": {"6101": formatted},
+    };
+
+    print("Selected config index: $selectedIndex");
+    print("Sending config for project: ${selectedConfig['PROJECT_NAME']}");
+    print("Formatted: $formatted");
+    print('jsonEncode(payload): ${jsonEncode(payload)}');
+
+    // Uncomment this when ready to send
+    MqttService().topicToPublishAndItsMessage(
+      jsonEncode(payload),
+      "${Environment.mqttPublishTopic}/${widget.deviceID}",
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Sent to ${widget.deviceID}: $formatted")),
+    );
+  }
+
+  void updateCode() {
     final payload = {
       "5700": {"5701": "28"},
     };
@@ -58,106 +149,86 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
     );
   }
 
-  void _publishInitialUpdate() {
-    final payload = {
-      "5700": {"5701": "22"},
-    };
-
-    MqttService().topicToPublishAndItsMessage(
-      jsonEncode(payload),
-      "${Environment.mqttPublishTopic}/${widget.deviceID}",
-    );
-
-    Future.delayed(const Duration(seconds: 5), () {
-      if (!mounted) return;
-      final settings = mqttPayloadProvider.mqttUpdateSettings;
-      if (settings.isNotEmpty) {
-        _initializeControllers(settings);
-
-        setState(() {
-          // Update the UI after new data is loaded
-        });
-      }
-    });
-  }
-
-  @override
-  void dispose() {
-    for (var controller in _controllers.values) {
-      controller.dispose();
-    }
-    super.dispose();
-  }
-
-  void _printValues() {
-    _controllers.forEach((key, controller) {
-      print('$key: ${controller.text}');
-    });
-
-    final mqttData = _controllers.values.map((c) => c.text).join(',') + ';';
-print('mqttData----->$mqttData');
-  }
-
   @override
   Widget build(BuildContext context) {
-    mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: true);
-
     return Scaffold(
-      appBar: AppBar(title: const Text('Configure MQTT')),
-      body: _controllers.isEmpty
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
+      appBar: AppBar(
+        title: Text('Configure MQTT: ${widget.deviceID}'),
+      ),
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Center(
-          child: SizedBox(width: 500,
-            child: ListView(
+        child: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : errorMessage.isNotEmpty
+            ? Center(child: Text(errorMessage))
+            : Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            DropdownButton<int>(
+              value: selectedIndex,
+              isExpanded: true,
+              hint: const Text('Select Project'),
+              items: List.generate(configs.length, (index) {
+                final config = configs[index];
+                return DropdownMenuItem<int>(
+                  value: index,
+                  child: Text('${config['PROJECT_NAME']} - ${config['SERVER_NAME']}'),
+                );
+              }),
+              onChanged: (index) {
+                setState(() {
+                  selectedIndex = index;
+                  formattedConfig = index != null
+                      ? formatConfig(configs[index])
+                      : null;
+                });
+              },
+            ),
+            const SizedBox(height: 20),
+            if (formattedConfig != null)
+              Container(
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Text(
+                    formattedConfig!,
+                    style: const TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ..._controllers.entries.map((entry) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: TextFormField(
-                      controller: entry.value,
-                      decoration: InputDecoration(
-                        labelText: entry.key,
-                        border: const OutlineInputBorder(),
-                      ),
-                    ),
-                  );
-                }).toList(),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: Theme.of(context).primaryColor,
-                            ),
-                      onPressed: _printValues,
-                      child: const Text('Settings Send'),
-                    ),
-                    const SizedBox(width: 20),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: Colors.lightBlue,
-                      ),
-                      onPressed: Updatecode,
-                      child: const Text('Update Code '),
-                    ),
-                  ],
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blue,
+                  ),
+                  onPressed: sendSelectedProject,
+                  child: const Text('Settings Update'),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.green,
+                  ),
+                  onPressed: updateCode,
+                  child: const Text('Update HW Code'),
                 ),
               ],
             ),
-          ),
+          ],
         ),
       ),
     );
   }
 }
-
-
-
-
-
-

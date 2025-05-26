@@ -7,6 +7,7 @@ class SiteModel {
   SiteModel({required this.data});
 
   factory SiteModel.fromJson(Map<String, dynamic> json) {
+    print("json data :: ${json['data']}");
 
     return SiteModel(
       data: List<Group>.from(json['data'].map((x) => Group.fromJson(x))),
@@ -1212,6 +1213,7 @@ class LiveMessage {
   });
 
   factory LiveMessage.fromJson(Map<String, dynamic> json) {
+    print("json in the live message :: $json");
     return LiveMessage(
       cC: json['cC'],
       /* cM: json['cM'] is Map<String, dynamic> ? Map<String, dynamic>.from(json['cM'])
