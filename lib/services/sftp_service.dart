@@ -17,37 +17,35 @@ class SftpService {
   SSHClient? _sshClient;
   SftpClient? _sftpClient;
 
-  Future<void> connect() async {
+  Future<int> connect() async {
     try {
+      print("Environment.privateKeyPath : ${Environment.privateKeyPath}");
+      print("Environment.sftpIpAddress : ${Environment.sftpIpAddress}");
+      print("Environment.sftpPort : ${Environment.sftpPort}");
       final pem = await rootBundle.loadString(Environment.privateKeyPath);
+      print("pem : ${pem.split('\n').length}");
       final privateKey = SSHKeyPair.fromPem(pem);
-
       final socket = await SSHSocket.connect(
         Environment.sftpIpAddress,
         Environment.sftpPort,
       );
-
       _sshClient = SSHClient(
         socket,
         username: 'ubuntu',
         identities: [...privateKey],
       );
-
       _sftpClient = await _sshClient!.sftp();
+      return 200;
     } catch (e, stackTrace) {
       if (kDebugMode) {
         print('SFTP connect() error: $e');
         print('StackTrace: $stackTrace');
       }
-      rethrow;
+      return 404;
     }
   }
 
   Future<List<SftpName>> listFilesInPath(String path) async {
-    if (_sftpClient == null) {
-      await connect();
-    }
-
     try {
       final items = await _sftpClient!.listdir(path);
       if (kDebugMode) {
@@ -61,8 +59,6 @@ class SftpService {
         print('listFilesInDirectory error: $e');
       }
       rethrow;
-    } finally {
-      disconnect();
     }
   }
 
@@ -71,10 +67,6 @@ class SftpService {
     required String remoteFileName,
   }) async {
     try {
-      if (_sftpClient == null) {
-        await connect();
-      }
-
       final remoteFile = await _sftpClient!.open(
         remoteFileName,
         mode: SftpFileOpenMode.truncate | SftpFileOpenMode.write,
@@ -100,20 +92,15 @@ class SftpService {
         print('StackTrace: $stackTrace');
       }
       return SftpFlag.fileUploadFailed;
-    } finally {
-      disconnect();
     }
   }
 
-  Future<SftpFlag> downloadFile({
+
+  Future<int> downloadFile({
     required String remoteFilePath,
     String localFileName = 'bootFile.txt',
   }) async {
     try {
-      if (_sftpClient == null) {
-        await connect();
-      }
-
       // Read remote file content
       final remoteFile = await _sftpClient!.open(remoteFilePath);
       final content = await remoteFile.readBytes();
@@ -130,16 +117,14 @@ class SftpService {
         print('File downloaded successfully to $localPath');
         print('File content: ${latin1.decode(content)}');
       }
+      return 200;
 
-      return SftpFlag.fileDownloadSuccessFully;
     } catch (e, stackTrace) {
       if (kDebugMode) {
         print('downloadFile() error: $e');
         print('StackTrace: $stackTrace');
       }
-      return SftpFlag.fileDownloadFailed;
-    } finally {
-      disconnect();
+      return 404;
     }
   }
 

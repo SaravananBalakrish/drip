@@ -116,9 +116,11 @@ class NodeList extends StatelessWidget {
                                 InkWell(
                                   onTap: (){
                                     Navigator.push(context, MaterialPageRoute(builder: (context) => NodeConnectionPage(
+                                      nodeData: vm.nodeList[index].toJson(),
                                       masterData: {
-                                        'deviceId' : vm.nodeList[index].deviceId,
-                                        'deviceName' : vm.nodeList[index].deviceName
+                                        "userId" : userId,
+                                        "customerId" : customerId,
+                                        "controllerId" : controllerId
                                       },
                                     )));
                                   },
