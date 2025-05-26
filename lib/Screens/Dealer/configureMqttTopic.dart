@@ -214,7 +214,7 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
                     backgroundColor: Colors.blue,
                   ),
                   onPressed: sendSelectedProject,
-                  child: const Text('Send Settings'),
+                  child: const Text('Settings Update'),
                 ),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
