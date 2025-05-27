@@ -47,5 +47,9 @@
 	<true/>
     <key>NSCameraUsageDescription</key>
     <string>We need camera access to scan QR codes.</string>
+    <key>NSLocationWhenInUseUsageDescription</key>
+    <string>This app uses your location to show map-based services.</string>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>This app uses Bluetooth to connect to nearby devices.</string>
 </dict>
 </plist>
