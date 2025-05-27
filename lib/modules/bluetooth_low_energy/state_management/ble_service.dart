@@ -356,7 +356,7 @@ class BleProvider extends ChangeNotifier {
     if (characteristic != null) {
       sendToHardwareSubscription =
           characteristic.lastValueStream.listen((value) {
-            // print('softWareValue string: ${String.fromCharCodes(value)}');
+            print('AppToHardware =>  ${String.fromCharCodes(value)}');
             // if (fileTraceControl != 'File') {
             sentAndReceive +=
             'AppToHardware ==> \n ${String.fromCharCodes(value)}\n len ${String.fromCharCodes(value).length}\n';
@@ -382,7 +382,7 @@ class BleProvider extends ChangeNotifier {
           characteristic.lastValueStream.listen((value) async {
             print(value);
             String convertToString = String.fromCharCodes(value);
-            print("read :: ${convertToString}");
+            print("read :: $convertToString");
             if(convertToString == "PASS"){
               fileMode = FileMode.crcPass;
               notifyListeners();
@@ -390,6 +390,7 @@ class BleProvider extends ChangeNotifier {
               fileMode = FileMode.crcFail;
               notifyListeners();
             }else if(convertToString == "START"){
+              timeOutForBootMessage();
               fileMode = FileMode.firmwareUpdating;
               notifyListeners();
             }else if(convertToString == "BOOTPASS"){
@@ -583,6 +584,22 @@ class BleProvider extends ChangeNotifier {
           });
     } else {
       print('receiving characteristic is null');
+    }
+  }
+
+  void timeOutForBootMessage()async{
+    int totalTimeOut = 60;
+    for(var second = 0;second < totalTimeOut;second++){
+      if(fileMode == FileMode.bootPass){
+        break;
+      }
+      await Future.delayed(const Duration(seconds: 1));
+      print("waiting for boot pass ${second+1}");
+      if(second == 59){
+        fileMode = FileMode.bootFail;
+        notifyListeners();
+        break;
+      }
     }
   }
 

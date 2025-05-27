@@ -39,7 +39,7 @@ class _NodeInBootModeState extends State<NodeInBootMode> {
           children: [
             SvgPicture.asset(
               'assets/Images/Svg/SmartComm/bootMode.svg',
-              height: 250,
+              height: 200,
             ),
             Text(
               'Hardware is in boot mode.\nPlease update the firmware to proceed.',
@@ -93,7 +93,7 @@ class _NodeInBootModeState extends State<NodeInBootMode> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
-        spacing: 20,
+        spacing: 10,
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -242,7 +242,7 @@ class _NodeInBootModeState extends State<NodeInBootMode> {
       width: double.infinity,
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        spacing: 20,
+        spacing: 10,
         children: [
           if(bleService.fileMode == FileMode.bootPass)
             Image.asset(
@@ -252,7 +252,7 @@ class _NodeInBootModeState extends State<NodeInBootMode> {
           if(bleService.fileMode == FileMode.crcPass || bleService.fileMode == FileMode.firmwareUpdating)
             Lottie.asset(
               'assets/json/file_matched.json',
-              width: 200,
+              width: 150,
             ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,

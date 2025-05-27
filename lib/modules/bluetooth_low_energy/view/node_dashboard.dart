@@ -69,7 +69,6 @@ class _NodeDashboardState extends State<NodeDashboard> {
                   userShouldWaitUntilRestart();
                 },
               )
-
             ],
           );
       }
@@ -81,7 +80,7 @@ class _NodeDashboardState extends State<NodeDashboard> {
         barrierDismissible: false,
         context: context, builder: (context){
       return AlertDialog(
-        title: const Text('Node not changed to Boot Mode.', style: TextStyle(fontSize: 14),),
+        title: const Text('Device not changed to Boot Mode.', style: TextStyle(fontSize: 14),),
         actions: [
           CustomMaterialButton()
         ],
@@ -134,7 +133,6 @@ class _NodeDashboardState extends State<NodeDashboard> {
     return InkWell(
       onTap: (){
         userAcknowledgementForUpdatingFirmware();
-        // Navigator.push(context, MaterialPageRoute(builder: (context)=> NodeInBootMode()));
       },
       child: Container(
         padding: const EdgeInsets.all(15),
