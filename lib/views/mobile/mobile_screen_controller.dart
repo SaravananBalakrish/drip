@@ -853,6 +853,7 @@ class MobileScreenController extends StatelessWidget {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
+      backgroundColor: Colors.white,
       builder: (_) {
         return StatefulBuilder(builder: (context, setModalState) {
           final manager = Provider.of<BluetoothManager>(context);
@@ -892,7 +893,7 @@ class MobileScreenController extends StatelessWidget {
                     dense: true,
                     visualDensity: VisualDensity.compact,
                     contentPadding: EdgeInsets.zero,
-                    title: const Text("Connect Mobile Paired Controller",
+                    title: const Text("Scan for Bluetooth Devices and Connect",
                         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                     trailing: IconButton(
                       icon: const Icon(Icons.refresh_outlined, color: Colors.black),
@@ -952,10 +953,11 @@ class MobileScreenController extends StatelessWidget {
     showDialog(
       context: context,
       builder: (context) {
-        final wifiNetworks = Provider.of<BluetoothManager>(context).listOfWifi;
+        final bluetoothManager = Provider.of<BluetoothManager>(context, listen: false);
         final connectingNetwork = ValueNotifier<String?>(null);
 
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: ListTile(
             title: const Text("Available Networks"),
             subtitle: const Text(
@@ -972,85 +974,99 @@ class MobileScreenController extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           content: SizedBox(
             width: double.maxFinite,
-            child: ValueListenableBuilder<List<Map<String, dynamic>>>(
-              valueListenable: wifiNetworks,
-              builder: (context, networks, _) {
-                if (networks.isEmpty) return const Text("No networks found.");
+            child: ValueListenableBuilder<String?>(
+              valueListenable: bluetoothManager.wifiMessage,
+              builder: (context, message, _) {
+                if (message != null && message.isNotEmpty) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
 
-                return ValueListenableBuilder<String?>(
-                  valueListenable: connectingNetwork,
-                  builder: (dialogContext, connectingSsid, _) {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: networks.length,
-                      itemBuilder: (context, index) {
-                        final net = networks[index];
-                        final ssid = net["SSID"] ?? "Unknown";
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Changing controller network..."),
+                          content: Text(message),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                bluetoothManager.wifiMessage.value = null;
+                                Navigator.of(context).pop();
+                                Navigator.of(context).pop();
+                                showWifiListDialog(context);
+                              },
+                              child: const Text("OK"),
+                            ),
+                          ],
+                        );
+                      },
+                    );
 
-                        final String? storedPassword = net["PASSWORD"];
-                        final bool isSecured = (storedPassword != null);
+                    /*final snackBar = SnackBar(content: Text(message));
+                    final messenger = ScaffoldMessenger.of(context);
+                    final controller = messenger.showSnackBar(snackBar);
+                    controller.closed.then((_) {
+                      bluetoothManager.wifiMessage.value = '';
+                    });*/
+                  });
+                }
 
-                        final wifiNetworks = Provider.of<BluetoothManager>(context).wifiMessage;
-                        print('wifiNetworks');
+                return ValueListenableBuilder<List<Map<String, dynamic>>>(
+                  valueListenable: bluetoothManager.listOfWifi,
+                  builder: (context, networks, _) {
+                    if (networks.isEmpty) {
+                      return const SizedBox(height: 20, child: Center(child: Text("No networks found.")));
+                    }
 
-                        return ListTile(
-                          leading: Icon(Icons.wifi, color: net["SIGNAL"] >= 75 ?
-                          Colors.green : (net["SIGNAL"] >= 50 ? Colors.orange : Colors.red),
-                          ),
-                          title: Text(ssid),
-                          subtitle: Text("Signal: ${net["SIGNAL"]}%"),
-                          trailing: connectingSsid == ssid ?
-                          const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ) :
-                          (net["IN-USE"] == "1" ?
-                          const Icon(Icons.check_circle, color: Colors.blue) : null),
-                            onTap: () async {
-                              final selectedSsid = ssid;
+                    return ValueListenableBuilder<String?>(
+                      valueListenable: connectingNetwork,
+                      builder: (dialogContext, connectingSsid, _) {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          itemCount: networks.length,
+                          itemBuilder: (context, index) {
+                            final net = networks[index];
+                            final ssid = net["SSID"] ?? "Unknown";
+                            final bool isSecured = (net["SECURITY"] != null);
 
-                              if(isSecured){
-                                final password =  await showPasswordDialog(context, selectedSsid);
-                                if (password == null || password.isEmpty) return;
-                                connectingNetwork.value = ssid;
-                                String payload = '2,$selectedSsid,$password';
-                                String livePayload = jsonEncode({"6000": {"6001": payload}});
-                                final communicationService = context.read<CommunicationService>();
-                                final result = await communicationService.sendCommand(serverMsg:'', payload: livePayload);
-                              }else{
+                            return ListTile(
+                              leading: Icon(
+                                Icons.wifi,
+                                color: net["SIGNAL"] >= 75
+                                    ? Colors.green
+                                    : (net["SIGNAL"] >= 50 ? Colors.orange : Colors.red),
+                              ),
+                              title: Text(ssid),
+                              subtitle: Text("Signal: ${net["SIGNAL"]}%"),
+                              trailing: connectingSsid == ssid
+                                  ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                                  : (net["IN-USE"] == "1"
+                                  ? const Icon(Icons.check_circle, color: Colors.blue)
+                                  : null),
+                              onTap: () async {
+                                final selectedSsid = ssid;
                                 connectingNetwork.value = selectedSsid;
-                                String payload = '2,$selectedSsid,';
-                                String livePayload = jsonEncode({"6000": {"6001": payload}});
+
                                 final communicationService = context.read<CommunicationService>();
-                                final result = await communicationService.sendCommand(serverMsg:'', payload: livePayload);
-                                print(result);
-                                /*await Future.delayed(const Duration(seconds: 3));
-                                connectingNetwork.value = null;*/
-                              }
 
-                              /*// Close the current dialog FIRST
-                              Navigator.pop(dialogContext); // use dialogContext here
+                                if (isSecured) {
+                                  final password = await showPasswordDialog(context, selectedSsid);
+                                  if (password == null || password.isEmpty) return;
 
-                              // Wait a moment to ensure dialog closes before opening new one
-                              await Future.delayed(const Duration(milliseconds: 300));
-
-                              // ✅ Use parentContext (not dialogContext) to show the next dialog
-                              final password = secured
-                                  ? await showPasswordDialog(context, selectedSsid)
-                                  : "";
-
-                              if (secured && (password == null || password.isEmpty)) return;
-
-                              connectingNetwork.value = selectedSsid;
-
-                              // ✅ Call connect method and refresh using parentContext if needed
-                              final bluetoothManager = Provider.of<BluetoothManager>(context, listen: false);
-
-                              // await bluetoothManager.connectToWifi(selectedSsid, password);
-                              await Future.delayed(const Duration(seconds: 3));
-                              requestAndShowWifiList(context, true);*/
-                            }
+                                  String payload = '2,$selectedSsid,$password';
+                                  String livePayload = jsonEncode({"6000": {"6001": payload}});
+                                  await communicationService.sendCommand(serverMsg: '', payload: livePayload);
+                                } else {
+                                  String payload = '2,$selectedSsid,';
+                                  String livePayload = jsonEncode({"6000": {"6001": payload}});
+                                  await communicationService.sendCommand(serverMsg: '', payload: livePayload);
+                                }
+                              },
+                            );
+                          },
                         );
                       },
                     );
@@ -1071,23 +1087,19 @@ class MobileScreenController extends StatelessWidget {
   }
 
   Future<String?> showPasswordDialog(BuildContext context, String ssid) async {
-    final controller = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
     return showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text('Enter password for "$ssid"'),
-        content: TextField(
-          controller: controller,
-          obscureText: true,
-          decoration: const InputDecoration(labelText: "Password"),
-        ),
+        content: PasswordField(controller: passwordController),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, null),
             child: const Text("Cancel"),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, controller.text),
+            onPressed: () => Navigator.pop(context, passwordController.text),
             child: const Text("Connect"),
           ),
         ],
@@ -1253,4 +1265,38 @@ class AlarmListItems extends StatelessWidget {
     );
   }
 
+}
+
+class PasswordField extends StatefulWidget {
+  final TextEditingController controller;
+
+  const PasswordField({super.key, required this.controller});
+
+  @override
+  State<PasswordField> createState() => _PasswordFieldState();
+}
+
+class _PasswordFieldState extends State<PasswordField> {
+  bool _obscureText = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextField(
+      controller: widget.controller,
+      obscureText: _obscureText,
+      decoration: InputDecoration(
+        labelText: 'Password',
+        suffixIcon: IconButton(
+          icon: Icon(
+            _obscureText ? Icons.visibility_off : Icons.visibility,
+          ),
+          onPressed: () {
+            setState(() {
+              _obscureText = !_obscureText;
+            });
+          },
+        ),
+      ),
+    );
+  }
 }
