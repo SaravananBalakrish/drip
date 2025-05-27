@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:bluetooth_classic/models/device.dart';
@@ -20,7 +21,7 @@ class BluetoothManager extends ChangeNotifier {
   final _bluetoothClassicPlugin = BluetoothClassic();
   MqttPayloadProvider? providerState;
 
-  List<CustomDevice> _devices = [];
+  final List<CustomDevice> _devices = [];
   Uint8List _data = Uint8List.fromList([]);
   String? _connectedAddress;
 
@@ -31,6 +32,11 @@ class BluetoothManager extends ChangeNotifier {
   String _buffer = '';
   final ValueNotifier<List<Map<String, dynamic>>> listOfWifi = ValueNotifier([]);
   ValueNotifier<String?> wifiMessage = ValueNotifier<String?>(null);
+
+  StreamSubscription<Device>? _scanSubscription;
+  late final Stream<Device> _deviceStream =
+  _bluetoothClassicPlugin.onDeviceDiscovered().asBroadcastStream();
+
 
   BluetoothManager({required MqttPayloadProvider? state}) {
     providerState = state;
@@ -62,13 +68,27 @@ class BluetoothManager extends ChangeNotifier {
     await _bluetoothClassicPlugin.initPermissions();
   }
 
-
   Future<void> getDevices() async {
-    var res = await _bluetoothClassicPlugin.getPairedDevices();
-    _devices = res.map((e) => CustomDevice(device: e)).toList();
+    _devices.clear();
     notifyListeners();
-  }
 
+    await _scanSubscription?.cancel();
+    await _bluetoothClassicPlugin.startScan();
+    _scanSubscription = _deviceStream.listen((device) {
+      if (device.name != null && device.name!.startsWith('NIA')) {
+        final customDevice = CustomDevice(device: device);
+
+        if (!_devices.any((d) => d.device.address == customDevice.device.address)) {
+          _devices.add(customDevice);
+          notifyListeners();
+        }
+      }
+    });
+
+    await Future.delayed(const Duration(seconds: 10));
+    await _bluetoothClassicPlugin.stopScan();
+    await _scanSubscription?.cancel();
+  }
 
   Future<void> connectToDevice(CustomDevice customDevice) async {
     _connectedAddress = customDevice.device.address;
@@ -138,13 +158,18 @@ class BluetoothManager extends ChangeNotifier {
                 }
               }
               else if (data['mC']?.toString() == '4200'){
-                print('kamaraj.....');
+                print('change password.....');
                 final cM = data['cM'] as Map<String, dynamic>?;
                 if (cM != null && cM.isNotEmpty) {
                   final firstEntry = cM.entries.first.value as Map<String, dynamic>;
                   final message = firstEntry['Message'];
                   print('Message: $message');
-                  wifiMessage.value = message;
+                  final cleanedMessage = message?.trim();
+                  if (cleanedMessage != null) {
+                    wifiMessage.value = cleanedMessage;
+                  }else{
+                    print('kamaraj password');
+                  }
                 }
               }
               else{
