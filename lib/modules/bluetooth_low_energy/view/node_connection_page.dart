@@ -120,6 +120,12 @@ class _NodeConnectionPageState extends State<NodeConnectionPage> {
           ],
         ),
         actions: [
+          FilledButton(
+              onPressed: (){
+                bleService.onDisconnect();
+              },
+              child: Text('DisConnect')
+          ),
           Text(bleService.connectionState(), style: TextStyle(color: Colors.white),),
           const SizedBox(width: 20,)
         ],

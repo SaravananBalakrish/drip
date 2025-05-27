@@ -645,6 +645,8 @@ class BleProvider extends ChangeNotifier {
   Future onDisconnect() async {
     try {
       await device!.disconnectAndUpdateStream();
+      clearBluetoothDeviceState();
+
       // Snackbar.show(ABC.c, "Disconnect: Success", success: true);
     } catch (e, backtrace) {
       // Snackbar.show(ABC.c, prettyException("Disconnect Error:", e), success: false);
