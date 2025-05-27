@@ -451,9 +451,10 @@ class PumpStationWithLine extends StatelessWidget {
       );
     }
     else{
+
       if(fertilizerSite.isEmpty){
 
-        double myDouble = MediaQuery.sizeOf(context).width / 70;
+        double myDouble = MediaQuery.sizeOf(context).width / 75;
         int itemsPerRow = myDouble.toInt();
 
         final valveWidgetEntries = valves.asMap().entries.toList();
