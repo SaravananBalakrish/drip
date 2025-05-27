@@ -591,6 +591,7 @@ class BleProvider extends ChangeNotifier {
     int totalTimeOut = 60;
     for(var second = 0;second < totalTimeOut;second++){
       if(fileMode == FileMode.bootPass){
+        requestingMacUntilBootModeToApp();
         break;
       }
       await Future.delayed(const Duration(seconds: 1));
@@ -600,6 +601,18 @@ class BleProvider extends ChangeNotifier {
         notifyListeners();
         break;
       }
+    }
+  }
+
+  void requestingMacUntilBootModeToApp()async{
+    for(var waitLoop = 0;waitLoop < 15;waitLoop++){
+      if(nodeDataFromHw['BOOT'] == '30'){
+        break;
+      }
+      await Future.delayed(const Duration(seconds: 2));
+      requestingMac();
+      print("userShouldWaitForBootModeToApp seconds : ${waitLoop + 1}");
+      print("nodeDataFromHw : ${nodeDataFromHw}");
     }
   }
 
