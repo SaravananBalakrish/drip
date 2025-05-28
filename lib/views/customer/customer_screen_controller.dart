@@ -17,7 +17,6 @@ import '../../Screens/Dealer/controllerverssionupdate.dart';
 import '../../Screens/Map/CustomerMap.dart';
 import '../../Screens/Map/allAreaBoundry.dart';
 import '../../Screens/planning/FactoryReset.dart';
-import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../flavors.dart';
 import '../../modules/PumpController/view/node_settings.dart';
 import '../../modules/ScheduleView/view/schedule_view_screen.dart';
@@ -54,8 +53,6 @@ class CustomerScreenController extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final String _correctPassword = 'Oro@321';
-
 
     return MultiProvider(
       providers: [
@@ -67,24 +64,6 @@ class CustomerScreenController extends StatelessWidget {
       ],
       child: Consumer2<NavRailViewModel, CustomerScreenControllerViewModel>(
         builder: (context, navViewModel, vm, _) {
-          final mqttProvider = Provider.of<MqttPayloadProvider>(context);
-
-          int wifiStrength = mqttProvider.wifiStrength;
-          String liveDataAndTime = mqttProvider.liveDateAndTime;
-          var iLineLiveMessage = mqttProvider.lineLiveMessage;
-          int powerSupply = mqttProvider.powerSupply;
-          var currentSchedule = mqttProvider.currentSchedule;
-          bool isLiveSynced = mqttProvider.isLiveSynced;
-          var alarm = mqttProvider.alarmDL;
-
-          if (liveDataAndTime.isNotEmpty) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              vm.updateLivePayload(wifiStrength, liveDataAndTime, currentSchedule, iLineLiveMessage);
-            });
-          } else {
-            print("liveDataAndTime is empty.");
-          }
-
           if(vm.isLoading){
             return const Scaffold(body: Center(child: Text('Site loading please waite....')));
           }
@@ -95,9 +74,9 @@ class CustomerScreenController extends StatelessWidget {
                   fromLogin ?const SizedBox():
                   const SizedBox(width: 10),
                   fromLogin ? Image(
-                    image: F.appFlavor!.name.contains('oro')?const AssetImage("assets/png/oro_logo_white.png"):
+                    image: F.appFlavor!.name.contains('oro')? const AssetImage("assets/png/oro_logo_white.png"):
                     const AssetImage("assets/png/company_logo.png"),
-                    width: 110,
+                    width: F.appFlavor!.name.contains('oro')? 70:110,
                     fit: BoxFit.fitWidth,
                   ):
                   const SizedBox(),
@@ -284,17 +263,17 @@ class CustomerScreenController extends StatelessWidget {
 
                     const SizedBox(width: 10,),
 
-                    (iLineLiveMessage.isNotEmpty &&
+                    (vm.lineLiveMessage.isNotEmpty &&
                         vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.length > 1)?
                     Builder(
                       builder: (context) {
-                        bool allPaused = iLineLiveMessage.every((line) {
+                        bool allPaused = vm.lineLiveMessage.every((line) {
                           final parts = line.split(',');
                           return parts.length > 1 && parts[1] == '1';
                         });
 
                         return TextButton(
-                          onPressed: () => vm.linePauseOrResume(iLineLiveMessage),
+                          onPressed: () => vm.linePauseOrResume(vm.lineLiveMessage),
                           style: ButtonStyle(
                             backgroundColor: WidgetStateProperty.all<Color>(
                               allPaused ? Colors.green : Colors.orange,
@@ -510,7 +489,7 @@ class CustomerScreenController extends StatelessWidget {
                     child: Column(
                       children: [
                         if (vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1) ...[
-                          if (!isLiveSynced)
+                          if (!vm.isLiveSynced)
                             Container(
                               height: 20.0,
                               decoration: BoxDecoration(
@@ -530,7 +509,7 @@ class CustomerScreenController extends StatelessWidget {
                                 ),
                               ),
                             )
-                          else if (powerSupply == 0)
+                          else if (vm.powerSupply == 0)
                             Container(
                               height: 23.0,
                               decoration: BoxDecoration(
@@ -605,7 +584,7 @@ class CustomerScreenController extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 15),
-                          AlarmButton(alarmPayload: alarm, deviceID: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
+                          AlarmButton(alarmPayload: vm.alarmDL, deviceID: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
                             customerId: customerId, controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,),
                           const SizedBox(height: 15),
                           CircleAvatar(
@@ -863,11 +842,11 @@ class CustomerScreenController extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Enter Password'),
+          title: const Text('Enter Password'),
           content: TextField(
             controller: passwordController,
             obscureText: true,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               labelText: 'Password',
               border: OutlineInputBorder(),
             ),
@@ -877,14 +856,14 @@ class CustomerScreenController extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
             TextButton(
               onPressed: () {
                 final enteredPassword = passwordController.text;
 
                 if (enteredPassword == correctPassword) {
-                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop();
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) =>  ResetVerssion(userId: userId, controllerId: controllerID, deviceID: imeiNumber,)),
@@ -894,7 +873,7 @@ class CustomerScreenController extends StatelessWidget {
                   showErrorDialog(context);
                 }
               },
-              child: Text('Submit'),
+              child: const Text('Submit'),
             ),
           ],
         );
@@ -907,14 +886,14 @@ class CustomerScreenController extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Error'),
-          content: Text('Incorrect password. Please try again.'),
+          title: const Text('Error'),
+          content: const Text('Incorrect password. Please try again.'),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -1135,7 +1114,7 @@ class AlarmButton extends StatelessWidget {
             bodyBuilder: (context) => AlarmListItems(alarm : alarmPayload, deviceID:deviceID, customerId: customerId, controllerId: controllerId,),
             onPop: () => print('Popover was popped!'),
             direction: PopoverDirection.left,
-            width: alarmPayload[0].isNotEmpty?600:250,
+            width: alarmPayload[0].isNotEmpty?600:150,
             height: alarmPayload[0].isNotEmpty?(alarmPayload.length*45)+20:50,
             arrowHeight: 15,
             arrowWidth: 30,

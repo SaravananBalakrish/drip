@@ -129,6 +129,18 @@ class MqttService {
     }
   }
 
+  Future<void> disConnect() async {
+    assert(_client != null);
+    if (isConnected) {
+      try {
+        _client!.disconnect();
+      } catch (e, stackTrace) {
+        debugPrint('MQTT Disconnect Exception: $e');
+        debugPrint('$stackTrace');
+      }
+    }
+  }
+
   void topicToSubscribe(String topic) {
     if (currentTopic != null && currentTopic != topic) {
       _client?.unsubscribe(currentTopic!);
