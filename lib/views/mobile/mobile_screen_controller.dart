@@ -62,25 +62,8 @@ class MobileScreenController extends StatelessWidget {
       ],
       child: Consumer2<NavRailViewModel, CustomerScreenControllerViewModel>(
         builder: (context, navViewModel, vm, _) {
-          final mqttProvider = Provider.of<MqttPayloadProvider>(context);
           final commMode = Provider.of<CustomerProvider>(context).controllerCommMode;
           final manager = Provider.of<BluetoothManager>(context);
-
-          int wifiStrength = mqttProvider.wifiStrength;
-          String liveDataAndTime = mqttProvider.liveDateAndTime;
-          print('liveDataAndTime:$liveDataAndTime');
-          int powerSupply = mqttProvider.powerSupply;
-          var currentSchedule = mqttProvider.currentSchedule;
-          bool isLiveSynced = mqttProvider.isLiveSynced;
-          var iLineLiveMessage = mqttProvider.lineLiveMessage;
-          var alarm = mqttProvider.alarmDL;
-
-
-          if (liveDataAndTime.isNotEmpty) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              vm.updateLivePayload(wifiStrength, liveDataAndTime, currentSchedule, iLineLiveMessage);
-            });
-          }
 
           if (vm.isLoading) {
             return const Scaffold(
@@ -103,7 +86,7 @@ class MobileScreenController extends StatelessWidget {
               ),
               actions: [
                 if(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId != 2)...[
-                  AlarmButton(alarmPayload: alarm, deviceID: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
+                  AlarmButton(alarmPayload: vm.alarmDL, deviceID: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
                     customerId: customerId, controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId),
                 ],
                 if(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 2)...[
@@ -696,7 +679,7 @@ class MobileScreenController extends StatelessWidget {
                 child: Column(
                   children: [
                     if (vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1) ...[
-                      if (!isLiveSynced)
+                      if (!vm.isLiveSynced)
                         Container(
                           height: 20.0,
                           decoration: BoxDecoration(
@@ -716,7 +699,7 @@ class MobileScreenController extends StatelessWidget {
                             ),
                           ),
                         )
-                      else if (powerSupply == 0)
+                      else if (vm.powerSupply == 0)
                         Container(
                           height: 30,
                           color: Colors.red.shade300,
