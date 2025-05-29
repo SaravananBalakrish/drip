@@ -7,6 +7,7 @@ import '../../Models/customer/site_model.dart';
 import '../../StateManagement/customer_provider.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../repository/repository.dart';
+import '../../services/bluetooth_sevice.dart';
 import '../../services/communication_service.dart';
 import '../../services/mqtt_service.dart';
 import '../../utils/constants.dart';
@@ -15,8 +16,9 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   final Repository repository;
   final BuildContext context;
   final MqttService mqttService = MqttService();
+  final BluService blueService = BluService();
 
-  late final MqttPayloadProvider payloadProvider;
+  late MqttPayloadProvider mqttProvider;
 
   bool isLoading = false;
   String errorMsg = '';
@@ -41,18 +43,12 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
 
   List<String> pairedDevices = ['Device A', 'Device B', 'Device C'];
 
-  CustomerScreenControllerViewModel(this.context, this.repository) {
+  CustomerScreenControllerViewModel(this.context, this.repository, this.mqttProvider) {
     fromWhere = 'init';
-    payloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
-    payloadProvider.addListener(_onPayloadReceived);
-
-    /*payloadProvider.addListener(() {
-      final liveDateAndTime = payloadProvider.liveDateAndTime;
-      debugPrint("live Date And Time updated: $liveDateAndTime");
-    });*/
-
     _initializeMqttConnection();
+    mqttProvider.addListener(_onPayloadReceived);
   }
+
 
   void _onPayloadReceived() {
     final mqttProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
@@ -69,8 +65,9 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   }
 
   void _initializeMqttConnection() {
-    mqttService.initializeMQTTClient(state: payloadProvider);
+    mqttService.initializeMQTTClient(state: mqttProvider);
     mqttService.connect();
+    blueService.initializeBluService(state: mqttProvider);
 
     mqttSubscription = mqttService.mqttConnectionStream.listen((state) {
       switch (state) {
@@ -106,7 +103,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
           mySiteList = SiteModel.fromJson(jsonData);
           updateSite(sIndex, mIndex, lIndex);
 
-          payloadProvider.saveUnits(Unit.toJsonList(mySiteList.data[sIndex].master[mIndex].units));
+          mqttProvider.saveUnits(Unit.toJsonList(mySiteList.data[sIndex].master[mIndex].units));
 
           final customerProvider = Provider.of<CustomerProvider>(context, listen: false);
           customerProvider.updateCustomerInfo(customerId: customerId);
@@ -115,7 +112,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
           );
 
           final live = mySiteList.data[sIndex].master[mIndex].live;
-          payloadProvider.updateReceivedPayload(
+          mqttProvider.updateReceivedPayload(
             live != null ? jsonEncode(live) : _defaultPayload(),
             true,
           );
@@ -204,8 +201,6 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   }
 
   void updateLivePayload(int ws, String liveDataAndTime, List<String> cProgram, List<String> linePauseResume) {
-    payloadProvider.wifiStrength = 0;
-    payloadProvider.liveDateAndTime = '';
 
     final parts = liveDataAndTime.split(' ');
     if (parts.length == 2) {
@@ -216,7 +211,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     wifiStrength = ws;
     programRunning = cProgram.isNotEmpty && cProgram[0].isNotEmpty;
     if (programRunning) {
-      payloadProvider.currentSchedule = cProgram;
+      mqttProvider.currentSchedule = cProgram;
     }
 
     for (final entry in linePauseResume) {
@@ -245,7 +240,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
         ? jsonEncode({"3000": {"3001": ""}})
         : jsonEncode({"sentSms": "#live"});
 
-    payloadProvider.liveSyncCall(true);
+    mqttProvider.liveSyncCall(true);
 
     final result = await context.read<CommunicationService>().sendCommand(
       serverMsg: '',
@@ -257,7 +252,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     if (result['bluetooth'] == true) debugPrint("Payload sent via Bluetooth");
 
     await Future.delayed(const Duration(seconds: 1));
-    payloadProvider.liveSyncCall(false);
+    mqttProvider.liveSyncCall(false);
   }
 
   Future<void> linePauseOrResume(List<String> lineLiveMsg) async {
@@ -313,10 +308,10 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     mqttService.disConnect();
   }
 
+
   @override
   void dispose() {
-    final payloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
-    payloadProvider.removeListener(_onPayloadReceived);
+    mqttProvider.removeListener(_onPayloadReceived);
     disposeMqtt();
     super.dispose();
   }

@@ -5,6 +5,7 @@ import '../Constants/data_convertion.dart';
 import '../Models/Weather_model.dart';
 import '../Models/customer/site_model.dart';
 import '../Screens/Map/googlemap_model.dart';
+import '../services/bluetooth_sevice.dart';
 
 enum MQTTConnectionState { connected, disconnected, connecting }
 
@@ -111,6 +112,54 @@ class MqttPayloadProvider with ChangeNotifier {
    final Map<String, String> _valveOnOffStatusMap = {};
    final Map<String, String> _sensorValueMap = {};
    final Map<String, String> _boosterPumpOnOffStatusMap = {};
+
+   //for blue service
+   CustomDevice? _connectedDevice;
+   CustomDevice? get connectedDevice => _connectedDevice;
+
+   List<CustomDevice> _pairedDevices = [];
+   List<CustomDevice> get pairedDevices => _pairedDevices;
+
+   List<Map<String, dynamic>> _wifiList = [];
+   String? _wifiMessage;
+
+   List<Map<String, dynamic>> get wifiList => _wifiList;
+   String? get wifiMessage => _wifiMessage;
+
+   void updateConnectedDeviceStatus(CustomDevice? device) {
+     _connectedDevice = device;
+     notifyListeners();
+   }
+
+   void updatePairedDevices(List<CustomDevice> devices) {
+     _pairedDevices = devices;
+     notifyListeners();
+   }
+
+   void updateDeviceStatus(String address, int status) {
+     for (var device in _pairedDevices) {
+       if (device.device.address == address) {
+         device.status = status;
+         notifyListeners();
+         break;
+       }
+     }
+   }
+
+   void updateWifiList(List<Map<String, dynamic>> list) {
+     _wifiList = list;
+     notifyListeners();
+   }
+
+   void updateWifiMessage(String? message) {
+     _wifiMessage = message;
+     notifyListeners();
+   }
+
+   void clearWifiMessage() {
+     _wifiMessage = null;
+     notifyListeners();
+   }
 
   void updateMapData(data){
     print("updateMapData $data");
@@ -471,135 +520,126 @@ class MqttPayloadProvider with ChangeNotifier {
 
   }
 
-   void updateReceivedPayload(String payload, bool dataFromHttp) async {
-     // Old code before try block
-     if (kDebugMode) {
-       // print("updateReceivedPayload ====$payload");
-     }
+  void updateReceivedPayload(String newPayload, bool dataFromHttp) async{
 
-     if (!dataFromHttp) {
-       dataFetchingStatus = 1;
-     } else {
-       dataFetchingStatus = 3;
-     }
+    if (_receivedPayload != newPayload) {
+      _receivedPayload = newPayload;
 
-     try {
-       Map<String, dynamic> data = payload.isNotEmpty ? jsonDecode(payload) : {};
-       print('data------>:$data');
+      if(!dataFromHttp) {
+        dataFetchingStatus = 1;
+      } else {
+        dataFetchingStatus = 3;
+      }
 
-       // Your existing logic for mC == '2400'
-       if (data['mC'] == '2400') {
-         print('blue live------>:$data');
-         isLiveSynced = true;
-         liveDateAndTime = '${data['cD']} ${data['cT']}';
-         wifiStrength = data['cM']['WifiStrength'];
-         powerSupply = data['cM']['PowerSupply'];
+      try {
+        Map<String, dynamic> data = _receivedPayload.isNotEmpty? jsonDecode(_receivedPayload) : {};
+        print('_receivedPayload------>:$_receivedPayload');
 
-         updateNodeLiveMessage(data['cM']['2401'].split(";"));
-         updateOutputStatusPayload(data['cM']['2402'].split(";"));
-         updateAllPumpPayloads(data['cM']['2402'].split(";"), data['cM']['2404'].split(";"));
-         updateFilterSitePayloads(data['cM']['2402'].split(";"), data['cM']['2406'].split(";"));
-         updateFertilizerSitePayloads(data['cM']['2402'].split(";"), data['cM']['2407'].split(";"));
-         updateValveStatus(data['cM']['2402'].split(";"));
-         updateSensorValue(data['cM']['2403'].split(";"));
-         updateBoosterPumpStatus(data['cM']['2402'].split(";"));
-         updateLineLiveMessage(data['cM']['2405'].split(";"));
-         updateCurrentProgram(data['cM']['2408'].split(";"));
-         updateNextProgram(data['cM']['2409'].split(";"));
-         updateScheduledProgram(data['cM']['2410'].split(";"));
-         updateAlarm(data['cM']['2412'].split(";"));
+        if(data['mC']=='2400'){
+          isLiveSynced = true;
+          liveDateAndTime = '${data['cD']} ${data['cT']}';
+          wifiStrength = data['cM']['WifiStrength'];
+          powerSupply = data['cM']['PowerSupply'];
+          updateNodeLiveMessage(data['cM']['2401'].split(";"));
+          updateOutputStatusPayload(data['cM']['2402'].split(";"));
 
-         notifyListeners();
-       }
-       // Your other conditionals as in old code
-       else if (data.containsKey('3600') && data['3600'] != null && data['3600'].isNotEmpty) {
-         // mySchedule.dataFromMqttConversion(payload);
-         schedulePayload = payload;
-       } else if (data.containsKey('5100') && data['5100'] != null && data['5100'].isNotEmpty) {
-         weatherModelinstance = WeatherModel.fromJson(data);
-       } else if (data['mC'] != null && data["mC"].contains("VIEW")) {
-         cCList = {...cCList, data['cC']}.toList();
-         viewSetting = data;
-         if (!viewSettingsList.contains(jsonEncode(data['cM']))) {
-           viewSettingsList.add(jsonEncode(data["cM"]));
-           // print("viewSettingsList ==> $viewSettingsList");
-         }
-       }
+          updateAllPumpPayloads(data['cM']['2402'].split(";"), data['cM']['2404'].split(";"));
+          updateFilterSitePayloads(data['cM']['2402'].split(";"), data['cM']['2406'].split(";"));
+          updateFertilizerSitePayloads(data['cM']['2402'].split(";"), data['cM']['2407'].split(";"));
 
-       // Additional checks
-       if (data['cM'] is! List<dynamic>) {
-         if (data['mC'] != null && data['cM'].containsKey('4201')) {
-           messageFromHw = data['cM']['4201'];
-         }
-       }
+          updateValveStatus(data['cM']['2402'].split(";"));
+          updateSensorValue(data['cM']['2403'].split(";"));
+          updateBoosterPumpStatus(data['cM']['2402'].split(";"));
 
-       // New improved message de-duplication block
-       if (data.containsKey("cM") && data["cM"] is! List) {
-         Map cM = data["cM"];
+          updateLineLiveMessage(data['cM']['2405'].split(";"));
+          updateCurrentProgram(data['cM']['2408'].split(";"));
+          updateNextProgram(data['cM']['2409'].split(";"));
+          updateScheduledProgram(data['cM']['2410'].split(";"));
+          updateAlarm(data['cM']['2412'].split(";"));
+          notifyListeners();
+        }
 
-         if (cM.containsKey("6601")) {
-           String msg = cM["6601"];
-           if (!scheduleMessagesSet.contains(msg)) {
-             sheduleLog += "\n" + msg;
-             scheduleMessagesSet.add(msg);
-           }
-         }
+        else if(data.containsKey('3600') && data['3600'] != null && data['3600'].isNotEmpty){
+          schedulePayload = _receivedPayload;
+        }
+        else if(data.containsKey('5100') && data['5100'] != null && data['5100'].isNotEmpty){
+          weatherModelinstance = WeatherModel.fromJson(data);
+        }
+        else if(data['mC'] != null && data["mC"].contains("VIEW")) {
+          cCList = {...cCList, data['cC']}.toList();
+          viewSetting = data;
+          if (!viewSettingsList.contains(jsonEncode(data['cM']))) {
+            viewSettingsList.add(jsonEncode(data["cM"]));
+            // print("viewSettingsList ==> $viewSettingsList");
+          }
+        }
+        if(data['cM'] is! List<dynamic>) {
+          if (data['mC'] != null && data['cM'].containsKey('4201')) {
+            messageFromHw = data['cM']['4201'];
+          }
+        }
+        if(data.containsKey("cM") && data["cM"] is! List && (data["cM"] as Map).containsKey("6601")){
+          if(ctrllogtimecheck != data['cT']){
+            sheduleLog += "\n";
+            sheduleLog += data['cM']['6601'];
+            ctrllogtimecheck = data['cT'];
+          }
 
-         if (cM.containsKey("6602")) {
-           String msg = cM["6602"];
-           if (!uardMessagesSet.contains(msg)) {
-             uardLog += "\n" + msg;
-             uardMessagesSet.add(msg);
-           }
-         }
+        }
+        if(data.containsKey("cM") && data["cM"] is! List && (data["cM"] as Map).containsKey("6602")){
+          if(ctrllogtimecheck != data['cT']) {
+            uardLog += "\n";
+            uardLog += data['cM']['6602'];
+            ctrllogtimecheck = data['cT'];
+          }
+        }
+        if(data.containsKey("cM") && data["cM"] is! List && (data["cM"] as Map).containsKey("6603"))
+        {
+          if(ctrllogtimecheck != data['cT']) {
+            uard0Log += "\n";
+            uard0Log += data['cM']['6603'];
+            ctrllogtimecheck = data['cT'];
+          }
 
-         if (cM.containsKey("6603")) {
-           String msg = cM["6603"];
-           if (!uard0MessagesSet.contains(msg)) {
-             print('\n6603 data-->$msg');
-             uard0Log += "\n" + msg;
-             uard0MessagesSet.add(msg);
-           }
-         }
+        }
+        if(data.containsKey("cM") && data["cM"] is! List && (data["cM"] as Map).containsKey("6604"))
+        {
+          if(ctrllogtimecheck != data['cT']) {
+            uard4Log += "\n";
+            uard4Log += data['cM']['6604'];
+            ctrllogtimecheck = data['cT'];
+          }
+        }
+        if(data['cM'].containsKey("6801")){
+          mqttUpdateSettings = data['cM']['6801'];
+        }
+      } catch (e, stackTrace) {
+        print('Error parsing JSON: $e');
+        print('Stacktrace while parsing json : $stackTrace');
+      }
+      finally{
+        notifyListeners();
+      }
+    }
 
-         if (cM.containsKey("6604")) {
-           String msg = cM["6604"];
-           if (!uard4MessagesSet.contains(msg)) {
-             uard4Log += "\n" + msg;
-             uard4MessagesSet.add(msg);
-           }
-         }
 
-         if (cM.containsKey("6801")) {
-           mqttUpdateSettings = cM['6801'];
-         }
-       }
-     } catch (e, stackTrace) {
-       print('Error parsing JSON: $e');
-       print('Stacktrace while parsing json : $stackTrace');
-     }
+    if(irrigationPump.isEmpty){
+      loading = true;
+    }else{
+      loading = false;
+    }
+    tryingToGetPayload = 0;
 
-     if (irrigationPump.isEmpty) {
-       loading = true;
-     } else {
-       loading = false;
-     }
 
-     tryingToGetPayload = 0;
-     notifyListeners();
+    updateSourcePump();
+    updateIrrigationPump();
+    updateLocalFertigationSite();
+    updateCentralFertigationSite();
+    updateCentralFiltrationSite();
+    updateLocalFiltrationSite();
+  }
 
-     updateSourcePump();
-     updateIrrigationPump();
-     updateLocalFertigationSite();
-     updateCentralFertigationSite();
-     updateCentralFiltrationSite();
-     updateLocalFiltrationSite();
-     // updateCurrentSchedule();
-
-     notifyListeners();
-   }
-
-   //Todo : Dashboard stop
+  //Todo : Dashboard stop
 
   Future<void> updateDashboardPayload(Map<String, dynamic> payload) async{
     _dashboardLiveInstance = SiteModel.fromJson(payload);

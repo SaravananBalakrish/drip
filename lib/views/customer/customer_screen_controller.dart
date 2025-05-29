@@ -17,11 +17,13 @@ import '../../Screens/Dealer/controllerverssionupdate.dart';
 import '../../Screens/Map/CustomerMap.dart';
 import '../../Screens/Map/allAreaBoundry.dart';
 import '../../Screens/planning/FactoryReset.dart';
+import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../flavors.dart';
 import '../../modules/PumpController/view/node_settings.dart';
 import '../../modules/ScheduleView/view/schedule_view_screen.dart';
 import '../../modules/PumpController/view/pump_controller_home.dart';
 import '../../repository/repository.dart';
+import '../../services/bluetooth_sevice.dart';
 import '../../services/communication_service.dart';
 import '../../services/http_service.dart';
 import '../../utils/formatters.dart';
@@ -53,12 +55,12 @@ class CustomerScreenController extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    MqttPayloadProvider mqttProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NavRailViewModel()),
         ChangeNotifierProvider(
-          create: (_) => CustomerScreenControllerViewModel(context, Repository(HttpService()))
+          create: (_) => CustomerScreenControllerViewModel(context, Repository(HttpService()), mqttProvider)
             ..getAllMySites(context, customerId),
         ),
       ],
