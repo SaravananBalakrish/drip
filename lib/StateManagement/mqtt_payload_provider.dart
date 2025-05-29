@@ -5,6 +5,7 @@ import '../Constants/data_convertion.dart';
 import '../Models/Weather_model.dart';
 import '../Models/customer/site_model.dart';
 import '../Screens/Map/googlemap_model.dart';
+import '../services/bluetooth_sevice.dart';
 
 enum MQTTConnectionState { connected, disconnected, connecting }
 
@@ -107,6 +108,54 @@ class MqttPayloadProvider with ChangeNotifier {
    final Map<String, String> _valveOnOffStatusMap = {};
    final Map<String, String> _sensorValueMap = {};
    final Map<String, String> _boosterPumpOnOffStatusMap = {};
+
+   //for blue service
+   CustomDevice? _connectedDevice;
+   CustomDevice? get connectedDevice => _connectedDevice;
+
+   List<CustomDevice> _pairedDevices = [];
+   List<CustomDevice> get pairedDevices => _pairedDevices;
+
+   List<Map<String, dynamic>> _wifiList = [];
+   String? _wifiMessage;
+
+   List<Map<String, dynamic>> get wifiList => _wifiList;
+   String? get wifiMessage => _wifiMessage;
+
+   void updateConnectedDeviceStatus(CustomDevice? device) {
+     _connectedDevice = device;
+     notifyListeners();
+   }
+
+   void updatePairedDevices(List<CustomDevice> devices) {
+     _pairedDevices = devices;
+     notifyListeners();
+   }
+
+   void updateDeviceStatus(String address, int status) {
+     for (var device in _pairedDevices) {
+       if (device.device.address == address) {
+         device.status = status;
+         notifyListeners();
+         break;
+       }
+     }
+   }
+
+   void updateWifiList(List<Map<String, dynamic>> list) {
+     _wifiList = list;
+     notifyListeners();
+   }
+
+   void updateWifiMessage(String? message) {
+     _wifiMessage = message;
+     notifyListeners();
+   }
+
+   void clearWifiMessage() {
+     _wifiMessage = null;
+     notifyListeners();
+   }
 
   void updateMapData(data){
     print("updateMapData $data");
@@ -480,7 +529,7 @@ class MqttPayloadProvider with ChangeNotifier {
 
       try {
         Map<String, dynamic> data = _receivedPayload.isNotEmpty? jsonDecode(_receivedPayload) : {};
-        print('data------>:$data');
+        print('_receivedPayload------>:$_receivedPayload');
 
         if(data['mC']=='2400'){
           isLiveSynced = true;
@@ -503,6 +552,7 @@ class MqttPayloadProvider with ChangeNotifier {
           updateNextProgram(data['cM']['2409'].split(";"));
           updateScheduledProgram(data['cM']['2410'].split(";"));
           updateAlarm(data['cM']['2412'].split(";"));
+          notifyListeners();
         }
 
         else if(data.containsKey('3600') && data['3600'] != null && data['3600'].isNotEmpty){
