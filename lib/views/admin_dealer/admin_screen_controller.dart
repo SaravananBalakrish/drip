@@ -22,7 +22,7 @@ class _AdminScreenControllerState extends State<AdminScreenController> {
 
   int selectedIndex = 0;
   int hoveredIndex = -1;
-  final List<String> menuTitles = ['Dashboard', 'All Products', 'Stock'];
+  final List<String> menuTitles = ['Dashboard', 'Products', 'Stock'];
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +53,6 @@ class _AdminScreenControllerState extends State<AdminScreenController> {
                     padding: const EdgeInsets.only(left: 8, right: 8),
                     child: MouseRegion(
                       cursor: SystemMouseCursors.click,
-                      onEnter: (_) => setState(() => hoveredIndex = index),
-                      onExit: (_) => setState(() => hoveredIndex = -1),
                       child: InkWell(
                         onTap: () {
                           setState(() {
@@ -65,7 +63,8 @@ class _AdminScreenControllerState extends State<AdminScreenController> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? Colors.teal
+                                ? F.appFlavor!.name.contains('oro') ? Colors.teal:
+                                  Theme.of(context).primaryColorLight
                                 : isHovered
                                 ? Colors.white24
                                 : Colors.transparent,
