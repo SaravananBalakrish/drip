@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oro_drip_irrigation/Widgets/custom_buttons.dart';
 import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/view/node_in_boot_mode.dart';
+import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/view/trace_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 
@@ -43,8 +44,27 @@ class _NodeDashboardState extends State<NodeDashboard> {
               minSpacing: 20,
                 desiredItemWidth: 120,
                 children: [
-                  gridItemWidget(imagePath: 'assets/Images/Svg/SmartComm/bootMode.svg', title: 'Update Firmware'),
-                  gridItemWidget(imagePath: 'assets/Images/Svg/SmartComm/interface_setting.svg', title: 'Interface Setting'),
+                  gridItemWidget(
+                      imagePath: 'assets/Images/Svg/SmartComm/bootMode.svg',
+                      title: 'Update Firmware',
+                    onTap: (){
+                      userAcknowledgementForUpdatingFirmware();
+                    }
+                  ),
+                  gridItemWidget(
+                      imagePath: 'assets/Images/Svg/SmartComm/interface_setting.svg',
+                      title: 'Interface Setting',
+                      onTap: () {  }
+                  ),
+                  gridItemWidget(
+                      imagePath: 'assets/Images/Svg/SmartComm/trace_file.svg',
+                      title: 'Trace',
+                    onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context){
+                          return TraceScreen(nodeData: widget.nodeData,);
+                        }));
+                    },
+                  ),
                 ]
             ),
           ),
@@ -128,12 +148,11 @@ class _NodeDashboardState extends State<NodeDashboard> {
 
   Widget gridItemWidget({
     required String imagePath,
-    required String title
-  }){
+    required String title,
+    required void Function() onTap
+}){
     return InkWell(
-      onTap: (){
-        userAcknowledgementForUpdatingFirmware();
-      },
+      onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(15),
         decoration: BoxDecoration(

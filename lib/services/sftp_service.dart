@@ -68,22 +68,23 @@ class SftpService {
     }
   }
 
-  Future<SftpFlag> uploadFile({
-    required String localFilePath,
-    required String remoteFileName,
+  Future<int> uploadFile({
+    required String localFileName,
+    required String remoteFilePath,
   }) async {
     try {
+      print("remoteFilePath : $remoteFilePath");
       final remoteFile = await _sftpClient!.open(
-        remoteFileName,
+        remoteFilePath,
         mode: SftpFileOpenMode.truncate | SftpFileOpenMode.write,
       );
       Directory appDocDir = await getApplicationDocumentsDirectory();
       String appDocPath = appDocDir.path;
-      String filePath = '$appDocPath/$localFilePath.txt';
+      String filePath = '$appDocPath/$localFileName.txt';
       final localFile = File(filePath);
 
       if (!await localFile.exists()) {
-        throw Exception('Local file does not exist: $localFilePath');
+        throw Exception('Local file does not exist: $localFileName');
       }
 
       await remoteFile.write(localFile.openRead().cast()).done;
@@ -91,13 +92,13 @@ class SftpService {
       if (kDebugMode) {
         print('File uploaded successfully.');
       }
-      return SftpFlag.fileUploadSuccessFully;
+      return 200;
     } catch (e, stackTrace) {
       if (kDebugMode) {
         print('uploadFile() error: $e');
         print('StackTrace: $stackTrace');
       }
-      return SftpFlag.fileUploadFailed;
+      return 404;
     }
   }
 

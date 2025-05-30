@@ -341,7 +341,15 @@ class _NodeConnectionPageState extends State<NodeConnectionPage> {
           'assets/Images/Png/bluetooth_connecting.png',
           height: 300,
         ),
-        const SizedBox(height: 24),
+        const Text(
+          'Please ensure you are nearby the bluetooth kit.',
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.black54,
+          ),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 12),
         ElevatedButton(
             onPressed: (){
               bleService.autoConnect();

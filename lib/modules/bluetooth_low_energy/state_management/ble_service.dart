@@ -24,9 +24,9 @@ enum BleNodeState {
   dashboard,
 }
 
-enum NodeMode{
-  applicationMode,
-  bootMode
+enum TraceMode{
+  traceOn,
+  traceOff
 }
 
 enum FileMode{
@@ -42,6 +42,9 @@ enum FileMode{
   downloadFileSuccess,
   downloadingFile,
   downloadFileFailed,
+  uploadFileSuccess,
+  uploadingFile,
+  uploadFileFailed,
   sendingToHardware,
   crcPass,
   crcFail,
@@ -52,6 +55,7 @@ enum FileMode{
 
 class BleProvider extends ChangeNotifier {
   BleNodeState bleNodeState = BleNodeState.bluetoothOff;
+  TraceMode traceMode = TraceMode.traceOff;
   FileMode fileMode = FileMode.idle;
 
   /*scanning variables*/
@@ -91,6 +95,10 @@ class BleProvider extends ChangeNotifier {
   String addingStringResult = '';
   int totalNoOfLines = 0;
   int currentLine = 0;
+  final List<String> traceData = [];
+
+  /*controller variable*/
+  ScrollController traceScrollController = ScrollController();
 
 
 
@@ -291,6 +299,9 @@ class BleProvider extends ChangeNotifier {
           break;
         }
         await Future.delayed(const Duration(seconds: 2));
+        if(bleNodeState == BleNodeState.disConnected){
+          return;
+        }
         print('after connect ${i + 1}');
         print('Requesting mac address.....');
         requestingMac();
@@ -389,204 +400,48 @@ class BleProvider extends ChangeNotifier {
             print(value);
             String convertToString = String.fromCharCodes(value);
             print("read :: $convertToString");
-            if(convertToString == "PASS"){
-              fileMode = FileMode.crcPass;
-              notifyListeners();
-            }else if(convertToString == "FAIL"){
-              fileMode = FileMode.crcFail;
-              notifyListeners();
-            }else if(convertToString == "START"){
-              timeOutForBootMessage();
-              fileMode = FileMode.firmwareUpdating;
-              notifyListeners();
-            }else if(convertToString == "BOOTPASS"){
-              fileMode = FileMode.bootPass;
-              notifyListeners();
-            }
-            sentAndReceive +=
-            'HardwareToApp ==> \n ${String.fromCharCodes(value)}\n\n';
-            if (value.isNotEmpty) {
-              readFromHardwareStringValue += String.fromCharCodes(value);
-            }
-            if(value[value.length - 1] == 125){
-              if(readFromHardwareStringValue[0] == '{'){
-                nodeDataFromHw = jsonDecode(readFromHardwareStringValue);
-                readFromHardwareStringValue = '';
-              }else{
-                readFromHardwareStringValue = '';
+            if(traceMode == TraceMode.traceOff){
+              if(convertToString == "PASS"){
+                fileMode = FileMode.crcPass;
+                notifyListeners();
+              }else if(convertToString == "FAIL"){
+                fileMode = FileMode.crcFail;
+                notifyListeners();
+              }else if(convertToString == "START"){
+                timeOutForBootMessage();
+                fileMode = FileMode.firmwareUpdating;
+                notifyListeners();
+              }else if(convertToString == "BOOTPASS"){
+                fileMode = FileMode.bootPass;
+                notifyListeners();
               }
+              if (value.isNotEmpty) {
+                readFromHardwareStringValue += String.fromCharCodes(value);
+              }
+              if(value[value.length - 1] == 125){
+                if(readFromHardwareStringValue[0] == '{'){
+                  nodeDataFromHw = jsonDecode(readFromHardwareStringValue);
+                  readFromHardwareStringValue = '';
+                }else{
+                  readFromHardwareStringValue = '';
+                }
+              }
+              print("nodeDataFromHw : $nodeDataFromHw");
+              notifyListeners();
+            }else if(traceMode == TraceMode.traceOn){
+              traceData.add(convertToString);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (traceScrollController.hasClients) {
+                  traceScrollController.animateTo(
+                    traceScrollController.position.maxScrollExtent,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOut,
+                  );
+                }
+              });
+              notifyListeners();
             }
-            print("nodeDataFromHw : $nodeDataFromHw");
-            notifyListeners();
-            // if (fileTraceControl == 'Trace') {
-            //   print("fileTraceControl => $fileTraceControl");
-            //   try {
-            //     var day = DateTime.now().day;
-            //     var month = DateTime.now().month;
-            //     var year = DateTime.now().year;
-            //     var hour = DateTime.now().hour;
-            //     var minute = DateTime.now().minute;
-            //     var second = DateTime.now().second;
-            //     dynamic dataFromHw = String.fromCharCodes(value);
-            //     dataFromHw = dataFromHw.split('|');
-            //     dataFromHw = dataFromHw.join('\n');
-            //     String traceData =
-            //         '$day/$month/$year - $hour:$minute:$second :: $dataFromHw';
-            //     traceResult += traceData;
-            //     MQTTManager().publish(traceData.toString(),
-            //         'getTraceFromBle/${nodeDataFromHw['MAC']}');
-            //     notifyListeners();
-            //   } catch (e) {
-            //     print('mqtt error => ${e.toString()}');
-            //   }
-            // }
-            // else {
-            //   if (value.isNotEmpty) {
-            //     hwListeningValue = value;
-            //     if (addingStringTrace.isEmpty ||
-            //         addingStringTrace.split('')[0] == '{') {
-            //       addingStringTrace += String.fromCharCodes(value);
-            //     }
-            //     if (String.fromCharCodes(value).contains('_200')) {
-            //       Future.delayed(const Duration(seconds: 2), () {
-            //         Snackbar.show(
-            //             ABC.c,
-            //             prettyException("Message from hardware => ",
-            //                 String.fromCharCodes(value)),
-            //             success: true,
-            //             hwMessageMode: true);
-            //       });
-            //     }
-            //     print('String.fromCharCodes : ${String.fromCharCodes(value)}');
-            //     if (String.fromCharCodes(value) == 'FAIL') {
-            //       messageFromHw = 'failed';
-            //       notifyListeners();
-            //       for (var i = 0; i < 20; i++) {
-            //         await Future.delayed(const Duration(seconds: 1));
-            //       }
-            //       messageFromHw = '';
-            //     }
-            //     if (String.fromCharCodes(value) == 'PASS') {
-            //       messageFromHw = 'matched';
-            //       notifyListeners();
-            //       matchLoop:
-            //       for (var i = 0; i < 20; i++) {
-            //         print('seconds : ${i + 1}');
-            //         await Future.delayed(const Duration(seconds: 1));
-            //         if (i == 19 && messageFromHw == 'matched') {
-            //           messageFromHw = 'incomplete';
-            //           notifyListeners();
-            //           break matchLoop;
-            //         }
-            //       }
-            //       if (messageFromHw == 'incomplete') {
-            //         for (var i = 0; i < 10; i++) {
-            //           print('seconds : ${i + 1}');
-            //           await Future.delayed(const Duration(seconds: 1));
-            //           if (i == 9) {
-            //             messageFromHw = '';
-            //             notifyListeners();
-            //           }
-            //         }
-            //       }
-            //     }
-            //     if (String.fromCharCodes(value) == 'START') {
-            //       messageFromHw = 'start';
-            //     }
-            //     if (String.fromCharCodes(value) == 'BOOTPASS') {
-            //       messageFromHw = 'updated';
-            //       notifyListeners();
-            //       for (var i = 0; i < 5; i++) {
-            //         await Future.delayed(Duration(seconds: 1));
-            //       }
-            //       // messageFromHw = '';
-            //       nodeDataFromHw = {};
-            //     }
-            //     if (String.fromCharCodes(value) == 'BOOTFAIL') {
-            //       messageFromHw = 'boot failed';
-            //       notifyListeners();
-            //       for (var i = 0; i < 5; i++) {
-            //         await Future.delayed(Duration(seconds: 1));
-            //       }
-            //       // messageFromHw = '';
-            //       nodeDataFromHw = {};
-            //     }
-            //     if (value[value.length - 1] == 125) {
-            //       print('addingStringTrace : $addingStringTrace');
-            //       if (addingStringTrace.split('')[0] == '{') {
-            //         nodeDataFromHw = jsonDecode(addingStringTrace);
-            //         if (nodeDataFromHw['MAC'] != null) {
-            //           nodeDataFromHw['MAC'] =
-            //               '${nodeDataFromHw['MAC']}'.toUpperCase();
-            //         }
-            //         if (nodeDataFromHw.containsKey('WIFISSID')) {
-            //           wifiSsid_controller.text = nodeDataFromHw['WIFISSID'];
-            //         }
-            //         if (nodeDataFromHw.containsKey('WIFISSID')) {
-            //           wifiPassword_controller.text = nodeDataFromHw['WIFIPASS'];
-            //         }
-            //         if (nodeDataFromHw.containsKey('IFT')) {
-            //           interfaceType = nodeDataFromHw['IFT'];
-            //         }
-            //         if (nodeDataFromHw.containsKey('FRQ')) {
-            //           frequency.text = '${int.parse(nodeDataFromHw['FRQ']) / 10}';
-            //         }
-            //         if (nodeDataFromHw.containsKey('SF')) {
-            //           spreadFactor.text = nodeDataFromHw['SF'];
-            //         }
-            //         if (nodeDataFromHw['PIN'] != null) {
-            //           cumulative_Controller.text = nodeDataFromHw['PIN'];
-            //         }
-            //         if (nodeDataFromHw['BC'] != null) {
-            //           battery_Controller.text = nodeDataFromHw['BC'];
-            //         }
-            //         if (nodeDataFromHw['AD7'] != null) {
-            //           if (calibrationEc1 == 'ec1') {
-            //             ec1Controller.text = nodeDataFromHw['AD7'];
-            //           }
-            //           if (calibrationEc1 == 'ec_1') {
-            //             ec1_Controller.text = nodeDataFromHw['AD7'];
-            //           }
-            //         }
-            //         if (nodeDataFromHw['AD8'] != null) {
-            //           if (calibrationEc2 == 'ec2') {
-            //             ec2Controller.text = nodeDataFromHw['AD8'];
-            //           }
-            //           if (calibrationEc2 == 'ec_2') {
-            //             ec2_Controller.text = nodeDataFromHw['AD8'];
-            //           }
-            //         }
-            //         if (nodeDataFromHw[
-            //         'AD${nodeDataFromHw['MID'] == '35' ? '1' : '5'}'] !=
-            //             null) {
-            //           if (calibrationPh1 == 'ph1') {
-            //             ph1Controller.text = nodeDataFromHw[
-            //             'AD${nodeDataFromHw['MID'] == '35' ? '1' : '5'}'];
-            //           }
-            //           if (calibrationPh1 == 'ph_1') {
-            //             ph1_Controller.text = nodeDataFromHw[
-            //             'AD${nodeDataFromHw['MID'] == '35' ? '1' : '5'}'];
-            //           }
-            //         }
-            //         if (nodeDataFromHw[
-            //         'AD${nodeDataFromHw['MID'] == '35' ? '2' : '5'}'] !=
-            //             null) {
-            //           if (calibrationPh2 == 'ph2') {
-            //             ph2Controller.text = nodeDataFromHw[
-            //             'AD${nodeDataFromHw['MID'] == '35' ? '2' : '5'}'];
-            //           }
-            //           if (calibrationPh2 == 'ph_2') {
-            //             ph2_Controller.text = nodeDataFromHw[
-            //             'AD${nodeDataFromHw['MID'] == '35' ? '2' : '5'}'];
-            //           }
-            //         }
-            //         addingStringTrace = '';
-            //         print('nodeDataFromHw => $nodeDataFromHw');
-            //       }
-            //     }
-            //     notifyListeners();
-            //   }
-            // }
+
           });
     } else {
       print('receiving characteristic is null');
@@ -611,6 +466,7 @@ class BleProvider extends ChangeNotifier {
   }
 
   void requestingMacUntilBootModeToApp()async{
+    await Future.delayed(const Duration(seconds: 3));
     onDisconnect();
     // for(var waitLoop = 0;waitLoop < 15;waitLoop++){
     //   if(nodeDataFromHw['BOOT'] == '30'){
@@ -727,6 +583,37 @@ class BleProvider extends ChangeNotifier {
       fileMode = FileMode.errorOnWhileGetFileName;
       print('Error on getting File Name :: ${e}');
       rethrow;
+    }
+  }
+
+  void uploadTraceFile({required String deviceId})async{
+    SftpService sftpService = SftpService();
+    fileMode = FileMode.connecting;
+    notifyListeners();
+    await Future.delayed(const Duration(seconds: 2));
+    int connectResponse =  await sftpService.connect();
+    if(connectResponse == 200){
+      fileMode = FileMode.connected;
+      notifyListeners();
+      await Future.delayed(const Duration(seconds: 1));
+      fileMode = FileMode.uploadingFile;
+      print('uploading..');
+      notifyListeners();
+      Directory appDocDir = await getApplicationDocumentsDirectory();
+      String appDocPath = appDocDir.path;
+      String filePath = '$appDocPath/trace_data.txt';
+      final localFile = File(filePath);
+      await localFile.writeAsString(traceData.join('\n'));
+      int uploadResponse = await sftpService.uploadFile(localFileName: 'trace_data', remoteFilePath: '${nodeDataFromServer['individualSetting']['fileDirectory']}$deviceId.txt');
+      if(uploadResponse == 200){
+        fileMode = FileMode.uploadFileSuccess;
+      }else{
+        fileMode = FileMode.uploadFileFailed;
+      }
+      sftpService.disconnect();
+      notifyListeners();
+    }else{
+      fileMode = FileMode.errorOnConnected;
     }
   }
 
@@ -892,5 +779,28 @@ class BleProvider extends ChangeNotifier {
       await sendToHardware!.read();
     }
   }
+
+  void sendTraceCommand() async {
+    if (sendToHardware != null) {
+      if(traceMode == TraceMode.traceOn){
+        traceMode = TraceMode.traceOff;
+      }else{
+        traceScrollController = ScrollController();
+        traceMode = TraceMode.traceOn;
+      }
+      String on = "TRACE_ON";
+      String off = "TRACE_OFF";
+      List<int> checkBluetoothFile = [];
+      for (var bleLine in (traceMode == TraceMode.traceOn ? on :off).split('')) {
+        checkBluetoothFile.add(bleLine.codeUnitAt(0));
+      }
+      await sendToHardware?.write(checkBluetoothFile,
+          withoutResponse:
+          sendToHardware!.properties.writeWithoutResponse);
+    }
+    notifyListeners();
+  }
+
+
   
 }
