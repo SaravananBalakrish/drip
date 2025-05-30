@@ -272,7 +272,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                 child: Column(
                   children: [
                     const SizedBox(height: 10,),
-                    if(preferenceProvider.commonPumpSettings!.isNotEmpty && !isValveSetting) ...[
+                    if(!isValveSetting) ...[
                       Container(
                         margin: const EdgeInsets.symmetric(horizontal: 10),
                         child: Row(
@@ -356,7 +356,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                               Expanded(
                                 child: _getDefaultTabController(),
                               ),
-                            if(MediaQuery.of(context).size.width > 500)
+                            if(MediaQuery.of(context).size.width > 500 && preferenceProvider.commonPumpSettings!.isNotEmpty)
                               IconButton(
                                   onPressed: (){
                                     setState(() {
