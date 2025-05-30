@@ -38,8 +38,43 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
   final ImagePicker _picker = ImagePicker();
 
   final List<String> _crops = ['Wheat', 'Rice', 'Maize', 'Tomato', 'Cotton', 'Soybean'];
-  final List<String> _soilTypes = ['Loamy', 'Clay', 'Sandy', 'Silt'];
+  final List<String> _soilTypes = ['Loamy', 'Clay', 'Sandy', 'Silt', 'Peaty'];
   final List<String> _growthStages = ['Vegetative', 'Flowering', 'Fruiting', 'Harvest'];
+
+  // Image mappings for crops and soil types
+  final Map<String, String> _cropImages = {
+    'Wheat': 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&h=300&fit=crop',
+    'Rice': 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?w=400&h=300&fit=crop',
+    'Maize': 'https://images.unsplash.com/photo-1551843073-4a9a5b6fcd5d?w=400&h=300&fit=crop',
+    'Tomato': 'https://images.unsplash.com/photo-1465146344425-f00d5f5c8f07?w=400&h=300&fit=crop',
+    'Cotton': 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop',
+    'Soybean': 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=400&h=300&fit=crop',
+  };
+
+  final Map<String, String> _soilImages = {
+    'Loamy': 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop',
+    'Clay': 'https://images.unsplash.com/photo-1635600695863-2625bf8d0b72?w=400&h=300&fit=crop',
+    'Sandy': 'https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=400&h=300&fit=crop',
+    'Silt': 'https://images.unsplash.com/photo-1673085618479-3d2436530fe6?w=400&h=300&fit=crop',
+    'Peaty': 'https://images.unsplash.com/photo-1571963511382-b88f78930d39?w=400&h=300&fit=crop',
+  };
+
+  final Map<String, String> _cropDescriptions = {
+    'Wheat': 'A cereal grain widely cultivated for food production',
+    'Rice': 'A staple food crop grown in flooded fields',
+    'Maize': 'A versatile grain crop with high nutritional value',
+    'Tomato': 'A popular fruit used in cooking and salads',
+    'Cotton': 'A fiber crop used in textile production',
+    'Soybean': 'A protein-rich legume crop with many uses',
+  };
+
+  final Map<String, String> _soilDescriptions = {
+    'Loamy': 'Well-balanced soil with good drainage and nutrients',
+    'Clay': 'Heavy soil that retains water and nutrients well',
+    'Sandy': 'Light soil with excellent drainage but low nutrients',
+    'Silt': 'Smooth soil that holds moisture well but can compact',
+    'Peaty': 'Smooth soil that holds moisture well but can compact',
+  };
 
   @override
   void initState() {
@@ -239,7 +274,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
   Future<void> _getRecommendation() async {
     if (!_formKey.currentState!.validate()) {
-      // Show validation error with better feedback
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Row(
@@ -259,11 +293,10 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
     setState(() {
       _isLoading = true;
-      _recommendation = ''; // Clear previous recommendation
+      _recommendation = '';
     });
 
     try {
-      // Show progress feedback
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Row(
@@ -284,14 +317,12 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
         ),
       );
 
-      // Fetch weather data
       final weather = await WeatherService().fetchWeather(
         city: _location.isNotEmpty && (_latitude == null || _longitude == null) ? _location : null,
         lat: _latitude,
         lon: _longitude,
       );
 
-      // Analyze images if provided
       Map<String, dynamic> imageAnalysis = {
         'health': 'Unknown',
         'waterStress': 'Unknown',
@@ -303,7 +334,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
         imageAnalysis = await ImageProcessor().analyzeImages(_rgbImage!, _thermalImage!);
       }
 
-      // Generate recommendation
       print('weather :: ${weather['humidity']}');
       final recommendation = RecommendationModel.generateRecommendation(
         cropType: _cropType,
@@ -470,14 +500,15 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
           _buildInfoCard(
             child: Column(
               children: [
-                _buildDropdownField(
-                  label: 'Crop Type',
-                  value: _cropType,
-                  items: _crops,
-                  icon: Icons.agriculture,
-                  onChanged: (value) => setState(() => _cropType = value!),
+                // Crop Type Selection with Images
+                const Text(
+                  'Select Crop Type',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
+                _buildCropSelectionGrid(),
+                const SizedBox(height: 24),
+
                 _buildDropdownField(
                   label: 'Growth Stage',
                   value: _growthStage,
@@ -490,6 +521,101 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCropSelectionGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 1,
+      ),
+      itemCount: _crops.length,
+      itemBuilder: (context, index) {
+        final crop = _crops[index];
+        final isSelected = _cropType == crop;
+
+        return GestureDetector(
+          onTap: () => setState(() => _cropType = crop),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isSelected ? Colors.green[600]! : Colors.grey[300]!,
+                width: isSelected ? 3 : 1,
+              ),
+              boxShadow: isSelected ? [
+                BoxShadow(
+                  color: Colors.green[600]!.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ] : null,
+            ),
+            child: Column(
+              children: [
+                Flexible(
+                  flex: 3,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    child: Image.network(
+                      _cropImages[crop]!,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[200],
+                          child: Icon(Icons.agriculture, size: 40, color: Colors.grey[400]),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Flexible(
+                  flex: 2,
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.green[50] : Colors.white,
+                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(12)),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          crop,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isSelected ? Colors.green[700] : Colors.black87,
+                            fontSize: 14,
+                          ),
+                        ),
+                        // const SizedBox(height: 4),
+                        Text(
+                          _cropDescriptions[crop]!,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey[600],
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -607,14 +733,15 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
           _buildInfoCard(
             child: Column(
               children: [
-                _buildDropdownField(
-                  label: 'Soil Type',
-                  value: _soilType,
-                  items: _soilTypes,
-                  icon: Icons.layers,
-                  onChanged: (value) => setState(() => _soilType = value!),
+                // Soil Type Selection with Images
+                const Text(
+                  'Select Soil Type',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 16),
+                _buildSoilSelectionGrid(),
+                const SizedBox(height: 24),
+
                 TextFormField(
                   controller: _soilMoistureController,
                   decoration: InputDecoration(
@@ -673,6 +800,100 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSoilSelectionGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 1,
+      ),
+      itemCount: _soilTypes.length,
+      itemBuilder: (context, index) {
+        final soil = _soilTypes[index];
+        final isSelected = _soilType == soil;
+
+        return GestureDetector(
+          onTap: () => setState(() => _soilType = soil),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: isSelected ? Colors.brown[600]! : Colors.grey[300]!,
+                width: isSelected ? 3 : 1,
+              ),
+              boxShadow: isSelected ? [
+                BoxShadow(
+                  color: Colors.brown[600]!.withOpacity(0.3),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ] : null,
+            ),
+            child: Column(
+              children: [
+                Flexible(
+                  flex: 3,
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    child: Image.network(
+                      _soilImages[soil]!,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey[200],
+                          child: Icon(Icons.layers, size: 40, color: Colors.grey[400]),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Flexible(
+                  flex: 2,
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: isSelected ? Colors.brown[50] : Colors.white,
+                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(12)),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          soil,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: isSelected ? Colors.brown[700] : Colors.black87,
+                            fontSize: 14,
+                          ),
+                        ),
+                        // const SizedBox(height: 4),
+                        Text(
+                          _soilDescriptions[soil]!,
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: Colors.grey[600],
+                          ),
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
