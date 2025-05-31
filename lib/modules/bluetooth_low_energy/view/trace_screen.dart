@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Constants/dialog_boxes.dart';
 import 'package:oro_drip_irrigation/Widgets/custom_buttons.dart';
 import 'package:provider/provider.dart';
 
@@ -96,6 +97,8 @@ class _TraceScreenState extends State<TraceScreen> {
               label: const Text('Upload'),
               onPressed: (){
                 bleService.uploadTraceFile(deviceId: widget.nodeData['deviceId']);
+                showDialogForUploadingFlags();
+
               },
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).primaryColor,
@@ -125,5 +128,38 @@ class _TraceScreenState extends State<TraceScreen> {
         ),
       ),
     );
+  }
+
+  void showDialogForUploadingFlags()async{
+    showDialog(
+        barrierDismissible: false,
+        context: context, builder: (context){
+      return const PopScope(
+        canPop: false,
+        child: AlertDialog(
+          content: Row(
+            spacing: 20,
+            children: [
+              CircularProgressIndicator(),
+              Text('Please wait...')
+            ],
+          ),
+        ),
+      );
+    }
+    );
+    int waitingDelay = 60;
+    bool success = false;
+    for(var second = 0; second < waitingDelay;second++){
+      if(bleService.fileMode == FileMode.uploadFileSuccess){
+        success = true;
+        break;
+      }else if(bleService.fileMode == FileMode.uploadFileFailed || bleService.fileMode == FileMode.errorOnConnected){
+        break;
+      }
+      await Future.delayed(const Duration(seconds: 1));
+    }
+    Navigator.pop(context);
+    simpleDialogBox(context: context, title: 'Upload Message', message: 'Trace file upload ${success ? 'successfully' : 'failed'}');
   }
 }

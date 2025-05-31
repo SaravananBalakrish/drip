@@ -76,7 +76,7 @@ class SftpService {
       print("remoteFilePath : $remoteFilePath");
       final remoteFile = await _sftpClient!.open(
         remoteFilePath,
-        mode: SftpFileOpenMode.truncate | SftpFileOpenMode.write,
+        mode: SftpFileOpenMode.create | SftpFileOpenMode.write | SftpFileOpenMode.truncate,
       );
       Directory appDocDir = await getApplicationDocumentsDirectory();
       String appDocPath = appDocDir.path;

@@ -51,11 +51,11 @@ class _NodeDashboardState extends State<NodeDashboard> {
                       userAcknowledgementForUpdatingFirmware();
                     }
                   ),
-                  gridItemWidget(
-                      imagePath: 'assets/Images/Svg/SmartComm/interface_setting.svg',
-                      title: 'Interface Setting',
-                      onTap: () {  }
-                  ),
+                  // gridItemWidget(
+                  //     imagePath: 'assets/Images/Svg/SmartComm/interface_setting.svg',
+                  //     title: 'Interface Setting',
+                  //     onTap: () {  }
+                  // ),
                   gridItemWidget(
                       imagePath: 'assets/Images/Svg/SmartComm/trace_file.svg',
                       title: 'Trace',
@@ -120,7 +120,7 @@ class _NodeDashboardState extends State<NodeDashboard> {
             spacing: 20,
             children: [
               CircularProgressIndicator(),
-              Text('Please wait ..')
+              Text('Please wait...')
             ],
           ),
         ),
@@ -155,6 +155,7 @@ class _NodeDashboardState extends State<NodeDashboard> {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(15),
+        height: 150,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(8),
@@ -163,6 +164,7 @@ class _NodeDashboardState extends State<NodeDashboard> {
           ],
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             SvgPicture.asset(
               imagePath,

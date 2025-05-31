@@ -451,7 +451,7 @@ class BleProvider extends ChangeNotifier {
   void timeOutForBootMessage()async{
     int totalTimeOut = 60;
     for(var second = 0;second < totalTimeOut;second++){
-      if(fileMode == FileMode.bootPass){
+      if(fileMode == FileMode.bootPass || fileMode == FileMode.bootFail){
         requestingMacUntilBootModeToApp();
         break;
       }
@@ -549,7 +549,8 @@ class BleProvider extends ChangeNotifier {
       if(connectResponse == 200){
         fileMode = FileMode.connected;
         notifyListeners();
-        List<SftpName> listOfFile = await sftpService.listFilesInPath("/home/ubuntu/FTP/RTU");
+        // List<SftpName> listOfFile = await sftpService.listFilesInPath("/home/ubuntu/FTP/RTU");
+        List<SftpName> listOfFile = await sftpService.listFilesInPath(nodeDataFromServer['pathSetting']['downloadDirectory']);
         for(var file in listOfFile){
           print(file);
           if(file.filename.contains('version')){
@@ -566,7 +567,7 @@ class BleProvider extends ChangeNotifier {
         fileMode = FileMode.downloadingFile;
         notifyListeners();
         await Future.delayed(const Duration(seconds: 2));
-        int downloadResponse = await sftpService.downloadFile(remoteFilePath: '/home/ubuntu/FTP/RTU/$nodeFirmwareFileName');
+        int downloadResponse = await sftpService.downloadFile(remoteFilePath: '${nodeDataFromServer['pathSetting']['downloadDirectory']}$nodeFirmwareFileName');
         if(downloadResponse == 200){
           fileMode = FileMode.downloadFileSuccess;
         }else{
@@ -590,7 +591,6 @@ class BleProvider extends ChangeNotifier {
     SftpService sftpService = SftpService();
     fileMode = FileMode.connecting;
     notifyListeners();
-    await Future.delayed(const Duration(seconds: 2));
     int connectResponse =  await sftpService.connect();
     if(connectResponse == 200){
       fileMode = FileMode.connected;
@@ -599,12 +599,13 @@ class BleProvider extends ChangeNotifier {
       fileMode = FileMode.uploadingFile;
       print('uploading..');
       notifyListeners();
+      String localFileNameForTrace = "trace_data";
       Directory appDocDir = await getApplicationDocumentsDirectory();
       String appDocPath = appDocDir.path;
-      String filePath = '$appDocPath/trace_data.txt';
+      String filePath = '$appDocPath/$localFileNameForTrace.txt';
       final localFile = File(filePath);
       await localFile.writeAsString(traceData.join('\n'));
-      int uploadResponse = await sftpService.uploadFile(localFileName: 'trace_data', remoteFilePath: '${nodeDataFromServer['individualSetting']['fileDirectory']}$deviceId.txt');
+      int uploadResponse = await sftpService.uploadFile(localFileName: localFileNameForTrace, remoteFilePath: '${nodeDataFromServer['pathSetting']['uploadDirectory']}$deviceId.txt');
       if(uploadResponse == 200){
         fileMode = FileMode.uploadFileSuccess;
       }else{
