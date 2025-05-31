@@ -54,8 +54,13 @@ class BluService {
   }
 
   Future<void> initPermissions() async {
-    await _bluetoothClassicPlugin.initPermissions();
+    try {
+      await _bluetoothClassicPlugin.initPermissions();
+    } catch (e) {
+      debugPrint("Bluetooth permissions init failed: $e");
+    }
   }
+
 
   void listenToBluDeviceStatus() {
     _bluetoothClassicPlugin.onDeviceStatusChanged().listen((status) {
