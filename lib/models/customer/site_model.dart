@@ -1317,7 +1317,7 @@ class NodeListModel{
   Map<String, dynamic> toJson() {
     return {
       'controllerId': controllerId,
-      'DeviceId': deviceId,
+      'deviceId': deviceId,
       'deviceName': deviceName,
       'categoryId': categoryId,
       'categoryName': categoryName,

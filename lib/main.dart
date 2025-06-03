@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/state_management/pump_controller_provider.dart';
+import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/state_management/ble_service.dart';
 import 'package:oro_drip_irrigation/services/bluetooth_sevice.dart';
 import 'package:oro_drip_irrigation/services/communication_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
@@ -81,6 +82,7 @@ FutureOr<void> main() async {
         ChangeNotifierProvider(create: (_) => ConstantProviderMani()),
         ChangeNotifierProvider(create: (_) => ConstantProvider()),
         ChangeNotifierProvider(create: (_) => PumpControllerProvider()),
+        ChangeNotifierProvider(create: (_) => BleProvider()),
 
         ProxyProvider2<MqttPayloadProvider, CustomerProvider, CommunicationService>(
           update: (BuildContext context, MqttPayloadProvider mqttService, CustomerProvider customer, CommunicationService? previous) {

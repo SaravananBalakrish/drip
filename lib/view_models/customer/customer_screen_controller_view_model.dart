@@ -387,7 +387,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   ];
 
   CustomerScreenControllerViewModel(this.context, this.repository){
-    fromWhere='init';
+    fromWhere = 'init';
     payloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
     mqttConnectionCallbackMethod();
   }
@@ -459,7 +459,6 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   }
 
   void setLoading(bool value) {
-    //if (!hasListeners) return;
     isLoading = value;
     notifyListeners();
   }

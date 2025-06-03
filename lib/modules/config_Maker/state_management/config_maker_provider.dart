@@ -111,8 +111,8 @@ class ConfigMakerProvider extends ChangeNotifier{
   }
 
   Future<List<DeviceModel>> fetchData(masterDataFromSiteConfigure)async {
-
     await Future.delayed(const Duration(seconds: 0));
+
     try{
       var body = {
         "userId" : masterDataFromSiteConfigure['customerId'],
@@ -197,7 +197,6 @@ class ConfigMakerProvider extends ChangeNotifier{
         if(b.serialNumber == null) return -1;
         return a.serialNumber!.compareTo(b.serialNumber!);
       });
-      print("listOfDeviceModel : ${listOfDeviceModel.length}");
 
       listOfSampleObjectModel = configMakerData['productLimit'].isNotEmpty
           ? (configMakerData['productLimit'] as List<dynamic>).map((object) => DeviceObjectModel.fromJson(object)).toList()
@@ -212,11 +211,11 @@ class ConfigMakerProvider extends ChangeNotifier{
       pump = (configMakerData['pump'] as List<dynamic>).map((pumpObject) => PumpModel.fromJson(pumpObject)).toList();
       moisture = (configMakerData['moistureSensor'] as List<dynamic>).map((moistureObject) => MoistureModel.fromJson(moistureObject)).toList();
       line = (configMakerData['irrigationLine'] as List<dynamic>).map((lineObject) => IrrigationLineModel.fromJson(lineObject)).toList();
-
-    }catch (e, stackTrace){
+    } catch (e, stackTrace){
       print('Error on converting to device model :: $e');
       print('stackTrace on converting to device model :: $stackTrace');
     }
+
     notifyListeners();
     return listOfDeviceModel;
   }
@@ -744,7 +743,6 @@ class ConfigMakerProvider extends ChangeNotifier{
   }
 
   String getFertilizerPayload() {
-
     List<dynamic> fertilizerPayload = [];
     for(var i = 0;i < fertilization.length;i++){
       var fertilizer = fertilization[i];
@@ -759,9 +757,6 @@ class ConfigMakerProvider extends ChangeNotifier{
         "Name" : fertilizer.commonDetails.name
       }.entries.map((e) => e.value).join(","));
     }
-
-
-
     return fertilizerPayload.join(";");
   }
 
@@ -1083,7 +1078,7 @@ class ConfigMakerProvider extends ChangeNotifier{
           "Tank high pin float" : tankHighConnectionNo,
           "level sensor" : levelConnectionNo,
           "waterMeter" : availableOfWaterMeter,
-          "pressure" : availableOfPressure
+          "pressureIn" : availableOfPressure
         }.entries.map((e) => e.value).join(','));
       }
       int fixedLengthOfTankPayload = 3;
