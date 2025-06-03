@@ -156,8 +156,8 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Location detected successfully!'),
+          const SnackBar(
+            content: Text('Location detected successfully!'),
             // backgroundColor: Colors.green[600],
             behavior: SnackBarBehavior.floating,
           ),
@@ -550,7 +550,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
               ),
               boxShadow: isSelected ? [
                 BoxShadow(
-                  color: Theme.of(context).primaryColor.withOpacity(0.3),
+                  color: Theme.of(context).primaryColor.withOpacity(0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -580,16 +580,16 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(6),
                     width: double.infinity,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       // color: isSelected ? Colors.green[50] : Colors.white,
-                      borderRadius: const BorderRadius.vertical(bottom: Radius.circular(12)),
+                      borderRadius: BorderRadius.vertical(bottom: Radius.circular(12)),
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           crop,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             // color: isSelected ? Colors.green[700] : Colors.black87,
                             fontSize: 14,
@@ -692,11 +692,11 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                       borderRadius: BorderRadius.circular(8),
                       // border: Border.all(color: Colors.green[200]!),
                     ),
-                    child: Row(
+                    child: const Row(
                       children: [
                         // Icon(Icons.check_circle, color: Colors.green[600]),
-                        const SizedBox(width: 8),
-                        const Expanded(
+                        SizedBox(width: 8),
+                        Expanded(
                           child: Text(
                             'Location detected successfully',
                             style: TextStyle(fontWeight: FontWeight.w500),
