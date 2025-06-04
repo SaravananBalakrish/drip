@@ -8,6 +8,7 @@ import 'dart:io';
 import '../model/recommendation_model.dart';
 import '../repository/image_processor.dart';
 import '../repository/weather_service.dart';
+import '../widgets/disease_identification_step.dart';
 
 class CropAdvisoryScreen extends StatefulWidget {
   const CropAdvisoryScreen({super.key});
@@ -32,6 +33,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
   File? _rgbImage;
   File? _thermalImage;
   int _currentStep = 0;
+  Map<String, dynamic>? _diseaseAnalysis;
 
   final TextEditingController _locationController = TextEditingController();
   final TextEditingController _soilMoistureController = TextEditingController(text: '20.0');
@@ -41,7 +43,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
   final List<String> _soilTypes = ['Loamy', 'Clay', 'Sandy', 'Silt', 'Peaty'];
   final List<String> _growthStages = ['Vegetative', 'Flowering', 'Fruiting', 'Harvest'];
 
-  // Image mappings for crops and soil types
   final Map<String, String> _cropImages = {
     'Wheat': 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&h=300&fit=crop',
     'Rice': 'https://images.unsplash.com/photo-1561504935-4e7d4516a2d1?w=400&h=300&fit=crop',
@@ -158,7 +159,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Location detected successfully!'),
-            // backgroundColor: Colors.green[600],
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -253,7 +253,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('${type.toUpperCase()} image uploaded successfully!'),
-              // backgroundColor: Colors.green[600],
               behavior: SnackBarBehavior.floating,
             ),
           );
@@ -344,6 +343,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
         soilMoisture: double.parse(_soilMoistureController.text),
         imageAnalysis: imageAnalysis,
         humidity: double.parse(weather['humidity'].toString()),
+        diseaseAnalysis: _diseaseAnalysis,
       );
 
       setState(() {
@@ -363,7 +363,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                 Text('Recommendation generated successfully!'),
               ],
             ),
-            // backgroundColor: Colors.green[600],
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
@@ -400,7 +399,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
   }
 
   void _nextStep() {
-    if (_currentStep < 3) {
+    if (_currentStep < 4) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -417,14 +416,17 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
     }
   }
 
+  void _onDiseaseIdentified(Map<String, dynamic> diseaseResult) {
+    setState(() {
+      _diseaseAnalysis = diseaseResult;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text('Crop Advisory'),
-        // backgroundColor: Colors.green[600],
-        foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
       ),
@@ -432,7 +434,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
         key: _formKey,
         child: Column(
           children: [
-            // Progress Indicator
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -445,20 +446,18 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
               child: Column(
                 children: [
                   Text(
-                    'Step ${_currentStep + 1} of 4',
+                    'Step ${_currentStep + 1} of 5',
                     style: const TextStyle(color: Colors.white70, fontSize: 16),
                   ),
                   const SizedBox(height: 8),
                   LinearProgressIndicator(
-                    value: (_currentStep + 1) / 4,
+                    value: (_currentStep + 1) / 5,
                     backgroundColor: Colors.white24,
                     valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                   ),
                 ],
               ),
             ),
-
-            // Page View Content
             Expanded(
               child: PageView(
                 controller: _pageController,
@@ -467,12 +466,15 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                   _buildBasicInfoStep(),
                   _buildLocationStep(),
                   _buildSoilInfoStep(),
+                  DiseaseIdentificationStep(
+                    cropType: _cropType,
+                    cropImage: _rgbImage,
+                    onDiseaseIdentified: _onDiseaseIdentified,
+                  ),
                   _buildImageAnalysisStep(),
                 ],
               ),
             ),
-
-            // Bottom Navigation
             _buildBottomNavigation(),
           ],
         ),
@@ -500,7 +502,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
           _buildInfoCard(
             child: Column(
               children: [
-                // Crop Type Selection with Images
                 const Text(
                   'Select Crop Type',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -530,8 +531,8 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
         childAspectRatio: 1,
       ),
       itemCount: _crops.length,
@@ -550,7 +551,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
               ),
               boxShadow: isSelected ? [
                 BoxShadow(
-                  color: Theme.of(context).primaryColor.withOpacity(0.1),
+                  color: Theme.of(context).primaryColor.withOpacity(0.3),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),
@@ -558,7 +559,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
             ),
             child: Column(
               children: [
-                Flexible(
+                Expanded(
                   flex: 3,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
@@ -671,7 +672,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                       height: 16,
                       child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                     )
-                        : const Icon(Icons.my_location),
+                        : const Icon(Icons.my_location, color: Colors.white,),
                     label: Text(_isLoading ? 'Getting Location...' : 'Use Current Location'),
                     style: ElevatedButton.styleFrom(
                       // backgroundColor: Colors.green[600],
@@ -688,15 +689,15 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                     margin: const EdgeInsets.only(top: 12),
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      // color: Colors.green[50],
+                      color: Colors.green[50],
                       borderRadius: BorderRadius.circular(8),
-                      // border: Border.all(color: Colors.green[200]!),
+                      border: Border.all(color: Colors.green[200]!),
                     ),
-                    child: const Row(
+                    child: Row(
                       children: [
-                        // Icon(Icons.check_circle, color: Colors.green[600]),
-                        SizedBox(width: 8),
-                        Expanded(
+                        Icon(Icons.check_circle, color: Colors.green[600]),
+                        const SizedBox(width: 8),
+                        const Expanded(
                           child: Text(
                             'Location detected successfully',
                             style: TextStyle(fontWeight: FontWeight.w500),
@@ -733,7 +734,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
           _buildInfoCard(
             child: Column(
               children: [
-                // Soil Type Selection with Images
                 const Text(
                   'Select Soil Type',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
@@ -779,7 +779,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                   min: 0,
                   max: 100,
                   divisions: 20,
-                  // activeColor: Colors.green[600],
+                  activeColor: Theme.of(context).primaryColor,
                   onChanged: (value) {
                     setState(() {
                       _soilMoisture = value;
@@ -837,7 +837,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
             ),
             child: Column(
               children: [
-                Flexible(
+                Expanded(
                   flex: 3,
                   child: ClipRRect(
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
@@ -854,7 +854,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                     ),
                   ),
                 ),
-                Flexible(
+                Expanded(
                   flex: 2,
                   child: Container(
                     padding: const EdgeInsets.all(6),
@@ -930,7 +930,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                         : const Icon(Icons.psychology),
                     label: Text(_isLoading ? 'Analyzing...' : 'Get Recommendation'),
                     style: ElevatedButton.styleFrom(
-                      // backgroundColor: Colors.green[600],
+                      backgroundColor: Colors.green[600],
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -1043,7 +1043,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header Section
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
@@ -1102,8 +1101,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                 ],
               ),
             ),
-
-            // Content Section
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
@@ -1117,7 +1114,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                   ? Column(
                 children: [
                   SpinKitWave(
-                    color: Theme.of(context).primaryColor,
+                    color: Colors.green[600],
                     size: 40,
                   ),
                   const SizedBox(height: 16),
@@ -1134,7 +1131,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                   : Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Recommendation Status Badge
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
@@ -1177,7 +1173,6 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
                   const SizedBox(height: 16),
 
-                  // Recommendation Content
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
@@ -1207,14 +1202,11 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
 
                   if (!_recommendation.startsWith('Error')) ...[
                     const SizedBox(height: 16),
-
-                    // Action Buttons
                     Row(
                       children: [
                         Expanded(
                           child: OutlinedButton.icon(
                             onPressed: () {
-                              // Copy to clipboard functionality
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: const Text('Recommendation copied to clipboard'),
@@ -1226,8 +1218,8 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                             icon: const Icon(Icons.copy, size: 18),
                             label: const Text('Copy'),
                             style: OutlinedButton.styleFrom(
-                              // foregroundColor: Colors.green[700],
-                              // side: BorderSide(color: Colors.green[300]!),
+                              foregroundColor: Colors.green[700],
+                              side: BorderSide(color: Colors.green[300]!),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -1238,11 +1230,10 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                         Expanded(
                           child: ElevatedButton.icon(
                             onPressed: () {
-                              // Save recommendation functionality
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: const Text('Recommendation saved successfully'),
-                                  // backgroundColor: Colors.green[600],
+                                  backgroundColor: Colors.green[600],
                                   behavior: SnackBarBehavior.floating,
                                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                                 ),
@@ -1251,7 +1242,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                             icon: const Icon(Icons.bookmark, size: 18),
                             label: const Text('Save'),
                             style: ElevatedButton.styleFrom(
-                              // backgroundColor: Colors.green[600],
+                              backgroundColor: Colors.green[600],
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -1348,11 +1339,10 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
             if (_currentStep > 0) const SizedBox(width: 16),
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: _currentStep < 3 ? _nextStep : null,
-                icon: Icon(_currentStep < 3 ? Icons.arrow_forward : Icons.check),
-                label: Text(_currentStep < 3 ? 'Next' : 'Complete'),
+                onPressed: _currentStep < 4 ? _nextStep : null,
+                icon: Icon(_currentStep < 4 ? Icons.arrow_forward : Icons.check),
+                label: Text(_currentStep < 4 ? 'Next' : 'Complete'),
                 style: ElevatedButton.styleFrom(
-                  // backgroundColor: Colors.green[600],
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   shape: RoundedRectangleBorder(

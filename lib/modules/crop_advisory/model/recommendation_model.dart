@@ -35,6 +35,7 @@ class RecommendationModel {
     required String growthStage,
     required double soilMoisture,
     required Map<String, dynamic> imageAnalysis,
+    Map<String, dynamic>? diseaseAnalysis,
     double? soilNitrogen,
     double? soilPH,
   }) {
@@ -61,6 +62,11 @@ class RecommendationModel {
 
     // Soil-based recommendations
     advice += _generateSoilAdvice(cropType, soilType, soilNitrogen, soilPH);
+
+    // Disease-based recommendations
+    if (diseaseAnalysis != null) {
+      advice += _generateDiseaseAdvice(diseaseAnalysis);
+    }
 
     // Image-based recommendations
     advice += _generateImageAdvice(imageAnalysis);
@@ -127,6 +133,37 @@ class RecommendationModel {
       } else {
         advice += 'Soil pH ($soilPH) is suitable.\n';
       }
+    }
+
+    return advice;
+  }
+
+  static String _generateDiseaseAdvice(Map<String, dynamic> diseaseAnalysis) {
+    String advice = '\nDisease Analysis:\n';
+
+    final diseaseName = diseaseAnalysis['diseaseName'] ?? 'Unknown';
+    final confidence = diseaseAnalysis['confidence'] ?? 0.0;
+    final severity = diseaseAnalysis['severity'] ?? 'Low';
+
+    if (diseaseName != 'Unknown' && confidence > 30) {
+      advice += 'Disease Detected: $diseaseName (${confidence.toStringAsFixed(1)}% confidence)\n';
+      advice += 'Severity Level: $severity\n';
+
+      if (diseaseAnalysis['solutions'] != null) {
+        advice += 'Immediate Actions:\n';
+        for (String solution in diseaseAnalysis['solutions']) {
+          advice += '  • $solution\n';
+        }
+      }
+
+      if (diseaseAnalysis['prevention'] != null) {
+        advice += 'Prevention Measures:\n';
+        for (String prevention in diseaseAnalysis['prevention']) {
+          advice += '  • $prevention\n';
+        }
+      }
+    } else {
+      advice += 'No significant disease detected. Continue regular monitoring.\n';
     }
 
     return advice;
