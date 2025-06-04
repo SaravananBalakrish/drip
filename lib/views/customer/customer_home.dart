@@ -430,7 +430,7 @@ class PumpStationWithLine extends StatelessWidget {
             final index = entry.key;
             final item = entry.value;
             if(fertilizerSite.isNotEmpty){
-              int itemsPerRow = ((MediaQuery.sizeOf(context).width - 140) / 68).floor();
+              int itemsPerRow = ((MediaQuery.sizeOf(context).width - 140) / 67).floor();
 
               if (item is ValveWidget && index < itemsPerRow) {
                 return Padding(
