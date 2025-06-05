@@ -355,7 +355,7 @@ class CustomerScreenController extends StatelessWidget {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (context) => Reset_Accumalation(userId: userId, controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId, deviceID: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,),
+                                        builder: (context) => ResetAccumalationScreen(userId: userId, controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId, deviceID: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,),
                                       ),
                                     );
                                   },
