@@ -927,10 +927,10 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                     onPressed: _isLoading ? null : _getRecommendation,
                     icon: _isLoading
                         ? const SpinKitCircle(color: Colors.white, size: 20)
-                        : const Icon(Icons.psychology),
+                        : const Icon(Icons.psychology, color: Colors.white,),
                     label: Text(_isLoading ? 'Analyzing...' : 'Get Recommendation'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green[600],
+                      // backgroundColor: Colors.green[600],
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -1047,7 +1047,7 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Colors.green[400]!, Colors.green[600]!],
+                  colors: [Theme.of(context).primaryColor, Theme.of(context).primaryColor],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -1218,8 +1218,8 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                             icon: const Icon(Icons.copy, size: 18),
                             label: const Text('Copy'),
                             style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.green[700],
-                              side: BorderSide(color: Colors.green[300]!),
+                              foregroundColor: Theme.of(context).primaryColor,
+                              side: BorderSide(color: Theme.of(context).primaryColor),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -1239,10 +1239,11 @@ class _CropAdvisoryScreenState extends State<CropAdvisoryScreen> {
                                 ),
                               );
                             },
-                            icon: const Icon(Icons.bookmark, size: 18),
+                            icon: const Icon(Icons.bookmark, color: Colors.white, size: 18),
                             label: const Text('Save'),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green[600],
+                              padding: const EdgeInsets.symmetric(vertical: 0),
+                              // backgroundColor: Colors.green[600],
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
