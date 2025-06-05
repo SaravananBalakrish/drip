@@ -186,7 +186,6 @@ class _NodeConnectionPageState extends State<NodeConnectionPage> {
   }
 
   Widget _buildContent() {
-    return _deviceConnected();
     switch (bleService.bleNodeState) {
       case BleNodeState.loading:
         return _loading();
@@ -344,7 +343,7 @@ class _NodeConnectionPageState extends State<NodeConnectionPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Image.asset(
-          'assets/Images/Png/bluetooth_connecting.png',
+          'assets/Images/Png/SmartComm/bluetooth_connecting.png',
           height: 300,
         ),
         const SizedBox(height: 24),
