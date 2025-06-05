@@ -278,7 +278,7 @@ class CustomerScreenController extends StatelessWidget {
                           onPressed: () => vm.linePauseOrResume(vm.lineLiveMessage),
                           style: ButtonStyle(
                             backgroundColor: WidgetStateProperty.all<Color>(
-                              allPaused ? Colors.green : Colors.orange,
+                              allPaused ? Colors.green : Colors.amber,
                             ),
                             shape: WidgetStateProperty.all<OutlinedBorder>(
                               RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
@@ -294,7 +294,7 @@ class CustomerScreenController extends StatelessWidget {
                               const SizedBox(width: 5),
                               Text(
                                 allPaused ? 'RESUME ALL LINE' : 'PAUSE ALL LINE',
-                                style: const TextStyle(color: Colors.black),
+                                style: const TextStyle(color: Colors.black54),
                               ),
                             ],
                           ),
