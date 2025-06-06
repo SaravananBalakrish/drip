@@ -75,7 +75,9 @@
 	<key>NSLocalNotificationUsageDescription</key>
 	<string>We need to send you notifications to keep you updated.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>This app uses your location to show map-based services.</string>
+	<string>We need to uses your location to show map-based services.</string>
+    <key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+    <string>We need to requires your location to provide personalized map services and improve your experience even when the app is in the background.</string>
 	<key>NSUserNotificationUsageDescription</key>
 	<string>We need your permission to send you notifications.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
