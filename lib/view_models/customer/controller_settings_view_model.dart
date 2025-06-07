@@ -31,6 +31,7 @@ class ControllerSettingsViewModel extends ChangeNotifier {
     {'title': 'View Settings', 'icon': Icons.remove_red_eye_outlined},
     {'title': 'Geography', 'icon': Icons.map_outlined},
     {'title': 'Geography Area', 'icon': Icons.map_sharp},
+    {'title': 'Pump Condition', 'icon': Icons.library_books},
   ];
 
   ControllerSettingsViewModel(this.repository);
@@ -58,9 +59,9 @@ class ControllerSettingsViewModel extends ChangeNotifier {
               'General',
               'Preference',
               'Name',
-              'Calibration',
+             /* 'Calibration',
               'Global Limit',
-              'Dealer Definition',
+              'Dealer Definition',*/
               'Geography',
               'Geography Area',
             };
@@ -73,7 +74,9 @@ class ControllerSettingsViewModel extends ChangeNotifier {
               if (setting['title'] == 'General'
                   || setting['title'] == 'Dealer Definition'
                   || setting['title'] == 'Geography'
-                  || setting['title'] == 'Geography Area') {
+                  || setting['title'] == 'Geography Area'
+                  || setting['title'] == 'Pump Condition'
+              ) {
                 return true;
               }
               return availableTitles.contains(setting['title']);
