@@ -187,7 +187,12 @@ class Repository{
   Future<http.Response> UpdatefrostProtection(body) async {
     return await apiService.postRequest('/user/planning/frostProtectionAndRainDelay/create', body);
   }
-
+  Future<http.Response> getUserPlanningPumpCondition(body) async {
+    return await apiService.postRequest('/user/planning/getUserPlanningPumpCondition/get', body);
+  }
+  Future<http.Response> updateUserPlanningPumpCondition(body) async {
+    return await apiService.postRequest('/user/planning/getUserPlanningPumpCondition/createt', body);
+  }
 
   ///Todo: Program urls
   Future<http.Response> getUserProgramSequence(body) async {
