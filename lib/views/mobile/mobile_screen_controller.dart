@@ -646,7 +646,10 @@ class MobileScreenController extends StatelessWidget {
                             modelId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId,
                             deviceName: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceName,
                             categoryName: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
-                          )
+                          ) : vm.selectedIndex == 2 ?
+                          IrrigationAndPumpLog(userData: {'userId' : userId, 'controllerId' : vm.mySiteList.data[vm.sIndex].master[vm
+                              .mIndex].controllerId},
+                          masterData: vm.mySiteList.data[vm.sIndex].master[vm.mIndex])
                               : ControllerSettings(customerId: customerId,
                             userId: userId,
                             masterController: vm.mySiteList.data[vm.sIndex].master[vm.mIndex],
