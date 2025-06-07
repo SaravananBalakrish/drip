@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class OpenAIService {
+  // final String _apiKey = "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"; // Replace with secure storage in production
   final String _apiKey = "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"; // Replace with secure storage in production
 
   Future<String?> getChatResponse(String userMessage) async {
