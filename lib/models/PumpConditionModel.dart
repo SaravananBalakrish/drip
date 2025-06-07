@@ -38,84 +38,76 @@ class Data {
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
-    pumpCondition: json["pumpCondition"] == null ? [] : List<PumpCondition>.from(json["pumpCondition"]!.map((x) => PumpCondition.fromJson(x))),
+    pumpCondition: json["pumpCondition"] == null
+        ? []
+        : List<PumpCondition>.from(json["pumpCondition"].map((x) => PumpCondition.fromJson(x))),
     controllerReadStatus: json["controllerReadStatus"],
   );
 
   Map<String, dynamic> toJson() => {
-    "pumpCondition": pumpCondition == null ? [] : List<dynamic>.from(pumpCondition!.map((x) => x.toJson())),
+    "pumpCondition": pumpCondition == null
+        ? []
+        : List<dynamic>.from(pumpCondition!.map((x) => x.toJson())),
     "controllerReadStatus": controllerReadStatus,
   };
 }
 
 class PumpCondition {
-  int? sNo;
-  String? id;
-  String? hid;
+  int? objectId;
+  double? sNo;
   String? name;
-  String? location;
-  String? type;
-  bool? controlGem;
-  String? deviceId;
+  String? objectName;
+  double? location;
   List<SelectedPump>? selectedPumps;
 
   PumpCondition({
+    this.objectId,
     this.sNo,
-    this.id,
-    this.hid,
     this.name,
+    this.objectName,
     this.location,
-    this.type,
-    this.controlGem,
-    this.deviceId,
     this.selectedPumps,
   });
 
   factory PumpCondition.fromJson(Map<String, dynamic> json) => PumpCondition(
-    sNo: json["sNo"],
-    id: json["id"],
-    hid: json["hid"],
+    objectId: json["objectId"],
+    sNo: (json["sNo"] as num?)?.toDouble(),
     name: json["name"],
-    location: json["location"],
-    type: json["type"],
-    controlGem: json["controlGem"],
-    deviceId: json["deviceId"],
-    selectedPumps: json["selectedPumps"] == null ? [] : List<SelectedPump>.from(json["selectedPumps"]!.map((x) => SelectedPump.fromJson(x))),
+    objectName: json["objectName"],
+    location: (json["location"] as num?)?.toDouble(),
+    selectedPumps: json["selectedPumps"] == null
+        ? []
+        : List<SelectedPump>.from(json["selectedPumps"].map((x) => SelectedPump.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
+    "objectId": objectId,
     "sNo": sNo,
-    "id": id,
-    "hid": hid,
     "name": name,
+    "objectName": objectName,
     "location": location,
-    "type": type,
-    "controlGem": controlGem,
-    "deviceId": deviceId,
-    "selectedPumps": selectedPumps == null ? [] : List<dynamic>.from(selectedPumps!.map((x) => x.toJson())),
+    "selectedPumps": selectedPumps == null
+        ? []
+        : List<dynamic>.from(selectedPumps!.map((x) => x.toJson())),
   };
 }
 
 class SelectedPump {
-  int? sNo;
-  String? id;
-  String? hid;
+  double? sNo;
+  int? objectId;
 
   SelectedPump({
     this.sNo,
-    this.id,
-    this.hid,
+    this.objectId,
   });
 
   factory SelectedPump.fromJson(Map<String, dynamic> json) => SelectedPump(
     sNo: json["sNo"],
-    id: json["id"],
-    hid: json["hid"],
-  );
+    objectId: json["objectId"],
+   );
 
   Map<String, dynamic> toJson() => {
     "sNo": sNo,
-    "id": id,
-    "hid": hid,
-  };
+    "objectId": objectId,
+   };
 }

@@ -188,10 +188,10 @@ class Repository{
     return await apiService.postRequest('/user/planning/frostProtectionAndRainDelay/create', body);
   }
   Future<http.Response> getUserPlanningPumpCondition(body) async {
-    return await apiService.postRequest('/user/planning/getUserPlanningPumpCondition/get', body);
+    return await apiService.postRequest('/user/planning/pumpCondition/get', body);
   }
   Future<http.Response> updateUserPlanningPumpCondition(body) async {
-    return await apiService.postRequest('/user/planning/getUserPlanningPumpCondition/createt', body);
+    return await apiService.postRequest('/user/planning/pumpCondition/create', body);
   }
 
   ///Todo: Program urls

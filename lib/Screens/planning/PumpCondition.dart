@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
- import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
 import 'dart:convert';
 
 import '../../StateManagement/mqtt_payload_provider.dart';
+import '../../StateManagement/overall_use.dart';
 import '../../models/PumpConditionModel.dart';
 import '../../modules/IrrigationProgram/view/program_library.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
- import '../../services/mqtt_service.dart';
+import '../../services/mqtt_service.dart';
 import '../../utils/snack_bar.dart';
 
 class PumpConditionScreen extends StatefulWidget {
-  PumpConditionScreen({
+  final dynamic userId;
+  final dynamic controllerId;
+  final String imeiNo;
+  final bool? isProgram;
+
+  const PumpConditionScreen({
     Key? key,
     required this.userId,
     required this.controllerId,
     required this.imeiNo,
     this.isProgram,
   }) : super(key: key);
-
-  final userId, controllerId;
-  final String imeiNo;
-  bool? isProgram ;
 
   @override
   State<PumpConditionScreen> createState() => _PumpConditionScreenState();
@@ -38,188 +40,209 @@ class _PumpConditionScreenState extends State<PumpConditionScreen> {
         Provider.of<MqttPayloadProvider>(context, listen: false);
     fetchData();
   }
+
   Future<void> fetchData() async {
-    try{
-      final Repository repository = Repository(HttpService());
+    try {
+      final repository = Repository(HttpService());
       var getUserDetails = await repository.getUserPlanningPumpCondition({
-        "userId":  widget.userId,
-        "controllerId": widget.controllerId
+        "userId": widget.userId,
+        "controllerId": widget.controllerId,
       });
+
       if (getUserDetails.statusCode == 200) {
         setState(() {
-           var jsonData = jsonDecode(getUserDetails.body);
-           pumpConditionModel = PumpConditionModel.fromJson(jsonData);
+          var jsonData = jsonDecode(getUserDetails.body);
+          pumpConditionModel = PumpConditionModel.fromJson(jsonData);
         });
-      } else {
-        //_showSnackBar(response.body);
       }
+    } catch (e, stackTrace) {
+      print('Error in fetchData: $e');
+      print('Stack trace: $stackTrace');
     }
-    catch (e, stackTrace) {
-      print(' Error overAll getData => ${e.toString()}');
-      print(' trace overAll getData  => ${stackTrace}');
-    }
-
-
   }
-   void togglePumpSelection(PumpCondition currentPump, PumpCondition targetPump) {
+
+  void togglePumpSelection(PumpCondition currentPump, PumpCondition targetPump) {
     var selectedList = currentPump.selectedPumps ?? [];
 
-    // Check if the pump is already selected
-    final alreadySelected = selectedList.any((p) => p.id == targetPump.id);
+    final alreadySelected =
+    selectedList.any((p) => p.sNo == targetPump.sNo);
 
     setState(() {
       if (alreadySelected) {
-        // Remove from the selected list if already selected
-        selectedList.removeWhere((p) => p.id == targetPump.id);
+        selectedList.removeWhere((p) => p.sNo == targetPump.sNo);
       } else {
-        // Add to the selected list if not selected
         selectedList.add(SelectedPump(
-          id: targetPump.id,
-          hid: targetPump.hid,
           sNo: targetPump.sNo,
+          objectId: targetPump.objectId,
         ));
       }
 
       currentPump.selectedPumps = selectedList;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final allPumps = pumpConditionModel.data?.pumpCondition ?? [];
 
     return Scaffold(
-      backgroundColor: Color(0xffE6EDF5),
-      appBar: AppBar(
-        title: const Text('Pump Conditions'),
-        automaticallyImplyLeading: false,
-      ),
+      backgroundColor: const Color(0xffE6EDF5),
       body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Wrap(
-            spacing: 16.0,
-            runSpacing: 16.0,
-            children: allPumps.map((pumpCondition) {
-              var selectedPumps = pumpCondition.selectedPumps ?? [];
-              return Card(
-                elevation: 4.0,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Center(
-                        child: Text(
-                          pumpCondition.name ?? 'No Name',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      const SizedBox(height: 8.0),
+        padding: const EdgeInsets.all(8.0),
+        child: Wrap(
+          spacing: 16.0,
+          runSpacing: 16.0,
+          children: allPumps.map((pumpCondition) {
+            var selectedPumps = pumpCondition.selectedPumps ?? [];
 
-
-                      Container(height: 0.5,color: Colors.grey,),
-                      const SizedBox(height: 8.0),
-                      Wrap(
-                        spacing: 6.0,
-                        runSpacing: 6.0,
-                        children: allPumps.map((pump) {
-                          if (pump.id == pumpCondition.id) return const SizedBox.shrink();
-                          bool isSelected = selectedPumps.any((sp) => sp.id == pump.id);
-                          return GestureDetector(
-                            onTap: () => togglePumpSelection(pumpCondition, pump),
-                            child: Chip(
-                              label: Text(pump.name ?? 'Unknown Pump'),
-                              backgroundColor: isSelected
-                                  ? Colors.yellowAccent.shade100
-                                  : Colors.grey.shade300,
-                              avatar: isSelected
-                                  ? const Icon(Icons.check_circle, color: Colors.green, size: 18)
-                                  : const Icon(Icons.circle_outlined, color: Colors.grey, size: 18),
-                            ),
-                          );
-                        }).toList(),
+            return Card(
+              elevation: 4.0,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Text(
+                        pumpCondition.name ?? 'No Name',
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    Container(height: 0.5, color: Colors.grey),
+                    const SizedBox(height: 8.0),
+                    Wrap(
+                      spacing: 6.0,
+                      runSpacing: 6.0,
+                      children: allPumps
+                          .where((pump) => pump.sNo != pumpCondition.sNo)
+                          .map((pump) {
+                        bool isSelected = selectedPumps.any(
+                                (sp) => sp.sNo == pump.sNo);
+
+                        return GestureDetector(
+                          onTap: () => togglePumpSelection(pumpCondition, pump),
+                          child: Chip(
+                            label: Text(pump.name ?? 'Unknown Pump'),
+                            backgroundColor: isSelected
+                                ? Colors.yellowAccent.shade100
+                                : Colors.grey.shade300,
+                            avatar: isSelected
+                                ? const Icon(Icons.check_circle, color: Colors.green, size: 18)
+                                : const Icon(Icons.circle_outlined, color: Colors.grey, size: 18),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
-              );
-            }).toList(),
-          ),
+              ),
+            );
+          }).toList(),
         ),
-      )
-      ,
+      ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         foregroundColor: Colors.white,
-        onPressed: () => _sendData(),
+        onPressed: _sendData,
         child: const Icon(Icons.send),
         tooltip: 'Send Data',
       ),
     );
   }
+
   String convertPumpDataToString(PumpConditionModel model) {
     final buffer = StringBuffer();
     final pumps = model.data?.pumpCondition ?? [];
+
     for (var pump in pumps) {
-      buffer.write(pump.sNo ?? '');
+      buffer.write(pump.sNo?.toStringAsFixed(3) ?? '');
       final selected = pump.selectedPumps ?? [];
+
       if (selected.isNotEmpty) {
         buffer.write(',');
         buffer.writeAll(
-          selected.map((sp) => sp.hid ?? ''),
+          selected.map((sp) => sp.sNo?.toString() ?? ','),
           '_',
         );
       }
+      else
+        {
+          buffer.write(',');
+        }
+
       buffer.write(';');
     }
+
     return buffer.toString();
   }
 
-  _sendData() async {
 
-    final Repository repository = Repository(HttpService());
+  Future<void> _sendData() async {
+     final repository = Repository(HttpService());
+
     String mqttSendData = convertPumpDataToString(pumpConditionModel);
-    var finaljson = pumpConditionModel.data?.toJson();
-    Map<String, Object> body = {
-      "userId": widget.userId,
-      "controllerId": widget.controllerId,
-      "pumpCondition": finaljson!['pumpCondition'],
-      "createUser": widget.userId,
-      "controllerReadStatus": "0"
-    };
-    var getUserDetails = await repository.updateUserPlanningPumpCondition(body);
-    var jsonDataResponse = jsonDecode(getUserDetails.body);
+    print('mqttSendData$mqttSendData');
 
-    final response = await HttpService()
-        .postRequest("createUserPlanningPumpCondition", body);
-    final jsonDataresponse = json.decode(response.body);
-    GlobalSnackBar.show(
-        context, jsonDataresponse['message'], response.statusCode);
+    // Prepare JSON for server
+    Map<String, dynamic> pumpConditionJson = pumpConditionModel.toJson();
+    Map<String, dynamic> pumpConditionServerData = {
+      "pumpCondition": pumpConditionJson["data"]?["pumpCondition"] ?? [],
+      "controllerReadStatus": "0",
+    };
+
+    // MQTT Payload format
     Map<String, dynamic> payLoadFinal = {
       "7100":
-        {"7101": mqttSendData}
+        {"7101": mqttSendData},
     };
 
-    if (MqttService().isConnected == true) {
-      await validatePayloadSent(
+    print("payLoadFinal,$payLoadFinal");
+    // Main request body
+    Map<String, dynamic> body = {
+      "userId": widget.userId,
+      "controllerId": widget.controllerId,
+      "pumpCondition": pumpConditionServerData,
+      "hardware": payLoadFinal,
+      "createUser": widget.userId,
+    };
+
+
+    try {
+      final getUserDetails = await repository.updateUserPlanningPumpCondition(body);
+      final jsonDataResponse = jsonDecode(getUserDetails.body);
+
+      print('Response ---> $jsonDataResponse');
+
+      if (MqttService().isConnected == true) {
+        await validatePayloadSent(
           dialogContext: context,
           context: context,
           mqttPayloadProvider: mqttPayloadProvider,
-          acknowledgedFunction: () async{
+          acknowledgedFunction: () async {
             setState(() {
-              body["controllerReadStatus"] = "1";
+              body["pumpCondition"]["controllerReadStatus"] = "1";
             });
           },
           payload: payLoadFinal,
           payloadCode: '7100',
-          deviceId: widget.imeiNo
-      );
-    } else {
-      GlobalSnackBar.show(context, 'MQTT is Disconnected', 201);
-    }
+          deviceId: widget.imeiNo,
+        );
+      } else {
+        GlobalSnackBar.show(context, 'MQTT is Disconnected', 201);
+      }
 
-    GlobalSnackBar.show(context, jsonDataResponse['message'], jsonDataResponse.statusCode);
+      GlobalSnackBar.show(
+        context,
+        jsonDataResponse['message'],
+        jsonDataResponse['statusCode'],
+      );
+    } catch (e ,stacktrace) {
+      print("Error in _sendData: $e");
+      print("stacktrace in _sendData: $stacktrace");
+      GlobalSnackBar.show(context, 'Error sending data: $e', 500);
+    }
   }
+
 
 }
