@@ -175,7 +175,10 @@ class _PumpConditionScreenState extends State<PumpConditionScreen> {
     }
     return buffer.toString();
   }
+
   _sendData() async {
+
+    final Repository repository = Repository(HttpService());
     String mqttSendData = convertPumpDataToString(pumpConditionModel);
     var finaljson = pumpConditionModel.data?.toJson();
     Map<String, Object> body = {
@@ -185,40 +188,38 @@ class _PumpConditionScreenState extends State<PumpConditionScreen> {
       "createUser": widget.userId,
       "controllerReadStatus": "0"
     };
+    var getUserDetails = await repository.updateUserPlanningPumpCondition(body);
+    var jsonDataResponse = jsonDecode(getUserDetails.body);
+
     final response = await HttpService()
         .postRequest("createUserPlanningPumpCondition", body);
     final jsonDataresponse = json.decode(response.body);
     GlobalSnackBar.show(
         context, jsonDataresponse['message'], response.statusCode);
     Map<String, dynamic> payLoadFinal = {
-      "7100": [
-        {"7101": mqttSendData},
-      ]
+      "7100":
+        {"7101": mqttSendData}
     };
 
     if (MqttService().isConnected == true) {
       await validatePayloadSent(
-        dialogContext: context,
-        context: context,
-        mqttPayloadProvider: mqttPayloadProvider,
-        acknowledgedFunction: () async {
-          setState(() {
-            body["controllerReadStatus"] = "1";
-          });
-
-          final response = await HttpService()
-              .postRequest("createUserPlanningPumpCondition", body);
-          final jsonDataResponse = json.decode(response.body);
-          GlobalSnackBar.show(
-              context, jsonDataResponse['message'], response.statusCode);
-        },
-        payload: payLoadFinal,
-        payloadCode: '7100',
-        deviceId: widget.imeiNo,
+          dialogContext: context,
+          context: context,
+          mqttPayloadProvider: mqttPayloadProvider,
+          acknowledgedFunction: () async{
+            setState(() {
+              body["controllerReadStatus"] = "1";
+            });
+          },
+          payload: payLoadFinal,
+          payloadCode: '7100',
+          deviceId: widget.imeiNo
       );
     } else {
       GlobalSnackBar.show(context, 'MQTT is Disconnected', 201);
     }
+
+    GlobalSnackBar.show(context, jsonDataResponse['message'], jsonDataResponse.statusCode);
   }
 
 }
