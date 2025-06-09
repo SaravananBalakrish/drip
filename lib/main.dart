@@ -36,10 +36,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 FutureOr<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-<<<<<<< Updated upstream
-  // F.appFlavor = Flavor.oroProduction;
-=======
->>>>>>> Stashed changes
+
   if(!kIsWeb){
     try {
       // Initialize Firebase
