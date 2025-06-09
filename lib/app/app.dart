@@ -68,9 +68,8 @@ class _MyAppState extends State<MyApp> {
           theme: isOro ? OroTheme.lightTheme : SmartCommTheme.lightTheme,
           darkTheme: isOro ? OroTheme.darkTheme : SmartCommTheme.darkTheme,
           themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          home: ConfigBasePage(masterData: {}),
-          // home: navigateToInitialScreen(snapshot.data ?? Routes.login),
-          // onGenerateRoute: Routes.generateRoute,
+          home: navigateToInitialScreen(snapshot.data ?? Routes.login),
+          onGenerateRoute: Routes.generateRoute,
         );
       },
     );
