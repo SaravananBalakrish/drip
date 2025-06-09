@@ -1245,6 +1245,7 @@ class NodeListModel{
   String latchOutput;
   String analogInput;
   String digitalInput;
+  String version;
 
 
   NodeListModel({
@@ -1270,6 +1271,7 @@ class NodeListModel{
     required this.latchOutput,
     required this.analogInput,
     required this.digitalInput,
+    this.version = '0.0.0',
 
   });
 

@@ -67,10 +67,7 @@ class _AdminScreenControllerState extends State<AdminScreenController> {
                               borderRadius: BorderRadius.circular(4),
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? (F.appFlavor!.name.contains('oro')
-                                      ? Colors.teal
-                                      : Theme.of(context).primaryColorLight)
+                                  color: isSelected ? Theme.of(context).primaryColorLight
                                       : isHovered
                                       ? Colors.white24
                                       : Colors.transparent,
@@ -105,104 +102,106 @@ class _AdminScreenControllerState extends State<AdminScreenController> {
                         );
                       }),
                     ),
-                    const Spacer(),
-                    Container(
-                      width: 400,
-                      height: 40,
-                      padding: const EdgeInsets.symmetric(horizontal: 3),
-                      decoration: BoxDecoration(
-                        color: Colors.white24,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.white12, width: 0.7),
-                      ),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 350,
-                            child: TextField(
-                              controller: viewModel.txtFldSearch,
-                              style: const TextStyle(color: Colors.white),
-                              decoration: InputDecoration(
-                                prefixIcon: const Icon(Icons.search, color: Colors.white54),
-                                suffixIcon: viewModel.txtFldSearch.text.isNotEmpty
-                                    ? IconButton(
-                                  icon: const Icon(Icons.clear, color: Colors.redAccent),
-                                  onPressed: () {
-                                    viewModel.clearSearch();
-                                    context.read<SearchProvider>().isSearchingProduct(false);
+                    if(selectedIndex==1)...[
+                      const Spacer(),
+                      Container(
+                        width: 400,
+                        height: 40,
+                        padding: const EdgeInsets.symmetric(horizontal: 3),
+                        decoration: BoxDecoration(
+                          color: Colors.white24,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.white12, width: 0.7),
+                        ),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 350,
+                              child: TextField(
+                                controller: viewModel.txtFldSearch,
+                                style: const TextStyle(color: Colors.white),
+                                decoration: InputDecoration(
+                                  prefixIcon: const Icon(Icons.search, color: Colors.white54),
+                                  suffixIcon: viewModel.txtFldSearch.text.isNotEmpty
+                                      ? IconButton(
+                                    icon: const Icon(Icons.clear, color: Colors.redAccent),
+                                    onPressed: () {
+                                      viewModel.clearSearch();
+                                      context.read<SearchProvider>().isSearchingProduct(false);
+                                      context.read<SearchProvider>().clearSearchFilters();
+                                    },
+                                  )
+                                      : null,
+                                  hintText: 'Search by device id / sales person',
+                                  hintStyle: const TextStyle(color: Colors.white24),
+                                  border: InputBorder.none,
+                                ),
+                                onChanged: (value) {
+                                  if (value.isEmpty) {
                                     context.read<SearchProvider>().clearSearchFilters();
-                                  },
-                                )
-                                    : null,
-                                hintText: 'Search by device id / sales person',
-                                hintStyle: const TextStyle(color: Colors.white24),
-                                border: InputBorder.none,
+                                  } else {
+                                    context.read<SearchProvider>().isSearchingProduct(true);
+                                    context.read<SearchProvider>().updateSearch(value);
+                                    context.read<SearchProvider>().updateCategoryId(0);
+                                    context.read<SearchProvider>().updateModelId(0);
+                                  }
+                                },
+                                onSubmitted: (value) {
+                                  if (value.isNotEmpty) {
+                                    context.read<SearchProvider>().isSearchingProduct(true);
+                                    context.read<SearchProvider>().updateSearch(value);
+                                  }
+                                },
                               ),
-                              onChanged: (value) {
-                                if (value.isEmpty) {
-                                  context.read<SearchProvider>().clearSearchFilters();
-                                } else {
-                                  context.read<SearchProvider>().isSearchingProduct(true);
-                                  context.read<SearchProvider>().updateSearch(value);
-                                  context.read<SearchProvider>().updateCategoryId(0);
-                                  context.read<SearchProvider>().updateModelId(0);
-                                }
+                            ),
+                            PopupMenuButton<dynamic>(
+                              icon: const Icon(Icons.filter_alt_outlined),
+                              tooltip: 'Filter by category or model',
+                              itemBuilder: (BuildContext context) {
+                                final categoryItems = viewModel.jsonDataMap['data']?['category'] ?? [];
+                                final modelItems = viewModel.jsonDataMap['data']?['model'] ?? [];
+
+                                return [
+                                  const PopupMenuItem<dynamic>(
+                                    enabled: false,
+                                    child: Text("Category"),
+                                  ),
+                                  ...categoryItems.map<PopupMenuItem>((item) => PopupMenuItem(
+                                    value: item,
+                                    child: Text(item['categoryName']),
+                                  )),
+                                  const PopupMenuItem<dynamic>(
+                                    enabled: false,
+                                    child: Text("Model"),
+                                  ),
+                                  ...modelItems.map<PopupMenuItem>((item) => PopupMenuItem(
+                                    value: item,
+                                    child: Text('${item['categoryName']} - ${item['modelName']}'),
+                                  )),
+                                ];
                               },
-                              onSubmitted: (value) {
-                                if (value.isNotEmpty) {
+                              onSelected: (selectedItem) {
+                                if (selectedItem is Map<String, dynamic>) {
+                                  viewModel.txtFldSearch.text = selectedItem.containsKey('modelName')
+                                      ? '${selectedItem['categoryName']} - ${selectedItem['modelName']}'
+                                      : '${selectedItem['categoryName']}';
+
                                   context.read<SearchProvider>().isSearchingProduct(true);
-                                  context.read<SearchProvider>().updateSearch(value);
+                                  context.read<SearchProvider>().updateSearch('');
+                                  context.read<SearchProvider>().updateCategoryId(
+                                    selectedItem['categoryId'] ?? 0,
+                                  );
+                                  context.read<SearchProvider>().updateModelId(
+                                    selectedItem['modelId'] ?? 0,
+                                  );
                                 }
                               },
                             ),
-                          ),
-                          PopupMenuButton<dynamic>(
-                            icon: const Icon(Icons.filter_alt_outlined),
-                            tooltip: 'Filter by category or model',
-                            itemBuilder: (BuildContext context) {
-                              final categoryItems = viewModel.jsonDataMap['data']?['category'] ?? [];
-                              final modelItems = viewModel.jsonDataMap['data']?['model'] ?? [];
-
-                              return [
-                                const PopupMenuItem<dynamic>(
-                                  enabled: false,
-                                  child: Text("Category"),
-                                ),
-                                ...categoryItems.map<PopupMenuItem>((item) => PopupMenuItem(
-                                  value: item,
-                                  child: Text(item['categoryName']),
-                                )),
-                                const PopupMenuItem<dynamic>(
-                                  enabled: false,
-                                  child: Text("Model"),
-                                ),
-                                ...modelItems.map<PopupMenuItem>((item) => PopupMenuItem(
-                                  value: item,
-                                  child: Text('${item['categoryName']} - ${item['modelName']}'),
-                                )),
-                              ];
-                            },
-                            onSelected: (selectedItem) {
-                              if (selectedItem is Map<String, dynamic>) {
-                                viewModel.txtFldSearch.text = selectedItem.containsKey('modelName')
-                                    ? '${selectedItem['categoryName']} - ${selectedItem['modelName']}'
-                                    : '${selectedItem['categoryName']}';
-
-                                context.read<SearchProvider>().isSearchingProduct(true);
-                                context.read<SearchProvider>().updateSearch('');
-                                context.read<SearchProvider>().updateCategoryId(
-                                  selectedItem['categoryId'] ?? 0,
-                                );
-                                context.read<SearchProvider>().updateModelId(
-                                  selectedItem['modelId'] ?? 0,
-                                );
-                              }
-                            },
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const Spacer(),
+                      const Spacer(),
+                    ]
                   ],
                 ),
               ),

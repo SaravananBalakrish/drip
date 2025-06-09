@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:timezone/data/latest.dart' as tz;
 import 'Screens/Constant/ConstantPageProvider/changeNotifier_constantProvider.dart';
 import 'StateManagement/search_provider.dart';
 import 'app/app.dart';
@@ -36,7 +37,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 FutureOr<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  tz.initializeTimeZones();
+  //F.appFlavor = Flavor.oroProduction;
   if(!kIsWeb){
     try {
       // Initialize Firebase

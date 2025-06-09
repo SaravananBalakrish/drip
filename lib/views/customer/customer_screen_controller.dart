@@ -778,7 +778,7 @@ class CustomerScreenController extends StatelessWidget {
                             ),
                           ),
 
-                           const SizedBox(height: 15),
+                          const SizedBox(height: 15),
                           Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
@@ -801,8 +801,8 @@ class CustomerScreenController extends StatelessWidget {
                               hoverColor: Theme.of(context).primaryColorLight,
                             ),
                           ),
-                           const SizedBox(height: 15),
-           Container(
+                          const SizedBox(height: 15),
+                          Container(
                             decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(5),
                                 color: Colors.transparent
@@ -839,7 +839,6 @@ class CustomerScreenController extends StatelessWidget {
 
   void showPasswordDialog(BuildContext context, correctPassword,userId,controllerID,imeiNumber) {
     final TextEditingController passwordController = TextEditingController();
-
 
     showDialog(
       context: context,
