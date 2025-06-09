@@ -64,7 +64,7 @@ class NodeList extends StatelessWidget {
               buildStatusHeaderRow(context, vm),
               SizedBox(
                 width: 400,
-                height: MediaQuery.sizeOf(context).height-170,
+                height: MediaQuery.sizeOf(context).height-175,
                 child: Column(
                   children: [
                     SizedBox(
@@ -155,7 +155,14 @@ class NodeList extends StatelessWidget {
                                     crossAxisAlignment: CrossAxisAlignment.end,
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      Text(vm.nodeList[index].deviceName, style: const TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: 13)),
+                                      RichText(
+                                        text: TextSpan(
+                                          children: <TextSpan>[
+                                            TextSpan(text: '${vm.nodeList[index].deviceName} - ', style: const TextStyle(fontWeight: FontWeight.normal, color: Colors.black, fontSize: 13)),
+                                            TextSpan(text: 'V : ${vm.nodeList[index].version}', style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 10, color: Colors.black),),
+                                          ],
+                                        ),
+                                      ),
                                       Text(vm.nodeList[index].deviceId, style: const TextStyle(fontWeight: FontWeight.normal,fontSize: 11, color: Colors.black)),
                                       RichText(
                                         text: TextSpan(
@@ -360,6 +367,10 @@ class NodeList extends StatelessWidget {
               icon: const Icon(Icons.close, color: Colors.redAccent),
               onPressed: () => Navigator.of(context).pop(),
             ),
+            Expanded(child:
+            ListTile(
+              title: Text('dfdfdfd'),
+            )),
           ],
         ),
         Padding(

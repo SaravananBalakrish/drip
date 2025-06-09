@@ -4,7 +4,6 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:oro_drip_irrigation/Screens/Dealer/dealer_definition.dart';
 import 'package:oro_drip_irrigation/Screens/planning/PumpCondition.dart';
 import 'package:oro_drip_irrigation/view_models/customer/controller_settings_view_model.dart';
-import 'package:oro_drip_irrigation/view_models/customer/customer_screen_controller_view_model.dart';
 import 'package:oro_drip_irrigation/views/customer/condition_library.dart';
 import 'package:provider/provider.dart';
 import '../../Models/customer/site_model.dart';
@@ -97,30 +96,23 @@ class ControllerSettings extends StatelessWidget {
         itemBuilder: (context, index) {
           final title = viewModel.filteredSettingList[index]['title'];
 
-          return Column(
-            children: [
-              ListTile(
-                leading: Icon(
-                  viewModel.filteredSettingList[index]['icon'],
-                  color: Theme.of(context).primaryColor,
-                ),
-                title: Text(
-                  title,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Text(
-                  getSubTitle(title),
-                  style: TextStyle(color: Colors.black45),
-                ),
-                trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                onTap: () => _navigateToScreen(context, title),
-              ),
-              if (index < viewModel.filteredSettingList.length - 1)
-                const Padding(
-                  padding: EdgeInsets.only(left: 40, right: 8),
-                  child: Divider(height: 0),
-                ),
-            ],
+          return ListTile(
+            visualDensity: const VisualDensity(vertical: -4),
+            isThreeLine: true,
+            leading: Icon(
+              viewModel.filteredSettingList[index]['icon'],
+              color: Theme.of(context).primaryColor,
+            ),
+            title: Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(
+              getSubTitle(title),
+              style: const TextStyle(color: Colors.black45),
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => _navigateToScreen(context, title),
           );
         },
       ),
