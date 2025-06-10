@@ -550,6 +550,8 @@ class MqttPayloadProvider with ChangeNotifier {
 
   void updateReceivedPayload(String newPayload, bool dataFromHttp) async{
 
+     print('newPayload --\n$newPayload');
+
     if (_receivedPayload != newPayload) {
       _receivedPayload = newPayload;
 
