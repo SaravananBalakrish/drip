@@ -126,10 +126,22 @@ class MqttPayloadProvider with ChangeNotifier {
    List<CustomDevice> get pairedDevices => _pairedDevices;
 
    List<Map<String, dynamic>> _wifiList = [];
-   String? _wifiMessage;
-
    List<Map<String, dynamic>> get wifiList => _wifiList;
+
+   String? _wifiMessage;
    String? get wifiMessage => _wifiMessage;
+
+   String? _wifiStatus;
+   String? get wifiStatus => _wifiStatus;
+
+   bool wifiStateChanging = false;
+
+   String? _interfaceType;
+   String? get interfaceType => _interfaceType;
+
+   String? _ipAddress;
+   String? get ipAddress => _ipAddress;
+
 
    void updateConnectedDeviceStatus(CustomDevice? device) {
      _connectedDevice = device;
@@ -155,6 +167,25 @@ class MqttPayloadProvider with ChangeNotifier {
      _wifiList = list;
      notifyListeners();
    }
+
+   void updateInterfaceType(String interfaceType) {
+     _interfaceType = interfaceType;
+     notifyListeners();
+   }
+
+   void updateIpAddress(String ip) {
+     _ipAddress = ip;
+     notifyListeners();
+   }
+
+
+
+   void updateWifiStatus(String status, bool loading) {
+     _wifiStatus = status;
+     wifiStateChanging = loading;
+     notifyListeners();
+   }
+
 
    void updateWifiMessage(String? message) {
      _wifiMessage = message;

@@ -135,7 +135,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
           visualDensity: const VisualDensity(vertical: -4),
           isThreeLine: true,
           title: const Text('Controller Name'),
-          subtitle: Text(viewModel.controllerCategory, style: TextStyle(fontWeight: FontWeight.bold)),
+          subtitle: Text(viewModel.controllerCategory, style: const TextStyle(fontWeight: FontWeight.bold)),
           leading: const Icon(Icons.developer_board),
           trailing: IconButton(
             onPressed: () {
@@ -186,25 +186,6 @@ class _GeneralSettingState extends State<GeneralSetting> {
         return ListTile(
           visualDensity: const VisualDensity(vertical: -4),
           isThreeLine: true,
-          leading: const Icon(Icons.wifi),
-          title: const Text('Wi-Fi', style: TextStyle(fontWeight: FontWeight.w500)),
-          subtitle: Text(
-            viewModel.isWifiEnabled
-                ? 'Wi-Fi is enabled on the controller'
-                : 'Wi-Fi is disabled on the controller',
-            style: const TextStyle(fontSize: 12),
-          ),
-          trailing: Switch(
-            value: viewModel.isWifiEnabled,
-            onChanged: (bool value) {
-              viewModel.toggleWifi(value);
-            },
-          ),
-        );
-      case 7:
-        return ListTile(
-          visualDensity: const VisualDensity(vertical: -4),
-          isThreeLine: true,
           leading: const Icon(Icons.timer_outlined),
           title: const Text('UTC'),
           subtitle: const Text('Time zone setting'),
@@ -228,7 +209,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
             ),
           ),
         );
-      case 8:
+      case 7:
         return ListTile(
           visualDensity: const VisualDensity(vertical: -4),
           isThreeLine: true,
@@ -240,7 +221,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
         );
-      case 9:
+      case 8:
         return ListTile(
           visualDensity: const VisualDensity(vertical: -4),
           isThreeLine: true,
@@ -252,7 +233,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
             style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
         );
-      case 10:
+      case 9:
         return const ListTile(
           title: Text('Time Format'),
           leading: Icon(Icons.av_timer),
@@ -261,7 +242,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
             style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           ),
         );
-      case 11:
+      case 10:
         return const ListTile(
           title: Text('Unit'),
           leading: Icon(Icons.ac_unit_rounded),

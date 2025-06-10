@@ -103,11 +103,20 @@ class BluService {
           try {
             Map<String, dynamic> jsonData = json.decode(jsonString);
             String jsonStr = json.encode(jsonData);
+            print('Blu jsonStr:$jsonStr');
 
             Map<String, dynamic> data = jsonStr.isNotEmpty ? jsonDecode(jsonStr) : {};
 
             if (data['mC']?.toString() == '7300') {
               final rawList = data["cM"]?["7301"]?["ListOfWifi"];
+              final wifiStatus = data["cM"]?["7301"]?["Status"];
+              final String interfaceType = data["cM"]?["7301"]?["InterfaceType"];
+              final String ipAddress = data["cM"]?["7301"]?["IpAddress"];
+
+              providerState?.updateWifiStatus(wifiStatus, false);
+              providerState?.updateInterfaceType(interfaceType);
+              providerState?.updateIpAddress(ipAddress);
+
               if (rawList is List) {
                 final wifiList = rawList.map<Map<String, dynamic>>((e) => Map<String, dynamic>.from(e)).toList();
                 providerState?.updateWifiList(wifiList);

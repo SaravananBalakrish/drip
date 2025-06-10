@@ -23,7 +23,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
   final TextEditingController txtEcGroupName = TextEditingController();
   String farmName = '', controllerCategory = '', modelName = '', deviceId = '', categoryName = '', controllerVersion='', newVersion='';
   int groupId = 0;
-  bool isWifiEnabled = false;
 
   String? selectedTimeZone;
   String currentDate = '';
@@ -148,10 +147,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
         .toList();
   }
 
-  void toggleWifi(bool enabled) {
-    isWifiEnabled = enabled;
-    notifyListeners();
-  }
 
   void updateCurrentDateTime(String timeZone) {
     final tz.Location location = tz.getLocation(timeZone);
