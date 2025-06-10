@@ -28,7 +28,17 @@ class StandAloneViewModel extends ChangeNotifier {
 
 
   List<ProgramModel> programList = [];
-  late StandAloneModel standAloneData;
+  StandAloneModel standAloneData = StandAloneModel(
+    startTogether: false,
+    time: '',
+    flow: '',
+    method: 0,
+    selection: [],
+    sequence: [],
+  );
+
+ // late StandAloneModel standAloneData;
+  //StandAloneModel standAloneData = StandAloneModel();
   bool visibleLoading = false;
   int ddCurrentPosition = 0;
   int serialNumber = 0;

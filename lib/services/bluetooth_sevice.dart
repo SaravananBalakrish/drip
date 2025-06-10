@@ -123,7 +123,8 @@ class BluService {
               } else {
                 print('ListOfWifi is not a List');
               }
-            } else if (data['mC']?.toString() == '4200') {
+            }
+            else if (data['mC']?.toString() == '4200') {
               final cM = data['cM'] as Map<String, dynamic>?;
               if (cM != null && cM.isNotEmpty) {
                 final firstEntry = cM.entries.first.value as Map<String, dynamic>;
@@ -135,7 +136,15 @@ class BluService {
                   print('Message is null or empty');
                 }
               }
-            } else {
+            }
+            else if (data['mC']?.toString() == '6600') {
+              //logs
+              final cM = data['cM'] as Map<String, dynamic>?;
+              if (cM != null && cM.isNotEmpty) {
+                providerState?.updateReceivedPayload(data.toString(), false);
+              }
+            }
+            else {
               providerState?.updateReceivedPayload(jsonStr, true);
             }
           } catch (e) {
