@@ -96,20 +96,22 @@ class BluService {
   void listenToBluData() {
     _bluetoothClassicPlugin.onDeviceDataReceived().listen((event) {
 
-      print('_buffer---> $_buffer');
       _buffer += utf8.decode(event);
-      print(_buffer);
+      print('_buffer---> $_buffer');
 
-      while (_buffer.contains('*') && _buffer.contains('#')) {
-        int startIndex = _buffer.indexOf('*');
-        int endIndex = _buffer.indexOf('#', startIndex);
+      while (_buffer.contains('*Start') && _buffer.contains('#End')) {
+        int startIndex = _buffer.indexOf('*Start');
+        int endIndex = _buffer.indexOf('#End', startIndex);
 
         if (startIndex != -1 && endIndex != -1 && endIndex > startIndex) {
-          String jsonString = _buffer.substring(startIndex + 1, endIndex);
+          String jsonString = _buffer.substring(startIndex + 6, endIndex).trim();
           _buffer = _buffer.substring(endIndex + 1);
+          _buffer='';
 
           try {
+            print("jsonString------>$jsonString");
             Map<String, dynamic> jsonData = json.decode(jsonString);
+            print('jsonData---$jsonData');
             String jsonStr = json.encode(jsonData);
             print('Blu jsonStr:$jsonStr');
 
