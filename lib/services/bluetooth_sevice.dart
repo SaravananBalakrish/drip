@@ -50,16 +50,21 @@ class BluService {
   }
 
   Future<void> requestPermissions() async {
-    if (await Permission.bluetoothConnect.isDenied) {
-      await Permission.bluetoothConnect.request();
-    }
+    final permissions = [
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan,
+      Permission.locationWhenInUse,
+    ];
 
-    if (await Permission.bluetoothScan.isDenied) {
-      await Permission.bluetoothScan.request();
-    }
+    for (final permission in permissions) {
+      if (await permission.isDenied || await permission.isPermanentlyDenied) {
+        final result = await permission.request();
 
-    if (await Permission.locationWhenInUse.isDenied) {
-      await Permission.locationWhenInUse.request();
+        if (result.isPermanentlyDenied) {
+          // You can show a dialog and redirect user to app settings
+          print('${permission.toString()} is permanently denied. Please enable it from settings.');
+        }
+      }
     }
   }
 
@@ -93,6 +98,7 @@ class BluService {
 
       print('_buffer---> $_buffer');
       _buffer += utf8.decode(event);
+      print(_buffer);
 
       while (_buffer.contains('*') && _buffer.contains('#')) {
         int startIndex = _buffer.indexOf('*');
@@ -184,7 +190,8 @@ class BluService {
       return;
     }
 
-    requestPermissions();
+    await requestPermissions();
+
     _connectedAddress = customDevice.device.address;
     customDevice.status = BluDevice.connecting;
     providerState?.updateDeviceStatus(customDevice.device.address, customDevice.status);
@@ -193,11 +200,13 @@ class BluService {
       await _bluetoothClassicPlugin.stopScan();
       await Future.delayed(const Duration(milliseconds: 300));
 
-      try {
-        await _bluetoothClassicPlugin.disconnect();
-        await Future.delayed(const Duration(milliseconds: 300));
-      } catch (e) {
-        print('Error during pre-disconnect: $e');
+      if (isConnected) {
+        try {
+          await _bluetoothClassicPlugin.disconnect();
+          await Future.delayed(const Duration(milliseconds: 300));
+        } catch (e) {
+          print('Error during pre-disconnect: $e');
+        }
       }
 
       await _bluetoothClassicPlugin
