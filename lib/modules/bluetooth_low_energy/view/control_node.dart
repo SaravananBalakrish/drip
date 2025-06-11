@@ -27,12 +27,14 @@ class _ControlNodeState extends State<ControlNode> {
   @override
   Widget build(BuildContext context) {
     bleService = Provider.of<BleProvider>(context, listen: true);
+    int keyCount = bleService.nodeDataFromHw.keys.length;
+
     return Scaffold(
       backgroundColor: const Color(0xffF7FFFD),
       appBar: AppBar(
         title: const Text('Control'),
       ),
-      body: bleService.nodeDataFromHw.containsKey('BAT')
+      body: keyCount > 4
           ? SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(15.0),
