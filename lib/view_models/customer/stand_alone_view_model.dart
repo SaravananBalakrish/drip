@@ -28,16 +28,17 @@ class StandAloneViewModel extends ChangeNotifier {
 
 
   List<ProgramModel> programList = [];
-  StandAloneModel standAloneData = StandAloneModel(
+ /* StandAloneModel standAloneData = StandAloneModel(
     startTogether: false,
     time: '',
     flow: '',
     method: 0,
     selection: [],
     sequence: [],
-  );
+  );*/
 
- // late StandAloneModel standAloneData;
+  StandAloneModel? standAloneData;
+
   //StandAloneModel standAloneData = StandAloneModel();
   bool visibleLoading = false;
   int ddCurrentPosition = 0;
@@ -156,6 +157,7 @@ class StandAloneViewModel extends ChangeNotifier {
             flowLiter.text = strFlow;
 
             await Future.delayed(const Duration(milliseconds: 500));
+            //scheduleSectionCallbackMethod(serialNumber, ddCurrentPosition);
             fetchStandAloneSelection(serialNumber, ddCurrentPosition);
 
           }catch(e){
@@ -172,6 +174,44 @@ class StandAloneViewModel extends ChangeNotifier {
     }
 
   }
+
+  /*Future<void> scheduleSectionCallbackMethod(serialNumber, selection) async
+  {
+    ddCurrentPosition = selection;
+    try {
+      standAloneData = await fetchControllerData(serialNumber);
+      print(standAloneData);
+    } catch (e) {
+      print('Error: $e');
+    }
+  }*/
+
+  /*Future<List<StandAloneModel>>fetchControllerData(sNo) async
+  {
+    Map<String, Object> body = {
+      "userId": customerId,
+      "controllerId": controllerId,
+      "serialNumber": sNo
+    };
+
+    var response = await repository.fetchManualOperation(body);
+    if (response.statusCode == 200) {
+      final jsonResponse = json.decode(response.body);
+      print(response.body);
+      if (jsonResponse['data'] != null) {
+        dynamic data = jsonResponse['data'];
+        if (data is Map<String, dynamic>) {
+          return [StandAloneModel.fromJson(data)];
+        } else {
+          throw Exception('Invalid response format: "data" is not a Map');
+        }
+      } else {
+        throw Exception('Invalid response format: "data" is null');
+      }
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }*/
 
 
   Future<void> fetchStandAloneSelection(int sNo, int cIndex) async {
@@ -192,78 +232,75 @@ class StandAloneViewModel extends ChangeNotifier {
         if (jsonResponse['data'] != null) {
           dynamic data = jsonResponse['data'];
           standAloneData = StandAloneModel.fromJson(data);
-          print(standAloneData.sequence);
 
-          if(ddCurrentPosition==0) {
-            for (var item in standAloneData.selection) {
-              int serialNo = item.sNo.toInt();
+          for (var item in standAloneData!.selection) {
+            int serialNo = item.sNo.toInt();
 
-              if (serialNo == 5) {
-                for (var line in masterData.irrigationLine) {
-                  for (var waterSource in line.outletSources) {
-                    waterSource.outletPump.where((pump) => pump.sNo == item.sNo).forEach((pump) {
-                      pump.selected = true;
-                    });
-                  }
-                }
-              }
-
-              if (serialNo == 7) {
-                for (var line in masterData.irrigationLine) {
-                  var fertilizerSite = line.centralFertilizerSite;
-                  if (fertilizerSite != null) {
-                    fertilizerSite.boosterPump.where((booster) => booster.sNo == item.sNo).forEach((booster) {
-                      booster.selected = true;
-                    });
-                  }
-                }
-              }
-
-              if (serialNo == 9) {
-                for (var line in masterData.irrigationLine) {
-                  var fertilizerSite = line.centralFertilizerSite;
-                  if (fertilizerSite != null) {
-                    fertilizerSite.agitator.where((agitator) => agitator.sNo == item.sNo).forEach((agitator) {
-                      agitator.selected = true;
-                    });
-                  }
-                }
-              }
-
-              if (serialNo == 10) {
-                for (var line in masterData.irrigationLine) {
-                  var fertilizerSite = line.centralFertilizerSite;
-                  if (fertilizerSite != null) {
-                    fertilizerSite.channel.where((channel) => channel.sNo == item.sNo).forEach((channel) {
-                      channel.selected = true;
-                    });
-                  }
-                }
-              }
-
-              if (serialNo == 11) {
-                for (var line in masterData.irrigationLine) {
-                  var filterSite = line.centralFilterSite;
-                  if (filterSite != null) {
-                    filterSite.filters.where((filter) => filter.sNo == item.sNo).forEach((filter) {
-                      filter.selected = true;
-                    });
-                  }
-                }
-              }
-
-              if (serialNo == 13) {
-                for (var line in masterData.irrigationLine) {
-                  line.valveObjects
-                      .where((valve) => valve.sNo == item.sNo)
-                      .forEach((valve) => valve.isOn = true);
+            if (serialNo == 5) {
+              for (var line in masterData.irrigationLine) {
+                for (var waterSource in line.outletSources) {
+                  waterSource.outletPump
+                      .where((pump) => pump.sNo == item.sNo)
+                      .forEach((pump) => pump.selected = true);
                 }
               }
             }
-          }
-          else{
-            //program
-            //fetchStandAloneSelection
+
+            if (serialNo == 7) {
+              for (var line in masterData.irrigationLine) {
+                var fertilizerSite = line.centralFertilizerSite;
+                if (fertilizerSite != null) {
+                  fertilizerSite.boosterPump
+                      .where((booster) => booster.sNo == item.sNo)
+                      .forEach((booster) => booster.selected = true);
+                }
+              }
+            }
+
+            if (serialNo == 9) {
+              for (var line in masterData.irrigationLine) {
+                var fertilizerSite = line.centralFertilizerSite;
+                if (fertilizerSite != null) {
+                  fertilizerSite.agitator
+                      .where((agitator) => agitator.sNo == item.sNo)
+                      .forEach((agitator) => agitator.selected = true);
+                }
+              }
+            }
+
+            if (serialNo == 10) {
+              for (var line in masterData.irrigationLine) {
+                var fertilizerSite = line.centralFertilizerSite;
+                if (fertilizerSite != null) {
+                  fertilizerSite.channel
+                      .where((channel) => channel.sNo == item.sNo)
+                      .forEach((channel) => channel.selected = true);
+                }
+              }
+            }
+
+            if (serialNo == 11) {
+              for (var line in masterData.irrigationLine) {
+                var filterSite = line.centralFilterSite;
+                if (filterSite != null) {
+                  filterSite.filters
+                      .where((filter) => filter.sNo == item.sNo)
+                      .forEach((filter) => filter.selected = true);
+                }
+              }
+            }
+
+            // Only for ddCurrentPosition == 0
+            if (ddCurrentPosition == 0 && serialNo == 13) {
+              for (var line in masterData.irrigationLine) {
+                line.valveObjects
+                    .where((valve) => valve.sNo == item.sNo)
+                    .forEach((valve) => valve.isOn = true);
+              }
+            }else if (ddCurrentPosition != 0) {
+              standAloneData!.sequence.where((sq) => sq.sNo == item.sNo.toString())
+                  .forEach((sqc) => sqc.selected = true);
+            }
           }
         } else {
           debugPrint('Invalid response format: "data" is null');
@@ -587,7 +624,7 @@ class StandAloneViewModel extends ChangeNotifier {
       }*/
 
 
-      for (var lineOrSq in standAloneData.sequence) {
+      for (var lineOrSq in standAloneData!.sequence) {
         if(lineOrSq.selected){
           strSldSqnNo = lineOrSq.sNo;
           strSldSqnLocation = lineOrSq.location;
@@ -641,7 +678,7 @@ class StandAloneViewModel extends ChangeNotifier {
           final commService = Provider.of<CommunicationService>(context, listen: false);
           commService.sendCommand(serverMsg: '', payload: payLoadFinal);
           sentManualModeToServer(programList[ddCurrentPosition].serialNumber, 1, standAloneMethod, strDuration, strFlow, standaloneSelection, payLoadFinal);
-
+          Navigator.pop(context, 'OK');
           //MQTTManager().publish(payLoadFinal, 'AppToFirmware/${widget.imeiNo}');
           //sentManualModeToServer(programList[ddCurrentPosition].serialNumber, 1, standAloneMethod,strDuration, strFlow, standaloneSelection, payLoadFinal);
         }
