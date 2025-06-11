@@ -232,76 +232,7 @@ class StandAloneViewModel extends ChangeNotifier {
         if (jsonResponse['data'] != null) {
           dynamic data = jsonResponse['data'];
           standAloneData = StandAloneModel.fromJson(data);
-
-          for (var item in standAloneData!.selection) {
-            int serialNo = item.sNo.toInt();
-
-            if (serialNo == 5) {
-              for (var line in masterData.irrigationLine) {
-                for (var waterSource in line.outletSources) {
-                  waterSource.outletPump
-                      .where((pump) => pump.sNo == item.sNo)
-                      .forEach((pump) => pump.selected = true);
-                }
-              }
-            }
-
-            if (serialNo == 7) {
-              for (var line in masterData.irrigationLine) {
-                var fertilizerSite = line.centralFertilizerSite;
-                if (fertilizerSite != null) {
-                  fertilizerSite.boosterPump
-                      .where((booster) => booster.sNo == item.sNo)
-                      .forEach((booster) => booster.selected = true);
-                }
-              }
-            }
-
-            if (serialNo == 9) {
-              for (var line in masterData.irrigationLine) {
-                var fertilizerSite = line.centralFertilizerSite;
-                if (fertilizerSite != null) {
-                  fertilizerSite.agitator
-                      .where((agitator) => agitator.sNo == item.sNo)
-                      .forEach((agitator) => agitator.selected = true);
-                }
-              }
-            }
-
-            if (serialNo == 10) {
-              for (var line in masterData.irrigationLine) {
-                var fertilizerSite = line.centralFertilizerSite;
-                if (fertilizerSite != null) {
-                  fertilizerSite.channel
-                      .where((channel) => channel.sNo == item.sNo)
-                      .forEach((channel) => channel.selected = true);
-                }
-              }
-            }
-
-            if (serialNo == 11) {
-              for (var line in masterData.irrigationLine) {
-                var filterSite = line.centralFilterSite;
-                if (filterSite != null) {
-                  filterSite.filters
-                      .where((filter) => filter.sNo == item.sNo)
-                      .forEach((filter) => filter.selected = true);
-                }
-              }
-            }
-
-            // Only for ddCurrentPosition == 0
-            if (ddCurrentPosition == 0 && serialNo == 13) {
-              for (var line in masterData.irrigationLine) {
-                line.valveObjects
-                    .where((valve) => valve.sNo == item.sNo)
-                    .forEach((valve) => valve.isOn = true);
-              }
-            }else if (ddCurrentPosition != 0) {
-              standAloneData!.sequence.where((sq) => sq.sNo == item.sNo.toString())
-                  .forEach((sqc) => sqc.selected = true);
-            }
-          }
+          updatePreviousSelection(standAloneData!);
         } else {
           debugPrint('Invalid response format: "data" is null');
         }
@@ -311,6 +242,83 @@ class StandAloneViewModel extends ChangeNotifier {
       debugPrint(stackTrace.toString());
     } finally {
       notifyListeners();
+    }
+  }
+
+  void updatePreviousSelection(StandAloneModel data){
+    for (var item in standAloneData!.selection) {
+      int serialNo = 0;
+      if(item.sNo.runtimeType is double){
+        int serialNo = item.sNo.toInt();
+
+        if (serialNo == 5) {
+          for (var line in masterData.irrigationLine) {
+            for (var waterSource in line.outletSources) {
+              waterSource.outletPump
+                  .where((pump) => pump.sNo == item.sNo)
+                  .forEach((pump) => pump.selected = true);
+            }
+          }
+        }
+
+        if (serialNo == 7) {
+          for (var line in masterData.irrigationLine) {
+            var fertilizerSite = line.centralFertilizerSite;
+            if (fertilizerSite != null) {
+              fertilizerSite.boosterPump
+                  .where((booster) => booster.sNo == item.sNo)
+                  .forEach((booster) => booster.selected = true);
+            }
+          }
+        }
+
+        if (serialNo == 9) {
+          for (var line in masterData.irrigationLine) {
+            var fertilizerSite = line.centralFertilizerSite;
+            if (fertilizerSite != null) {
+              fertilizerSite.agitator
+                  .where((agitator) => agitator.sNo == item.sNo)
+                  .forEach((agitator) => agitator.selected = true);
+            }
+          }
+        }
+
+        if (serialNo == 10) {
+          for (var line in masterData.irrigationLine) {
+            var fertilizerSite = line.centralFertilizerSite;
+            if (fertilizerSite != null) {
+              fertilizerSite.channel
+                  .where((channel) => channel.sNo == item.sNo)
+                  .forEach((channel) => channel.selected = true);
+            }
+          }
+        }
+
+        if (serialNo == 11) {
+          for (var line in masterData.irrigationLine) {
+            var filterSite = line.centralFilterSite;
+            if (filterSite != null) {
+              filterSite.filters
+                  .where((filter) => filter.sNo == item.sNo)
+                  .forEach((filter) => filter.selected = true);
+            }
+          }
+        }
+
+        if (ddCurrentPosition == 0 && serialNo == 13) {
+          for (var line in masterData.irrigationLine) {
+            line.valveObjects
+                .where((valve) => valve.sNo == item.sNo)
+                .forEach((valve) => valve.isOn = true);
+          }
+        }
+
+      }else{
+        standAloneData!.sequence
+            .where((sq) => sq.sNo == item.sNo)
+            .forEach((sqc) => sqc.selected = true);
+      }
+
     }
   }
 
@@ -464,12 +472,30 @@ class StandAloneViewModel extends ChangeNotifier {
   }
 
   void stopAllManualOperation(BuildContext context) {
+    final commService = Provider.of<CommunicationService>(context, listen: false);
+    print(ddCurrentPosition);
     if(ddCurrentPosition==0){
       String payLoadFinal = jsonEncode({
         "800": {"801": '0,0,0,0,0'}
       });
-      MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+      commService.sendCommand(serverMsg: '', payload: payLoadFinal);
+      print(payLoadFinal);
       Navigator.of(context).pop();
+    }else{
+      String strSldSqnNo = '';
+      for (var lineOrSq in standAloneData!.sequence) {
+        if(lineOrSq.selected){
+          strSldSqnNo = lineOrSq.sNo;
+          break;
+        }
+      }
+
+      String payLoadFinal = jsonEncode({
+        "3900": {"3901": '0,${programList[ddCurrentPosition].serialNumber},$strSldSqnNo,0,0,0,0,0,0,0,0'}
+      });
+      commService.sendCommand(serverMsg: '', payload: payLoadFinal);
+      print(payLoadFinal);
+      Navigator.pop(context, 'OK');
     }
   }
 
