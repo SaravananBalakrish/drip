@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:oro_drip_irrigation/Constants/notifications_service.dart';
 import '../flavors.dart';
-import '../modules/open_ai_screen.dart';
+import '../modules/open_ai/open_ai_screen.dart';
+import '../modules/open_ai/open_ai_screen2.dart';
 import '../utils/Theme/smart_comm_theme.dart';
 import '../utils/Theme/oro_theme.dart';
 import '../utils/routes.dart';
@@ -68,7 +69,7 @@ class _MyAppState extends State<MyApp> {
           theme: isOro ? OroTheme.lightTheme : SmartCommTheme.lightTheme,
           darkTheme: isOro ? OroTheme.darkTheme : SmartCommTheme.darkTheme,
           themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          home: AIChatScreen(),
+          home: OpenAIChatScreen(),
           // home: navigateToInitialScreen(snapshot.data ?? Routes.login),
           // onGenerateRoute: Routes.generateRoute,
         );

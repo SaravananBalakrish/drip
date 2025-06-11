@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../services/open_ai_service.dart';
+import '../../services/open_ai_service.dart';
 
 class AIChatScreen extends StatefulWidget {
   const AIChatScreen({super.key});
