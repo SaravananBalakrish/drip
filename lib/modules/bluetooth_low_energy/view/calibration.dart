@@ -51,12 +51,12 @@ class _CalibrationState extends State<Calibration> {
   @override
   Widget build(BuildContext context) {
     bleService = Provider.of<BleProvider>(context, listen: true);
-
+    int keyCount = bleService.nodeDataFromHw.keys.length;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Calibration'),
       ),
-      body: bleService.nodeDataFromHw.containsKey('BAT')
+      body: keyCount > 4
           ? SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
