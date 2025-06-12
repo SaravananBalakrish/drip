@@ -145,6 +145,8 @@ class MqttPayloadProvider with ChangeNotifier {
    String? _ipAddress;
    String? get ipAddress => _ipAddress;
    List<String> traceLog = [];
+   bool isTraceLoading = false;
+   int traceLogSize = 0;
 
    void updateConnectedDeviceStatus(CustomDevice? device) {
      _connectedDevice = device;
@@ -230,6 +232,14 @@ class MqttPayloadProvider with ChangeNotifier {
     publishTopic = topic;
     notifyListeners();
   }
+   void setTraceLoading(bool loading) {
+     isTraceLoading = loading;
+     notifyListeners();
+   }
+   void setTraceLoadingsize(int size) {
+     traceLogSize = size;
+      notifyListeners();
+   }
 
   void editLineData(dynamic data){
     // // print('editLineData : ${data}');
