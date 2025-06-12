@@ -203,6 +203,51 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
 
   }
 
+  Future<void> showBluetoothLoadingDialog(BuildContext context) async {
+    showDialog(
+      context: context,
+      barrierDismissible: false, // prevents closing by tapping outside
+      builder: (BuildContext context) {
+
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Consumer<MqttPayloadProvider>(
+              builder: (context, provider, _) {
+                final sizeInBytes = mqttPayloadProvider.traceLogSize;
+                final sizeText = sizeInBytes > 1024
+                    ? '${(sizeInBytes / 1024).toStringAsFixed(2)} KB'
+                    : '$sizeInBytes bytes';
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // const CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    const Text("Fetching logs via Bluetooth..."),
+                    Text( 'Loading logs... Size: $sizeText',),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.close),
+                      label: const Text("Close"),
+                      style: ElevatedButton.styleFrom(
+                         foregroundColor: Colors.white,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // dismiss dialog
+                        provider.setTraceLoading(false); // stop loading manually
+                      },
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 
   Widget _buildActionButtons() {
     return Padding(
@@ -243,30 +288,50 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
             color: Colors.blue,
             icon: Icons.cloud_upload,
             onPressed: () {
+              // if(widget.communicationType != "MQTT") {
+                mqttPayloadProvider.setTraceLoading(true);
 
               _showSnackBar("Today log send FTP...");
               getlog(currentLogType.value + 5);
+                showBluetoothLoadingDialog(context);
+
             },
           ),
-          _buildButton(
+          widget.communicationType != "MQTT" ? _buildButton(
             label: 'Today FTP upload',
             color: Colors.blue,
             icon: Icons.cloud_upload,
             onPressed: () {
                _showSnackBar("Today log send FTP...");
-              uploadToFile('$currentLogType');
+              uploadToFile('$currentLogType,today');
             },
-          ),
+          ) : Container(),
           const SizedBox(width: 10),
           _buildButton(
             label: 'Yesterday FTP',
             color: Colors.blue,
             icon: Icons.cloud_upload,
             onPressed: () {
+                 mqttPayloadProvider.setTraceLoading(true);
+
               _showSnackBar("Yesterday log send FTP...");
               getlog(currentLogType.value + 10);
+                 showBluetoothLoadingDialog(context);
+
             },
           ),
+
+
+          const SizedBox(width: 10),
+          widget.communicationType != "MQTT" ? _buildButton(
+            label: 'Yesterday FTP Upload',
+            color: Colors.blue,
+            icon: Icons.cloud_upload,
+            onPressed: () {
+              _showSnackBar("Yesterday log send FTP...");
+              uploadToFile('$currentLogType,yesterday');
+            },
+          ) : Container()
         ],
       )
           : Row(

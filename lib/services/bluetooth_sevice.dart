@@ -46,6 +46,13 @@ class BluService {
     initPermissions();
     _listenToBluEvents();
   }
+  int getTraceLogSize() {
+    int totalBytes = 0;
+    for (final str in traceLog) {
+      totalBytes += utf8.encode(str).length;
+    }
+    return totalBytes;
+  }
 
   Future<void> initPermissions() async {
     await _bluetoothClassicPlugin.initPermissions();
@@ -99,18 +106,27 @@ class BluService {
     _bluetoothClassicPlugin.onDeviceDataReceived().listen((event) async {
 
       _buffer += utf8.decode(event);
-      print('_buffer---> $_buffer');
+      // print('_buffer---> $_buffer');
       traceLog.add(_buffer);
       print("traceLog : $traceLog");
       providerState?.updatetracelog(traceLog);
 
+      int sizeInBytes = getTraceLogSize();
+      print('TraceLog size in bytes: $sizeInBytes');
+      providerState?.setTraceLoadingsize(sizeInBytes);
+
+      if (_buffer.contains('LogFileSentSuccess')) {
+        providerState?.setTraceLoading(false);
+      }
       while (_buffer.contains('*StartLog') && _buffer.contains('#EndLog')) {
+        providerState?.setTraceLoading(true);
 
         traceLog.add(_buffer);
          print("traceLog : $traceLog");
         providerState?.updatetracelog(traceLog);
 
-        print('*StartLog');
+        int sizeInBytes = getTraceLogSize();
+        print('TraceLog size in bytes: $sizeInBytes');
 
         int startIndex = _buffer.indexOf('*StartLog');
         int endIndex = _buffer.indexOf('#EndLog', startIndex);
@@ -119,10 +135,15 @@ class BluService {
           print('*StartLog != -1');
           String jsonString = _buffer.substring(startIndex + 9, endIndex).trim();
           _buffer = _buffer.substring(endIndex + 7);
-          print("Extracted JSON: $jsonString");
+          // print("Extracted JSON: $jsonString");
           traceLog.add(_buffer);
           print("traceLog : $traceLog");
           providerState?.updatetracelog(traceLog);
+          int sizeInBytes = getTraceLogSize();
+          print('TraceLog size in bytes: $sizeInBytes');
+          providerState?.setTraceLoadingsize(sizeInBytes);
+
+
 
         } else {
           break;
@@ -139,11 +160,11 @@ class BluService {
           _buffer='';
 
           try {
-            print("jsonString log ------>$jsonString");
+            // print("jsonString log ------>$jsonString");
             Map<String, dynamic> jsonData = json.decode(jsonString);
-            print('jsonData log---$jsonData');
+            // print('jsonData log---$jsonData');
             String jsonStr = json.encode(jsonData);
-            print('Blu jsonStr log :$jsonStr');
+            // print('Blu jsonStr log :$jsonStr');
 
             Map<String, dynamic> data = jsonStr.isNotEmpty ? jsonDecode(jsonStr) : {};
 
