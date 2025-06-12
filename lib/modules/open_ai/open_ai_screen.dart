@@ -17,6 +17,11 @@ class _AIChatScreenState extends State<AIChatScreen> {
   final OpenAIService _openAIService = OpenAIService();
   final ImagePicker _picker = ImagePicker();
 
+  Future<void> _initPermissions() async {
+    await Permission.camera.request();
+    await Permission.storage.request();
+  }
+
   Future<bool> _requestPermissions() async {
     if (Platform.isAndroid) {
       if (await Permission.photos.isGranted) {
@@ -33,22 +38,49 @@ class _AIChatScreenState extends State<AIChatScreen> {
 
     String userMessage = _controller.text;
     setState(() {
-      _messages.add({"role": "user", "content": userMessage, "isImage": false});
+      _messages.add({
+        "role": "user",
+        "content": userMessage,
+        "isImage": false,
+      });
       _controller.clear();
     });
 
     try {
       final response = await _openAIService.getChatResponse(userMessage);
       setState(() {
-        _messages.add({"role": "assistant", "content": response, "isImage": false});
+        _messages.add({
+          "role": "assistant",
+          "content": response,
+          "isImage": false,
+        });
       });
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('$e'),
-          duration: const Duration(seconds: 5), // Longer duration for user to read
+          duration: const Duration(seconds: 5),
         ),
       );
+    }
+  }
+
+  Future<void> _pickImageFromCamera() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.camera);
+    if (pickedFile != null) {
+      setState(() {
+        _messages.add({
+          "role": "user",
+          "content": pickedFile.path,
+          "isImage": true,
+          "source": "camera",
+        });
+        _messages.add({
+          "role": "assistant",
+          "content": "Image from camera received.",
+          "isImage": false,
+        });
+      });
     }
   }
 
@@ -70,24 +102,30 @@ class _AIChatScreenState extends State<AIChatScreen> {
       );
       if (image != null) {
         setState(() {
-          _messages.add({"role": "user", "content": image.path, "isImage": true});
-        });
-        setState(() {
+          _messages.add({
+            "role": "user",
+            "content": image.path,
+            "isImage": true,
+            "source": "gallery",
+          });
           _messages.add({
             "role": "assistant",
-            "content": "Image received! (Image processing not implemented in this API)",
-            "isImage": false
+            "content": "Image from gallery received.",
+            "isImage": false,
           });
         });
-      } else {
-        print('No image selected');
       }
-    } catch (e, stackTrace) {
-      print('Error picking image: $e\nStackTrace: $stackTrace');
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error picking image: $e')),
       );
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initPermissions();
   }
 
   @override
@@ -105,6 +143,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
                 final message = _messages[index];
                 final isUser = message['role'] == 'user';
                 final isImage = message['isImage'] ?? false;
+                final source = message['source'];
 
                 return Align(
                   alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
@@ -116,13 +155,23 @@ class _AIChatScreenState extends State<AIChatScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: isImage
-                        ? Image.file(
-                      File(message['content']),
-                      width: 200,
-                      height: 200,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                      const Text('Error loading image'),
+                        ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Image.file(
+                          File(message['content']),
+                          width: 200,
+                          height: 200,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                          const Text('Error loading image'),
+                        ),
+                        if (source != null)
+                          Text(
+                            "Source: $source",
+                            style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                          ),
+                      ],
                     )
                         : Text(
                       message['content'],
@@ -140,6 +189,10 @@ class _AIChatScreenState extends State<AIChatScreen> {
                 IconButton(
                   icon: const Icon(Icons.image),
                   onPressed: _pickImage,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.camera_alt),
+                  onPressed: _pickImageFromCamera,
                 ),
                 Expanded(
                   child: TextField(

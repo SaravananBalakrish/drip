@@ -20,18 +20,13 @@ class _OpenAIChatScreenState extends State<OpenAIChatScreen> {
   File? _selectedImage;
   File? _recordedAudio;
 
-  final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
-  bool _isRecording = false;
-
   @override
   void initState() {
     super.initState();
     _initPermissions();
-    _recorder.openRecorder();
   }
 
   Future<void> _initPermissions() async {
-    await Permission.microphone.request();
     await Permission.camera.request();
     await Permission.storage.request();
   }
@@ -87,25 +82,8 @@ class _OpenAIChatScreenState extends State<OpenAIChatScreen> {
     }
   }
 
-  Future<void> _toggleRecording() async {
-    if (_isRecording) {
-      final path = await _recorder.stopRecorder();
-      if (path != null) {
-        setState(() {
-          _recordedAudio = File(path);
-        });
-      }
-    } else {
-      final dir = await getTemporaryDirectory();
-      final path = '${dir.path}/audio.aac';
-      await _recorder.startRecorder(toFile: path);
-    }
-    setState(() => _isRecording = !_isRecording);
-  }
-
   @override
   void dispose() {
-    _recorder.closeRecorder();
     _textController.dispose();
     super.dispose();
   }
@@ -144,10 +122,6 @@ class _OpenAIChatScreenState extends State<OpenAIChatScreen> {
               IconButton(
                 icon: const Icon(Icons.camera_alt),
                 onPressed: _pickImageFromCamera,
-              ),
-              IconButton(
-                icon: Icon(_isRecording ? Icons.stop : Icons.mic),
-                onPressed: _toggleRecording,
               ),
               Expanded(
                 child: TextField(
