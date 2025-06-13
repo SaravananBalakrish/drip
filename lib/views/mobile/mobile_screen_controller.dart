@@ -7,11 +7,9 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart' hide BluetoothDevice;
 import 'package:oro_drip_irrigation/Screens/Dealer/controllerlogfile.dart';
 import 'package:oro_drip_irrigation/Screens/Dealer/sevicecustomer.dart';
 import 'package:oro_drip_irrigation/Screens/Logs/irrigation_and_pump_log.dart';
-import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
 import 'package:oro_drip_irrigation/modules/ScheduleView/view/schedule_view_screen.dart';
 import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
 import 'package:popover/popover.dart';
-import '../../Models/customer/site_model.dart';
 import 'package:provider/provider.dart';
 import '../../StateManagement/customer_provider.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
@@ -366,36 +364,21 @@ class MobileScreenController extends StatelessWidget {
             ),
             floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
             bottomNavigationBar: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1 ?
-            Container(
-              margin: const EdgeInsets.only(top: 4),
-              decoration: BoxDecoration(
-                color: Theme.of(context).primaryColor,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow:  const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    offset: Offset(0, -1),
-                    blurRadius: 1,
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
-              child: BottomNavigationBar(
-                backgroundColor: Theme.of(context).primaryColor,
-                type: BottomNavigationBarType.fixed,
-                selectedFontSize: 14,
-                unselectedFontSize: 12,
-                currentIndex: vm.selectedIndex,
-                onTap: vm.onItemTapped,
-                selectedItemColor: Colors.white,
-                unselectedItemColor: Colors.white70,
-                items: const [
-                  BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-                  BottomNavigationBarItem(icon: Icon(Icons.list), label: "Scheduled Program"),
-                  BottomNavigationBarItem(icon: Icon(Icons.report_gmailerrorred), label: "Log"),
-                  BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: "Settings"),
-                ],
-              ),
+            BottomNavigationBar(
+              backgroundColor: Theme.of(context).primaryColor,
+              type: BottomNavigationBarType.fixed,
+              selectedFontSize: 14,
+              unselectedFontSize: 12,
+              currentIndex: vm.selectedIndex,
+              onTap: vm.onItemTapped,
+              selectedItemColor: Colors.white,
+              unselectedItemColor: Colors.white54,
+              items: const [
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+                BottomNavigationBarItem(icon: Icon(Icons.list), label: "Scheduled Program"),
+                BottomNavigationBarItem(icon: Icon(Icons.report_gmailerrorred), label: "Log"),
+                BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: "Settings"),
+              ],
             )
             : null,
             floatingActionButton: vm.mySiteList.data[vm.sIndex].master[vm
@@ -408,6 +391,8 @@ class MobileScreenController extends StatelessWidget {
                   onPressed: null,
                   backgroundColor: Theme.of(context).primaryColorLight,
                   child: PopupMenuButton<String>(
+                      offset: const Offset(0, -180),
+                      color: Colors.white,
                       onSelected: (String value) {
                         switch (value) {
                           case 'Node Status':
@@ -506,8 +491,6 @@ class MobileScreenController extends StatelessWidget {
                             break;
                         }
                       },
-                      offset: const Offset(0, -180),
-                      color: Colors.blue.shade50,
                       icon: const Icon(Icons.menu, color: Colors.white),
                       itemBuilder: (BuildContext context) =>
                       [
@@ -536,16 +519,7 @@ class MobileScreenController extends StatelessWidget {
                   Theme.of(context).primaryColorLight : Colors.redAccent,
                   onPressed: ()=>_showBottomSheet(context, vm, vm.mySiteList.data[vm.sIndex].master[vm
                       .mIndex].controllerId),
-                 /* onPressed: (){
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SelectBondedDevicePage(),
-                      ),
-                    );
-
-                  },*/
                   tooltip: 'Second Action',
                   child: commMode == 1?
                   Column(
@@ -598,9 +572,9 @@ class MobileScreenController extends StatelessWidget {
                     if (vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1) ...[
                       if (!vm.isLiveSynced)
                         Container(
-                          height: 20.0,
+                          height: 25,
                           decoration: BoxDecoration(
-                            color: Colors.red.shade300,
+                            color: Colors.red.shade200,
                             borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(5),
                               topRight: Radius.circular(5),
@@ -610,21 +584,21 @@ class MobileScreenController extends StatelessWidget {
                             child: Text(
                               'NO COMMUNICATION TO CONTROLLER',
                               style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12.0,
+                                color: Colors.black87,
+                                fontSize: 13.0,
                               ),
                             ),
                           ),
                         )
                       else if (vm.powerSupply == 0)
                         Container(
-                          height: 30,
-                          color: Colors.red.shade300,
+                          height: 25,
+                          color: Colors.red.shade200,
                           child: const Center(
                             child: Text(
                               'NO POWER SUPPLY TO CONTROLLER',
                               style: TextStyle(
-                                color: Colors.white,
+                                color: Colors.black87,
                                 fontSize: 13.0,
                               ),
                             ),
@@ -705,48 +679,6 @@ class MobileScreenController extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  Widget mainScreen(int index, groupId, groupName, List<MasterControllerModel> masterData, int controllerId, int categoryId, int masterIndex, int siteIndex, bool isChanged, CustomerScreenControllerViewModel vm) {
-    switch (index) {
-      case 0:
-        return categoryId==1? CustomerHome(customerId: userId, controllerId: controllerId,
-          deviceId: masterData[masterIndex].deviceId,):
-        isChanged ? PumpControllerHome(
-          userId: userId,
-          customerId: customerId,
-          masterData: masterData[masterIndex],
-        ) : const Scaffold(
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Please wait...'),
-                SizedBox(height: 10),
-                CircularProgressIndicator(),
-              ],
-            ),
-          ),
-        );
-      case 1:
-        return CustomerProduct(customerId: userId);
-      case 2:
-        return SentAndReceived(customerId: userId, controllerId: controllerId);
-      case 3:
-        return IrrigationAndPumpLog(userData: {'userId' : userId, 'controllerId' : controllerId},
-          masterData: masterData[masterIndex]);
-      case 4:
-        return ControllerSettings(
-          customerId: customerId,
-          userId: userId,
-          masterController: masterData[masterIndex],
-        );
-      case 6:
-        return WeatherScreen(userId: userId, controllerId: controllerId, deviceID: '',);
-
-      default:
-        return const SizedBox();
-    }
   }
 
   void _showBottomSheet(BuildContext context, CustomerScreenControllerViewModel vm, controllerId) {
