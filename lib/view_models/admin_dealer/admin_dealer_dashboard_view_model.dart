@@ -1,37 +1,33 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import '../../models/admin_dealer/customer_list_model.dart';
 import '../../models/admin_dealer/stock_model.dart';
 import '../../models/sales_data_model.dart';
 import '../../repository/repository.dart';
 import '../../views/admin_dealer/admin_dashboard.dart';
+import 'package:flutter/material.dart';
 
 class AdminAndDealerDashboardViewModel extends ChangeNotifier {
-
   final Repository repository;
 
-  List<StockModel> productStockList = <StockModel>[];
-  List<CustomerListModel> myCustomerList = <CustomerListModel>[];
-  bool accountCreated = false;
-  String responseMsg = '';
-
-  late SalesDataModel mySalesData;
-  int totalSales = 0;
-  bool isLoadingSalesData = false;
-  bool isLoadingCustomerData = false;
-  MySegment segmentView = MySegment.all;
-
-  TextEditingController txtFldSearch = TextEditingController();
-  bool searched = false;
+  List<StockModel> productStockList = [];
+  List<CustomerListModel> myCustomerList = [];
   List<CustomerListModel> filteredCustomerList = [];
 
+  SalesDataModel mySalesData = SalesDataModel(graph: {}, total: []);
+  int totalSales = 0;
 
-  AdminAndDealerDashboardViewModel(this.repository){
-    mySalesData = SalesDataModel(graph: {}, total: []);
-    MySegment.all;
+  bool isLoadingSalesData = false;
+  bool isLoadingCustomerData = false;
+  bool accountCreated = false;
+  bool searched = false;
 
-  }
+  String responseMsg = '';
+  MySegment segmentView = MySegment.all;
+
+  final TextEditingController txtFldSearch = TextEditingController();
+
+  AdminAndDealerDashboardViewModel(this.repository);
 
   @override
   void dispose() {
@@ -39,169 +35,187 @@ class AdminAndDealerDashboardViewModel extends ChangeNotifier {
     super.dispose();
   }
 
-  Future<void> getMySalesData(int userId, MySegment segment) async {
-    isLoadingSalesData = true;
-    notifyListeners();
+  // ------------------ SALES ------------------
 
-    Map<String, Object> body = {
+  Future<void> getMySalesData(int userId, MySegment segment) async {
+    _setLoadingSales(true);
+
+    final body = {
       "userId": userId,
       "userType": 1,
-      "type": segment.index == 0 ? 'All' : 'Year',
+      "type": segment == MySegment.all ? 'All' : 'Year',
       "year": 2024,
     };
 
     try {
-      var response = await repository.fetchAllMySalesReports(body);
+      final response = await repository.fetchAllMySalesReports(body);
       if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonData = jsonDecode(response.body);
-        if (jsonData["code"] == 200 && jsonData.containsKey("data")) {
-          mySalesData = SalesDataModel.fromJson(jsonData);
-          totalSales = mySalesData.total?.fold<int>(0, (sum, item) => sum + item.totalProduct) ?? 0;
+        final data = jsonDecode(response.body);
+        if (data["code"] == 200 && data.containsKey("data")) {
+          mySalesData = SalesDataModel.fromJson(data);
+          totalSales = mySalesData.total?.fold(0, (sum, e) => sum! + e.totalProduct) ?? 0;
         } else {
-          debugPrint("API Error: ${jsonData['message'] ?? 'Unknown error'}");
+          debugPrint("API Error: ${data['message'] ?? 'Unknown error'}");
         }
       } else {
         debugPrint("HTTP Error: ${response.statusCode}");
       }
-    } catch (error, stackTrace) {
-      debugPrint('Error fetching sales data: $error');
-      debugPrint(stackTrace.toString());
+    } catch (e, st) {
+      debugPrint('Error: $e\n$st');
     } finally {
-      isLoadingSalesData = false;
-      notifyListeners();
+      _setLoadingSales(false);
     }
   }
+
+  // ------------------ STOCK ------------------
 
   Future<void> getMyStock(int userId, int userType) async {
-    isLoadingSalesData = true;
-    notifyListeners();
+    _setLoadingSales(true);
 
-    Map<String, dynamic> body = {
-      "userType": userType,
-      "userId": userId,
-    };
+    final body = {"userId": userId, "userType": userType};
 
     try {
-      var response = await repository.fetchMyStocks(body);
+      final response = await repository.fetchMyStocks(body);
       if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonData = jsonDecode(response.body);
-        if(jsonData["code"] == 200){
-          final List<dynamic> stockList = jsonData["data"] ?? [];
-          productStockList = stockList.map((item) => StockModel.fromJson(item)).toList();
+        final data = jsonDecode(response.body);
+        if (data["code"] == 200) {
+          final list = data["data"] as List<dynamic>;
+          productStockList = list.map((e) => StockModel.fromJson(e)).toList();
         }
       }
-    } catch (error, stackTrace) {
-      debugPrint('Error fetching Product stock: $error');
-      debugPrint(stackTrace.toString());
+    } catch (e, st) {
+      debugPrint('Stock fetch error: $e\n$st');
     } finally {
-      isLoadingSalesData = false;
-      notifyListeners();
+      _setLoadingSales(false);
     }
   }
+
+  Future<void> updateStockList(Map<String, dynamic> json) async {
+    if (json['status'] != 'success') return;
+
+    final dataList = json["data"] ?? [];
+    final products = json["products"] ?? [];
+
+    for (var d in dataList) {
+      for (var p in products) {
+        if (p["deviceId"] == d["deviceId"]) {
+          p["productId"] = d["productId"];
+        }
+      }
+    }
+
+    final newStocks = products.map((e) => StockModel.fromJson(e)).toList();
+    productStockList.insertAll(0, newStocks);
+
+    notifyListeners();
+  }
+
+  Future<void> removeStockList(Map<String, dynamic> json) async {
+    if (json['status'] != 'success') return;
+
+    for (var p in json['products']) {
+      productStockList.removeWhere((item) => item.productId == p['productId']);
+    }
+
+    notifyListeners();
+  }
+
+  // ------------------ CUSTOMERS ------------------
 
   Future<void> getMyCustomers(int userId, int userType) async {
-    isLoadingCustomerData = true;
-    notifyListeners();
+    _setLoadingCustomer(true);
 
-    Map<String, dynamic> body = {
-      "userType": userType,
-      "userId": userId,
-    };
+    final body = {"userId": userId, "userType": userType};
 
     try {
-      var response = await repository.fetchMyCustomerList(body);
+      final response = await repository.fetchMyCustomerList(body);
       if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonData = jsonDecode(response.body);
-        if (jsonData["code"] == 200) {
-          final customerList = jsonData["data"];
-          if (customerList is List) {
-            myCustomerList = customerList.map((item) => CustomerListModel.fromJson(item)).toList();
-            filteredCustomerList = myCustomerList;
-          } else {
-            debugPrint("Unexpected data format: 'data' is not a List");
+        final data = jsonDecode(response.body);
+        if (data["code"] == 200) {
+          final list = data["data"];
+          if (list is List) {
+            myCustomerList = list.map((e) => CustomerListModel.fromJson(e)).toList();
+            _refreshFilter();
           }
         } else {
-          debugPrint("API Error: ${jsonData['message']}");
+          debugPrint("API Error: ${data['message']}");
         }
-      } else {
-        debugPrint("HTTP Error: ${response.statusCode}");
       }
-    } catch (error, stackTrace) {
-      debugPrint('Error fetching customers: $error');
-      debugPrint(stackTrace.toString());
+    } catch (e, st) {
+      debugPrint('Customer fetch error: $e\n$st');
     } finally {
-      isLoadingCustomerData = false;
+      _setLoadingCustomer(false);
+    }
+  }
+
+  Future<void> updateCustomerList(Map<String, dynamic> json) async {
+    if (json['status'] != 'success') return;
+
+    final newCustomer = CustomerListModel(
+      userId: json['userId'],
+      userName: json['userName'],
+      countryCode: json['countryCode'],
+      mobileNumber: json['mobileNumber'],
+      emailId: json['emailId'],
+      serviceRequestCount: json['serviceRequestCount'],
+      criticalAlarmCount: json['criticalAlarmCount'],
+    );
+
+    if (!myCustomerList.any((c) => c.userId == newCustomer.userId)) {
+      myCustomerList.add(newCustomer);
+      _refreshFilter();
+      accountCreated = true;
+      responseMsg = json['message'];
       notifyListeners();
     }
   }
+
+  // ------------------ FILTER / SEARCH ------------------
+
+  void filterCustomer(String query) {
+    filteredCustomerList = myCustomerList.where((customer) {
+      final q = query.toLowerCase();
+      return customer.userName.toLowerCase().contains(q) || customer.mobileNumber.toLowerCase().contains(q);
+    }).toList();
+
+    notifyListeners();
+  }
+
+  void searchCustomer() {
+    searched = true;
+    filterCustomer(txtFldSearch.text);
+  }
+
+  void clearSearch() {
+    searched = false;
+    txtFldSearch.clear();
+    _refreshFilter();
+    notifyListeners();
+  }
+
+  void _refreshFilter() {
+    filteredCustomerList = searched
+        ? myCustomerList.where((customer) {
+      final q = txtFldSearch.text.toLowerCase();
+      return customer.userName.toLowerCase().contains(q) || customer.mobileNumber.toLowerCase().contains(q);
+    }).toList()
+        : List.from(myCustomerList);
+  }
+
+  // ------------------ UTILITY ------------------
 
   void updateSegmentView(MySegment newSegment) {
     segmentView = newSegment;
     notifyListeners();
   }
 
-  Future<void> updateCustomerList(Map<String, dynamic> jsonData) async {
-    if(jsonData['status']=='success'){
-      myCustomerList.add(CustomerListModel(userId: jsonData['userId'], userName: jsonData['userName'],
-          countryCode : jsonData['countryCode'], mobileNumber : jsonData['mobileNumber'],
-          emailId : jsonData['emailId'], serviceRequestCount : jsonData['serviceRequestCount'],
-          criticalAlarmCount : jsonData['criticalAlarmCount']));
-      responseMsg = jsonData['message'];
-      accountCreated = true;
-      notifyListeners();
-    }
-  }
-
-  Future<void> updateStockList(Map<String, dynamic> jsonData) async {
-    if (jsonData['status'] == 'success') {
-      List<dynamic> dataList = jsonData["data"] ?? [];
-      List<dynamic> productList = jsonData["products"] ?? [];
-
-      for (var dataItem in dataList) {
-        String dataDeviceId = dataItem["deviceId"];
-        int productId = dataItem["productId"];
-
-        for (var product in productList) {
-          if (product["deviceId"] == dataDeviceId) {
-            product["productId"] = productId;
-          }
-        }
-      }
-
-      productStockList.insertAll(0,
-        productList.map((product) => StockModel.fromJson(product)).toList(),
-      );
-
-      notifyListeners();
-    }
-  }
-
-  Future<void> removeStockList(Map<String, dynamic> jsonData) async {
-    if(jsonData['status']=='success'){
-      for (var product in jsonData['products']) {
-        productStockList.removeWhere((stockItem) => stockItem.productId == product['productId']);
-      }
-      notifyListeners();
-    }
-  }
-
-  void filterCustomer(value){
-    filteredCustomerList = myCustomerList.where((customer) {
-      return customer.userName.toLowerCase().contains(value.toLowerCase()) ||
-          customer.mobileNumber.toLowerCase().contains(value.toLowerCase());
-    }).toList();
+  void _setLoadingSales(bool loading) {
+    isLoadingSalesData = loading;
     notifyListeners();
   }
 
-  void searchCustomer() {
-    searched = true;
-    notifyListeners();
-  }
-
-  void clearSearch() {
-    searched = false;
-    filteredCustomerList = myCustomerList;
-    txtFldSearch.clear();
+  void _setLoadingCustomer(bool loading) {
+    isLoadingCustomerData = loading;
     notifyListeners();
   }
 }
