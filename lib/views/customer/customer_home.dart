@@ -213,7 +213,7 @@ class CustomerHome extends StatelessWidget {
                         height: 47,
                         child: Card(
                           color: Colors.white,
-                          elevation: 0.5,
+                          elevation: 0,
                           surfaceTintColor: Colors.white,
                           margin: EdgeInsets.zero,
                           shape: const RoundedRectangleBorder(
