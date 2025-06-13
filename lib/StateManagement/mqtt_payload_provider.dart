@@ -147,6 +147,7 @@ class MqttPayloadProvider with ChangeNotifier {
    List<String> traceLog = [];
    bool isTraceLoading = false;
    int traceLogSize = 0;
+   int totalTraceLogSize = 0;
 
    void updateConnectedDeviceStatus(CustomDevice? device) {
      _connectedDevice = device;
@@ -240,6 +241,11 @@ class MqttPayloadProvider with ChangeNotifier {
      traceLogSize = size;
       notifyListeners();
    }
+   void setTotalTraceSize(int size) {
+     totalTraceLogSize = size;
+     notifyListeners();
+   }
+
 
   void editLineData(dynamic data){
     // // print('editLineData : ${data}');

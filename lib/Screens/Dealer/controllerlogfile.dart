@@ -53,9 +53,13 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
     _tabController = TabController(length: 5, vsync: this);
 
     // MQTT subscriptions
-    manager.topicToUnSubscribe('${Environment.mqttSubscribeTopic}/${widget.deviceID}');
-    manager.topicToUnSubscribe('${Environment.mqttLogTopic}/${widget.deviceID}');
-    manager.topicToSubscribe('${Environment.mqttLogTopic}/${widget.deviceID}');
+    if(widget.communicationType == 'MQTT')
+      {
+        manager.topicToUnSubscribe('${Environment.mqttSubscribeTopic}/${widget.deviceID}');
+        manager.topicToUnSubscribe('${Environment.mqttLogTopic}/${widget.deviceID}');
+        manager.topicToSubscribe('${Environment.mqttLogTopic}/${widget.deviceID}');
+      }
+
   }
 
   Future<String> getLogFilePath() async {
@@ -194,8 +198,10 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
       await localFile.writeAsString(traceData.join('\n'));
       int uploadResponse = await sftpService.uploadFile(localFileName: localFileNameForTrace, remoteFilePath: '/home/ubuntu/oro2024/OroGem/OroGemLogs/${type}${dateString}${widget.deviceID}.txt');
       if(uploadResponse == 200){
+        _showSnackBar("/home/ubuntu/oro2024/OroGem/OroGemLogs/${type}${dateString}${widget.deviceID}.txt \n FTP upload success'...");
         print('upload success');
       }else{
+        _showSnackBar("FTP upload failed...");
         print('upload failed');
       }
       sftpService.disconnect();
@@ -216,16 +222,26 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
             child: Consumer<MqttPayloadProvider>(
               builder: (context, provider, _) {
                 final sizeInBytes = mqttPayloadProvider.traceLogSize;
+                final totalSizeInBytes = mqttPayloadProvider.totalTraceLogSize;
+                final totalSizeText = totalSizeInBytes > 1024
+                    ? '${(totalSizeInBytes / 1024).toStringAsFixed(2)} KB'
+                    : '$totalSizeInBytes bytes';
                 final sizeText = sizeInBytes > 1024
                     ? '${(sizeInBytes / 1024).toStringAsFixed(2)} KB'
                     : '$sizeInBytes bytes';
+                final percentage = totalSizeInBytes > 0
+                    ? (sizeInBytes / totalSizeInBytes) * 100
+                    : 0;
                 return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // const CircularProgressIndicator(),
+                    const SizedBox(height: 16),
+                    LinearProgressIndicator(value: percentage / 100),
                     const SizedBox(height: 16),
                     const Text("Fetching logs via Bluetooth..."),
-                    Text( 'Loading logs... Size: $sizeText',),
+                    Text(
+                      'Loading logs... Size: $sizeText / $totalSizeText (${percentage.toStringAsFixed(1)}%)',
+                    ),
                     const SizedBox(height: 16),
                     ElevatedButton.icon(
                       icon: const Icon(Icons.close),
@@ -296,7 +312,7 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
                 showBluetoothLoadingDialog(context);
 
             },
-          ),
+          ), const SizedBox(width: 10),
           widget.communicationType != "MQTT" ? _buildButton(
             label: 'Today FTP upload',
             color: Colors.blue,
