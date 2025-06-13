@@ -105,50 +105,42 @@ class BluService {
   void listenToBluData() {
     _bluetoothClassicPlugin.onDeviceDataReceived().listen((event) async {
 
+      bool startlog = false;
       _buffer += utf8.decode(event);
-      // print('_buffer---> $_buffer');
-      traceLog.add(_buffer);
-      print("traceLog : $traceLog");
-      providerState?.updatetracelog(traceLog);
-
-      int sizeInBytes = getTraceLogSize();
-      print('TraceLog size in bytes: $sizeInBytes');
-      providerState?.setTraceLoadingsize(sizeInBytes);
+      print('_buffer---> $_buffer');
+      // traceLog.add(_buffer);
+      // print("traceLog : $traceLog");
+      // providerState?.updatetracelog(traceLog);
+      // int sizeInBytes = getTraceLogSize();
+      // print('TraceLog size in bytes: $sizeInBytes');
+      // providerState?.setTraceLoadingsize(sizeInBytes);
 
       if (_buffer.contains('LogFileSentSuccess')) {
+
+        startlog = false;
         providerState?.setTraceLoading(false);
       }
-      while (_buffer.contains('*StartLog') && _buffer.contains('#EndLog')) {
+      if(_buffer.contains('*StartLog')) {
+        startlog = true;
+      }
+      if(_buffer.contains('*StartLog')) {
+       int setTotalTraceSize = 34567890;
+       providerState?.setTotalTraceSize(setTotalTraceSize);
+      }
+
+
         providerState?.setTraceLoading(true);
 
-        traceLog.add(_buffer);
-         print("traceLog : $traceLog");
+        if(startlog) traceLog.add(_buffer);
         providerState?.updatetracelog(traceLog);
-
         int sizeInBytes = getTraceLogSize();
         print('TraceLog size in bytes: $sizeInBytes');
-
-        int startIndex = _buffer.indexOf('*StartLog');
-        int endIndex = _buffer.indexOf('#EndLog', startIndex);
-
-        if (startIndex != -1 && endIndex > startIndex) {
-          print('*StartLog != -1');
-          String jsonString = _buffer.substring(startIndex + 9, endIndex).trim();
-          _buffer = _buffer.substring(endIndex + 7);
-          // print("Extracted JSON: $jsonString");
-          traceLog.add(_buffer);
-          print("traceLog : $traceLog");
-          providerState?.updatetracelog(traceLog);
-          int sizeInBytes = getTraceLogSize();
-          print('TraceLog size in bytes: $sizeInBytes');
-          providerState?.setTraceLoadingsize(sizeInBytes);
-
-
-
-        } else {
-          break;
+        providerState?.setTraceLoadingsize(sizeInBytes);
+        if(_buffer.contains('#EndLog')){
+          startlog = false;
         }
-      }
+
+
 
       while (_buffer.contains('*Start') && _buffer.contains('#End')) {
         int startIndex = _buffer.indexOf('*Start');
