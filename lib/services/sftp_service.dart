@@ -71,7 +71,8 @@ class SftpService {
   Future<int> uploadFile({
     required String localFileName,
     required String remoteFilePath,
-  }) async {
+  }) async
+  {
     try {
       print("remoteFilePath : $remoteFilePath");
       final remoteFile = await _sftpClient!.open(
@@ -106,7 +107,8 @@ class SftpService {
   Future<int> downloadFile({
     required String remoteFilePath,
     String localFileName = 'bootFile.txt',
-  }) async {
+  }) async
+  {
     try {
       // Read remote file content
       final remoteFile = await _sftpClient!.open(remoteFilePath);
@@ -115,6 +117,7 @@ class SftpService {
       // Get local file path
       final appDocDir = await getApplicationDocumentsDirectory();
       final localPath = '${appDocDir.path}/$localFileName';
+      print('localPath---->$localPath');
       final localFile = File(localPath);
 
       // Write content to local file

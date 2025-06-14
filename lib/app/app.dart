@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:oro_drip_irrigation/Constants/notifications_service.dart';
 import 'package:oro_drip_irrigation/modules/config_Maker/view/config_base_page.dart';
+import '../Screens/Dealer/bLE_update.dart';
 import '../Screens/Dealer/ble_controllerlog_ftp.dart';
 import '../flavors.dart';
 import '../utils/Theme/smart_comm_theme.dart';
@@ -84,6 +85,7 @@ Widget navigateToInitialScreen(String route) {
     case Routes.login:
        return const LoginScreen();
     case Routes.dashboard:
+       // return  FileTransferPage();
        return const ScreenController();
     default:
       return const SplashScreen();
