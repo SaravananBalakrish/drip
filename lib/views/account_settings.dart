@@ -9,9 +9,11 @@ import '../services/http_service.dart';
 import '../view_models/account_setting_view_model.dart';
 
 class AccountSettings extends StatelessWidget {
-  const AccountSettings({super.key, required this.userId, required this.userName, required this.mobileNo, required this.emailId, required this.customerId});
+  const AccountSettings({super.key, required this.userId, required this.userName, required this.mobileNo,
+    required this.emailId, required this.customerId, required this.hideAppbar});
   final int userId, customerId;
   final String userName, mobileNo, emailId;
+  final bool hideAppbar;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +22,7 @@ class AccountSettings extends StatelessWidget {
       child: Consumer<UserSettingViewModel>(
         builder: (context, viewModel, _) {
           return Scaffold(
-            appBar: AppBar(
+            appBar: !hideAppbar? AppBar(
               title: const Text('Account Settings'),
               actions: [
                 IconButton(onPressed: (){
@@ -29,14 +31,15 @@ class AccountSettings extends StatelessWidget {
                 tooltip: 'Close'),
                 SizedBox(width: 16),
               ],
-            ),
+            ) :
+            null,
             body: kIsWeb?Container(
               color: Colors.blueGrey.shade50,
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ListTile(
+                    const ListTile(
                       title: Text("Profile Settings", style: TextStyle(fontSize: 20, color: Colors.black),),
                       subtitle: Text('Real-time Information and activity of your property.'),
                     ),
