@@ -101,74 +101,74 @@ class _ConnectionState extends State<Connection> {
                         Text(selectedDevice.modelName),
                         if(!AppConstants.weatherModelList.contains(selectedDevice.categoryId))
                           SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            spacing: 20,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              if((selectedDevice.noOfRelay == 0 ? selectedDevice.noOfLatch : selectedDevice.noOfRelay) != 0)
-                                getConnectionBox(
-                                    selectedDevice: selectedDevice,
-                                    color: AppConstants.outputColor,
-                                    from: 0,
-                                    to: selectedDevice.noOfRelay == 0 ? selectedDevice.noOfLatch : selectedDevice.noOfRelay,
-                                    type: '1,2',
-                                    typeName: selectedDevice.noOfRelay == 0 ? 'Latch' : 'Relay',
-                                    keyWord: selectedDevice.noOfRelay == 0 ? 'L' : 'R'
-                                ),
-                              if(selectedDevice.noOfAnalogInput != 0)
-                                getConnectionBox(
-                                    selectedDevice: selectedDevice,
-                                    color: getObjectTypeCodeToColor(3),
-                                    from: 0,
-                                    to: selectedDevice.noOfAnalogInput,
-                                    type: AppConstants.analogCode,
-                                    typeName: 'Analog',
-                                    keyWord: 'A'
-                                ),
-                              if(selectedDevice.noOfDigitalInput != 0)
-                                getConnectionBox(
-                                    selectedDevice: selectedDevice,
-                                    color: getObjectTypeCodeToColor(4),
-                                    from: 0,
-                                    to: selectedDevice.noOfDigitalInput,
-                                    type: AppConstants.digitalCode,
-                                    typeName: 'Digital',
-                                    keyWord: 'D'
-                                ),
-                              if(selectedDevice.noOfPulseInput != 0)
-                                getConnectionBox(
-                                    selectedDevice: selectedDevice,
-                                    color: getObjectTypeCodeToColor(6),
-                                    from: 0,
-                                    to: selectedDevice.noOfPulseInput,
-                                    type: AppConstants.pulseCode,
-                                    typeName: 'Pulse',
-                                    keyWord: 'P'
-                                ),
-                              if(selectedDevice.noOfMoistureInput != 0)
-                                getConnectionBox(
-                                    selectedDevice: selectedDevice,
-                                    color: getObjectTypeCodeToColor(5),
-                                    from: 0,
-                                    to: selectedDevice.noOfMoistureInput,
-                                    type: AppConstants.moistureCode,
-                                    typeName: 'Moisture',
-                                    keyWord: 'M'
-                                ),
-                              if(selectedDevice.noOfI2CInput != 0)
-                                getConnectionBox(
-                                    selectedDevice: selectedDevice,
-                                    color: getObjectTypeCodeToColor(7),
-                                    from: 0,
-                                    to: selectedDevice.noOfI2CInput,
-                                    type: AppConstants.i2cCode,
-                                    typeName: 'I2c',
-                                    keyWord: 'I2c'
-                                ),
-                            ],
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              spacing: 20,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if((selectedDevice.noOfRelay == 0 ? selectedDevice.noOfLatch : selectedDevice.noOfRelay) != 0)
+                                  getConnectionBox(
+                                      selectedDevice: selectedDevice,
+                                      color: AppConstants.outputColor,
+                                      from: 0,
+                                      to: selectedDevice.noOfRelay == 0 ? selectedDevice.noOfLatch : selectedDevice.noOfRelay,
+                                      type: '1,2',
+                                      typeName: selectedDevice.noOfRelay == 0 ? 'Latch' : 'Relay',
+                                      keyWord: selectedDevice.noOfRelay == 0 ? 'L' : 'R'
+                                  ),
+                                if(selectedDevice.noOfAnalogInput != 0)
+                                  getConnectionBox(
+                                      selectedDevice: selectedDevice,
+                                      color: getObjectTypeCodeToColor(3),
+                                      from: 0,
+                                      to: selectedDevice.noOfAnalogInput,
+                                      type: AppConstants.analogCode,
+                                      typeName: 'Analog',
+                                      keyWord: 'A'
+                                  ),
+                                if(selectedDevice.noOfDigitalInput != 0)
+                                  getConnectionBox(
+                                      selectedDevice: selectedDevice,
+                                      color: getObjectTypeCodeToColor(4),
+                                      from: 0,
+                                      to: selectedDevice.noOfDigitalInput,
+                                      type: AppConstants.digitalCode,
+                                      typeName: 'Digital',
+                                      keyWord: 'D'
+                                  ),
+                                if(selectedDevice.noOfPulseInput != 0)
+                                  getConnectionBox(
+                                      selectedDevice: selectedDevice,
+                                      color: getObjectTypeCodeToColor(6),
+                                      from: 0,
+                                      to: selectedDevice.noOfPulseInput,
+                                      type: AppConstants.pulseCode,
+                                      typeName: 'Pulse',
+                                      keyWord: 'P'
+                                  ),
+                                if(selectedDevice.noOfMoistureInput != 0)
+                                  getConnectionBox(
+                                      selectedDevice: selectedDevice,
+                                      color: getObjectTypeCodeToColor(5),
+                                      from: 0,
+                                      to: selectedDevice.noOfMoistureInput,
+                                      type: AppConstants.moistureCode,
+                                      typeName: 'Moisture',
+                                      keyWord: 'M'
+                                  ),
+                                if(selectedDevice.noOfI2CInput != 0)
+                                  getConnectionBox(
+                                      selectedDevice: selectedDevice,
+                                      color: getObjectTypeCodeToColor(7),
+                                      from: 0,
+                                      to: selectedDevice.noOfI2CInput,
+                                      type: AppConstants.i2cCode,
+                                      typeName: 'I2c',
+                                      keyWord: 'I2c'
+                                  ),
+                              ],
+                            ),
                           ),
-                        ),
                         const SizedBox(height: 20,),
                         if(AppConstants.gemModelList.contains(widget.configPvd.masterData['modelId']))
                           Center(child: getSelectionCategory()),
@@ -236,7 +236,7 @@ class _ConnectionState extends State<Connection> {
             && object.controllerId == null || (object.controllerId == selectedDevice.controllerId && object.connectionNo == widget.configPvd.selectedConnectionNo))
             .toList().where((object) => object.type == widget.configPvd.selectedType)
             .map((object){
-              print("object name : ${object.name}  type : ${object.type} widget.configPvd.selectedType : ${widget.configPvd.selectedType}");
+          print("object name : ${object.name}  type : ${object.type} widget.configPvd.selectedType : ${widget.configPvd.selectedType}");
           bool isSelected = object.controllerId == selectedDevice.controllerId
               && object.type == widget.configPvd.selectedType
               && object.connectionNo == widget.configPvd.selectedConnectionNo;
@@ -281,7 +281,7 @@ class _ConnectionState extends State<Connection> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   SvgPicture.asset(
-                      'assets/Images/Svg/objectId_${object.objectId}.svg',
+                    'assets/Images/Svg/objectId_${object.objectId}.svg',
                     width: 25,
                     height: 25,
                     color: isSelected ? Colors.white : Colors.black,
@@ -358,17 +358,17 @@ class _ConnectionState extends State<Connection> {
                         const SizedBox(height: 5,),
                       ],
                     if(type == AppConstants.analogCode)
-                    ...[
-                      ConnectorWidget(
-                        connectionNo: 9,
-                        selectedDevice: selectedDevice,
-                        configPvd: widget.configPvd,
-                        type: type,
-                        keyWord: '',
-                        color: color,
-                      ),
-                      const SizedBox(height: 5,),
-                    ]
+                      ...[
+                        ConnectorWidget(
+                          connectionNo: 9,
+                          selectedDevice: selectedDevice,
+                          configPvd: widget.configPvd,
+                          type: type,
+                          keyWord: '',
+                          color: color,
+                        ),
+                        const SizedBox(height: 5,),
+                      ]
                   ],
                 ),
               ),
@@ -419,12 +419,12 @@ class _ConnectionState extends State<Connection> {
     DeviceModel selectedDevice = widget.configPvd.listOfDeviceModel.firstWhere((device) => device.controllerId == widget.configPvd.selectedModelControllerId);
     List<int> filteredObjectList = widget.configPvd.listOfSampleObjectModel
         .where((object) {
-          if(object.objectId == AppConstants.pumpObjectId && AppConstants.ecoGemModelList.contains(widget.configPvd.masterData['modelId'])){
-            return false;
-          }else{
-            return true;
-          }
-        })
+      if(object.objectId == AppConstants.pumpObjectId && AppConstants.ecoGemModelList.contains(widget.configPvd.masterData['modelId'])){
+        return false;
+      }else{
+        return true;
+      }
+    })
         .where((object) => (object.type == '1,2' && !['', '0', null].contains(object.count)))
         .toList().where((object) => selectedDevice.connectingObjectId.contains(object.objectId)).toList().map((object) => object.objectId)
         .toList();
@@ -458,7 +458,7 @@ class _ConnectionState extends State<Connection> {
     List<DeviceObjectModel> filteredList = widget.configPvd.listOfObjectModelConnection.where((object)=> filteredObjectList.contains(object.objectId)).toList();
 
     filteredList = filteredList.where((object) {
-       if(['', '0', null].contains(object.count) && getNotConfiguredObjectByObjectId(object.objectId, widget.configPvd) == 0){
+      if(['', '0', null].contains(object.count) && getNotConfiguredObjectByObjectId(object.objectId, widget.configPvd) == 0){
         return false;
       }else{
         return true;
