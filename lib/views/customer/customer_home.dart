@@ -195,73 +195,69 @@ class CustomerHome extends StatelessWidget {
           NextSchedule(scheduledPrograms: scheduledProgram),
           ...irrigationLine.map((line) => Padding(
             padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
-            child: Column(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      color: Theme.of(context).primaryColor.withOpacity(0.2),
-                      width: 0.5,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(5)),
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: MediaQuery.sizeOf(context).width,
-                        height: 45,
-                        color: Theme.of(context).primaryColor.withOpacity(0.03),
-                        child: Row(
-                          children: [
-                            const SizedBox(width: 16),
-                            Text(
-                              line.name,
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(color: Colors.black54, fontSize: 17, fontWeight: FontWeight.bold),
-                            ),
-                            const Spacer(),
-                            MaterialButton(
-                              color: line.linePauseFlag == 0
-                                  ? Theme.of(context).primaryColorLight
-                                  : Colors.deepOrangeAccent.shade100,
-                              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                              onPressed: () async {
-                                String payLoadFinal = jsonEncode({
-                                  "4900": {
-                                    "4901": "${line.sNo}, ${line.linePauseFlag == 0 ? 1 : 0}",
-                                  }
-                                });
-
-                                final result = await context.read<CommunicationService>().sendCommand(
-                                  payload: payLoadFinal,
-                                  serverMsg: line.linePauseFlag == 0
-                                      ? 'Paused the ${line.name}'
-                                      : 'Resumed the ${line.name}',
-                                );
-
-                                if (result['http'] == true) debugPrint("Payload sent to Server");
-                                if (result['mqtt'] == true) debugPrint("Payload sent to MQTT Box");
-                                if (result['bluetooth'] == true) debugPrint("Payload sent via Bluetooth");
-                              },
-                              child: Text(
-                                line.linePauseFlag == 0 ? 'PAUSE THE LINE' : 'RESUME THE LINE',
-                                style: TextStyle(
-                                  color: line.linePauseFlag == 0 ? Colors.white:Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 5)
-                          ],
-                        ),
-                      ),
-                      buildIrrigationLine(context, line, customerId, controllerId),
-                    ],
-                  ),
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(
+                  color: Theme.of(context).primaryColor.withOpacity(0.2),
+                  width: 0.5,
                 ),
-              ],
+                borderRadius: const BorderRadius.all(Radius.circular(5)),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    width: MediaQuery.sizeOf(context).width,
+                    height: 45,
+                    color: Theme.of(context).primaryColor.withOpacity(0.03),
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 16),
+                        Text(
+                          line.name,
+                          textAlign: TextAlign.left,
+                          style: const TextStyle(color: Colors.black54, fontSize: 17, fontWeight: FontWeight.bold),
+                        ),
+                        const Spacer(),
+                        MaterialButton(
+                          color: line.linePauseFlag == 0
+                              ? Theme.of(context).primaryColorLight
+                              : Colors.orange.shade400,
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                          onPressed: () async {
+                            String payLoadFinal = jsonEncode({
+                              "4900": {
+                                "4901": "${line.sNo}, ${line.linePauseFlag == 0 ? 1 : 0}",
+                              }
+                            });
+
+                            final result = await context.read<CommunicationService>().sendCommand(
+                              payload: payLoadFinal,
+                              serverMsg: line.linePauseFlag == 0
+                                  ? 'Paused the ${line.name}'
+                                  : 'Resumed the ${line.name}',
+                            );
+
+                            if (result['http'] == true) debugPrint("Payload sent to Server");
+                            if (result['mqtt'] == true) debugPrint("Payload sent to MQTT Box");
+                            if (result['bluetooth'] == true) debugPrint("Payload sent via Bluetooth");
+                          },
+                          child: Text(
+                            line.linePauseFlag == 0 ? 'PAUSE THE LINE' : 'RESUME THE LINE',
+                            style: const TextStyle(
+                              color:Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 5)
+                      ],
+                    ),
+                  ),
+                  buildIrrigationLine(context, line, customerId, controllerId),
+                ],
+              ),
             ),
           )),
           const SizedBox(height: 8),
