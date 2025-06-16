@@ -151,7 +151,7 @@ class DealerScreenController extends StatelessWidget {
           userRole: UserRole.dealer,
         );
       case 2:
-        return AccountSettings(userId: userId, userName: userName, mobileNo: mobileNo, emailId: emailId, customerId: userId);
+        return AccountSettings(userId: userId, userName: userName, mobileNo: mobileNo, emailId: emailId, customerId: userId, hideAppbar: true);
       default:
         return const SizedBox();
     }
