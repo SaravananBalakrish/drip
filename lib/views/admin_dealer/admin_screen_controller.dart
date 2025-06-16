@@ -262,7 +262,7 @@ class _AdminScreenControllerState extends State<AdminScreenController> {
                                   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(5), topRight: Radius.circular(5))),
                                   builder: (BuildContext context) {
                                     return AccountSettings(userId: widget.userId, userName: widget.userName,
-                                        mobileNo: widget.mobileNo, emailId: widget.emailId, customerId: widget.userId);
+                                        mobileNo: widget.mobileNo, emailId: widget.emailId, customerId: widget.userId, hideAppbar: false,);
                                   },
                                 );
                               } else if (value == 'logout') {
