@@ -92,7 +92,7 @@ class MobileScreenController extends StatelessWidget {
                       );
                     },
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   AlarmButton(alarmPayload: vm.alarmDL, deviceID: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
                       customerId: customerId, controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId),
                 ],
