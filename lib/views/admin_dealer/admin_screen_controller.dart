@@ -122,16 +122,14 @@ class _AdminScreenControllerState extends State<AdminScreenController> {
                                 style: const TextStyle(color: Colors.white),
                                 decoration: InputDecoration(
                                   prefixIcon: const Icon(Icons.search, color: Colors.white54),
-                                  suffixIcon: viewModel.txtFldSearch.text.isNotEmpty
-                                      ? IconButton(
+                                  suffixIcon: viewModel.txtFldSearch.text.isNotEmpty ? IconButton(
                                     icon: const Icon(Icons.clear, color: Colors.redAccent),
                                     onPressed: () {
                                       viewModel.clearSearch();
                                       context.read<SearchProvider>().isSearchingProduct(false);
                                       context.read<SearchProvider>().clearSearchFilters();
                                     },
-                                  )
-                                      : null,
+                                  ) : null,
                                   hintText: 'Search by device id / sales person',
                                   hintStyle: const TextStyle(color: Colors.white24),
                                   border: InputBorder.none,
