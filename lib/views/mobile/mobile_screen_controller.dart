@@ -1243,7 +1243,7 @@ class _BluetoothScanTileState extends State<BluetoothScanTile>
     );
   }
 
-  Future<void> _startScan() async {
+  Future<void> startScan() async {
     if (isScanning) return;
 
     setState(() {
@@ -1251,6 +1251,7 @@ class _BluetoothScanTileState extends State<BluetoothScanTile>
     });
 
     _controller.repeat();
+
 
     await widget.vm.blueService.getDevices(); // Now it waits 10 seconds
 
@@ -1284,7 +1285,7 @@ class _BluetoothScanTileState extends State<BluetoothScanTile>
             Icons.refresh_outlined,
             color: isScanning ? Colors.blue : Colors.black,
           ),
-          onPressed: _startScan,
+          onPressed: startScan,
         ),
       ),
     );

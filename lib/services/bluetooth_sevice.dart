@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 import '../StateManagement/mqtt_payload_provider.dart';
 import 'package:oro_drip_irrigation/plugins/flutter_bluetooth_serial/lib/flutter_bluetooth_serial.dart';
 
@@ -48,14 +51,35 @@ class BluService {
 
   StreamSubscription<BluetoothDiscoveryResult>? _scanSubscription;
 
-  void initializeBluService({MqttPayloadProvider? state}) {
+  Future<void> initializeBluService({MqttPayloadProvider? state}) async {
     providerState = state;
-    initPermissions();
-    _listenToData();
+
+    await initPermissions();
+    await requestPermissions();
+    await checkLocationServices();
+
+    _listenToData(); // Now safe to proceed
   }
 
   Future<void> initPermissions() async {
     await _bluetooth.requestEnable();
+  }
+
+  Future<void> requestPermissions() async {
+    if (Platform.isAndroid) {
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.bluetooth,
+        Permission.bluetoothConnect,
+        Permission.bluetoothScan,
+        Permission.locationWhenInUse,
+        Permission.location,
+      ].request();
+
+      if (statuses.values.any((status) => status.isDenied || status.isPermanentlyDenied)) {
+        print('Permissions not granted.');
+        // Optionally show dialog to enable them in settings
+      }
+    }
   }
 
   int getTraceLogSize() {
@@ -66,12 +90,68 @@ class BluService {
     return totalBytes;
   }
 
+  Future<void> checkLocationServices() async {
+    bool isLocationEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!isLocationEnabled) {
+      print("Location services are OFF. Prompting user...");
+      await Geolocator.openLocationSettings();
+    }
+  }
+
   int getCurrentChunkSize() {
     return utf8.encode(traceChunk).length;
   }
 
   Future<void> getDevices() async {
     _devices.clear();
+    await FlutterBluetoothSerial.instance.cancelDiscovery();
+    await requestPermissions();
+    await checkLocationServices();
+
+    final subscription = FlutterBluetoothSerial.instance.startDiscovery().listen((result) {
+      final device = result.device;
+
+      if ((device.name?.startsWith('NIA_') ?? false)) {
+        final exists = _devices.any((d) => d.address == device.address);
+        if (!exists) {
+          _devices.add(device);
+
+          final existing = providerState?.pairedDevices.firstWhere(
+                (e) => e.device.address == device.address,
+            orElse: () => CustomDevice(device: device),
+          );
+
+          final updatedDevice = CustomDevice(
+            device: device,
+            status: existing?.status ?? BluDevice.disconnected,
+          );
+
+          final updatedList = [
+            ...(providerState?.pairedDevices
+                .where((d) => d.device.address != device.address)
+                .toList() ??
+                <CustomDevice>[]),
+            updatedDevice,
+          ];
+
+          providerState?.updatePairedDevices(updatedList);
+        }
+      }
+    });
+
+    await Future.delayed(const Duration(seconds: 10));
+    await subscription.cancel();
+    await FlutterBluetoothSerial.instance.cancelDiscovery();
+    print("Bluetooth discovery stopped after 10 seconds.");
+  }
+
+  /*Future<void> getDevices() async {
+
+    await requestPermissions();
+    await FlutterBluetoothSerial.instance.requestEnable();
+
+    _devices.clear();
+    await FlutterBluetoothSerial.instance.cancelDiscovery();
 
     final completer = Completer<void>();
 
@@ -115,10 +195,10 @@ class BluService {
     });
 
     return completer.future;
-  }
+  }*/
 
 
-  Future<void> startScan() async {
+  /*Future<void> startScan() async {
     _scanSubscription?.cancel();
     _scanSubscription = _bluetooth.startDiscovery().listen((result) {
       if (result.device.name?.startsWith('NIA_') ?? false) {
@@ -136,7 +216,7 @@ class BluService {
     Future.delayed(const Duration(seconds: 10)).then((_) async {
       await _scanSubscription?.cancel();
     });
-  }
+  }*/
 
   Future<void> connectToDevice(CustomDevice device) async {
     try {
