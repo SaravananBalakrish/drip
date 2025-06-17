@@ -63,7 +63,6 @@ dependencies:
   webview_flutter: ^4.11.0
   firebase_messaging: ^15.2.5
   intl_phone_field: ^3.2.0
-  bluetooth_classic: ^0.0.3
   flutter_blue_plus: ^1.35.5
   az_notification_hub: ^1.1.2
   flutter_dotenv: ^5.2.1
