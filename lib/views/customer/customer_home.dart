@@ -406,33 +406,36 @@ class PumpStationWithLine extends StatelessWidget {
           ...valveWidgets,
           ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wjl.png', fertilizerSite.isNotEmpty),
       ];
-      return Align(
-        alignment: Alignment.topLeft,
-        child: Wrap(
-          alignment: WrapAlignment.start,
-          spacing: 0,
-          runSpacing: 0,
-          children: allItems.asMap().entries.map<Widget>((entry) {
-            final index = entry.key;
-            final item = entry.value;
-            if(fertilizerSite.isNotEmpty){
-              int itemsPerRow = ((MediaQuery.sizeOf(context).width - 140) / 67).floor();
+      return Padding(
+        padding: const EdgeInsets.only(top: 8),
+        child: Align(
+          alignment: Alignment.topLeft,
+          child: Wrap(
+            alignment: WrapAlignment.start,
+            spacing: 0,
+            runSpacing: 0,
+            children: allItems.asMap().entries.map<Widget>((entry) {
+              final index = entry.key;
+              final item = entry.value;
+              if(fertilizerSite.isNotEmpty){
+                int itemsPerRow = ((MediaQuery.sizeOf(context).width - 140) / 67).floor();
 
-              if (item is ValveWidget && index < itemsPerRow) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 30),
-                  child: item,
-                );
+                if (item is ValveWidget && index < itemsPerRow) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 30),
+                    child: item,
+                  );
+                }
+                else{
+                  return item;
+                }
               }
               else{
                 return item;
               }
-            }
-            else{
-              return item;
-            }
 
-          }).toList(),
+            }).toList(),
+          ),
         ),
       );
     }
@@ -748,6 +751,14 @@ class PumpStationWithLine extends StatelessWidget {
           agitator: site.agitator,
           siteSno: site.sNo.toString(),
         ));
+
+        final isLast = channelIndex == site.channel.length - 1;
+
+        if(isLast && site.agitator.isNotEmpty){
+          widgets.add(AgitatorWidget(
+            fertilizerSite: site,
+          ));
+        }
       }
       if(kIsWeb) {
         widgets.add(SizedBox(
@@ -769,8 +780,10 @@ class PumpStationWithLine extends StatelessWidget {
         ));
       }
       return widgets;
-    }).expand((item) => item).toList().cast<Widget>(); // 👈 Cast the final list
+    }).expand((item) => item).toList().cast<Widget>();
   }
+
+
 }
 
 class BuildInletSource extends StatelessWidget {

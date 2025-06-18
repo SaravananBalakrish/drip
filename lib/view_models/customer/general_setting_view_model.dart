@@ -73,7 +73,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
     }
   }
 
-
   Future<void> getControllerInfo(customerId, controllerId) async {
     try {
       Map<String, Object> body = {"userId": customerId, "controllerId": controllerId};
@@ -162,6 +161,7 @@ class GeneralSettingViewModel extends ChangeNotifier {
     isLoading = value;
     notifyListeners();
   }
+
 
   @override
   void dispose() {

@@ -253,3 +253,45 @@ class ChannelWidget extends StatelessWidget {
     );
   }
 }
+
+class AgitatorWidget extends StatelessWidget {
+  final FertilizerSiteModel fertilizerSite;
+  const AgitatorWidget({
+    super.key,
+    required this.fertilizerSite,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<MqttPayloadProvider, String?>(
+      selector: (_, provider) => provider.getAgitatorOnOffStatus(fertilizerSite.agitator[0].sNo.toString()),
+      builder: (_, status, __) {
+
+        final statusParts = status?.split(',') ?? [];
+        if(statusParts.isNotEmpty){
+          fertilizerSite.agitator[0].status = int.parse(statusParts[1]);
+        }
+
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            SizedBox(
+                width: 53,
+                height: 34,
+                child : AppConstants.getAsset('agitator', fertilizerSite.agitator[0].status,''),
+            ),
+            if(kIsWeb)...[
+              const SizedBox(height: 90),
+              Container(width: 53, height: 1,color: Colors.grey.shade300),
+              const SizedBox(height: 3.5),
+              Container(width: 53, height: 1,color: Colors.grey.shade300),
+            ]
+          ],
+        );
+      },
+    );
+  }
+
+}

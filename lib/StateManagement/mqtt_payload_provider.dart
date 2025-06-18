@@ -120,6 +120,8 @@ class MqttPayloadProvider with ChangeNotifier {
    final Map<String, String> _valveOnOffStatusMap = {};
    final Map<String, String> _sensorValueMap = {};
    final Map<String, String> _boosterPumpOnOffStatusMap = {};
+   final Map<String, String> _agitatorOnOffStatusMap = {};
+
 
    //for blue service
    CustomDevice? _connectedDevice;
@@ -652,6 +654,7 @@ class MqttPayloadProvider with ChangeNotifier {
           updateValveStatus(data['cM']['2402'].split(";"));
           updateSensorValue(data['cM']['2403'].split(";"));
           updateBoosterPumpStatus(data['cM']['2402'].split(";"));
+          updateAgitatorStatus(data['cM']['2402'].split(";"));
 
           updateLineLiveMessage(data['cM']['2405'].split(";"));
           updateCurrentProgram(data['cM']['2408'].split(";"));
@@ -893,11 +896,21 @@ print('cM---> $cM');
 
    void updateBoosterPumpStatus(List<String> valveOnOffPayload) {
      for (final entry in valveOnOffPayload) {
-       if (!entry.startsWith('7.')) continue;
+       if (!entry.startsWith('9.')) continue;
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].isEmpty) continue;
        final sNo = parts[0];
        _boosterPumpOnOffStatusMap[sNo] = entry;
+     }
+   }
+
+   void updateAgitatorStatus(List<String> status) {
+     for (final entry in status) {
+       if (!entry.startsWith('7.')) continue;
+       final parts = entry.split(',');
+       if (parts.isEmpty || parts[0].isEmpty) continue;
+       final sNo = parts[0];
+       _agitatorOnOffStatusMap[sNo] = entry;
      }
    }
 
@@ -935,6 +948,7 @@ print('cM---> $cM');
    String? getValveOnOffStatus(String sNo) => _valveOnOffStatusMap[sNo];
    String? getSensorUpdatedValve(String sNo) => _sensorValueMap[sNo];
    String? getBoosterPumpOnOffStatus(String sNo) => _boosterPumpOnOffStatusMap[sNo];
+   String? getAgitatorOnOffStatus(String sNo) => _agitatorOnOffStatusMap[sNo];
 
   String get receivedDashboardPayload => dashBoardPayload;
   String get receivedSchedulePayload => schedulePayload;

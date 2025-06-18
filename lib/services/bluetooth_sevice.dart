@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -54,18 +55,50 @@ class BluService {
   Future<void> initializeBluService({MqttPayloadProvider? state}) async {
     providerState = state;
 
-    await initPermissions();
     await requestPermissions();
+    await initPermissions();
     await checkLocationServices();
 
-    _listenToData(); // Now safe to proceed
+    _listenToData();
   }
 
   Future<void> initPermissions() async {
-    await _bluetooth.requestEnable();
+    try {
+      final isEnabled = await _bluetooth.isEnabled;
+      if (!(isEnabled ?? false)) {
+        await _bluetooth.requestEnable();
+      }
+    } catch (e) {
+      print('Error enabling Bluetooth: $e');
+    }
   }
 
   Future<void> requestPermissions() async {
+    if (Platform.isAndroid) {
+      final deviceInfo = DeviceInfoPlugin();
+      final androidInfo = await deviceInfo.androidInfo;
+      final sdkInt = androidInfo.version.sdkInt;
+
+      final List<Permission> permissions = [
+        if (sdkInt >= 31) ...[
+          Permission.bluetoothScan,
+          Permission.bluetoothConnect,
+        ] else ...[
+          Permission.bluetooth,
+        ],
+        Permission.locationWhenInUse,
+      ];
+
+      Map<Permission, PermissionStatus> statuses = await permissions.request();
+
+      if (statuses.values.any((status) => status.isDenied || status.isPermanentlyDenied)) {
+        print('Some permissions were not granted.');
+        // Consider prompting user to go to settings
+      }
+    }
+  }
+
+  /*Future<void> requestPermissions() async {
     if (Platform.isAndroid) {
       Map<Permission, PermissionStatus> statuses = await [
         Permission.bluetooth,
@@ -80,7 +113,24 @@ class BluService {
         // Optionally show dialog to enable them in settings
       }
     }
-  }
+  }*/
+
+  /*Future<void> requestPermissions() async {
+    if (Platform.isAndroid) {
+      Map<Permission, PermissionStatus> statuses = await [
+        Permission.bluetooth,
+        Permission.bluetoothConnect,
+        Permission.bluetoothScan,
+        Permission.locationWhenInUse,
+        Permission.location,
+      ].request();
+
+      if (statuses.values.any((status) => status.isDenied || status.isPermanentlyDenied)) {
+        print('Permissions not granted.');
+        // Optionally show dialog to enable them in settings
+      }
+    }
+  }*/
 
   int getTraceLogSize() {
     int totalBytes = 0;
