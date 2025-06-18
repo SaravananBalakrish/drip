@@ -752,12 +752,14 @@ class FertilizerSiteModel {
         .map(BoosterPump.fromConfigObject)
         .toList();
 
-    /*final agitatorSNo = ((json['agitator'] as List?)?.first ?? 0) as num;
-
+    final agitatorList = json['agitator'] as List?;
+    final agitatorSNo = (agitatorList != null && agitatorList.isNotEmpty)
+        ? agitatorList.first as num
+        : 0;
     final agitator = configObjects
         .where((obj) => agitatorSNo == obj.sNo)
         .map(Agitator.fromConfigObject)
-        .toList();*/
+        .toList();
 
     final ecSNoSet = ((json['ec'] as List?) ?? []).map((e) => e).toSet();
     final ecSensor = configObjects.where((obj) => ecSNoSet.contains(obj.sNo))
@@ -779,7 +781,7 @@ class FertilizerSiteModel {
       siteMode: json['siteMode'],
       channel: channel,
       boosterPump: boosterPump,
-      agitator: [],
+      agitator: agitator,
       selector: json['selector'] ?? [],
       ec: ecSensor,
       ph: phSensor,
@@ -1004,58 +1006,6 @@ class Agitator {
     };
   }
 }
-
-/*class Agitator {
-  final int objectId;
-  final double sNo;
-  final String name;
-  final int connectionNo;
-  final String objectName;
-  final String type;
-  final int controllerId;
-  final int? count;
-  bool selected;
-  int status;
-
-  Agitator({
-    required this.objectId,
-    required this.sNo,
-    required this.name,
-    required this.connectionNo,
-    required this.objectName,
-    required this.type,
-    required this.controllerId,
-    this.count,
-    this.selected=false,
-    this.status=0,
-  });
-
-  factory Agitator.fromJson(Map<String, dynamic> json) {
-    return Agitator(
-      objectId: json['objectId'],
-      sNo: json['sNo'].toDouble(),
-      name: json['name'],
-      connectionNo: json['connectionNo'],
-      objectName: json['objectName'],
-      type: json['type'],
-      controllerId: json['controllerId'],
-      count: json['count'],
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'objectId': objectId,
-      'sNo': sNo,
-      'name': name,
-      'connectionNo': connectionNo,
-      'objectName': objectName,
-      'type': type,
-      'controllerId': controllerId,
-      'count': count,
-    };
-  }
-}*/
 
 class MoistureSensorModel {
   final double sNo;
