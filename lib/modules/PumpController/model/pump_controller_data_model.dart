@@ -219,6 +219,9 @@ class PumpValveModel extends IndividualPumpData {
   String setSerialFlag;
   final String moistureValues;
   final String soilTemperature;
+  final String phaseType;
+  final String lightReason;
+  String? light;
 
   PumpValveModel({
     required this.valveOnMode,
@@ -233,6 +236,9 @@ class PumpValveModel extends IndividualPumpData {
     required this.setSerialFlag,
     required this.moistureValues,
     required this.soilTemperature,
+    required this.phaseType,
+    required this.lightReason,
+    required this.light,
   }) : super(
     status: 0,
     reason: '',
@@ -276,7 +282,25 @@ class PumpValveModel extends IndividualPumpData {
       setSerialFlag: json['SS'] ?? '',
       moistureValues: json['MOS'] ?? '',
       soilTemperature: json['STM'] ?? '',
+      phaseType: json['SPF'] ?? '',
+      lightReason: getReason(json['LIS'] ?? '').toUpperCase(),
+      light: json['LIT'] ?? '',
     );
+  }
+
+  static String getReason(String reasonCode) {
+    switch(reasonCode) {
+      case "1":
+        return "Turned on due to stanalone";
+      case "2":
+        return "Turned on due to RTC";
+      case "3":
+        return "Turned off due to stanalone";
+      case "4":
+        return "Turned off due to RTC";
+      default:
+        return "Unknown";
+    }
   }
 
   Map<String, dynamic> toJson() {

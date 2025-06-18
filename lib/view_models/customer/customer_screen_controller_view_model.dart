@@ -226,6 +226,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     isChanged = false;
     await Future.delayed(const Duration(seconds: 1));
     isChanged = true;
+    notifyListeners();
   }
 
   Future<void> masterOnChanged(int index) async {
