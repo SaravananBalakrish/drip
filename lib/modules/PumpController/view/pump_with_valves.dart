@@ -102,6 +102,7 @@ class PumpWithValves extends StatelessWidget {
                   ),
                   // SizedBox(height: 10,),
                 ],
+                if(valves.length > 1)
                 IntrinsicWidth(
                   child: PopupMenuButton(
                     tooltip: "Select the valve to change",

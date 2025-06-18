@@ -20,6 +20,7 @@ import '../widget/custom_bouncing_button.dart';
 import '../widget/custom_connection_error.dart';
 import '../widget/custom_countdown_timer.dart';
 import '../widget/custom_gauge.dart';
+import '../widget/custom_light.dart';
 
 class PumpDashboardScreen extends StatefulWidget {
   final int userId, customerId;
@@ -152,8 +153,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                 return const Center(child: Text('Data not available'));
               }
               return ListView(
-                // mainAxisAlignment: MainAxisAlignment.start,
-                // crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: 10,),
                   ConnectionErrorToast(dataFetchingStatus: snapshot.data!.dataFetchingStatus),
@@ -256,40 +255,54 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     child: Column(
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            for(var index = 0; index < 3; index++)
-                              buildContainer(
-                                title: snapshot.data!.powerFactor == null
-                                    ? ["RY", "YB", "BR"][index]
-                                    : ["RN ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
-                                  "YN ${double.parse(snapshot.data!.voltage.split(',')[1]).toStringAsFixed(0)}",
-                                  "BN ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index],
-                                value: snapshot.data!.powerFactor == null
-                                    ? double.parse(snapshot.data!.voltage.split(',')[index]).toStringAsFixed(0)
-                                    : ["RPF ${double.parse(snapshot.data!.powerFactor.split(',')[0]).toStringAsFixed(0)}",
-                                  "YPF ${double.parse(snapshot.data!.powerFactor.split(',')[1]).toStringAsFixed(0)}",
-                                  "BPF ${double.parse(snapshot.data!.powerFactor.split(',')[2]).toStringAsFixed(0)}"][index],
-                                value2: snapshot.data!.power != null
-                                    ? ["RP ${double.parse(snapshot.data!.power.split(',')[0]).toStringAsFixed(0)}",
-                                  "YP ${double.parse(snapshot.data!.power.split(',')[1]).toStringAsFixed(0)}",
-                                  "BP ${double.parse(snapshot.data!.power.split(',')[2]).toStringAsFixed(0)}"][index]
-                                    : null,
-                                // value: snapshot.data!.voltage.split(',')[index],
-                                color1: [
-                                  Colors.redAccent.shade100,
-                                  Colors.amberAccent.shade100,
-                                  Colors.lightBlueAccent.shade100,
-                                ][index],
-                                color2: [
-                                  Colors.redAccent.shade700,
-                                  Colors.amberAccent.shade700,
-                                  Colors.lightBlueAccent.shade700,
-                                ][index],
-                              )
-                          ],
-                        ),
+                        if((snapshot.data!.pumps.firstWhere((pump) => pump is PumpValveModel) as PumpValveModel).phaseType != "1")
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              for(var index = 0; index < 3; index++)
+                                buildContainer(
+                                  title: snapshot.data!.powerFactor == null
+                                      ? ["RY", "YB", "BR"][index]
+                                      : ["RN ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
+                                    "YN ${double.parse(snapshot.data!.voltage.split(',')[1]).toStringAsFixed(0)}",
+                                    "BN ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index],
+                                  value: snapshot.data!.powerFactor == null
+                                      ? double.parse(snapshot.data!.voltage.split(',')[index]).toStringAsFixed(0)
+                                      : ["RPF ${double.parse(snapshot.data!.powerFactor.split(',')[0]).toStringAsFixed(0)}",
+                                    "YPF ${double.parse(snapshot.data!.powerFactor.split(',')[1]).toStringAsFixed(0)}",
+                                    "BPF ${double.parse(snapshot.data!.powerFactor.split(',')[2]).toStringAsFixed(0)}"][index],
+                                  value2: snapshot.data!.power != null
+                                      ? ["RP ${double.parse(snapshot.data!.power.split(',')[0]).toStringAsFixed(0)}",
+                                    "YP ${double.parse(snapshot.data!.power.split(',')[1]).toStringAsFixed(0)}",
+                                    "BP ${double.parse(snapshot.data!.power.split(',')[2]).toStringAsFixed(0)}"][index]
+                                      : null,
+                                  // value: snapshot.data!.voltage.split(',')[index],
+                                  color1: [
+                                    Colors.redAccent.shade100,
+                                    Colors.amberAccent.shade100,
+                                    Colors.lightBlueAccent.shade100,
+                                  ][index],
+                                  color2: [
+                                    Colors.redAccent.shade700,
+                                    Colors.amberAccent.shade700,
+                                    Colors.lightBlueAccent.shade700,
+                                  ][index],
+                                )
+                            ],
+                          )
+                        else
+                          Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            decoration: _boxDecoration(Theme.of(context).primaryColor, Theme.of(context).primaryColorDark),
+                            // padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text("VOLTAGE : ", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400)),
+                                Text("${int.parse(snapshot.data!.voltage.split(',')[0]) + int.parse(snapshot.data!.voltage.split(',')[2])}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
                         if(snapshot.data!.energyParameters != null && snapshot.data!.energyParameters.isNotEmpty)
                           const SizedBox(height: 8,),
                         if(snapshot.data!.energyParameters != null && snapshot.data!.energyParameters.isNotEmpty)
@@ -324,6 +337,8 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                   const SizedBox(height: 15,),
                   for(var index = 0; index < int.parse(snapshot.data!.numberOfPumps); index++)
                     buildNewPumpDetails(index: index, pumpData: snapshot.data!,),
+                  if(AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId))
+                    _buildLight(snapshot.data!.pumps.firstWhere((pump) => pump is PumpValveModel) as PumpValveModel, snapshot.data!),
                   if(AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId))
                     PumpWithValves(
                       valveData: snapshot.data!.pumps.firstWhere((pump) => pump is PumpValveModel) as PumpValveModel,
@@ -576,10 +591,10 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                               : 'assets/png/idealmotor.png',
                         ),
                         /*getTypesOfPump(
-                              mode: pumpData.pumps[index].status,
-                              controller: _controller,
-                              animationValue: _animation.value
-                          ),*/
+                          mode: pumpData.pumps[index].status,
+                          controller: _controller,
+                          animationValue: _animation.value
+                      ),*/
                         if(pumpItem.onDelayLeft != "00:00:00" && pumpData.dataFetchingStatus == 1 && pumpItem.reasonCode != 30)
                           Positioned(
                               top: 8,
@@ -619,69 +634,77 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                         ),
                       ],
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        if(int.parse(pumpData.numberOfPumps) == 1)
-                          for(var i = 0; i < pumpData.current.toString().split(',').length; i++)
+                    if((pumpData.pumps.firstWhere((pump) => pump is PumpValveModel) as PumpValveModel).phaseType != "1")
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          if(int.parse(pumpData.numberOfPumps) == 1)
+                            for(var i = 0; i < pumpData.current.toString().split(',').length; i++)
+                              buildCurrentContainer(
+                                title: ['RC : ', 'YC : ', 'BC : '][i],
+                                value: "${pumpData.current.toString().split(',')[i].substring(2)} A",
+                                color1: [
+                                  Colors.redAccent.shade100,
+                                  Colors.amberAccent.shade100,
+                                  Colors.lightBlueAccent.shade100,
+                                ][i],
+                                color2: [
+                                  Colors.redAccent.shade700,
+                                  Colors.amberAccent.shade700,
+                                  Colors.lightBlueAccent.shade700,
+                                ][i],
+                              ),
+                          if(int.parse(pumpData.numberOfPumps) == 2 && index == 0)
+                            for(var i = 0; i < int.parse(pumpData.numberOfPumps); i++)
+                              buildCurrentContainer(
+                                title: ['RC : ', 'YC : '][i],
+                                value: "${pumpData.current.toString().split(',')[i].substring(2)} A",
+                                color1: [
+                                  Colors.redAccent.shade100,
+                                  Colors.amberAccent.shade100,
+                                ][i],
+                                color2: [
+                                  Colors.redAccent.shade700,
+                                  Colors.amberAccent.shade700,
+                                ][i],
+                              ),
+                          if(int.parse(pumpData.numberOfPumps) == 2 && index == 1)
                             buildCurrentContainer(
-                              title: ['RC : ', 'YC : ', 'BC : '][i],
-                              value: "${pumpData.current.toString().split(',')[i].substring(2)} A",
-                              color1: [
-                                Colors.redAccent.shade100,
-                                Colors.amberAccent.shade100,
-                                Colors.lightBlueAccent.shade100,
-                              ][i],
-                              color2: [
-                                Colors.redAccent.shade700,
-                                Colors.amberAccent.shade700,
-                                Colors.lightBlueAccent.shade700,
-                              ][i],
+                              title: 'BC : ',
+                              value: "${pumpData.current.toString().split(',').last.substring(2)} A",
+                              color1: Colors.lightBlueAccent.shade100,
+                              color2: Colors.lightBlueAccent.shade700,
                             ),
-                        if(int.parse(pumpData.numberOfPumps) == 2 && index == 0)
-                          for(var i = 0; i < int.parse(pumpData.numberOfPumps); i++)
+                          if(int.parse(pumpData.numberOfPumps) == 3 && index == 0)
                             buildCurrentContainer(
-                              title: ['RC : ', 'YC : '][i],
-                              value: "${pumpData.current.toString().split(',')[i].substring(2)} A",
-                              color1: [
-                                Colors.redAccent.shade100,
-                                Colors.amberAccent.shade100,
-                              ][i],
-                              color2: [
-                                Colors.redAccent.shade700,
-                                Colors.amberAccent.shade700,
-                              ][i],
+                              title: 'RC : ',
+                              value: "${pumpData.current.toString().split(',').first.substring(2)} A",
+                              color1: Colors.redAccent.shade100,
+                              color2: Colors.redAccent.shade700,
                             ),
-                        if(int.parse(pumpData.numberOfPumps) == 2 && index == 1)
-                          buildCurrentContainer(
-                            title: 'BC : ',
-                            value: "${pumpData.current.toString().split(',').last.substring(2)} A",
-                            color1: Colors.lightBlueAccent.shade100,
-                            color2: Colors.lightBlueAccent.shade700,
-                          ),
-                        if(int.parse(pumpData.numberOfPumps) == 3 && index == 0)
-                          buildCurrentContainer(
-                            title: 'RC : ',
-                            value: "${pumpData.current.toString().split(',').first.substring(2)} A",
-                            color1: Colors.redAccent.shade100,
-                            color2: Colors.redAccent.shade700,
-                          ),
-                        if(int.parse(pumpData.numberOfPumps) == 3 && index == 1)
-                          buildCurrentContainer(
-                            title: 'YC : ',
-                            value: "${pumpData.current.toString().split(',')[1].substring(2)} A",
-                            color1: Colors.amberAccent.shade100,
-                            color2: Colors.amberAccent.shade700,
-                          ),
-                        if(int.parse(pumpData.numberOfPumps) == 3 && index == 2)
-                          buildCurrentContainer(
-                            title: 'BC : ',
-                            value: "${pumpData.current.toString().split(',').last.substring(2)} A",
-                            color1: Colors.lightBlueAccent.shade100,
-                            color2: Colors.lightBlueAccent.shade700,
-                          ),
-                      ],
-                    ),
+                          if(int.parse(pumpData.numberOfPumps) == 3 && index == 1)
+                            buildCurrentContainer(
+                              title: 'YC : ',
+                              value: "${pumpData.current.toString().split(',')[1].substring(2)} A",
+                              color1: Colors.amberAccent.shade100,
+                              color2: Colors.amberAccent.shade700,
+                            ),
+                          if(int.parse(pumpData.numberOfPumps) == 3 && index == 2)
+                            buildCurrentContainer(
+                              title: 'BC : ',
+                              value: "${pumpData.current.toString().split(',').last.substring(2)} A",
+                              color1: Colors.lightBlueAccent.shade100,
+                              color2: Colors.lightBlueAccent.shade700,
+                            ),
+                        ],
+                      )
+                    else
+                      buildCurrentContainer(
+                        title: 'CT : ',
+                        value: "${pumpData.current.toString().split(',')[2].substring(2)} A",
+                        color1: Theme.of(context).primaryColorLight,
+                        color2: Theme.of(context).primaryColor,
+                      ),
                     // const SizedBox(width: 10,),
                   ],
                 ),
@@ -830,6 +853,183 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                         ),
                       );
                     }
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 15,)
+      ],
+    );
+  }
+
+  Widget _buildLight(PumpValveModel pumpItem, PumpControllerData pumpData) {
+    return Column(
+      children: [
+        SizedBox(
+          width: MediaQuery.of(context).size.width <= 500 ? MediaQuery.of(context).size.width : 400,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                height: 25,
+                width: 80,
+                decoration: BoxDecoration(
+                  // gradient: AppProperties.linearGradientLeading,
+                    color: Theme.of(context).primaryColorLight,
+                    borderRadius: const BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(3))
+                ),
+                child: const Center(
+                  child: Text(
+                    "Light",
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white,),
+                  ),
+                ),
+              ),
+              if(pumpData.dataFetchingStatus == 1)
+                Expanded(
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Text(pumpItem.lightReason,
+                      style: TextStyle(
+                        overflow: TextOverflow.ellipsis,
+                        color: (pumpItem.lightReason.contains('ON') ? Colors.green.shade700 : Colors.red.shade700),
+                        fontWeight: FontWeight.bold,
+                        // fontSize: titleFontSize
+                      ),
+                      textAlign: TextAlign.right,
+                      // overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+        Card(
+          margin: const EdgeInsets.symmetric(horizontal: 10),
+          shape: RoundedRectangleBorder(
+            side: BorderSide(
+              color: Theme.of(context).primaryColorLight,
+              width: 0.5,
+            ),
+            borderRadius: const BorderRadius.only(bottomRight: Radius.circular(10), bottomLeft: Radius.circular(10), topRight: Radius.circular(10)),
+          ),
+          elevation: 4,
+          color: Colors.white,
+          surfaceTintColor: Colors.white,
+          shadowColor: Theme.of(context).primaryColorLight.withAlpha(100),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            width: MediaQuery.of(context).size.width <= 500 ? MediaQuery.of(context).size.width : 400,
+            decoration: BoxDecoration(
+              // boxShadow: neumorphicButtonShadow,
+              // boxShadow: customBoxShadow,
+                color: Colors.white,
+                borderRadius: const BorderRadius.only(topRight: Radius.circular(10), bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                border: Border.all(color: Theme.of(context).primaryColor, width: 0.3)
+            ),
+            child: Column(
+              children: [
+                const SizedBox(height: 10,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // const SizedBox(width: 10,),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      // decoration: BoxDecoration(
+                      //   shape: BoxShape.circle,
+                      //   color: pumpItem.light == "1" ? Colors.yellow.shade100 : Colors.grey.shade200,
+                      //   border: Border.all(color: pumpItem.light == "1" ? Colors.yellow : Colors.grey),
+                      //   boxShadow: [
+                      //     BoxShadow(
+                      //       color: pumpItem.light == "1" ? Colors.yellow.shade300.withOpacity(0.5) : pumpItem.light == "2" ? Colors.red.withOpacity(0.3) : Colors.grey.withOpacity(0.3),
+                      //       spreadRadius: pumpItem.light == "1" ? 10 : 5,
+                      //       blurRadius: 10,
+                      //       offset: const Offset(0, 3),
+                      //     ),
+                      //   ],
+                      // ),
+                      child: Image.asset(
+                        pumpData.dataFetchingStatus == 1 ? pumpItem.light == "1" ? "assets/png/street-lamp.png" : "assets/png/street-lamp (1).png" : "assets/png/street-lamp (1).png",
+                        width: 80,
+                        height: 90,
+                      ),
+                      /*child: Icon(
+                        pumpItem.light == "1" ? Icons.lightbulb : Icons.lightbulb_outlined,
+                        color: pumpItem.light == "1" ? Colors.yellow.shade700 : pumpItem.light == "2" ? Colors.red.shade600 : Colors.grey.shade600,
+                        size: 40,
+                        semanticLabel: pumpItem.light == "1" ? 'Light On' : 'Light Off',
+                      ),*/
+                    ),
+                    Row(
+                      children: [
+                        BounceEffectButton(
+                          label: "ON",
+                          textColor: Colors.green,
+                          onTap: pumpData.dataFetchingStatus == 1 ? () async {
+                            setState(() => pumpItem.light = "2");
+                            var data = {
+                              "userId": widget.userId,
+                              "controllerId": widget.masterData.controllerId,
+                              "data": {"sentSms": "lighton"},
+                              "messageStatus": "Turned on light manually",
+                              "createUser": widget.userId,
+                              "hardware": {"sentSms": "lighton"},
+                            };
+                            await mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "lighton"}), "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}",);
+                            await repository.sendManualOperationToServer(data);
+                            await Future.delayed(const Duration(seconds: 2));
+                            liveRequest();
+                          } : null,
+                        ),
+                        BounceEffectButton(
+                          label: "OFF",
+                          textColor: Colors.red,
+                          onTap: pumpData.dataFetchingStatus == 1 ? () async {
+                            setState(() => pumpItem.light = "2");
+                            var data = {
+                              "userId": widget.userId,
+                              "controllerId": widget.masterData.controllerId,
+                              "data": {"sentSms": "lightoff"},
+                              "messageStatus": "Turned off light manually",
+                              "createUser": widget.userId,
+                              "hardware": {"sentSms": "lightoff"},
+                            };
+                            await mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "lightoff"}), "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}",);
+                            await repository.sendManualOperationToServer(data);
+                            await Future.delayed(const Duration(seconds: 2));
+                            liveRequest();
+                          } : null,
+                        )
+                      ],
+                    ),
+                   /* Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        if(int.parse(pumpData.numberOfPumps) == 1)
+                          for(var i = 0; i < pumpData.current.toString().split(',').length; i++)
+                            buildCurrentContainer(
+                              title: ['RC : ', 'YC : ', 'BC : '][i],
+                              value: "${pumpData.current.toString().split(',')[i].substring(2)} A",
+                              color1: [
+                                Colors.redAccent.shade100,
+                                Colors.amberAccent.shade100,
+                                Colors.lightBlueAccent.shade100,
+                              ][i],
+                              color2: [
+                                Colors.redAccent.shade700,
+                                Colors.amberAccent.shade700,
+                                Colors.lightBlueAccent.shade700,
+                              ][i],
+                            ),
+                      ],
+                    )*/
+                    // const SizedBox(width: 10,),
+                  ],
                 ),
               ],
             ),
