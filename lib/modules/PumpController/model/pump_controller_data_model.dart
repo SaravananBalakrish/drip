@@ -299,7 +299,7 @@ class PumpValveModel extends IndividualPumpData {
       case "4":
         return "Turned off due to RTC";
       default:
-        return "Unknown";
+        return "";
     }
   }
 

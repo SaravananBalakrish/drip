@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart' hide BluetoothDevice;
@@ -18,6 +19,7 @@ import '../../flavors.dart';
 import '../../modules/IrrigationProgram/view/program_library.dart';
 import '../../modules/PumpController/view/node_settings.dart';
 import '../../modules/PumpController/view/pump_controller_home.dart';
+import '../../modules/bluetooth_low_energy/view/node_connection_page.dart';
 import '../../repository/repository.dart';
 import '../../services/communication_service.dart';
 import '../../services/http_service.dart';
@@ -133,6 +135,36 @@ class MobileScreenController extends StatelessWidget {
                       },
                       icon: const Icon(Icons.question_answer_outlined)
                   ),
+                  if(!kIsWeb)
+                    IconButton(
+                        padding: const EdgeInsets.all(0),
+                        onPressed: (){
+                          final Map<String, dynamic> data = {
+                            'controllerId': vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId,
+                            'deviceId': vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
+                            'deviceName': vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceName,
+                            'categoryId': vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId,
+                            'categoryName': vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
+                            'modelId': vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId,
+                            'modelName': vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelName,
+                            'InterfaceType': 1,
+                            'interface': 'GSM',
+                            'relayOutput': 3,
+                            'latchOutput': 0,
+                            'analogInput': 8,
+                            'digitalInput': 4,
+                          };
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => NodeConnectionPage(
+                            nodeData: data,
+                            masterData: {
+                              "userId" : userId,
+                              "customerId" : customerId,
+                              "controllerId" : vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId
+                            },
+                          )));
+                        },
+                        icon: const Icon(Icons.bluetooth)
+                    ),
                 ],
                 const SizedBox(width: 16),
               ],
@@ -925,7 +957,7 @@ class MobileScreenController extends StatelessWidget {
                   contentPadding: EdgeInsets.zero,
                   title: const Text('Controller connected with ethernet'),
                   subtitle: Text('IpAddress : $ipAddress'),
-                  trailing: Icon(Icons.cast_connected),
+                  trailing: const Icon(Icons.cast_connected),
                 ):
                 networks.isEmpty
                     ? const SizedBox(height: 20, child: Center(child: Text("No networks found.")))
