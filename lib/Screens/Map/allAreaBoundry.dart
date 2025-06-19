@@ -102,9 +102,7 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
             points: valve.area,
             strokeColor: strokeColor,
             strokeWidth: 1,
-            fillColor: valve.status == 1
-                ? Colors.green.withOpacity(0.7)
-                : Colors.red.withOpacity(0.7),
+            fillColor: getColorByStatus(valve.status).withOpacity(0.7),
           ),
         );
 
@@ -145,6 +143,19 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
       lng += point.longitude;
     }
     return LatLng(lat / points.length, lng / points.length);
+  }
+  Color getColorByStatus(int? status) {
+    switch (status) {
+      case 1:
+        return Colors.green;
+      case 2:
+        return Colors.blue;
+      case 3:
+        return Colors.red;
+      case 0:
+      default:
+        return Colors.grey;
+    }
   }
 
   Future<void> _zoomToValves() async {

@@ -42,6 +42,7 @@ class _ConfigureHwState extends State<ConfigureHw> {
    }
 
   Future<void> fetchData() async {
+    print('fetchData  call');
     final url = Uri.parse('http://13.235.254.21:9000/getConfigs');
 
     try {
@@ -245,6 +246,7 @@ class _ConfigureHwState extends State<ConfigureHw> {
 
   @override
   Widget build(BuildContext context) {
+    print('build called ');
     return Scaffold(
       appBar: AppBar(
         title: Text('Configure Hardware'),
