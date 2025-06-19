@@ -16,7 +16,7 @@ import 'package:oro_drip_irrigation/modules/irrigation_report/view/scrollingTabl
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:syncfusion_flutter_xlsio/xlsio.dart' as xlsio;
-import 'dart:html' as html;
+// import 'dart:html' as html;
 import '../model/data_parsing_and_sorting_model.dart';
 import '../model/general_parameter_model.dart';
 import '../repository/irrigation_repository.dart';
@@ -1791,10 +1791,10 @@ Future<void> generateExcelForWeb(Map<String, dynamic> data, String name) async {
     // Encode bytes to base64
     final content = base64Encode(bytes);
     // Create a download link
-    final anchor = html.AnchorElement(
+   /* final anchor = html.AnchorElement(
       href: 'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,$content',
     )..setAttribute('download', '$name.xlsx')
-      ..click();
+      ..click();*/
   } finally {
     workbook.dispose();
   }
