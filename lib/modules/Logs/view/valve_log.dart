@@ -82,7 +82,8 @@ class ValveLog extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: const Color(0xffE6F0FA), // Light blue background
+        color: theme.primaryColorLight.withAlpha(50),
+        // color: const Color(0xffE6F0FA),
         borderRadius: BorderRadius.circular(10),
         border: Border.all(color: theme.primaryColorLight),
       ),
