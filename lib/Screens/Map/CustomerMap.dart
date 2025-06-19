@@ -192,13 +192,16 @@ class _MapScreenallState extends State<MapScreenall> {
    if( type.contains('Valve')) {
      print('_getMarkerIcon Status:$status');
      switch (status) {
-      case 1:
-        return markerGreen;
-      case 0:
-        return markerRed;
-      default:
-        return markerGray;
-    }
+       case 1:
+         return markerGreen;
+       case 2:
+         return markerBlue;
+       case 3:
+         return markerRed;
+       case 0:
+       default:
+         return markerGray;
+     }
     } else if( type.contains('fertilizer')) {
           return markerFert;
     }else if( type.contains('Filter')) {

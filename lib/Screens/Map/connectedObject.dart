@@ -77,9 +77,8 @@ class _MapScreenConnectedObjectsState extends State<MapScreenConnectedObjects> {
             icon: BitmapDescriptor.defaultMarkerWithHue(
               isSelected
                   ? BitmapDescriptor.hueAzure
-                  : obj.status == 1
-                  ? BitmapDescriptor.hueGreen
-                  : BitmapDescriptor.hueRed,
+                  : getMarkerHueByStatus(obj.status),
+
             ),
             infoWindow: InfoWindow(
               title: obj.name ?? 'Object',
@@ -101,7 +100,20 @@ class _MapScreenConnectedObjectsState extends State<MapScreenConnectedObjects> {
       _markers = markers;
     });
   }
-
+  double getMarkerHueByStatus(int? status) {
+    print('getMarkerHueByStatus $status');
+    switch (status) {
+      case 1:
+        return BitmapDescriptor.hueGreen;
+      case 2:
+        return BitmapDescriptor.hueBlue;
+      case 3:
+        return BitmapDescriptor.hueRed;
+      case 0:
+      default:
+        return 210.0; // Default or unknown status
+    }
+  }
   void _updateMarker(double lat, double long) {
     if (_selectedConnectedObject == null) return;
 
