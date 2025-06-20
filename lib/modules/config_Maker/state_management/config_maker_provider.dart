@@ -99,14 +99,26 @@ class ConfigMakerProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void updateAssignObject({required double sNo, required List<double> listOfSerialNo}){
+    for(var object in listOfGeneratedObject){
+      if(listOfSerialNo.contains(object.sNo) && !object.assignObject.contains(sNo)){
+        object.assignObject.add(sNo);
+      }
+    }
+    notifyListeners();
+  }
+
   DeviceObjectModel mapToDeviceObject(dynamic object) {
     return DeviceObjectModel(
       objectId: object['objectTypeId'],
       objectName: object['object'],
       type: object['ioType'],
       count: '0',
+      assignObject: [],
     );
   }
+
+
 
   Future<List<DeviceModel>> fetchData(masterDataFromSiteConfigure)async {
     await Future.delayed(const Duration(seconds: 0));
@@ -237,6 +249,7 @@ class ConfigMakerProvider extends ChangeNotifier{
               name: '${object.objectName} ${start+1}',
               sNo: double.parse(stringDecimalNo),
               controllerId: null,
+              assignObject: [],
             );
             listOfGeneratedObject.add(
                 deviceObjectModel
