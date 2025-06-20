@@ -98,14 +98,14 @@ class _FirmwareBLEPageState extends State<FirmwareBLEPage> {
   Future<void> _deleteBootFile() async {
     try {
       Directory appDocDir = await getApplicationDocumentsDirectory();
-      String filePath = '${appDocDir.path}/bootFile.txt';
+      String filePath = '${appDocDir.path}/gembootFile.txt';
       File file = File(filePath);
 
       if (await file.exists()) {
         await file.delete();
-        print('bootFile.txt deleted successfully.');
+        print('gembootFile.txt deleted successfully.');
       } else {
-        print('bootFile.txt does not exist.');
+        print('gembootFile.txt does not exist.');
       }
     } catch (e) {
       print('Error deleting file: $e');
@@ -125,7 +125,7 @@ class _FirmwareBLEPageState extends State<FirmwareBLEPage> {
         print("SHA-256 Checksum: $hex");
         return hex;
       } else {
-        print('bootFile.txt not found.');
+        print('gembootFile.txt not found.');
         return null;
       }
     } catch (e) {
@@ -201,7 +201,7 @@ class _FirmwareBLEPageState extends State<FirmwareBLEPage> {
   Future<void> readBootFileStringWithSize() async {
     try {
       Directory appDocDir = await getApplicationDocumentsDirectory();
-      String filePath = '${appDocDir.path}/bootFile.txt';
+      String filePath = '${appDocDir.path}/gembootFile.txt';
       File file = File(filePath);
         if (await file.exists()) {
         List<int> contentsBytes = await file.readAsBytes();
@@ -219,7 +219,7 @@ class _FirmwareBLEPageState extends State<FirmwareBLEPage> {
          final checksum = await calculateSHA256Checksum(filePath);
         fileChecksumSize = checksum as String;
         } else {
-        print('bootFile.txt not found.');
+        print('gembootFile.txt not found.');
       }
     } catch (e) {
       print('Error reading file: $e');
@@ -232,10 +232,10 @@ class _FirmwareBLEPageState extends State<FirmwareBLEPage> {
 
       if (await file.exists()) {
         String contents = await file.readAsString();
-        print('bootFile.txt contents$contents');
+        print('gembootFile.txt contents$contents');
         return contents.trim();
       } else {
-        print('bootFile.txt not found.');
+        print('gembootFile.txt not found.');
         return null;
       }
     } catch (e) {
