@@ -295,11 +295,11 @@ class _AIChatScreenState extends State<AIChatScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
+      endDrawer: Drawer(
         child: Column(
           children: [
-            DrawerHeader(
-              child: const Align(
+            const DrawerHeader(
+              child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Chat History',
@@ -376,6 +376,19 @@ class _AIChatScreenState extends State<AIChatScreen> {
       ),
       appBar: AppBar(
         title: const Text('AI Assistant'),
+        actions: [
+          Builder(
+            builder: (BuildContext context) {
+              return IconButton(
+                icon: const Icon(Icons.history),
+                onPressed: () {
+                  Scaffold.of(context).openEndDrawer();
+                },
+                tooltip: 'Open Chat History',
+              );
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -397,7 +410,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
             controller: _controller,
             onSend: _sendMessage,
             onPickImage: _pickImage,
-            selectedImage: _selectedImage, // Pass the selected image
+            selectedImage: _selectedImage,
           ),
         ],
       ),
