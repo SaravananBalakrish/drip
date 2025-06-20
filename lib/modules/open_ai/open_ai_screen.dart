@@ -2,101 +2,320 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Message {
   final String role;
   final String content;
+  final String? text;
   final bool isImage;
   final String? source;
   final DateTime timestamp;
+  final String chatId;
 
   Message({
     required this.role,
     required this.content,
     this.isImage = false,
     this.source,
+    this.text,
     required this.timestamp,
+    required this.chatId,
   });
+
+  Map<String, dynamic> toJson() => {
+    'role': role,
+    'content': content,
+    'isImage': isImage,
+    'source': source,
+    'text': text,
+    'timestamp': timestamp.toIso8601String(),
+    'chatId': chatId,
+  };
+
+  factory Message.fromJson(Map<String, dynamic> json) => Message(
+    role: json['role'],
+    content: json['content'],
+    isImage: json['isImage'] ?? false,
+    source: json['source'],
+    text: json['text'],
+    timestamp: DateTime.parse(json['timestamp']),
+    chatId: json['chatId'],
+  );
+}
+
+class Chat {
+  final String id;
+  final String title;
+  final DateTime lastModified;
+
+  Chat({required this.id, required this.title, required this.lastModified});
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'lastModified': lastModified.toIso8601String(),
+  };
+
+  factory Chat.fromJson(Map<String, dynamic> json) => Chat(
+    id: json['id'],
+    title: json['title'],
+    lastModified: DateTime.parse(json['lastModified']),
+  );
 }
 
 class AIChatScreen extends StatefulWidget {
   const AIChatScreen({super.key});
-
   @override
   State<AIChatScreen> createState() => _AIChatScreenState();
 }
 
 class _AIChatScreenState extends State<AIChatScreen> {
   final TextEditingController _controller = TextEditingController();
-  final List<Message> _messages = [];
+  List<Message> _messages = [];
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
+  File? _selectedImage;
+  String? _imageSource;
+  List<Chat> _chatHistory = [];
+  String _currentChatId = '';
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     _initPermissions();
+    _loadChatHistory();
   }
 
   Future<void> _initPermissions() async {
     await [Permission.camera, Permission.photos].request();
   }
 
-  Future<void> _sendMessage() async {
-    if (_controller.text.isEmpty) return;
-
-    final userMessage = Message(
-      role: 'user',
-      content: _controller.text,
-      timestamp: DateTime.now(),
-    );
-
+  Future<void> _loadChatHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final chatList = prefs.getStringList('chat_history') ?? [];
     setState(() {
-      _messages.add(userMessage);
-      _controller.clear();
-      _isLoading = true;
+      _chatHistory = chatList
+          .map((chat) => Chat.fromJson(jsonDecode(chat)))
+          .toList()
+          .reversed
+          .toList();
+      if (_chatHistory.isNotEmpty) {
+        _currentChatId = _chatHistory.first.id;
+        _loadMessages(_currentChatId);
+      } else {
+        _startNewChat();
+      }
     });
+  }
+
+  Future<void> _loadMessages(String chatId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final messageList = prefs.getStringList('messages_$chatId') ?? [];
+    setState(() {
+      _messages = messageList.map((msg) => Message.fromJson(jsonDecode(msg))).toList();
+    });
+    _scrollToBottom();
+  }
+
+  Future<void> _saveMessage(Message message) async {
+    final prefs = await SharedPreferences.getInstance();
+    _messages.add(message);
+    final messageList = _messages.map((msg) => jsonEncode(msg.toJson())).toList();
+    await prefs.setStringList('messages_$_currentChatId', messageList);
+    _updateChatHistory();
+    _scrollToBottom();
+  }
+
+  Future<void> _saveChatHistory() async {
+    final prefs = await SharedPreferences.getInstance();
+    final chatList = _chatHistory.map((chat) => jsonEncode(chat.toJson())).toList();
+    await prefs.setStringList('chat_history', chatList);
+  }
+
+  void _updateChatHistory() {
+    final chatIndex = _chatHistory.indexWhere((chat) => chat.id == _currentChatId);
+    if (chatIndex != -1 && _messages.isNotEmpty) {
+      setState(() {
+        _chatHistory[chatIndex] = Chat(
+          id: _currentChatId,
+          title: _messages.first.text != null && _messages.first.text!.isNotEmpty
+              ? (_messages.first.text!.length > 30
+              ? '${_messages.first.text!.substring(0, 30)}...'
+              : _messages.first.text!)
+              : _messages.first.isImage
+              ? 'Image Message'
+              : (_messages.first.content.length > 30
+              ? '${_messages.first.content.substring(0, 30)}...'
+              : _messages.first.content),
+          lastModified: DateTime.now(),
+        );
+      });
+      _saveChatHistory();
+    }
+  }
+
+  void _startNewChat() {
+    setState(() {
+      _currentChatId = DateTime.now().millisecondsSinceEpoch.toString();
+      _messages = [];
+      _chatHistory.insert(
+        0,
+        Chat(
+          id: _currentChatId,
+          title: 'New Chat',
+          lastModified: DateTime.now(),
+        ),
+      );
+    });
+    _saveChatHistory();
+  }
+
+  Future<void> _deleteChat(String chatId) async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _chatHistory.removeWhere((chat) => chat.id == chatId);
+      if (_currentChatId == chatId) {
+        _messages = [];
+        if (_chatHistory.isNotEmpty) {
+          _currentChatId = _chatHistory.first.id;
+          _loadMessages(_currentChatId);
+        } else {
+          _startNewChat();
+        }
+      }
+    });
+    await prefs.remove('messages_$chatId');
+    await _saveChatHistory();
+  }
+
+  void _scrollToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          _scrollController.position.maxScrollExtent,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOut,
+        );
+      }
+    });
+  }
+
+
+  Future<void> _sendMessage() async {
+    if (_controller.text.isEmpty && _selectedImage == null) return;
+
+    setState(() => _isLoading = true);
 
     try {
-      // Simulate API call
-      final uri = Uri.parse('https://api.openai.com/v1/chat/completions');
-      final headers = {
-        'Authorization': 'Bearer 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',
-        'Content-Type': 'application/json',
-      };
-      final body = jsonEncode({
-        "model": "gpt-3.5-turbo",
-        "messages": [
-          {"role": "user", "content": _controller.text}
-        ]
-      });
-
-      final response = await http.post(uri, headers: headers, body: body);
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final reply = data['choices'][0]['message']['content'];
+      if (_selectedImage != null) {
+        final bytes = await _selectedImage!.readAsBytes();
+        final base64Image = base64Encode(bytes);
+        final userMessage = Message(
+          role: 'user',
+          content: base64Image,
+          isImage: true,
+          source: _imageSource,
+          text: _controller.text.isNotEmpty ? _controller.text : null,
+          timestamp: DateTime.now(),
+          chatId: _currentChatId,
+        );
+        await _saveMessage(userMessage);
+        await _sendImageMessage(base64Image);
         setState(() {
-          _messages.add(Message(
-            role: 'assistant',
-            content: reply,
-            timestamp: DateTime.now(),
-          ));
+          _selectedImage = null;
+          _imageSource = null;
+          _controller.clear();
         });
       } else {
-        setState(() {
-          _messages.add(Message(
-            role: 'assistant',
-            content: 'Failed to get response.',
-            timestamp: DateTime.now(),
-          ));
-        });
+        final userMessage = Message(
+          role: 'user',
+          content: _controller.text,
+          timestamp: DateTime.now(),
+          chatId: _currentChatId,
+        );
+        await _saveMessage(userMessage);
+        await _sendTextMessage(userMessage.content);
+        setState(() => _controller.clear());
       }
     } catch (e) {
-      _showError('Failed to get response: $e');
+      _showError('Error: $e');
     } finally {
       setState(() => _isLoading = false);
+    }
+  }
+
+  Future<void> _sendTextMessage(String text) async {
+    final uri = Uri.parse('https://api.openai.com/v1/chat/completions');
+    final headers = {
+      'Authorization': 'Bearer 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', // Replace with your API key
+      'Content-Type': 'application/json',
+    };
+    final body = jsonEncode({
+      'model': 'gpt-3.5-turbo',
+      'messages': [
+        {'role': 'user', 'content': text}
+      ],
+    });
+
+    final response = await http.post(uri, headers: headers, body: body);
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final assistantMessage = Message(
+        role: 'assistant',
+        content: data['choices'][0]['message']['content'],
+        timestamp: DateTime.now(),
+        chatId: _currentChatId,
+      );
+      await _saveMessage(assistantMessage);
+    } else {
+      _showError('Text request failed: ${response.statusCode}');
+    }
+  }
+
+  Future<void> _sendImageMessage(String base64Image) async {
+    final headers = {
+      'Authorization': 'Bearer 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', // Replace with your API key
+      'Content-Type': 'application/json',
+    };
+    final body = jsonEncode({
+      'model': 'gpt-4o-mini',
+      'messages': [
+        {
+          'role': 'user',
+          'content': [
+            {
+              'type': 'image_url',
+              'image_url': {'url': 'data:image/jpeg;base64,$base64Image'},
+            },
+            {
+              'type': 'text',
+              'text': _controller.text.isNotEmpty ? _controller.text : 'What is in this image?',
+            },
+          ],
+        },
+      ],
+      'max_tokens': 300,
+    });
+
+    final uri = Uri.parse('https://api.openai.com/v1/chat/completions');
+    final response = await http.post(uri, headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      final assistantMessage = Message(
+        role: 'assistant',
+        content: data['choices'][0]['message']['content'],
+        timestamp: DateTime.now(),
+        chatId: _currentChatId,
+      );
+      await _saveMessage(assistantMessage);
+    } else {
+      _showError('Image request failed: ${response.statusCode}');
     }
   }
 
@@ -109,18 +328,8 @@ class _AIChatScreenState extends State<AIChatScreen> {
     final image = await _picker.pickImage(source: source, imageQuality: 80);
     if (image != null) {
       setState(() {
-        _messages.add(Message(
-          role: 'user',
-          content: image.path,
-          isImage: true,
-          source: source == ImageSource.camera ? 'camera' : 'gallery',
-          timestamp: DateTime.now(),
-        ));
-        _messages.add(Message(
-          role: 'assistant',
-          content: 'Image received.',
-          timestamp: DateTime.now(),
-        ));
+        _selectedImage = File(image.path);
+        _imageSource = source == ImageSource.camera ? 'camera' : 'gallery';
       });
     }
   }
@@ -132,18 +341,97 @@ class _AIChatScreenState extends State<AIChatScreen> {
 
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), action: SnackBarAction(label: 'Retry', onPressed: _sendMessage)),
+      SnackBar(
+        content: Text(message),
+        backgroundColor: Colors.red,
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: Drawer(
+        child: Column(
+          children: [
+            DrawerHeader(
+              child: const Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Chat History',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.add),
+              title: const Text('New Chat'),
+              onTap: () {
+                Navigator.pop(context);
+                _startNewChat();
+              },
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _chatHistory.length,
+                itemBuilder: (context, index) {
+                  final chat = _chatHistory[index];
+                  return ListTile(
+                    leading: const Icon(Icons.chat),
+                    title: Text(chat.title),
+                    subtitle: Text(
+                      DateFormat('MMM d, yyyy').format(chat.lastModified),
+                      style: const TextStyle(fontSize: 12),
+                    ),
+                    selected: chat.id == _currentChatId,
+                    onTap: () {
+                      setState(() {
+                        _currentChatId = chat.id;
+                        _loadMessages(chat.id);
+                      });
+                      Navigator.pop(context);
+                    },
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) => AlertDialog(
+                            title: const Text('Delete Chat'),
+                            content: const Text(
+                                'Are you sure you want to delete this chat?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () => Navigator.pop(context),
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  _deleteChat(chat.id);
+                                  Navigator.pop(context);
+                                },
+                                child: const Text(
+                                  'Delete',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
       appBar: AppBar(
         title: const Text('AI Assistant'),
-        actions: [
-          IconButton(icon: const Icon(Icons.delete), onPressed: () => setState(() => _messages.clear())),
-        ],
       ),
       body: Column(
         children: [
@@ -165,6 +453,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
             controller: _controller,
             onSend: _sendMessage,
             onPickImage: _pickImage,
+            selectedImage: _selectedImage, // Pass the selected image
           ),
         ],
       ),
@@ -174,61 +463,135 @@ class _AIChatScreenState extends State<AIChatScreen> {
 
 class MessageBubble extends StatelessWidget {
   final Message message;
+
   const MessageBubble({super.key, required this.message});
 
   @override
   Widget build(BuildContext context) {
     final isUser = message.role == 'user';
-    return Align(
-      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: isUser ? Colors.blueAccent : Colors.grey[300],
-          borderRadius: BorderRadius.circular(15).copyWith(
-            bottomLeft: Radius.circular(isUser ? 15 : 0),
-            bottomRight: Radius.circular(isUser ? 0 : 15),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (message.isImage)
-              GestureDetector(
-                onTap: () => _showFullImage(context, message.content),
-                child: Image.file(
-                  File(message.content),
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => const Text('Error loading image'),
-                ),
-              )
-            else
-              Text(
-                message.content,
-                style: TextStyle(color: isUser ? Colors.white : Colors.black),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Column(
+        crossAxisAlignment: isUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Text(
+              isUser ? 'You' : 'AI Assistant',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w600,
               ),
-            if (message.source != null)
-              Text(
-                'Source: ${message.source}',
-                style: const TextStyle(fontSize: 10, fontStyle: FontStyle.italic),
-              ),
-            Text(
-              '${message.timestamp.hour}:${message.timestamp.minute}',
-              style: const TextStyle(fontSize: 10, color: Colors.black54),
             ),
-          ],
-        ),
+          ),
+          Align(
+            alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.75,
+              ),
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: isUser
+                        ? [Theme.of(context).primaryColor, Colors.blueAccent]
+                        : [Colors.grey[200]!, Colors.grey[300]!],
+                  ),
+                  borderRadius: BorderRadius.circular(20).copyWith(
+                    bottomLeft: Radius.circular(isUser ? 20 : 5),
+                    bottomRight: Radius.circular(isUser ? 5 : 20),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 3,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (message.isImage)
+                      GestureDetector(
+                        onTap: () => _showFullImage(context, message.content),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.memory(
+                            base64Decode(message.content),
+                            width: 150,
+                            height: 150,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) => const Icon(Icons.error),
+                          ),
+                        ),
+                      ),
+                    if (message.text != null || !message.isImage)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8),
+                        child: Text(
+                          message.isImage ? message.text! : message.content,
+                          style: TextStyle(
+                            color: isUser ? Colors.white : Colors.black87,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ),
+                    if (message.source != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Text(
+                          'Source: ${message.source}',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: isUser ? Colors.white70 : Colors.grey[600],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        DateFormat('h:mm a').format(message.timestamp),
+                        style: TextStyle(
+                          fontSize: 10,
+                          color: isUser ? Colors.white70 : Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  void _showFullImage(BuildContext context, String path) {
+  void _showFullImage(BuildContext context, String base64Image) {
     showDialog(
       context: context,
-      builder: (_) => Dialog(child: Image.file(File(path))),
+      builder: (_) => Dialog(
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.9,
+            maxHeight: MediaQuery.of(context).size.height * 0.9,
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Image.memory(
+              base64Decode(base64Image),
+              fit: BoxFit.contain,
+              errorBuilder: (_, __, ___) => const Icon(Icons.error),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -237,12 +600,14 @@ class ChatInputField extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onSend;
   final Function(ImageSource) onPickImage;
+  final File? selectedImage;
 
   const ChatInputField({
     super.key,
     required this.controller,
     required this.onSend,
     required this.onPickImage,
+    this.selectedImage,
   });
 
   @override
@@ -255,23 +620,61 @@ class ChatInputField extends StatelessWidget {
         borderRadius: BorderRadius.circular(25),
         boxShadow: [BoxShadow(color: Colors.grey[300]!, blurRadius: 5)],
       ),
-      child: Row(
+      child: Column(
         children: [
-          IconButton(
-            icon: const Icon(Icons.attach_file),
-            onPressed: () => _showAttachmentOptions(context),
-          ),
-          Expanded(
-            child: TextField(
-              controller: controller,
-              decoration: const InputDecoration(
-                hintText: 'Type a message...',
-                border: InputBorder.none,
+          if (selectedImage != null) // Show image preview if an image is selected
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0),
+              child: Stack(
+                children: [
+                  Image.file(
+                    selectedImage!,
+                    height: 100,
+                    width: 100,
+                    fit: BoxFit.cover,
+                  ),
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.close, color: Colors.red),
+                      onPressed: () {
+                        // Clear the selected image
+                        (context as Element)
+                            .findAncestorStateOfType<_AIChatScreenState>()
+                            ?.setState(() {
+                          (context as Element)
+                              .findAncestorStateOfType<_AIChatScreenState>()
+                              ?._selectedImage = null;
+                          (context as Element)
+                              .findAncestorStateOfType<_AIChatScreenState>()
+                              ?._imageSource = null;
+                        });
+                      },
+                    ),
+                  ),
+                ],
               ),
-              onSubmitted: (_) => onSend(),
             ),
+          Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.attach_file),
+                onPressed: () => _showAttachmentOptions(context),
+              ),
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  decoration: const InputDecoration(
+                    hintText: 'Type a message...',
+                    border: InputBorder.none,
+                  ),
+                  onSubmitted: (_) => onSend(),
+                ),
+              ),
+              IconButton(icon: const Icon(Icons.send), onPressed: onSend),
+            ],
           ),
-          IconButton(icon: const Icon(Icons.send), onPressed: onSend),
         ],
       ),
     );
