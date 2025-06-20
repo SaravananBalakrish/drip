@@ -11,6 +11,7 @@ class DeviceObjectModel {
   int? controllerId;
   String? count;
   int? connectedObject;
+  List<double> assignObject;
   int? siteMode;
   double? location;
 
@@ -24,6 +25,7 @@ class DeviceObjectModel {
     this.controllerId,
     this.count,
     this.connectedObject,
+    required this.assignObject,
     this.siteMode,
     this.location,
   });
@@ -40,6 +42,7 @@ class DeviceObjectModel {
       controllerId: data['controllerId'],
       count: data['count'],
       connectedObject: data['connectedObject'],
+      assignObject: data['assignObject'] ?? [],
       siteMode: data['siteMode'],
       location: (data['location'] == 0 ? 0.0 : data['location']) ?? 0.00,
     );
@@ -56,6 +59,7 @@ class DeviceObjectModel {
       'controllerId': controllerId,
       'count': count,
       'connectedObject': connectedObject,
+      'assignObject': assignObject,
       'siteMode': siteMode,
       if(data != null)
         'location' : AppConstants.findLocation(data: data, objectSno: sNo!, key: 'sNo')
