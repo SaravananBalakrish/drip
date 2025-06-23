@@ -16,7 +16,7 @@ import '../view/connection.dart';
 
 class ConfigMakerProvider extends ChangeNotifier{
   double ratio = 1.0;
-  ConfigMakerTabs selectedTab = ConfigMakerTabs.siteConfigure;
+  ConfigMakerTabs selectedTab = ConfigMakerTabs.deviceList;
   Map<String, dynamic> configMakerDataFromHttp = {};
   Map<String, dynamic> defaultDataFromHttp = {};
   Map<int, String> configurationTab = {
@@ -124,8 +124,6 @@ class ConfigMakerProvider extends ChangeNotifier{
     );
   }
 
-
-
   Future<List<DeviceModel>> fetchData(masterDataFromSiteConfigure)async {
     await Future.delayed(const Duration(seconds: 0));
 
@@ -215,9 +213,20 @@ class ConfigMakerProvider extends ChangeNotifier{
         return a.serialNumber!.compareTo(b.serialNumber!);
       });
 
-      listOfSampleObjectModel = configMakerData['productLimit'].isNotEmpty
-          ? (configMakerData['productLimit'] as List<dynamic>).map((object) => DeviceObjectModel.fromJson(object)).toList()
-          : (defaultData['objectType'] as List<dynamic>).map(mapToDeviceObject).toList();
+      for(var obj in defaultData['objectType']){
+        if(configMakerData['productLimit'].isNotEmpty){
+          var oldObject = (configMakerData['productLimit'] as List<dynamic>).firstWhere(
+                (object) => object['objectId'] == obj['objectTypeId'],
+            orElse: () => null, // if not found, return null
+          );
+          if(oldObject == null){
+            listOfSampleObjectModel.add(mapToDeviceObject(obj));
+          }else{
+            listOfSampleObjectModel.add(DeviceObjectModel.fromJson(oldObject));
+          }
+        }
+      }
+
       listOfObjectModelConnection = configMakerData['connectionCount'].isNotEmpty
           ? (configMakerData['connectionCount'] as List<dynamic>).map((object) => DeviceObjectModel.fromJson(object)).toList()
           : (defaultData['objectType'] as List<dynamic>).map(mapToDeviceObject).toList();
