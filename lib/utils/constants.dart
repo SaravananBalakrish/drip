@@ -653,8 +653,19 @@ class AppConstants {
   static int phObjectId = 28;
   static int moistureObjectId = 25;
   static int soilTemperatureObjectId = 30;
+  static int pesticideObjectId = 18;
+  static int ventObjectId = 18;
+  static int co2ObjectId = 33;
+  static int screenObjectId = 21;
+  static int humidityObjectId = 36;
+  static int heaterObjectId = 17;
+  static int foggerObjectId = 16;
+  static int mistObjectId = 44;
+  static int fanObjectId = 15;
+  static int temperatureObjectId = 29;
   static int powerSupplyObjectId = 42;
   static int lightObjectId = 19;
+  static int gateObjectId = 43;
 
   static List<int> pumpWithValveModelList = [48, 49];
   static List<int> ecoGemModelList = [3];

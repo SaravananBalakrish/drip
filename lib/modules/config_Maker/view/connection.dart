@@ -89,7 +89,7 @@ class _ConnectionState extends State<Connection> {
                         getModelBySelectedCategory(),
                         const SizedBox(height: 5,),
                         Text(selectedDevice.modelName),
-                        if(!AppConstants.weatherModelList.contains(selectedDevice.categoryId))
+                        if(!AppConstants.weatherModelList.contains(selectedDevice.modelId))
                           SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
