@@ -16,7 +16,7 @@ import '../view/connection.dart';
 
 class ConfigMakerProvider extends ChangeNotifier{
   double ratio = 1.0;
-  ConfigMakerTabs selectedTab = ConfigMakerTabs.deviceList;
+  ConfigMakerTabs selectedTab = ConfigMakerTabs.siteConfigure;
   Map<String, dynamic> configMakerDataFromHttp = {};
   Map<String, dynamic> defaultDataFromHttp = {};
   Map<int, String> configurationTab = {
@@ -37,7 +37,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     5 : AppConstants.irrigationLineObjectId,
   };
 
-  int selectedConfigurationTab = 0;
+  int selectedConfigurationTab = 5;
   SelectionMode selectedSelectionMode = SelectionMode.auto;
   int selectedConnectionNo = 0;
   String selectedType = '';
@@ -302,7 +302,28 @@ class ConfigMakerProvider extends ChangeNotifier{
               );
             }else if(deviceObjectModel.objectId == AppConstants.irrigationLineObjectId){
               line.add(
-                  IrrigationLineModel(commonDetails: deviceObjectModel, sourcePump: [], irrigationPump: [], valve: [], mainValve: [], fan: [], fogger: [], pesticides: [], heater: [], screen: [], vent: [], moisture: [], temperature: [], soilTemperature: [], humidity: [], co2: [], weatherStation: [])
+                  IrrigationLineModel(
+                      commonDetails: deviceObjectModel,
+                      sourcePump: [],
+                      irrigationPump: [],
+                      valve: [],
+                      mainValve: [],
+                      light: [],
+                      gate: [],
+                      fan: [],
+                      fogger: [],
+                      mist: [],
+                      pesticides: [],
+                      heater: [],
+                      screen: [],
+                      vent: [],
+                      moisture: [],
+                      temperature: [],
+                      soilTemperature: [],
+                      humidity: [],
+                      co2: [],
+                      weatherStation: []
+                  )
               );
             }
           }
@@ -623,12 +644,24 @@ class ConfigMakerProvider extends ChangeNotifier{
         }else if(parameter == LineParameter.moisture){
           irrigationLine.moisture.clear();
           irrigationLine.moisture.addAll(listOfSelectedSno);
+        }else if(parameter == LineParameter.light){
+          irrigationLine.light.clear();
+          irrigationLine.light.addAll(listOfSelectedSno);
+        }else if(parameter == LineParameter.gate){
+          irrigationLine.gate.clear();
+          irrigationLine.gate.addAll(listOfSelectedSno);
         }else if(parameter == LineParameter.fan){
           irrigationLine.fan.clear();
           irrigationLine.fan.addAll(listOfSelectedSno);
         }else if(parameter == LineParameter.fogger){
           irrigationLine.fogger.clear();
           irrigationLine.fogger.addAll(listOfSelectedSno);
+        }else if(parameter == LineParameter.mist){
+          irrigationLine.mist.clear();
+          irrigationLine.mist.addAll(listOfSelectedSno);
+        }else if(parameter == LineParameter.mist){
+          irrigationLine.mist.clear();
+          irrigationLine.mist.addAll(listOfSelectedSno);
         }else if(parameter == LineParameter.pesticides){
           irrigationLine.pesticides.clear();
           irrigationLine.pesticides.addAll(listOfSelectedSno);
