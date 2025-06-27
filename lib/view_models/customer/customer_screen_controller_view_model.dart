@@ -120,16 +120,21 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   }
 
   void _subscribeToDeviceTopic() async {
-    final deviceId = mySiteList.data[sIndex].master[mIndex].deviceId;
-    if (deviceId.isEmpty) {
-      debugPrint("No device ID found");
-      return;
+    if(mySiteList.data.isNotEmpty){
+      final deviceId = mySiteList.data[sIndex].master[mIndex].deviceId;
+      if (deviceId.isEmpty) {
+        debugPrint("No device ID found");
+        return;
+      }
+
+      final topic = '${AppConstants.subscribeTopic}/$deviceId';
+      await mqttService.topicToSubscribe(topic);
+
+      Future.delayed(const Duration(seconds: 2), onRefreshClicked);
+    }else{
+      print('site data fetching from server...');
     }
 
-    final topic = '${AppConstants.subscribeTopic}/$deviceId';
-    await mqttService.topicToSubscribe(topic);
-
-    Future.delayed(const Duration(seconds: 2), onRefreshClicked);
   }
 
   void updateLivePayload(int ws, String liveDataAndTime, List<String> cProgram, List<String> linePauseResume) {
