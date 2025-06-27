@@ -515,9 +515,12 @@ class AppConstants {
         return 'Pump-based conditions such as program ON/OFF logic.';
       case 'Controller Log':
         return 'Controller live trace and Logs';
+      case 'Crop Advisory':
+        return 'Get AI-powered guidance for your crop';
       default:
         return 'No additional information available.';
     }
+
   }
 
   static dynamic findLocation({required data, required double objectSno, required String key}) {
