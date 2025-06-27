@@ -53,12 +53,12 @@ class MasterControllerModel {
   final int modelId;
   final String modelName;
 
-  final int interfaceTypeId;
+  final String interfaceTypeId;
   final String interface;
-  final int relayOutput;
-  final int latchOutput;
-  final int analogInput;
-  final int digitalInput;
+  final String relayOutput;
+  final String latchOutput;
+  final String analogInput;
+  final String digitalInput;
 
   int? communicationMode;
   List<ConfigObject> configObjects;

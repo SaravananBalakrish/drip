@@ -367,7 +367,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
         }
       }
     } catch (error) {
-      errorMsg = 'Error fetching site list: $error';
+      //errorMsg = 'Error fetching site list: $error';
     }
   }
 
