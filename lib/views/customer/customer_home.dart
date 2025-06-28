@@ -1020,7 +1020,6 @@ class SensorWidget extends StatelessWidget {
                           showPopover(
                             context: context,
                             bodyBuilder: (context) {
-
                               List<CartesianSeries<dynamic, String>> series = [
                                 LineSeries<SensorHourlyData, String>(
                                   dataSource: sensorDataList,
@@ -1038,7 +1037,6 @@ class SensorWidget extends StatelessWidget {
                                   name: sensor.name ?? 'Sensor',
                                 ),
                               ];
-
                               return kIsWeb? Column(
                                 children: [
                                   Row(
@@ -1254,7 +1252,6 @@ class SensorWidget extends StatelessWidget {
                                       series: series,
                                     ),
                                   ),
-
                                 ],
                               );
                             },
