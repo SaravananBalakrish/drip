@@ -158,7 +158,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
       32: 'km/h',
       33: 'ppm',
       34: 'lx',
-      35: '',
+      35: 'Lu',
       36: '%',
       37: '%',
       38: 'MM',
