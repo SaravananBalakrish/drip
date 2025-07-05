@@ -532,9 +532,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     //   print('generated : ${obj.toJson()}');
     // }
 
-
     notifyListeners();
-
   }
 
   void updateObjectConnectionForPowerSupply(DeviceObjectModel selectedConnectionObject, bool value ){
