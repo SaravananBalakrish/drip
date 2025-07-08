@@ -193,6 +193,7 @@ class CustomerDeviceListViewModel extends ChangeNotifier {
     try {
       var response = await repository.fetchMasterProductStock(body);
       if (response.statusCode == 200) {
+        print(response.body);
         final Map<String, dynamic> jsonData = jsonDecode(response.body);
         if(jsonData["code"] == 200){
           myMasterControllerList.clear();
