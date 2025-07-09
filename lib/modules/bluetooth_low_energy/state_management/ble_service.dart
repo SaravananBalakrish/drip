@@ -133,6 +133,7 @@ class BleProvider extends ChangeNotifier {
   Map<String, dynamic> nodeDataFromServer = {};
   String nodeFirmwareFileName = '';
   Map<String, dynamic> nodeData = {};
+  List<String> loraModel = ['40'];
 
   void editNodeDataFromServer(data, nodeData){
     nodeDataFromServer = data;
@@ -674,9 +675,16 @@ class BleProvider extends ChangeNotifier {
         List<SftpName> listOfFile = await sftpService.listFilesInPath(nodeDataFromServer['pathSetting']['downloadDirectory']);
         for(var file in listOfFile){
           print(file);
-          if(file.filename.contains('version')){
-            nodeFirmwareFileName = file.filename;
+          if(loraModel.contains(nodeDataFromHw['MID'])){
+            if(file.filename.contains('lora')){
+              nodeFirmwareFileName = file.filename;
+            }
+          }else{
+            if(file.filename.contains('version')){
+              nodeFirmwareFileName = file.filename;
+            }
           }
+
         }
         if(nodeFirmwareFileName.isNotEmpty){
           fileMode = FileMode.fileNameGetSuccess;
@@ -883,7 +891,7 @@ class BleProvider extends ChangeNotifier {
         ...fileLengthName,
         ...crcFormatFileSizeStringList
       ];
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
       await sendToHardware?.write(finalOutPutOfCrcAndFileSize,
           withoutResponse:
           sendToHardware!.properties.writeWithoutResponse);
@@ -891,11 +899,9 @@ class BleProvider extends ChangeNotifier {
       for (var crc in finalOutPutOfCrcAndFileSize) {
         sentAndReceive.add('${crc.toRadixString(16).padLeft(2, '0')}');
       }
-
       sentAndReceive.add('file size ==> ${fileSize}');
       waitingForCrcPassOrCrcFail();
       notifyListeners();
-
     } catch (e) {
       print('Error on crc & others => ${e.toString()}');
     }
