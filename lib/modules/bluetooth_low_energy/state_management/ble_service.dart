@@ -133,7 +133,7 @@ class BleProvider extends ChangeNotifier {
   Map<String, dynamic> nodeDataFromServer = {};
   String nodeFirmwareFileName = '';
   Map<String, dynamic> nodeData = {};
-  List<String> loraModel = ['40'];
+  List<String> loraModel = ['40', '41', '42'];
 
   void editNodeDataFromServer(data, nodeData){
     nodeDataFromServer = data;
