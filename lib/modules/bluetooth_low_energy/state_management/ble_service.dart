@@ -126,9 +126,6 @@ class BleProvider extends ChangeNotifier {
   String calibrationPh1 = 'ph1';
   String calibrationPh2 = 'ph2';
 
-
-
-
   /* server variable*/
   Map<String, dynamic> nodeDataFromServer = {};
   String nodeFirmwareFileName = '';
@@ -146,7 +143,6 @@ class BleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   String connectionState(){
     if(bleConnectionState == BluetoothConnectionState.connected){
       return "Connected";
@@ -156,7 +152,6 @@ class BleProvider extends ChangeNotifier {
       return "Connecting...";
     }
   }
-
 
   void autoScanAndFoundDevice({required String macAddressToConnect}) async{
     bleNodeState = BleNodeState.scanning;
