@@ -1160,7 +1160,7 @@ class _StandAloneState extends State<StandAlone> with SingleTickerProviderStateM
                               DataCell(
                                 Center(
                                   child: Image.asset(
-                                    'assets/png/gate_close.png',
+                                    'assets/png/gate_gray.png',
                                     width: 25,
                                     height: 25,
                                   ),
