@@ -53,16 +53,10 @@ enum FileMode{
   bootFail,
 }
 
-enum EcCalibrationMode{ecOneGetFirst, ecOneGetSecond, ecTwoGetFirst, ecTwoGetSecond,}
-
-enum PhCalibrationMode{phOneGetFirst, phOneGetSecond, phTwoGetFirst, phTwoGetSecond,}
-
 class BleProvider extends ChangeNotifier {
   BleNodeState bleNodeState = BleNodeState.bluetoothOff;
   TraceMode traceMode = TraceMode.traceOff;
   FileMode fileMode = FileMode.idle;
-  EcCalibrationMode ecCalibrationMode = EcCalibrationMode.ecOneGetFirst;
-  PhCalibrationMode phCalibrationMode = PhCalibrationMode.phOneGetFirst;
 
   /*scanning variables*/
   late StreamSubscription<List<ScanResult>> _scanResultsSubscription;
@@ -104,7 +98,6 @@ class BleProvider extends ChangeNotifier {
   final List<String> sentAndReceive = [];
   int developerOption = 0;
 
-
   /*controller variable*/
   ScrollController traceScrollController = ScrollController();
   TextEditingController frequency = TextEditingController();
@@ -126,13 +119,11 @@ class BleProvider extends ChangeNotifier {
   String calibrationPh1 = 'ph1';
   String calibrationPh2 = 'ph2';
 
-
-
-
   /* server variable*/
   Map<String, dynamic> nodeDataFromServer = {};
   String nodeFirmwareFileName = '';
   Map<String, dynamic> nodeData = {};
+  List<String> loraModel = ['40', '41', '42'];
 
   void editNodeDataFromServer(data, nodeData){
     nodeDataFromServer = data;
@@ -145,7 +136,6 @@ class BleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-
   String connectionState(){
     if(bleConnectionState == BluetoothConnectionState.connected){
       return "Connected";
@@ -155,7 +145,6 @@ class BleProvider extends ChangeNotifier {
       return "Connecting...";
     }
   }
-
 
   void autoScanAndFoundDevice({required String macAddressToConnect}) async{
     bleNodeState = BleNodeState.scanning;
@@ -674,9 +663,16 @@ class BleProvider extends ChangeNotifier {
         List<SftpName> listOfFile = await sftpService.listFilesInPath(nodeDataFromServer['pathSetting']['downloadDirectory']);
         for(var file in listOfFile){
           print(file);
-          if(file.filename.contains('version')){
-            nodeFirmwareFileName = file.filename;
+          if(loraModel.contains(nodeDataFromHw['MID'])){
+            if(file.filename.contains('lora')){
+              nodeFirmwareFileName = file.filename;
+            }
+          }else{
+            if(file.filename.contains('version')){
+              nodeFirmwareFileName = file.filename;
+            }
           }
+
         }
         if(nodeFirmwareFileName.isNotEmpty){
           fileMode = FileMode.fileNameGetSuccess;
@@ -883,7 +879,7 @@ class BleProvider extends ChangeNotifier {
         ...fileLengthName,
         ...crcFormatFileSizeStringList
       ];
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
       await sendToHardware?.write(finalOutPutOfCrcAndFileSize,
           withoutResponse:
           sendToHardware!.properties.writeWithoutResponse);
@@ -891,11 +887,9 @@ class BleProvider extends ChangeNotifier {
       for (var crc in finalOutPutOfCrcAndFileSize) {
         sentAndReceive.add('${crc.toRadixString(16).padLeft(2, '0')}');
       }
-
       sentAndReceive.add('file size ==> ${fileSize}');
       waitingForCrcPassOrCrcFail();
       notifyListeners();
-
     } catch (e) {
       print('Error on crc & others => ${e.toString()}');
     }

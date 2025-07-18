@@ -146,6 +146,7 @@ class AppConstants {
   static String mqttUrl = Environment.mqttWebUrl;
   static int mqttWebPort = Environment.mqttWebPort;
   static int mqttMobilePort = Environment.mqttMobilePort;
+  static String mqttMobileUrl = Environment.mqttMobileUrl;
   static String mqttUserName = Environment.mqttUserName;
   static String mqttPassword = Environment.mqttPassword;
 
@@ -222,6 +223,12 @@ class AppConstants {
   static const String valveCwsON = "valve_green_cws.png";
   static const String valveCwsNotON = "valve_orange_cws.png";
   static const String valveCwsNotOFF = "valve_red_cws.png";
+
+  static const String lightOFF = "light_gray.png";
+  static const String lightON = "light_yellow.png";
+
+  static const String gateOFF = "gate_close.png";
+  static const String gateON = "gate_open.png";
 
   static const Map<UserRole, String> formTitle = {
     UserRole.admin: "Dealer Account Form",
@@ -337,6 +344,12 @@ class AppConstants {
         break;
       case 'valve_cws':
         imagePathFinal = _getValveCWSImagePath(keyTwo);
+        break;
+      case 'light':
+        imagePathFinal = _getLightImagePath(keyTwo);
+        break;
+      case 'gate':
+        imagePathFinal = _getGateImagePath(keyTwo);
         break;
 
       default:
@@ -533,6 +546,28 @@ class AppConstants {
     }
   }
 
+  static String _getLightImagePath(int status) {
+    switch (status) {
+      case 0:
+        return lightOFF;
+      case 1:
+        return lightON;
+      default:
+        return '';
+    }
+  }
+
+  static String _getGateImagePath(int status) {
+    switch (status) {
+      case 0:
+        return gateOFF;
+      case 1:
+        return gateON;
+      default:
+        return '';
+    }
+  }
+
   static String getSettingsSummary(String title) {
     switch (title) {
       case 'General':
@@ -684,8 +719,8 @@ class AppConstants {
   static int lightObjectId = 19;
   static int gateObjectId = 43;
 
-  static List<int> pumpWithValveModelList = [48, 49];
-  static List<int> ecoGemModelList = [3];
+  static List<int> pumpWithValveModelList = [48, 49, 52, 53, 53, 55];
+  static List<int> ecoGemModelList = [56, 57, 58, 59];
   static List<int> gemModelList = [1, 2, 4];
   static List<int> weatherModelList = [13, 14];
   static List<int> pumpModelList = [5, 6, 7, 8, 9, 10];

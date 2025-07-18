@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -69,8 +68,6 @@ FutureOr<void> main() async {
       debugPrint('Initialization error: $e');
     }
   }
-
-
 
   /*final mqttService = MqttService();
   final myMqtt = MqttPayloadProvider();*/
