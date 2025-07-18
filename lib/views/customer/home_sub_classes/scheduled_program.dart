@@ -991,12 +991,10 @@ class ScheduledProgram extends StatelessWidget {
 
   void getAdvisory() async {
     try {
-
       Map<String, Object> body = {
         "userId": userId,
         "controllerId": controllerId,
       };
-
       final response = await Repository(HttpService()).fetchSiteAiAdvisoryData(body);
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
@@ -1030,13 +1028,13 @@ class ScheduledProgram extends StatelessWidget {
               final lines = response.trim().split('\n');
               final percent = extractPercentageOnly(lines[0]);
               final reason = lines.skip(1).join('\n').trim();
-
               if (percent != null) {
                 aiResponseNotifier.value = {
                   'percentage': percent,
                   'reason': reason,
                 };
-              } else {
+              }
+              else {
                 aiResponseNotifier.value = {
                   'error': '⚠️Could not extract irrigation percentage.',
                 };

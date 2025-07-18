@@ -63,7 +63,6 @@ class _NamesState extends State<Names> {
   void initState() {
     super.initState();
     _controllers = [];
-
     getData();
   }
 
@@ -74,15 +73,14 @@ class _NamesState extends State<Names> {
     }
     super.dispose();
   }
+
   Widget getTabBarViewWidget() {
     List<String> listOfCategory = uniqueObjectNames;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-
           child: Row(
             spacing: 5,
             mainAxisAlignment: MainAxisAlignment.start,
