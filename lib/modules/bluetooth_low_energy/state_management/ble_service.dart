@@ -53,16 +53,10 @@ enum FileMode{
   bootFail,
 }
 
-enum EcCalibrationMode{ecOneGetFirst, ecOneGetSecond, ecTwoGetFirst, ecTwoGetSecond,}
-
-enum PhCalibrationMode{phOneGetFirst, phOneGetSecond, phTwoGetFirst, phTwoGetSecond,}
-
 class BleProvider extends ChangeNotifier {
   BleNodeState bleNodeState = BleNodeState.bluetoothOff;
   TraceMode traceMode = TraceMode.traceOff;
   FileMode fileMode = FileMode.idle;
-  EcCalibrationMode ecCalibrationMode = EcCalibrationMode.ecOneGetFirst;
-  PhCalibrationMode phCalibrationMode = PhCalibrationMode.phOneGetFirst;
 
   /*scanning variables*/
   late StreamSubscription<List<ScanResult>> _scanResultsSubscription;
@@ -103,7 +97,6 @@ class BleProvider extends ChangeNotifier {
   final List<String> traceData = [];
   final List<String> sentAndReceive = [];
   int developerOption = 0;
-
 
   /*controller variable*/
   ScrollController traceScrollController = ScrollController();

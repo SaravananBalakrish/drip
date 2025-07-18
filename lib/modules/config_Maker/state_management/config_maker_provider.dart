@@ -536,7 +536,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void updateObjectConnectionForPowerSupply(DeviceObjectModel selectedConnectionObject, bool value ){
+  void updateObjectConnectionForPowerSupply(DeviceObjectModel selectedConnectionObject, bool value){
     DeviceModel selectedDevice = listOfDeviceModel.firstWhere((device) => device.controllerId == selectedModelControllerId);
     for(var object in listOfObjectModelConnection){
       if(object.objectId == selectedConnectionObject.objectId){
