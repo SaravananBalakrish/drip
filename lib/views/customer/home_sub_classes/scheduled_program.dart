@@ -9,6 +9,7 @@ import '../../../Models/customer/site_model.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../modules/IrrigationProgram/view/irrigation_program_main.dart';
 import '../../../repository/repository.dart';
+import '../../../services/ai_service.dart';
 import '../../../services/communication_service.dart';
 import '../../../services/http_service.dart';
 import '../../../services/weather_service.dart';
@@ -264,11 +265,9 @@ class ScheduledProgram extends StatelessWidget {
                                     onSelected: (String result) {
                                       if(result=='Edit program'){
                                         bool conditionL = false;
-
                                         if (filteredScheduleProgram[index].conditions.isNotEmpty) {
                                           conditionL = true;
                                         }
-
                                         Navigator.push(
                                           context,
                                           MaterialPageRoute(
@@ -365,16 +364,30 @@ class ScheduledProgram extends StatelessWidget {
                                                             const SizedBox(height: 12),
                                                             Align(
                                                               alignment: Alignment.centerRight,
-                                                              child: ElevatedButton(
-                                                                onPressed: () {
-                                                                  print("✔️ Applied $percent%");
-                                                                  Navigator.of(context).pop();
-                                                                },
-                                                                style: ElevatedButton.styleFrom(
-                                                                  backgroundColor: Theme.of(context).primaryColor,
-                                                                  padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                                                                ),
-                                                                child: const Text('Apply', style: TextStyle(color: Colors.white)),
+                                                              child: Row(
+                                                                mainAxisSize: MainAxisSize.min,
+                                                                children: [
+                                                                  ElevatedButton(
+                                                                    onPressed: () =>Navigator.of(context).pop(),
+                                                                    style: ElevatedButton.styleFrom(
+                                                                      backgroundColor: Colors.red,
+                                                                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                                                                    ),
+                                                                    child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                                                                  ),
+                                                                  const SizedBox(width: 16),
+                                                                  ElevatedButton(
+                                                                    onPressed: () {
+                                                                      print("✔️ Applied $percent%");
+                                                                      Navigator.of(context).pop();
+                                                                    },
+                                                                    style: ElevatedButton.styleFrom(
+                                                                      backgroundColor: Theme.of(context).primaryColor,
+                                                                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                                                                    ),
+                                                                    child: const Text('Apply', style: TextStyle(color: Colors.white)),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
                                                           ],
@@ -636,7 +649,31 @@ class ScheduledProgram extends StatelessWidget {
                             icon: const Icon(Icons.more_vert),
                             onSelected: (String result) {
                               if (result == 'Edit program') {
-                                // Navigate to edit screen
+                                bool conditionL = false;
+                                if (filteredScheduleProgram[index].conditions.isNotEmpty) {
+                                  conditionL = true;
+                                }
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => IrrigationProgram(
+                                      deviceId: deviceId,
+                                      userId: userId,
+                                      controllerId: controllerId,
+                                      serialNumber: scheduledPrograms[index].serialNumber,
+                                      programType: filteredScheduleProgram[index].programType,
+                                      conditionsLibraryIsNotEmpty: conditionL,
+                                      fromDealer: false,
+                                      toDashboard: true,
+                                      groupId: groupId,
+                                      categoryId: categoryId,
+                                      customerId: customerId,
+                                      modelId: modelId,
+                                      deviceName: deviceName,
+                                      categoryName: categoryName,
+                                    ),
+                                  ),
+                                );
                               }
                             },
                             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -712,16 +749,30 @@ class ScheduledProgram extends StatelessWidget {
                                                     const SizedBox(height: 12),
                                                     Align(
                                                       alignment: Alignment.centerRight,
-                                                      child: ElevatedButton(
-                                                        onPressed: () {
-                                                          print("✔️ Applied $percent%");
-                                                          Navigator.of(context).pop();
-                                                        },
-                                                        style: ElevatedButton.styleFrom(
-                                                          backgroundColor: Theme.of(context).primaryColor,
-                                                          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-                                                        ),
-                                                        child: const Text('Apply', style: TextStyle(color: Colors.white)),
+                                                      child: Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          ElevatedButton(
+                                                            onPressed: () =>Navigator.of(context).pop(),
+                                                            style: ElevatedButton.styleFrom(
+                                                              backgroundColor: Colors.red,
+                                                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                                                            ),
+                                                            child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+                                                          ),
+                                                          const SizedBox(width: 16),
+                                                          ElevatedButton(
+                                                            onPressed: () {
+                                                              print("✔️ Applied $percent%");
+                                                              Navigator.of(context).pop();
+                                                            },
+                                                            style: ElevatedButton.styleFrom(
+                                                              backgroundColor: Theme.of(context).primaryColor,
+                                                              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                                                            ),
+                                                            child: const Text('Apply', style: TextStyle(color: Colors.white)),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                   ],
@@ -803,6 +854,7 @@ class ScheduledProgram extends StatelessWidget {
                 condition.conditionStatus = conditionStatus!;
                 condition.actualValue = actualValue;
               } catch (e) {
+                //print(e);
                 // Not found — optionally handle or ignore
               }
             }
@@ -938,49 +990,65 @@ class ScheduledProgram extends StatelessWidget {
   }
 
   void getAdvisory() async {
-    //weather data
     try {
-      final weatherData = await WeatherService().fetchWeather(city: 'Coimbatore');
+      Map<String, Object> body = {
+        "userId": userId,
+        "controllerId": controllerId,
+      };
+      final response = await Repository(HttpService()).fetchSiteAiAdvisoryData(body);
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        if (jsonData["code"] == 200) {
+          final data = jsonData['data'];
+          if (data != null || data.isNotEmpty) {
 
-      aiResponseNotifier.value = null;
+            final weatherData = await WeatherService().fetchWeather(city: data['location']);
+            aiResponseNotifier.value = null;
 
-      final params = IrrigationParams(
-        cropType: 'Rice',
-        soilType: 'Clay',
-        moistureLevel: '60',
-        weather: '${weatherData['rainfall']}',
-        area: '200',
-        growthStage: 'Flowering',
-        temperature: '${weatherData['temperature']}',
-        humidity: '${weatherData['humidity']}',
-        windSpeed: '${weatherData['wind_speed']}',
-        windDirection: '${weatherData['wind_direction']}',
-        cloudCover: '${weatherData['cloud_cover']}',
-        pressure: '${weatherData['pressure']}',
-        recentRainfall: '${weatherData['rainfall']}',
-        irrigationMethod: 'Drip',
-      );
-      final prompt = params.toPrompt();
-      try {
-        final response = await HttpService().sendTextToAI(prompt, "English");
-        final lines = response.trim().split('\n');
-        final percent = extractPercentageOnly(lines[0]);
-        final reason = lines.skip(1).join('\n').trim();
+            final params = IrrigationParams(
+              cropType: data['cropName'],
+              soilType: data['soilType'],
+              moistureLevel: 'unknown',
+              weather: '${weatherData['rainfall']}',
+              area: data['fieldArea'],
+              growthStage: data['stage'],
+              temperature: '${weatherData['temperature']}',
+              humidity: '${weatherData['humidity']}',
+              windSpeed: '${weatherData['wind_speed']}',
+              windDirection: '${weatherData['wind_direction']}',
+              cloudCover: '${weatherData['cloud_cover']}',
+              pressure: '${weatherData['pressure']}',
+              recentRainfall: '${weatherData['rainfall']}',
+              irrigationMethod: data['irrigationType'],
+            );
 
-        if (percent != null) {
-          aiResponseNotifier.value = {
-            'percentage': percent,
-            'reason': reason,
-          };
-        } else {
-          aiResponseNotifier.value = {
-            'error': '⚠️Could not extract irrigation percentage.',
-          };
+            final prompt = params.toPrompt();
+            try {
+              final response = await AIService().sendTextToAI(prompt, "English");
+              final lines = response.trim().split('\n');
+              final percent = extractPercentageOnly(lines[0]);
+              final reason = lines.skip(1).join('\n').trim();
+              if (percent != null) {
+                aiResponseNotifier.value = {
+                  'percentage': percent,
+                  'reason': reason,
+                };
+              }
+              else {
+                aiResponseNotifier.value = {
+                  'error': '⚠️Could not extract irrigation percentage.',
+                };
+              }
+            } catch (e) {
+              aiResponseNotifier.value = {
+                'error': '❌ Error fetching AI advisory.',
+              };
+            }
+
+          } else {
+            print("Data is empty");
+          }
         }
-      } catch (e) {
-        aiResponseNotifier.value = {
-          'error': '❌ Error fetching AI advisory.',
-        };
       }
 
     } catch (e) {
@@ -1023,8 +1091,6 @@ class ClickableSubmenu extends StatelessWidget {
     );
   }
 
-
-
   void _showSubmenu(BuildContext context) {
     final RenderBox button = context.findRenderObject() as RenderBox;
     final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
@@ -1042,15 +1108,13 @@ class ClickableSubmenu extends StatelessWidget {
       position: position,
       items: submenuItems.map((Sequence item) {
         return PopupMenuItem<String>(
-          value: item.name, // Ensure unique values
+          value: item.name,
           child: Text(item.name),
         );
       }).toList(),
     ).then((String? selectedItem) {
       if (selectedItem != null) {
         int selectedIndex = submenuItems.indexWhere((item) => item.name == selectedItem);
-
-        // Ensure selectedItem exists before calling callback
         if (selectedIndex != -1) {
           onItemSelected(selectedItem, selectedIndex);
         }

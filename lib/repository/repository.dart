@@ -1,11 +1,32 @@
 import 'package:http/http.dart' as http;
 import '../services/http_service.dart';
 
+
+abstract class ApiRepository {
+  Future<dynamic> checkLoginAuth(Map<String, dynamic> body);
+  Future<http.Response> fetchAllMySalesReports(Map<String, dynamic> body);
+}
+
+class RepositoryImpl implements ApiRepository {
+  final HttpService apiService;
+  RepositoryImpl(this.apiService);
+
+  @override
+  Future<dynamic> checkLoginAuth(Map<String, dynamic> body) async {
+    return apiService.postRequest('/auth/signIn', body);
+  }
+
+  @override
+  Future<http.Response> fetchAllMySalesReports(Map<String, dynamic> body) async {
+    return await apiService.postRequest('/product/getSalesReport', body);
+  }
+}
+
 class Repository{
   final HttpService apiService;
   Repository(this.apiService);
 
-  Future<dynamic> checkLoginAuth(body) async {
+  Future<http.Response> checkLoginAuth(body) async {
     return apiService.postRequest('/auth/signIn', body);
   }
 
@@ -99,11 +120,11 @@ class Repository{
   }
 
   Future<http.Response> createCategory(body) async {
-  return await apiService.postRequest('/category/create', body);
+    return await apiService.postRequest('/category/create', body);
   }
 
   Future<http.Response> updateCategory(body) async {
-  return await apiService.putRequest('/category/update', body);
+    return await apiService.putRequest('/category/update', body);
   }
 
   Future<http.Response> inActiveCategoryById(body) async {
@@ -164,6 +185,14 @@ class Repository{
 
   Future<http.Response> fetchAllMySite(body) async {
      return await apiService.postRequest('/user/dashboard', body);
+  }
+
+  Future<http.Response> fetchSiteAiAdvisoryData(body) async {
+    return await apiService.postRequest('/user/deviceList/aiAdvisory/get', body);
+  }
+
+  Future<http.Response> updateSiteAiAdvisoryData(body) async {
+    return await apiService.putRequest('/user/deviceList/aiAdvisory/update', body);
   }
 
   Future<http.Response> updateControllerCommunicationMode(body) async {
