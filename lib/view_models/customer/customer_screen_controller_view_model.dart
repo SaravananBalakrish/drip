@@ -319,7 +319,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
       return;
     }
 
-    final isCategory1 = mySiteList.data[sIndex].master[mIndex].categoryId == 1;
+    final isCategory1 = AppConstants.gemModelList.contains(mySiteList.data[sIndex].master[mIndex].modelId);
     final payload = isCategory1
         ? jsonEncode({"3000": {"3001": ""}})
         : jsonEncode({"sentSms": "#live"});

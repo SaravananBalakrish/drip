@@ -61,7 +61,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
     )..repeat(reverse: true);
     _controller.addListener(() {setState(() {});});
     _controller.repeat();
-    mqttService.pumpDashboardPayload = widget.masterData.live?.cM as PumpControllerData;
+    mqttService.pumpDashboardPayload = widget.masterData.live?.cM as PumpControllerData?;
     _animation2 = Tween<double>(begin: 1.0, end: 0.0).animate(_controller2);
     if(mounted){
       getLive();
