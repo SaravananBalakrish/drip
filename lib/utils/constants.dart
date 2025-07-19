@@ -719,7 +719,7 @@ class AppConstants {
   static int lightObjectId = 19;
   static int gateObjectId = 43;
 
-  static List<int> pumpWithValveModelList = [48, 49, 52, 53, 53, 55];
+  static List<int> pumpWithValveModelList = [48, 49, 52, 53, 53, 54, 55];
   static List<int> ecoGemModelList = [56, 57, 58, 59];
   static List<int> gemModelList = [1, 2, 4];
   static List<int> weatherModelList = [13, 14];
