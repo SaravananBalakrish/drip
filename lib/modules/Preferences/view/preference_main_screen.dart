@@ -224,9 +224,9 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     });
     preferenceProvider.updateTabIndex(0);
     mqttPayloadProvider.viewSettingsList.clear();
-    isToGem = widget.masterData.categoryId == 1 && AppConstants.gemModelList.contains(widget.masterData.modelId);
+    isToGem = AppConstants.gemModelList.contains(widget.masterData.modelId);
     isPumpWithValveModel = AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId);
-    isPumpOnly = widget.masterData.categoryId == 2 && AppConstants.pumpModelList.contains(widget.masterData.modelId);
+    isPumpOnly = AppConstants.pumpModelList.contains(widget.masterData.modelId);
     isValveSetting = [1, 2].contains(widget.selectedIndex);
     super.initState();
   }
