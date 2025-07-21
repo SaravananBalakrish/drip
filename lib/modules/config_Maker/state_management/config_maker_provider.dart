@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:oro_drip_irrigation/app.dart';
 import 'package:oro_drip_irrigation/modules/config_Maker/repository/config_maker_repository.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import '../model/device_model.dart';
@@ -16,7 +17,7 @@ import '../view/connection.dart';
 
 class ConfigMakerProvider extends ChangeNotifier{
   double ratio = 1.0;
-  ConfigMakerTabs selectedTab = ConfigMakerTabs.deviceList;
+  ConfigMakerTabs selectedTab = ConfigMakerTabs.productLimit;
   Map<String, dynamic> configMakerDataFromHttp = {};
   Map<String, dynamic> defaultDataFromHttp = {};
   Map<int, String> configurationTab = {
@@ -189,7 +190,12 @@ class ConfigMakerProvider extends ChangeNotifier{
 
       /* hardcoded for pushing master to deviceList*/
       if(![1, 2, 4].contains(masterDataFromSiteConfigure['modelId'])){
-        selectedTab = ConfigMakerTabs.productLimit;
+        if([...AppConstants.pumpWithValveModelList, ...AppConstants.pumpModelList].contains(masterDataFromSiteConfigure['modelId'])){
+          selectedTab = ConfigMakerTabs.productLimit;
+        }else{
+          selectedTab = ConfigMakerTabs.deviceList;
+        }
+
         defaultData['deviceList'].add(
             {
               "controllerId": masterDataFromSiteConfigure['controllerId'],
@@ -536,7 +542,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     notifyListeners();
   }
 
-  void updateObjectConnectionForPowerSupply(DeviceObjectModel selectedConnectionObject, bool value ){
+  void updateObjectConnectionForPowerSupply(DeviceObjectModel selectedConnectionObject, bool value){
     DeviceModel selectedDevice = listOfDeviceModel.firstWhere((device) => device.controllerId == selectedModelControllerId);
     for(var object in listOfObjectModelConnection){
       if(object.objectId == selectedConnectionObject.objectId){

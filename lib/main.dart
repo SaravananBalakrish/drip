@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -70,9 +69,8 @@ FutureOr<void> main() async {
     }
   }
 
-
-
   /*final mqttService = MqttService();
+
   final myMqtt = MqttPayloadProvider();*/
 
   runApp(

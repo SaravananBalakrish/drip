@@ -81,17 +81,20 @@ class ConditionLibraryViewModel extends ChangeNotifier {
     clData.cnLibrary.condition[index].reason = '--';
     clData.cnLibrary.condition[index].delayTime = '--';
     clData.cnLibrary.condition[index].alertMessage = '--';
+    updateRule(index);
     notifyListeners();
   }
 
   void parameterOnChange(String param, int index){
     clData.cnLibrary.condition[index].parameter = param;
+    updateRule(index);
     notifyListeners();
 
   }
 
   void thresholdOnChange(String valT, int index){
     clData.cnLibrary.condition[index].threshold = valT;
+    updateRule(index);
     if(valT.contains('Lower')){
       clData.cnLibrary.condition[index].delayTime = '10 Sec';
     }else{
@@ -102,6 +105,7 @@ class ConditionLibraryViewModel extends ChangeNotifier {
 
   void valueOnChange(String val, int index){
     clData.cnLibrary.condition[index].value = val;
+    updateRule(index);
     notifyListeners();
   }
 
@@ -113,11 +117,7 @@ class ConditionLibraryViewModel extends ChangeNotifier {
         '${clData.cnLibrary.condition[index].component}';
     amTEVControllers[index].text = clData.cnLibrary.condition[index].alertMessage;
 
-    clData.cnLibrary.condition[index].rule =
-    '${clData.cnLibrary.condition[index].parameter} of '
-        '${clData.cnLibrary.condition[index].component} is '
-        '${clData.cnLibrary.condition[index].threshold} '
-        '${clData.cnLibrary.condition[index].value}';
+    updateRule(index);
 
     amTEVControllers[index].text = clData.cnLibrary.condition[index].alertMessage;
 
@@ -161,6 +161,19 @@ class ConditionLibraryViewModel extends ChangeNotifier {
       List<String> cc = connectedTo[index];
       String result = cc.join(" - ");
       clData.cnLibrary.condition[index].component = result;
+    }
+    notifyListeners();
+  }
+
+  void updateRule(int index){
+    if(clData.cnLibrary.condition[index].parameter!='--'){
+      clData.cnLibrary.condition[index].rule =
+      '${clData.cnLibrary.condition[index].parameter} of '
+          '${clData.cnLibrary.condition[index].component} is '
+          '${clData.cnLibrary.condition[index].threshold} '
+          '${clData.cnLibrary.condition[index].value}';
+    }else{
+      clData.cnLibrary.condition[index].rule = '';
     }
     notifyListeners();
   }
@@ -237,7 +250,8 @@ class ConditionLibraryViewModel extends ChangeNotifier {
           'StartTime': '00:01:00',
           'StopTime': '23:59:00',
           'notify': 1,
-          'category': condition.type == 'Program' ? 1 :condition.type == 'Sensor' ? 5:6,
+          'category': condition.type == 'Program' ? 1 : condition.type == 'Sensor' && condition.parameter=='Level'? 9:
+          condition.type == 'Sensor' && condition.parameter=='Moisture'? 8:5,
           'object': condition.componentSNo,
           'operator': condition.threshold == 'Higher than'? 4 : condition.threshold == 'Lower than'? 5 : 6,
           'setValue': numberOnly,
@@ -262,6 +276,11 @@ class ConditionLibraryViewModel extends ChangeNotifier {
     } finally {
       setLoading(false);
     }
+  }
+
+  void removeCondition(int index) {
+    clData.cnLibrary.condition.removeAt(index);
+    notifyListeners();
   }
 
   String formatTime(String time) {
