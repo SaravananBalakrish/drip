@@ -25,6 +25,7 @@ import '../../repository/repository.dart';
 import '../../services/bluetooth_sevice.dart';
 import '../../services/communication_service.dart';
 import '../../services/http_service.dart';
+import '../../utils/constants.dart';
 import '../../utils/formatters.dart';
 import '../../utils/my_function.dart';
 import '../../utils/routes.dart';
@@ -162,16 +163,16 @@ class CustomerScreenController extends StatelessWidget {
                   Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
                     style: const TextStyle(fontSize: 17),),
 
-                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1?
+                  AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?
                   const SizedBox(width: 15,): const SizedBox(),
 
-                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1?
+                  AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)?
                   Container(width: 1,height: 20, color: Colors.white54,): const SizedBox(),
 
-                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1?
+                  AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)?
                   const SizedBox(width: 5,): const SizedBox(),
 
-                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1 &&
+                  AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) &&
                       vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.length>1?
                   DropdownButton<int>(
                     underline: Container(),
@@ -198,7 +199,7 @@ class CustomerScreenController extends StatelessWidget {
                     iconDisabledColor: Colors.white,
                     focusColor: Colors.transparent,
                   ) :
-                  vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1?
+                  AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)?
                   Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.isNotEmpty?
                   vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine[0].name:
                   'Line empty', style: const TextStyle(fontSize: 17),):
@@ -490,7 +491,7 @@ class CustomerScreenController extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        if (vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1) ...[
+                        if (AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)) ...[
                           if (vm.isNotCommunicate)
                             Container(
                               height: 20.0,
@@ -978,7 +979,7 @@ class CustomerScreenController extends StatelessWidget {
   Widget mainScreen(int index, groupId, groupName, List<MasterControllerModel> masterData, int controllerId, int categoryId, int masterIndex, int siteIndex, bool isChanged, CustomerScreenControllerViewModel vm) {
     switch (index) {
       case 0:
-        return categoryId==1 ?
+        return AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?
         CustomerHome(customerId: userId, controllerId: controllerId, deviceId: masterData[masterIndex].deviceId):
         isChanged ? PumpControllerHome(
       /*    deviceId: masterData[masterIndex].deviceId,

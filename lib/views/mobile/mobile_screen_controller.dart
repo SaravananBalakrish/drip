@@ -23,6 +23,7 @@ import '../../modules/open_ai/view/open_ai_screen.dart';
 import '../../repository/repository.dart';
 import '../../services/communication_service.dart';
 import '../../services/http_service.dart';
+import '../../utils/constants.dart';
 import '../../utils/formatters.dart';
 import '../../utils/my_function.dart';
 import '../../utils/routes.dart';
@@ -227,7 +228,7 @@ class MobileScreenController extends StatelessWidget {
                           if (vm.mySiteList.data[vm.sIndex].master.length > 1)
                             const VerticalDividerWhite(),
                           IrrigationLineSelectorWidget(vm: vm),
-                          if (vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1 &&
+                          if (AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId) &&
                               vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.length > 1)
                             const VerticalDividerWhite(),
 
@@ -442,7 +443,7 @@ class MobileScreenController extends StatelessWidget {
               ),
             ),
             floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-            bottomNavigationBar: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1 ?
+            bottomNavigationBar: AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId) ?
             BottomNavigationBar(
               backgroundColor: Theme.of(context).primaryColor,
               type: BottomNavigationBarType.fixed,
@@ -643,7 +644,7 @@ class MobileScreenController extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    if (vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId == 1) ...[
+                    if (AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryId)) ...[
                       if (vm.isNotCommunicate)
                         Container(
                           height: 25,

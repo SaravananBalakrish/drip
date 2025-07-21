@@ -28,12 +28,14 @@ class HttpService implements ApiService {
       'Content-Type': 'application/json',
       'auth_token': token?.isNotEmpty == true ? token! : 'default_token',
     };
-
+    print(endpoint);
+    print(bodyData);
     return http.post(
       Uri.parse('${AppConstants.apiUrl}$endpoint'),
       headers: headers,
       body: jsonEncode(bodyData),
     );
+
   }
 
   @override
