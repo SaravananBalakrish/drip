@@ -78,6 +78,9 @@ class _ProductLimitState extends State<ProductLimit> {
     List<DeviceObjectModel> filteredList = widget.configPvd.listOfSampleObjectModel.where((object) {
       return (object.type == '1,2' && widget.configPvd.getPossibleConnectingObjectId().contains(object.objectId));
     }).toList();
+    for(var obj in filteredList){
+      print("obj name : ${obj.objectName}");
+    }
     return ProductLimitGridListTile(
       listOfObjectModel: filteredList,
       title: 'Output Object',
@@ -98,10 +101,9 @@ class _ProductLimitState extends State<ProductLimit> {
 
 
   Widget digitalObject(){
+    print("widget.configPvd.getPossibleConnectingObjectId() : ${widget.configPvd.getPossibleConnectingObjectId()}");
     List<DeviceObjectModel> filteredList = widget.configPvd.listOfSampleObjectModel.where((object) {
-      if(widget.configPvd.masterData['categoryId'] != 2){
-        return object.type == '4';
-      }else if(AppConstants.pumpWithValveModelList.contains(widget.configPvd.masterData['modelId'])){
+      if(AppConstants.pumpWithValveModelList.contains(widget.configPvd.masterData['modelId'])){
         return (object.type == '4' && widget.configPvd.getPossibleConnectingObjectId().contains(object.objectId));
       }else{
         return (object.type == '4' && widget.configPvd.getPossibleConnectingObjectId().contains(object.objectId));
