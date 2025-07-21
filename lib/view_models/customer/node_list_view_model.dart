@@ -37,8 +37,6 @@ class NodeListViewModel extends ChangeNotifier {
 
   void onLivePayloadReceived(List<String> nodeLiveMeg, List<String> inputOutputStatus){
 
-    print('node live recived');
-
     for (String group in nodeLiveMeg) {
       List<String> values = group.split(",");
       int sNo = int.parse(values[0]);

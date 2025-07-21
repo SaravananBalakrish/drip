@@ -118,7 +118,6 @@ class _InterfaceSettingState extends State<InterfaceSetting> {
           },
         ),
       ),
-
     );
   }
 
@@ -372,7 +371,7 @@ class _InterfaceSettingState extends State<InterfaceSetting> {
                       String subNetMask = '0:0:0:0';
                       String gateWay = '0:0:0:0';
                       String dnsServer = '0:0:0:0';
-                      String serverIp = '0:0:0:0';
+                      String serverIp = AppConstants.mqttMobileUrl.split('.').join(':');
                       var payload = '\$:29:210:${bleService.wifiSsid.text}:${bleService.wifiPassword.text}:${AppConstants.mqttUserName}:${AppConstants.mqttPassword}:$staticIp:$subNetMask:$gateWay:$dnsServer:$serverIp:';
                       List<int> listOfBytes = [];
                       var sumOfAscii = 0;
