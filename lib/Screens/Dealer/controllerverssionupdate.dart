@@ -364,6 +364,24 @@ class _ResetVerssionState extends State<ResetVerssion> {
                     )
                         : const Text('Status'),
 
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: LinearProgressIndicator(
+                              value: 0.6,
+                              minHeight: 8,
+                              backgroundColor: Colors.grey[300],
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                            ),
+                          ),
+                          SizedBox(width: 12),
+                          Text('${(0.6 * 100).toStringAsFixed(0)}%'),
+                        ],
+                      ),
+                    ),
+
                     // Center(child: Text('${mqttPayloadProvider.messageFromHw ?? 'Status'} ',style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),)),
                     Container(
                       height: 1,
