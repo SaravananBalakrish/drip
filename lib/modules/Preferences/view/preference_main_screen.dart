@@ -701,7 +701,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             Wrap(
               children: [
                 for(var categoryIndex = 0; categoryIndex < settingList.length; categoryIndex++)
-                  if((settingList[categoryIndex].type == 207 && (preferenceProvider.generalData!.categoryId != 2)) ? preferenceProvider.individualPumpSetting![pumpIndex].controlGem : true)
+                  if((settingList[categoryIndex].type == 207 && isToGem) ? preferenceProvider.individualPumpSetting![pumpIndex].controlGem : true)
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       width: constraints.maxWidth < 700 ? constraints.maxWidth : (constraints.maxWidth/2) - 40,
@@ -768,7 +768,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                       ),
                     ),
                 for(var categoryIndex = 0; categoryIndex < settingList.length; categoryIndex++)
-                  if(!((settingList[categoryIndex].type == 207 && (preferenceProvider.generalData!.categoryId != 2)) ? preferenceProvider.individualPumpSetting![pumpIndex].controlGem : true))
+                  if(!((settingList[categoryIndex].type == 207 && isToGem) ? preferenceProvider.individualPumpSetting![pumpIndex].controlGem : true))
                     const SizedBox(height: 50,)
               ],
             ),
