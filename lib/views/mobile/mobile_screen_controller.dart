@@ -81,7 +81,7 @@ class MobileScreenController extends StatelessWidget {
                 fit: BoxFit.fitWidth,
               ),
               actions: [
-                if(AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId))...[
+                if([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId))...[
                   Consumer<CustomerScreenControllerViewModel>(
                     builder: (context, vm, child) {
                       return Row(
@@ -111,7 +111,7 @@ class MobileScreenController extends StatelessWidget {
                   ),
                   // const SizedBox(width: 16),
                 ],
-                if(!AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId))...[
+                if(![...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId))...[
                   Container(
                     height: 35,
                     decoration: BoxDecoration(
@@ -228,7 +228,7 @@ class MobileScreenController extends StatelessWidget {
                           if (vm.mySiteList.data[vm.sIndex].master.length > 1)
                             const VerticalDividerWhite(),
                           IrrigationLineSelectorWidget(vm: vm),
-                          if (AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) &&
+                          if ([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) &&
                               vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.length > 1)
                             const VerticalDividerWhite(),
 
@@ -443,7 +443,7 @@ class MobileScreenController extends StatelessWidget {
               ),
             ),
             floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-            bottomNavigationBar: AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?
+            bottomNavigationBar: [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?
             BottomNavigationBar(
               backgroundColor: Theme.of(context).primaryColor,
               type: BottomNavigationBarType.fixed,
@@ -461,7 +461,7 @@ class MobileScreenController extends StatelessWidget {
               ],
             )
             : null,
-            floatingActionButton: AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?
+            floatingActionButton: [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?
             Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -617,7 +617,7 @@ class MobileScreenController extends StatelessWidget {
                 ),
               ],
             ) : null,
-            body: !AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?
+            body: ![...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?
             vm.isChanged ? PumpControllerHome(
               userId: userId,
               customerId: customerId,
@@ -643,7 +643,7 @@ class MobileScreenController extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    if (AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)) ...[
+                    if ([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)) ...[
                       if (vm.isNotCommunicate)
                         Container(
                           height: 25,

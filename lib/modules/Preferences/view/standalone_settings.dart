@@ -81,9 +81,7 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
       floatingActionButton: FilledButton.icon(
         onPressed: () {
           final provider = Provider.of<PreferenceProvider>(context, listen: false);
-          print(provider.standaloneSettings!.setting.map((e) => e.serialNumber));
-          print(provider.standaloneSettings!.setting.map((e) => e.title));
-          if(widget.selectedIndex == 1 && provider.standaloneSettings!.setting.where((e) => e.serialNumber != 1).every((ele) => ele.value == false)){
+          if(widget.selectedIndex == 1 && provider.standaloneSettings!.setting[0].value == true && provider.standaloneSettings!.setting.where((e) => e.serialNumber != 1).every((ele) => ele.value == false)){
             _showAlert();
           } else {
             _sendSettings(context);
