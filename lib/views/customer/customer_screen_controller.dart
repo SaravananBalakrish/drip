@@ -123,7 +123,7 @@ class CustomerScreenController extends StatelessWidget {
                       textColor: Colors.white,
                       child: Row(
                         children: [
-                          Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName),
+                          Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceName),
                           const SizedBox(width: 3),
                           const Icon(Icons.arrow_drop_down, color: Colors.white),
                         ],
@@ -142,11 +142,11 @@ class CustomerScreenController extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    master.categoryName,
+                                    master.deviceName,
                                     style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                                   ),
                                   Text(
-                                    master.modelName,
+                                    master.modelDescription,
                                     style: const TextStyle(fontSize: 12, color: Colors.white54),
                                   ),
                                 ],
@@ -160,7 +160,7 @@ class CustomerScreenController extends StatelessWidget {
                       vm.masterOnChanged(index); // ✅ Pass only the index
                     },
                   ):
-                  Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
+                  Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceName,
                     style: const TextStyle(fontSize: 17),),
 
                   [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?

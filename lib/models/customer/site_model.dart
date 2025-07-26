@@ -51,6 +51,8 @@ class MasterControllerModel {
   final String categoryName;
   final int modelId;
   final String modelName;
+  final String modelDescription;
+
 
   final String interfaceTypeId;
   final String interface;
@@ -75,6 +77,7 @@ class MasterControllerModel {
     required this.categoryName,
     required this.modelId,
     required this.modelName,
+    required this.modelDescription,
 
     required this.interfaceTypeId,
     required this.interface,
@@ -193,6 +196,7 @@ class MasterControllerModel {
       categoryName: json['categoryName'] ?? '',
       modelId: json['modelId'] ?? 0,
       modelName: json['modelName'] ?? '',
+      modelDescription: json['modelDescription'] ?? '',
 
       interfaceTypeId: json['interfaceTypeId'] ?? '',
       interface: json['interface'] ?? '',
