@@ -446,9 +446,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                     // // padding: const EdgeInsets.all(8),
                     margin: const EdgeInsets.symmetric(horizontal: 15),
                     child: Text(
-                      (!AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId) || (pumpData.pumps.firstWhere((pump) => pump is PumpValveModel) as PumpValveModel).cycleCompletedFlag == '1')
-                          ? "Turned off due to Cycles completed".toUpperCase()
-                          : pumpItem.reasonCode == 0
+                      pumpItem.reasonCode == 0
                           ? (pumpItem.status == 1 ? "Turned on through the mobile" : "Turned off through the mobile").toUpperCase()
                           : pumpItem.reason.toUpperCase(),
                       style: TextStyle(
