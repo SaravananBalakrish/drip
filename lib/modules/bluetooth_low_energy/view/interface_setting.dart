@@ -202,10 +202,7 @@ class _InterfaceSettingState extends State<InterfaceSetting> {
                       var bytes = i.codeUnitAt(0);
                       sumOfAscii += bytes;
                     }
-                    for(var i = 0;i < (3 - '${sumOfAscii % 256}'.split('').length);i++){
-                      payload += '0';
-                    }
-                    payload += '${sumOfAscii % 256}:\r';
+                    payload += '${bleService.sendThreeDigit('${sumOfAscii % 256}')}:\r';
                     for(var i in payload.split('')){
                       var bytes = i.codeUnitAt(0);
                       listOfBytes.add(bytes);
@@ -286,10 +283,7 @@ class _InterfaceSettingState extends State<InterfaceSetting> {
                       // listOfBytes.add(bytes);
                       sumOfAscii += bytes;
                     }
-                    for(var i = 0;i < (3 - '${sumOfAscii % 256}'.split('').length);i++){
-                      payload += '0';
-                    }
-                    payload += '${sumOfAscii % 256}:\r';
+                    payload += '${bleService.sendThreeDigit('${sumOfAscii % 256}')}:\r';
                     for(var i in payload.split('')){
                       var bytes = i.codeUnitAt(0);
                       listOfBytes.add(bytes);
@@ -371,7 +365,9 @@ class _InterfaceSettingState extends State<InterfaceSetting> {
                       String subNetMask = '0:0:0:0';
                       String gateWay = '0:0:0:0';
                       String dnsServer = '0:0:0:0';
-                      String serverIp = AppConstants.mqttMobileUrl.split('.').join(':');
+                      String serverIp = AppConstants.mqttMobileUrl.split('.').map((val){
+                        return bleService.sendThreeDigit(val);
+                      }).join(':');
                       var payload = '\$:29:210:${bleService.wifiSsid.text}:${bleService.wifiPassword.text}:${AppConstants.mqttUserName}:${AppConstants.mqttPassword}:$staticIp:$subNetMask:$gateWay:$dnsServer:$serverIp:';
                       List<int> listOfBytes = [];
                       var sumOfAscii = 0;
@@ -379,7 +375,7 @@ class _InterfaceSettingState extends State<InterfaceSetting> {
                         var bytes = i.codeUnitAt(0);
                         sumOfAscii += bytes;
                       }
-                      payload += '${sumOfAscii % 256}:\r';
+                      payload += '${bleService.sendThreeDigit('${sumOfAscii % 256}')}:\r';
                       for(var i in payload.split('')){
                         var bytes = i.codeUnitAt(0);
                         listOfBytes.add(bytes);
@@ -410,6 +406,7 @@ class _InterfaceSettingState extends State<InterfaceSetting> {
     );
   }
 
+
   void loadingDialog()async{
     showDialog(
         barrierDismissible: false,
@@ -428,7 +425,7 @@ class _InterfaceSettingState extends State<InterfaceSetting> {
       );
     }
     );
-    await Future.delayed(Duration(seconds: 2), (){
+    await Future.delayed(const Duration(seconds: 2), (){
       Navigator.pop(context);
     });
     simpleDialogBox(context: context, title: 'Success', message: 'Interface Setting Sent Successfully...');

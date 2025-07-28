@@ -158,13 +158,15 @@ class IndividualPumpData {
           : reason == 30 ? "Power off"
           : reason == 31 ? "Power on"
           : reason == 32 ? "Ready to start"
-          : reason == 33 ? "3 Phase only"
+          : reason == 33 ? "$motorOff 3 Phase only"
           : reason == 35 ? "$motorOff Cyclic interval"
           : reason == 36 ? "$motorOff Moisture limit"
           : reason == 37 ? "$motorOff Cycles completed"
           : reason == 38 ? "$motorOff Cycle pause"
           : reason == 39 ? "$motorOff wrong feedback"
           : reason == 40 ? "No communication"
+          : reason == 41 ? "$motorOff Pressure sensor low"
+          : reason == 42 ? "$motorOff Pressure sensor high"
           : "Unknown",
       waterMeter: json["WM"] ?? "",
       cumulativeFlow: value != "-" ? value.substring(firstIndex) : "-",

@@ -250,7 +250,6 @@ class BleProvider extends ChangeNotifier {
     notifyListeners();
     listeningConnectionState();
     for(var connectLoop = 0;connectLoop < 30;connectLoop++){
-
       await Future.delayed(const Duration(seconds: 1));
       print("connecting seconds :: ${connectLoop+1}");
       if(forceStop){
@@ -664,7 +663,12 @@ class BleProvider extends ChangeNotifier {
         for(var file in listOfFile){
           print(file);
           if(loraModel.contains(nodeDataFromHw['MID'])){
-            if(file.filename.contains('lora')){
+            Map<String, String> checkFileName = {
+              "40" : "lora",
+              "41" : "lora1",
+              "42" : "lora2",
+            };
+            if(checkFileName.containsKey(nodeDataFromHw['MID']) && file.filename.contains(checkFileName[nodeDataFromHw['MID']]!)){
               nodeFirmwareFileName = file.filename;
             }
           }else{
@@ -900,6 +904,14 @@ class BleProvider extends ChangeNotifier {
     }
   }
 
+  String sendThreeDigit(String val){
+    List<String> value = val.split('');
+    for(var i = 0;i < (3 - val.length);i++){
+      value.insert(0, '0');
+    }
+    return value.join('');
+  }
+
   void waitingForCrcPassOrCrcFail()async{
     int crcDelay = 8;
     for(var i = 0; i < crcDelay;i++){
@@ -945,7 +957,7 @@ class BleProvider extends ChangeNotifier {
       // listOfBytes.add(bytes);
       sumOfAscii += bytes;
     }
-    payload += '${sumOfAscii % 256}:\r';
+    payload += '${sendThreeDigit('${sumOfAscii % 256}')}:\r';
     for (var i in payload.split('')) {
       var bytes = i.codeUnitAt(0);
       listOfBytes.add(bytes);
@@ -976,3 +988,4 @@ class BleProvider extends ChangeNotifier {
   }
 
 }
+
