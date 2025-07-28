@@ -123,7 +123,7 @@ class CustomerScreenController extends StatelessWidget {
                       textColor: Colors.white,
                       child: Row(
                         children: [
-                          Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName),
+                          Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceName),
                           const SizedBox(width: 3),
                           const Icon(Icons.arrow_drop_down, color: Colors.white),
                         ],
@@ -142,11 +142,11 @@ class CustomerScreenController extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    master.categoryName,
+                                    master.deviceName,
                                     style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
                                   ),
                                   Text(
-                                    master.modelName,
+                                    master.modelDescription,
                                     style: const TextStyle(fontSize: 12, color: Colors.white54),
                                   ),
                                 ],
@@ -160,19 +160,19 @@ class CustomerScreenController extends StatelessWidget {
                       vm.masterOnChanged(index); // ✅ Pass only the index
                     },
                   ):
-                  Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
+                  Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceName,
                     style: const TextStyle(fontSize: 17),),
 
-                  AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?
+                  [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?
                   const SizedBox(width: 15,): const SizedBox(),
 
-                  AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)?
+                  [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)?
                   Container(width: 1,height: 20, color: Colors.white54,): const SizedBox(),
 
-                  AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)?
+                  [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)?
                   const SizedBox(width: 5,): const SizedBox(),
 
-                  AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) &&
+                  [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) &&
                       vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.length>1?
                   DropdownButton<int>(
                     underline: Container(),
@@ -199,7 +199,7 @@ class CustomerScreenController extends StatelessWidget {
                     iconDisabledColor: Colors.white,
                     focusColor: Colors.transparent,
                   ) :
-                  AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)?
+                  [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)?
                   Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.isNotEmpty?
                   vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine[0].name:
                   'Line empty', style: const TextStyle(fontSize: 17),):
@@ -491,7 +491,7 @@ class CustomerScreenController extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        if (AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)) ...[
+                        if ([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)) ...[
                           if (vm.isNotCommunicate)
                             Container(
                               height: 20.0,
@@ -615,11 +615,10 @@ class CustomerScreenController extends StatelessWidget {
                                           borderRadius: BorderRadius.zero,
                                           child: StatefulBuilder(
                                             builder: (BuildContext context, StateSetter stateSetter) {
-                                              return NodeList(customerId: customerId, nodes: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].nodeList,
-                                                deviceId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceId,
-                                                deviceName: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].categoryName,
-                                                controllerId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].controllerId, userId: userId,
-                                                configObjects: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].configObjects);
+                                              return NodeList(customerId: customerId, userId: userId,
+                                                  nodes: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].nodeList,
+                                                configObjects: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].configObjects,
+                                                  masterData: vm.mySiteList.data[vm.sIndex].master[vm.mIndex]);
                                             },
                                           ),
                                         ),
@@ -979,8 +978,8 @@ class CustomerScreenController extends StatelessWidget {
   Widget mainScreen(int index, groupId, groupName, List<MasterControllerModel> masterData, int controllerId, int categoryId, int masterIndex, int siteIndex, bool isChanged, CustomerScreenControllerViewModel vm) {
     switch (index) {
       case 0:
-        return AppConstants.gemModelList.contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?
-        CustomerHome(customerId: userId, controllerId: controllerId, deviceId: masterData[masterIndex].deviceId):
+        return [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?
+        CustomerHome(customerId: userId, controllerId: controllerId, deviceId: masterData[masterIndex].deviceId, modelId: vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId,):
         isChanged ? PumpControllerHome(
       /*    deviceId: masterData[masterIndex].deviceId,
           liveData: masterData[masterIndex].live!.cM as PumpControllerData,
