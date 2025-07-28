@@ -208,12 +208,14 @@ class LoginScreen extends StatelessWidget {
                 Stack(
                   children: [
                     Container(
-                      height: (MediaQuery.of(context).size.height / 2),
+                      height: F.appFlavor!.name.contains('oro')? (MediaQuery.of(context).size.height / 3):
+                      (MediaQuery.of(context).size.height / 2),
                       width: double.infinity,
                       color: Theme.of(context).primaryColor,
-                      child: F.appFlavor!.name.contains('oro')? Padding(
-                        padding: const EdgeInsets.only(top: 20, bottom: 40),
-                        child: SvgPicture.asset('assets/svg_images/login_left_picture.svg'),
+                      child: F.appFlavor!.name.contains('oro')? const Image(
+                        image: AssetImage('assets/png/oro_logo_white.png'),
+                        height: 75,
+                        width: 150,
                       ):
                       const Image(
                         image: AssetImage('assets/png/lk_login_left_picture.png'),
