@@ -314,6 +314,7 @@ class ConfigMakerProvider extends ChangeNotifier{
           categoryId: devices['categoryId'],
           categoryName: devices['categoryName'],
           modelId: devices['modelId'],
+          modelDescription: devices['modelDescription'] ?? '',
           modelName: devices['modelName'],
           interfaceTypeId: devices['interfaceTypeId'],
           interfaceInterval: 5,
