@@ -111,9 +111,9 @@ class CustomerScreenController extends StatelessWidget {
                   Text(vm.mySiteList.data[vm.sIndex].groupName,
                     style: const TextStyle(fontSize: 17), overflow: TextOverflow.ellipsis,),
 
-                  const SizedBox(width: 15,),
+                  const SizedBox(width: 15),
                   Container(width: 1,height: 20, color: Colors.white54,),
-                  const SizedBox(width: 5,),
+                  const SizedBox(width: 5),
 
                   vm.mySiteList.data[vm.sIndex].master.length>1? PopupMenuButton<int>(
                     color: Theme.of(context).primaryColorLight,
@@ -161,16 +161,16 @@ class CustomerScreenController extends StatelessWidget {
                     },
                   ):
                   Text(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].deviceName,
-                    style: const TextStyle(fontSize: 17),),
+                    style: const TextStyle(fontSize: 17)),
 
                   [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) ?
-                  const SizedBox(width: 15,): const SizedBox(),
+                  const SizedBox(width: 15): const SizedBox(),
 
                   [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)?
                   Container(width: 1,height: 20, color: Colors.white54,): const SizedBox(),
 
                   [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId)?
-                  const SizedBox(width: 5,): const SizedBox(),
+                  const SizedBox(width: 5): const SizedBox(),
 
                   [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId) &&
                       vm.mySiteList.data[vm.sIndex].master[vm.mIndex].irrigationLine.length>1?

@@ -77,6 +77,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
       if (response.statusCode == 200) {
         setState(() {
           var jsondata = jsonDecode(response.body);
+          print('jsondata---->$jsondata');
            valAssing(jsondata['data']);
 
           MqttService().connect();
