@@ -3,8 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/views/mobile/mobile_screen_controller.dart';
 import 'package:provider/provider.dart';
 import '../StateManagement/mqtt_payload_provider.dart';
+import '../layout_controller/layout_controller.dart';
+import '../providers/user_provider.dart';
 import '../repository/repository.dart';
 import '../services/http_service.dart';
+import '../utils/enums.dart';
+import '../utils/shared_preferences_helper.dart';
 import '../view_models/customer/customer_screen_controller_view_model.dart';
 import '../view_models/screen_controller_view_model.dart';
 import 'admin_dealer/admin_screen_controller.dart';
@@ -14,9 +18,44 @@ import 'customer/customer_screen_controller.dart';
 class ScreenController extends StatelessWidget {
   const ScreenController({super.key});
 
+  Future<void> initializeUserRole(BuildContext context) async {
+    final roleString = await PreferenceHelper.getUserRole();
+    final role = getRoleFromString(roleString);
+    context.read<UserProvider>().setRole(role);
+  }
+
+  UserRole getRoleFromString(String? role) {
+    switch (role?.toLowerCase()) {
+      case 'super admin':
+        return UserRole.superAdmin;
+      case 'admin':
+        return UserRole.admin;
+      case 'dealer':
+        return UserRole.dealer;
+      case 'sub user':
+        return UserRole.subUser;
+      case 'customer':
+      default:
+        return UserRole.customer;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    print('Screen controller loaded');
+    return FutureBuilder(
+      future: initializeUserRole(context),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+        return LayoutController.getLayout(context);
+      },
+    );
+  }
+
+  /*@override
+  Widget build(BuildContext context) {
+
     return ChangeNotifierProvider(
       create: (_) => ScreenControllerViewModel(),
       child: Consumer<ScreenControllerViewModel>(
@@ -58,7 +97,7 @@ class ScreenController extends StatelessWidget {
         },
       ),
     );
-  }
+  }*/
 
   Widget controllerScreen(String userRole, int userId, String userName, String mobileNo, String emailId) {
     switch (userRole) {

@@ -22,7 +22,7 @@ import '../../modules/PumpController/view/node_settings.dart';
 import '../../modules/ScheduleView/view/schedule_view_screen.dart';
 import '../../modules/PumpController/view/pump_controller_home.dart';
 import '../../repository/repository.dart';
-import '../../services/bluetooth_sevice.dart';
+import '../../services/bluetooth_service.dart';
 import '../../services/communication_service.dart';
 import '../../services/http_service.dart';
 import '../../utils/constants.dart';
