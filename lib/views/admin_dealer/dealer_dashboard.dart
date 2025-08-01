@@ -292,8 +292,8 @@ class DealerDashboard extends StatelessWidget {
                   columns: [
                     DataColumn2(label: Center(child: AppConstants().txtSNo), fixedWidth: 50),
                     DataColumn(label: AppConstants().txtCategory),
-                    DataColumn(label: AppConstants().txtModel),
-                    DataColumn2(label: Center(child: AppConstants().txtIMEI), size: ColumnSize.L),
+                    DataColumn2(label: AppConstants().txtModel, size: ColumnSize.L),
+                    DataColumn2(label: Center(child: AppConstants().txtIMEI), size: ColumnSize.S),
                     DataColumn2(label: Center(child: AppConstants().txtMDate), fixedWidth: 150),
                     DataColumn2(label: Center(child: AppConstants().txtWarranty), fixedWidth: 100),
                   ],
