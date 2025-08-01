@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/views/mobile/mobile_screen_controller.dart';
 import 'package:provider/provider.dart';
 import '../StateManagement/mqtt_payload_provider.dart';
-import '../layout_controller/layout_controller.dart';
+import '../layouts/layout_selector.dart';
+import '../models/user_model.dart';
 import '../providers/user_provider.dart';
 import '../repository/repository.dart';
 import '../services/http_service.dart';
@@ -18,10 +19,31 @@ import 'customer/customer_screen_controller.dart';
 class ScreenController extends StatelessWidget {
   const ScreenController({super.key});
 
-  Future<void> initializeUserRole(BuildContext context) async {
+  Future<bool> initializeUser(BuildContext context) async {
+    final token = await PreferenceHelper.getToken();
+    if (token == null || token.isEmpty) return false;
+
     final roleString = await PreferenceHelper.getUserRole();
+    final userId = await PreferenceHelper.getUserId();
+    final userName = await PreferenceHelper.getUserName();
+    final countryCode = await PreferenceHelper.getCountryCode();
+    final mobile = await PreferenceHelper.getMobileNumber();
+    final email = await PreferenceHelper.getEmail();
     final role = getRoleFromString(roleString);
-    context.read<UserProvider>().setRole(role);
+    final user = UserModel(
+      token: token,
+      userId: userId ?? 0,
+      userName: userName ?? '',
+      role: role,
+      countryCode: countryCode ?? '',
+      mobileNumber: mobile ?? '',
+      email: email ?? '',
+    );
+
+    // Update user provider
+    context.read<UserProvider>().setLoggedInUser(user);
+
+    return true;
   }
 
   UserRole getRoleFromString(String? role) {
@@ -32,28 +54,35 @@ class ScreenController extends StatelessWidget {
         return UserRole.admin;
       case 'dealer':
         return UserRole.dealer;
+      case 'customer':
+        return UserRole.customer;
       case 'sub user':
         return UserRole.subUser;
-      case 'customer':
       default:
         return UserRole.customer;
     }
   }
 
-  @override
+  /*@override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: initializeUserRole(context),
+    return FutureBuilder<bool>(
+      future: initializeUser(context),
       builder: (context, snapshot) {
         if (snapshot.connectionState != ConnectionState.done) {
-          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
         }
-        return LayoutController.getLayout(context);
+
+        final user = context.watch<UserProvider>().loggedInUser;
+        return LayoutSelector(userRole: user.role);
+
       },
     );
-  }
+  }*/
 
-  /*@override
+
+  @override
   Widget build(BuildContext context) {
 
     return ChangeNotifierProvider(
@@ -97,7 +126,7 @@ class ScreenController extends StatelessWidget {
         },
       ),
     );
-  }*/
+  }
 
   Widget controllerScreen(String userRole, int userId, String userName, String mobileNo, String emailId) {
     switch (userRole) {

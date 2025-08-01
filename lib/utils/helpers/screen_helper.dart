@@ -5,10 +5,10 @@ const int tabletBreakpoint = 900;
 const int desktopBreakpoint = 1200;
 
 class ScreenHelper {
-  static DeviceScreenType getDeviceType(double width) {
-    if (width >= desktopBreakpoint) return DeviceScreenType.web;
-    if (width >= tabletBreakpoint) return DeviceScreenType.desktop;
-    if (width >= mobileBreakpoint) return DeviceScreenType.tablet;
-    return DeviceScreenType.mobile;
+  static ScreenType getDeviceType(double width) {
+    if (width >= desktopBreakpoint) return ScreenType.web;
+    if (width >= tabletBreakpoint) return ScreenType.desktop;
+    if (width >= mobileBreakpoint) return ScreenType.tablet;
+    return ScreenType.mobile;
   }
 }
