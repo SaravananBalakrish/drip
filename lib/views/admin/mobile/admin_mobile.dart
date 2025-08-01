@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class AdminMobile extends StatelessWidget {
-  const AdminMobile({super.key});
+class AdminMobileLayout extends StatelessWidget {
+  const AdminMobileLayout({super.key});
 
   @override
   Widget build(BuildContext context) {
