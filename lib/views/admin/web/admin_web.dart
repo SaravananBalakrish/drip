@@ -5,11 +5,10 @@ import '../../../view_models/admin_header_view_model.dart';
 
 class AdminWeb extends StatelessWidget {
   const AdminWeb({super.key});
+ // final AdminHeaderViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = context.watch<AdminHeaderViewModel>();
-
     return Scaffold(
       appBar: AppBar(
         leading: Padding(
@@ -22,7 +21,7 @@ class AdminWeb extends StatelessWidget {
             fit: BoxFit.fitWidth,
           ),
         ),
-        title: buildMainMenu(context, viewModel),
+        //title: buildMainMenu(context, viewModel),
         actions: <Widget>[
         ],
         centerTitle: false,
