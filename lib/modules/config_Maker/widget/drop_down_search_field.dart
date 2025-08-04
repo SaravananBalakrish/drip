@@ -90,6 +90,13 @@ class _DropDownSearchFieldState extends State<DropDownSearchField> {
                   }
                   int statusCode = await configPvd.replaceDevice(newDevice: widget.productStock.firstWhere((device) => device['deviceId'] == _dropdownSearchFieldController.text), oldDevice: widget.oldDevice, masterOrNode: widget.masterOrNode);
                   if(statusCode == 200){
+                    for(var device in widget.productStock){
+                      if(device["deviceId"] == _dropdownSearchFieldController.text){
+                        setState(() {
+                          device["deviceId"] = widget.oldDevice["deviceId"];
+                        });
+                      }
+                    }
                     Navigator.pop(context);
                     simpleDialogBox(
                         context: context,

@@ -28,6 +28,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     4 : 'Moisture Configuration',
     5 : 'Line Configuration',
   };
+
   int rangeStart = -1;
   int rangeEnd = -1;
   bool rangeMode = false;
@@ -417,9 +418,10 @@ class ConfigMakerProvider extends ChangeNotifier{
         if(masterOrNode == 1){
           masterData['deviceId'] = newDevice['deviceId'];
         }else{
+          print("replacing node.......");
           for(var device in listOfDeviceModel){
             if(device.controllerId == oldDevice["controllerId"]){
-              device.deviceId = oldDevice["deviceId"];
+              device.deviceId = newDevice["deviceId"];
             }
           }
         }
@@ -1140,8 +1142,13 @@ class ConfigMakerProvider extends ChangeNotifier{
       if(object.connectionNo != 0 && object.connectionNo != null && !weatherControllerId.contains(object.controllerId)){
         print(object.toJson());
         var controller = listOfDeviceModel.firstWhere((e) => e.controllerId == object.controllerId);
+        List<String> objectSerialNoForEcoGemSplitList = object.sNo.toString().split('.');
+        if(objectSerialNoForEcoGemSplitList[1].length == 2){
+          objectSerialNoForEcoGemSplitList[1] += '0';
+        }
+        String objectSerialNoForEcoGem = objectSerialNoForEcoGemSplitList.join(',');
         objectPayload.add({
-          "S_No": AppConstants.gemModelList.contains(masterData['modelId']) ? object.sNo : object.sNo.toString().split('.').join(','),
+          "S_No": AppConstants.gemModelList.contains(masterData['modelId']) ? object.sNo : objectSerialNoForEcoGem,
           "ObjectType": object.objectId,
           "DeviceTypeNumber": controller.categoryId,
           "DeviceRunningNumber": findOutReferenceNumber(controller),

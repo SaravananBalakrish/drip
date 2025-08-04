@@ -609,6 +609,7 @@ class _DeviceListState extends State<DeviceList> {
         throw ArgumentError('Invalid ConfigMakerTabs value: $configMakerTabs');
     }
   }
+
   String getTabImage(ConfigMakerTabs configMakerTabs) {
     switch (configMakerTabs) {
       case ConfigMakerTabs.deviceList:
