@@ -35,6 +35,7 @@
     <uses-feature android:name="android.hardware.bluetooth" android:required="false" />
     <uses-feature android:name="android.hardware.location" android:required="false" />
 
+
 <!--    &lt;!&ndash; For file reading &ndash;&gt;
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -49,6 +50,7 @@
         android:requestLegacyExternalStorage="true"
         android:enableOnBackInvokedCallback="true"
         android:theme="@style/LaunchTheme">
+
 
         <activity
             android:name=".MainActivity"
