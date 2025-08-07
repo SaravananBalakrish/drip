@@ -450,6 +450,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                           ? (pumpItem.status == 1 ? "Turned on through the mobile" : "Turned off through the mobile").toUpperCase()
                           : pumpItem.reason.toUpperCase(),
                       style: TextStyle(
+
                         overflow: TextOverflow.ellipsis,
                         color: pumpItem.reasonCode == 0
                             ? (pumpItem.status == 1
