@@ -85,7 +85,7 @@ class _ProductInventoryState extends State<ProductInventory> {
                           scrollController: vm.scrollController,
                           columnSpacing: 12,
                           horizontalMargin: 12,
-                          minWidth: 1200,
+                          minWidth: 1050,
                           dataRowHeight: 35.0,
                           headingRowHeight: 30,
                           headingRowColor: WidgetStateProperty.all<Color>(Colors.cyan.shade50),

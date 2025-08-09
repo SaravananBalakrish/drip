@@ -25,7 +25,7 @@ class AdminDesktop extends StatelessWidget {
         ),
         title: MainMenu(viewModel: viewModel),
         actions: const <Widget>[
-          UserAccountMenu(),
+          UserAccountMenu(screenType: 'Desktop'),
         ],
         centerTitle: false,
         elevation: 10,
