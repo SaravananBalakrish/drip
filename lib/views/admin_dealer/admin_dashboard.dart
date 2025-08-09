@@ -45,7 +45,7 @@ class AdminDashboard extends StatelessWidget {
                   Expanded(
                     child: Column(
                       children: [
-                        AnalyticsOverview(viewModel: viewModel, userId: viewedCustomer!.id),
+                        AnalyticsOverview(viewModel: viewModel, userId: viewedCustomer!.id, isWideScreen: true),
                         Expanded(child: buildDealerDataTable(context, viewModel, viewedCustomer.id)),
                       ],
                     ),
@@ -56,7 +56,7 @@ class AdminDashboard extends StatelessWidget {
                 scrollDirection: Axis.vertical,
                 child: Column(
                   children: [
-                    AnalyticsOverview(viewModel: viewModel, userId: viewedCustomer!.id),
+                    AnalyticsOverview(viewModel: viewModel, userId: viewedCustomer!.id, isWideScreen: false),
                     SizedBox(
                       height: (viewModel.myCustomerList.length*45)+95,
                       child: buildDealerDataTable(context, viewModel, viewedCustomer.id),

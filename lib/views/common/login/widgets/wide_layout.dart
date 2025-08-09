@@ -88,7 +88,7 @@ class WideLayout extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 15),
-                    const PhoneInputField(),
+                    const PhoneInputField(isWeb: true),
                     const SizedBox(height: 15),
                     const PasswordInputField(isWeb: true),
                     if (viewModel.errorMessage.isNotEmpty)
