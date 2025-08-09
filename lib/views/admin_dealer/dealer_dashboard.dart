@@ -47,7 +47,7 @@ class DealerDashboard extends StatelessWidget {
                   Expanded(
                     child: Column(
                       children: [
-                        AnalyticsOverview(viewModel: viewModel, userId: viewedCustomer!.id),
+                        AnalyticsOverview(viewModel: viewModel, userId: viewedCustomer!.id, isWideScreen: true),
                         Expanded(
                           child: buildProductStock(context, viewModel),
                         ),
@@ -62,7 +62,7 @@ class DealerDashboard extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    AnalyticsOverview(viewModel: viewModel, userId: viewedCustomer!.id),
+                    AnalyticsOverview(viewModel: viewModel, userId: viewedCustomer!.id, isWideScreen: false),
                     SizedBox(
                       width: MediaQuery.sizeOf(context).width,
                         height: (viewModel.productStockList.length * 35)+95,

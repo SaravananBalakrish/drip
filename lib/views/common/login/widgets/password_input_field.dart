@@ -18,7 +18,7 @@ class PasswordInputField extends StatelessWidget {
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
         border: isWeb? const OutlineInputBorder() : null,
-        icon: const Icon(Icons.lock_outline, color: Colors.white),
+        icon: Icon(Icons.lock_outline, color:  isWeb ? Colors.black:Colors.white),
         labelText: 'Password',
         labelStyle: const TextStyle(color: Colors.black),
         suffixIcon: IconButton(

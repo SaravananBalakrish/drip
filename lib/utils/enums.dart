@@ -3,6 +3,7 @@ enum ScreenType { mobile, tablet, desktop, web }
 enum UserRole { superAdmin, admin, dealer, customer, subUser }
 
 enum MySegment {all, year}
+enum MainMenuSegment {dashboard, product, stock}
 
 enum GemProgramStartStopReasonCode {
   rs1(1, 'Running As Per Schedule'),

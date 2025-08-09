@@ -12,24 +12,31 @@ import '../../../admin_dealer/dealer_device_list.dart';
 import '../../../create_account.dart';
 
 class MyUser extends StatelessWidget {
-  final UserDashboardViewModel viewModel;
-  final int userId;
-
   const MyUser({
     super.key,
     required this.viewModel,
     required this.userId,
+    required this.isWideScreen,
   });
+
+  final UserDashboardViewModel viewModel;
+  final int userId;
+  final bool isWideScreen;
 
   @override
   Widget build(BuildContext context) {
+    final customerList = viewModel.myCustomerList;
+
     return Card(
       color: Colors.white,
-      child: Column(
-        children: [
-          SizedBox(
-            height: 44,
-            child: ListTile(
+      surfaceTintColor: Colors.white,
+      elevation: isWideScreen?5:0,
+      child: Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: Column(
+          children: [
+            ListTile(
+              tileColor: Colors.white,
               title: const Text('My Dealers', style: TextStyle(fontSize: 20)),
               trailing: IconButton(
                 tooltip: 'Create Dealer account',
@@ -38,98 +45,124 @@ class MyUser extends StatelessWidget {
                 onPressed: () => userAccountBottomSheet(context, viewModel, userId),
               ),
             ),
-          ),
-          Expanded(
-            child: DataTable2(
-              columnSpacing: 12,
-              horizontalMargin: 12,
-              minWidth: 850,
-              headingRowColor: WidgetStateProperty.all<Color>(
-                Theme.of(context).primaryColorLight.withOpacity(0.1),
-              ),
-              headingRowHeight: 35,
-              dataRowHeight: 40,
-              columns: const [
-                DataColumn(label: Text('Name', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn(label: Text('Mobile No', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn2(
-                  label: Text('E-mail Address', style: TextStyle(fontWeight: FontWeight.bold)),
-                  size: ColumnSize.L,
+            SizedBox(
+              height: isWideScreen ? customerList.length * 50 : customerList.length * 78,
+              child: isWideScreen ? DataTable2(
+                columnSpacing: 12,
+                horizontalMargin: 12,
+                minWidth: 850,
+                headingRowColor: WidgetStateProperty.all<Color>(
+                  Theme.of(context).primaryColorLight.withOpacity(0.1),
                 ),
-                DataColumn2(
-                  label: Text('Address', style: TextStyle(fontWeight: FontWeight.bold)),
-                  size: ColumnSize.L,
-                ),
-                DataColumn2(
-                  label: Text(''),
-                  fixedWidth: 100,
-                ),
-              ],
-              rows: List<DataRow>.generate(
-                viewModel.myCustomerList.length,
-                    (index) => DataRow(
-                  cells: [
-                    DataCell(Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const CircleAvatar(
-                          backgroundImage: AssetImage("assets/png/user_thumbnail.png"),
-                          backgroundColor: Colors.transparent,
-                          radius: 14,
-                        ),
-                        const SizedBox(width: 12),
-                        Text(viewModel.myCustomerList[index].userName),
-                      ],
-                    )),
-                    DataCell(Text('+ ${viewModel.myCustomerList[index].countryCode} ${viewModel.myCustomerList[index].mobileNumber}')),
-                    DataCell(Text(viewModel.myCustomerList[index].emailId)),
-                    const DataCell(Text('--')),
-                    DataCell(Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          tooltip: 'View and Add new product',
-                          icon: const Icon(Icons.playlist_add),
-                          onPressed: () => openDealerDeviceListBottomSheet(
-                            context,
-                            viewModel.myCustomerList[index],
-                            viewModel,
-                            userId,
-                          ),
-                        ),
-                        IconButton(
-                          tooltip: 'View dealer dashboard',
-                          icon: const Icon(Icons.dashboard_outlined),
-                          onPressed: () {
-                            final user = UserModel(
-                              token: 'token',
-                              id: viewModel.myCustomerList[index].userId ?? 0,
-                              name: viewModel.myCustomerList[index].userName ?? '',
-                              role: UserRole.dealer,
-                              countryCode: viewModel.myCustomerList[index].countryCode ?? '',
-                              mobileNo: viewModel.myCustomerList[index].mobileNumber ?? '',
-                              email: viewModel.myCustomerList[index].emailId ?? '',
-                            );
-
-                            final userProvider = context.read<UserProvider>();
-                            userProvider.setViewedCustomer(user);
-
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const DealerScreenLayout(),
+                headingRowHeight: 35,
+                dataRowHeight: 40,
+                columns: const [
+                  DataColumn(label: Text('Name', style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn(label: Text('Mobile No', style: TextStyle(fontWeight: FontWeight.bold))),
+                  DataColumn2(
+                    label: Text('E-mail Address', style: TextStyle(fontWeight: FontWeight.bold)),
+                    size: ColumnSize.L,
+                  ),
+                  DataColumn2(
+                    label: Text('Address', style: TextStyle(fontWeight: FontWeight.bold)),
+                    size: ColumnSize.L,
+                  ),
+                  DataColumn2(label: Text(''), fixedWidth: 100),
+                ],
+                rows: List<DataRow>.generate(
+                  customerList.length,
+                      (index) {
+                    final customer = customerList[index];
+                    return DataRow(
+                      cells: [
+                        DataCell(Row(
+                          children: [
+                            const CircleAvatar(
+                              backgroundImage: AssetImage("assets/png/user_thumbnail.png"),
+                              backgroundColor: Colors.transparent,
+                              radius: 14,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(customer.userName),
+                          ],
+                        )),
+                        DataCell(Text('+ ${customer.countryCode} ${customer.mobileNumber}')),
+                        DataCell(Text(customer.emailId)),
+                        const DataCell(Text('--')),
+                        DataCell(Row(
+                          children: [
+                            IconButton(
+                              tooltip: 'View and Add new product',
+                              icon: const Icon(Icons.playlist_add),
+                              onPressed: () => openDealerDeviceListBottomSheet(
+                                context, customer, viewModel, userId,
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                            IconButton(
+                              tooltip: 'View dealer dashboard',
+                              icon: const Icon(Icons.dashboard_outlined),
+                              onPressed: () {
+                                final user = UserModel(
+                                  token: 'token',
+                                  id: customer.userId ?? 0,
+                                  name: customer.userName ?? '',
+                                  role: UserRole.dealer,
+                                  countryCode: customer.countryCode ?? '',
+                                  mobileNo: customer.mobileNumber ?? '',
+                                  email: customer.emailId ?? '',
+                                );
+
+                                context.read<UserProvider>().setViewedCustomer(user);
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const DealerScreenLayout(),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        )),
                       ],
-                    )),
-                  ],
+                    );
+                  },
                 ),
+              ) :
+              ListView.builder(
+                itemCount: customerList.length,
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true, // important!
+                padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+                itemBuilder: (context, index) {
+                  final customer = customerList[index];
+                  return ListTile(
+                    tileColor: Colors.white,
+                    leading: const CircleAvatar(
+                      backgroundImage: AssetImage("assets/png/user_thumbnail.png"),
+                      backgroundColor: Colors.transparent,
+                      radius: 20,
+                    ),
+                    title: Text(
+                      customer.userName,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      '+ ${customer.countryCode} ${customer.mobileNumber}\n${customer.emailId}',
+                      style: const TextStyle(color: Colors.black54),
+                    ),
+                    trailing: IconButton(
+                      tooltip: 'View and Add new product',
+                      icon: const Icon(Icons.playlist_add),
+                      onPressed: () => openDealerDeviceListBottomSheet(context, customer, viewModel, userId),
+                    ),
+                    onTap: (){},
+                  );
+                },
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -159,8 +192,12 @@ class MyUser extends StatelessWidget {
     );
   }
 
-  void openDealerDeviceListBottomSheet(BuildContext context, CustomerListModel customer, UserDashboardViewModel viewModel, int userId) {
-
+  void openDealerDeviceListBottomSheet(
+      BuildContext context,
+      CustomerListModel customer,
+      UserDashboardViewModel viewModel,
+      int userId,
+      ) {
     showModalBottomSheet(
       context: context,
       elevation: 10,

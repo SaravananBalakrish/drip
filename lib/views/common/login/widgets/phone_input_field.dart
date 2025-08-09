@@ -5,7 +5,8 @@ import 'package:provider/provider.dart';
 import '../../../../view_models/login_view_model.dart';
 
 class PhoneInputField extends StatelessWidget {
-  const PhoneInputField({super.key});
+  const PhoneInputField({super.key, required this.isWeb});
+  final bool isWeb;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +18,7 @@ class PhoneInputField extends StatelessWidget {
           icon: const Icon(Icons.clear, color: Colors.red),
           onPressed: () => viewModel.mobileNoController.clear(),
         ),
-        icon: const Icon(Icons.phone_outlined, color: Colors.white),
+        icon: Icon(Icons.phone_outlined, color: isWeb? Colors.black : Colors.white),
         filled: true,
         fillColor: Colors.white,
         contentPadding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
