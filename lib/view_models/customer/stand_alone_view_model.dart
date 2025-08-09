@@ -537,6 +537,18 @@ class StandAloneViewModel extends ChangeNotifier {
         }
       }
 
+      for (var line in masterData.irrigationLine) {
+        for (int j = 0; j < line.mainValveObjects.length; j++) {
+          if (line.mainValveObjects[j].isOn) {
+            strSldValveSrlNo += '${line.mainValveObjects[j].sNo}_';
+            standaloneSelection.add({
+              'sNo': line.mainValveObjects[j].sNo,
+              'selected': line.mainValveObjects[j].isOn,
+            });
+          }
+        }
+      }
+
       strSldValveSrlNo = strSldValveSrlNo.isNotEmpty ? strSldValveSrlNo.substring(
           0, strSldValveSrlNo.length - 1) : '';
 

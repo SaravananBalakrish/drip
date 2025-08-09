@@ -32,16 +32,20 @@ class AdminWebDashboard extends StatelessWidget {
             body: Padding(
               padding: const EdgeInsets.all(3.0),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Column(
-                      children: [
-                        AnalyticsOverview(viewModel: viewModel, userId: viewedCustomer!.id),
-                        Expanded(child: MyUser(viewModel:viewModel, userId: viewedCustomer.id)),
-                      ],
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          AnalyticsOverview(viewModel: viewModel, userId: viewedCustomer!.id, isWideScreen: true),
+                          MyUser(viewModel:viewModel, userId: viewedCustomer.id, isWideScreen: true),
+                        ],
+                      ),
                     ),
                   ),
-                  ProductList(viewModel: viewModel, userId: viewedCustomer.id),
+                  ProductList(viewModel: viewModel, userId: viewedCustomer.id, isWide: true),
                 ],
               ),
             ),

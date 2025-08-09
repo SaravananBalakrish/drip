@@ -27,7 +27,7 @@ class DealerWeb extends StatelessWidget {
         ),
         title: MainMenu(viewModel: viewModel),
         actions: const <Widget>[
-          UserAccountMenu(),
+          UserAccountMenu(screenType: 'Web'),
         ],
         centerTitle: false,
         elevation: 10,

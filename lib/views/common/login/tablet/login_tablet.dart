@@ -33,7 +33,7 @@ class LoginTablet extends StatelessWidget {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const PhoneInputField(),
+                        const PhoneInputField(isWeb: false),
                         const SizedBox(height: 15),
                         const PasswordInputField(isWeb: false),
                         if (viewModel.errorMessage.isNotEmpty)
