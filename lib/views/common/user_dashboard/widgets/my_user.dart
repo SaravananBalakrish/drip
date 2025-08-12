@@ -12,16 +12,17 @@ import '../../../admin_dealer/dealer_device_list.dart';
 import '../../../create_account.dart';
 
 class MyUser extends StatelessWidget {
-  const MyUser({
-    super.key,
+  const MyUser({super.key,
     required this.viewModel,
     required this.userId,
     required this.isWideScreen,
+    required this.role,
   });
 
   final UserDashboardViewModel viewModel;
   final int userId;
   final bool isWideScreen;
+  final UserRole role;
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class MyUser extends StatelessWidget {
           children: [
             ListTile(
               tileColor: Colors.white,
-              title: const Text('My Dealers', style: TextStyle(fontSize: 20)),
+              title: Text(getUserListTitle(role), style: const TextStyle(fontSize: 20)),
               trailing: IconButton(
                 tooltip: 'Create Dealer account',
                 icon: const Icon(Icons.person_add_outlined),
@@ -99,7 +100,39 @@ class MyUser extends StatelessWidget {
                               ),
                             ),
                             IconButton(
-                              tooltip: 'View dealer dashboard',
+                              tooltip: role == UserRole.admin
+                                  ? 'View dealer dashboard'
+                                  : 'View customer dashboard',
+                              icon: const Icon(Icons.dashboard_outlined),
+                              onPressed: () {
+                                final user = UserModel(
+                                  token: context.read<UserProvider>().loggedInUser.token, // use real token
+                                  id: customer.userId ?? 0,
+                                  name: customer.userName ?? '',
+                                  role: role == UserRole.admin
+                                      ? UserRole.dealer // Admin viewing a dealer
+                                      : UserRole.customer, // Dealer viewing a customer
+                                  countryCode: customer.countryCode ?? '',
+                                  mobileNo: customer.mobileNumber ?? '',
+                                  email: customer.emailId ?? '',
+                                );
+
+                                context.read<UserProvider>().setViewedCustomer(user);
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const DealerScreenLayout(),
+                                  ),
+                                ).then((_) {
+                                  // Reset to logged-in user when returning
+                                  //context.read<UserProvider>().clearViewedCustomer();
+                                });
+                              },
+                            ),
+                            /*IconButton(
+                              tooltip: role == UserRole.admin ? 'View dealer dashboard':
+                              'View customer dashboard',
                               icon: const Icon(Icons.dashboard_outlined),
                               onPressed: () {
                                 final user = UserModel(
@@ -121,7 +154,7 @@ class MyUser extends StatelessWidget {
                                   ),
                                 );
                               },
-                            ),
+                            ),*/
                           ],
                         )),
                       ],
@@ -156,12 +189,14 @@ class MyUser extends StatelessWidget {
                       icon: const Icon(Icons.playlist_add),
                       onPressed: () => openDealerDeviceListBottomSheet(context, customer, viewModel, userId),
                     ),
-                    onTap: (){
+                    onTap: () {
                       final user = UserModel(
-                        token: 'token',
+                        token: context.read<UserProvider>().loggedInUser.token,
                         id: customer.userId ?? 0,
                         name: customer.userName ?? '',
-                        role: UserRole.dealer,
+                        role: role == UserRole.admin
+                            ? UserRole.dealer
+                            : UserRole.customer,
                         countryCode: customer.countryCode ?? '',
                         mobileNo: customer.mobileNumber ?? '',
                         email: customer.emailId ?? '',
@@ -174,7 +209,9 @@ class MyUser extends StatelessWidget {
                         MaterialPageRoute(
                           builder: (context) => const DealerScreenLayout(),
                         ),
-                      );
+                      ).then((_) {
+                        context.read<UserProvider>().clearViewedCustomer();
+                      });
                     },
                   );
                 },
@@ -228,10 +265,21 @@ class MyUser extends StatelessWidget {
         userId: userId,
         customerName: customer.userName,
         customerId: customer.userId,
-        userRole: 'Dealer',
+        userRole: role == UserRole.admin ? 'Dealer': 'Customer',
         productStockList: viewModel.productStockList,
         onDeviceListAdded: viewModel.removeStockList,
       ),
     );
+  }
+
+  String getUserListTitle(UserRole role) {
+    switch (role) {
+      case UserRole.admin:
+        return 'My Dealers';
+      case UserRole.dealer:
+        return 'My Customers';
+      default:
+        return 'My Customers';
+    }
   }
 }

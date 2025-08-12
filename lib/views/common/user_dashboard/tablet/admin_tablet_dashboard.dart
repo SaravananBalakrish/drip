@@ -36,7 +36,7 @@ class AdminTabletDashboard extends StatelessWidget {
                     AnalyticsOverview(viewModel: viewModel, userId: viewedCustomer!.id, isWideScreen: true),
                     SizedBox(
                       height: (viewModel.myCustomerList.length*45)+95,
-                      child: MyUser(viewModel:viewModel, userId: viewedCustomer.id, isWideScreen: true),
+                      child: MyUser(viewModel:viewModel, userId: viewedCustomer.id, isWideScreen: true, role: viewedCustomer.role),
                     ),
                     ProductList(viewModel: viewModel, userId: viewedCustomer.id, isWide: false),
                   ],

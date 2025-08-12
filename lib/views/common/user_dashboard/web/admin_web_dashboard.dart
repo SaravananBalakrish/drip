@@ -39,7 +39,7 @@ class AdminWebDashboard extends StatelessWidget {
                       child: Column(
                         children: [
                           AnalyticsOverview(viewModel: viewModel, userId: viewedCustomer!.id, isWideScreen: true),
-                          MyUser(viewModel:viewModel, userId: viewedCustomer.id, isWideScreen: true),
+                          MyUser(viewModel:viewModel, userId: viewedCustomer.id, isWideScreen: true, role: viewedCustomer.role),
                         ],
                       ),
                     ),
