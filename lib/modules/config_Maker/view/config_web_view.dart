@@ -615,11 +615,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
   bool validateTab(ConfigMakerTabs tab){
     bool display = false;
     if(AppConstants.pumpWithValveModelList.contains(configPvd.masterData['modelId'])){
-      if([ConfigMakerTabs.productLimit.name].contains(tab.name)){
-        display = true;
-      }
-    }else if(AppConstants.pumpModelList.contains(configPvd.masterData['modelId'])){
-      if(tab.name != ConfigMakerTabs.deviceList.name){
+      if([ConfigMakerTabs.deviceList.name, ConfigMakerTabs.productLimit.name].contains(tab.name)){
         display = true;
       }
     }else{

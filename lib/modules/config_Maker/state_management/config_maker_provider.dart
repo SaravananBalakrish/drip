@@ -17,7 +17,7 @@ import '../view/connection.dart';
 
 class ConfigMakerProvider extends ChangeNotifier{
   double ratio = 1.0;
-  ConfigMakerTabs selectedTab = ConfigMakerTabs.deviceList;
+  ConfigMakerTabs selectedTab = ConfigMakerTabs.siteConfigure;
   Map<String, dynamic> configMakerDataFromHttp = {};
   Map<String, dynamic> defaultDataFromHttp = {};
   Map<int, String> configurationTab = {
@@ -28,7 +28,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     4 : 'Moisture Configuration',
     5 : 'Line Configuration',
   };
-  int selectedConfigurationTab = 0;
+  int selectedConfigurationTab = 2;
   int rangeStart = -1;
   int rangeEnd = -1;
   bool rangeMode = false;
@@ -968,6 +968,15 @@ class ConfigMakerProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void updateFilterMode(FiltrationModel filtrationSite, int filterIndex, int value){
+    for(var site in filtration){
+      if(site.commonDetails.sNo == filtrationSite.commonDetails.sNo){
+        site.filters[filterIndex].filterMode = value;
+      }
+    }
+    notifyListeners();
+  }
+
   String serialNoOrEmpty(double sNo){
     return sNo == 0.0 ? '' : sNo.toString();
   }
@@ -1053,7 +1062,7 @@ class ConfigMakerProvider extends ChangeNotifier{
       var filterSite = filtration[i];
       filterPayload.add({
         "S_No": filterSite.commonDetails.sNo,
-        "Filter": filterSite.filters.join('_'),
+        "Filter": filterSite.filters.map((filter) => filter.sNo).join('_'),
         "PressureIn": serialNoOrEmpty(filterSite.pressureIn),
         "PressureOut": serialNoOrEmpty(filterSite.pressureOut),
         "IrrigationLine": line.where((irrigationLine) => [irrigationLine.centralFiltration, irrigationLine.localFiltration].contains(filterSite.commonDetails.sNo)).map((filteredLine) => filteredLine.commonDetails.sNo).toList().join('_'),

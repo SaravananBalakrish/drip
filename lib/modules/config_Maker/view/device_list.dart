@@ -405,7 +405,7 @@ class _DeviceListState extends State<DeviceList> {
             )
           ],
         ),
-        trailing: IntrinsicWidth(
+        trailing: ![...AppConstants.pumpWithValveModelList, ...AppConstants.pumpModelList].contains(configPvd.masterData['modelId']) ? IntrinsicWidth(
           child: CustomMaterialButton(
               onPressed: (){
                 setState(() {
@@ -577,7 +577,7 @@ class _DeviceListState extends State<DeviceList> {
               },
               title: 'Add Nodes'
           ),
-        ),
+        ) : null,
       ),
     );
   }
