@@ -26,7 +26,6 @@ import 'modules/config_Maker/state_management/config_maker_provider.dart';
 import 'StateManagement/mqtt_payload_provider.dart';
 import 'StateManagement/overall_use.dart';
 import 'modules/constant/state_management/constant_provider.dart';
-import 'package:uni_links/uni_links.dart';
 
 // Initialize local notifications plugin
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();

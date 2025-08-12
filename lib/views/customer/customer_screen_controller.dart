@@ -71,12 +71,8 @@ class CustomerScreenController extends StatelessWidget {
             return const Scaffold(body: Center(child: Text('Site loading please waite....')));
           }
 
-
           final screenWidth = MediaQuery.sizeOf(context).width;
           final screenHeight = MediaQuery.sizeOf(context).height;
-
-
-          print("vm.mySiteList.data:${vm.mySiteList.data}");
 
           final currentSite = vm.mySiteList.data[vm.sIndex];
           final currentMaster = currentSite.master[vm.mIndex];
@@ -173,7 +169,7 @@ class CustomerScreenController extends StatelessWidget {
                     },
                   ):
                   Text(currentMaster.deviceName,
-                    style: const TextStyle(fontSize: 17)),
+                      style: const TextStyle(fontSize: 17)),
 
                   [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(currentMaster.modelId) ?
                   const SizedBox(width: 15): const SizedBox(),
@@ -213,8 +209,8 @@ class CustomerScreenController extends StatelessWidget {
                   ) :
                   [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(currentMaster.modelId)?
                   Text(currentMaster.irrigationLine.isNotEmpty?
-                    currentMaster.irrigationLine[0].name:
-                    'Line empty', style: const TextStyle(fontSize: 17)):
+                  currentMaster.irrigationLine[0].name:
+                  'Line empty', style: const TextStyle(fontSize: 17)):
                   const SizedBox(),
 
                   const SizedBox(width: 15,),
@@ -357,8 +353,8 @@ class CustomerScreenController extends StatelessWidget {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => ResetVerssion(
-                                          userId: userId, controllerId: currentMaster.controllerId,
-                                          deviceID: currentMaster.deviceId),
+                                            userId: userId, controllerId: currentMaster.controllerId,
+                                            deviceID: currentMaster.deviceId),
                                       ),
                                     );
                                   },
@@ -372,7 +368,7 @@ class CustomerScreenController extends StatelessWidget {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) => ResetAccumalationScreen(userId: userId,
-                                          controllerId: currentMaster.controllerId, deviceID: currentMaster.deviceId),
+                                            controllerId: currentMaster.controllerId, deviceID: currentMaster.deviceId),
                                       ),
                                     );
                                   },
@@ -1007,15 +1003,15 @@ class CustomerScreenController extends StatelessWidget {
           masterData: currentMaster,
         ):
         const Scaffold(body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text('Please wait...'),
-                SizedBox(height: 10),
-                CircularProgressIndicator(),
-              ],
-            ),
-          ));
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Please wait...'),
+              SizedBox(height: 10),
+              CircularProgressIndicator(),
+            ],
+          ),
+        ));
       case 1:
         return CustomerProduct(customerId: userId);
       case 2:
@@ -1024,8 +1020,8 @@ class CustomerScreenController extends StatelessWidget {
         return IrrigationAndPumpLog(userData: {'userId' : userId, 'controllerId' : currentMaster.controllerId}, masterData: currentMaster);
       case 4:
         return ControllerSettings(
-            userId: userId,
-            customerId: userId,
+          userId: userId,
+          customerId: userId,
           masterController: currentMaster,
         );
       case 5:

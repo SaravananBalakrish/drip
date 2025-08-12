@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -92,7 +91,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     mqttService.initializeMQTTClient(state: mqttProvider);
     mqttService.connect();
 
-    if (!kIsWeb&&Platform.isAndroid) {
+    if (!kIsWeb) {
       blueService.initializeBluService(state: mqttProvider);
     }
 
@@ -199,12 +198,9 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   }
 
   Future<void> getAllMySites(BuildContext context, int customerId) async {
-    print('customerId:-->$customerId');
     setLoading(true);
     try {
       final response = await repository.fetchAllMySite({"userId": customerId});
-      print("response:$response");
-      print("response:${response.body}");
       if (response.statusCode == 200) {
         print(response.body);
         final jsonData = jsonDecode(response.body);
