@@ -508,6 +508,7 @@ class MasterListForSite extends StatelessWidget {
                       width: 125,
                       child: MaterialButton(
                         onPressed: () {
+                          print("masterData.modelDescription : ${site.master[mstIndex].modelDescription}");
                           Navigator.push(
                             context,
                             MaterialPageRoute(builder: (context) {
