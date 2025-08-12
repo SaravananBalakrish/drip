@@ -847,6 +847,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                 initialValue: rtcSetting.onTime.isNotEmpty ? rtcSetting.onTime : "00:00:00",
                                 onChanged: (newTime) {
                                   setState(() {
+                                    settingList[categoryIndex].setting[settingIndex].isChanged = true;
                                     settingList[categoryIndex].changed = true;
                                     rtcSetting.onTime = newTime;
                                   });
@@ -918,6 +919,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                   onChanged: (newValue) {
                     setState(() {
                       settingList[categoryIndex].setting[settingIndex].value[index] = newValue;
+                      settingList[categoryIndex].setting[settingIndex].isChanged = true;
                       settingList[categoryIndex].changed = true;
                     });
                   }
@@ -1011,6 +1013,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
 
   void onChangeValue(int categoryIndex, int settingIndex, List settingList, newValue) {
     setState(() {
+      settingList[categoryIndex].setting[settingIndex].isChanged = true;
       if(settingList[categoryIndex].type == 206) {
         if (settingList[categoryIndex].setting[settingIndex].serialNumber == 15 ||
             settingList[categoryIndex].setting[settingIndex].serialNumber == 16) {
@@ -1267,6 +1270,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   };
 
   Future<void> sendFunction() async {
+    print("seee ==> ${generatePayloadMessageForChangedPayload()}");
     // mqttPayloadProvider.preferencePayload = {};
     breakLoop = false;
     Map<String, dynamic> userData = {
@@ -1388,6 +1392,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
           'calibrationSetting': preferenceProvider.calibrationSetting?.map((item) => item.toJson()).toList(),
           'commonPumps': preferenceProvider.commonPumpSettings?.map((item) => item.toJson()).toList(),
           'hardware': payloadForSlave,
+          'changedPayload': '',
           'controllerReadStatus': preferenceProvider.generalData!.controllerReadStatus,
         });
       });
@@ -1407,6 +1412,37 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
 
   Future<void> showSnackBar({required String message}) async{
     ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message:  message));
+  }
+
+  String generatePayloadMessageForChangedPayload(){
+    Map<String, List<String>> changedPayloadObject= {};
+    if(preferenceProvider.commonPumpSettings != null){
+      for(var controller in preferenceProvider.commonPumpSettings!){
+        print("controller.deviceId => ${controller.deviceId}");
+        print("controller.settingList => ${controller.settingList}");
+        for(var settingCategory in controller.settingList){
+          print("settingCategory => ${settingCategory.name}");
+          for(var setting in settingCategory.setting){
+            print("${setting.isChanged}  == ${setting.title}");
+            if(setting.isChanged){
+              var keyString = '${controller.deviceName} | ${controller.deviceId} | ${settingCategory.name}';
+              if(!changedPayloadObject.containsKey(keyString)){
+                changedPayloadObject[keyString] = [];
+              }else{
+                String payload = '${setting.title} (${setting.value})';
+                changedPayloadObject[keyString]!.add(payload);
+              }
+            }
+          }
+        }
+      }
+    }
+    String singlePayload = '';
+    for(var key in changedPayloadObject.keys){
+      singlePayload += '$key --> ';
+      singlePayload += changedPayloadObject[key]!.join(', ');
+    }
+    return singlePayload;
   }
 
   String onDelayTimer() {

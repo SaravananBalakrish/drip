@@ -64,6 +64,7 @@ class WidgetSetting {
   dynamic value;
   List<RtcTimeSetting>? rtcSettings;
   bool hidden;
+  bool isChanged;
 
   WidgetSetting({
     required this.title,
@@ -73,6 +74,7 @@ class WidgetSetting {
     this.value,
     this.rtcSettings,
     required this.hidden,
+    required this.isChanged,
     required this.serialNumber
   });
 
@@ -114,6 +116,7 @@ class WidgetSetting {
       value: value,
       rtcSettings: rtcSettings,
       hidden: json['hidden'],
+      isChanged: false,
     );
   }
 
