@@ -862,6 +862,7 @@ class FilterSite {
       controllerId: json["controllerId"],
       count: json["count"],
       siteMode: json["siteMode"] ?? 0,
+      //filters: [],
       filters: json["filters"] is List ? json["filters"].whereType<int>().toList() : [],
       pressureIn: json["pressureIn"] is List ? json["pressureIn"].whereType<int>().toList() : [],
       pressureOut: json["pressureOut"] is List ? json["pressureOut"].whereType<int>().toList() : [],
