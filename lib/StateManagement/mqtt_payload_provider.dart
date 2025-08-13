@@ -851,9 +851,11 @@ class MqttPayloadProvider with ChangeNotifier {
 
    void updateValveStatus(List<String> valveOnOffPayload) {
      for (final entry in valveOnOffPayload) {
-       if (!entry.startsWith('13.')) continue;
+       if (!(entry.startsWith('13.') || entry.startsWith('14.'))) continue;
+
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].isEmpty) continue;
+
        final sNo = parts[0];
        _valveOnOffStatusMap[sNo] = entry;
      }

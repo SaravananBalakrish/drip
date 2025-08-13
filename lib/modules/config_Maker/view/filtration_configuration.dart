@@ -108,14 +108,15 @@ class _FiltrationConfigurationState extends State<FiltrationConfiguration> {
                             SizedBox(
                               width: 150,
                               child: Center(
-                                child: Text(filtrationSite.filters.isEmpty ? '-' : filtrationSite.filters.map((sNo) => getObjectName(sNo, widget.configPvd).name!).join(', '), style: TextStyle(color: themeData.primaryColor, fontSize: 12, fontWeight: FontWeight.bold),),
+                                child: Text(filtrationSite.filters.isEmpty ? '-' : filtrationSite.filters.map((filter) => getObjectName(filter.sNo, widget.configPvd).name!).join(', '), style: TextStyle(color: themeData.primaryColor, fontSize: 12, fontWeight: FontWeight.bold),),
                               ),
                             ),
                             IconButton(
                                 onPressed: (){
                                   setState(() {
                                     widget.configPvd.listOfSelectedSno.clear();
-                                    widget.configPvd.listOfSelectedSno.addAll(filtrationSite.filters);
+                                    List<double> listOfFilterSno = filtrationSite.filters.map((filter) => filter.sNo).toList();
+                                    widget.configPvd.listOfSelectedSno.addAll(listOfFilterSno);
                                   });
                                   selectionDialogBox(
                                       context: context,
@@ -125,7 +126,8 @@ class _FiltrationConfigurationState extends State<FiltrationConfiguration> {
                                       onPressed: (){
                                         setState(() {
                                           filtrationSite.filters.clear();
-                                          filtrationSite.filters.addAll(widget.configPvd.listOfSelectedSno);
+                                          List<Filter> listOfFilter = widget.configPvd.listOfSelectedSno.map((sNo) => Filter.fromJson({"sNo" : sNo, "filterMode" : 1})).toList();
+                                          filtrationSite.filters.addAll(listOfFilter);
                                           widget.configPvd.listOfSelectedSno.clear();
                                         });
                                         Navigator.pop(context);
@@ -223,11 +225,12 @@ class _FiltrationConfigurationState extends State<FiltrationConfiguration> {
     List<double> assignedFilters = [];
     List<double> unAssignedFilters = [];
     for(var site in widget.configPvd.filtration){
-      for(var filterSno in site.filters){
-        assignedFilters.add(filterSno);
+      for(var filter in site.filters){
+        assignedFilters.add(filter.sNo);
       }
     }
-    filterObject = filterObject.where((object) => (!assignedFilters.contains(object.sNo!) || filtrationSite.filters.contains(object.sNo))).toList();
+    List<double> filterSnoOfFiltrationSite = filtrationSite.filters.map((filter) => filter.sNo).toList();
+    filterObject = filterObject.where((object) => (!assignedFilters.contains(object.sNo!) || filterSnoOfFiltrationSite.contains(object.sNo))).toList();
     return filterObject;
   }
 
@@ -277,6 +280,7 @@ class _FiltrationDashboardFormationState extends State<FiltrationDashboardFormat
     super.initState();
     configPvd = Provider.of<ConfigMakerProvider>(context, listen: false);
   }
+
   @override
   Widget build(BuildContext context) {
     configPvd = Provider.of<ConfigMakerProvider>(context, listen: true);
@@ -360,17 +364,35 @@ class _FiltrationDashboardFormationState extends State<FiltrationDashboardFormat
         firstHorizontalPipe(),
         Stack(
           children: [
-            SvgPicture.asset(
-              'assets/Images/Filtration/single_filter_4.svg',
-              width: 150,
-              height: 150 * configPvd.ratio,
+            FilterModeSelectionWidget(
+              filterIndex: 0,
+                filtrationSite: widget.filtrationSite,
+                child: SvgPicture.asset(
+                  'assets/Images/Filtration/single_filter_4.svg',
+                  width: 150,
+                  height: 150 * configPvd.ratio,
+                )
             ),
+            if(widget.filtrationSite.filters[0].filterMode == 2)
+              Positioned(
+                bottom: 40,
+                left: 47,
+                child: FilterModeSelectionWidget(
+                    filtrationSite: widget.filtrationSite,
+                    filterIndex: 0,
+                    child: SvgPicture.asset(
+                      'assets/Images/Filtration/disc.svg',
+                      color: Theme.of(context).primaryColor,
+                      width: 50,
+                      height: 50 * configPvd.ratio,
+                    )
+                ),
+              ),
             Positioned(
               left : 20,
               top: 6 * configPvd.ratio,
-              child: Text(getObjectName(widget.filtrationSite.filters[0], configPvd).name!,style: TextStyle(fontSize: 12 * configPvd.ratio, fontWeight: FontWeight.bold),),
+              child: Text(getObjectName(widget.filtrationSite.filters[0].sNo, configPvd).name!,style: TextStyle(fontSize: 12 * configPvd.ratio, fontWeight: FontWeight.bold),),
             ),
-
           ],
         ),
         secondHorizontalPipe(),
@@ -383,12 +405,12 @@ class _FiltrationDashboardFormationState extends State<FiltrationDashboardFormat
       children: [
         firstHorizontalPipe(),
         if(widget.filtrationSite.filters.isNotEmpty)
-          multipleFilterFirstFilter(widget.filtrationSite.filters[0],),
+          multipleFilterFirstFilter(widget.filtrationSite.filters[0].sNo,),
         if(widget.filtrationSite.filters.length > 2)
           for(var middleFilter = 1;middleFilter < widget.filtrationSite.filters.length - 1;middleFilter++)
-            multipleFilterMiddleFilter(widget.filtrationSite.filters[middleFilter]),
+            multipleFilterMiddleFilter(widget.filtrationSite.filters[middleFilter].sNo),
         if(widget.filtrationSite.filters.length > 1)
-          multipleFilterLastFilter(widget.filtrationSite.filters[widget.filtrationSite.filters.length - 1]),
+          multipleFilterLastFilter(widget.filtrationSite.filters[widget.filtrationSite.filters.length - 1].sNo),
         secondHorizontalPipe(),
       ],
     );
@@ -397,11 +419,30 @@ class _FiltrationDashboardFormationState extends State<FiltrationDashboardFormat
     DeviceObjectModel filterObject = configPvd.listOfGeneratedObject.firstWhere((object) => object.sNo == filterSno);
     return Stack(
       children: [
-        SvgPicture.asset(
-          'assets/Images/Filtration/multiple_filter_first_4.svg',
-          width: 150,
-          height: 150 * configPvd.ratio,
+        FilterModeSelectionWidget(
+            filterIndex: 0,
+            filtrationSite: widget.filtrationSite,
+            child: SvgPicture.asset(
+              'assets/Images/Filtration/multiple_filter_first_4.svg',
+              width: 150,
+              height: 150 * configPvd.ratio,
+            ),
         ),
+        if(widget.filtrationSite.filters[0].filterMode == 2)
+          Positioned(
+            bottom: 40,
+            left: 37,
+            child: FilterModeSelectionWidget(
+                filtrationSite: widget.filtrationSite,
+                filterIndex: 0,
+                child: SvgPicture.asset(
+                  'assets/Images/Filtration/disc.svg',
+                  color: Theme.of(context).primaryColor,
+                  width: 50,
+                  height: 50 * configPvd.ratio,
+                )
+            ),
+          ),
         Positioned(
           top: 20 * configPvd.ratio,
           child: SvgPicture.asset(
@@ -420,12 +461,32 @@ class _FiltrationDashboardFormationState extends State<FiltrationDashboardFormat
   }
   Widget multipleFilterMiddleFilter(double filterSno){
     DeviceObjectModel filterObject = configPvd.listOfGeneratedObject.firstWhere((object) => object.sNo == filterSno);
+    int filterIndex = widget.filtrationSite.filters.indexWhere((filter) => filter.sNo == filterSno);
     return Stack(
       children: [
-        SvgPicture.asset(
-          'assets/Images/Filtration/multiple_filter_middle_4.svg',
-          width: 150,
-          height: 150 * configPvd.ratio,
+        FilterModeSelectionWidget(
+          filterIndex: filterIndex,
+          filtrationSite: widget.filtrationSite,
+          child: SvgPicture.asset(
+            'assets/Images/Filtration/multiple_filter_middle_4.svg',
+            width: 150,
+            height: 150 * configPvd.ratio,
+          ),
+        ),
+        if(widget.filtrationSite.filters[filterIndex].filterMode == 2)
+          Positioned(
+            bottom: 40,
+            left: 47,
+            child: FilterModeSelectionWidget(
+                filtrationSite: widget.filtrationSite,
+                filterIndex: filterIndex,
+                child: SvgPicture.asset(
+                  'assets/Images/Filtration/disc.svg',
+                  width: 50,
+                  height: 50 * configPvd.ratio,
+                    color: Theme.of(context).primaryColor
+                )
+            ),
         ),
         Positioned(
           top: 20 * configPvd.ratio,
@@ -448,10 +509,29 @@ class _FiltrationDashboardFormationState extends State<FiltrationDashboardFormat
     DeviceObjectModel filterObject = configPvd.listOfGeneratedObject.firstWhere((object) => object.sNo == filterSno);
     return Stack(
       children: [
-        SvgPicture.asset(
-          'assets/Images/Filtration/multiple_filter_last_4.svg',
-          width: 150,
-          height: 150 * configPvd.ratio,
+        FilterModeSelectionWidget(
+          filterIndex: widget.filtrationSite.filters.length - 1,
+          filtrationSite: widget.filtrationSite,
+          child: SvgPicture.asset(
+            'assets/Images/Filtration/multiple_filter_last_4.svg',
+            width: 150,
+            height: 150 * configPvd.ratio,
+          ),
+        ),
+        if(widget.filtrationSite.filters[widget.filtrationSite.filters.length - 1].filterMode == 2)
+          Positioned(
+          bottom: 40,
+          left: 47,
+          child: FilterModeSelectionWidget(
+              filtrationSite: widget.filtrationSite,
+              filterIndex: widget.filtrationSite.filters.length - 1,
+              child: SvgPicture.asset(
+                'assets/Images/Filtration/disc.svg',
+                width: 50,
+                height: 50 * configPvd.ratio,
+                color: Theme.of(context).primaryColor,
+              )
+          ),
         ),
         Positioned(
           bottom: 0,
@@ -471,3 +551,71 @@ class _FiltrationDashboardFormationState extends State<FiltrationDashboardFormat
   }
 }
 
+class FilterModeSelectionWidget extends StatefulWidget {
+  final FiltrationModel filtrationSite;
+  final Widget child;
+  final int filterIndex;
+  const FilterModeSelectionWidget({super.key, required this.child, required this.filtrationSite, required this.filterIndex});
+
+  @override
+  State<FilterModeSelectionWidget> createState() => _FilterModeSelectionWidgetState();
+}
+
+class _FilterModeSelectionWidgetState extends State<FilterModeSelectionWidget> {
+  late ConfigMakerProvider configPvd;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    configPvd = Provider.of<ConfigMakerProvider>(context, listen: false);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    configPvd = Provider.of<ConfigMakerProvider>(context, listen: true);
+    return InkWell(
+      child: widget.child,
+      onTap: (){
+        showDialog(context: context, builder: (context){
+          return StatefulBuilder(builder: (context,stateSetter){
+            return AlertDialog(
+              title: Text('Select Filter Type'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  RadioListTile(
+                      title: const Text("Sand filter"),
+                      value: 1,
+                      groupValue: widget.filtrationSite.filters[widget.filterIndex].filterMode,
+                      onChanged: (value){
+                        stateSetter((){
+                          setState(() {
+                            configPvd.updateFilterMode(widget.filtrationSite, widget.filterIndex, value!);
+                          });
+                        });
+
+                      }),
+                  RadioListTile(
+                    title: const Text("Disc filter"),
+                    value: 2,
+                    groupValue: widget.filtrationSite.filters[widget.filterIndex].filterMode,
+                    onChanged: (value) {
+                      stateSetter((){
+                        setState(() {
+                          configPvd.updateFilterMode(widget.filtrationSite, widget.filterIndex, value!);
+                        });
+                      });
+
+                    },
+                  )
+                ],
+              ),
+            );
+          });
+
+        });
+      },
+    );
+  }
+}

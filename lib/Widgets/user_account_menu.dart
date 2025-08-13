@@ -6,7 +6,8 @@ import '../view_models/base_header_view_model.dart';
 import '../views/account_settings.dart';
 
 class UserAccountMenu extends StatelessWidget {
-  const UserAccountMenu({super.key});
+  const UserAccountMenu({super.key, required this.screenType});
+  final String screenType;
 
   Future<void> _onMenuSelected(BuildContext context, String? value) async {
     switch (value) {
@@ -31,13 +32,26 @@ class UserAccountMenu extends StatelessWidget {
     }
   }
 
-  void _showUserMenu(BuildContext context, TapDownDetails details) {
+  void _showUserMenu(BuildContext context, TapDownDetails details, String userName) {
     final offset = details.globalPosition;
     showMenu<String>(
       context: context,
       position: RelativeRect.fromLTRB(offset.dx, offset.dy, offset.dx, 0),
-      items: const [
-        PopupMenuItem(
+      items: [
+        if(screenType == "Tablet" || screenType == "Mobile")...[
+          PopupMenuItem<String>(
+            enabled: false,
+            child: Text(
+              userName,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+        ],
+        const PopupMenuItem<String>(
           value: 'profile',
           child: Row(
             children: [
@@ -47,7 +61,7 @@ class UserAccountMenu extends StatelessWidget {
             ],
           ),
         ),
-        PopupMenuItem(
+        const PopupMenuItem<String>(
           value: 'logout',
           child: Row(
             children: [
@@ -60,6 +74,7 @@ class UserAccountMenu extends StatelessWidget {
       ],
     ).then((value) => _onMenuSelected(context, value));
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -77,8 +92,25 @@ class UserAccountMenu extends StatelessWidget {
         MouseRegion(
           cursor: SystemMouseCursors.click,
           child: GestureDetector(
-            onTapDown: (details) => _showUserMenu(context, details),
-            child: Container(
+            onTapDown: (details) => _showUserMenu(context, details, customer!.name),
+            child: screenType == "Tablet" || screenType == "Mobile" ? Row(
+              children: [
+                Container(
+                  width: 36,
+                  height: 36,
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  child: const CircleAvatar(
+                    radius: 18,
+                    backgroundImage: AssetImage("assets/png/user_thumbnail.png"),
+                  ),
+                ),
+                const SizedBox(width: 10),
+              ],
+            ) :
+            Container(
               width: 230,
               height: 36,
               decoration: const BoxDecoration(

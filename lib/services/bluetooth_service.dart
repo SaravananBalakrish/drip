@@ -255,6 +255,8 @@ class BluService {
   void _parseBuffer() {
     print('_buffer----> $_buffer');
 
+    if (_buffer.isEmpty) return;
+
     // Start logging when *StartLog appears
     if (_buffer.contains('LogFileSentSuccess')) {
       isLogging = false;
