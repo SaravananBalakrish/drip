@@ -139,10 +139,10 @@ class _ConfigWebViewState extends State<ConfigWebView> {
             IconButton(
                 alignment: Alignment.center,
                 style: ButtonStyle(
-                    backgroundColor: WidgetStateProperty.all(configPvd.selectedTab == ConfigMakerTabs.siteConfigure ? Colors.grey.shade500 : Theme.of(context).primaryColor)
+                    backgroundColor: WidgetStateProperty.all(configPvd.selectedTab == (AppConstants.pumpWithValveModelList.contains(configPvd.masterData["modelId"]) ?  ConfigMakerTabs.productLimit : ConfigMakerTabs.siteConfigure) ? Colors.grey.shade500 : Theme.of(context).primaryColor)
                 ),
                 onPressed: (){
-                  if(configPvd.selectedTab != ConfigMakerTabs.siteConfigure){
+                  if(configPvd.selectedTab != (AppConstants.pumpWithValveModelList.contains(configPvd.masterData["modelId"]) ?  ConfigMakerTabs.productLimit : ConfigMakerTabs.siteConfigure)){
                     setState(() {
                       if(configPvd.selectedTab == ConfigMakerTabs.deviceList){
                         configPvd.selectedTab = ConfigMakerTabs.productLimit;
@@ -615,11 +615,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
   bool validateTab(ConfigMakerTabs tab){
     bool display = false;
     if(AppConstants.pumpWithValveModelList.contains(configPvd.masterData['modelId'])){
-      if([ConfigMakerTabs.productLimit.name].contains(tab.name)){
-        display = true;
-      }
-    }else if(AppConstants.pumpModelList.contains(configPvd.masterData['modelId'])){
-      if(tab.name != ConfigMakerTabs.deviceList.name){
+      if([ConfigMakerTabs.deviceList.name, ConfigMakerTabs.productLimit.name].contains(tab.name)){
         display = true;
       }
     }else{

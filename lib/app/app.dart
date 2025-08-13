@@ -6,11 +6,12 @@ import 'package:oro_drip_irrigation/modules/config_Maker/view/config_base_page.d
 import '../Screens/Dealer/bLE_update.dart';
 import '../Screens/Dealer/ble_controllerlog_ftp.dart';
 import '../flavors.dart';
+import '../modules/constant/view/constant_base_page.dart';
 import '../utils/Theme/smart_comm_theme.dart';
 import '../utils/Theme/oro_theme.dart';
 import '../utils/routes.dart';
 import '../utils/shared_preferences_helper.dart';
-import '../views/login_screen.dart';
+import '../views/common/login/login_screen.dart';
 import '../views/screen_controller.dart';
 import '../views/splash_screen.dart';
 
@@ -61,7 +62,7 @@ class _MyAppState extends State<MyApp> {
           theme: isOro ? OroTheme.lightTheme : SmartCommTheme.lightTheme,
           darkTheme: isOro ? OroTheme.darkTheme : SmartCommTheme.darkTheme,
           themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          // home: ConfigBasePage(masterData: {"userId":4,"customerId":18,"controllerId":94,"productId":93,"deviceId":"ADCAEAC11114","deviceName":"ORO GEM","categoryId":1,"categoryName":"ORO GEM","modelId":4,"modelName":"NAm2000ROOL","groupId":20,"groupName":"Vanam India Foundati","connectingObjectId":["1","2","3","4","-"],"productStock":[{"productId":48,"categoryName":"ORO PUMP","modelName":"NAp1000LOOO","modelId":5,"deviceId":"TEST12345679","dateOfManufacturing":"2025-06-17","warrantyMonths":12}]}),
+          // home: ConfigBasePage(masterData: {"userId":4,"customerId":27,"controllerId":135,"productId":134,"deviceId":"2CCF676A936E","deviceName":"NAm2000ROOL","categoryId":1,"categoryName":"ORO GEM","modelId":4,"modelDescription":"Gem+ (RL)","modelName":"NAm2000ROOL","groupId":32,"groupName":"MANI PRAKASH","connectingObjectId":["1","2","3","4","-"],"productStock":[{"productId":48,"categoryName":"ORO PUMP","modelName":"Pump (L3R)","modelId":5,"deviceId":"TEST12345679","dateOfManufacturing":"2025-06-17","warrantyMonths":12}]}),
           home: navigateToInitialScreen(snapshot.data ?? Routes.login),
           onGenerateRoute: Routes.generateRoute,
         );

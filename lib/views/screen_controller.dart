@@ -13,6 +13,7 @@ import '../utils/shared_preferences_helper.dart';
 import '../view_models/customer/customer_screen_controller_view_model.dart';
 import 'admin_dealer/admin_screen_controller.dart';
 import 'admin_dealer/dealer_screen_controller.dart';
+import 'common/login/login_screen.dart';
 import 'customer/customer_screen_controller.dart';
 
 class ScreenController extends StatelessWidget {
@@ -42,7 +43,6 @@ class ScreenController extends StatelessWidget {
     final userProvider = context.read<UserProvider>();
     userProvider.setLoggedInUser(user);
     userProvider.setViewedCustomer(user);
-
 
     return true;
   }
@@ -76,9 +76,12 @@ class ScreenController extends StatelessWidget {
           );
         }
 
-        final user = context.watch<UserProvider>().loggedInUser;
-        return LayoutSelector(userRole: user.role);
+        if (snapshot.hasData && snapshot.data == false) {
+          return const LoginScreen();
+        }
 
+        final userRole = context.read<UserProvider>().loggedInUser.role;
+        return UserLayoutSelector(userRole: userRole);
       },
     );
   }

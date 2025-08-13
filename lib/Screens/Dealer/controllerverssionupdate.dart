@@ -254,7 +254,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
                             icon: const Icon(Icons.arrow_circle_right_outlined),
                           ),
                         ),
-                        userRole == 'admin' ?  Padding(
+                        Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Tooltip(
                             message: "Config Hardware",
@@ -278,7 +278,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
                               icon: const Icon(Icons.settings_outlined),
                             ),
                           ),
-                        ) : Container(),
+                        ) ,
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Tooltip(
