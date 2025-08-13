@@ -243,8 +243,10 @@ class PreferenceProvider extends ChangeNotifier {
       if (setting.value.toString().contains(',')) {
         final parts = setting.value.split(',');
         setting.value = '$newValue,${parts[1]}';
+        setting.isChanged = true;
       } else {
         setting.value = newValue;
+        setting.isChanged = true;
       }
       notifyListeners();
     }
@@ -257,11 +259,14 @@ class PreferenceProvider extends ChangeNotifier {
         if (setting.value.toString().contains(',')) {
           if(part1) {
             setting.value = '$newValue,${setting.value.split(',')[1]}';
+            setting.isChanged = true;
           } else {
             setting.value = '${setting.value.split(',')[0]},$newValue';
+            setting.isChanged = true;
           }
           final parts = setting.value.split(',');
           setting.value = '$newValue,${parts[1]}';
+          setting.isChanged = true;
         }
       }
       notifyListeners();
@@ -274,8 +279,10 @@ class PreferenceProvider extends ChangeNotifier {
       if (setting.value.toString().contains(',')) {
         final parts = setting.value.split(',');
         setting.value = '${parts[0]},${newValue ? "1" : "0"}';
+        setting.isChanged = true;
       } else {
         setting.value = newValue;
+        setting.isChanged = true;
 
        /* if(setting.serialNumber == 5) {
           if(setting.value) {
@@ -293,6 +300,7 @@ class PreferenceProvider extends ChangeNotifier {
     final setting = moistureSettings?.setting.firstWhere((e) => e.title == title);
     if (setting != null) {
       setting.value = newValue;
+      setting.isChanged = true;
       notifyListeners();
     }
   }

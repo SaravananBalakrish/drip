@@ -55,6 +55,7 @@ class _DeviceListState extends State<DeviceList> {
     setState(() {
       userRole = role!;
     });
+    print("userRole :: ${userRole}");
   }
 
   @override
@@ -76,11 +77,26 @@ class _DeviceListState extends State<DeviceList> {
           width: screenWidth > 500 ? 950 : screenWidth,
           child: Column(
             children: [
+              if([...AppConstants.pumpWithValveModelList, ...AppConstants.pumpModelList].contains(configPvd.masterData['modelId']))
+                Column(
+                  spacing: 15,
+                  children: [
+                    Image.asset(
+                      'assets/Images/Png/${F.name.contains('oro') ? 'Oro' : 'SmartComm'}/category_${configPvd.masterData['categoryId']}.png',
+                      width: 200,
+                      height: 200,
+                    ),
+                    Text('${configPvd.masterData["modelDescription"]}'),
+                    const SizedBox(height: 20,),
+                  ],
+                ),
               masterBox(
                   listOfDevices: widget.listOfDevices
               ),
               const SizedBox(height: 20,),
-              Expanded(
+
+              if(![...AppConstants.pumpWithValveModelList, ...AppConstants.pumpModelList].contains(configPvd.masterData['modelId']))
+                Expanded(
                 child: DataTable2(
                     minWidth: 1000,
                     headingRowColor: WidgetStatePropertyAll(themeData.colorScheme.onBackground),
@@ -203,9 +219,9 @@ class _DeviceListState extends State<DeviceList> {
                                       }
                                     },
                                   ),
-                                  if(userRole == 'admin')
+                                  if(["admin", "1"].contains(userRole))
                                     editDeviceIdWidget(masterOrNode: 2, device: device),
-                                  if(userRole == 'dealer')
+                                  if(["dealer","2"].contains(userRole))
                                     IconButton(
                                         onPressed: (){
                                           showDialog(
@@ -386,9 +402,9 @@ class _DeviceListState extends State<DeviceList> {
           spacing: 20,
           children: [
             SelectableText('${configPvd.masterData['deviceId']}', style: themeData.textTheme.bodySmall,),
-            if(userRole == 'admin')
+            if(["admin", "1"].contains(userRole))
               editDeviceIdWidget(masterOrNode: 1),
-            if(userRole == 'dealer')
+            if(["dealer", "2"].contains(userRole))
               IconButton(
                 onPressed: (){
                   showDialog(
@@ -404,7 +420,7 @@ class _DeviceListState extends State<DeviceList> {
             )
           ],
         ),
-        trailing: IntrinsicWidth(
+        trailing: ![...AppConstants.pumpWithValveModelList, ...AppConstants.pumpModelList].contains(configPvd.masterData['modelId']) ? IntrinsicWidth(
           child: CustomMaterialButton(
               onPressed: (){
                 setState(() {
@@ -576,7 +592,7 @@ class _DeviceListState extends State<DeviceList> {
               },
               title: 'Add Nodes'
           ),
-        ),
+        ) : null,
       ),
     );
   }
