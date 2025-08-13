@@ -54,4 +54,25 @@ class UserModel {
       token: '',
     );
   }
+
+  /// ✅ This allows updating only specific fields
+  UserModel copyWith({
+    int? id,
+    String? name,
+    String? email,
+    String? mobileNo,
+    String? countryCode,
+    UserRole? role,
+    String? token,
+  }) {
+    return UserModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      email: email ?? this.email,
+      mobileNo: mobileNo ?? this.mobileNo,
+      countryCode: countryCode ?? this.countryCode,
+      role: role ?? this.role,
+      token: token ?? this.token,
+    );
+  }
 }

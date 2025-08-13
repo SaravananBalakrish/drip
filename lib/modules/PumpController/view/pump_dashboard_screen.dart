@@ -263,7 +263,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                               for(var index = 0; index < 3; index++)
                                 buildContainer(
                                   title: snapshot.data!.powerFactor == null
-                                      ? ["RY", "YB", "BR"][index]
+                                      ? ["RN", "YN", "BN"][index]
                                       : ["RN ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
                                     "YN ${double.parse(snapshot.data!.voltage.split(',')[1]).toStringAsFixed(0)}",
                                     "BN ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index],
@@ -450,6 +450,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                           ? (pumpItem.status == 1 ? "Turned on through the mobile" : "Turned off through the mobile").toUpperCase()
                           : pumpItem.reason.toUpperCase(),
                       style: TextStyle(
+
                         overflow: TextOverflow.ellipsis,
                         color: pumpItem.reasonCode == 0
                             ? (pumpItem.status == 1

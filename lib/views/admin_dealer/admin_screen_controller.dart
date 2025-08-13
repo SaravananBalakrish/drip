@@ -371,11 +371,11 @@ class _AdminScreenControllerState extends State<AdminScreenController> {
   Widget getPage(int index) {
     switch (index) {
       case 0:
-        return const AdminDashboard();
+        return const AdminDashboard(isWideLayout: true);
       case 1:
         return const ProductInventory();
       case 2:
-        return const StockEntry();
+        return const StockEntry(screenType: 'Web');
       default:
         return const SizedBox();
     }
