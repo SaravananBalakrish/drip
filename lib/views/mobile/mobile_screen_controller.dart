@@ -65,8 +65,8 @@ class _MobileScreenControllerState extends State<MobileScreenController> with Wi
       viewModel = Provider.of<CustomerScreenControllerViewModel>(context, listen: false);
       viewModel.getAllMySites(context, widget.userId);
       loadVersion();
-    });
 
+    });
   }
 
   @override
@@ -75,6 +75,22 @@ class _MobileScreenControllerState extends State<MobileScreenController> with Wi
     super.dispose();
   }
 
+  void loadVersion() async {
+    version = await getCurrentVersion();
+    print('Loaded version: $version');
+  }
+  Future<String?> getCurrentVersion() async {
+    print('call:current verssion');
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      print('packageInfo.version:->${packageInfo.version}');
+      return packageInfo.version;
+
+    } catch (e) {
+      print('Error fetching release version: $e');
+      return null;
+    }
+  }
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
@@ -89,11 +105,9 @@ class _MobileScreenControllerState extends State<MobileScreenController> with Wi
     }
   }
 
+
+
   void callbackFunction(message){
-  }
-  void loadVersion() async {
-    version = await getCurrentVersion();
-    print('Loaded version: $version');
   }
 
   @override
@@ -110,7 +124,8 @@ class _MobileScreenControllerState extends State<MobileScreenController> with Wi
     }
 
     final currentMaster = vm.mySiteList.data[vm.sIndex].master[vm.mIndex];
-     return Scaffold(
+
+    return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: F.appFlavor!.name.contains('oro') ?
@@ -333,9 +348,8 @@ class _MobileScreenControllerState extends State<MobileScreenController> with Wi
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(color: Colors.white, fontSize: 14)),
                           const SizedBox(height: 20),
-                           Text("version:${version.toString()}",
+                           Text("Version:$version",
                               style: TextStyle(color: Colors.white54)),
-
                         ],
                       ),
                     ),
@@ -1235,20 +1249,6 @@ class BadgeButton extends StatelessWidget {
           ),
       ],
     );
-  }
-}
-
-
-Future<String?> getCurrentVersion() async {
-  print('call:current verssion');
-  try {
-    final packageInfo = await PackageInfo.fromPlatform();
-    print('packageInfo.version:->${packageInfo.version}');
-     return packageInfo.version;
-
-  } catch (e) {
-    print('Error fetching release version: $e');
-    return null;
   }
 }
 
