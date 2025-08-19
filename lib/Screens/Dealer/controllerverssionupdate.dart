@@ -77,7 +77,9 @@ class _ResetVerssionState extends State<ResetVerssion> {
       var response = await repository.getUserDeviceFirmwareDetails({"userId": widget.userId});
       if (response.statusCode == 200) {
         setState(() {
+          print("widget.userId:${widget.userId}");
           var jsondata = jsonDecode(response.body);
+          print('jsondata:$jsondata');
            valAssing(jsondata['data']);
 
           MqttService().connect();
