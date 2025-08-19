@@ -348,15 +348,16 @@ class CustomerScreenController extends StatelessWidget {
                                   leading: const Icon(Icons.info_outline),
                                   title: const Text('Controller info'),
                                   onTap: () {
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ResetVerssion(
-                                          userId: userId, controllerId: currentMaster.controllerId,
-                                          deviceID: currentMaster.deviceId),
-                                      ),
-                                    );
+                                     Navigator.pop(context);
+                                    showPasswordDialog(context,'Oro@321',customerId,currentMaster.controllerId,currentMaster.deviceId);
+                                     // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(
+                                    //     builder: (context) => ResetVerssion(
+                                    //       userId: userId, controllerId: currentMaster.controllerId,
+                                    //       deviceID: currentMaster.deviceId),
+                                    //   ),
+                                    // );
                                   },
                                 ),
                                 ListTile(
@@ -854,7 +855,7 @@ class CustomerScreenController extends StatelessWidget {
 
   void showPasswordDialog(BuildContext context, correctPassword,userId,controllerID,imeiNumber) {
     final TextEditingController passwordController = TextEditingController();
-
+    print('userId:$userId,controllerID:$controllerID,imeiNumber:$imeiNumber');
     showDialog(
       context: context,
       builder: (BuildContext context) {
