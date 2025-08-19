@@ -191,7 +191,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   late TabController commonPumpTabController;
   late TabController individualPumpTabController;
   int selectedSetting = 0;
-  bool doCalibration = false;
   TextEditingController passwordController = TextEditingController();
   final MqttService mqttService = MqttService();
   late bool isToGem;
