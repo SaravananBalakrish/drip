@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -262,13 +263,11 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                             children: [
                               for(var index = 0; index < 3; index++)
                                 buildContainer(
-                                  title: snapshot.data!.powerFactor == null
-                                      ? ["RN", "YN", "BN"][index]
-                                      : ["RN ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
-                                    "YN ${double.parse(snapshot.data!.voltage.split(',')[1]).toStringAsFixed(0)}",
-                                    "BN ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index],
+                                  title: null,
                                   value: snapshot.data!.powerFactor == null
-                                      ? double.parse(snapshot.data!.voltage.split(',')[index]).toStringAsFixed(0)
+                                      ? ["RN ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
+                                    "YN ${double.parse(snapshot.data!.voltage.split(',')[1]).toStringAsFixed(0)}",
+                                    "BN ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index]
                                       : ["RPF ${double.parse(snapshot.data!.powerFactor.split(',')[0]).toStringAsFixed(0)}",
                                     "YPF ${double.parse(snapshot.data!.powerFactor.split(',')[1]).toStringAsFixed(0)}",
                                     "BPF ${double.parse(snapshot.data!.powerFactor.split(',')[2]).toStringAsFixed(0)}"][index],
@@ -276,7 +275,9 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                                       ? ["RP ${double.parse(snapshot.data!.power.split(',')[0]).toStringAsFixed(0)}",
                                     "YP ${double.parse(snapshot.data!.power.split(',')[1]).toStringAsFixed(0)}",
                                     "BP ${double.parse(snapshot.data!.power.split(',')[2]).toStringAsFixed(0)}"][index]
-                                      : null,
+                                      : ["RY ${calculatePhToPh(double.parse(snapshot.data!.voltage.split(',')[0]), double.parse(snapshot.data!.voltage.split(',')[1]))}",
+                                    "YB ${calculatePhToPh(double.parse(snapshot.data!.voltage.split(',')[1]), double.parse(snapshot.data!.voltage.split(',')[2]))}",
+                                    "BR ${calculatePhToPh(double.parse(snapshot.data!.voltage.split(',')[2]), double.parse(snapshot.data!.voltage.split(',')[0]))}"][index],
                                   // value: snapshot.data!.voltage.split(',')[index],
                                   color1: [
                                     Colors.redAccent.shade100,
@@ -378,6 +379,24 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
 
     return Icon(iconData, color: iconColor);
   }
+
+  String calculatePhToPh(double val1, double val2)
+  {
+    double tpc, tp2c;
+
+    tpc = val1 * val1;
+    tp2c = val2 * val2;
+
+    tpc = (tpc + tp2c);
+    tp2c = val1 * val2;
+
+    tpc = tpc + tp2c;
+
+    tp2c = sqrt(tpc);
+
+    return tp2c.toStringAsFixed(0);
+  }
+
 
   Widget buildNewPumpDetails({required int index, required PumpControllerData pumpData}) {
     final pumps = widget.masterData.configObjects.where((e) => e.objectId == 5).toList();
@@ -1141,7 +1160,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
   }
 
   Widget buildContainer({
-    required String title,
+    String? title,
     required String value,
     String? value2,
     required Color color1,
@@ -1155,8 +1174,8 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400)),
-            Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+            if(title != null) Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400)),
+            Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400,)),
             if (value2 != null) Text(value2, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400)),
           ],
         ),
