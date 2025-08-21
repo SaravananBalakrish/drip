@@ -1062,9 +1062,9 @@ class CustomerScreenController extends StatelessWidget {
           groupName: groupName,
         );
       case 6:
-        return TicketHomePage(userId: userId, controllerId: currentMaster.controllerId);
+        return TicketHomePage(userId: customerId, controllerId: currentMaster.controllerId);
       case 7:
-        return WeatherScreen(userId: userId, controllerId: currentMaster.controllerId, deviceID: currentMaster.deviceId);
+        return WeatherScreen(userId: customerId, controllerId: currentMaster.controllerId, deviceID: currentMaster.deviceId);
       case 8:
         return MapScreenall(userId: userId, customerId: customerId, controllerId: currentMaster.controllerId, imeiNo: currentMaster.deviceId);
       case 9:
