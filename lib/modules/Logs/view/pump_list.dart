@@ -61,8 +61,8 @@ class _PumpListState extends State<PumpList> {
                             icon: [Icons.schedule, Icons.auto_graph, Icons.electric_bolt][i],
                             onPressed: [
                               () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PumpLogScreen(userId: widget.userId, controllerId: widget.masterData.controllerId, nodeControllerId: pumpItem['controllerId'], masterData: widget.masterData,))),
-                                  () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PowerGraphScreen(userId: widget.userId, controllerId: widget.masterData.controllerId, nodeControllerId: pumpItem['controllerId'],))),
-                              () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PumpVoltageLogScreen(userId: widget.userId, controllerId: widget.masterData.controllerId, nodeControllerId: pumpItem['controllerId'],))),
+                                  () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PowerGraphScreen(userId: widget.userId, controllerId: widget.masterData.controllerId, nodeControllerId: pumpItem['controllerId'], masterData: widget.masterData,))),
+                              () => Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => PumpVoltageLogScreen(userId: widget.userId, controllerId: widget.masterData.controllerId, nodeControllerId: pumpItem['controllerId'], masterData: widget.masterData))),
                             ][i]
                         ),
                     ],
