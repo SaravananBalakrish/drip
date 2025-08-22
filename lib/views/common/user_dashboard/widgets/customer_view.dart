@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/views/common/user_dashboard/widgets/user_device_list.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../Screens/Dealer/sevicerequestdealer.dart';
 import '../../../../layouts/user_layout.dart';
 import '../../../../models/admin_dealer/customer_list_model.dart';
 import '../../../../models/user_model.dart';
@@ -171,6 +172,15 @@ class CustomerView extends StatelessWidget {
           tooltip: 'Service Request',
           icon: const Icon(Icons.build_circle),
           onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ServiceRequestsTable(
+                  userId: customer.id,
+                 ),
+              ),
+            );
+
             // TODO: implement service request
           },
         ),
