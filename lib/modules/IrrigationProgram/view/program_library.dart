@@ -95,7 +95,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
       ),
       body: irrigationProgramMainProvider.programLibrary != null ?
       RefreshIndicator(
-        onRefresh: () => irrigationProgramMainProvider.programLibraryData( widget.userId,  widget.controllerId),
+        onRefresh: () => irrigationProgramMainProvider.programLibraryData( widget.customerId,  widget.controllerId),
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             double cardSize = 0.0;
@@ -762,10 +762,10 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
 
   void createCopyOfProgram({required int oldSerialNumber, required int serialNumber, required String programName, required String defaultProgramName, required String programType}) {
     irrigationProgramMainProvider
-        .userProgramCopy( widget.userId,  widget.controllerId, oldSerialNumber, serialNumber, programName, defaultProgramName, programType)
+        .userProgramCopy( widget.userId,  widget.controllerId, oldSerialNumber, serialNumber, programName, defaultProgramName, programType, widget.customerId)
         .then((String message) {
       ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: message));
-    }).then((value) => irrigationProgramMainProvider.programLibraryData( widget.userId,  widget.controllerId)
+    }).then((value) => irrigationProgramMainProvider.programLibraryData( widget.customerId,  widget.controllerId)
         .catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: error));
     }));
@@ -820,7 +820,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                         });
                         // await saveProgramDetails(program, dataToMqtt);
                         await Future.delayed(const Duration(seconds: 1), () async{
-                          await irrigationProgramMainProvider.programLibraryData( widget.userId,  widget.controllerId,);
+                          await irrigationProgramMainProvider.programLibraryData( widget.customerId,  widget.controllerId,);
                         });
                         if(toMove != "inactive") {
                           if(irrigationProgramMainProvider.programLibrary!.program.any((element) => element.programName.isNotEmpty)) {
@@ -852,10 +852,10 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
          widget.controllerId,
         program.programId,
         widget.deviceId,
-        program.serialNumber, program.defaultProgramName, program.programName, active, controllerReadStatus)
+        program.serialNumber, program.defaultProgramName, program.programName, active, controllerReadStatus, widget.customerId)
         .then((String message) {
       ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: message));
-    }).then((value) => irrigationProgramMainProvider.programLibraryData( widget.userId,  widget.controllerId)
+    }).then((value) => irrigationProgramMainProvider.programLibraryData( widget.customerId,  widget.controllerId)
         .catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: error));
     }));
@@ -988,7 +988,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
         program.programName,
         program.priority,
         program.defaultProgramName,
-        controllerReadStatus, hardwareData)
+        controllerReadStatus, hardwareData, widget.customerId)
         .then((value) => ScaffoldMessenger.of(context)
         .showSnackBar(CustomSnackBar(message: value)));
   }
