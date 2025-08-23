@@ -296,7 +296,7 @@ class _NamesState extends State<Names> {
     final Repository repository = Repository(HttpService());
     print(namesModelData['configObject']);
     Map<String, dynamic> body = {
-      "userId": widget.userID,
+      "userId": widget.customerID,
       "controllerId": widget.controllerId,
       "configObject": namesModelData['configObject'],
       "waterSource": namesModelData['waterSource'],
