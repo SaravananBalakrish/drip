@@ -436,7 +436,7 @@ class BleProvider extends ChangeNotifier {
       characteristic.setNotifyValue(true);
       readFromHardwareSubscription =
           characteristic.lastValueStream.listen((value) async {
-            print(value);
+            print('from hardware :: $value');
             String convertToString = String.fromCharCodes(value);
             print("read :: $convertToString");
             if(traceMode == TraceMode.traceOff){
@@ -874,10 +874,13 @@ class BleProvider extends ChangeNotifier {
         ...crcFormatFileSizeStringList
       ];
       await Future.delayed(const Duration(milliseconds: 100));
+      print("finalOutPutOfCrcAndFileSize ==> $finalOutPutOfCrcAndFileSize");
       await sendToHardware?.write(finalOutPutOfCrcAndFileSize,
           withoutResponse:
           sendToHardware!.properties.writeWithoutResponse);
-      sentAndReceive.add('before conversion :: $crcNameStr$addingResult$fileLengthStr$fileSize');
+      var beforeConversion = 'before conversion :: $crcNameStr$addingResult$fileLengthStr$fileSize';
+      print("beforeConversion => $beforeConversion");
+      sentAndReceive.add(beforeConversion);
       for (var crc in finalOutPutOfCrcAndFileSize) {
         sentAndReceive.add('${crc.toRadixString(16).padLeft(2, '0')}');
       }
