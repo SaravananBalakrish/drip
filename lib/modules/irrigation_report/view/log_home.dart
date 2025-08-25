@@ -289,7 +289,6 @@ class _LogHomeState extends State<LogHome> {
           statusDuplicate = [];
         });
         if(dataSource['log'] != null){
-          print(dataSource['log'].length);
           for(var data in dataSource['log']){
             if(data['irrigation'].isNotEmpty){
               if(data['irrigation']['Date'] != null){
