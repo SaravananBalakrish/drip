@@ -19,9 +19,9 @@ class SftpService {
 
   Future<int> connect() async {
     try {
-      print("Environment.privateKeyPath : ${Environment.privateKeyPath}");
-      print("Environment.sftpIpAddress : ${Environment.sftpIpAddress}");
-      print("Environment.sftpPort : ${Environment.sftpPort}");
+      // print("Environment.privateKeyPath : ${Environment.privateKeyPath}");
+      // print("Environment.sftpIpAddress : ${Environment.sftpIpAddress}");
+      // print("Environment.sftpPort : ${Environment.sftpPort}");
       final rawPem = await rootBundle.loadString(Environment.privateKeyPath);
       final pem = rawPem.replaceAll('\r\n', '\n').trim();
       for(var line in pem.split('\n')){
