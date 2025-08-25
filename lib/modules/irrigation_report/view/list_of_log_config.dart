@@ -113,7 +113,7 @@ class _ListOfLogConfigState extends State<ListOfLogConfig> {
       var body = {
         'userId' : widget.userData['userId'],
         'controllerId' : widget.userData['controllerId'],
-        'logName': logName,
+        'logName': name,
         'irrigationLog': configDetails,
         'createUser': widget.userData['userId'],
       };
@@ -185,6 +185,9 @@ class _ListOfLogConfigState extends State<ListOfLogConfig> {
         });
         irrigationParameterArray.editParameter(irrigationLogParameterFromServer);
         irrigationParameterArrayDuplicate.editParameter(irrigationLogParameterFromServer);
+        if(serverData['logConfig'].isEmpty){
+          createUserLogConfig(name: 'General', configDetails: irrigationParameterArrayDuplicate.toJson());
+        }
       }
     }catch(e){
       log(e.toString());

@@ -227,6 +227,7 @@ class _NodeDashboardState extends State<NodeDashboard> {
       bleService.requestingMac();
       print("userShouldWaitUntilRestart seconds : ${waitLoop + 1}");
       print("nodeDataFromHw : ${bleService.nodeDataFromHw}");
+      print("nodeDataFromHw : ${bleService.nodeDataFromHw}");
     }
     if(closeDialog){
       Navigator.pop(context);

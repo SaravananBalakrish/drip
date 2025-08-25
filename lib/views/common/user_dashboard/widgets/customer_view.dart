@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:badges/badges.dart';
+import 'package:flutter/material.dart' hide Badge;
 import 'package:oro_drip_irrigation/views/common/user_dashboard/widgets/user_device_list.dart';
 import 'package:provider/provider.dart';
 
@@ -12,7 +13,7 @@ import '../../../../utils/enums.dart';
 import '../../../../view_models/customer_list_view_model.dart';
 import '../../../../view_models/product_stock_view_model.dart';
 import '../../../admin_dealer/customer_device_list.dart';
-import '../../../create_account.dart';
+import '../../user_profile/create_account.dart';
 
 class CustomerView extends StatelessWidget {
   const CustomerView({super.key, required this.role, required this.isNarrow, required this.onCustomerProductChanged});
@@ -31,8 +32,15 @@ class CustomerView extends StatelessWidget {
       body: Column(
         children: [
           ListTile(
-            title: const Text('My Customers', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54)),
-            trailing: Text('${viewModel.myCustomerList.length}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            dense: true, // reduces overall height
+            visualDensity: const VisualDensity(vertical: -2),
+            title: const Text('My Customers',
+              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54, fontSize: 15),
+            ),
+            trailing: Text(
+              '${viewModel.myCustomerList.length}',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            ),
           ),
           Expanded(
             child: ListView.builder(
@@ -64,41 +72,49 @@ class CustomerView extends StatelessWidget {
       elevation: 0,
       automaticallyImplyLeading: false,
       backgroundColor: !isNarrow ? Colors.white : null,
-      title: TextField(
-        controller: vm.txtFldSearch,
-        style: TextStyle(
-          color: isNarrow ? Colors.white : Colors.black,
-          fontSize: 16,
+      title: SizedBox(
+        height: 40,
+        child: TextField(
+          controller: vm.txtFldSearch,
+          style: TextStyle(
+            color: isNarrow ? Colors.white : Colors.black,
+            fontSize: 14,
+          ),
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 8,
+            ),
+            hintText: 'Search customers...',
+            hintStyle: TextStyle(
+              color: isNarrow ? Colors.white30 : Colors.black38,
+            ),
+            prefixIcon: Icon(Icons.search,
+                size: 20, // 👈 shrink icon size
+                color: isNarrow ? Colors.white60 : Colors.black54),
+            suffixIcon: vm.searching
+                ? IconButton(
+              icon: Icon(Icons.clear,
+                  size: 20,
+                  color: isNarrow ? Colors.white : Colors.black),
+              onPressed: vm.clearSearch,
+            )
+                : null,
+            filled: true,
+            fillColor: isNarrow ? Colors.white24 : Colors.black12,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: const BorderSide(color: Colors.white24),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: const BorderSide(color: Colors.white30),
+            ),
+          ),
+          onChanged: (value) =>
+          value.isEmpty ? vm.clearSearch() : vm.filterCustomer(value),
+          onSubmitted: (_) => vm.searchCustomer(),
         ),
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-          hintText: 'Search customers...',
-          hintStyle: TextStyle(
-            color: isNarrow ? Colors.white30 : Colors.black38,
-          ),
-          prefixIcon: Icon(Icons.search,
-              color: isNarrow ? Colors.white60 : Colors.black54),
-          suffixIcon: vm.searching
-              ? IconButton(
-            icon: Icon(Icons.clear,
-                color: isNarrow ? Colors.white : Colors.black),
-            onPressed: vm.clearSearch,
-          )
-              : null,
-          filled: true,
-          fillColor: isNarrow ? Colors.white24 : Colors.black12,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
-            borderSide: const BorderSide(color: Colors.white24),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
-            borderSide: const BorderSide(color: Colors.white30),
-          ),
-        ),
-        onChanged: (value) =>
-        value.isEmpty ? vm.clearSearch() : vm.filterCustomer(value),
-        onSubmitted: (_) => vm.searchCustomer(),
       ),
     );
   }
@@ -168,22 +184,36 @@ class CustomerView extends StatelessWidget {
           icon: const Icon(Icons.playlist_add_circle),
           onPressed: () => _showDeviceList(context, customer, stockVM),
         ),
-        IconButton(
-          tooltip: 'Service Request',
-          icon: const Icon(Icons.build_circle),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => ServiceRequestsTable(
-                  userId: customer.id,
-                 ),
-              ),
-            );
+        if((customer.criticalAlarmCount + customer.serviceRequestCount) > 0)...[
+          Badge(
+            showBadge: (customer.criticalAlarmCount + customer.serviceRequestCount) > 0,
+            position: BadgePosition.topEnd(top: 0, end: 0),
+            badgeStyle: const BadgeStyle(
+                badgeColor: Colors.red
+            ),
+            badgeContent: Text(
+              '${customer.criticalAlarmCount + customer.serviceRequestCount}',
+              style: const TextStyle(color: Colors.white, fontSize: 10),
+            ),
+            child: IconButton(
+              tooltip: 'Service Request',
+              icon: const Icon(Icons.build_circle),
+              onPressed: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  elevation: 10,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+                  ),
+                  builder: (_) => ServiceRequestsTable(userId: customer.id),
+                );
 
-            // TODO: implement service request
-          },
-        ),
+              },
+            ),
+          ),
+
+        ]
       ],
     );
   }
