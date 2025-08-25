@@ -35,7 +35,7 @@ class _NamesState extends State<Names> {
     try {
       final Repository repository = Repository(HttpService());
       var getUserDetails = await repository.getUserConfigMaker({
-        "userId": widget.userID,
+        "userId": widget.customerID,
         "controllerId": widget.controllerId,
       });
 
@@ -263,27 +263,29 @@ class _NamesState extends State<Names> {
       );
     }
 
-    return Scaffold(
-      appBar: kIsWeb ? null  : AppBar(title: Text('Names'),),
-      body: Column(
-        children: [
-          getTabBarViewWidget(),
-          Expanded(
-            child: buildTab(selectedCategory),
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Theme.of(context).primaryColorDark,
-        foregroundColor: Colors.white,
-        onPressed: () {
-          setState(() {
-            updateAllNames();
-            updateUserNames();
-          });
-        },
-        tooltip: 'Send',
-        child: const Icon(Icons.send),
+    return SafeArea(
+      child: Scaffold(
+        appBar: kIsWeb ? null  : AppBar(title: Text('Names'),),
+        body: Column(
+          children: [
+            getTabBarViewWidget(),
+            Expanded(
+              child: buildTab(selectedCategory),
+            ),
+          ],
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Theme.of(context).primaryColorDark,
+          foregroundColor: Colors.white,
+          onPressed: () {
+            setState(() {
+              updateAllNames();
+              updateUserNames();
+            });
+          },
+          tooltip: 'Send',
+          child: const Icon(Icons.send),
+        ),
       ),
     );
   }
@@ -294,7 +296,7 @@ class _NamesState extends State<Names> {
     final Repository repository = Repository(HttpService());
     print(namesModelData['configObject']);
     Map<String, dynamic> body = {
-      "userId": widget.userID,
+      "userId": widget.customerID,
       "controllerId": widget.controllerId,
       "configObject": namesModelData['configObject'],
       "waterSource": namesModelData['waterSource'],
@@ -305,7 +307,10 @@ class _NamesState extends State<Names> {
       "moistureSensor": namesModelData['moistureSensor'],
       "createUser": widget.userID,
     };
-       var getUserDetails = await repository.updateUserNames(body);
+     print('body:-$body');
+
+     var getUserDetails = await repository.updateUserNames(body);
+       print('getUserDetails.body-:${getUserDetails.body}');
       final jsonDataResponsePut = json.decode(getUserDetails.body);
       GlobalSnackBar.show(context, jsonDataResponsePut['message'], jsonDataResponsePut['code']);
 

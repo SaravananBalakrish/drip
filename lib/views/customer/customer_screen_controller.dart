@@ -22,6 +22,7 @@ import '../../modules/PumpController/view/node_settings.dart';
 import '../../modules/ScheduleView/view/schedule_view_screen.dart';
 import '../../modules/PumpController/view/pump_controller_home.dart';
 import '../../modules/UserChat/view/user_chat.dart';
+import '../../providers/user_provider.dart';
 import '../../repository/repository.dart';
 import '../../services/bluetooth_service.dart';
 import '../../services/communication_service.dart';
@@ -40,12 +41,18 @@ import 'customer_product.dart';
 import 'input_output_connection_details.dart';
 import 'node_list.dart';
 
-class CustomerScreenController extends StatelessWidget {
+class CustomerScreenController extends StatefulWidget {
   const CustomerScreenController({super.key, required this.userId, required this.customerName, required this.mobileNo, required this.emailId, required this.customerId, required this.fromLogin});
   final int customerId, userId;
   final String customerName, mobileNo, emailId;
   final bool fromLogin;
 
+  @override
+  State<CustomerScreenController> createState() => _CustomerScreenControllerState();
+}
+
+class _CustomerScreenControllerState extends State<CustomerScreenController> {
+  late String role;
   void callbackFunction(message)
   {
     /*Navigator.pop(context);
@@ -57,12 +64,14 @@ class CustomerScreenController extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MqttPayloadProvider mqttProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
+    final loggedInUser = Provider.of<UserProvider>(context, listen: false).loggedInUser;
+     role = loggedInUser.name;
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => NavRailViewModel(Repository(HttpService()))),
         ChangeNotifierProvider(
           create: (_) => CustomerScreenControllerViewModel(context, Repository(HttpService()), mqttProvider)
-            ..getAllMySites(context, customerId),
+            ..getAllMySites(context, widget.customerId),
         ),
       ],
       child: Consumer2<NavRailViewModel, CustomerScreenControllerViewModel>(
@@ -81,9 +90,9 @@ class CustomerScreenController extends StatelessWidget {
             appBar: AppBar(
               title:  Row(
                 children: [
-                  fromLogin ?const SizedBox():
+                  widget.fromLogin ?const SizedBox():
                   const SizedBox(width: 10),
-                  fromLogin ? Image(
+                  widget.fromLogin ? Image(
                     image: F.appFlavor!.name.contains('oro')? const AssetImage("assets/png/oro_logo_white.png"):
                     const AssetImage("assets/png/company_logo.png"),
                     width: F.appFlavor!.name.contains('oro')? 70:110,
@@ -91,7 +100,7 @@ class CustomerScreenController extends StatelessWidget {
                   ):
                   const SizedBox(),
 
-                  fromLogin ?const SizedBox(width: 20,):
+                  widget.fromLogin ?const SizedBox(width: 20,):
                   const SizedBox(width: 0),
 
                   Container(width: 1, height: 20, color: Colors.white54,),
@@ -169,7 +178,7 @@ class CustomerScreenController extends StatelessWidget {
                     },
                   ):
                   Text(currentMaster.deviceName,
-                      style: const TextStyle(fontSize: 17)),
+                    style: const TextStyle(fontSize: 17)),
 
                   [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(currentMaster.modelId) ?
                   const SizedBox(width: 15): const SizedBox(),
@@ -209,8 +218,8 @@ class CustomerScreenController extends StatelessWidget {
                   ) :
                   [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(currentMaster.modelId)?
                   Text(currentMaster.irrigationLine.isNotEmpty?
-                  currentMaster.irrigationLine[0].name:
-                  'Line empty', style: const TextStyle(fontSize: 17)):
+                    currentMaster.irrigationLine[0].name:
+                    'Line empty', style: const TextStyle(fontSize: 17)):
                   const SizedBox(),
 
                   const SizedBox(width: 15,),
@@ -340,7 +349,7 @@ class CustomerScreenController extends StatelessWidget {
                                     Navigator.pop(context);
                                     Navigator.push(
                                         context,
-                                        MaterialPageRoute(builder: (BuildContext context) => UserChatScreen(userId: customerId, userName: customerName, phoneNumber: mobileNo))
+                                        MaterialPageRoute(builder: (BuildContext context) => UserChatScreen(userId: widget.customerId, userName: widget.customerName, phoneNumber: widget.mobileNo))
                                     );
                                   },
                                 ),
@@ -348,15 +357,21 @@ class CustomerScreenController extends StatelessWidget {
                                   leading: const Icon(Icons.info_outline),
                                   title: const Text('Controller info'),
                                   onTap: () {
-                                    Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ResetVerssion(
-                                            userId: userId, controllerId: currentMaster.controllerId,
-                                            deviceID: currentMaster.deviceId),
-                                      ),
-                                    );
+                                     Navigator.pop(context);
+                                     if(role == "Admin"){
+                                       Navigator.push(
+                                         context,
+                                         MaterialPageRoute(builder: (context) =>
+                                             ResetVerssion(userId: widget.customerId,
+                                               controllerId: currentMaster.controllerId,
+                                               deviceID: currentMaster.deviceId,)),
+                                       );
+                                     }
+                                     else
+                                     {
+                                       showPasswordDialog(context,'Oro@321',widget.customerId,currentMaster.controllerId,currentMaster.deviceId,1);
+                                     }
+
                                   },
                                 ),
                                 ListTile(
@@ -364,13 +379,19 @@ class CustomerScreenController extends StatelessWidget {
                                   title: const Text('Factory Reset'),
                                   onTap: () {
                                     Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ResetAccumalationScreen(userId: userId,
-                                            controllerId: currentMaster.controllerId, deviceID: currentMaster.deviceId),
-                                      ),
-                                    );
+                                    if(role == "Admin"){
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(builder: (context) =>
+                                            ResetAccumalationScreen(userId: widget.customerId,
+                                              controllerId: currentMaster.controllerId,
+                                              deviceID: currentMaster.deviceId,)),
+                                      );
+                                    }
+                                    else
+                                      {
+                                        showPasswordDialog(context,'Oro@321',widget.customerId,currentMaster.controllerId,currentMaster.deviceId,2);
+                                      }
                                   },
                                 ),
                                 const Divider(height: 0),
@@ -391,7 +412,7 @@ class CustomerScreenController extends StatelessWidget {
                       backgroundColor: Colors.white,
                       child: Icon(Icons.live_help_outlined),
                     )),
-                    IconButton(tooltip : 'Your Account\n$customerName\n $mobileNo', onPressed: (){
+                    IconButton(tooltip : 'Your Account\n${widget.customerName}\n ${widget.mobileNo}', onPressed: (){
                       showMenu(
                         context: context,
                         position: const RelativeRect.fromLTRB(100, 0, 10, 0),
@@ -404,11 +425,11 @@ class CustomerScreenController extends StatelessWidget {
                               children: [
                                 Center(
                                   child: CircleAvatar(radius: 30, backgroundColor: Theme.of(context).primaryColor.withOpacity(0.1),
-                                    child: Text(customerName.substring(0, 1).toUpperCase(),
+                                    child: Text(widget.customerName.substring(0, 1).toUpperCase(),
                                         style: const TextStyle(fontSize: 25)),),
                                 ),
-                                Text('Hi, $customerName!',style: const TextStyle(fontSize: 20)),
-                                Text(mobileNo, style: const TextStyle(fontSize: 13)),
+                                Text('Hi, ${widget.customerName}!',style: const TextStyle(fontSize: 20)),
+                                Text(widget.mobileNo, style: const TextStyle(fontSize: 13)),
                                 const SizedBox(height: 8),
                                 MaterialButton(
                                   color: Theme.of(context).primaryColor,
@@ -451,7 +472,7 @@ class CustomerScreenController extends StatelessWidget {
                         icon: CircleAvatar(
                           radius: 17,
                           backgroundColor: Colors.white,
-                          child: Text(customerName.substring(0, 1).toUpperCase()),
+                          child: Text(widget.customerName.substring(0, 1).toUpperCase()),
                         )
                     ),
 
@@ -463,9 +484,9 @@ class CustomerScreenController extends StatelessWidget {
                                 context: context,
                                 builder: (context) {
                                   return NodeSettings(
-                                    userId: userId,
+                                    userId: widget.userId,
                                     controllerId: currentMaster.controllerId,
-                                    customerId: customerId,
+                                    customerId: widget.customerId,
                                     nodeList: currentMaster.nodeList,
                                     deviceId: currentMaster.deviceId,
                                   );
@@ -593,7 +614,7 @@ class CustomerScreenController extends StatelessWidget {
                             ),
                             const SizedBox(height: 15),
                             AlarmButton(alarmPayload: vm.alarmDL, deviceID: currentMaster.deviceId,
-                                customerId: customerId, controllerId: currentMaster.controllerId,
+                                customerId: widget.customerId, controllerId: currentMaster.controllerId,
                                 irrigationLine: currentMaster.irrigationLine),
                             const SizedBox(height: 15),
                             CircleAvatar(
@@ -623,7 +644,7 @@ class CustomerScreenController extends StatelessWidget {
                                             borderRadius: BorderRadius.zero,
                                             child: StatefulBuilder(
                                               builder: (BuildContext context, StateSetter stateSetter) {
-                                                return NodeList(customerId: customerId, userId: userId,
+                                                return NodeList(customerId: widget.customerId, userId: widget.userId,
                                                     nodes: currentMaster.nodeList,
                                                     configObjects: currentMaster.configObjects,
                                                     masterData: currentMaster);
@@ -687,10 +708,10 @@ class CustomerScreenController extends StatelessWidget {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => ProgramLibraryScreenNew(
-                                        customerId: customerId,
+                                        customerId: widget.customerId,
                                         controllerId: currentMaster.controllerId,
                                         deviceId: currentMaster.deviceId,
-                                        userId: userId,
+                                        userId: widget.userId,
                                         groupId: vm.mySiteList.data[vm.sIndex].groupId,
                                         categoryId: currentMaster.categoryId,
                                         modelId: currentMaster.modelId,
@@ -723,9 +744,9 @@ class CustomerScreenController extends StatelessWidget {
                                     MaterialPageRoute(
                                       builder: (context) => ScheduleViewScreen(
                                         deviceId: currentMaster.deviceId,
-                                        userId: userId,
+                                        userId: widget.userId,
                                         controllerId: currentMaster.controllerId,
-                                        customerId: customerId,
+                                        customerId: widget.customerId,
                                         groupId: vm.mySiteList.data[vm.sIndex].groupId,
                                       ),
                                     ),
@@ -765,9 +786,9 @@ class CustomerScreenController extends StatelessWidget {
                                             builder: (BuildContext context, StateSetter stateSetter) {
                                               return StandAlone(siteId: vm.mySiteList.data[vm.sIndex].groupId,
                                                   controllerId: currentMaster.controllerId,
-                                                  customerId: customerId,
+                                                  customerId: widget.customerId,
                                                   deviceId: currentMaster.deviceId,
-                                                  callbackFunction: callbackFunction, userId: userId, masterData: currentMaster);
+                                                  callbackFunction: callbackFunction, userId: widget.userId, masterData: currentMaster);
                                             },
                                           ),
                                         ),
@@ -801,7 +822,7 @@ class CustomerScreenController extends StatelessWidget {
                                   Navigator.push(context,
                                     MaterialPageRoute(
                                       builder: (context) => MapScreenall(
-                                          userId: userId, customerId: customerId,
+                                          userId: widget.userId, customerId: widget.customerId,
                                           controllerId: currentMaster.controllerId,
                                           imeiNo: currentMaster.deviceId),
                                     ),
@@ -826,7 +847,7 @@ class CustomerScreenController extends StatelessWidget {
                                   Navigator.push(context,
                                     MaterialPageRoute(
                                       builder: (context) => MapScreenAllArea(
-                                          userId: userId, customerId: customerId,
+                                          userId: widget.userId, customerId: widget.customerId,
                                           controllerId: currentMaster.controllerId,
                                           imeiNo: currentMaster.deviceId),
                                     ),
@@ -852,9 +873,9 @@ class CustomerScreenController extends StatelessWidget {
     );
   }
 
-  void showPasswordDialog(BuildContext context, correctPassword,userId,controllerID,imeiNumber) {
+  void showPasswordDialog(BuildContext context, correctPassword,userId,controllerID,imeiNumber,type) {
     final TextEditingController passwordController = TextEditingController();
-
+    print('userId:$userId,controllerID:$controllerID,imeiNumber:$imeiNumber');
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -876,19 +897,51 @@ class CustomerScreenController extends StatelessWidget {
               child: const Text('Cancel'),
             ),
             TextButton(
-              onPressed: () {
-                final enteredPassword = passwordController.text;
+              onPressed: () async{
+                final userPsw = passwordController.text;
 
-                if (enteredPassword == correctPassword) {
-                  Navigator.of(context).pop();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) =>  ResetVerssion(userId: userId, controllerId: controllerID, deviceID: imeiNumber,)),
-                  );
-                } else {
-                  Navigator.of(context).pop(); // Close the dialog
-                  showErrorDialog(context);
-                }
+                   try{
+                    final Repository repository = Repository(HttpService());
+                    var getUserDetails = await repository.checkpassword({
+                      "passkey": userPsw
+                    });
+
+                    if (getUserDetails.statusCode == 200) {
+                      var jsonData = jsonDecode(getUserDetails.body);
+                      print("jsonData$jsonData");
+                      if (jsonData['code'] == 200) {
+                        print("getUserDetails.body: ${getUserDetails.body}");
+                         if (type == 1) {
+                          Navigator.of(context).pop();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) =>
+                                ResetVerssion(userId: userId,
+                                  controllerId: controllerID,
+                                  deviceID: imeiNumber,)),
+                          );
+                        }
+                        else if (type == 2) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  ResetAccumalationScreen(userId: userId,
+                                      controllerId: controllerID,
+                                      deviceID: imeiNumber),
+                            ),
+                          );
+                        }
+                      } else {
+                        Navigator.of(context).pop(); // Close the dialog
+                        showErrorDialog(context);
+                      }
+                    }
+                  }
+                  catch (e, stackTrace) {
+                    print(' Error overAll getData => ${e.toString()}');
+                    print(' trace overAll getData  => ${stackTrace}');
+                  }
               },
               child: const Text('Submit'),
             ),
@@ -917,7 +970,6 @@ class CustomerScreenController extends StatelessWidget {
       },
     );
   }
-
 
   List<NavigationRailDestination> getNavigationDestinations() {
     final destinations = [
@@ -995,58 +1047,73 @@ class CustomerScreenController extends StatelessWidget {
     switch (index) {
       case 0:
         return [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(currentMaster.modelId) ?
-        CustomerHome(customerId: userId, controllerId: currentMaster.controllerId,
+        CustomerHome(customerId: widget.userId, controllerId: currentMaster.controllerId,
             deviceId: currentMaster.deviceId, modelId: currentMaster.modelId):
         isChanged ? PumpControllerHome(
-          userId: userId,
-          customerId: customerId,
+          userId: widget.userId,
+          customerId: widget.customerId,
           masterData: currentMaster,
         ):
         const Scaffold(body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text('Please wait...'),
-              SizedBox(height: 10),
-              CircularProgressIndicator(),
-            ],
-          ),
-        ));
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Please wait...'),
+                SizedBox(height: 10),
+                CircularProgressIndicator(),
+              ],
+            ),
+          ));
       case 1:
-        return CustomerProduct(customerId: userId);
+        return CustomerProduct(customerId: widget.customerId);
       case 2:
-        return SentAndReceived(customerId: userId, controllerId: currentMaster.controllerId);
+        return SentAndReceived(customerId: widget.customerId, controllerId: currentMaster.controllerId);
       case 3:
-        return IrrigationAndPumpLog(userData: {'userId' : userId, 'controllerId' : currentMaster.controllerId}, masterData: currentMaster);
+        return IrrigationAndPumpLog(userData: {'userId' : widget.userId, 'controllerId' : currentMaster.controllerId, 'customerId': widget.customerId}, masterData: currentMaster);
       case 4:
         return ControllerSettings(
-          userId: userId,
-          customerId: userId,
+            userId: widget.userId,
+            customerId: widget.customerId,
           masterController: currentMaster,
         );
       case 5:
-        return SiteConfig(
-            userId: userId,
-            customerId: customerId,
-            customerName: customerName,
-            masterData: allMaster,
-            groupId: groupId,
-            groupName: groupName
-        );
+         if(role == 'Admin')
+          {
+            return SiteConfig(
+              userId: widget.userId,
+              customerId: widget.customerId,
+              customerName: widget.customerName,
+              masterData: allMaster,
+              groupId: groupId,
+              groupName: groupName,
+            );
+          }
+        else
+          {
+            return _PasswordProtectedSiteConfig(
+              userId: widget.userId,
+              customerId: widget.customerId,
+              customerName: widget.customerName,
+              allMaster: allMaster,
+              groupId: groupId,
+              groupName: groupName,
+            );
+          }
+
       case 6:
-        return TicketHomePage(userId: userId, controllerId: currentMaster.controllerId);
+        return TicketHomePage(userId: widget.customerId, controllerId: currentMaster.controllerId);
       case 7:
-        return WeatherScreen(userId: userId, controllerId: currentMaster.controllerId, deviceID: currentMaster.deviceId);
+        return WeatherScreen(userId: widget.customerId, controllerId: currentMaster.controllerId, deviceID: currentMaster.deviceId);
       case 8:
-        return MapScreenall(userId: userId, customerId: customerId, controllerId: currentMaster.controllerId, imeiNo: currentMaster.deviceId);
+        return MapScreenall(userId: widget.userId, customerId: widget.customerId, controllerId: currentMaster.controllerId, imeiNo: currentMaster.deviceId);
       case 9:
-        return MapScreenAllArea(userId: userId, customerId: customerId, controllerId: currentMaster.controllerId, imeiNo: currentMaster.deviceId);
+        return MapScreenAllArea(userId: widget.userId, customerId: widget.customerId, controllerId: currentMaster.controllerId, imeiNo: currentMaster.deviceId);
       default:
         return const SizedBox();
     }
   }
-
 }
+
 
 class BadgeButton extends StatelessWidget {
   final VoidCallback onPressed;
@@ -1260,3 +1327,129 @@ class AlarmListItems extends StatelessWidget {
   }
 
 }
+
+class _PasswordProtectedSiteConfig extends StatefulWidget {
+  final int userId;
+  final int customerId;
+  final String customerName;
+  final List<MasterControllerModel> allMaster;
+  final int groupId;
+  final String groupName;
+
+  const _PasswordProtectedSiteConfig({
+    Key? key,
+    required this.userId,
+    required this.customerId,
+    required this.customerName,
+    required this.allMaster,
+    required this.groupId,
+    required this.groupName,
+  }) : super(key: key);
+
+  @override
+  State<_PasswordProtectedSiteConfig> createState() =>
+      _PasswordProtectedSiteConfigState();
+}
+
+class _PasswordProtectedSiteConfigState
+    extends State<_PasswordProtectedSiteConfig> {
+  bool _authorized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // show password dialog after first build
+    WidgetsBinding.instance.addPostFrameCallback((_) => _askPassword());
+  }
+
+  Future<void> _askPassword() async {
+    final controller = TextEditingController();
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Enter Password'),
+          content: TextField(
+            controller: controller,
+            obscureText: true,
+            decoration: const InputDecoration(
+              labelText: 'Password',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final userPsw = controller.text;
+
+                try {
+                  final Repository repository = Repository(HttpService());
+                  var getUserDetails = await repository.checkpassword({
+                    "passkey": userPsw,
+                  });
+
+                  if (getUserDetails.statusCode == 200) {
+                    var jsonData = jsonDecode(getUserDetails.body);
+                    print("jsonData $jsonData");
+
+                    if (jsonData['code'] == 200) {
+                      print("getUserDetails.body: ${getUserDetails.body}");
+                      if (ctx.mounted) Navigator.pop(ctx, true); // ✅ close dialog safely
+                    } else {
+                      if (ctx.mounted) Navigator.pop(ctx, false); // wrong password
+                    }
+                  }
+                } catch (e, stackTrace) {
+                  print('Error getData => ${e.toString()}');
+                  print('Trace getData => $stackTrace');
+                  if (ctx.mounted) Navigator.pop(ctx, false);
+                }
+              },
+              child: const Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result == true) {
+      setState(() => _authorized = true);
+    } else {
+      // Wrong password → show error
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("Error"),
+          content: const Text("Incorrect Password!"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            )
+          ],
+        ),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_authorized) {
+      return SiteConfig(
+        userId: widget.userId,
+        customerId: widget.customerId,
+        customerName: widget.customerName,
+        masterData: widget.allMaster,
+        groupId: widget.groupId,
+        groupName: widget.groupName,
+      );
+    }
+    return const SizedBox.shrink(); // empty until password is validated
+  }
+}
+

@@ -28,8 +28,7 @@ class LoginViewModel extends ChangeNotifier {
   void initState() {
     mobileNoController = TextEditingController();
     passwordController = TextEditingController();
-    verssion = getCurrentVersion() as String;
-  }
+   }
 
   void onIsObscureChanged() {
     isObscure = !isObscure;
@@ -89,8 +88,7 @@ class LoginViewModel extends ChangeNotifier {
           countryCode: cleanedCountryCode,
           mobileNumber: mobileNumber,
           email: userData['email'],
-          appVersion: verssion,
-        );
+         );
         onLoginSuccess(data['message']);
       } else {
         isLoading = false;

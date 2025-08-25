@@ -126,6 +126,11 @@ class Repository{
     return await apiService.putRequest('/category/update', body);
   }
 
+  Future<http.Response> updateUserNodeDetails(body) async {
+    return await apiService.putRequest('/user/deviceList/updateNodeDetails', body);
+  }
+
+
   Future<http.Response> inActiveCategoryById(body) async {
     return await apiService.putRequest('/category/inactive', body);
   }
@@ -447,7 +452,9 @@ class Repository{
   Future<http.Response> updateresetAccumulation(body) async {
     return await apiService.putRequest('/user/resetAccumulation/update', body);
   }
-
+  Future<http.Response> checkpassword(body) async {
+    return await apiService.postRequest('/user/verifyPasskey', body);
+  }
   Future<http.Response> getgeography(body) async {
      return await apiService.postRequest('/user/geography/get', body);
   }

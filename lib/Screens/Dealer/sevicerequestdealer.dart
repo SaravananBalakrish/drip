@@ -34,11 +34,12 @@ class _ServiceRequestsTableState extends State<ServiceRequestsTable> {
 
 
   Future<void> fetchData() async {
+    print('userId:${widget.userId}');
     var overAllPvd = Provider.of<OverAllUse>(context,listen: false);
     final prefs = await SharedPreferences.getInstance();
     try{
       final Repository repository = Repository(HttpService());
-      var getUserDetails = await repository.getUserServiceRequest({
+      var getUserDetails = await repository.getUserServiceRequestForDealer({
         "userId": widget.userId,
        });
       print("getUserDetails.body ${getUserDetails.body}");
@@ -64,23 +65,31 @@ class _ServiceRequestsTableState extends State<ServiceRequestsTable> {
   @override
   Widget build(BuildContext context) {
     if (_serviceDealerModel.data == null) {
-      return const Center(
-        child: Text(
-          'Currently no repository Request available ',
-          style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
+      return Scaffold(
+        backgroundColor: Colors.grey.shade100,
+        appBar:  AppBar(title: const Text('Service Request List')),
+        body: const Center(
+          child: Text(
+            'Currently No Request available ',
+            style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
+          ),
         ),
       );
     } else if (_serviceDealerModel.data!.length <= 0) {
-      return const Center(
-        child: Text(
-          'Currently No repository Request available on Customer Account',
-          style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
+      return Scaffold(
+        appBar:  AppBar(title: const Text('Service Request List')),
+        body: const Center(
+          child: Text(
+            'Currently No Request available on Customer Account',
+            style: TextStyle(fontWeight: FontWeight.normal, color: Colors.black),
+          ),
         ),
       );
     } else {
 
       return Scaffold(
-
+        backgroundColor: Colors.grey.shade100,
+        appBar:  AppBar(title: const Text('Service Request List')),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: DataTable2(
@@ -229,7 +238,9 @@ class _ServiceRequestsTableState extends State<ServiceRequestsTable> {
                           );
                           fetchData();
                         },
-                        child: const Text('Update'),
+                        child: const Text('Update',  style: TextStyle(
+                          color: Colors.white,
+                        ),),
                       ),
                     ),
                   ],

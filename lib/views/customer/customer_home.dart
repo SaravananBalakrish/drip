@@ -392,11 +392,10 @@ class PumpStationWithLine extends StatelessWidget {
       final allValveWidgets = [
         ...mainValves.asMap().entries.map((entry) {
           final valve = entry.value;
-          return ValveWidget(
+          return MainValveWidget(
             valve: valve,
             customerId: customerId,
             controllerId: controllerId,
-            isLastValve: false,
             modelId: modelId,
           );
         }),
@@ -435,12 +434,12 @@ class PumpStationWithLine extends StatelessWidget {
 
         if (fertilizerSite.isNotEmpty)
           ..._buildFertilizer(context, fertilizerSite),
+        ...lightWidgets,
         ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch_wj.png', fertilizerSite.isNotEmpty),
         ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png', fertilizerSite.isNotEmpty),
         ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter_wj.png', fertilizerSite.isNotEmpty),
         ...allValveWidgets,
-        ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wjl.png', fertilizerSite.isEmpty),
-        ...lightWidgets,
+        ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wjl.png', fertilizerSite.isNotEmpty),
         ...gateWidgets,
       ];
 
@@ -458,7 +457,9 @@ class PumpStationWithLine extends StatelessWidget {
               if(fertilizerSite.isNotEmpty){
                 int itemsPerRow = ((MediaQuery.sizeOf(context).width - 140) / 67).floor();
 
-                if (item is ValveWidget && index < itemsPerRow) {
+                if (((item is ValveWidget)||(item is MainValveWidget)
+                    ||(item is LightWidget)||(item is SensorWidget))
+                    && index < itemsPerRow) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 30),
                     child: item,
@@ -529,11 +530,10 @@ class PumpStationWithLine extends StatelessWidget {
 
       final mainValveWidgets = mainValveWidgetEntries.map((entry) {
         final valve = entry.value;
-        return ValveWidget(
+        return MainValveWidget(
           valve: valve,
           customerId: customerId,
           controllerId: controllerId,
-          isLastValve: false,
           modelId: modelId,
         );
       }).toList();
@@ -567,8 +567,8 @@ class PumpStationWithLine extends StatelessWidget {
             runSpacing: 0,
             children: [
               ...wsAndFilterItems,
-              ...allItems,
               ...lightWidgets,
+              ...allItems,
             ],
           ),
         );
@@ -744,7 +744,7 @@ class PumpStationWithLine extends StatelessWidget {
   List<Widget> _buildSensorItems(List<SensorModel> sensors, String type, String imagePath, bool isAvailFertilizer) {
     return sensors.map((sensor) {
       return Padding(
-        padding: EdgeInsets.only(top: isAvailFertilizer?30:0),
+        padding: EdgeInsets.only(top: isAvailFertilizer? 30 : 0),
         child: SensorWidget(
           sensor: sensor,
           sensorType: type,
@@ -1415,6 +1415,57 @@ class _SensorPopoverContentState extends State<SensorPopoverContent> {
   }
 }
 
+class MainValveWidget extends StatelessWidget {
+  final ValveModel valve;
+  final int customerId, controllerId, modelId;
+  const MainValveWidget({super.key, required this.valve, required this.customerId,
+    required this.controllerId, required this.modelId});
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<MqttPayloadProvider, String?>(
+      selector: (_, provider) => provider.getValveOnOffStatus([56, 57, 58, 59].contains(modelId) ?
+      double.parse(valve.sNo.toString()).toStringAsFixed(3): valve.sNo.toString()),
+      builder: (_, status, __) {
+
+        final statusParts = status?.split(',') ?? [];
+        if(statusParts.isNotEmpty){
+          valve.status = int.parse(statusParts[1]);
+        }
+
+        return SizedBox(
+          width: 70,
+          height: 100,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 70,
+                    height: 70,
+                    child: AppConstants.getAsset('main_valve', valve.status, ''),
+                  ),
+                  Text(
+                    valve.name,
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontSize: 10, color: Colors.black54),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
 class ValveWidget extends StatelessWidget {
   final ValveModel valve;
   final int customerId, controllerId, modelId;
@@ -1957,7 +2008,6 @@ class ValveWidget extends StatelessWidget {
         "fromDate": date,
         "toDate": date,
       };
-      print(body);
 
       final response = await Repository(HttpService()).fetchSensorHourlyData(body);
       if (response.statusCode == 200) {
