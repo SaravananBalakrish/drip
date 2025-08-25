@@ -135,7 +135,7 @@ class NodeListViewModel extends ChangeNotifier {
             key: formKey,
             child: TextFormField(
               controller: nodeNameController,
-              maxLength: 15,
+              maxLength: 30,
               decoration: const InputDecoration(hintText: "Enter node name"),
               validator: (value) {
                 if (value == null || value.isEmpty) {
@@ -163,7 +163,6 @@ class NodeListViewModel extends ChangeNotifier {
                     var response = await repository.updateUserNodeDetails(body);
                     if (response.statusCode == 200) {
                       final jsonData = jsonDecode(response.body);
-                      print('response:${response.body}');
                       if (jsonData["code"] == 200) {
                         nodeList[index].deviceName = nodeNameController.text;
                         notifyListeners();
