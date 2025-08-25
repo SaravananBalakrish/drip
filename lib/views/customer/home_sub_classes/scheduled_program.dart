@@ -173,18 +173,24 @@ class ScheduledProgram extends StatelessWidget {
                                   ),
                                 ),
                                 (filteredScheduleProgram[index].conditions.isNotEmpty &&
-                                    filteredScheduleProgram[index].conditions.every((c) => c.selected == true))?
-                                IconButton(
-                                  tooltip: 'view condition',
+                                    filteredScheduleProgram[index].conditions.any((c) => c.selected == true)) // ✅ check if any selected
+                                    ? IconButton(
+                                  tooltip: 'View Condition',
                                   onPressed: () {
-                                    showConditionDialog(context,
+                                    final selectedConditions = filteredScheduleProgram[index]
+                                        .conditions
+                                        .where((c) => c.selected == true)
+                                        .toList();
+
+                                    showConditionDialog(
+                                      context,
                                       filteredScheduleProgram[index].programName,
-                                      filteredScheduleProgram[index].conditions,
+                                      selectedConditions,
                                     );
                                   },
                                   icon: const Icon(Icons.visibility_outlined),
-                                ):
-                                const SizedBox(),
+                                )
+                                    : const SizedBox(),
                               ],
                             )),
                             DataCell(Center(child: Text('${filteredScheduleProgram[index].sequence.length}'))),
@@ -540,18 +546,25 @@ class ScheduledProgram extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                  filteredScheduleProgram[index].conditions.isNotEmpty?
-                                  IconButton(
-                                    tooltip: 'view condition',
+                                  (filteredScheduleProgram[index].conditions.isNotEmpty &&
+                                      filteredScheduleProgram[index].conditions.any((c) => c.selected == true)) // ✅ check if any selected
+                                      ? IconButton(
+                                    tooltip: 'View Condition',
                                     onPressed: () {
-                                      showConditionDialog(context,
+                                      final selectedConditions = filteredScheduleProgram[index]
+                                          .conditions
+                                          .where((c) => c.selected == true)
+                                          .toList();
+
+                                      showConditionDialog(
+                                        context,
                                         filteredScheduleProgram[index].programName,
-                                        filteredScheduleProgram[index].conditions,
+                                        selectedConditions,
                                       );
                                     },
-                                    icon: const Icon(Icons.visibility_outlined, color: Colors.teal,),
-                                  ):
-                                  const SizedBox(),
+                                    icon: const Icon(Icons.visibility_outlined),
+                                  )
+                                      : const SizedBox(),
                                 ],
                               ),
                               Text(filteredScheduleProgram[index].selectedSchedule, style: const TextStyle(fontSize: 11)),

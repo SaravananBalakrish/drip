@@ -73,6 +73,11 @@ class AppConstants {
   static const String agitatorNotON = "dp_agitator_right_y.png";
   static const String agitatorNotOFF = "dp_agitator_right_r.png";
 
+  static const String mainValveOFF = "main_valve_gray.png";
+  static const String mainValveON = "main_valve_green.png";
+  static const String mainValveNotON = "main_valve_orange.png";
+  static const String mainValveNotOFF = "main_valve_red.png";
+
   static const String valveOFF = "valve_gray.png";
   static const String valveON = "valve_green.png";
   static const String valveNotON = "valve_orange.png";
@@ -200,6 +205,8 @@ class AppConstants {
       case 'agitator':
         imagePathFinal = _getAgitatorImagePath(keyTwo);
         break;
+      case 'main_valve':
+        imagePathFinal = _getMainValveImagePath(keyTwo);
       case 'valve':
         imagePathFinal = _getValveImagePath(keyTwo);
         break;
@@ -227,6 +234,7 @@ class AppConstants {
         fit: BoxFit.fill,
       );
     }
+
     return Image.asset(
       '$pngPath$imagePathFinal',
       width: double.infinity,
@@ -360,6 +368,21 @@ class AppConstants {
         return agitatorNotON;
       case 3:
         return agitatorNotOFF;
+      default:
+        return '';
+    }
+  }
+
+  static String _getMainValveImagePath(int status) {
+    switch (status) {
+      case 0:
+        return mainValveOFF;
+      case 1:
+        return mainValveON;
+      case 2:
+        return mainValveNotON;
+      case 3:
+        return mainValveNotOFF;
       default:
         return '';
     }
@@ -590,7 +613,8 @@ class AppConstants {
   static List<int> ecoGemModelList = [56, 57, 58, 59];
   static List<int> gemModelList = [1, 2, 4, ];
   static List<int> weatherModelList = [13, 14];
-  static List<int> pumpModelList = [5, 6, 7, 8, 9, 10];
+  static List<int> pumpModelList = [5, 6, 7, ...pumpPlusModelList];
+  static List<int> pumpPlusModelList = [8, 9, 10];
   static List<int> senseModelList = [41, 42, 43, 44, 45];
   static List<int> ecoNodeList = [36];
   static List<int> extendLoraList = [46];

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -63,6 +64,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
     _controller.addListener(() {setState(() {});});
     _controller.repeat();
     mqttService.pumpDashboardPayload = widget.masterData.live?.cM as PumpControllerData?;
+
     _animation2 = Tween<double>(begin: 1.0, end: 0.0).animate(_controller2);
     if(mounted){
       getLive();
@@ -262,21 +264,26 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                             children: [
                               for(var index = 0; index < 3; index++)
                                 buildContainer(
-                                  title: snapshot.data!.powerFactor == null
-                                      ? ["RN", "YN", "BN"][index]
-                                      : ["RN ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
+                                  title: AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId)
+                                      ? ["RN ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
                                     "YN ${double.parse(snapshot.data!.voltage.split(',')[1]).toStringAsFixed(0)}",
-                                    "BN ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index],
-                                  value: snapshot.data!.powerFactor == null
-                                      ? double.parse(snapshot.data!.voltage.split(',')[index]).toStringAsFixed(0)
+                                    "BN ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index]
+                                      : null,
+                                  value: !AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId) ? snapshot.data!.powerFactor == null
+                                      ? ["RN ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
+                                    "YN ${double.parse(snapshot.data!.voltage.split(',')[1]).toStringAsFixed(0)}",
+                                    "BN ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index]
                                       : ["RPF ${double.parse(snapshot.data!.powerFactor.split(',')[0]).toStringAsFixed(0)}",
                                     "YPF ${double.parse(snapshot.data!.powerFactor.split(',')[1]).toStringAsFixed(0)}",
-                                    "BPF ${double.parse(snapshot.data!.powerFactor.split(',')[2]).toStringAsFixed(0)}"][index],
-                                  value2: snapshot.data!.power != null
+                                    "BPF ${double.parse(snapshot.data!.powerFactor.split(',')[2]).toStringAsFixed(0)}"][index] : null,
+                                  value2: !AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId)
+                                      ? snapshot.data!.power != null
                                       ? ["RP ${double.parse(snapshot.data!.power.split(',')[0]).toStringAsFixed(0)}",
                                     "YP ${double.parse(snapshot.data!.power.split(',')[1]).toStringAsFixed(0)}",
                                     "BP ${double.parse(snapshot.data!.power.split(',')[2]).toStringAsFixed(0)}"][index]
-                                      : null,
+                                      : ["RY ${calculatePhToPh(double.parse(snapshot.data!.voltage.split(',')[0]), double.parse(snapshot.data!.voltage.split(',')[1]))}",
+                                    "YB ${calculatePhToPh(double.parse(snapshot.data!.voltage.split(',')[1]), double.parse(snapshot.data!.voltage.split(',')[2]))}",
+                                    "BR ${calculatePhToPh(double.parse(snapshot.data!.voltage.split(',')[2]), double.parse(snapshot.data!.voltage.split(',')[0]))}"][index] : null,
                                   // value: snapshot.data!.voltage.split(',')[index],
                                   color1: [
                                     Colors.redAccent.shade100,
@@ -378,6 +385,24 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
 
     return Icon(iconData, color: iconColor);
   }
+
+  String calculatePhToPh(double val1, double val2)
+  {
+    double tpc, tp2c;
+
+    tpc = val1 * val1;
+    tp2c = val2 * val2;
+
+    tpc = (tpc + tp2c);
+    tp2c = val1 * val2;
+
+    tpc = tpc + tp2c;
+
+    tp2c = sqrt(tpc);
+
+    return tp2c.toStringAsFixed(0);
+  }
+
 
   Widget buildNewPumpDetails({required int index, required PumpControllerData pumpData}) {
     final pumps = widget.masterData.configObjects.where((e) => e.objectId == 5).toList();
@@ -956,7 +981,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                       //   ],
                       // ),
                       child: Image.asset(
-                        pumpData.dataFetchingStatus == 1 ? pumpItem.light == "1" ? "assets/png/street-lamp.png" : "assets/png/street-lamp (1).png" : "assets/png/street-lamp (1).png",
+                        pumpData.dataFetchingStatus == 1 ? pumpItem.light == "1" ? "assets/gif/light on.gif" : "assets/png/light off.png" : "assets/png/light off.png",
                         width: 80,
                         height: 90,
                       ),
@@ -1141,8 +1166,8 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
   }
 
   Widget buildContainer({
-    required String title,
-    required String value,
+    String? title,
+    required String? value,
     String? value2,
     required Color color1,
     required Color color2,
@@ -1155,8 +1180,8 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400)),
-            Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+            if(title != null) Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400)),
+            if(value != null) Text(value, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400,)),
             if (value2 != null) Text(value2, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w400)),
           ],
         ),

@@ -18,7 +18,6 @@ class ProductStockViewModel extends ChangeNotifier {
     try {
       final response = await repository.fetchMyStocks(body);
       if (response.statusCode == 200) {
-        print(response.body);
         final data = jsonDecode(response.body);
         if (data["code"] == 200) {
           final list = data["data"] as List<dynamic>;
@@ -30,6 +29,14 @@ class ProductStockViewModel extends ChangeNotifier {
     } finally {
       setStockLoading(false);
     }
+  }
+
+  Future<void> removeStockList(Map<String, dynamic> json) async {
+    if (json['status'] != 'success') return;
+    for (var p in json['products']) {
+      productStockList.removeWhere((item) => item.productId == p['productId']);
+    }
+    notifyListeners();
   }
 
   void setStockLoading(bool loadingState) {
