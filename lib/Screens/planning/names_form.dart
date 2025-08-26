@@ -229,7 +229,7 @@ class _NamesState extends State<Names> {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Name Already Exists')),
                             );
-                            _controllers[originalIndex].text = data.name ?? "";
+                            // _controllers[originalIndex].text = data.name ?? "";
                           } else if (val.length > 15) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Name length Maximum reached')),
