@@ -2516,6 +2516,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         "controllerId": controllerId,
       };
 
+      print("userData in the programLibraryData :: $userData");
       var getUserProgramName = await repository.getProgramLibraryData(userData);
       // var getUserProgramName = await httpService.postRequest('getUserProgramLibrary', userData);
       _programLibrary = null;
