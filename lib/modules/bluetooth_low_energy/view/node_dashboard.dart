@@ -39,6 +39,10 @@ class _NodeDashboardState extends State<NodeDashboard> {
 
   Future<int> getData()async{
     try{
+      if(bleService.nodeDataFromHw.isEmpty){
+        // second time updation nodeDataFromHw is empty...
+        return 200;
+      }
       await Future.delayed(const Duration(seconds: 1));
       var body = {
         "userId": widget.masterData['customerId'],
@@ -97,7 +101,7 @@ class _NodeDashboardState extends State<NodeDashboard> {
                                       userAcknowledgementForUpdatingFirmware();
                                     }
                                 ),
-                                gridItemWidget(
+                                  gridItemWidget(
                                   imagePath: 'assets/Images/Svg/SmartComm/control.svg',
                                   title: 'View & Control',
                                   onTap: () {
@@ -124,7 +128,8 @@ class _NodeDashboardState extends State<NodeDashboard> {
                                     }));
                                   },
                                 ),
-                                gridItemWidget(
+                                if(!bleService.nodeDataFromServer['hardwareLoraModel'].contains(bleService.nodeDataFromHw['MID']) && (!AppConstants.pumpWithValveModelList.contains(bleService.nodeData['modelId']) && !AppConstants.ecoGemModelList.contains(bleService.nodeData['modelId'])))
+                                  gridItemWidget(
                                   imagePath: 'assets/Images/Svg/SmartComm/calibration.svg',
                                   title: 'Calibration',
                                   onTap: () {

@@ -49,7 +49,7 @@ class _ControlNodeState extends State<ControlNode> {
               if(bleService.nodeDataFromHw.containsKey('RLY'))
                 relayWidget(),
               viewDetailsWidget(),
-              if(bleService.nodeDataFromServer['analogInput'] != '-')
+              if(bleService.nodeDataFromServer['analogInput'] != '-' && bleService.nodeDataFromHw.keys.any((key) => key.contains('AD')))
                 analogDetailsWidget()
 
             ],
@@ -88,7 +88,8 @@ class _ControlNodeState extends State<ControlNode> {
     return Row(
       spacing: 20,
       children: [
-        Expanded(child: versionWidget(color: const Color(0xffEB7C17), title: 'Controller Version $controller')),
+        if(!bleService.nodeDataFromServer['hardwareLoraModel'].contains(bleService.nodeDataFromHw['MID']))
+          Expanded(child: versionWidget(color: const Color(0xffEB7C17), title: 'Controller Version $controller')),
         Expanded(child: versionWidget(color: const Color(0xff005C8E), title: 'Boot Version $boot')),
         Expanded(child: versionWidget(color: const Color(0xffE0070A), title: '${bleService.nodeDataFromServer['interface']} Version $interFaceVersion')),
       ],
