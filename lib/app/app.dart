@@ -77,7 +77,7 @@ Widget navigateToInitialScreen(String route) {
     case Routes.login:
        return const LoginScreen();
     case Routes.dashboard:
-       // return  FileTransferPage();
+       // return  FirmwareBLEPage();
        return const ScreenController();
     default:
       return const SplashScreen();
