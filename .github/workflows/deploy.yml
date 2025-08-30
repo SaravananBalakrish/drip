@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 jobs:
   build_and_release:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     environment: production  # Replace with your environment name
     steps:
       - name: 📂 Checkout code
