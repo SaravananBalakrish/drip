@@ -195,7 +195,15 @@ class CustomerView extends StatelessWidget {
               tooltip: 'Service Request',
               icon: const Icon(Icons.build_circle),
               onPressed: () {
-                showModalBottomSheet(
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ServiceRequestsTable(userId: customer.id),
+                  ),
+                );
+
+                /*showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
                   elevation: 10,
@@ -203,8 +211,7 @@ class CustomerView extends StatelessWidget {
                     borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
                   ),
                   builder: (_) => ServiceRequestsTable(userId: customer.id),
-                );
-
+                );*/
               },
             ),
           ),

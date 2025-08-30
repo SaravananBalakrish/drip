@@ -9,6 +9,7 @@ import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/constants.dart';
 import '../../utils/enums.dart';
+import '../../utils/snack_bar.dart';
 import '../../view_models/customer/general_setting_view_model.dart';
 import '../common/user_profile/create_account.dart';
 
@@ -632,7 +633,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
     );
   }
 
-  Future<void> _showAlertDialog(BuildContext context, GeneralSettingViewModel vm, String cName, int suId) async {
+  Future<void> _showAlertDialog(BuildContext pntContext, GeneralSettingViewModel vm, String cName, int suId) async {
 
     List<UserGroup> userGroups = [];
     Map<String, Object> body = {
@@ -686,17 +687,11 @@ class _GeneralSettingState extends State<GeneralSetting> {
 
                 Map<String, Object> body = {
                   "userId": widget.customerId,
-                  "controllerId": widget.controllerId,
                   "sharedUser": suId,
-                  "userPermission": masterList.map((item) => item.toMap()).toList(),
-                  "modifyUser": widget.userId,
+                  "masterList": masterList.map((item) => item.toMap()).toList(),
+                  "createUser": widget.userId,
                 };
-
-                final String result = await vm.updatedSubUserPermission(body, suId);
-                print('result:$result');
-
-                ///api/v1/user/sharedUser/updatePermission  => userId, controllerId, sharedUser, userPermission, modifyUser
-
+                vm.updatedSubUserPermission(body, suId, pntContext);
               },
             ),
           ],

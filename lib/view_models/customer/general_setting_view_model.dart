@@ -206,22 +206,18 @@ class GeneralSettingViewModel extends ChangeNotifier {
     return null;
   }
 
-  Future<String> updatedSubUserPermission(Map<String, dynamic> body, int subUsrId) async {
-    print(body);
-
+  Future<void> updatedSubUserPermission(Map<String, dynamic> body, int subUsrId, BuildContext context) async {
     try {
       var response = await repository.updatedSubUserPermission(body);
+      print(response.body);
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print(response.body);
-        if (data["code"] == 200) {
-          return jsonEncode(data['data']);
-        }
+        GlobalSnackBar.show(context, data["message"], data["code"]);
+        Navigator.pop(context);
       }
     } catch (error) {
       debugPrint('Error fetching device list: $error');
     }
-    return "";
   }
 
   void setLoading(bool value) {

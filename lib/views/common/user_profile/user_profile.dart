@@ -249,7 +249,20 @@ class UserProfile extends StatelessWidget {
                         color: Theme.of(context).primaryColorLight,
                         textColor: Colors.white,
                         child: const Text('SAVE CHANGES'),
-                        onPressed: () => viewModel.updateUserProfile(context, viewedCustomer.id, loggedInUser.id),
+                        onPressed: () async {
+                          final response = await viewModel.updateUserProfile(
+                            context,
+                            viewedCustomer.id,
+                            loggedInUser.id,
+                          );
+
+                          if (response != null) {
+                            Navigator.pop(context);
+                            GlobalSnackBar.show(context, response["message"], response["code"]);
+                          } else {
+                            GlobalSnackBar.show(context, 'profile update cancelled', 400);
+                          }
+                        },
                       ),
                       const SizedBox(width: 16),
                     ],
