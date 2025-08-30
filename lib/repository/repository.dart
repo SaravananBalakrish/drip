@@ -445,7 +445,7 @@ class Repository{
   }
 
   Future<http.Response> updatedSubUserPermission(body) async {
-    return await apiService.putRequest('/user/sharedUser/updatePermission', body);
+    return await apiService.postRequest('/user/sharedUser/create', body);
   }
 
   Future<http.Response> getweather(body) async {

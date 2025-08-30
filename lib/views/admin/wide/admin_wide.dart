@@ -7,7 +7,6 @@ import '../../../flavors.dart';
 import '../../../layouts/layout_selector.dart';
 import '../../../layouts/user_layout.dart';
 import '../../../view_models/base_header_view_model.dart';
-import '../../../view_models/product_stock_view_model.dart';
 import '../../admin_dealer/product_inventory.dart';
 import '../../common/product_search_bar.dart';
 import '../../common/user_dashboard/widgets/main_menu.dart';

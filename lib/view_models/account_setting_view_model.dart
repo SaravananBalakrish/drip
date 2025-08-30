@@ -81,8 +81,8 @@ class UserSettingViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> updateUserProfile(BuildContext context, int customerId, userId) async {
-
+  Future<Map<String, dynamic>?> updateUserProfile(
+      BuildContext context, int customerId, int userId) async {
     errorMsg = '';
     String newPw = controllerNewPwd.text;
     String cnPw = controllerConfirmPwd.text;
@@ -91,21 +91,20 @@ class UserSettingViewModel extends ChangeNotifier {
       if (cnPw.isEmpty) {
         errorMsg = 'Please confirm your password';
         notifyListeners();
-        return;
+        return null;
       } else if (newPw.length < 6 || cnPw.length < 6) {
         errorMsg = 'Password must be at least 6 characters';
         notifyListeners();
-        return;
+        return null;
       } else if (newPw != cnPw) {
         errorMsg = 'Passwords do not match';
         notifyListeners();
-        return;
+        return null;
       }
     }
 
     if (formKey.currentState!.validate()) {
-
-      showDialog(
+      final result = await showDialog<Map<String, dynamic>?>(
         context: context,
         builder: (ctx) {
           return AlertDialog(
@@ -113,13 +112,11 @@ class UserSettingViewModel extends ChangeNotifier {
             content: const Text("Are you sure you want to update your profile?"),
             actions: [
               TextButton(
-                onPressed: () => Navigator.of(ctx).pop(), // close dialog
+                onPressed: () => Navigator.of(ctx).pop(null),
                 child: const Text("Cancel"),
               ),
               ElevatedButton(
                 onPressed: () async {
-                  Navigator.of(ctx).pop();
-
                   String cleanedCode = countryCode.replaceAll('+', '');
                   final body = {
                     "userId": customerId,
@@ -137,32 +134,16 @@ class UserSettingViewModel extends ChangeNotifier {
                   setLoading(true);
                   try {
                     var response = await repository.updateUserDetails(body);
+
                     if (response.statusCode == 200) {
                       final jsonData = jsonDecode(response.body);
-
-                      if (jsonData["code"] == 200) {
-                        GlobalSnackBar.show(context, jsonData["message"], jsonData["code"]);
-                        Future.delayed(const Duration(milliseconds: 100), () {
-                          Navigator.of(context).pop();
-                        });
-
-                        final userProvider = context.read<UserProvider>();
-                        final updatedUser = UserModel(
-                          id: customerId,
-                          name: controllerUsrName.text,
-                          mobileNo: controllerMblNo.text,
-                          countryCode: cleanedCode,
-                          email: controllerEmail.text,
-                          token: userProvider.loggedInUser.token,
-                          role: userProvider.loggedInUser.id == customerId
-                              ? userProvider.loggedInUser.role
-                              : userProvider.viewedCustomer?.role ?? UserRole.customer,
-                        );
-                        userProvider.updateUser(updatedUser);
-                      }
+                      Navigator.of(ctx).pop(jsonData);
+                    } else {
+                      Navigator.of(ctx).pop({"error": "Server error"});
                     }
                   } catch (error) {
                     errorMsg = 'Error updating profile: $error';
+                    Navigator.of(ctx).pop({"error": errorMsg});
                   } finally {
                     setLoading(false);
                   }
@@ -173,7 +154,11 @@ class UserSettingViewModel extends ChangeNotifier {
           );
         },
       );
+
+      return result; // will be either jsonData or {"error": ...}
     }
+
+    return null;
   }
 
 
