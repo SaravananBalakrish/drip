@@ -67,6 +67,13 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
       }
     }
     irrigationProgramProvider.calculateTotalFlowRate();
+   /* final selectedValves = irrigationProgramProvider.irrigationLine?.sequence.expand((e) => e['mainValve'].map((valve) => valve['sNo'])).toList() ?? [];
+    final availableValves = irrigationProgramProvider.mainValves?.map((e) => e.sNo).toList() ?? [];
+    bool allSelectedValvesExist = selectedValves.isNotEmpty && selectedValves.every((sNo) => availableValves.contains(sNo));
+
+    print("selected main valves :: $selectedValves");
+    print("available main valves :: $availableValves");
+    print(allSelectedValvesExist);*/
     // print(irrigationProgramProvider.fertilizerSite!.map((e) => e.toJson()));
   }
 
@@ -81,6 +88,7 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
   Widget build(BuildContext context) {
     irrigationProgramProvider = Provider.of<IrrigationProgramMainProvider>(context);
     final isEcoGem = [3].contains(widget.modelId);
+
     return irrigationProgramProvider.sampleIrrigationLine != null ? LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         final irrigationLine = irrigationProgramProvider.sampleIrrigationLine!;
@@ -118,7 +126,9 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
           }
           return false;
         });
-
+        final selectedValves = irrigationProgramProvider.irrigationLine?.sequence.expand((e) => e['mainValve'].map((valve) => valve['sNo'])).toList() ?? [];
+        final availableValves = irrigationProgramProvider.mainValves?.map((e) => e.sNo).toList() ?? [];
+        bool allSelectedValvesExist = selectedValves.isNotEmpty && selectedValves.every((sNo) => availableValves.contains(sNo));
         return SingleChildScrollView(
           child: Container(
             margin: MediaQuery.of(context).size.width >= 700 ? EdgeInsets.symmetric(
@@ -129,7 +139,7 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 buildSectionTitle(title: "General", context: context),
-                if((irrigationProgramProvider.irrigationLine?.sequence.expand((e) => e['valve'].map((valve) => valve['sNo'])).toList() ?? []).contains(irrigationProgramProvider.mainValves?.map((e) => e.sNo).toList() ?? []))
+                if(!allSelectedValvesExist)
                   buildSection(
                     title: "Main Valves",
                     dataList: irrigationLine!.map((e) => e.mainValve ?? []).expand((list) => list).toList(),
