@@ -4,7 +4,7 @@ import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/modules/Logs/view/pump_log.dart';
 import 'package:oro_drip_irrigation/modules/Logs/view/voltage_log.dart';
 import 'package:responsive_grid/responsive_grid.dart';
-import '../../../Models/customer/site_model.dart';
+import '../../../models/customer/site_model.dart';
 import '../../../utils/constants.dart';
 import 'power_graph_screen.dart';
 

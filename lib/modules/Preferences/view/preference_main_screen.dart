@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
-import 'package:oro_drip_irrigation/modules/Preferences/view/valve_settings.dart';
 import 'package:oro_drip_irrigation/modules/Preferences/view/view_config.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
-import 'package:oro_drip_irrigation/view_models/customer/customer_screen_controller_view_model.dart';
 import 'package:provider/provider.dart';
-import '../../../Models/customer/site_model.dart';
+import '../../../models/customer/site_model.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../Widgets/custom_animated_switcher.dart';
 import '../../IrrigationProgram/view/schedule_screen.dart';
@@ -23,7 +21,6 @@ import '../../../utils/environment.dart';
 import '../../IrrigationProgram/view/program_library.dart';
 import '../widgets/custom_segmented_control.dart';
 import '../widgets/progress_dialog.dart';
-import 'moisture_settings.dart';
 
 final otherSettingsIcons = [
   MdiIcons.lightbulbMultipleOutline,

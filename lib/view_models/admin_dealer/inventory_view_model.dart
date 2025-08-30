@@ -134,7 +134,7 @@ class InventoryViewModel extends ChangeNotifier {
         debugPrint("HTTP Error: ${response.statusCode}");
       }
     } catch (error, stackTrace) {
-      debugPrint('Error fetching Models: $error');
+      debugPrint('Error fetching models: $error');
       debugPrint(stackTrace.toString());
     } finally {
       isLoading = false;
@@ -279,7 +279,7 @@ class InventoryViewModel extends ChangeNotifier {
                         debugPrint("HTTP Error: ${response.statusCode}");
                       }
                     } catch (error, stackTrace) {
-                      debugPrint('Error fetching Models: $error');
+                      debugPrint('Error fetching models: $error');
                       debugPrint(stackTrace.toString());
                     } finally {
                       notifyListeners();

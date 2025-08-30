@@ -10,7 +10,7 @@ import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
 import 'package:oro_drip_irrigation/views/customer/site_config.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone.dart';
 import 'package:popover/popover.dart';
-import '../../Models/customer/site_model.dart';
+import '../../models/customer/site_model.dart';
 import 'package:provider/provider.dart';
 import '../../Screens/Dealer/controllerverssionupdate.dart';
 import '../../Screens/Map/CustomerMap.dart';

@@ -13,7 +13,7 @@ import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
-import '../../Models/customer/site_model.dart';
+import '../../models/customer/site_model.dart';
 import '../../Screens/Dealer/ble_mobile_screen.dart';
 import '../../StateManagement/customer_provider.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
