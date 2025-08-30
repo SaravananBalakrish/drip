@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../Models/customer/program_model.dart';
-import '../../Models/customer/site_model.dart';
-import '../../Models/customer/stand_alone_model.dart';
+import '../../models/customer/program_model.dart';
+import '../../models/customer/site_model.dart';
+import '../../models/customer/stand_alone_model.dart';
 import '../../repository/repository.dart';
 import '../../services/communication_service.dart';
 

@@ -141,7 +141,7 @@ class StockEntryViewModel extends ChangeNotifier {
         }
       }
     } catch (error) {
-      errorMsg = 'Error fetching Models: $error';
+      errorMsg = 'Error fetching models: $error';
     }
   }
 

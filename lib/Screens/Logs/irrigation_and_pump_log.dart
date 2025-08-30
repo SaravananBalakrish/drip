@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 
-import '../../Models/customer/site_model.dart';
+import '../../models/customer/site_model.dart';
 import '../../modules/Logs/repository/log_repos.dart';
 import '../../modules/Logs/view/pump_list.dart';
 import '../../modules/irrigation_report/view/list_of_log_config.dart';
