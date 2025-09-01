@@ -91,7 +91,7 @@ class _ControlNodeState extends State<ControlNode> {
         if(!bleService.nodeDataFromServer['hardwareLoraModel'].contains(bleService.nodeDataFromHw['MID']))
           Expanded(child: versionWidget(color: const Color(0xffEB7C17), title: 'Controller Version $controller')),
         Expanded(child: versionWidget(color: const Color(0xff005C8E), title: 'Boot Version $boot')),
-        Expanded(child: versionWidget(color: const Color(0xffE0070A), title: '${bleService.nodeDataFromServer['interface']} Version $interFaceVersion')),
+        Expanded(child: versionWidget(color: const Color(0xffE0070A), title: '${bleService.nodeDataFromServer['interface'] ?? (bleService.nodeDataFromServer['hardwareLoraModel'].contains(bleService.nodeDataFromHw['MID']) ? 'LoRa' : '')} Version $interFaceVersion')),
       ],
     );
   }
