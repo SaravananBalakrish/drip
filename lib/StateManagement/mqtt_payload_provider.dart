@@ -747,13 +747,13 @@ class MqttPayloadProvider with ChangeNotifier {
              final rawFrequency = int.parse(parts[2]);
              final frequency = (rawFrequency / 10).toStringAsFixed(1);
 
-             Loara1verssion = "Verssion:${parts[1]},Frequency:$frequency,SF:${parts[3]}";
+             Loara1verssion = "${parts[1]},$frequency,${parts[3]}";
            }
          else
            {
              final rawFrequency = int.parse(parts[2]);
              final frequency = (rawFrequency / 10).toStringAsFixed(1);
-             Loara2verssion = "Verssion:${parts[1]},Frequency:$frequency,SF:${parts[3]}";
+             Loara2verssion = "${parts[1]},$frequency,${parts[3]}";
            }
 
         }
