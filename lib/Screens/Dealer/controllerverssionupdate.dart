@@ -13,6 +13,7 @@ import '../../services/mqtt_service.dart';
 import '../../utils/shared_preferences_helper.dart';
 import 'configureMqttTopic.dart';
 import 'controllerlogfile.dart';
+import 'frequencyLoRaPage.dart';
 
 class ResetVerssion extends StatefulWidget {
   const ResetVerssion(
@@ -290,13 +291,34 @@ class _ResetVerssionState extends State<ResetVerssion> {
                                 style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty.all(
                                         Colors.teal.shade100)),
+                                // onPressed: () {
+                                //   setState(() {
+                                //     selectindex = index;
+                                //     _showFrequencyDialog(context, index, trudwe);
+                                //
+                                //   });
+                                // },
                                 onPressed: () {
                                   setState(() {
                                     selectindex = index;
-                                    _showFrequencyDialog(context, index, true);
-          
                                   });
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => FrequencyPage(
+                                        userId: widget.userId,
+                                        controllerId:  widget.controllerId,
+                                        deviceId:  widget.deviceID,
+                                        plusTrue: true,
+                                        loraValue: mergedList[index]['loraFrequency'] ?? '',
+                                        loara1Version: mqttPayloadProvider.Loara1verssion,
+                                        loara2Version: mqttPayloadProvider.Loara2verssion,
+                                      ),
+                                    ),
+                                  );
+
                                 },
+
                                 icon: const Icon(Icons.settings_applications),
                               ),
                             ),
