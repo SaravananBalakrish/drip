@@ -2384,8 +2384,15 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         if (configObjects.isNotEmpty) {
           _selectedObjects!.removeWhere((element) => !configObjects.any((element2) {
             double configSNo = double.tryParse(element2['sNo'].toString()) ?? 0.0;
+            if(element.objectId == 5) {
+              final irrigationPumpSnoList = sampleIrrigationLine!.map((e) => e.irrigationPump ?? []).expand((list) => list).toList().map((ele) => ele.sNo).toList();
+              irrigationPumpSnoList.contains(element.sNo);
+              // sampleIrrigationLine!.map((e) => e.irrigationPump
+            }
             print("Comparing element.sNo: ${element.sNo} with configSNo: $configSNo");
-            return configSNo == element.sNo;
+            return element.objectId == 5
+                ? sampleIrrigationLine!.map((e) => e.irrigationPump ?? []).expand((list) => list).toList().map((ele) => ele.sNo).toList().contains(element.sNo)
+                : configSNo == element.sNo;
           }));
         } else {
           print("Warning: configObjects is empty, skipping filter");
