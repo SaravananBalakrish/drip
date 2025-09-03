@@ -1163,7 +1163,7 @@ Future<void> validatePayloadSent({
       const Duration(seconds: 30),
       onTimeout: (sink) => sink.close(),
     )) {
-      if (message != null && message['cM']['4201']['PayloadCode'] == payloadCode) {
+      if (message != null && message['cM']['4201'] != null && message['cM']['4201']['PayloadCode'] == payloadCode) {
         isAcknowledged = true;
         break;
       }
