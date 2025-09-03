@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../../Models/Weather_model.dart';
-import '../../Models/weather_modelnew.dart';
+import '../../models/weather_modelnew.dart';
 import '../../Widgets/animated_cloud.dart';
 import '../../models/Weather_model.dart';
 import '../../modules/IrrigationProgram/view/water_and_fertilizer_screen.dart';
@@ -14,7 +14,6 @@ import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../services/mqtt_service.dart';
 import '../../utils/environment.dart';
-import 'WeatherScreenExternal.dart';
 
 class WeatherScreen extends StatefulWidget {
   const WeatherScreen(

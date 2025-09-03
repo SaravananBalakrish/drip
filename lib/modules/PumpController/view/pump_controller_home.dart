@@ -4,7 +4,6 @@ import 'package:oro_drip_irrigation/modules/Preferences/view/preference_main_scr
 import 'package:oro_drip_irrigation/modules/PumpController/view/pump_dashboard_screen.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/widget/custom_outline_button.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
-import 'package:oro_drip_irrigation/view_models/customer/customer_screen_controller_view_model.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -15,7 +14,6 @@ import '../../Logs/view/pump_log.dart';
 import '../../Logs/view/pump_logs_home.dart';
 import '../../Logs/view/voltage_log.dart';
 import '../../Preferences/view/standalone_settings.dart';
-import '../model/pump_controller_data_model.dart';
 import '../state_management/pump_controller_provider.dart';
 
 class PumpControllerHome extends StatefulWidget {

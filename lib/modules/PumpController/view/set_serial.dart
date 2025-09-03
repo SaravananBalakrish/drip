@@ -7,7 +7,6 @@ import 'package:oro_drip_irrigation/utils/environment.dart';
 
 import '../../../models/customer/site_model.dart';
 import '../../../services/mqtt_service.dart';
-import '../../../utils/snack_bar.dart';
 import '../model/pump_controller_data_model.dart';
 
 class SetSerialScreen extends StatefulWidget {

@@ -2,7 +2,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/config_Maker/view/config_base_page.dart';
 import 'package:provider/provider.dart';
-import '../../Models/admin_dealer/stock_model.dart';
+import '../../models/admin_dealer/stock_model.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/formatters.dart';

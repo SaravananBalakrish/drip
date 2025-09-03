@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -7,9 +6,7 @@ import 'package:provider/provider.dart';
 import '../../Screens/Dealer/controllerverssionupdate.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
-import '../../utils/constants.dart';
 import '../../utils/enums.dart';
-import '../../utils/snack_bar.dart';
 import '../../view_models/customer/general_setting_view_model.dart';
 import '../common/user_profile/create_account.dart';
 

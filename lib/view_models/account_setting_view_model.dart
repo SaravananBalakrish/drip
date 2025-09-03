@@ -1,13 +1,7 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import '../models/admin_dealer/language_list.dart';
-import '../models/user_model.dart';
-import '../providers/user_provider.dart';
 import '../repository/repository.dart';
-import '../utils/enums.dart';
-import '../utils/snack_bar.dart';
 
 class UserSettingViewModel extends ChangeNotifier {
   final Repository repository;
