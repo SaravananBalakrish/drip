@@ -3,10 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../../../../flavors.dart';
 import '../../../../view_models/login_view_model.dart';
-import '../widgets/continue_button.dart';
-import '../widgets/login_header.dart';
-import '../widgets/password_input_field.dart';
-import '../widgets/phone_input_field.dart';
 import '../widgets/wide_layout.dart';
 
 class LoginTablet extends StatelessWidget {

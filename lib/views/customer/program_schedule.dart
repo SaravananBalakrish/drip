@@ -6,7 +6,6 @@ import '../../Screens/planning/names_form.dart';
 import '../../Screens/planning/valve_group_screen.dart';
 import '../../Screens/planning/virtual_screen.dart';
 import '../../modules/IrrigationProgram/view/program_library.dart';
-import '../../modules/Preferences/view/preference_main_screen.dart';
 import '../../modules/SystemDefinitions/view/system_definition_screen.dart';
 import '../../modules/calibration/view/calibration_screen.dart';
 import '../../modules/fertilizer_set/view/fertilizer_Set_screen.dart';

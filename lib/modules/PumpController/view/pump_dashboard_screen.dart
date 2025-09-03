@@ -10,7 +10,6 @@ import 'package:oro_drip_irrigation/repository/repository.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
-import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 import '../../../models/customer/site_model.dart';
 import '../../../Screens/dashboard/wave_view.dart';
@@ -22,7 +21,6 @@ import '../widget/custom_bouncing_button.dart';
 import '../widget/custom_connection_error.dart';
 import '../widget/custom_countdown_timer.dart';
 import '../widget/custom_gauge.dart';
-import '../widget/custom_light.dart';
 
 class PumpDashboardScreen extends StatefulWidget {
   final int userId, customerId;

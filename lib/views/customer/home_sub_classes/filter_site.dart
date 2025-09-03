@@ -6,7 +6,6 @@ import '../../../models/customer/site_model.dart';
 import '../../../StateManagement/duration_notifier.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../utils/constants.dart';
-import '../../../utils/formatters.dart';
 
 class FilterSiteView extends StatelessWidget {
   final FilterSiteModel filterSite;

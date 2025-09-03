@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../Constants/data_convertion.dart';
 import '../models/Weather_model.dart';
-import '../models/customer/site_model.dart';
 import '../Screens/Map/googlemap_model.dart';
 import '../services/bluetooth_service.dart';
 import '../utils/enums.dart';
