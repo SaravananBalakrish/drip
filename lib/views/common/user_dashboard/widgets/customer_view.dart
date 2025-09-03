@@ -198,13 +198,22 @@ class CustomerView extends StatelessWidget {
               tooltip: 'Service Request',
               icon: const Icon(Icons.build_circle),
               onPressed: () {
-
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ServiceRequestsTable(userId: customer.id),
-                  ),
-                );
+                if(MediaQuery.of(context).size.width >= 600) {
+                  showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (BuildContext context) {
+                        return  ServiceRequestsTable(userId: customer.id);
+                      }
+                  );
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => ServiceRequestsTable(userId: customer.id),
+                    ),
+                  );
+                }
               },
             ),
           ),
