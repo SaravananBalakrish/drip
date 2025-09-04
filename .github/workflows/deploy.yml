@@ -82,11 +82,14 @@ jobs:
           name: Release ${{ github.ref_name }}
           artifacts: artifacts/*.aab
           token: ${{ secrets.GITHUB_TOKEN }}
-      - name: 📤 Upload to Play Store (Internal testing)
+      - name: 📤 Upload to Play Store (Production)
         if: startsWith(github.ref, 'refs/tags/v')
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.GOOGLE_PLAY_JSON }}
           packageName: com.niagaraautomations.oroDripirrigation
           releaseFiles: artifacts/app-oroProduction-release.aab
-          track: internal
+          track: production
+          inAppUpdatePriority: 3
+          status: completed
+          changesNotSentForReview: true

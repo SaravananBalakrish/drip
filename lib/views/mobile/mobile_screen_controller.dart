@@ -64,7 +64,6 @@ class _MobileScreenControllerState extends State<MobileScreenController> with Wi
       viewModel = Provider.of<CustomerScreenControllerViewModel>(context, listen: false);
       viewModel.getAllMySites(context, widget.userId);
       loadVersion();
-
     });
   }
 
