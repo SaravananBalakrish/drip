@@ -93,7 +93,7 @@ class CreateAccountViewModel extends ChangeNotifier {
           'countryCode': dialCode.replaceAll('+', ''),
           'mobileNumber': mobileNoController.text,
           'userType': cusType,
-          'createUser': userId,
+          'createUser': role == UserRole.subUser ? customerId : userId,
           'address': address ?? '',
           'pinCode': '',
           'city': city ?? '',
