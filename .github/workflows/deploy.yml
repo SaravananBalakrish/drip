@@ -1,10 +1,12 @@
 name: 🛠 Android CI / Build & Release AAB
 on:
-  push:
-    branches: [ main ]
-    tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
+# on:
+#   push:
+#     branches: [ main ]
+#     tags: [ 'v*.*.*' ]
+#   pull_request:
+#     branches: [ main ]
 permissions:
   contents: write
   actions: read
