@@ -275,7 +275,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                                       ? ["RPF ${double.parse(snapshot.data!.powerFactor.split(',')[0]).toStringAsFixed(0)}",
                                     "YPF ${double.parse(snapshot.data!.powerFactor.split(',')[1]).toStringAsFixed(0)}",
                                     "BPF ${double.parse(snapshot.data!.powerFactor.split(',')[2]).toStringAsFixed(0)}"][index]
-                                      : F.name.contains('oro')
+                                      : (!AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId)) && F.name.contains('oro')
                                       ? ["RN ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
                                     "YN ${double.parse(snapshot.data!.voltage.split(',')[1]).toStringAsFixed(0)}",
                                     "BN ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index]
