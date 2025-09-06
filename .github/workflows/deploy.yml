@@ -131,50 +131,46 @@ jobs:
 #          port: ${{ secrets.EC2_PORT || 22 }}
 #          source: "build/web/*"
 #          target: "/home/ec2-user/ORO/ORO_NEW/flutter_web"
-#  build_and_release_ios:
-#    runs-on: macos-latest
-#    environment: ORO IntelliIrrigate iOS Deployment
-#    steps:
-#      - name: 📂 Checkout code
-#        uses: actions/checkout@v3
-#        with:
-#          fetch-depth: 0
-#
-#      - name: 🦋 Setup Flutter
-#        uses: subosito/flutter-action@v2
-#        with:
-#          channel: stable
-#          flutter-version: '3.27.3'
-#
-#      - name: 📥 Get dependencies
-#        run: flutter pub get
-#
-#      - name: 🍏 Set up Xcode version
-#        run: sudo xcode-select -s /Applications/Xcode_15.0.app # Change if needed
-#
-#      - name: 🔐 Import Apple Certificate
-#        env:
-#          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-#          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-#        run: |
-#          echo "$APPLE_CERTIFICATE" | base64 --decode > certificate.p12
-#          security import certificate.p12 -P "$APPLE_CERTIFICATE_PASSWORD" -A
-#
-#      - name: 🔐 Add Provisioning Profile
-#        env:
-#          APPLE_PROVISIONING_PROFILE: ${{ secrets.APPLE_PROVISIONING_PROFILE }}
-#        run: |
-#          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
-#          echo "$APPLE_PROVISIONING_PROFILE" | base64 --decode > ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
-#
-#      - name: 🏗️ Build IPA
-#        run: |
-#          flutter build ipa --release --flavor oroProduction -t lib/main_oroProduction.dart
-#
-#      - name: 🚀 Upload to App Store Connect (TestFlight)
-#        uses: apple-actions/upload-testflight-build@v1
-#        with:
-#          app-path: build/ios/ipa/*.ipa
-#          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
-#          api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
-#          api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
+  build_and_release_ios:
+    runs-on: macos-latest
+    environment: ORO iOS Deployment
+    steps:
+      - name: 📂 Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: 🦋 Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.27.3'
+
+      - name: 📥 Get dependencies
+        run: flutter pub get
+
+      - name: 🍏 Setup Xcode
+        run: sudo xcode-select -s /Applications/Xcode_16.4.app
+
+      - name: 🔐 Setup Code Signing
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_PROVISIONING_PROFILE: ${{ secrets.APPLE_PROVISIONING_PROFILE }}
+        run: |
+          # Import certificate and provisioning profile
+          echo "$APPLE_CERTIFICATE" | base64 -d > certificate.p12
+          security import certificate.p12 -P "$APPLE_CERTIFICATE_PASSWORD" -A
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
+          echo "$APPLE_PROVISIONING_PROFILE" | base64 -d > ~/Library/MobileDevice/Provisioning\ Profiles/profile.mobileprovision
+
+      - name: 🏗️ Build IPA
+        run: flutter build ipa --release --flavor oroProduction -t lib/main_oroProduction.dart
+
+      - name: 🚀 Upload to App Store Connect
+        uses: apple-actions/upload-testflight-build@v1
+        with:
+          app-path: build/ios/ipa/*.ipa
+          issuer-id: ${{ secrets.APPSTORE_ISSUER_ID }}
+          api-key-id: ${{ secrets.APPSTORE_API_KEY_ID }}
+          api-private-key: ${{ secrets.APPSTORE_API_PRIVATE_KEY }}
