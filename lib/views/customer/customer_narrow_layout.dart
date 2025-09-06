@@ -44,16 +44,10 @@ class CustomerNarrowLayout extends StatelessWidget {
       const DashboardLayoutSelector(userRole: UserRole.customer),
       ScheduledProgramNarrow(
       userId: loggedInUser.id,
-      scheduledPrograms: cM.programList,
-      controllerId: cM.controllerId,
-      deviceId: cM.deviceId,
       customerId: viewedCustomer!.id,
       currentLineSNo: cM.irrigationLine[vm.lIndex].sNo,
       groupId: vm.mySiteList.data[vm.sIndex].groupId,
-      categoryId: cM.categoryId,
-      modelId: cM.modelId,
-      deviceName: cM.deviceName,
-      categoryName: cM.categoryName,
+      master: cM,
     ),
       IrrigationAndPumpLog(
         userData: {

@@ -67,22 +67,16 @@ class CustomerDashboardNarrow extends StatelessWidget {
                     elevation: 1,
                     child: Column(
                       children: [
-                        Container(
-                          width: MediaQuery.sizeOf(context).width,
-                          height: 45,
-                          color: Colors.white70,
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 16),
-                              Text(
-                                'Pump Station of ${line.name}',
-                                textAlign: TextAlign.left,
-                                style: const TextStyle(color: Colors.black54, fontSize: 17, fontWeight: FontWeight.bold),
-                              ),
-                            ],
-                          ),
+                        const ListTile(
+                          visualDensity: VisualDensity(vertical: -4),
+                          title: Text('Pump Station',
+                              style: TextStyle(color: Colors.black54, fontSize: 17, fontWeight: FontWeight.bold)),
+                          tileColor: Colors.white,
                         ),
-                        buildPumpStation(context, line, viewedCustomer.id, controllerId, modelId, deviceId)
+                        Container(
+                          color: Colors.white,
+                          child: buildPumpStation(context, line, viewedCustomer.id, controllerId, modelId, deviceId)
+                        )
                       ],
                     ),
                   ),
@@ -105,9 +99,8 @@ class CustomerDashboardNarrow extends StatelessWidget {
                               ),
                               const Spacer(),
                               MaterialButton(
-                                color: line.linePauseFlag == 0
-                                    ? Theme.of(context).primaryColorLight
-                                    : Colors.orange.shade400,
+                                color: line.linePauseFlag == 0 ? Theme.of(context).primaryColorLight :
+                                Colors.orange.shade400,
                                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
                                 onPressed: () async {
                                   String payLoadFinal = jsonEncode({
@@ -783,7 +776,6 @@ class IrrigationLine extends StatelessWidget {
     );
 
     final allItems = [
-      ...allItemsWithoutValves,
       ...mainValveWidgets,
       ...valveWidgets,
       ...pressureOutWidgets,
@@ -791,6 +783,9 @@ class IrrigationLine extends StatelessWidget {
 
     return Column(
       children: [
+        if(baseSensors.isNotEmpty)...[
+          ...allItemsWithoutValves,
+        ],
         Align(
           alignment: Alignment.topLeft,
           child: Wrap(
@@ -806,16 +801,12 @@ class IrrigationLine extends StatelessWidget {
 
   List<Widget> _buildSensorItems(List<SensorModel> sensors, String type, String imagePath) {
     return sensors.map((sensor) {
-      return SizedBox(
-        width: 70,
-        height: 50,
-        child: SensorWidgetMobile(
-          sensor: sensor,
-          sensorType: type,
-          imagePath: imagePath,
-          customerId: customerId,
-          controllerId: controllerId,
-        ),
+      return SensorWidgetMobile(
+        sensor: sensor,
+        sensorType: type,
+        imagePath: imagePath,
+        customerId: customerId,
+        controllerId: controllerId,
       );
     }).toList();
   }
