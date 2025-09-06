@@ -324,7 +324,7 @@ class ConditionLibraryViewModel extends ChangeNotifier {
   int getOperatorOfSensor(Condition condition) {
     if (condition.threshold == 'Above') {
       return 4;
-    }else if (condition.threshold == 'Blow') {
+    }else if (condition.threshold == 'Below') {
       return 5;
     }
     return 6;
