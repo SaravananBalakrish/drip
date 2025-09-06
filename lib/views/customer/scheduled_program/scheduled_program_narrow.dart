@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 
@@ -20,16 +20,12 @@ import '../../../utils/snack_bar.dart';
 
 class ScheduledProgramNarrow extends StatelessWidget {
   const ScheduledProgramNarrow({super.key, required this.userId,
-    required this.scheduledPrograms, required this.controllerId,
-    required this.deviceId, required this.customerId,
-    required this.currentLineSNo, required this.groupId,
-    required this.categoryId, required this.modelId,
-    required this.deviceName, required this.categoryName});
+    required this.customerId, required this.currentLineSNo, required this.groupId,
+    required this.master});
 
-  final int userId, customerId, controllerId, groupId, categoryId, modelId;
-  final String deviceId, deviceName, categoryName;
-  final List<ProgramList> scheduledPrograms;
+  final int userId, customerId, groupId;
   final double currentLineSNo;
+  final MasterControllerModel master;
 
   static const headerStyle = TextStyle(fontSize: 13);
   static final ValueNotifier<Map<String, dynamic>?> aiResponseNotifier = ValueNotifier(null);
@@ -40,12 +36,12 @@ class ScheduledProgramNarrow extends StatelessWidget {
     final spLive = Provider.of<MqttPayloadProvider>(context).scheduledProgramPayload;
     final conditionPayload = Provider.of<MqttPayloadProvider>(context).conditionPayload;
     if (spLive.isNotEmpty) {
-      _updateProgramsFromMqtt(spLive, scheduledPrograms, conditionPayload);
+      _updateProgramsFromMqtt(spLive, master.programList, conditionPayload);
     }
 
     var filteredScheduleProgram = currentLineSNo == 0 ?
-    scheduledPrograms :
-    scheduledPrograms.where((program) {
+    master.programList :
+    master.programList.where((program) {
       return program.irrigationLine.contains(currentLineSNo);
     }).toList();
 
@@ -208,7 +204,7 @@ class ScheduledProgramNarrow extends StatelessWidget {
                       children: [
                         const Spacer(),
                         Tooltip(
-                          message: getDescription(int.parse(program.prgOnOff)),
+                          message: AppConstants().codeInfoMap[int.parse(program.prgOnOff)]?.description ?? "Code not found",
                           child: MaterialButton(
                             color: int.parse(program.prgOnOff) >= 0
                                 ? isStop
@@ -226,7 +222,7 @@ class ScheduledProgramNarrow extends StatelessWidget {
                                 });
 
                                 final commService = Provider.of<CommunicationService>(context, listen: false);
-                                commService.sendCommand(serverMsg: '${program.programName} ${getDescription(int.parse(program.prgOnOff))}', payload: payLoadFinal);
+                                commService.sendCommand(serverMsg: '${program.programName} ${AppConstants().codeInfoMap[int.parse(program.prgOnOff)]?.description ?? "Code not found"}', payload: payLoadFinal);
                                 GlobalSnackBar.show(context, 'Comment sent successfully', 200);
                               } else {
                                 GlobalSnackBar.show(context, 'Permission denied', 400);
@@ -268,20 +264,20 @@ class ScheduledProgramNarrow extends StatelessWidget {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => IrrigationProgram(
-                                    deviceId: deviceId,
+                                    deviceId: master.deviceId,
                                     userId: userId,
-                                    controllerId: controllerId,
-                                    serialNumber: scheduledPrograms[index].serialNumber,
+                                    controllerId: master.controllerId,
+                                    serialNumber: master.programList[index].serialNumber,
                                     programType: filteredScheduleProgram[index].programType,
                                     conditionsLibraryIsNotEmpty: conditionL,
                                     fromDealer: false,
                                     toDashboard: true,
                                     groupId: groupId,
-                                    categoryId: categoryId,
+                                    categoryId: master.categoryId,
                                     customerId: customerId,
-                                    modelId: modelId,
-                                    deviceName: deviceName,
-                                    categoryName: categoryName,
+                                    modelId: master.modelId,
+                                    deviceName: master.deviceName,
+                                    categoryName: master.categoryName,
                                   ),
                                 ),
                               );
@@ -475,9 +471,9 @@ class ScheduledProgramNarrow extends StatelessWidget {
   }
 
   void updateProgramById(int id, ProgramList updatedProgram) {
-    int index = scheduledPrograms.indexWhere((program) => program.serialNumber == id);
+    int index = master.programList.indexWhere((program) => program.serialNumber == id);
     if (index != -1) {
-      scheduledPrograms[index] = updatedProgram;
+      master.programList[index] = updatedProgram;
     } else {
       print("Program with ID $id not found");
     }
@@ -605,7 +601,7 @@ class ScheduledProgramNarrow extends StatelessWidget {
     try {
       Map<String, Object> body = {
         "userId": userId,
-        "controllerId": controllerId,
+        "controllerId": master.controllerId,
       };
       final response = await Repository(HttpService()).fetchSiteAiAdvisoryData(body);
       if (response.statusCode == 200) {

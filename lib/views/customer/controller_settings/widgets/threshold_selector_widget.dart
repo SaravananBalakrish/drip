@@ -27,7 +27,7 @@ class ThresholdSelectorWidget extends StatelessWidget {
             itemBuilder: (BuildContext context) {
               final type = vm.clData.cnLibrary.condition[index].type;
               final options = type == 'Sensor'
-                  ? ['Blow', 'Above', 'Equal to']
+                  ? ['Below', 'Above', 'Equal to']
                   : type == 'Program'
                   ? ['is Running', 'is Starting', 'is Ending']
                   : ['Anyone is', 'Both are'];
