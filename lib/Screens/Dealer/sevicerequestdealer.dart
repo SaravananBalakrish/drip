@@ -190,6 +190,7 @@ class _ServiceRequestsTableState extends State<ServiceRequestsTable> {
                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
+
                     DataColumn2(
                       fixedWidth: 140,
                       label: Text(
@@ -235,7 +236,14 @@ class _ServiceRequestsTableState extends State<ServiceRequestsTable> {
                           // DataCell(Text(_serviceDealerModel.data![index].groupName ?? '')),
                           DataCell(Text(_serviceDealerModel.data![index].groupName ?? '')),
                           DataCell(Text(_serviceDealerModel.data![index].requestType ?? '')),
-                          DataCell(Text(_serviceDealerModel.data![index].requestDescription ?? '')),
+                          DataCell(SizedBox(
+                            height: 60,
+                            width: double.infinity,
+                            child: SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: Text(_serviceDealerModel.data![index].requestDescription ?? ''),
+                            ),
+                          ),),
                           DataCell(Text(DateFormat('yyyy-MM-dd').format(_serviceDealerModel.data![index].requestDate!).toString())),
                           DataCell(
                             InkWell(
