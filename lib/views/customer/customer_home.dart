@@ -2709,46 +2709,53 @@ class SensorWidgetMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Selector<MqttPayloadProvider, String?>(
-      selector: (_, provider) => provider.getSensorUpdatedValve(sensor.sNo.toString()),
+      selector: (_, provider) =>
+          provider.getSensorUpdatedValve(sensor.sNo.toString()),
       builder: (_, status, __) {
         final statusParts = status?.split(',') ?? [];
         if (statusParts.isNotEmpty) {
           sensor.value = statusParts[1];
         }
 
-        return SizedBox(
-          width: 70,
-          height: 70,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              if (sensorType != 'Pressure Switch')
-                _buildSensorButton(context)
-              else...[
-                const SizedBox(height: 1),
-                Image.asset(imagePath, width: 70, height: 70)
-              ],
-              Text(
-                sensor.name,
-                textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 10, color: Colors.black54),
-              ),
-            ],
+        return Container(
+          decoration: const BoxDecoration(
+            border: Border(
+              top: BorderSide(color: Colors.black26, width: 0.5),
+              bottom: BorderSide(color: Colors.black26, width: 0.5),
+            ),
           ),
-        );
-      },
-    );
-  }
-
-  Widget _buildSensorButton(BuildContext context) {
-    return Stack(
-      children: [
-        SizedBox(
-          width: 70,
-          height: 65,
-          child: TextButton(
-            onPressed: () async {
-              final sensors = await fetchSensorData(DateTime.now(), DateTime.now());
+          child: ListTile(
+            minVerticalPadding: 0,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+            visualDensity: const VisualDensity(vertical: -4),
+            leading: Image.asset(imagePath, width: 30, height: 30),
+            title: Text(
+              sensor.name,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            trailing: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: Colors.yellow.shade200,
+                borderRadius: BorderRadius.circular(4),
+                border: Border.all(color: Colors.grey, width: 0.5),
+              ),
+              child: Text(
+                MyFunction().getUnitByParameter(context, sensorType, sensor.value.toString(),) ?? '',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
+            onTap: () async {
+              final sensors =
+              await fetchSensorData(DateTime.now(), DateTime.now());
               final sensorDataList = getSensorDataById(sensor.sNo.toString(), sensors);
               showPopover(
                 context: context,
@@ -2767,40 +2774,14 @@ class SensorWidgetMobile extends StatelessWidget {
                 arrowDyOffset: -40,
               );
             },
-            style: ButtonStyle(
-              padding: WidgetStateProperty.all(EdgeInsets.zero),
-              minimumSize: WidgetStateProperty.all(Size.zero),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              backgroundColor: WidgetStateProperty.all(Colors.transparent),
-            ),
-            child: Image.asset(imagePath, width: 70, height: 70),
           ),
-        ),
-        Positioned(
-          top: 17,
-          left: sensorType == 'Pressure Sensor' ? 10 : 1,
-          right: sensorType == 'Pressure Sensor' ? 10 : 1,
-          child: Container(
-            width: 70,
-            height: 17,
-            decoration: BoxDecoration(
-              color: Colors.yellow,
-              borderRadius: BorderRadius.circular(2),
-              border: Border.all(color: Colors.grey, width: 0.5),
-            ),
-            child: Center(
-              child: Text(
-                MyFunction().getUnitByParameter(context, sensorType, sensor.value.toString()) ?? '',
-                style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-        ),
-      ],
+        );
+      },
     );
   }
 
-  Future<List<SensorHourlyDataModel>> fetchSensorData(DateTime fromDate, DateTime toDate) async {
+  Future<List<SensorHourlyDataModel>> fetchSensorData(
+      DateTime fromDate, DateTime toDate) async {
     List<SensorHourlyDataModel> sensors = [];
 
     try {
@@ -2814,13 +2795,14 @@ class SensorWidgetMobile extends StatelessWidget {
         "toDate": to,
       };
 
-      final response = await Repository(HttpService()).fetchSensorHourlyData(body);
+      final response =
+      await Repository(HttpService()).fetchSensorHourlyData(body);
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
         if (jsonData["code"] == 200) {
           sensors = (jsonData['data'] as List).map((item) {
-            final dateStr = item['date']; // 👈 You need this!
+            final dateStr = item['date'];
             final Map<String, List<SensorHourlyData>> hourlyDataMap = {};
 
             item.forEach((key, value) {
@@ -2828,7 +2810,8 @@ class SensorWidgetMobile extends StatelessWidget {
               if (value is String && value.isNotEmpty) {
                 final entries = value.split(';');
                 hourlyDataMap[key] = entries
-                    .map((entry) => SensorHourlyData.fromCsv(entry, key, dateStr))
+                    .map((entry) =>
+                    SensorHourlyData.fromCsv(entry, key, dateStr))
                     .toList();
               } else {
                 hourlyDataMap[key] = [];
@@ -2846,11 +2829,13 @@ class SensorWidgetMobile extends StatelessWidget {
     return sensors;
   }
 
-  List<SensorHourlyData> getSensorDataById(String sensorId, List<SensorHourlyDataModel> sensorData) {
+  List<SensorHourlyData> getSensorDataById(
+      String sensorId, List<SensorHourlyDataModel> sensorData) {
     final result = <SensorHourlyData>[];
     for (final model in sensorData) {
       model.data.forEach((_, sensorList) {
-        result.addAll(sensorList.where((sensor) => sensor.sensorId == sensorId));
+        result.addAll(
+            sensorList.where((sensor) => sensor.sensorId == sensorId));
       });
     }
     return result;
