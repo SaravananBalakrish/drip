@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/modules/irrigation_report/view/ec_25_log.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 
 import '../../models/customer/site_model.dart';
@@ -64,20 +65,33 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
               children: [
                   TabBar(
                     tabs: [
-                      const Tab(text: "Irrigation Log",),
-                      const Tab(text: "Standalone Log",),
+                      if(AppConstants.ecoGemModelList.contains(widget.masterData.modelId))
+                        ...[
+                          const Tab(text: "Motor Cyclic Log",)
+                        ]
+                      else
+                        ...[
+                          const Tab(text: "Irrigation Log",),
+                          const Tab(text: "Standalone Log",),
+                        ],
                       if(!AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? pumpList.isNotEmpty : true)
                         const Tab(text: "Pump Log",)
                       else
                         Container()
+
                     ]
                 ),
                 // SizedBox(height: 10,),
                 Expanded(
                     child: TabBarView(
                         children: [
-                          ListOfLogConfig(userData: widget.userData,),
-                          StandaloneLog(userData: widget.userData,),
+                          if(AppConstants.ecoGemModelList.contains(widget.masterData.modelId))
+                            Ec25Log(userData: widget.userData)
+                          else
+                            ...[
+                              ListOfLogConfig(userData: widget.userData,),
+                              StandaloneLog(userData: widget.userData,),
+                            ],
                           if(!AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? pumpList.isNotEmpty : true)
                             PumpList(
                               pumpList: pumpList,
@@ -86,6 +100,8 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
                             )
                           else
                             Container()
+
+
                         ]
                     )
                 )
