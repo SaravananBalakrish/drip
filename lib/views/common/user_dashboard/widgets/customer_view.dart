@@ -1,5 +1,6 @@
 import 'package:badges/badges.dart';
 import 'package:flutter/material.dart' hide Badge;
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:oro_drip_irrigation/views/common/user_dashboard/widgets/user_device_list.dart';
 import 'package:provider/provider.dart';
 import '../../../../Screens/Dealer/sevicerequestdealer.dart';
@@ -42,13 +43,25 @@ class CustomerView extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: ListView.builder(
+            child: viewModel.filteredCustomerList.isNotEmpty ? ListView.builder(
               padding: const EdgeInsets.only(bottom: 80),
               itemCount: viewModel.filteredCustomerList.length,
               itemBuilder: (context, index) {
                 final customer = viewModel.filteredCustomerList[index];
                 return _buildCustomerTile(context, customer, viewModel, stockVM);
               },
+            ):
+            Center(
+              child: viewModel.isLoadingCustomer ?
+              const SizedBox(
+                width: 40,
+                height: 200,
+                child: LoadingIndicator(indicatorType: Indicator.ballPulse),
+              ):
+              const Text('No customer available', style: TextStyle(
+                color: Colors.black54,
+                fontSize: 15,
+              ),),
             ),
           ),
         ],
