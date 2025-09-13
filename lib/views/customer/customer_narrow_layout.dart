@@ -26,6 +26,7 @@ class CustomerNarrowLayout extends StatefulWidget {
 }
 
 class _CustomerNarrowLayoutState extends State<CustomerNarrowLayout> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   void callbackFunction(String status) {
     if (status == 'Program created') {
@@ -45,20 +46,8 @@ class _CustomerNarrowLayoutState extends State<CustomerNarrowLayout> {
     final navModel = context.watch<BottomNavViewModel>();
     final vm = context.watch<CustomerScreenControllerViewModel>();
 
-    if (vm.isLoading) {
-      return Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: Image.asset(F.appFlavor!.name.contains('oro') ? 'assets/oro_store.png' :
-          'assets/smartcomm_playstore.png',
-            width: 175,
-            height: 175,
-          ),
-        ),
-      );
-    }
-
     final cM = vm.mySiteList.data[vm.sIndex].master[vm.mIndex];
+
     final isGem = [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList]
         .contains(cM.modelId);
 
@@ -101,16 +90,25 @@ class _CustomerNarrowLayoutState extends State<CustomerNarrowLayout> {
     }
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.grey.shade100,
       appBar: AppBar(
         title: appBarLogo(),
-        actions: appBarActions(context, vm, cM, true),
+        actions: [
+          ...appBarActions(context, vm, cM, true),
+          IconButton(
+            icon: const Icon(Icons.menu),
+            onPressed: () {
+              _scaffoldKey.currentState?.openEndDrawer();
+            },
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(50),
           child: appBarDropDownMenu(context, vm, cM),
         ),
       ),
-      drawer: CustomerDrawer(
+      endDrawer: CustomerDrawer(
         viewedCustomer: viewedCustomer,
         loggedInUser: loggedInUser,
         vm: vm,
@@ -120,7 +118,7 @@ class _CustomerNarrowLayoutState extends State<CustomerNarrowLayout> {
         viewedCustomer: viewedCustomer,
         loggedInUser: loggedInUser,
         vm: vm,
-        callbackFunction: callbackFunction, // ✅ pass function down
+        callbackFunction: callbackFunction,
       ),
       body: IndexedStack(
         index: navModel.index,
@@ -154,5 +152,9 @@ class _CustomerNarrowLayoutState extends State<CustomerNarrowLayout> {
       )
           : null,
     );
+  }
+
+  void openEndDrawer() {
+    _scaffoldKey.currentState?.openEndDrawer(); // ✅ opens the drawer programmatically
   }
 }
