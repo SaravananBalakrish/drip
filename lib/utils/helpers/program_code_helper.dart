@@ -16,6 +16,10 @@ class ProgramCodeHelper {
       'button': "Started By Rtc",
       'description': "Started By Rtc Couldn't Stop",
     },
+    -4: {
+      'button': "Cond Couldn't",
+      'description': "Stopped by Condition, Couldn't bypass and Start",
+    },
     7: {
       'button': "Stop Manually",
       'description': "Stop Manually",
