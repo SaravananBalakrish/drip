@@ -22,7 +22,6 @@ class DealerDashboardWide extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
             Expanded(
               child: SingleChildScrollView(
                 child: Column(children: [

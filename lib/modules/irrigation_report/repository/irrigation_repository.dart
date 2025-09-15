@@ -29,4 +29,8 @@ class IrrigationRepository{
   Future<http.Response> getLogDateWise(body) async {
     return await httpService.postRequest('/user/log/gem/get', body);
   }
+
+  Future<http.Response> getNovaLogDateWise(body) async {
+    return await httpService.postRequest('/user/log/nova/get', body);
+  }
 }

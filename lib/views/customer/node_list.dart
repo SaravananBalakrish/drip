@@ -398,7 +398,6 @@ class NodeList extends StatelessWidget {
                           'categoryName': masterData.categoryName,
                           'modelId': masterData.modelId,
                           'modelName': masterData.modelName,
-
                           'interfaceTypeId': masterData.interfaceTypeId,
                           'interface': masterData.interface,
                           'relayOutput': masterData.relayOutput,
