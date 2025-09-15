@@ -10,7 +10,10 @@ import 'package:oro_drip_irrigation/Screens/Constant/main_valve_in_constant.dart
 import 'package:oro_drip_irrigation/Screens/Constant/main_valve_in_constant.dart';
 import 'package:oro_drip_irrigation/modules/constant/model/object_in_constant_model.dart';
 
+import '../../../Constants/dialog_boxes.dart';
 import '../../../StateManagement/overall_use.dart';
+import '../../../repository/repository.dart';
+import '../../../services/http_service.dart';
 import '../../../services/mqtt_service.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/environment.dart';
@@ -29,6 +32,7 @@ class FilterSiteInConstant extends StatefulWidget {
 class _FilterSiteInConstantState extends State<FilterSiteInConstant> {
   double cellWidth = 200;
   MqttService mqttService = MqttService();
+  final Repository repository = Repository(HttpService());
 
 
   @override
@@ -111,12 +115,22 @@ class _FilterSiteInConstantState extends State<FilterSiteInConstant> {
                   Center(
                       child:  FilledButton.icon(
                         icon: const Icon(Icons.swipe),
-                        onPressed: () {
-                          String manualBackwashPayload = jsonEncode({
+                        onPressed: () async{
+                          var jsonData = {
                             "4000": {"4001": filterSite.sNo.toString()}
-                          });
+                          };
+                          String manualBackwashPayload = jsonEncode(jsonData);
                           mqttService.topicToPublishAndItsMessage(manualBackwashPayload, '${Environment.mqttPublishTopic}/${widget.constPvd.userData['deviceId']}');
-
+                          var data = {
+                            "userId": widget.constPvd.userData["customerId"],
+                            "controllerId": widget.constPvd.userData["controllerId"],
+                            "data": jsonData,
+                            "messageStatus": "manual backwash on/off",
+                            "createUser": widget.constPvd.userData["customerId"],
+                            "hardware": jsonData,
+                          };
+                          await repository.sendManualOperationToServer(data);
+                          loadingDialog();
                         },
                         label: const Text('Manual Backwash on/off', style: TextStyle(fontSize: 10),),
                         style: FilledButton.styleFrom(
@@ -136,4 +150,30 @@ class _FilterSiteInConstantState extends State<FilterSiteInConstant> {
       }),
     );
   }
+
+  void loadingDialog()async{
+    showDialog(
+        barrierDismissible: false,
+        context: context, builder: (context){
+      return const PopScope(
+        canPop: false,
+        child: AlertDialog(
+          content: Row(
+            spacing: 20,
+            children: [
+              CircularProgressIndicator(),
+              Text('Please wait...')
+            ],
+          ),
+        ),
+      );
+    }
+    );
+    await Future.delayed(const Duration(seconds: 2), (){
+      Navigator.pop(context);
+    });
+
+    simpleDialogBox(context: context, title: 'Success', message: 'Manual Backwash on/off command Sent Successfully...');
+  }
+
 }

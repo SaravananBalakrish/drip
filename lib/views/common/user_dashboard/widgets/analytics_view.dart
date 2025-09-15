@@ -14,32 +14,28 @@ class AnalyticsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final viewModel = context.watch<AnalyticsViewModel>();
 
-    return Card(
-      color: Colors.white,
-      elevation: 0,
-      child: Padding(
-        padding: const EdgeInsets.all(3.0),
-        child: Column(
-          children: [
-            buildHeader(context, viewModel),
-            Expanded(
-              child: viewModel.isLoadingSalesData ?
-              const Center(child: SizedBox(width: 40, child: LoadingIndicator(indicatorType: Indicator.ballPulse)))
-                  : MySalesBarChart(graph: viewModel.mySalesData.graph),
-            ),
-            const SizedBox(height: 6),
-            if ((viewModel.mySalesData.total ?? []).isNotEmpty)
-              Wrap(
-                spacing: 5,
-                runSpacing: 5,
-                children: List.generate(
-                  viewModel.mySalesData.total!.length, (index) => SalesChip(
-                    index: index, item: viewModel.mySalesData.total![index]),
-                ),
+    return Padding(
+      padding: const EdgeInsets.all(3.0),
+      child: Column(
+        children: [
+          buildHeader(context, viewModel),
+          Expanded(
+            child: viewModel.isLoadingSalesData ?
+            const Center(child: SizedBox(width: 40, child: LoadingIndicator(indicatorType: Indicator.ballPulse)))
+                : MySalesBarChart(graph: viewModel.mySalesData.graph),
+          ),
+          const SizedBox(height: 6),
+          if ((viewModel.mySalesData.total ?? []).isNotEmpty)
+            Wrap(
+              spacing: 5,
+              runSpacing: 5,
+              children: List.generate(
+                viewModel.mySalesData.total!.length, (index) => SalesChip(
+                  index: index, item: viewModel.mySalesData.total![index]),
               ),
-            const SizedBox(height: 8),
-          ],
-        ),
+            ),
+          const SizedBox(height: 8),
+        ],
       ),
     );
   }
