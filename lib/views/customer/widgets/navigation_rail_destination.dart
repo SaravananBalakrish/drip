@@ -23,7 +23,7 @@ class NavigationDestinationsBuilder {
         selectedIcon: Icon(Icons.question_answer, color: Colors.white),
         label: Text(''),
       ),
-      if ([1, 2, 3, 4].contains(master.modelId))
+      if ([1, 2, 3, 4, 56, 57, 58, 59].contains(master.modelId))
         const NavigationRailDestination(
           icon: Tooltip(message: 'Controller Logs', child: Icon(Icons.receipt_outlined)),
           selectedIcon: Icon(Icons.receipt, color: Colors.white),

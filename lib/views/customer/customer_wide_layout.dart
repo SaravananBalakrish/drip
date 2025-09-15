@@ -188,6 +188,7 @@ class _CustomerWideLayoutState extends State<CustomerWideLayout> {
       UserRole role, int customerId, String customerName, int userId) {
 
     final isGem = [1, 2, 3, 4].contains(currentMaster.modelId);
+    final isNova = [56, 57, 58, 59].contains(currentMaster.modelId);
 
     switch (index) {
       case 0:
@@ -226,7 +227,7 @@ class _CustomerWideLayoutState extends State<CustomerWideLayout> {
         );
 
       case 3:
-        return isGem ? IrrigationAndPumpLog(
+        return (isGem || isNova) ? IrrigationAndPumpLog(
           userData: {
             'userId': userId,
             'controllerId': currentMaster.controllerId,
@@ -241,7 +242,7 @@ class _CustomerWideLayoutState extends State<CustomerWideLayout> {
         );
 
       case 4:
-        return isGem ? ControllerSettingWide(
+        return (isGem || isNova) ? ControllerSettingWide(
           userId: userId,
           customerId: customerId,
           masterController: currentMaster,
@@ -264,9 +265,7 @@ class _CustomerWideLayoutState extends State<CustomerWideLayout> {
         );
 
       case 5:
-        return isGem
-            ? (role == 'Admin'
-            ? SiteConfig(
+        return (isGem || isNova) ? (role == UserRole.admin ? SiteConfig(
           userId: userId,
           customerId: customerId,
           customerName: customerName,
