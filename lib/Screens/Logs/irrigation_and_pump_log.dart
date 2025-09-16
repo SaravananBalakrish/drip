@@ -1,15 +1,14 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/modules/irrigation_report/view/ec_25_log.dart';
+import 'package:oro_drip_irrigation/modules/irrigation_report/view/motor_cyclic_log.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
-
 import '../../models/customer/site_model.dart';
 import '../../modules/Logs/repository/log_repos.dart';
 import '../../modules/Logs/view/pump_list.dart';
 import '../../modules/irrigation_report/view/list_of_log_config.dart';
 import '../../modules/irrigation_report/view/standalone_log.dart';
 import '../../services/http_service.dart';
+
 
 class IrrigationAndPumpLog extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -86,7 +85,7 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
                     child: TabBarView(
                         children: [
                           if(AppConstants.ecoGemModelList.contains(widget.masterData.modelId))
-                            Ec25Log(userData: widget.userData)
+                            MotorCyclicLog(userData: widget.userData)
                           else
                             ...[
                               ListOfLogConfig(userData: widget.userData,),
@@ -100,7 +99,6 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
                             )
                           else
                             Container()
-
                         ]
                     )
                 )

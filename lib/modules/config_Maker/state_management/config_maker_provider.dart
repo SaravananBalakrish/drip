@@ -397,8 +397,11 @@ class ConfigMakerProvider extends ChangeNotifier{
   }
 
   Future<int> replaceDevice({required dynamic newDevice,required dynamic oldDevice, required int masterOrNode})async {
-    print("newDevice : ${newDevice}");
     try{
+      print("------------");
+      print("oldDevice : $oldDevice");
+      print("newDevice : $newDevice");
+      print("masterData : $masterData");
       var body = {
         "userId" : masterData['userId'],
         "oldControllerId" : oldDevice['controllerId'],
@@ -410,10 +413,11 @@ class ConfigMakerProvider extends ChangeNotifier{
       };
       var response = await ConfigMakerRepository().productReplace(body);
       Map<String, dynamic> jsonData = jsonDecode(response.body);
-      print('jsonData : $jsonData');
+      print("jsonData == $jsonData");
       notifyListeners();
       if(jsonData['code'] == 200){
         if(masterOrNode == 1){
+          masterData = Map<String, dynamic>.from(masterData);
           masterData['deviceId'] = newDevice['deviceId'];
         }else{
           print("replacing node.......");

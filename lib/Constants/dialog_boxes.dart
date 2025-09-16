@@ -13,6 +13,7 @@ void simpleDialogBox({
   required BuildContext context,
   required String title,
   required String message,
+  Widget? content,
   List<Widget>? actionButton,
 }){
   showDialog(
@@ -37,7 +38,7 @@ void simpleDialogBox({
               ),
             ],
           ),
-          content: Column(
+          content: content ?? Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(

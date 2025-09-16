@@ -653,8 +653,8 @@ class _ListOfLogConfigState extends State<ListOfLogConfig> {
                                       counterText: '',
                                       border: UnderlineInputBorder(
                                         borderSide: BorderSide(
-                                          color: Colors.black, // You can set the color of the bottom border here
-                                          width: 1.0, // You can adjust the width of the bottom border here
+                                          color: Colors.black,
+                                          width: 1.0,
                                         ),
                                       )
                                   ),
