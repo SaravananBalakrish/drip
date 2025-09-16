@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Screens/login_screenOTP/login_screenotp.dart';
 import '../views/screen_controller.dart';
 import '../views/common/login/login_screen.dart';
 import '../views/splash_screen.dart';
@@ -6,6 +7,7 @@ import '../views/splash_screen.dart';
 class Routes {
   static const String flash = '/';
   static const String login = '/login';
+  static const String loginOtp = '/loginOtp';
   static const String dashboard = '/dashboard';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -18,6 +20,11 @@ class Routes {
       case Routes.login:
         return MaterialPageRoute(
           builder: (_) => const LoginScreen(),
+          settings: settings,
+        );
+      case Routes.login:
+        return MaterialPageRoute(
+          builder: (_) =>  LoginScreenOTP(),
           settings: settings,
         );
       case Routes.dashboard:

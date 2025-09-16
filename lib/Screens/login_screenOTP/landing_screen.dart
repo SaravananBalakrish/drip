@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
  import 'package:shared_preferences/shared_preferences.dart';
 
- import '../../services/http_service.dart';
+ import '../../repository/repository.dart';
+import '../../services/http_service.dart';
+import '../../utils/enums.dart';
+import '../../utils/shared_preferences_helper.dart';
 import '../../views/common/login/login_screen.dart';
 import 'login_screenotp.dart';
 class LandingScreen extends StatefulWidget {
@@ -77,83 +80,99 @@ class _LandingScreenState extends State<LandingScreen> with TickerProviderStateM
       ),
     );
   }
+  UserRole getRoleFromString(String? role) {
+    switch (role?.toLowerCase()) {
+      case '0':
+        return UserRole.superAdmin;
+      case '1':
+        return UserRole.admin;
+      case '2':
+        return UserRole.dealer;
+      case '3':
+        return UserRole.customer;
+      case 'sub user':
+        return UserRole.subUser;
+      default:
+        return UserRole.customer;
+    }
+  }
 
-  void checkAuthentication() async{
-    final prefs = await SharedPreferences.getInstance();
-    final userType =  prefs.getString('userType') ?? '';
-    final userIdFromPref = prefs.getString('userId') ?? '';
-    final deviceToken = prefs.getString('deviceToken') ?? '';
-    Map<String, dynamic> data = {
-      'userId': int.parse(userIdFromPref.isNotEmpty ? userIdFromPref : '0'),
-      'deviceToken': deviceToken
-    };
+  Future<void> checkAuthentication() async {
     try {
-      final userVerifyWithDeviceToken = await HttpService().postRequest('userVerifyWithDeviceToken', data);
-      final result = jsonDecode(userVerifyWithDeviceToken.body);
-      await Future.delayed(Duration(seconds: 4));
+      final roleString = await PreferenceHelper.getUserRole();
+      final int? userId = await PreferenceHelper.getUserId(); // already int
+      final userName = await PreferenceHelper.getUserName();
+      final countryCode = await PreferenceHelper.getCountryCode();
+      final deviceToken = await PreferenceHelper.getDeviceToken();
+      final email = await PreferenceHelper.getEmail();
+      final role = getRoleFromString(roleString);
+
+      // If no userId saved → go to login immediately
+      if (userId == null || userId == 0) {
+        _navigateTo( LoginScreenOTP());
+        return;
+      }
+
+      final data = {
+        'userId': userId,
+        'deviceToken': deviceToken,
+      };
+
+      final repository = Repository(HttpService());
+      final response = await repository.userVerifyWithDeviceToken(data);
+
+      final result = jsonDecode(response.body);
+
+      final success = response.statusCode == 200 && result['code'] == 200;
+
       setState(() {
-        _isSucceed = result['code'] == 200;
+        _isSucceed = success;
         _isLoading = false;
       });
-      await Future.delayed(Duration(seconds: 1));
-      if(result['code'] == 200) {
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) {
-              if(userIdFromPref.isEmpty) {
-                return LoginScreenOTP();
-              } else {
-                if(userType == "2") {
-                  return Container();
-                  // return DealerDashboard(userName: prefs.getString('userName') ?? "", countryCode:  prefs.getString('countryCode') ?? "", mobileNo:  prefs.getString('mobileNumber') ??"", userId: int.parse(prefs.getString('userId') ?? ''), emailId: prefs.getString('email') ?? '');
-                } else if(userType == "3"){
-                  // return HomeScreen(userId: 0, fromDealer: false,);
-                  return Container();
-                } else {
-                  return Container();
-                }
-              }
-            },
-            transitionsBuilder: (context, animation1, animation2, child) {
-              return FadeTransition(
-                opacity: animation1,
-                child: child,
-              );
-            },
-            transitionDuration: const Duration(milliseconds: 1000),
-          ),
-        );
-      } else {
-        setState(() {
-          _isSucceed = false;
-          _isLoading = false;
-        });
-        Navigator.of(context).pushReplacement(
-          PageRouteBuilder(
-            pageBuilder: (context, animation1, animation2) {
-              return LoginScreen();
-            },
-            transitionsBuilder: (context, animation1, animation2, child) {
-              return FadeTransition(
-                opacity: animation1,
-                child: child,
-              );
-            },
-            transitionDuration: const Duration(milliseconds: 1000),
-          ),
-        );
-      }
-      print(userVerifyWithDeviceToken.body);
-    } catch (e) {
-      print(e);
+
+      // if (success) {
+      //   // Navigate based on role
+      //   switch (role) {
+      //     case UserRole.dealer:
+      //       _navigateTo(DealerDashboard(
+      //         userName: userName ?? "",
+      //         countryCode: countryCode ?? "",
+      //         mobileNo: "", // fetch from prefs if you have it
+      //         userId: userId,
+      //         emailId: email ?? "",
+      //       ));
+      //       break;
+      //     case UserRole.subUser:
+      //       _navigateTo(HomeScreen(userId: userId, fromDealer: false));
+      //       break;
+      //     case UserRole.customer:
+      //       _navigateTo(HomeScreen(userId: userId, fromDealer: false));
+      //       break;
+      //     default:
+      //       _navigateTo(const LoginScreen());
+      //   }
+      // } else {
+      //   _navigateTo(const LoginScreen());
+      // }
+      _navigateTo(const LoginScreen());
+    } catch (e, stackTrace) {
+      print("Error in checkAuthentication: $e");
+      print(stackTrace);
+      _navigateTo(const LoginScreen());
     }
-    // final authProvider = context.read<AuthenticatorProvider>();
-    // bool isUserAuthenticated = await authProvider.checkAuthenticationState();
-    //
-    // if(isUserAuthenticated){
-    //   Navigator.pushReplacementNamed(context, Constants.homeScreen);
-    // } else {
-    //   Navigator.pushReplacementNamed(context, Constants.loginScreen);
-    // }
   }
+
+  /// Helper to clean up navigation code
+  void _navigateTo(Widget page) {
+    Navigator.of(context).pushReplacement(
+      PageRouteBuilder(
+        pageBuilder: (context, animation1, animation2) => page,
+        transitionsBuilder: (context, animation1, animation2, child) {
+          return FadeTransition(opacity: animation1, child: child);
+        },
+        transitionDuration: const Duration(milliseconds: 1000),
+      ),
+    );
+  }
+
 }
