@@ -29,7 +29,7 @@ import 'modules/config_Maker/state_management/config_maker_provider.dart';
 import 'StateManagement/mqtt_payload_provider.dart';
 import 'StateManagement/overall_use.dart';
 import 'modules/constant/state_management/constant_provider.dart';
-
+import 'package:flutter/services.dart';
 // Initialize local notifications plugin
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -44,6 +44,13 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 FutureOr<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  const platform = MethodChannel("ble_raw");
+  platform.setMethodCallHandler((call) async {
+    if (call.method == "onRawAdv") {
+      print("Raw adv bytes: ${call.arguments}");
+      // here you can parse advertisement bytes manually
+    }
+  });
   tz.initializeTimeZones();
   await NetworkUtils.initialize();
 
