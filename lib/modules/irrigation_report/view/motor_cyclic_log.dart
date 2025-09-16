@@ -1,25 +1,23 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_date_range_picker/flutter_date_range_picker.dart';
 import 'package:oro_drip_irrigation/Constants/data_convertion.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 import 'package:intl/intl.dart';
-
 import '../../../Widgets/custom_buttons.dart';
 import '../repository/irrigation_repository.dart';
 import 'log_home.dart';
 
 
-class Ec25Log extends StatefulWidget {
+class MotorCyclicLog extends StatefulWidget {
   final Map<String, dynamic> userData;
-  const Ec25Log({super.key, required this.userData});
+  const MotorCyclicLog({super.key, required this.userData});
 
   @override
-  State<Ec25Log> createState() => _Ec25LogState();
+  State<MotorCyclicLog> createState() => _MotorCyclicLogState();
 }
 
-class _Ec25LogState extends State<Ec25Log> {
+class _MotorCyclicLogState extends State<MotorCyclicLog> {
   DateTime? selectedDate;
   String _selectedDate = '';
   String _dateCount = '';
