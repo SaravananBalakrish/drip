@@ -6,6 +6,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:oro_drip_irrigation/Screens/login_screenOTP/widget/custom_button.dart';
  import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../views/common/login/login_screen.dart';
 import 'otp_verification.dart';
@@ -37,8 +38,7 @@ class _LoginScreenState extends State<LoginScreenOTP> {
     if (_contactEditingController.text.isEmpty) {
       showErrorDialog(context, 'Register number can\'t be empty.');
     } else {
-      String checkval =
-      await checkNumber(selectedCountryDialCode!, '${_contactEditingController.text}');
+      String checkval = await checkNumber(selectedCountryDialCode!, '${_contactEditingController.text}');
       if (checkval == 'true') {
 
         final responseMessage = await Navigator.push(context, MaterialPageRoute(builder: (context) => OtpScreen(contact: "$selectedCountryDialCode ${_contactEditingController.text}",)));
@@ -76,16 +76,14 @@ class _LoginScreenState extends State<LoginScreenOTP> {
       'deviceToken': deveicetoken,
       'isMobile': true
     };
-    final response = await HttpService().postRequest("userVerification", body);
-    if (response.statusCode == 200) {
-      // var data = jsonDecode(response.body);
-      if (response.statusCode == 200) {
+     final repository = Repository(HttpService());
+    final response = await repository.checkMobileNumber(body);
+
+     if (response.statusCode == 200) {
+       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        if (data["code"] == 200) {
-          // final customerData = data["data"];
-          // final customerInfo = customerData["user"];
-           /*List<dynamic> siteData = data['data']['site'];
-          List<String> siteList = siteData.map((site) => json.encode(site)).toList();*/
+         if (data["code"] == 200) {
+
 
           if (mounted) {
             Navigator.pushReplacementNamed(context, '/dashboard');
@@ -144,6 +142,7 @@ class _LoginScreenState extends State<LoginScreenOTP> {
       }
     });
   }
+
 
   Future<bool> _onWillPop(BuildContext context) async {
     return await showDialog(
@@ -206,7 +205,7 @@ class _LoginScreenState extends State<LoginScreenOTP> {
                   GestureDetector(
                     onTap: _handleTap,
                     child: Image.asset(
-                      'assets/images/otpmobile.png',
+                      'assets/Images/otpmobile.png',
                       height: screenHeight * 0.3,
                       fit: BoxFit.contain,
                     ),
@@ -267,7 +266,7 @@ class _LoginScreenState extends State<LoginScreenOTP> {
                                       _contactEditingController.clear();
                                     },
                                   ),
-                                  border: OutlineInputBorder(
+                                  border: const OutlineInputBorder(
                                     borderSide: BorderSide(),
                                   ),
                                 ),

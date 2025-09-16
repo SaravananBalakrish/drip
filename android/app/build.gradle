@@ -32,19 +32,19 @@ android {
             dimension "flavor-type"
             applicationId "com.niagaraautomations.oroDevelopment"
             resValue "string", "app_name", "ORO-Dev"
-            minSdkVersion flutter.minSdkVersion
+            minSdkVersion 23
         }
         oroProduction {
             dimension "flavor-type"
             applicationId "com.niagaraautomations.oroDripirrigation"
             resValue "string", "app_name", "ORO"
-            minSdkVersion flutter.minSdkVersion
+            minSdkVersion 23
         }
         smartComm {
             dimension "flavor-type"
             applicationId "com.niagaraautomations.smartComm"
             resValue "string", "app_name", "SMART COMM"
-            minSdkVersion flutter.minSdkVersion
+            minSdkVersion 23
         }
     }
 
@@ -82,6 +82,7 @@ android {
     defaultConfig {
         applicationId = "com.niagaraautomations.oroDripirrigation"
         minSdkVersion flutter.minSdkVersion
+        minSdkVersion 23
 //        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = 12

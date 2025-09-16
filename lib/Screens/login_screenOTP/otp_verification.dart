@@ -3,13 +3,17 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:otp_pin_field/otp_pin_field.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../repository/repository.dart';
 import '../../services/http_service.dart';
+import '../../utils/shared_preferences_helper.dart';
 
 
 // ignore: must_be_immutable
@@ -39,13 +43,7 @@ class _OtpScreenState extends State<OtpScreen> {
       // widget.contact = '${ModalRoute.of(context)?.settings.arguments as String}';
       print(widget.contact);
       generateOtp(widget.contact);
-      // print("widget._isInit ${widget._isInit}");
-      //  if (widget._isInit) {
-      //   widget.contact = '${ModalRoute.of(context)?.settings.arguments as String}';
-      //   print(widget.contact);
-      //   generateOtp(widget.contact);
-      //   widget._isInit = false;
-      // }
+
     });
   }
 
@@ -81,7 +79,7 @@ class _OtpScreenState extends State<OtpScreen> {
                     height: screenHeight * 0.05,
                   ),
                   Image.asset(
-                    'assets/images/otp.png',
+                    'assets/Images/otp.png',
                     height: screenHeight * 0.3,
                     fit: BoxFit.contain,
                   ),
@@ -103,7 +101,7 @@ class _OtpScreenState extends State<OtpScreen> {
                       color: Colors.black,
                     ),
                   ),
-                  Text(
+                  const Text(
                     'If you didn\'t receive the OTP, you can',
                     style: TextStyle(fontSize: 16),
                   ),
@@ -214,12 +212,14 @@ class _OtpScreenState extends State<OtpScreen> {
   }
 
   Future<void> getDeviceToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString('deviceToken') ?? '';
-     setState(() {
-      deveicetoken = token;
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    await messaging.getToken().then((String? token) async{
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('deviceToken', token ?? '' );
+      deveicetoken = token ?? '';
     });
-  }
+    }
+
 
    Future<void> verifyOtp() async {
     if (smsOTP.isEmpty || smsOTP == '') {
@@ -245,106 +245,85 @@ class _OtpScreenState extends State<OtpScreen> {
       print("stackTrace $stackTrace");
     }
   }
-  Future<String> checkNumber(String countryCode)
-  async
-  {
-    if(deveicetoken.isEmpty || deveicetoken == '')
-    {
-     await getDeviceToken();
+
+  Future<bool> checkNumber(String countryCode) async {
+    if (deveicetoken.isEmpty) {
+      await getDeviceToken();
     }
-    // verifyOtp();
-    print("county code widget ${widget.contact}");
-    print("countryCode ==>, $countryCode");
+
+    final parts = countryCode.trim().split(' ');
+    if (parts.length < 2) {
+      _showSnackBar("Invalid phone number format", Colors.red);
+      return false;
+    }
+
+    final code = parts[0].replaceFirst('+', '');
+    final number = parts[1];
+
     try {
-
-      // // print('device Token:--->$userIdFromPref');
-      Map<String,
-          Object> body = {
-        'countryCode': countryCode.split(' ')[0].replaceFirst('+', ''),
-        'mobileNumber': countryCode.split(' ')[1],
-        // 'macAddress': '123456',
+      final body = {
+        'countryCode': code,
+        'mobileNumber': number,
         'deviceToken': deveicetoken,
-        'isMobile' : true
+        'isMobile': kIsWeb ? false : true,
       };
-      // print(body);
-      final response = await HttpService()
-          .postRequest(
-          "userVerification", body);
-      if (response.statusCode == 200) {
-        var data = jsonDecode(response.body);
-        if (data["code"] == 200) {
+      final repository = Repository(HttpService());
+      final response = await repository.checkMobileNumber(body);
 
-          final customerData = data["data"];
-          final customerInfo = customerData["user"];
+print("response: $response");
+      print("response: ${response.body}");
+      if (response.statusCode != 200) {
+        _showSnackBar("Server error: ${response.statusCode}", Colors.red);
+        return false;
+      }
 
-          /*List<dynamic> siteData = data['data']['site'];
-                                                  List<String> siteList = siteData.map((site) => json.encode(site)).toList();*/
-          // print(customerInfo);
+      final data = jsonDecode(response.body);
 
-          final prefs = await SharedPreferences
-              .getInstance();
-          await prefs.setString(
-              'userType',
-              customerInfo["userType"]
-                  .toString());
-          await prefs.setString(
-              'userName',
-              customerInfo["userName"]
-                  .toString());
-          await prefs.setString(
-              'userId',
-              customerInfo["userId"]
-                  .toString());
-          await prefs.setString(
-              'countryCode',
-              customerInfo["countryCode"]
-                  .toString());
-          await prefs.setString(
-              'mobileNumber',
-              customerInfo["mobileNumber"]
-                  .toString());
-          await prefs.setString(
-              'password',
-              customerInfo["password"]
-                  .toString());
-          await prefs.setString(
-              'email',
-              customerInfo["email"]
-                  .toString());
-          //await prefs.setStringList('site', siteList);
-          final userType =  prefs.getString('userType') ?? '';
-          if (mounted) {
-            if(userType == "2") {
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => DealerDashboard(userName: prefs.getString('userName')!, countryCode:  prefs.getString('countryCode')!, mobileNo:  prefs.getString('mobileNumber')!, userId: int.parse(prefs.getString('userId')!), emailId: prefs.getString('email')!)));
-            }else if(userType == "1"){
-              _showSnackBar("Admin cannot login through mobile phone",Colors.red);
-            }
-            else if(userType == "3"){
-              Navigator.pushReplacementNamed(context, '/dashboard');
-            } else {
-              _showSnackBar("User type not found",Colors.red);
-            }
-          }
+      if (data['code'] != 200) {
+        _showSnackBar(data['message'], Colors.red);
+        return false;
+      }
 
-          return 'true';
-        }
-        else {
-          _showSnackBar(
-              data["message"],Colors.red);
-          return 'false';
+      final userData = data['data']['user'];
+
+      await PreferenceHelper.saveUserDetails(
+        token: userData['accessToken'],
+        userId: userData['userId'],
+        userName: userData['userName'],
+        role: userData['userType'],
+        countryCode: code,
+        mobileNumber: number,
+        email: userData['email'],
+      );
+
+      // 🔹 Example: Navigate based on role
+      Future.delayed(Duration.zero, () {
+        switch (userData['userType']) {
+          case "1":
+            _showSnackBar("Admin cannot login on mobile", Colors.red);
+            break;
+          case "2":
+            Navigator.pushReplacementNamed(context, '/dealerDashboard');
+            break;
+          case "3":
+            Navigator.pushReplacementNamed(context, '/dashboard');
+            break;
+          default:
+            _showSnackBar("Unknown user type", Colors.red);
         }
 
-      }
-      else {
-        return 'false';
-
-      }
-    } catch(error, stackTrace) {
+        return true;
+      });
+      return true;
+    } catch (error, stackTrace) {
       print("Error on checkNumber $error");
       print("StackTrace on checkNumber $stackTrace");
-      return 'false';
+      _showSnackBar("Something went wrong", Colors.red);
+      return false;
     }
   }
+
+
   //Method for handle the errors
   void handleError(PlatformException error) {
     switch (error.code) {

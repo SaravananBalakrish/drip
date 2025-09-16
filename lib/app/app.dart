@@ -73,10 +73,11 @@ class _MyAppState extends State<MyApp> {
 
 /// Helper function to navigate to the appropriate screen
 Widget navigateToInitialScreen(String route) {
+  var isOro = F.appFlavor?.name.contains('oro') ?? false;
   switch (route) {
     case Routes.login:
-       return const LandingScreen();
-    case Routes.dashboard:
+       return kIsWeb ? LoginScreen() : isOro ? LandingScreen() : LoginScreen();
+     case Routes.dashboard:
        return const ScreenController();
     default:
       return const SplashScreen();
