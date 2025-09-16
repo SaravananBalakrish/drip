@@ -281,6 +281,9 @@ class _DeviceListState extends State<DeviceList> {
                       int status = await changeDeviceId(
                           productId: masterOrNode == 1 ? configPvd.masterData['productId'] : device!.productId,
                           modelId: masterOrNode == 1 ? configPvd.masterData['modelId'] : device!.modelId,
+                        controllerId : masterOrNode == 1 ? configPvd.masterData['controllerId'] : device!.controllerId,
+                        deviceId: masterOrNode == 1 ? configPvd.masterData['deviceId'] : device!.deviceId,
+                        masterOrNode: masterOrNode,
                       );
                       if(status == 200){
                         var oldTopic = '${Environment.mqttSubscribeTopic}/${configPvd.masterData['deviceId']}';
@@ -305,25 +308,95 @@ class _DeviceListState extends State<DeviceList> {
     );
   }
 
-  Future<int> changeDeviceId({required int productId, required int modelId})async {
+  Future<int> changeDeviceId({required int productId, required int modelId, required int controllerId, required String deviceId, required int masterOrNode})async {
     try{
       var body = {
-        "productId": productId,
-        "modelId": modelId,
+        // "productId": productId,
+        // "modelId": modelId,
         "deviceId": replaceDeviceId,
-        "modifyUser": configPvd.masterData['customerId'],
+        // "modifyUser": configPvd.masterData['customerId'],
       };
-      print("body : $body");
-      var response = await ConfigMakerRepository().updateProduct(body);
-      if(response.statusCode == 200){
-        Map<String, dynamic> jsonData = jsonDecode(response.body);
+      var response = await ConfigMakerRepository().checkProduct(body);
+      print("response +++ ${response.body}");
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+      if(response.statusCode == 200 && jsonData["code"] == 200){
         print("jsonData : $jsonData");
-        String message = jsonData['message'];
+        String message = '${jsonData['message']}';
         Navigator.pop(context);
-        simpleDialogBox(context: context, title: jsonData['code'] == 200 ? 'Success' : 'Failed', message: message);
+        simpleDialogBox(
+            context: context,
+            title: 'Alert',
+            message: message,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: const Text('Name'),
+                subtitle: Text('${jsonData['data'][0]['userName']}'),
+              ),
+              ListTile(
+                title: const Text('Mobile No'),
+                subtitle: Text('${jsonData['data'][0]['mobileNumber']}'),
+              ),
+            ],
+          ),
+          actionButton: [
+            CustomMaterialButton(
+              title: 'Cancel',
+              onPressed: (){
+                Navigator.pop(context);
+              },
+            ),
+            CustomMaterialButton(
+              title: 'Replace',
+              onPressed: ()async{
+                var newDeviceData = {
+                  'deviceId' : jsonData['data'][0]['deviceId'],
+                  'modelId' : jsonData['data'][0]['modelId'],
+                };
+                var oldDeviceData = {
+                  'deviceId' : deviceId,
+                  'modelId' : modelId,
+                  'controllerId' : controllerId,
+                };
+                Navigator.pop(context);
+                loadingDialog();
+                int statusCode = await configPvd.replaceDevice(newDevice: newDeviceData, oldDevice: oldDeviceData, masterOrNode: masterOrNode);
+                if(statusCode == 200 ){
+                  Navigator.pop(context);
+                  simpleDialogBox(context: context, title: 'Success', message: 'Product updated successfully..');
+                }else{
+                  Navigator.pop(context);
+                  simpleDialogBox(context: context, title: 'Failed', message: 'Product not updated..');
+
+                }
+
+              },
+            ),
+          ]
+        );
         return jsonData['code'];
-      }else{
-        simpleDialogBox(context: context, title: 'Failed', message: 'Product not updated..');
+      }
+      else{
+        var newDeviceData = {
+          'deviceId' : replaceDeviceId,
+          'modelId' : null,
+        };
+        var oldDeviceData = {
+          'deviceId' : deviceId,
+          'modelId' : modelId,
+          'controllerId' : controllerId,
+        };
+        print("++++++++");
+        int statusCode = await configPvd.replaceDevice(newDevice: newDeviceData, oldDevice: oldDeviceData, masterOrNode: masterOrNode);
+        if(statusCode == 200 ){
+          Navigator.pop(context);
+          simpleDialogBox(context: context, title: 'Success', message: 'Product updated successfully..');
+        }else{
+          Navigator.pop(context);
+          simpleDialogBox(context: context, title: 'Failed', message: 'Product not updated..');
+
+        }
         return 404;
       }
     }catch (e, stackTrace){

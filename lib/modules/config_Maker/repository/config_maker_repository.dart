@@ -21,4 +21,8 @@ class ConfigMakerRepository{
     return await httpService.putRequest('/product/update', body);
   }
 
+  Future<http.Response> checkProduct(body) async {
+    return await httpService.postRequest('/product/forReplace', body);
+  }
+
 }
