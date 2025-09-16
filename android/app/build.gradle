@@ -61,7 +61,7 @@ android {
                 keyPassword keyProperties['keyPassword']
             } else {
                 // Fallback for local builds (optional)
-                storeFile file("release-key.jks")
+                storeFile = file("/Users/user/Documents/drip/android/key.properties")
                 storePassword "Oro@321"
                 keyAlias "upload"
                 keyPassword "Oro@321"

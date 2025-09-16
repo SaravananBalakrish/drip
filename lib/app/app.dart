@@ -6,6 +6,7 @@ import 'package:oro_drip_irrigation/modules/config_Maker/view/config_base_page.d
 import 'package:oro_drip_irrigation/modules/irrigation_report/view/ec_25_log.dart';
 import '../Screens/Dealer/bLE_update.dart';
 import '../Screens/Dealer/ble_controllerlog_ftp.dart';
+import '../Screens/login_screenOTP/landing_screen.dart';
 import '../flavors.dart';
 import '../modules/constant/view/constant_base_page.dart';
 import '../utils/Theme/smart_comm_theme.dart';
@@ -74,7 +75,7 @@ class _MyAppState extends State<MyApp> {
 Widget navigateToInitialScreen(String route) {
   switch (route) {
     case Routes.login:
-       return const LoginScreen();
+       return const LandingScreen();
     case Routes.dashboard:
        return const ScreenController();
     default:
