@@ -814,9 +814,6 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                               deleteProgram(program, toMove);
                               // showSnackBar(message: "${mqttPayloadProvider.messageFromHw['Name']} from controller", context: context);
                             },
-                            failedFunction: () {
-                              deleteProgram(program, toMove);
-                            },
                             payload: toMove == "active" ? dataToMqtt : deleteProgramToHardware,
                             payloadCode: toMove == "active" ? "2500" : "3800",
                             deviceId: widget.deviceId
@@ -1182,7 +1179,7 @@ Future<void> validatePayloadSent({
 
     if (isAcknowledged) {
       final decodedPayload = MqttService().acknowledgementPayload!;
-      if (decodedPayload['cM']['4201']['Code'] == "200") {
+      if (decodedPayload['cM']['4201']['Code'] == "200" || decodedPayload['cM']['4201']['Code'] == "67") {
         acknowledgedFunction();
       } else {
         if(failedFunction != null) {
@@ -1202,6 +1199,8 @@ Future<void> validatePayloadSent({
     print("stackTrace ::: $stackTrace");
     print("error ::: $error");
     showAlertDialog(message: error.toString(), context: context);
+    await Future.delayed(const Duration(seconds: 1));
+    Navigator.of(context).pop();
   }
 }
 
