@@ -155,7 +155,7 @@ class _LoginScreenState extends State<LoginScreenOTP> {
           TextButton(
             onPressed: () => exit(0),
             // onPressed: () => Navigator.of(context).pop(true),// Return true to pop the route
-            child: Text(
+            child: const Text(
               "Yes",
               style: TextStyle(
                 color: Colors.blue,
@@ -167,7 +167,7 @@ class _LoginScreenState extends State<LoginScreenOTP> {
           TextButton(
             onPressed: () => Navigator.of(context)
                 .pop(false), // Return false to stay on the route
-            child: Text(
+            child: const Text(
               "No",
               style: TextStyle(
                 color: Colors.blue,
