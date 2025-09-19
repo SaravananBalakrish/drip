@@ -30,10 +30,12 @@ class _CustomerNarrowLayoutState extends State<CustomerNarrowLayout> {
 
   void callbackFunction(String status) {
     if (status == 'Program created') {
-      final viewModel = Provider.of<CustomerScreenControllerViewModel>(context, listen: false);
-      final viewedCustomer = Provider.of<UserProvider>(context, listen: false).viewedCustomer;
-      if (viewedCustomer != null) {
-        viewModel.getAllMySites(context, viewedCustomer.id, preserveSelection: true);
+      if(mounted) {
+        final viewModel = Provider.of<CustomerScreenControllerViewModel>(context, listen: false);
+        final viewedCustomer = Provider.of<UserProvider>(context, listen: false).viewedCustomer;
+        if (viewedCustomer != null) {
+          viewModel.getAllMySites(context, viewedCustomer.id, preserveSelection: true);
+        }
       }
     }
   }

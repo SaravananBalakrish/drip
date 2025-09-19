@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:oro_drip_irrigation/modules/config_Maker/model/device_object_model.dart';
 
 class SequenceModel {
@@ -725,5 +726,69 @@ class ChartData {
     }
     var totalFlowRate = nominalFlowRate.map(int.parse).reduce((a, b) => a + b);
     return totalFlowRate * 0.00027778;
+  }
+}
+
+class DayCountRtcModel {
+  bool dayCountRtc;
+  String dayCountRtcTime;
+
+  DayCountRtcModel({
+    required this.dayCountRtc,
+    required this.dayCountRtcTime
+  });
+
+  factory DayCountRtcModel.fromJson(Map<String, dynamic> json) {
+    return DayCountRtcModel(
+        dayCountRtc: json["dayCountRtc"] ?? false,
+        dayCountRtcTime: json["dayCountRtcTime"] ?? DateFormat('Hms').format(DateTime.now())
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "dayCountRtc" : dayCountRtc,
+      "dayCountRtcTime" : dayCountRtcTime
+    };
+  }
+}
+
+class ProgramQueueModel {
+  bool programQueue;
+  List<String> queueOrder;
+  bool autoQueueRestart;
+  List<String> queueOrderRestartTimes;
+  bool skipDays;
+  String noOfSkipDays;
+
+  ProgramQueueModel({
+    required this.programQueue,
+    required this.queueOrder,
+    required this.autoQueueRestart,
+    required this.queueOrderRestartTimes,
+    required this.skipDays,
+    required this.noOfSkipDays,
+  });
+
+  factory ProgramQueueModel.fromJson(Map<String, dynamic> json) {
+    return ProgramQueueModel(
+      programQueue: json["dayCountRtc"] ?? false,
+      queueOrder: json["dayCountRtcTime"] ?? List<String>.from(['0', '0', '0', '0', '0', '0']),
+      autoQueueRestart: json["autoQueueRestart"] ?? false,
+      queueOrderRestartTimes: json["queueOrderRestartTimes"] ?? List.filled(6, '00:00:00'),
+      skipDays: json["skipDays"] ?? false,
+      noOfSkipDays: json["skipDays"] ?? '0',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "dayCountRtc" : programQueue,
+      "dayCountRtcTime" : queueOrder,
+      "autoQueueRestart" : autoQueueRestart,
+      "queueOrderRestartTimes" : queueOrderRestartTimes,
+      "skipDays" : skipDays,
+      "noOfSkipDays" : noOfSkipDays
+    };
   }
 }

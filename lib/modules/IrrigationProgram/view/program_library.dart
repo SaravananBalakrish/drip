@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -8,8 +9,11 @@ import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 
 import 'package:provider/provider.dart';
+import '../../../Widgets/HoursMinutesSeconds.dart';
+import '../../../services/http_service.dart';
 import '../../../utils/constants.dart';
 import '../model/sequence_model.dart';
+import '../repository/irrigation_program_repo.dart';
 import '../state_management/irrigation_program_provider.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../StateManagement/overall_use.dart';
@@ -17,6 +21,7 @@ import '../widgets/custom_alert_dialog.dart';
 import '../../SystemDefinitions/widgets/custom_snack_bar.dart';
 import '../../../utils/environment.dart';
 import '../widgets/custom_drop_down_tile.dart';
+import '../widgets/custom_native_time_picker.dart';
 import '../widgets/progress_dialog_ecogem.dart';
 import 'irrigation_program_main.dart';
 
@@ -60,6 +65,10 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
   TextEditingController copyController = TextEditingController();
   String tempProgramName = '';
   String controllerReadStatus = "0";
+  final IrrigationProgramRepository repository = IrrigationProgramRepository(HttpService());
+  DayCountRtcModel dayCountRtcModel = DayCountRtcModel.fromJson({});
+  ProgramQueueModel programQueueModel = ProgramQueueModel.fromJson({});
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -76,6 +85,32 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
     super.dispose();
     _programNameFocusNode.dispose();
     _textEditingController.dispose();
+  }
+
+  Future<void> getUserDayCountRtc() async {
+    try {
+      var userData = {
+        "userId": widget.customerId,
+        "controllerId": widget.controllerId,
+      };
+
+      var getUserDayCountRtcResult = await repository.getDayCountRtc(userData);
+      if (getUserDayCountRtcResult.statusCode == 200) {
+        final responseJson = getUserDayCountRtcResult.body;
+        final convertedJson = jsonDecode(responseJson);
+        if(convertedJson['data']['dayCountRtc'] != null) {
+          setState(() {
+            dayCountRtcModel = DayCountRtcModel.fromJson(convertedJson['data']['dayCountRtc']);
+            // programQueueModel = ProgramQueueModel.fromJson(convertedJson['data']['programQueue']);
+          });
+        }
+      } else {
+        log("HTTP Request failed or received an unexpected response.");
+        throw Exception("HTTP Request failed or received an unexpected response.");
+      }
+    } catch (e) {
+      log('Error: $e');
+    }
   }
 
   @override
@@ -101,6 +136,16 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
             Navigator.pop(context);
           },
         ),
+        actions: [
+          if(AppConstants.ecoGemModelList.contains(widget.modelId))
+            IconButton(
+                onPressed: () async{
+                  await getUserDayCountRtc();
+                  showIrrigationSettings();
+                },
+                icon: const Icon(Icons.schedule)
+            )
+        ],
       ),
       body: irrigationProgramMainProvider.programLibrary != null ?
       RefreshIndicator(
@@ -209,6 +254,306 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
         ),
         child: const Text("+  Create", style: TextStyle(color: Colors.white),),
       ),
+    );
+  }
+
+  void showIrrigationSettings() {
+    final theme = Theme.of(context);
+
+    showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: false,
+      scrollControlDisabledMaxHeightRatio: 0.7,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Day Count RTC Section
+                    Text(
+                      'Day Count RTC',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: theme.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    SwitchListTile(
+                      title: const Text('Enable Day Count RTC'),
+                      value: dayCountRtcModel.dayCountRtc,
+                      onChanged: (value) {
+                        setState(() {
+                          dayCountRtcModel.dayCountRtc = value;
+                        });
+                      },
+                      activeColor: theme.primaryColor,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                    ),
+                    if(dayCountRtcModel.dayCountRtc)...[
+                      const SizedBox(height: 16),
+                      ListTile(
+                        title: const Text('RTC Time'),
+                        trailing: Text(dayCountRtcModel.dayCountRtcTime),
+                        leading: Icon(Icons.access_time, color: theme.primaryColor),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(color: Colors.grey[300]!),
+                        ),
+                        onTap: () async {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              final overAllPvd = context.read<OverAllUse>();
+                              return AlertDialog(
+                                title: HoursMinutesSeconds(
+                                  initialTime: dayCountRtcModel.dayCountRtcTime,
+                                  onPressed: () {
+                                    setState(() {
+                                      dayCountRtcModel.dayCountRtcTime =
+                                      '${overAllPvd.hrs.toString().padLeft(2, '0')}:${overAllPvd.min.toString().padLeft(2, '0')}:${overAllPvd.sec.toString().padLeft(2, '0')}';
+                                    });
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Text(
+                          'Program runs at this time daily!',
+                          style: TextStyle(color: Colors.grey[600]),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 20),
+                    /*const Divider(),
+                    // Program Queue Section
+                    Text(
+                      'Program Queue',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: theme.primaryColor,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    SwitchListTile(
+                      title: const Text('Enable Program Queue'),
+                      value: programQueueModel.programQueue,
+                      onChanged: (value) {
+                        setState(() {
+                          programQueueModel.programQueue = value;
+                        });
+                      },
+                      activeColor: theme.primaryColor,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                    ),
+                    if (programQueueModel.programQueue) ...[
+                      SwitchListTile(
+                        title: const Text('Auto-Restart Queue'),
+                        value: programQueueModel.autoQueueRestart,
+                        onChanged: (value) {
+                          setState(() {
+                            programQueueModel.autoQueueRestart = value;
+                          });
+                        },
+                        activeColor: theme.primaryColor,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                      ),
+                      const SizedBox(height: 8),
+                      ReorderableListView(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        onReorder: (oldIndex, newIndex) {
+                          setState(() {
+                            if (newIndex > oldIndex) newIndex--;
+                            final item = programQueueModel.queueOrder.removeAt(oldIndex);
+                            programQueueModel.queueOrder.insert(newIndex, item);
+                          });
+                        },
+                        children: programQueueModel.queueOrder.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          return Column(
+                            key: ValueKey(index),
+                            children: [
+                              ListTile(
+                                leading: CircleAvatar(
+                                  child: Text('${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold),),
+                                ),
+                                title: DropdownButtonFormField<String>(
+                                  value: programQueueModel.queueOrder[index] != '0' ? programQueueModel.queueOrder[index] : '0',
+                                  decoration: InputDecoration(
+                                    // labelText: 'Program ${index + 1}',
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                  items: [
+                                    const DropdownMenuItem<String>(
+                                      value: '0',
+                                      child: Text('None'),
+                                    ),
+                                    ...irrigationProgramMainProvider.programLibrary!.program.map((program) {
+                                      return DropdownMenuItem<String>(
+                                        value: program.serialNumber.toString(),
+                                        child: Text(program.programName),
+                                      );
+                                    }),
+                                  ],
+                                  onChanged: (newValue) {
+                                    setState(() {
+                                      programQueueModel.queueOrder[index] = newValue ?? '0';
+                                    });
+                                  },
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                  side: BorderSide(color: Colors.grey[300]!),
+                                ),
+                              ),
+                              if(programQueueModel.autoQueueRestart)
+                                ListTile(
+                                  title: Text('Delay ${index + 1}→${index == 5 ? 1 : index + 2}'),
+                                  trailing: Text(programQueueModel.queueOrderRestartTimes[index]),
+                                  leading: Icon(Icons.timer, color: theme.primaryColor),
+                                  onTap: () async {
+                                    showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        final overAllPvd = context.read<OverAllUse>();
+                                        return AlertDialog(
+                                          title: HoursMinutesSeconds(
+                                            initialTime: programQueueModel.queueOrderRestartTimes[index],
+                                            onPressed: () {
+                                              setState(() {
+                                                programQueueModel.queueOrderRestartTimes[index] =
+                                                '${overAllPvd.hrs.toString().padLeft(2, '0')}:${overAllPvd.min.toString().padLeft(2, '0')}:${overAllPvd.sec.toString().padLeft(2, '0')}';
+                                              });
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        );
+                                      },
+                                    );
+                                  },
+                                )
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                      const SizedBox(height: 16),
+                      SwitchListTile(
+                        title: const Text('Enable Skip Days'),
+                        value: programQueueModel.skipDays,
+                        onChanged: (value) {
+                          setState(() {
+                            programQueueModel.skipDays = value;
+                          });
+                        },
+                        activeColor: theme.primaryColor,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                      ),
+                      if (programQueueModel.skipDays) ...[
+                        const SizedBox(height: 16),
+                        ListTile(
+                          title: const Text('Number of Skip Days'),
+                          subtitle: Text('${programQueueModel.noOfSkipDays} days'),
+                          leading: Icon(Icons.calendar_today, color: theme.primaryColor),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(color: Colors.grey[300]!),
+                          ),
+                          onTap: () async {
+                            final days = await showDialog<int>(
+                              context: context,
+                              builder: (context) => NumberPickerDialog(
+                                initialValue: int.parse(programQueueModel.noOfSkipDays),
+                                minValue: 1,
+                                maxValue: 30,
+                              ),
+                            );
+                            if (days != null) {
+                              setState(() {
+                                programQueueModel.noOfSkipDays = days.toString();
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                      const SizedBox(height: 16),
+                      const Text(
+                        'Queue Preview',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey[300]!),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'Order: ${programQueueModel.queueOrder.map((sNo) => sNo == '0' ? "None" : irrigationProgramMainProvider.programLibrary!.program.firstWhere((p) => p.serialNumber.toString() == sNo).programName).join(" → ")}${programQueueModel.autoQueueRestart ? " (restarts)" : ""}${programQueueModel.skipDays ? ", skips every ${programQueueModel.noOfSkipDays} days" : ""}',
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: 20),*/
+                    ElevatedButton(
+                      onPressed: () async{
+                        try {
+                          Map<String, dynamic> userData = {
+                            "userId": widget.customerId,
+                            "controllerId": widget.controllerId,
+                            "dayCountRtc": {
+                              "dayCountRtc": dayCountRtcModel.toJson()
+                            },
+                            "createUser": widget.userId
+                          };
+
+                          var getUserDayCountRtcResult = await repository.createDayCountRtc(userData);
+                          if (getUserDayCountRtcResult.statusCode == 200) {
+                            final responseJson = getUserDayCountRtcResult.body;
+                            final convertedJson = jsonDecode(responseJson);
+                            ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: convertedJson['message']));
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("HTTP Request failed or received an unexpected response."), backgroundColor: Colors.red));
+                            log("HTTP Request failed or received an unexpected response.");
+                            throw Exception("HTTP Request failed or received an unexpected response.");
+                          }
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'), backgroundColor: Colors.red,));
+                          log('Error: $e');
+                        }
+                        Navigator.pop(context);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.primaryColor,
+                        minimumSize: const Size(double.infinity, 50),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: const Text(
+                        'Submit',
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 
@@ -1226,4 +1571,109 @@ void showAlertDialog({required String message, Widget? child, required BuildCont
 
 void showSnackBar({required String message, required BuildContext context}) {
   ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: message));
+}
+
+// Dialog for picking duration (minutes)
+/*class DurationPickerDialog extends StatelessWidget {
+  final int initialMinutes;
+
+  const DurationPickerDialog({super.key, required this.initialMinutes});
+
+  @override
+  Widget build(BuildContext context) {
+    int minutes = initialMinutes;
+    return AlertDialog(
+      title: const Text('Set Delay'),
+      content: StatefulBuilder(
+        builder: (context, setState) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove),
+                onPressed: minutes > 0
+                    ? () => setState(() => minutes--)
+                    : null,
+                color: theme.primaryColor,
+              ),
+              Text('$minutes min'),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: minutes < 1440 // Max 24 hours
+                    ? () => setState(() => minutes++)
+                    : null,
+                color: theme.primaryColor,
+              ),
+            ],
+          );
+        },
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, minutes),
+          child: const Text('OK'),
+        ),
+      ],
+    );
+  }
+}*/
+
+// Dialog for picking number of skip days
+class NumberPickerDialog extends StatelessWidget {
+  final int initialValue;
+  final int minValue;
+  final int maxValue;
+
+  const NumberPickerDialog({super.key,
+    required this.initialValue,
+    required this.minValue,
+    required this.maxValue,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    int value = initialValue;
+    return AlertDialog(
+      title: const Text('Set Skip Days'),
+      content: StatefulBuilder(
+        builder: (context, setState) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.remove),
+                onPressed: value > minValue
+                    ? () => setState(() => value--)
+                    : null,
+                color: theme.primaryColor,
+              ),
+              Text('$value days'),
+              IconButton(
+                icon: const Icon(Icons.add),
+                onPressed: value < maxValue
+                    ? () => setState(() => value++)
+                    : null,
+                color: theme.primaryColor,
+              ),
+            ],
+          );
+        },
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.pop(context, value),
+          child: const Text('OK'),
+        ),
+      ],
+    );
+  }
 }
