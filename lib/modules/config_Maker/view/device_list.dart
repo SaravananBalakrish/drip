@@ -279,8 +279,8 @@ class _DeviceListState extends State<DeviceList> {
                       Navigator.pop(context);
                       loadingDialog();
                       int status = await changeDeviceId(
-                          productId: masterOrNode == 1 ? configPvd.masterData['productId'] : device!.productId,
-                          modelId: masterOrNode == 1 ? configPvd.masterData['modelId'] : device!.modelId,
+                        productId: masterOrNode == 1 ? configPvd.masterData['productId'] : device!.productId,
+                        modelId: masterOrNode == 1 ? configPvd.masterData['modelId'] : device!.modelId,
                         controllerId : masterOrNode == 1 ? configPvd.masterData['controllerId'] : device!.controllerId,
                         deviceId: masterOrNode == 1 ? configPvd.masterData['deviceId'] : device!.deviceId,
                         masterOrNode: masterOrNode,
@@ -323,58 +323,60 @@ class _DeviceListState extends State<DeviceList> {
         print("jsonData : $jsonData");
         String message = '${jsonData['message']}';
         Navigator.pop(context);
+        await Future.delayed(const Duration(milliseconds: 100));
         simpleDialogBox(
             context: context,
             title: 'Alert',
             message: message,
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                title: const Text('Name'),
-                subtitle: Text('${jsonData['data'][0]['userName']}'),
-              ),
-              ListTile(
-                title: const Text('Mobile No'),
-                subtitle: Text('${jsonData['data'][0]['mobileNumber']}'),
-              ),
-            ],
-          ),
-          actionButton: [
-            CustomMaterialButton(
-              title: 'Cancel',
-              onPressed: (){
-                Navigator.pop(context);
-              },
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  title: const Text('Name'),
+                  subtitle: Text('${jsonData['data'][0]['userName']}'),
+                ),
+                ListTile(
+                  title: const Text('Mobile No'),
+                  subtitle: Text('${jsonData['data'][0]['mobileNumber']}'),
+                ),
+              ],
             ),
-            CustomMaterialButton(
-              title: 'Replace',
-              onPressed: ()async{
-                var newDeviceData = {
-                  'deviceId' : jsonData['data'][0]['deviceId'],
-                  'modelId' : jsonData['data'][0]['modelId'],
-                };
-                var oldDeviceData = {
-                  'deviceId' : deviceId,
-                  'modelId' : modelId,
-                  'controllerId' : controllerId,
-                };
-                Navigator.pop(context);
-                loadingDialog();
-                int statusCode = await configPvd.replaceDevice(newDevice: newDeviceData, oldDevice: oldDeviceData, masterOrNode: masterOrNode);
-                if(statusCode == 200 ){
+            actionButton: [
+              CustomMaterialButton(
+                title: 'Cancel',
+                onPressed: (){
                   Navigator.pop(context);
-                  simpleDialogBox(context: context, title: 'Success', message: 'Product updated successfully..');
-                }else{
+                },
+              ),
+              CustomMaterialButton(
+                title: 'Replace',
+                onPressed: ()async{
+                  var newDeviceData = {
+                    'deviceId' : jsonData['data'][0]['deviceId'],
+                    'modelId' : jsonData['data'][0]['modelId'],
+                  };
+                  var oldDeviceData = {
+                    'deviceId' : deviceId,
+                    'modelId' : modelId,
+                    'controllerId' : controllerId,
+                  };
                   Navigator.pop(context);
-                  simpleDialogBox(context: context, title: 'Failed', message: 'Product not updated..');
+                  loadingDialog();
+                  int statusCode = await configPvd.replaceDevice(newDevice: newDeviceData, oldDevice: oldDeviceData, masterOrNode: masterOrNode);
+                  if(statusCode == 200 ){
+                    Navigator.pop(context);
+                    simpleDialogBox(context: context, title: 'Success', message: 'Product updated successfully..');
+                  }else{
+                    Navigator.pop(context);
+                    simpleDialogBox(context: context, title: 'Failed', message: 'Product not updated..');
 
-                }
+                  }
 
-              },
-            ),
-          ]
+                },
+              ),
+            ]
         );
+
         return jsonData['code'];
       }
       else{
@@ -387,13 +389,14 @@ class _DeviceListState extends State<DeviceList> {
           'modelId' : modelId,
           'controllerId' : controllerId,
         };
-        print("++++++++");
         int statusCode = await configPvd.replaceDevice(newDevice: newDeviceData, oldDevice: oldDeviceData, masterOrNode: masterOrNode);
         if(statusCode == 200 ){
           Navigator.pop(context);
+          await Future.delayed(const Duration(milliseconds: 100));
           simpleDialogBox(context: context, title: 'Success', message: 'Product updated successfully..');
         }else{
           Navigator.pop(context);
+          await Future.delayed(const Duration(milliseconds: 100));
           simpleDialogBox(context: context, title: 'Failed', message: 'Product not updated..');
 
         }
@@ -410,6 +413,7 @@ class _DeviceListState extends State<DeviceList> {
   void loadingDialog(){
     showDialog(
         context: context,
+        useRootNavigator: true,
         builder: (context){
           return PopScope(
             canPop: false,
@@ -616,11 +620,11 @@ class _DeviceListState extends State<DeviceList> {
                                               ),
                                               DataCell(
                                                   Column(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                     children: [
                                                       Text(device.deviceName,style: themeData.textTheme.headlineSmall,),
                                                       Text(device.modelDescription, style: TextStyle(fontWeight: FontWeight.normal, color: Theme.of(context).primaryColor, fontSize: 10)),
                                                     ],
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                   )
                                               ),
                                               DataCell(
@@ -691,7 +695,6 @@ class _DeviceListState extends State<DeviceList> {
   //   // print("getOroPumpPayload ==> ${widget.configPvd.getOroPumpPayload()}");
   // }
 
-
   String getTabName(ConfigMakerTabs configMakerTabs) {
     switch (configMakerTabs) {
       case ConfigMakerTabs.deviceList:
@@ -721,6 +724,7 @@ class _DeviceListState extends State<DeviceList> {
         throw ArgumentError('Invalid ConfigMakerTabs value: $configMakerTabs');
     }
   }
+
 }
 
 Color textColorInCell = const Color(0xff667085);

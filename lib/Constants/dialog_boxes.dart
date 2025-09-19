@@ -17,6 +17,7 @@ void simpleDialogBox({
   List<Widget>? actionButton,
 }){
   showDialog(
+      useRootNavigator: true,
       context: context,
       builder: (context){
         return AlertDialog(
