@@ -159,7 +159,8 @@ class _MobileScreenControllerState extends State<MobileScreenController> with Wi
             ),
             const SizedBox(width: 8),
             AlarmButton(alarmPayload: vm.alarmDL, deviceID: currentMaster.deviceId,
-                customerId: viewedCustomer!.id, controllerId: currentMaster.controllerId, irrigationLine: currentMaster.irrigationLine),
+                customerId: viewedCustomer!.id, controllerId: currentMaster.controllerId,
+              irrigationLine: currentMaster.irrigationLine, isNarrow: true),
             IconButton(
                 onPressed: (){
                   Navigator.push(
@@ -373,7 +374,7 @@ class _MobileScreenControllerState extends State<MobileScreenController> with Wi
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const UserProfile(),
+                    builder: (context) => const UserProfile(isNarrow: true),
                   ),
                 );
               },

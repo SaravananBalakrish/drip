@@ -9,7 +9,8 @@ import '../../../utils/snack_bar.dart';
 import '../../../view_models/account_setting_view_model.dart';
 
 class UserProfile extends StatelessWidget {
-  const UserProfile({super.key});
+  const UserProfile({super.key, required this.isNarrow});
+  final bool isNarrow;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,7 @@ class UserProfile extends StatelessWidget {
       child: Consumer<UserSettingViewModel>(
         builder: (context, viewModel, _) {
           return Scaffold(
+            appBar: isNarrow ? AppBar(title: const Text('Profile')) : null,
             body: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -137,7 +139,6 @@ class UserProfile extends StatelessWidget {
                             ),
                           ),
                         ),
-
                         const ListTile(
                           tileColor: Colors.transparent,
                           title: Text(

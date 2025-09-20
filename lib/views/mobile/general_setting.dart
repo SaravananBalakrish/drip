@@ -27,7 +27,6 @@ class _GeneralSettingState extends State<GeneralSetting> {
       create: (_) => GeneralSettingViewModel(Repository(HttpService()))
         ..getControllerInfo(widget.customerId, widget.controllerId)
         ..getSubUserList(widget.customerId)
-        ..getNotificationList(widget.customerId, widget.controllerId)
         ..getLanguage(),
       child: Consumer<GeneralSettingViewModel>(
         builder: (context, viewModel, _) {

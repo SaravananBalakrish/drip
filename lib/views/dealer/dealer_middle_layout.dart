@@ -40,7 +40,7 @@ class DealerMiddleLayout extends StatelessWidget {
           ],
         ),
         actions: const <Widget>[
-          UserAccountMenu(screenType: 'Web'),
+          UserAccountMenu(isNarrow: true),
         ],
         centerTitle: false,
         elevation: 10,
