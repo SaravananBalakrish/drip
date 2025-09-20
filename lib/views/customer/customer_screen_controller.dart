@@ -455,7 +455,7 @@ class _CustomerScreenControllerState extends State<CustomerScreenController> {
                                             color: Colors.white,
                                             borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
                                           ),
-                                          child: const UserProfile(),
+                                          child: const UserProfile(isNarrow:false),
                                         ),
                                       ),
                                     );
@@ -645,7 +645,8 @@ class _CustomerScreenControllerState extends State<CustomerScreenController> {
                                 alarmPayload: vm.alarmDL, deviceID: currentMaster.deviceId,
                                 customerId: vm.mySiteList.data[vm.sIndex].customerId,
                                 controllerId: currentMaster.controllerId,
-                                irrigationLine: currentMaster.irrigationLine),
+                                irrigationLine: currentMaster.irrigationLine,
+                              isNarrow: false),
                             const SizedBox(height: 15),
                             CircleAvatar(
                               radius: 20,

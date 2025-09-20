@@ -35,7 +35,7 @@ class AdminWideLayout extends StatelessWidget {
           ],
         ),
         actions: const <Widget>[
-          UserAccountMenu(screenType: 'Web'),
+          UserAccountMenu(isNarrow: false),
         ],
         centerTitle: false,
         elevation: 10,
@@ -46,7 +46,7 @@ class AdminWideLayout extends StatelessWidget {
         children: const [
           DashboardLayoutSelector(userRole: UserRole.admin),
           ProductInventory(),
-          StockEntry(screenType: 'Web'),
+          StockEntry(isNarrow: false),
         ],
       ),
     );

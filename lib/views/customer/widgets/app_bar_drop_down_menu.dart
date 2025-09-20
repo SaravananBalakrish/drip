@@ -21,8 +21,10 @@ Widget appBarDropDownMenu(BuildContext context,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const SizedBox(width: 15),
+
             SiteSelectorWidget(vm: vm, context: context),
             const VerticalDividerWhite(),
+
             MasterSelectorWidget(vm: vm, sIndex: vm.sIndex, mIndex: vm.mIndex),
             if (vm.mySiteList.data[vm.sIndex].master.length > 1)...[
               const VerticalDividerWhite(),
