@@ -50,6 +50,7 @@ class SideActionMenu extends StatelessWidget {
             customerId: vm.mySiteList.data[vm.sIndex].customerId,
             controllerId: cM.controllerId,
             irrigationLine: cM.irrigationLine,
+            isNarrow: false,
           ),
 
           const SizedBox(height: 15),

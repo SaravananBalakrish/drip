@@ -39,7 +39,7 @@ class DealerWideLayout extends StatelessWidget {
           ],
         ),
         actions: const <Widget>[
-          UserAccountMenu(screenType: 'Web'),
+          UserAccountMenu(isNarrow: false),
         ],
         centerTitle: false,
         elevation: 10,

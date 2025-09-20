@@ -29,7 +29,6 @@ class _GeneralSettingsNarrowState extends State<GeneralSettingsNarrow> {
       create: (_) => GeneralSettingViewModel(Repository(HttpService()))
         ..getControllerInfo(vCustomer!.id, widget.controllerId)
         ..getSubUserList(vCustomer.id)
-        ..getNotificationList(vCustomer.id, widget.controllerId)
         ..getLanguage(),
       child: Consumer<GeneralSettingViewModel>(
         builder: (context, viewModel, _) {

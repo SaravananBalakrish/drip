@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/views/customer/controller_settings/wide/notification_wide.dart';
 
 import '../../../../Screens/Dealer/controllerlogfile.dart';
 import '../../../../Screens/Dealer/dealer_definition.dart';
@@ -18,9 +19,10 @@ import '../../../../modules/fertilizer_set/view/fertilizer_Set_screen.dart';
 import '../../../../modules/global_limit/view/global_limit_screen.dart';
 import '../../../mobile/general_setting.dart';
 import '../../crop_advisory_form.dart';
-import '../condition_library_wide.dart';
+import '../wide/condition_library_wide.dart';
 import '../narrow/condition_library_narrow.dart';
 import '../narrow/general_settings_narrow.dart';
+import '../narrow/notification_narrow.dart';
 
 class SettingsScreenFactory {
   static void navigateTo(BuildContext context, String title, ControllerContext ctx, bool isNarrow) {
@@ -155,6 +157,21 @@ class SettingsScreenFactory {
           controllerId: ctx.controllerId,
           imeiNo: ctx.imeiNo,
         );
+
+      case 'Notification':
+        if(isNarrow){
+          return NotificationNarrow(
+            userId: ctx.userId,
+            customerId: ctx.customerId,
+            controllerId: ctx.controllerId,
+          );
+        }else{
+          return NotificationWide(
+            userId: ctx.userId,
+            customerId: ctx.customerId,
+            controllerId: ctx.controllerId,
+          );
+        }
 
       case 'Geography':
         return MapScreenall(

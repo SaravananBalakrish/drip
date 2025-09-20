@@ -74,6 +74,10 @@ class Repository{
     return await apiService.postRequest('/user/deviceList/pushNotificationType/get', body);
   }
 
+  Future<http.Response> updateUserPushNotificationType(body) async {
+    return await apiService.putRequest('/user/deviceList/pushNotificationType/update', body);
+  }
+
   Future<http.Response> fetchCountryList() async {
     return await apiService.getRequest('/country/get');
   }
@@ -129,7 +133,6 @@ class Repository{
   Future<http.Response> updateUserNodeDetails(body) async {
     return await apiService.putRequest('/user/deviceList/updateNodeDetails', body);
   }
-
 
   Future<http.Response> inActiveCategoryById(body) async {
     return await apiService.putRequest('/category/inactive', body);
@@ -210,6 +213,7 @@ class Repository{
   Future<http.Response> getUserFilterBackwasing(body) async {
     return await apiService.postRequest('/user/planning/filterBackwashing/get', body);
   }
+
 
   Future<http.Response> UpdateFilterBackwasing(body) async {
     return await apiService.postRequest('/user/planning/filterBackwashing/create', body);

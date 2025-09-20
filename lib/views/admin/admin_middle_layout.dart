@@ -25,7 +25,7 @@ class AdminMiddleLayout extends StatelessWidget {
         ),
         title: MainMenu(viewModel: viewModel),
         actions: const <Widget>[
-          UserAccountMenu(screenType: 'Middle'),
+          UserAccountMenu(isNarrow: true),
         ],
         centerTitle: false,
         elevation: 10,
@@ -36,7 +36,7 @@ class AdminMiddleLayout extends StatelessWidget {
         children: const [
           DashboardLayoutSelector(userRole: UserRole.admin),
           ProductInventory(),
-          StockEntry(screenType: 'Middle'),
+          StockEntry(isNarrow: false),
         ],
       ),
     );

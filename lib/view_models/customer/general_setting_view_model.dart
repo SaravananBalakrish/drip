@@ -16,7 +16,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
 
   final List<LanguageList> languageList = <LanguageList>[];
 
-
   List<Map<String, dynamic>> subUsers = [];
 
   String farmName = '', controllerCategory = '', modelName = '', deviceId = '', categoryName = '',
@@ -33,7 +32,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
   double opacity = 1.0;
   Timer? _timer;
 
-  List<NotificationListModel> notifications = [];
 
   final List<String> timeZones = tz.timeZoneDatabase.locations.keys.toList();
 
@@ -130,31 +128,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
       setLoading(false);
     }
   }
-
-  Future<void> getNotificationList(customerId, controllerId) async {
-    try {
-      Map<String, Object> body = {"userId": customerId, "controllerId": controllerId};
-      var response = await repository.fetchUserPushNotificationType(body);
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data["code"] == 200) {
-          notifications = parseNotifications(response.body);
-        }
-      }
-    } catch (error) {
-      debugPrint('Error fetching language list: $error');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  List<NotificationListModel> parseNotifications(String responseBody) {
-    final parsed = json.decode(responseBody);
-    return (parsed['data'] as List)
-        .map((notification) => NotificationListModel.fromJson(notification))
-        .toList();
-  }
-
 
   void updateCurrentDateTime(String timeZone) {
     final tz.Location location = tz.getLocation(timeZone);
