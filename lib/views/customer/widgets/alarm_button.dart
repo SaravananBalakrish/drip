@@ -8,12 +8,14 @@ import 'badge_button.dart';
 class AlarmButton extends StatelessWidget {
   const AlarmButton({super.key, required this.alarmPayload,
     required this.deviceID, required this.customerId,
-    required this.controllerId, required this.irrigationLine});
+    required this.controllerId, required this.irrigationLine,
+    required this.isNarrow});
 
   final List<String> alarmPayload;
   final String deviceID;
   final int customerId, controllerId;
   final List<IrrigationLineModel> irrigationLine;
+  final bool isNarrow;
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +33,10 @@ class AlarmButton extends StatelessWidget {
             bodyBuilder: (context) => AlarmListItems(alarm : alarmPayload, deviceID:deviceID,
                 customerId: customerId, controllerId: controllerId, irrigationLine: irrigationLine),
             onPop: () => print('Popover was popped!'),
-            direction: PopoverDirection.left,
-            width: alarmPayload[0].isNotEmpty?600:150,
-            height: alarmPayload[0].isNotEmpty?(alarmPayload.length*45)+20:50,
+            direction: isNarrow ? PopoverDirection.bottom : PopoverDirection.left,
+            width: alarmPayload[0].isNotEmpty ? isNarrow ? 400 : 600 : 150,
+            height: isNarrow ? alarmPayload[0].isNotEmpty?(alarmPayload.length*80):50:
+            alarmPayload[0].isNotEmpty?(alarmPayload.length*45)+20:50,
             arrowHeight: 15,
             arrowWidth: 30,
           );

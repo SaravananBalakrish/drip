@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/models/customer/condition_library_model.dart';
+import 'package:provider/provider.dart';
 import '../../repository/repository.dart';
-import '../../services/mqtt_service.dart';
-import '../../utils/constants.dart';
+import '../../services/communication_service.dart';
 import '../../utils/snack_bar.dart';
 
 class ConditionLibraryViewModel extends ChangeNotifier {
@@ -164,17 +164,19 @@ class ConditionLibraryViewModel extends ChangeNotifier {
     if (connectedTo[index].contains(source)) {
       connectedTo[index].remove(source);
     } else {
+      if (connectedTo[index].length >= 2) {
+        return;
+      }
       connectedTo[index].add(source);
     }
 
     List<String> cc = connectedTo[index];
     String resultNames = cc.join(" & ");
 
-    List<int> serials = [];
-    for (var name in cc) {
+    List<int> serials = cc.map((name) {
       final cond = clData.cnLibrary.condition.firstWhere((c) => c.name == name);
-      serials.add(cond.sNo);
-    }
+      return cond.sNo;
+    }).toList();
     String resultSerials = serials.join("_");
 
     clData.cnLibrary.condition[index].component = resultNames;
@@ -182,6 +184,14 @@ class ConditionLibraryViewModel extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  void clearCombined(int index) {
+    connectedTo[index].clear();
+    clData.cnLibrary.condition[index].component = '--';
+    clData.cnLibrary.condition[index].componentSNo = '';
+    notifyListeners();
+  }
+
 
   void updateRule(int index){
     if(clData.cnLibrary.condition[index].parameter!='--'){
@@ -244,14 +254,6 @@ class ConditionLibraryViewModel extends ChangeNotifier {
   Future<void> saveConditionLibrary(BuildContext context, int customerId, int controllerId, userId, deviceId) async
   {
     try {
-      Map<String, dynamic> body = {
-        "userId": customerId,
-        "controllerId": controllerId,
-        "condition": clData.cnLibrary.toJson(),
-        "createUser": userId,
-      };
-
-      print(clData.cnLibrary.toJson());
 
       List<Map<String, dynamic>> payloadList = [];
 
@@ -293,7 +295,17 @@ class ConditionLibraryViewModel extends ChangeNotifier {
       String payLoadFinal = jsonEncode({
         "1000": {"1001": payloadString}
       });
-      MqttService().topicToPublishAndItsMessage(payLoadFinal, '${AppConstants.publishTopic}/$deviceId');
+
+      final commService = Provider.of<CommunicationService>(context, listen: false);
+      commService.sendCommand(serverMsg: '', payload: payLoadFinal);
+
+      Map<String, dynamic> body = {
+        "userId": customerId,
+        "controllerId": controllerId,
+        "condition": clData.cnLibrary.toJson(),
+        "hardware": jsonDecode(payLoadFinal),
+        "createUser": userId,
+      };
 
       var response = await repository.saveConditionLibrary(body);
       if (response.statusCode == 200) {

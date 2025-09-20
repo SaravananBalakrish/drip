@@ -5,8 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../StateManagement/customer_provider.dart';
-import '../../../../Widgets/network_connection_banner.dart';
 import '../../../../models/customer/site_model.dart';
 import '../../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../../Widgets/pump_widget.dart';
@@ -45,152 +43,102 @@ class CustomerHomeNarrow extends StatelessWidget {
         ? irrigationLines.where((line) => line.name != viewModel.myCurrentIrrLine).toList()
         : irrigationLines.where((line) => line.name == viewModel.myCurrentIrrLine).toList();
 
-    final commMode = Provider.of<CustomerProvider>(context).controllerCommMode;
 
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: const EdgeInsets.only(bottom: 100),
-        child: Column(
-          children: [
-            if ([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(modelId)) ...[
-              const NetworkConnectionBanner(),
-              if (commMode == 2) ...[
-                Container(
-                  width: double.infinity,
-                  color: Colors.black38,
-                  child: const Padding(
-                    padding: EdgeInsets.only(top: 3, bottom: 4),
-                    child: Text(
-                      'Bluetooth mode enabled. Please ensure Bluetooth is connected.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 13, color: Colors.white70),
-                    ),
-                  ),
-                ),
-              ],
-
-              if (viewModel.isNotCommunicate)
-                Container(
-                  height: 25,
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade200,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(5),
-                      topRight: Radius.circular(5),
-                    ),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'NO COMMUNICATION TO CONTROLLER',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 13.0,
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await viewModel.onRefreshClicked();
+        },
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          padding: const EdgeInsets.only(bottom: 130),
+          child: Column(
+            children: [
+              ...linesToDisplay.map((line) => Padding(
+                padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
+                child: Column(
+                  children: [
+                    Card(
+                      color: Colors.white,
+                      elevation: 1,
+                      child: Column(
+                        children: [
+                          const ListTile(
+                            visualDensity: VisualDensity(vertical: -4),
+                            title: Text('Pump Station',
+                                style: TextStyle(color: Colors.black54, fontSize: 17, fontWeight: FontWeight.bold)),
+                            tileColor: Colors.white,
+                          ),
+                          Container(
+                              color: Colors.white,
+                              child: buildPumpStation(context, line, viewedCustomer!.id, controllerId, modelId, deviceId)
+                          )
+                        ],
                       ),
                     ),
-                  ),
-                )
-              else if (viewModel.powerSupply == 0)
-                Container(
-                  height: 25,
-                  color: Colors.red.shade300,
-                  child: const Center(
-                    child: Text(
-                      'NO POWER SUPPLY TO CONTROLLER',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 13.0,
-                      ),
-                    ),
-                  ),
-                )
-              else
-                const SizedBox(),
-            ],
-            ...linesToDisplay.map((line) => Padding(
-              padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
-              child: Column(
-                children: [
-                  Card(
-                    color: Colors.white,
-                    elevation: 1,
-                    child: Column(
-                      children: [
-                        const ListTile(
-                          visualDensity: VisualDensity(vertical: -4),
-                          title: Text('Pump Station',
-                              style: TextStyle(color: Colors.black54, fontSize: 17, fontWeight: FontWeight.bold)),
-                          tileColor: Colors.white,
-                        ),
-                        Container(
-                            color: Colors.white,
-                            child: buildPumpStation(context, line, viewedCustomer!.id, controllerId, modelId, deviceId)
-                        )
-                      ],
-                    ),
-                  ),
-                  Card(
-                    color: Colors.white,
-                    elevation: 1,
-                    child: Column(
-                      children: [
-                        Container(
-                          width: MediaQuery.sizeOf(context).width,
-                          height: 45,
-                          color: Colors.white70,
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 16),
-                              Text(
-                                line.name,
-                                textAlign: TextAlign.left,
-                                style: const TextStyle(color: Colors.black54, fontSize: 17, fontWeight: FontWeight.bold),
-                              ),
-                              const Spacer(),
-                              MaterialButton(
-                                color: line.linePauseFlag == 0 ? Theme.of(context).primaryColorLight :
-                                Colors.orange.shade400,
-                                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                                onPressed: () async {
-                                  String payLoadFinal = jsonEncode({
-                                    "4900": {
-                                      "4901": "${line.sNo}, ${line.linePauseFlag == 0 ? 1 : 0}",
-                                    }
-                                  });
-
-                                  final result = await context.read<CommunicationService>().sendCommand(
-                                    payload: payLoadFinal,
-                                    serverMsg: line.linePauseFlag == 0
-                                        ? 'Paused the ${line.name}'
-                                        : 'Resumed the ${line.name}',
-                                  );
-
-                                  if (result['http'] == true) debugPrint("Payload sent to Server");
-                                  if (result['mqtt'] == true) debugPrint("Payload sent to MQTT Box");
-                                  if (result['bluetooth'] == true) debugPrint("Payload sent via Bluetooth");
-                                },
-                                child: Text(
-                                  line.linePauseFlag == 0 ? 'PAUSE THE LINE' : 'RESUME THE LINE',
-                                  style: const TextStyle(
-                                    color:Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
+                    Card(
+                      color: Colors.white,
+                      elevation: 1,
+                      child: Column(
+                        children: [
+                          Container(
+                            width: MediaQuery.sizeOf(context).width,
+                            height: 45,
+                            color: Colors.white70,
+                            child: Row(
+                              children: [
+                                const SizedBox(width: 16),
+                                Text(
+                                  line.name,
+                                  textAlign: TextAlign.left,
+                                  style: const TextStyle(color: Colors.black54, fontSize: 17, fontWeight: FontWeight.bold),
+                                ),
+                                const Spacer(),
+                                MaterialButton(
+                                  color: line.linePauseFlag == 0 ? Theme.of(context).primaryColorLight :
+                                  Colors.orange.shade400,
+                                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+                                  onPressed: () async {
+                                    String payLoadFinal = jsonEncode({
+                                      "4900": {
+                                        "4901": "${line.sNo}, ${line.linePauseFlag == 0 ? 1 : 0}",
+                                      }
+                                    });
+        
+                                    final result = await context.read<CommunicationService>().sendCommand(
+                                      payload: payLoadFinal,
+                                      serverMsg: line.linePauseFlag == 0
+                                          ? 'Paused the ${line.name}'
+                                          : 'Resumed the ${line.name}',
+                                    );
+        
+                                    if (result['http'] == true) debugPrint("Payload sent to Server");
+                                    if (result['mqtt'] == true) debugPrint("Payload sent to MQTT Box");
+                                    if (result['bluetooth'] == true) debugPrint("Payload sent via Bluetooth");
+                                  },
+                                  child: Text(
+                                    line.linePauseFlag == 0 ? 'PAUSE THE LINE' : 'RESUME THE LINE',
+                                    style: const TextStyle(
+                                      color:Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              const SizedBox(width: 5)
-                            ],
+                                const SizedBox(width: 5)
+                              ],
+                            ),
                           ),
-                        ),
-                        buildIrrigationLine(context, line, viewedCustomer.id, controllerId, modelId, deviceId)
-                      ],
+                          buildIrrigationLine(context, line, viewedCustomer.id, controllerId, modelId, deviceId)
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            )),
-            const SizedBox(height: 8),
-          ],
+                  ],
+                ),
+              )),
+              const SizedBox(height: 8),
+            ],
+          ),
         ),
       ),
 
@@ -746,29 +694,21 @@ class CustomerHomeNarrow extends StatelessWidget {
         ),
         const SizedBox(
           width: 10,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(':'),
-              SizedBox(height: 2),
-              Text(':'),
-              SizedBox(height: 2),
-              Text(':'),
-              SizedBox(height: 2),
-            ],
-          ),
         ),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(programName),
-              const SizedBox(height: 1),
-              Text(convert24HourTo12Hour(values[6])),
-              const SizedBox(height: 3),
-              Text(values[3]),
-              const SizedBox(height: 2),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(programName),
+                const SizedBox(height: 1),
+                Text(convert24HourTo12Hour(values[6])),
+                const SizedBox(height: 3),
+                Text(values[3]),
+                const SizedBox(height: 2),
+              ],
+            ),
           ),
         )
       ],

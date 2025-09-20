@@ -35,7 +35,7 @@ class DealerNarrowLayout extends StatelessWidget {
         ),
         title: MainMenuSegmentWidget(viewModel: viewModel),
         actions: const <Widget>[
-          UserAccountMenu(screenType: 'Narrow'),
+          UserAccountMenu(isNarrow: true),
         ],
         centerTitle: true,
         elevation: 10,

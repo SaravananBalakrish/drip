@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../view_models/customer/condition_library_view_model.dart';
@@ -48,12 +49,12 @@ class SensorValueButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(10),
           ),
           content: SizedBox(
-            width: 250,
-            height: 260,
+            width: kIsWeb? 250 : 300,
+            height: kIsWeb? 260 : 300,
             child: Column(
               children: [
                 SizedBox(
-                  width: 250,
+                  width: kIsWeb? 260 : 300,
                   height: 50,
                   child: TextFormField(
                     controller: controller,
@@ -78,7 +79,7 @@ class SensorValueButton extends StatelessWidget {
                 const SizedBox(height: 8),
                 _buildGridView(context),
                 SizedBox(
-                  width: 250,
+                  width: kIsWeb? 260 : 300,
                   height: 50,
                   child: Row(
                     children: [
@@ -86,7 +87,7 @@ class SensorValueButton extends StatelessWidget {
                         color: Theme.of(context).primaryColor,
                         textColor: Colors.white,
                         height: 40,
-                        minWidth: 170,
+                        minWidth: kIsWeb? 170 : 200,
                         onPressed: () {
                           controller.text += ' ';
                         },
@@ -135,8 +136,8 @@ class SensorValueButton extends StatelessWidget {
   Widget _buildGridView(BuildContext context) {
     List<String> operators = ['%', '°C', '.', 'cl', 'C', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0'];
     return SizedBox(
-      width: 250,
-      height: 150,
+      width: kIsWeb? 260 : 300,
+      height: kIsWeb? 150: 190,
       child: GridView.count(
         crossAxisCount: 5,
         crossAxisSpacing: 5,

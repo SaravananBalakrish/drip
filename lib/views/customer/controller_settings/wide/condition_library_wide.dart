@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
+import 'package:provider/provider.dart';
 import '../../../../repository/repository.dart';
 import '../../../../services/http_service.dart';
 import '../../../../view_models/customer/condition_library_view_model.dart';
@@ -9,8 +9,8 @@ import '../widgets/build_condition_card.dart';
 import '../widgets/build_floating_action_buttons.dart';
 
 
-class ConditionLibraryNarrow extends StatelessWidget {
-  const ConditionLibraryNarrow({
+class ConditionLibraryWide extends StatelessWidget {
+  const ConditionLibraryWide({
     super.key,
     required this.customerId,
     required this.controllerId,
@@ -37,13 +37,18 @@ class ConditionLibraryNarrow extends StatelessWidget {
           final hasConditions = vm.clData.cnLibrary.condition.isNotEmpty;
 
           return Scaffold(
-            appBar: AppBar(title: const Text('Condition Library')),
             body: Padding(
               padding: const EdgeInsets.all(8.0),
-              child: hasConditions ? ListView.builder(
-                padding: const EdgeInsets.only(bottom: 60),
+              child: hasConditions ? GridView.builder(
                 itemCount: vm.clData.cnLibrary.condition.length,
-                itemBuilder: (context, index) {
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount:
+                  MediaQuery.of(context).size.width > 1350 ? 3 : 2,
+                  crossAxisSpacing: 3.0,
+                  mainAxisSpacing: 3.0,
+                  childAspectRatio: _getChildAspectRatio(context),
+                ),
+                itemBuilder: (BuildContext context, int index) {
                   return buildConditionCard(context, vm, index);
                 },
               ) : const Center(child: Text('No condition available')),
@@ -54,5 +59,13 @@ class ConditionLibraryNarrow extends StatelessWidget {
         },
       ),
     );
+  }
+
+  double _getChildAspectRatio(BuildContext context) {
+    if (MediaQuery.of(context).size.width > 1350) {
+      return MediaQuery.of(context).size.width / 1200;
+    } else {
+      return MediaQuery.of(context).size.width / 750;
+    }
   }
 }

@@ -12,12 +12,11 @@ class ControllerSettingsViewModel extends ChangeNotifier {
 
   List<Map<String, dynamic>> filteredSettingList = [];
 
-
   final List<Map<String, dynamic>> allSettings = [
     {'title': 'General', 'icon': Icons.settings_outlined},
-    {'title': 'Name', 'icon': Icons.text_fields},
     {'title': 'Preference', 'icon': Icons.settings_applications_outlined},
     {'title': 'Constant', 'icon': Icons.private_connectivity_sharp},
+    {'title': 'Name', 'icon': Icons.text_fields},
     {'title': 'Condition Library', 'icon': Icons.library_books_outlined},
     {'title': 'Notification', 'icon': Icons.notifications_none},
     {'title': 'Fertilizer Set', 'icon': Icons.format_textdirection_r_to_l},
@@ -49,7 +48,6 @@ class ControllerSettingsViewModel extends ChangeNotifier {
         "userId": customerId,
         "controllerId": controllerId
       };
-      print(body);
       var response = await repository.getPlanningHiddenMenu(body);
 
       if (response.statusCode == 200) {
@@ -92,6 +90,7 @@ class ControllerSettingsViewModel extends ChangeNotifier {
               if(isGem){
                 if (setting['title'] == 'General'
                     || setting['title'] == 'Dealer Definition'
+                    || setting['title'] == 'Notification'
                     || setting['title'] == 'Geography'
                     || setting['title'] == 'Geography Area'
                     || setting['title'] == 'Pump Condition'
@@ -121,5 +120,4 @@ class ControllerSettingsViewModel extends ChangeNotifier {
     isLoading = value;
     notifyListeners();
   }
-
 }
