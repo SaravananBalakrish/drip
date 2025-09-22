@@ -17,16 +17,16 @@ import '../../utils/shared_preferences_helper.dart';
 
 
 // ignore: must_be_immutable
-class OtpScreen extends StatefulWidget {
+class OtpVerifyScreen extends StatefulWidget {
   String contact;
 
-  OtpScreen({required this.contact});
+  OtpVerifyScreen({required this.contact});
 
   @override
-  _OtpScreenState createState() => _OtpScreenState();
+  _OtpVerifyScreenState createState() => _OtpVerifyScreenState();
 }
 
-class _OtpScreenState extends State<OtpScreen> {
+class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   late String phoneNo;
   late String smsOTP;
   late String verificationId;
@@ -198,12 +198,13 @@ class _OtpScreenState extends State<OtpScreen> {
         timeout: const Duration(seconds: 60),
         verificationCompleted: (AuthCredential phoneAuthCredential) {},
         verificationFailed: (error) {
-          // print(error);
+          print(error);
           _showSnackBar(error.message ?? 'verificationFailed',Colors.red);
         },
       );
     } catch (e,stackTrace) {
-      // print('error generateOtp');
+      print('error generateOtp');
+      print(e.toString());
       _showSnackBar(e.toString(),Colors.red);
       print('error $e');
       print("stackTrace $stackTrace");
@@ -237,6 +238,7 @@ class _OtpScreenState extends State<OtpScreen> {
       await checkNumber(widget.contact);
     } on PlatformException catch(e){
       handleError(e);
+      print(e.toString());
       _showSnackBar(e.message!,Colors.red);
     }
     catch (e, stackTrace) {
@@ -270,8 +272,7 @@ class _OtpScreenState extends State<OtpScreen> {
       final repository = Repository(HttpService());
       final response = await repository.checkMobileNumber(body);
 
-print("response: $response");
-      print("response: ${response.body}");
+       print("response: ${response.body}");
       if (response.statusCode != 200) {
         _showSnackBar("Server error: ${response.statusCode}", Colors.red);
         return false;
@@ -298,20 +299,7 @@ print("response: $response");
 
       // 🔹 Example: Navigate based on role
       Future.delayed(Duration.zero, () {
-        switch (userData['userType']) {
-          case "1":
-            _showSnackBar("Admin cannot login on mobile", Colors.red);
-            break;
-          case "2":
-            Navigator.pushReplacementNamed(context, '/dealerDashboard');
-            break;
-          case "3":
-            Navigator.pushReplacementNamed(context, '/dashboard');
-            break;
-          default:
-            _showSnackBar("Unknown user type", Colors.red);
-        }
-
+        Navigator.pushReplacementNamed(context, '/dashboard');
         return true;
       });
       return true;

@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreenOTP> {
       String checkval = await checkNumber(selectedCountryDialCode!, '${_contactEditingController.text}');
       if (checkval == 'true') {
 
-        final responseMessage = await Navigator.push(context, MaterialPageRoute(builder: (context) => OtpScreen(contact: "$selectedCountryDialCode ${_contactEditingController.text}",)));
+        final responseMessage = await Navigator.push(context, MaterialPageRoute(builder: (context) => OtpVerifyScreen(contact: "$selectedCountryDialCode ${_contactEditingController.text}",)));
         if (responseMessage != null) {
           showErrorDialog(context, responseMessage as String);
         }
