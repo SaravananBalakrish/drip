@@ -9,9 +9,7 @@ import 'package:oro_drip_irrigation/Screens/Logs/irrigation_and_pump_log.dart';
 import 'package:oro_drip_irrigation/Widgets/network_connection_banner.dart';
 import 'package:oro_drip_irrigation/modules/ScheduleView/view/schedule_view_screen.dart';
 import 'package:oro_drip_irrigation/modules/UserChat/view/user_chat.dart';
-import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 import '../../models/customer/site_model.dart';
 import '../../Screens/Dealer/ble_mobile_screen.dart';
@@ -27,7 +25,6 @@ import '../../providers/user_provider.dart';
 import '../../services/communication_service.dart';
 import '../../utils/constants.dart';
 import '../../utils/formatters.dart';
-import '../../utils/my_function.dart';
 import '../../utils/routes.dart';
 import '../../utils/shared_preferences_helper.dart';
 import '../../view_models/customer/customer_screen_controller_view_model.dart';
@@ -38,7 +35,8 @@ import '../customer/customer_home.dart';
 import '../customer/customer_product.dart';
 import '../customer/scheduled_program/scheduled_program_wide.dart';
 import '../customer/input_output_connection_details.dart';
-import '../customer/node_list.dart';
+import '../customer/node_list/node_list.dart';
+import '../customer/send_and_received/sent_and_received.dart';
 import '../customer/stand_alone.dart';
 import '../customer/widgets/alarm_button.dart';
 import '../customer/widgets/irrigation_line_selector_widget.dart';
@@ -161,7 +159,8 @@ class _MobileScreenControllerState extends State<MobileScreenController> with Wi
             ),
             const SizedBox(width: 8),
             AlarmButton(alarmPayload: vm.alarmDL, deviceID: currentMaster.deviceId,
-                customerId: viewedCustomer!.id, controllerId: currentMaster.controllerId, irrigationLine: currentMaster.irrigationLine),
+                customerId: viewedCustomer!.id, controllerId: currentMaster.controllerId,
+              irrigationLine: currentMaster.irrigationLine, isNarrow: true),
             IconButton(
                 onPressed: (){
                   Navigator.push(
@@ -213,6 +212,7 @@ class _MobileScreenControllerState extends State<MobileScreenController> with Wi
                                 SentAndReceived(
                                   customerId: loggedInUser.id,
                                   controllerId: currentMaster.controllerId,
+                                  isWide: false,
                                 ),
                           ),
                         );
@@ -374,7 +374,7 @@ class _MobileScreenControllerState extends State<MobileScreenController> with Wi
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const UserProfile(),
+                    builder: (context) => const UserProfile(isNarrow: true),
                   ),
                 );
               },
@@ -548,7 +548,7 @@ class _MobileScreenControllerState extends State<MobileScreenController> with Wi
                               nodes: currentMaster.nodeList,
                               userId: loggedInUser.id,
                               configObjects: currentMaster.configObjects,
-                              masterData: currentMaster),
+                              masterData: currentMaster, isWide: false),
                         ),
                       );
                       break;
@@ -568,7 +568,8 @@ class _MobileScreenControllerState extends State<MobileScreenController> with Wi
                         MaterialPageRoute(
                           builder: (context) => SentAndReceived(
                               customerId: viewedCustomer.id,
-                              controllerId: currentMaster.controllerId
+                              controllerId: currentMaster.controllerId,
+                            isWide: false,
                           ),
                         ),
                       );

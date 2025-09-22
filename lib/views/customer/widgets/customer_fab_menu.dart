@@ -16,8 +16,8 @@ import '../../../utils/constants.dart';
 import '../../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../../mobile/mobile_screen_controller.dart';
 import '../input_output_connection_details.dart';
-import '../node_list/node_list_narrow.dart';
-import '../send_and_received/sent_and_received_narrow.dart';
+import '../node_list/node_list.dart';
+import '../send_and_received/sent_and_received.dart';
 import '../stand_alone/stand_alone_narrow.dart';
 
 class CustomerFabMenu extends StatelessWidget {
@@ -130,12 +130,12 @@ class CustomerFabMenu extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => NodeListNarrow(
+            builder: (context) => NodeList(
               customerId: viewedCustomer.id,
               nodes: currentMaster.nodeList,
               userId: loggedInUser.id,
               configObjects: currentMaster.configObjects,
-              masterData: currentMaster,
+              masterData: currentMaster, isWide: false,
             ),
           ),
         );
@@ -157,9 +157,10 @@ class CustomerFabMenu extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SentAndReceivedNarrow(
-              customerId: viewedCustomer.id,
+            builder: (context) => SentAndReceived(
+              customerId: vm.mySiteList.data[vm.sIndex].customerId,
               controllerId: currentMaster.controllerId,
+              isWide: false,
             ),
           ),
         );

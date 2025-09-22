@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
+import 'package:oro_drip_irrigation/views/customer/send_and_received/sent_and_received.dart';
 import 'package:oro_drip_irrigation/views/customer/site_config.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/app_bar_action.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/app_bar_drop_down_menu.dart';
@@ -163,7 +163,7 @@ class _CustomerWideLayoutState extends State<CustomerWideLayout> {
                           loggedInUser.role,
                           vm.mySiteList.data[vm.sIndex].customerId,
                           vm.mySiteList.data[vm.sIndex].customerName,
-                            viewedCustomer!.id,
+                          viewedCustomer!.id,
                         );
                       },
                     ),
@@ -224,6 +224,7 @@ class _CustomerWideLayoutState extends State<CustomerWideLayout> {
         return SentAndReceived(
           customerId: customerId,
           controllerId: currentMaster.controllerId,
+          isWide: true,
         );
 
       case 3:
@@ -251,7 +252,6 @@ class _CustomerWideLayoutState extends State<CustomerWideLayout> {
           userId: userId,
           customerId: customerId,
           customerName: customerName,
-          masterData: allMaster,
           groupId: groupId,
           groupName: groupName,
         ) :
@@ -269,7 +269,6 @@ class _CustomerWideLayoutState extends State<CustomerWideLayout> {
           userId: userId,
           customerId: customerId,
           customerName: customerName,
-          masterData: allMaster,
           groupId: groupId,
           groupName: groupName,
         ) : _PasswordProtectedSiteConfig(
@@ -424,7 +423,6 @@ class _PasswordProtectedSiteConfigState
         userId: widget.userId,
         customerId: widget.customerId,
         customerName: widget.customerName,
-        masterData: widget.allMaster,
         groupId: widget.groupId,
         groupName: widget.groupName,
       );

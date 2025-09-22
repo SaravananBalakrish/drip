@@ -133,7 +133,7 @@ class BleProvider extends ChangeNotifier {
     // }else if(AppConstants.pumpWithValveModelList.contains(nodeData['modelId'])){
     //   nodeDataFromServer['pathSetting']['downloadDirectory'] = "/home/ubuntu/FTP/download/PUMP_VALVE/";
     // }
-    print("nodeDataFromServer : $nodeDataFromServer");
+    print("nodeDataFromServer : ${nodeDataFromServer['pathSetting']}");
     notifyListeners();
   }
 
@@ -161,13 +161,6 @@ class BleProvider extends ChangeNotifier {
       print("_isScanning :: $_isScanning");
       for(var result in _scanResults){
         var adv = result.advertisementData;
-        print("${adv.advName} ----------------- ${result.device.remoteId}");
-        print("adv.connectable ::: ${adv.connectable}");
-        print("adv.manufacturerData ::: ${adv.manufacturerData}");
-        print("adv.appearance ::: ${adv.appearance}");
-        print("result.device.advName ::: ${result.device.advName}");
-        print("result.device.platformName} ::: ${result.device.platformName}");
-        print("result.device.remoteId} ::: ${result.device.remoteId}");
         String upComingMacAddress = result.device.remoteId.toString().split(':').join('');
         if(macAddressToConnect == upComingMacAddress){
           device = result.device;

@@ -29,6 +29,9 @@ class Repository{
   Future<http.Response> checkLoginAuth(body) async {
     return apiService.postRequest('/auth/signIn', body);
   }
+  Future<http.Response> checkMobileNumber(body) async {
+    return apiService.postRequest('/auth/verification', body);
+  }
 
   Future<http.Response> fetchAllMySalesReports(body) async {
     return await apiService.postRequest('/product/getSalesReport', body);
@@ -36,6 +39,10 @@ class Repository{
 
   Future<http.Response> fetchMyStocks(body) async {
     return await apiService.postRequest('/product/getStock', body);
+  }
+
+  Future<http.Response> userVerifyWithDeviceToken(body) async {
+    return await apiService.postRequest('/userVerifyWithDeviceToken', body);
   }
 
   Future<http.Response> fetchMyCustomerList(body) async {
@@ -72,6 +79,10 @@ class Repository{
 
   Future<http.Response> fetchUserPushNotificationType(body) async {
     return await apiService.postRequest('/user/deviceList/pushNotificationType/get', body);
+  }
+
+  Future<http.Response> updateUserPushNotificationType(body) async {
+    return await apiService.putRequest('/user/deviceList/pushNotificationType/update', body);
   }
 
   Future<http.Response> fetchCountryList() async {
@@ -129,7 +140,6 @@ class Repository{
   Future<http.Response> updateUserNodeDetails(body) async {
     return await apiService.putRequest('/user/deviceList/updateNodeDetails', body);
   }
-
 
   Future<http.Response> inActiveCategoryById(body) async {
     return await apiService.putRequest('/category/inactive', body);
@@ -210,6 +220,7 @@ class Repository{
   Future<http.Response> getUserFilterBackwasing(body) async {
     return await apiService.postRequest('/user/planning/filterBackwashing/get', body);
   }
+
 
   Future<http.Response> UpdateFilterBackwasing(body) async {
     return await apiService.postRequest('/user/planning/filterBackwashing/create', body);

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Screens/Dealer/sevicecustomer.dart';
@@ -35,7 +36,7 @@ class CustomerDrawer extends StatelessWidget {
             text: "Profile",
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const UserProfile()),
+              MaterialPageRoute(builder: (context) => const UserProfile(isNarrow: true)),
             ),
           ),
           _divider(),
@@ -110,39 +111,37 @@ class CustomerDrawer extends StatelessWidget {
   Widget _buildHeader(BuildContext context) {
     return DrawerHeader(
       decoration: BoxDecoration(color: Theme.of(context).primaryColor),
-      child: Padding(
-        padding: const EdgeInsets.only(top: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                children: [
-                  Text(
-                    viewedCustomer!.name,
-                    style: const TextStyle(color: Colors.white),
-                  ),
-                  Text(
-                    viewedCustomer.mobileNo,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                  Text(
-                    viewedCustomer.email,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(color: Colors.white, fontSize: 14),
-                  ),
-                ],
-              ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          const SizedBox(
+            width: 70,
+            height: 70,
+            child: CircleAvatar(),
+          ),
+          SizedBox(
+            width: MediaQuery.sizeOf(context).width,
+            child: Column(
+              children: [
+                Text(
+                  viewedCustomer!.name,
+                  style: const TextStyle(color: Colors.white),
+                ),
+                Text(
+                  viewedCustomer.mobileNo,
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                ),
+                Text(
+                  viewedCustomer.email,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                ),
+              ],
             ),
-            const SizedBox(
-              width: 75,
-              height: 75,
-              child: CircleAvatar(),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -171,7 +170,7 @@ class CustomerDrawer extends StatelessWidget {
         onPressed: () async {
           await PreferenceHelper.clearAll();
           if (!context.mounted) return;
-          Navigator.pushNamedAndRemoveUntil(context, Routes.login, (route) => false);
+          Navigator.pushNamedAndRemoveUntil(context, isSkiaWeb ? Routes.loginOtp : Routes.login, (route) => false);
         },
         icon: const Icon(Icons.logout, color: Colors.red),
         label: const Text(

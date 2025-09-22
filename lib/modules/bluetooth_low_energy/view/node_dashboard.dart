@@ -45,6 +45,7 @@ class _NodeDashboardState extends State<NodeDashboard> {
       // }
       for(var i = 0; i < 30;i++){
         if(bleService.nodeDataFromHw.containsKey('MID')){
+          print("wait until get mac..");
           break;
         }else{
           await Future.delayed(const Duration(seconds: 1));

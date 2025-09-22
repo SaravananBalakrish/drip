@@ -24,7 +24,7 @@ class ConditionTile extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(name, style: const TextStyle(fontSize: 15)),
-            Text(rule, style: TextStyle(fontSize: 12, color: Colors.black54)),
+            Text(rule, style: const TextStyle(fontSize: 12, color: Colors.black54)),
             const SizedBox(height: 5),
           ],
         ),
@@ -43,9 +43,30 @@ class ConditionTile extends StatelessWidget {
         ),
         IconButton(
           tooltip: 'Remove condition',
-          onPressed: onRemove,
-          icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
-        ),
+          icon: const Icon(Icons.remove_circle, color: Colors.red, size: 20),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (ctx) => AlertDialog(
+                title: const Text('Remove Condition'),
+                content: Text('Are you sure you want to remove this $name ?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                      onRemove();
+                    },
+                    child: const Text('Remove', style: TextStyle(color: Colors.red)),
+                  ),
+                ],
+              ),
+            );
+          },
+        )
       ],
     );
   }

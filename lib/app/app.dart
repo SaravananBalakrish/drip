@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:oro_drip_irrigation/Constants/notifications_service.dart';
 import 'package:oro_drip_irrigation/modules/config_Maker/view/config_base_page.dart';
-import 'package:oro_drip_irrigation/modules/irrigation_report/view/ec_25_log.dart';
+import 'package:oro_drip_irrigation/modules/irrigation_report/view/fertilizer_pump_runtime_log.dart';
+import 'package:oro_drip_irrigation/modules/irrigation_report/view/motor_cyclic_log.dart';
+import 'package:oro_drip_irrigation/modules/irrigation_report/view/zone_cyclic_log.dart';
 import '../Screens/Dealer/bLE_update.dart';
 import '../Screens/Dealer/ble_controllerlog_ftp.dart';
+import '../Screens/login_screenOTP/landing_screen.dart';
 import '../flavors.dart';
 import '../modules/constant/view/constant_base_page.dart';
 import '../utils/Theme/smart_comm_theme.dart';
@@ -64,6 +67,7 @@ class _MyAppState extends State<MyApp> {
           themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
           home: navigateToInitialScreen(snapshot.data ?? Routes.login),
           onGenerateRoute: Routes.generateRoute,
+          // home: FertilizerPumpRuntimeLog(userData: {}),
         );
       },
     );
@@ -72,10 +76,11 @@ class _MyAppState extends State<MyApp> {
 
 /// Helper function to navigate to the appropriate screen
 Widget navigateToInitialScreen(String route) {
+  var isOro = F.appFlavor?.name.contains('oro') ?? false;
   switch (route) {
     case Routes.login:
-       return const LoginScreen();
-    case Routes.dashboard:
+       return kIsWeb ? LoginScreen() : isOro ? LandingScreen() : LoginScreen();
+     case Routes.dashboard:
        return const ScreenController();
     default:
       return const SplashScreen();

@@ -8,6 +8,8 @@ import 'package:oro_drip_irrigation/views/customer/widgets/customer_fab_menu.dar
 import 'package:provider/provider.dart';
 
 import '../../Screens/Logs/irrigation_and_pump_log.dart';
+import '../../StateManagement/customer_provider.dart';
+import '../../Widgets/network_connection_banner.dart';
 import '../../flavors.dart';
 import '../../layouts/layout_selector.dart';
 import '../../modules/PumpController/view/pump_controller_home.dart';
@@ -30,10 +32,12 @@ class _CustomerNarrowLayoutState extends State<CustomerNarrowLayout> {
 
   void callbackFunction(String status) {
     if (status == 'Program created') {
-      final viewModel = Provider.of<CustomerScreenControllerViewModel>(context, listen: false);
-      final viewedCustomer = Provider.of<UserProvider>(context, listen: false).viewedCustomer;
-      if (viewedCustomer != null) {
-        viewModel.getAllMySites(context, viewedCustomer.id, preserveSelection: true);
+      if(mounted) {
+        final viewModel = Provider.of<CustomerScreenControllerViewModel>(context, listen: false);
+        final viewedCustomer = Provider.of<UserProvider>(context, listen: false).viewedCustomer;
+        if (viewedCustomer != null) {
+          viewModel.getAllMySites(context, viewedCustomer.id, preserveSelection: true);
+        }
       }
     }
   }
@@ -46,11 +50,22 @@ class _CustomerNarrowLayoutState extends State<CustomerNarrowLayout> {
     final navModel = context.watch<BottomNavViewModel>();
     final vm = context.watch<CustomerScreenControllerViewModel>();
 
+    if (vm.isLoading) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        body: Center(child: Image.asset(F.appFlavor!.name.contains('oro')?
+        'assets/oro_store.png':'assets/smartcomm_playstore.png',width: 175, height: 175)),
+      );
+    }
+
     final cM = vm.mySiteList.data[vm.sIndex].master[vm.mIndex];
+    if (vm.mySiteList.data.isEmpty ||
+        vm.sIndex >= vm.mySiteList.data.length ||
+        vm.mIndex >= vm.mySiteList.data[vm.sIndex].master.length) {
+      return const Scaffold(body: Center(child: Text("No site data available")));
+    }
 
-    final isGem = [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList]
-        .contains(cM.modelId);
-
+    final isGem = [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(cM.modelId);
     List<Widget> pages = [];
 
     if (isGem) {
@@ -120,9 +135,23 @@ class _CustomerNarrowLayoutState extends State<CustomerNarrowLayout> {
         vm: vm,
         callbackFunction: callbackFunction,
       ),
-      body: IndexedStack(
-        index: navModel.index,
-        children: pages,
+      body: Column(
+        children: [
+          if (isGem) ...[
+            const NetworkConnectionBanner(),
+            Consumer<CustomerProvider>(
+              builder: (context, customerProvider, _) {
+                return _buildStatusBanner(context, vm, customerProvider.controllerCommMode!);
+              },
+            ),
+          ],
+          Expanded(
+            child: IndexedStack(
+              index: navModel.index,
+              children: pages,
+            ),
+          ),
+        ],
       ),
       bottomNavigationBar: isGem ? BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -156,5 +185,53 @@ class _CustomerNarrowLayoutState extends State<CustomerNarrowLayout> {
 
   void openEndDrawer() {
     _scaffoldKey.currentState?.openEndDrawer(); // ✅ opens the drawer programmatically
+  }
+
+  Widget _buildStatusBanner(BuildContext context, CustomerScreenControllerViewModel vm, int commMode) {
+    if (commMode == 2) {
+      return Container(
+        width: double.infinity,
+        color: Colors.black38,
+        child: const Padding(
+          padding: EdgeInsets.only(top: 3, bottom: 4),
+          child: Text(
+            'Bluetooth mode enabled. Please ensure Bluetooth is connected.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 13, color: Colors.white70),
+          ),
+        ),
+      );
+    }else{
+      if (vm.isNotCommunicate) {
+        return Container(
+          height: 25,
+          decoration: BoxDecoration(
+            color: Colors.red.shade200,
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(5),
+              topRight: Radius.circular(5),
+            ),
+          ),
+          child: const Center(
+            child: Text(
+              'NO COMMUNICATION TO CONTROLLER',
+              style: TextStyle(color: Colors.black87, fontSize: 13.0),
+            ),
+          ),
+        );
+      } else if (vm.powerSupply == 0) {
+        return Container(
+          height: 25,
+          color: Colors.red.shade300,
+          child: const Center(
+            child: Text(
+              'NO POWER SUPPLY TO CONTROLLER',
+              style: TextStyle(color: Colors.white, fontSize: 13.0),
+            ),
+          ),
+        );
+      }
+    }
+    return const SizedBox();
   }
 }
