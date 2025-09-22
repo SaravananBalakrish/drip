@@ -16,12 +16,14 @@ class GeneralSettingViewModel extends ChangeNotifier {
 
   final List<LanguageList> languageList = <LanguageList>[];
 
-
   List<Map<String, dynamic>> subUsers = [];
 
   String farmName = '', controllerCategory = '', modelName = '', deviceId = '', categoryName = '',
-      controllerLocation='', controllerVersion='', newVersion='';
-  int groupId = 0;
+      controllerLocation = '', controllerVersion='', newVersion='';
+  int groupId = 0, modelId = 0;
+
+  String? countryCode;
+  String? simNumber;
 
   String? selectedTimeZone;
   String currentDate = '';
@@ -30,7 +32,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
   double opacity = 1.0;
   Timer? _timer;
 
-  List<NotificationListModel> notifications = [];
 
   final List<String> timeZones = tz.timeZoneDatabase.locations.keys.toList();
 
@@ -79,16 +80,24 @@ class GeneralSettingViewModel extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data["code"] == 200) {
-          farmName  = data["data"][0]['groupName'];
-          controllerCategory = data["data"][0]['deviceName'];
-          deviceId = data["data"][0]['deviceId'];
-          modelName = data["data"][0]['modelName'];
-          categoryName = data["data"][0]['categoryName'];
-          groupId = data["data"][0]['groupId'];
-          controllerVersion = data["data"][0]['hwVersion'];
-          newVersion = data["data"][0]['availableHwVersion'];
-          controllerLocation = data["data"][0]['controllerLocation'] ?? '';
-          updateCurrentDateTime(data["data"][0]['timeZone']);
+
+          final firstItem = (data["data"] as List).isNotEmpty ? data["data"][0] : {};
+
+          farmName  = firstItem['groupName'];
+          controllerCategory = firstItem['deviceName'];
+          deviceId = firstItem['deviceId'];
+          modelName = firstItem['modelName'];
+          modelId = firstItem['modelId'];
+          categoryName = firstItem['categoryName'];
+          groupId = firstItem['groupId'];
+
+          countryCode = firstItem['countryCode'] as String?;
+          simNumber   = firstItem['simNumber'] as String?;
+
+          controllerVersion = firstItem['hwVersion'];
+          newVersion = firstItem['availableHwVersion'];
+          controllerLocation = firstItem['controllerLocation'] ?? '';
+          updateCurrentDateTime(firstItem['timeZone']);
           if(controllerVersion!=newVersion){
             timerFunction();
           }else{
@@ -120,31 +129,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> getNotificationList(customerId, controllerId) async {
-    try {
-      Map<String, Object> body = {"userId": customerId, "controllerId": controllerId};
-      var response = await repository.fetchUserPushNotificationType(body);
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data["code"] == 200) {
-          notifications = parseNotifications(response.body);
-        }
-      }
-    } catch (error) {
-      debugPrint('Error fetching language list: $error');
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  List<NotificationListModel> parseNotifications(String responseBody) {
-    final parsed = json.decode(responseBody);
-    return (parsed['data'] as List)
-        .map((notification) => NotificationListModel.fromJson(notification))
-        .toList();
-  }
-
-
   void updateCurrentDateTime(String timeZone) {
     final tz.Location location = tz.getLocation(timeZone);
     final tz.TZDateTime now = tz.TZDateTime.now(location);
@@ -158,7 +142,7 @@ class GeneralSettingViewModel extends ChangeNotifier {
   Future<void> updateMasterDetails(BuildContext context, int customerId, int controllerId, int modifyUser) async {
     try {
 
-      Map<String, Object> body = {
+      Map<String, Object?> body = {
         "userId": customerId,
         "controllerId": controllerId,
         "deviceName": controllerCategory,
@@ -166,6 +150,8 @@ class GeneralSettingViewModel extends ChangeNotifier {
         "controllerLocation": controllerLocation,
         "groupId": groupId,
         "groupName": farmName,
+        "countryCode": ([56, 57, 58, 59].contains(modelId)) ? countryCode : null,
+        "simNumber":  ([56, 57, 58, 59].contains(modelId)) ? simNumber : null,
         "modifyUser": modifyUser,
       };
 

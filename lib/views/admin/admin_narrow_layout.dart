@@ -24,7 +24,7 @@ class AdminNarrowLayout extends StatelessWidget {
           child: AppLogo(),
         ),
         actions: const <Widget>[
-          UserAccountMenu(screenType: 'Narrow'),
+          UserAccountMenu(isNarrow: true),
         ],
         centerTitle: false,
         elevation: 10,
@@ -52,7 +52,7 @@ class AdminNarrowLayout extends StatelessWidget {
         children: const [
           DashboardLayoutSelector(userRole: UserRole.admin),
           ProductInventory(),
-          StockEntry(screenType: 'Narrow'),
+          StockEntry(isNarrow: true),
         ],
       ),
     );

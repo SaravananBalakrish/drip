@@ -20,7 +20,7 @@ import '../../../utils/routes.dart';
 import '../../../utils/shared_preferences_helper.dart';
 import '../../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../../common/user_profile/user_profile.dart';
-import '../sent_and_received.dart';
+import '../send_and_received/sent_and_received.dart';
 import 'alarm_button.dart';
 
 List<Widget> appBarActions(
@@ -45,6 +45,7 @@ List<Widget> appBarActions(
         customerId: viewedCustomer!.id,
         controllerId: master.controllerId,
         irrigationLine: master.irrigationLine,
+        isNarrow: isNarrow,
       ),
       IconButton(
         onPressed: () => Navigator.push(
@@ -82,7 +83,7 @@ List<Widget> appBarActions(
             ),
           ),
           _buildHelpMenu(context, vm, loggedInUser, viewedCustomer, master),
-          _buildAccountMenu(context, vm, viewedCustomer),
+          _buildAccountMenu(context, vm, viewedCustomer, isNarrow),
           if (master.nodeList.isNotEmpty &&
               master.categoryId == 2 &&
               [48, 49].contains(master.modelId))
@@ -247,7 +248,7 @@ Widget _buildHelpMenu(BuildContext context, CustomerScreenControllerViewModel vm
 }
 
 Widget _buildAccountMenu(BuildContext context, CustomerScreenControllerViewModel vm,
-    dynamic viewedCustomer) {
+    dynamic viewedCustomer, bool isNarrow) {
   return IconButton(
     tooltip: 'Your Account\n${viewedCustomer!.name}\n${viewedCustomer.mobileNo}',
     onPressed: () {
@@ -286,7 +287,7 @@ Widget _buildAccountMenu(BuildContext context, CustomerScreenControllerViewModel
                             color: Colors.white,
                             borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
                           ),
-                          child: const UserProfile(),
+                          child: UserProfile(isNarrow: isNarrow),
                         ),
                       ),
                     );
@@ -366,6 +367,7 @@ Widget _buildNonGemActions(BuildContext context, dynamic master,
                 builder: (context) => SentAndReceived(
                   customerId: loggedInUser.id,
                   controllerId: master.controllerId,
+                  isWide: true,
                 ),
               ),
             );

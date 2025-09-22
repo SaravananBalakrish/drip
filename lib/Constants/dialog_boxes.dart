@@ -13,9 +13,11 @@ void simpleDialogBox({
   required BuildContext context,
   required String title,
   required String message,
+  Widget? content,
   List<Widget>? actionButton,
 }){
   showDialog(
+      useRootNavigator: true,
       context: context,
       builder: (context){
         return AlertDialog(
@@ -37,7 +39,7 @@ void simpleDialogBox({
               ),
             ],
           ),
-          content: Column(
+          content: content ?? Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               SizedBox(

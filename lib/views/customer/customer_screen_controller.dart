@@ -2,12 +2,11 @@ import 'dart:convert';
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/Screens/Dealer/controllerlogfile.dart';
 import 'package:oro_drip_irrigation/Screens/Dealer/sevicecustomer.dart';
 import 'package:oro_drip_irrigation/Screens/Logs/irrigation_and_pump_log.dart';
 import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/program_library.dart';
-import 'package:oro_drip_irrigation/views/customer/sent_and_received.dart';
+import 'package:oro_drip_irrigation/views/customer/send_and_received/sent_and_received.dart';
 import 'package:oro_drip_irrigation/views/customer/site_config.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/alarm_button.dart';
@@ -15,8 +14,6 @@ import 'package:popover/popover.dart';
 import '../../models/customer/site_model.dart';
 import 'package:provider/provider.dart';
 import '../../Screens/Dealer/controllerverssionupdate.dart';
-import '../../Screens/Map/CustomerMap.dart';
-import '../../Screens/Map/allAreaBoundry.dart';
 import '../../Screens/planning/FactoryReset.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../flavors.dart';
@@ -26,11 +23,9 @@ import '../../modules/PumpController/view/pump_controller_home.dart';
 import '../../modules/UserChat/view/user_chat.dart';
 import '../../providers/user_provider.dart';
 import '../../repository/repository.dart';
-import '../../services/communication_service.dart';
 import '../../services/http_service.dart';
 import '../../utils/constants.dart';
 import '../../utils/formatters.dart';
-import '../../utils/my_function.dart';
 import '../../utils/routes.dart';
 import '../../utils/shared_preferences_helper.dart';
 import '../../view_models/customer/customer_screen_controller_view_model.dart';
@@ -40,7 +35,7 @@ import 'controller_settings/wide/controller_settings_wide.dart';
 import 'customer_home.dart';
 import 'customer_product.dart';
 import 'input_output_connection_details.dart';
-import 'node_list.dart';
+import 'node_list/node_list.dart';
 
 class CustomerScreenController extends StatefulWidget {
   const CustomerScreenController({super.key, required this.userId, required this.customerName, required this.mobileNo, required this.emailId, required this.customerId, required this.fromLogin});
@@ -460,7 +455,7 @@ class _CustomerScreenControllerState extends State<CustomerScreenController> {
                                             color: Colors.white,
                                             borderRadius: BorderRadius.vertical(top: Radius.circular(8)),
                                           ),
-                                          child: const UserProfile(),
+                                          child: const UserProfile(isNarrow:false),
                                         ),
                                       ),
                                     );
@@ -650,7 +645,8 @@ class _CustomerScreenControllerState extends State<CustomerScreenController> {
                                 alarmPayload: vm.alarmDL, deviceID: currentMaster.deviceId,
                                 customerId: vm.mySiteList.data[vm.sIndex].customerId,
                                 controllerId: currentMaster.controllerId,
-                                irrigationLine: currentMaster.irrigationLine),
+                                irrigationLine: currentMaster.irrigationLine,
+                              isNarrow: false),
                             const SizedBox(height: 15),
                             CircleAvatar(
                               radius: 20,
@@ -684,7 +680,8 @@ class _CustomerScreenControllerState extends State<CustomerScreenController> {
                                                     userId: widget.userId,
                                                     nodes: currentMaster.nodeList,
                                                     configObjects: currentMaster.configObjects,
-                                                    masterData: currentMaster);
+                                                    masterData: currentMaster,
+                                                  isWide: true);
                                               },
                                             ),
                                           ),
@@ -1067,6 +1064,7 @@ class _CustomerScreenControllerState extends State<CustomerScreenController> {
         return SentAndReceived(
           customerId: customerId,
           controllerId: currentMaster.controllerId,
+          isWide: true,
         );
 
       case 3:
@@ -1094,7 +1092,6 @@ class _CustomerScreenControllerState extends State<CustomerScreenController> {
           userId: widget.userId,
           customerId: customerId,
           customerName: customerName,
-          masterData: allMaster,
           groupId: groupId,
           groupName: groupName,
         ) :
@@ -1114,7 +1111,6 @@ class _CustomerScreenControllerState extends State<CustomerScreenController> {
           userId: widget.userId,
           customerId: customerId,
           customerName: customerName,
-          masterData: allMaster,
           groupId: groupId,
           groupName: groupName,
         ) : _PasswordProtectedSiteConfig(
@@ -1310,7 +1306,6 @@ class _PasswordProtectedSiteConfigState
         userId: widget.userId,
         customerId: widget.customerId,
         customerName: widget.customerName,
-        masterData: widget.allMaster,
         groupId: widget.groupId,
         groupName: widget.groupName,
       );

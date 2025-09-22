@@ -70,4 +70,15 @@ class IrrigationProgramRepository {
   Future<http.Response> updateProgramDetails(body) async {
     return await apiService.putRequest('/user/program/updateDetails', body);
   }
+
+  Future<http.Response> getDayCountRtc(body) async {
+    return await apiService.postRequest('/user/planning/dayCountRtc/get', body);
+  }
+
+  Future<http.Response> createDayCountRtc(body) async {
+    return await apiService.postRequest('/user/planning/dayCountRtc/create', body);
+  }
+
+ /* post => /api/v1/user/planning/dayCountRtc/get => userId, controllerId
+  post => /api/v1/user/planning/dayCountRtc/create => userId, controllerId, dayCountRtc, createUser*/
 }
