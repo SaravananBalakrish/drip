@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../../Screens/Dealer/sevicecustomer.dart';
@@ -169,7 +170,7 @@ class CustomerDrawer extends StatelessWidget {
         onPressed: () async {
           await PreferenceHelper.clearAll();
           if (!context.mounted) return;
-          Navigator.pushNamedAndRemoveUntil(context, Routes.login, (route) => false);
+          Navigator.pushNamedAndRemoveUntil(context, isSkiaWeb ? Routes.loginOtp : Routes.login, (route) => false);
         },
         icon: const Icon(Icons.logout, color: Colors.red),
         label: const Text(

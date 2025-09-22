@@ -29,6 +29,9 @@ class Repository{
   Future<http.Response> checkLoginAuth(body) async {
     return apiService.postRequest('/auth/signIn', body);
   }
+  Future<http.Response> checkMobileNumber(body) async {
+    return apiService.postRequest('/auth/verification', body);
+  }
 
   Future<http.Response> fetchAllMySalesReports(body) async {
     return await apiService.postRequest('/product/getSalesReport', body);
@@ -36,6 +39,10 @@ class Repository{
 
   Future<http.Response> fetchMyStocks(body) async {
     return await apiService.postRequest('/product/getStock', body);
+  }
+
+  Future<http.Response> userVerifyWithDeviceToken(body) async {
+    return await apiService.postRequest('/userVerifyWithDeviceToken', body);
   }
 
   Future<http.Response> fetchMyCustomerList(body) async {

@@ -347,8 +347,6 @@ class _ResetAccumalationScreenState extends State<ResetAccumalationScreen>
       print(' Error overAll getData => ${e.toString()}');
       print(' trace overAll getData  => ${stackTrace}');
     }
-
-
   }
 
 
@@ -384,9 +382,6 @@ class _ResetAccumalationScreenState extends State<ResetAccumalationScreen>
       "5400":
       {"5401": restsrn}
     };
-
-
-
 
     MqttService().topicToPublishAndItsMessage(jsonEncode(payLoadFinal), "${Environment.mqttPublishTopic}/${widget.deviceID}");
     createUserSentAndReceivedMessageManually(jsonEncode(payLoadFinal));
