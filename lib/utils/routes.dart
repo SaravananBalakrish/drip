@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Screens/login_screenOTP/login_screenotp.dart';
 import '../views/screen_controller.dart';
@@ -22,7 +23,7 @@ class Routes {
           builder: (_) => const LoginScreen(),
           settings: settings,
         );
-      case Routes.login:
+      case Routes.loginOtp:
         return MaterialPageRoute(
           builder: (_) =>  LoginScreenOTP(),
           settings: settings,
@@ -33,12 +34,15 @@ class Routes {
           settings: settings,
         );
       default:
-        return MaterialPageRoute(
+     return isSkiaWeb ?   MaterialPageRoute(
           builder: (_) => const Scaffold(
             body: Center(child: Text('Unknown Route')),
           ),
           settings: settings,
-        );
+        ) :  MaterialPageRoute(
+          builder: (_) =>  LoginScreenOTP(),
+    settings: settings,
+    ) ;
     }
   }
 }
