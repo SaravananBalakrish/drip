@@ -19,6 +19,7 @@ import 'StateManagement/search_provider.dart';
 import 'app/app.dart';
 import 'StateManagement/customer_provider.dart';
 import 'firebase_options.dart';
+import 'flavors.dart';
 import 'modules/IrrigationProgram/state_management/irrigation_program_provider.dart';
 import 'modules/Preferences/state_management/preference_provider.dart';
 import 'modules/SystemDefinitions/state_management/system_definition_provider.dart';
@@ -44,12 +45,14 @@ FutureOr<void> main() async {
   const platform = MethodChannel("ble_raw");
   platform.setMethodCallHandler((call) async {
     if (call.method == "onRawAdv") {
-      //print("Raw adv bytes: ${call.arguments}");
+      print("Raw adv bytes: ${call.arguments}");
       // here you can parse advertisement bytes manually
     }
   });
   tz.initializeTimeZones();
   await NetworkUtils.initialize();
+
+  // F.appFlavor = Flavor.oroProduction;
 
   if(!kIsWeb){
     try {
@@ -105,9 +108,6 @@ FutureOr<void> main() async {
       debugPrint('Initialization error: $e');
     }
   }
-
-
-
 
   runApp(
     MultiProvider(
