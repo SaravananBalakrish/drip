@@ -8,7 +8,7 @@ import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/program_library.dart';
 import 'package:oro_drip_irrigation/views/customer/send_and_received/sent_and_received.dart';
 import 'package:oro_drip_irrigation/views/customer/site_config.dart';
-import 'package:oro_drip_irrigation/views/customer/stand_alone.dart';
+import 'package:oro_drip_irrigation/views/customer/stand_alone/stand_alone_wide.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/alarm_button.dart';
 import 'package:popover/popover.dart';
 import '../../models/customer/site_model.dart';
@@ -823,7 +823,7 @@ class _CustomerScreenControllerState extends State<CustomerScreenController> {
                                           borderRadius: BorderRadius.zero,
                                           child: StatefulBuilder(
                                             builder: (BuildContext context, StateSetter stateSetter) {
-                                              return StandAlone(siteId: vm.mySiteList.data[vm.sIndex].groupId,
+                                              return StandAloneWide(siteId: vm.mySiteList.data[vm.sIndex].groupId,
                                                   controllerId: currentMaster.controllerId,
                                                   customerId:vm.mySiteList.data[vm.sIndex].customerId,
                                                   deviceId: currentMaster.deviceId,
