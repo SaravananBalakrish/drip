@@ -1,6 +1,8 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/custom_card_table.dart';
+import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/custom_switch_row.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/customer/site_model.dart';
@@ -279,512 +281,130 @@ class _StandAloneNarrowState extends State<StandAloneNarrow> with SingleTickerPr
         .whereType<FertilizerSiteModel>()
         .toList();
 
-    final valveList = masterData.irrigationLine
-        .expand((line) => line.valveObjects ?? [])
-        .toList();
 
     return Column(
       children: [
         if(vm.ddCurrentPosition==0)...[
-          allSourcePumps.isNotEmpty ? Padding(
-            padding: const EdgeInsets.only(left: 12, right: 12, top: 8),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: (allSourcePumps.length*40)+51,
-                  child: Card(
-                    color: Colors.white,
-                    elevation: 1,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 35,
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).primaryColorLight.withOpacity(0.1),
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(5.0),
-                              topRight: Radius.circular(5.0),
-                            ),
-                          ),
-                          child: const Padding(
-                            padding: EdgeInsets.only(left: 10.0, top: 7),
-                            child: Text(
-                              'Source Pump',
-                              textAlign: TextAlign.left,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: allSourcePumps.length*40,
-                          child: DataTable2(
-                            columnSpacing: 12,
-                            horizontalMargin: 12,
-                            minWidth: 150,
-                            dataRowHeight: 40.0,
-                            headingRowHeight: 0,
-                            dataRowColor: WidgetStateProperty.all(Colors.white),
-                            columns: const [
-                              DataColumn2(
-                                label: Center(child: Text('', style: TextStyle(fontSize: 14),)),
-                                fixedWidth: 35,
-                              ),
-                              DataColumn2(
-                                  label: Text('',  style: TextStyle(fontSize: 14),),
-                                  size: ColumnSize.M
-                              ),
-                              DataColumn2(
-                                label: Center(
-                                  child: Text('', textAlign: TextAlign.right,),
-                                ),
-                                fixedWidth: 50,
-                              ),
-                            ],
-                            rows: List<DataRow>.generate(allSourcePumps.length, (index) => DataRow(cells: [
-                              DataCell(Center(child: Image.asset('assets/png/dp_pump.png',width: 30, height: 30,))),
-                              DataCell(Text(allSourcePumps[index].name, style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14))),
-                              DataCell(Transform.scale(
-                                scale: 0.7,
-                                child: Tooltip(
-                                  message: allSourcePumps[index].selected? 'Deselect' : 'Select',
-                                  child: Switch(
-                                    hoverColor: Colors.pink.shade100,
-                                    activeColor: Colors.teal,
-                                    value: allSourcePumps[index].selected,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        allSourcePumps[index].selected = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              )),
-                            ])),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+          if (allSourcePumps.isNotEmpty)...[
+            CustomCardTable(
+              title: "Source Pump",
+              rows: allSourcePumps.map((pump) {
+                return CustomSwitchRow(
+                  iconPath: 'assets/png/dp_pump.png',
+                  label: pump.name,
+                  value: pump.selected,
+                  onChanged: (val) {
+                    setState(() => pump.selected = val);
+                  },
+                );
+              }).toList(),
             ),
-          ):
-          Container(),
+          ],
         ],
 
-        allIrrigationPumps.isNotEmpty ? Padding(
-          padding: const EdgeInsets.only(left: 12, right: 12, top: 8),
-          child: Column(
-            children: [
-              SizedBox(
-                height: (allIrrigationPumps.length*40)+51,
-                child: Card(
-                  color: Colors.white,
-                  elevation: 1,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5.0), // Adjust the value as needed
-                  ),
-                  child: Column(
-                    children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.teal.shade50, // Background color (optional)
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(5.0),
-                            topRight: Radius.circular(5.0),
-                          ),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.only(left: 10.0, top: 8.0, bottom: 8.0), // Adjust values as needed
-                          child: Text(
-                            'Irrigation Pump',
-                            textAlign: TextAlign.left,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: (allIrrigationPumps.length*40)+3,
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 3,bottom: 3, right: 3),
-                          child: DataTable2(
-                            columnSpacing: 12,
-                            horizontalMargin: 12,
-                            minWidth: 150,
-                            dataRowHeight: 40.0,
-                            headingRowHeight: 0,
-                            dataRowColor: WidgetStateProperty.all(Colors.white),
-                            columns: const [
-                              DataColumn2(
-                                label: Center(child: Text('', style: TextStyle(fontSize: 14),)),
-                                fixedWidth: 35,
-                              ),
-                              DataColumn2(
-                                  label: Text('',  style: TextStyle(fontSize: 14),),
-                                  size: ColumnSize.M
-                              ),
-                              DataColumn2(
-                                label: Center(
-                                  child: Text('', textAlign: TextAlign.right,),
-                                ),
-                                fixedWidth: 50,
-                              ),
-                            ],
-                            rows: List<DataRow>.generate(allIrrigationPumps.length, (index) => DataRow(cells: [
-                              DataCell(Center(child: Image.asset('assets/png/dp_pump.png',width: 30, height: 30,))),
-                              DataCell(Text(allIrrigationPumps[index].name, style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14))),
-                              DataCell(Transform.scale(
-                                scale: 0.7,
-                                child: Tooltip(
-                                  message: allIrrigationPumps[index].selected? 'Deselect' : 'Select',
-                                  child: Switch(
-                                    hoverColor: Colors.pink.shade100,
-                                    activeColor: Colors.teal,
-                                    value: allIrrigationPumps[index].selected,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        allIrrigationPumps[index].selected = value;
-                                      });
-                                    },
-                                  ),
-                                ),
-                              )),
-                            ])),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ):
-        Container(),
-
-        filterSites.isNotEmpty? Padding(
-          padding: const EdgeInsets.only(left: 8, right: 5, top: 8),
-          child: Column(
-            children: filterSites.map((site) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: SizedBox(
-                  height: site.filters.length * 40 + 48,
-                  child: Card(
-                    elevation: 1,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.teal.shade50,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(5.0),
-                              topRight: Radius.circular(5.0),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0, top: 8.0, bottom: 8.0),
-                            child: Text(
-                              site.name,
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: site.filters.length * 40,
-                          child: DataTable2(
-                            columnSpacing: 12,
-                            horizontalMargin: 12,
-                            minWidth: 150,
-                            dataRowHeight: 40.0,
-                            headingRowHeight: 0,
-                            dataRowColor: WidgetStateProperty.all(Colors.white),
-                            columns: const [
-                              DataColumn2(
-                                label: Center(child: Text('', style: TextStyle(fontSize: 14))),
-                                fixedWidth: 35,
-                              ),
-                              DataColumn2(
-                                label: Text('', style: TextStyle(fontSize: 14)),
-                                size: ColumnSize.M,
-                              ),
-                              DataColumn2(
-                                label: Center(child: Text('', textAlign: TextAlign.right)),
-                                fixedWidth: 50,
-                              ),
-                            ],
-                            rows: site.filters.map((filter) {
-                              return DataRow(
-                                cells: [
-                                  DataCell(Center(
-                                    child: Image.asset(
-                                      'assets/png/filter.png',
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                  )),
-                                  DataCell(Text(
-                                    filter.name,
-                                    style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                                  )),
-                                  DataCell(Transform.scale(
-                                    scale: 0.7,
-                                    child: Tooltip(
-                                      message: filter.selected ? 'Close' : 'Open',
-                                      child: Switch(
-                                        hoverColor: Colors.pink.shade100,
-                                        activeColor: Colors.teal,
-                                        value: filter.selected,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            filter.selected = value;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  )),
-                                ],
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+        if (allIrrigationPumps.isNotEmpty)...[
+          CustomCardTable(
+            title: "Irrigation Pump",
+            rows: allIrrigationPumps.map((pump) {
+              return CustomSwitchRow(
+                iconPath: 'assets/png/dp_pump.png',
+                label: pump.name,
+                value: pump.selected,
+                onChanged: (val) {
+                  setState(() => pump.selected = val);
+                },
               );
             }).toList(),
           ),
-        ):
-        Container(),
+        ],
 
-        fertilizerSite.isNotEmpty? Padding(
-          padding: const EdgeInsets.only(left: 8, right: 5, top: 8),
-          child: Column(
-            children: fertilizerSite.map((site) {
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: SizedBox(
-                  height: (site.channel.length + site.agitator.length + site.boosterPump.length) * 40 + 48,
-                  child: Card(
-                    elevation: 1,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.teal.shade50,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(5.0),
-                              topRight: Radius.circular(5.0),
-                            ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 10.0, top: 8.0, bottom: 8.0),
-                            child: Text(
-                              site.name,
-                              textAlign: TextAlign.left,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: site.channel.length * 40, // Adjust height based on number of filters
-                          child: DataTable2(
-                            columnSpacing: 12,
-                            horizontalMargin: 12,
-                            minWidth: 150,
-                            dataRowHeight: 40.0,
-                            headingRowHeight: 0,
-                            dataRowColor: WidgetStateProperty.all(Colors.white),
-                            columns: const [
-                              DataColumn2(
-                                label: Center(child: Text('', style: TextStyle(fontSize: 14))),
-                                fixedWidth: 35,
-                              ),
-                              DataColumn2(
-                                label: Text('', style: TextStyle(fontSize: 14)),
-                                size: ColumnSize.M,
-                              ),
-                              DataColumn2(
-                                label: Center(child: Text('', textAlign: TextAlign.right)),
-                                fixedWidth: 50,
-                              ),
-                            ],
-                            rows: site.channel.map((channel) {
-                              return DataRow(
-                                cells: [
-                                  DataCell(Center(
-                                    child: Image.asset(
-                                      'assets/png/fert_chanel.png',
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                  )),
-                                  DataCell(Text(
-                                    channel.name,
-                                    style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                                  )),
-                                  DataCell(Transform.scale(
-                                    scale: 0.7,
-                                    child: Tooltip(
-                                      message: channel.selected ? 'Close' : 'Open',
-                                      child: Switch(
-                                        hoverColor: Colors.pink.shade100,
-                                        activeColor: Colors.teal,
-                                        value: channel.selected,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            channel.selected = value;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  )),
-                                ],
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                        SizedBox(
-                          height: site.boosterPump.length * 40, // Adjust height based on number of filters
-                          child: DataTable2(
-                            columnSpacing: 12,
-                            horizontalMargin: 12,
-                            minWidth: 150,
-                            dataRowHeight: 40.0,
-                            headingRowHeight: 0,
-                            dataRowColor: WidgetStateProperty.all(Colors.white),
-                            columns: const [
-                              DataColumn2(
-                                label: Center(child: Text('', style: TextStyle(fontSize: 14))),
-                                fixedWidth: 35,
-                              ),
-                              DataColumn2(
-                                label: Text('', style: TextStyle(fontSize: 14)),
-                                size: ColumnSize.M,
-                              ),
-                              DataColumn2(
-                                label: Center(child: Text('', textAlign: TextAlign.right)),
-                                fixedWidth: 50,
-                              ),
-                            ],
-                            rows: site.boosterPump.map((boosterPump) {
-                              return DataRow(
-                                cells: [
-                                  DataCell(Center(
-                                    child: Image.asset(
-                                      'assets/png/booster_pump.png',
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                  )),
-                                  DataCell(Text(
-                                    boosterPump.name,
-                                    style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                                  )),
-                                  DataCell(Transform.scale(
-                                    scale: 0.7,
-                                    child: Tooltip(
-                                      message: boosterPump.selected ? 'Close' : 'Open',
-                                      child: Switch(
-                                        hoverColor: Colors.pink.shade100,
-                                        activeColor: Colors.teal,
-                                        value: boosterPump.selected,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            boosterPump.selected = value;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  )),
-                                ],
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                        SizedBox(
-                          height: site.agitator.length * 40, // Adjust height based on number of filters
-                          child: DataTable2(
-                            columnSpacing: 12,
-                            horizontalMargin: 12,
-                            minWidth: 150,
-                            dataRowHeight: 40.0,
-                            headingRowHeight: 0,
-                            dataRowColor: WidgetStateProperty.all(Colors.white),
-                            columns: const [
-                              DataColumn2(
-                                label: Center(child: Text('', style: TextStyle(fontSize: 14))),
-                                fixedWidth: 35,
-                              ),
-                              DataColumn2(
-                                label: Text('', style: TextStyle(fontSize: 14)),
-                                size: ColumnSize.M,
-                              ),
-                              DataColumn2(
-                                label: Center(child: Text('', textAlign: TextAlign.right)),
-                                fixedWidth: 50,
-                              ),
-                            ],
-                            rows: site.agitator.map((agitator) {
-                              return DataRow(
-                                cells: [
-                                  DataCell(Center(
-                                    child: Image.asset(
-                                      'assets/png/agitator_gray.png',
-                                      width: 30,
-                                      height: 30,
-                                    ),
-                                  )),
-                                  DataCell(Text(
-                                    agitator.name,
-                                    style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 14),
-                                  )),
-                                  DataCell(Transform.scale(
-                                    scale: 0.7,
-                                    child: Tooltip(
-                                      message: agitator.selected ? 'Close' : 'Open',
-                                      child: Switch(
-                                        hoverColor: Colors.pink.shade100,
-                                        activeColor: Colors.teal,
-                                        value: agitator.selected,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            agitator.selected = value;
-                                          });
-                                        },
-                                      ),
-                                    ),
-                                  )),
-                                ],
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ],
-                    ),
+        if (filterSites.isNotEmpty)...[
+          Padding(
+            padding: const EdgeInsets.only(left: 8, right: 5, top: 8),
+            child: Column(
+              children: filterSites.map((site) {
+                final rows = site.filters.map((filter) {
+                  return CustomSwitchRow(
+                    iconPath: 'assets/png/filter.png',
+                    label: filter.name,
+                    value: filter.selected,
+                    onChanged: (value) {
+                      setState(() {
+                        filter.selected = value;
+                      });
+                    },
+                  );
+                }).toList();
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: CustomCardTable(
+                    title: site.name,
+                    rows: rows,
                   ),
-                ),
-              );
-            }).toList(),
-          ),
-        ):
-        Container(),
+                );
+              }).toList(),
+            ),
+          )
+        ],
+
+        if (fertilizerSite.isNotEmpty) ...[
+          Padding(
+            padding: const EdgeInsets.only(left: 8, right: 5, top: 8),
+            child: Column(
+              children: fertilizerSite.map((site) {
+                final rows = <DataRow>[];
+
+                rows.addAll(site.channel.map((channel) {
+                  return CustomSwitchRow(
+                    iconPath: 'assets/png/fert_chanel.png',
+                    label: channel.name,
+                    value: channel.selected,
+                    onChanged: (value) {
+                      setState(() {
+                        channel.selected = value;
+                      });
+                    },
+                  );
+                }));
+
+                rows.addAll(site.boosterPump.map((boosterPump) {
+                  return CustomSwitchRow(
+                    iconPath: 'assets/png/booster_pump.png',
+                    label: boosterPump.name,
+                    value: boosterPump.selected,
+                    onChanged: (value) {
+                      setState(() {
+                        boosterPump.selected = value;
+                      });
+                    },
+                  );
+                }));
+
+                rows.addAll(site.agitator.map((agitator) {
+                  return CustomSwitchRow(
+                    iconPath: 'assets/png/agitator_gray.png',
+                    label: agitator.name,
+                    value: agitator.selected,
+                    onChanged: (value) {
+                      setState(() {
+                        agitator.selected = value;
+                      });
+                    },
+                  );
+                }));
+
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: CustomCardTable(
+                    title: site.name,
+                    rows: rows,
+                  ),
+                );
+              }).toList(),
+            ),
+          )
+        ],
 
         ddPosition == 0 ? Column(
           mainAxisSize: MainAxisSize.min,
