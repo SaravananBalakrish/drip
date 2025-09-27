@@ -1619,11 +1619,11 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
           getValve.add('0');
         }
       }
-      String sequenceSerialNo = sq['sNo'].toString();
+      // String sequenceSerialNo = sq['sNo'].toString();
       // String valSerialNo = sq['valve'][v]['sNo'].toString().split('.')[1];
-      String zoneSerialNo = sequenceSerialNo.contains('.') ? sequenceSerialNo.split('.')[1] : sequenceSerialNo;
+      // String zoneSerialNo = sequenceSerialNo.contains('.') ? sequenceSerialNo.split('.')[1] : sequenceSerialNo;
       Map<String, dynamic> jsonPayload = {
-        'Zone_No' : zoneSerialNo,
+        'Zone_No' : sequenceData.indexOf(sq) + 1,
         'Program_No' : serialNumber,
         'SequenceData' : getValve.join(','),
         'ValveFlowrate' : getNominalFlow(),
