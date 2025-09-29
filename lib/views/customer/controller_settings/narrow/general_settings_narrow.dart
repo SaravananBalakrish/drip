@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../Screens/Dealer/controllerverssionupdate.dart';
@@ -33,7 +34,7 @@ class _GeneralSettingsNarrowState extends State<GeneralSettingsNarrow> {
       child: Consumer<GeneralSettingViewModel>(
         builder: (context, viewModel, _) {
 
-          final bool isNova = [56, 57, 58, 59].contains(viewModel.modelId);
+          final bool isEcoMdl = [...AppConstants.ecoGemModelList, ...AppConstants.pumpList].contains(viewModel.modelId);
 
           return Scaffold(
             appBar: AppBar(
@@ -106,8 +107,8 @@ class _GeneralSettingsNarrowState extends State<GeneralSettingsNarrow> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 5, bottom: 5),
                     child: Column(
-                      children: List.generate(isNova? 7 : 6, (index) => getSettingTile(context,
-                          viewModel, isNova? index + 5 : index + 6, vCustomer!.id, widget.controllerId, loggedInUser.id)),
+                      children: List.generate(isEcoMdl? 7 : 6, (index) => getSettingTile(context,
+                          viewModel, isEcoMdl? index + 5 : index + 6, vCustomer!.id, widget.controllerId, loggedInUser.id)),
                     ),
                   ),
                 ),
