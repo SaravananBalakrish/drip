@@ -15,6 +15,7 @@ import 'package:oro_drip_irrigation/providers/user_provider.dart';
 import 'Constants/notifi_service.dart';
 import 'app/app.dart';
 import 'firebase_options.dart';
+import 'flavors.dart';
 import 'modules/PumpController/state_management/pump_controller_provider.dart';
 
 // Local notifications plugin
@@ -57,7 +58,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   tz.initializeTimeZones();
-
+  F.appFlavor = Flavor.oroProduction;
   // Request runtime permissions before providers start
   if (!kIsWeb && Platform.isAndroid) {
     await requestAppPermissions();
