@@ -5,6 +5,7 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
+import '../../utils/constants.dart';
 import '../../utils/enums.dart';
 import '../../view_models/customer/general_setting_view_model.dart';
 import '../common/user_profile/create_account.dart';
@@ -363,7 +364,7 @@ class _GeneralSettingState extends State<GeneralSetting> {
                       flex: 1,
                       child: Column(
                         children: [
-                          if([56, 57, 58, 59].contains(viewModel.modelId))...[
+                          if([...AppConstants.ecoGemModelList, ...AppConstants.pumpList].contains(viewModel.modelId))...[
                             ListTile(
                               title: const Text('Sim card number'),
                               leading: const Icon(Icons.sim_card_outlined),
