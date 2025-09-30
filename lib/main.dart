@@ -76,33 +76,36 @@ FutureOr<void> main() async {
     await requestAppPermissions();
   }
   // Firebase init
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  if (!kIsWeb) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Firebase Messaging
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  await messaging.requestPermission(alert: true, badge: true, sound: true);
+    // Firebase Messaging
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission(alert: true, badge: true, sound: true);
 
-  // Local notifications
-  const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-  const initSettings = InitializationSettings(android: androidInit);
-  await flutterLocalNotificationsPlugin.initialize(initSettings);
+    // Local notifications
+    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const initSettings = InitializationSettings(android: androidInit);
+    await flutterLocalNotificationsPlugin.initialize(initSettings);
 
-  // Background messaging
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // Background messaging
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  // Foreground
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    if (message.notification != null) {
-      NotificationService().showNotification(
-        title: message.notification!.title,
-        body: message.notification!.body,
-      );
-    }
-  });
+    // Foreground
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        NotificationService().showNotification(
+          title: message.notification!.title,
+          body: message.notification!.body,
+        );
+      }
+    });
 
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    debugPrint("Message clicked: ${message.messageId}");
-  });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      debugPrint("Message clicked: ${message.messageId}");
+    });
+  }
+
   runApp(
     MultiProvider(
       providers: [
