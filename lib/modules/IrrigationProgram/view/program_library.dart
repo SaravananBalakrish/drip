@@ -142,7 +142,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
             IconButton(
                 onPressed: () async{
                   await getUserDayCountRtc();
-                  showIrrigationSettings();
+                  showIrrigationSettings(context);
                 },
                 icon: const Icon(Icons.schedule)
             )
@@ -263,11 +263,11 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
     );
   }
 
-  void showIrrigationSettings() {
-    final theme = Theme.of(context);
+  void showIrrigationSettings(BuildContext parentContext) {
+    final theme = Theme.of(parentContext);
 
     showModalBottomSheet(
-      context: context,
+      context: parentContext,
       showDragHandle: true,
       isScrollControlled: false,
       scrollControlDisabledMaxHeightRatio: 0.7,
@@ -518,10 +518,14 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                     ElevatedButton(
                       onPressed: () async{
                         try {
-
-                          final Map<String, dynamic> dataToMqtt = {"sentSms": "daycountrtctim,${dayCountRtcModel.dayCountRtc},${dayCountRtcModel.dayCountRtcTime}"};
-                          MqttService().topicToPublishAndItsMessage(jsonEncode(dataToMqtt), "${Environment.mqttPublishTopic}/${widget.deviceId}",);
-                          /*await validatePayloadSent(
+                          final Map<String, dynamic> dataToMqtt = {
+                            "7000": {
+                              "7001":
+                              "${dayCountRtcModel.dayCountRtc ? 1 : 0},${DateFormat.Hm().format(DateTime.parse('2025-01-01 ${dayCountRtcModel.dayCountRtcTime}')).split(':').join(',')}"
+                            }
+                          };
+                          // MqttService().topicToPublishAndItsMessage(jsonEncode(dataToMqtt), "${Environment.mqttPublishTopic}/${widget.deviceId}",);
+                          await validatePayloadSent(
                               dialogContext: context,
                               context: context,
                               acknowledgedFunction: () {
@@ -531,7 +535,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                                 // showSnackBar(message: "${mqttPayloadProvider.messageFromHw['Name']} from controller", context: context);
                               },
                               payload: dataToMqtt,
-                              payloadCode: "2500",
+                              payloadCode: "7000",
                               deviceId: widget.deviceId
                           ).whenComplete(() async {
                             if(MqttService().acknowledgementPayload!['cM']['4201']['Code'] != "200") {
@@ -539,7 +543,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                                 controllerReadStatusForDayCount = "0";
                               });
                             }
-                          });*/
+                          });
 
                           Map<String, dynamic> userData = {
                             "userId": widget.customerId,
@@ -561,10 +565,13 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                             log("HTTP Request failed or received an unexpected response.");
                             throw Exception("HTTP Request failed or received an unexpected response.");
                           }
-                        } catch (e) {
+                        } catch (e, stackTrace) {
+                          print("Error :: $e");
+                          print("stackTrace :: $stackTrace");
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'), backgroundColor: Colors.red,));
                           log('Error: $e');
                         }
+                        Future.delayed(const Duration(seconds: 1));
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/config_Maker/model/device_object_model.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/schedule_screen.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/sequence_screen.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
 import '../state_management/irrigation_program_provider.dart';
 import '../widgets/custom_animated_switcher.dart';
@@ -79,7 +80,7 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
   @override
   Widget build(BuildContext context) {
     irrigationProgramProvider = Provider.of<IrrigationProgramMainProvider>(context);
-    final isEcoGem = [3].contains(widget.modelId);
+    final isEcoGem = AppConstants.ecoGemModelList.contains(widget.modelId);
 
     return irrigationProgramProvider.sampleIrrigationLine != null ? LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {

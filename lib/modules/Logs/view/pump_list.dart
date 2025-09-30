@@ -91,6 +91,7 @@ class _PumpListState extends State<PumpList> {
                             controllerId: widget.masterData.controllerId,
                             nodeControllerId: AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
                             masterData: widget.masterData,
+                            showMobileCalendar: true,
                           ),
                         ) : Navigator.push(
                                 context,
@@ -129,6 +130,7 @@ class _PumpListState extends State<PumpList> {
                             controllerId: widget.masterData.controllerId,
                             nodeControllerId: AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
                             masterData: widget.masterData,
+                            showMobileCalendar: true,
                           ),
                         ) : Navigator.push(
                                 context,

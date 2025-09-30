@@ -28,9 +28,22 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
   @override
   void initState() {
     // TODO: implement initState
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: _calculateTabLength(), vsync: this);
     getUserNodePumpList();
     super.initState();
+  }
+
+  int _calculateTabLength() {
+    int length = 0;
+    if (AppConstants.ecoGemModelList.contains(widget.masterData.modelId)) {
+      length = 1;
+    } else {
+      length = 2;
+    }
+    if (!AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? pumpList.isNotEmpty : true) {
+      length += 1;
+    }
+    return length;
   }
 
   Future<void> getUserNodePumpList() async{
@@ -40,6 +53,7 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
     setState(() {
       if(result.statusCode == 200 && jsonDecode(result.body)['data'] != null) {
         pumpList = jsonDecode(result.body)['data'];
+        tabController = TabController(length: _calculateTabLength(), vsync: this);
       } else {
         message = jsonDecode(result.body)['message'];
       }
@@ -58,53 +72,50 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: DefaultTabController(
-            length: tabController.length,
-            child: Column(
-              children: [
+          child: DefaultTabController(
+              length: tabController.length,
+              child: Column(
+                children: [
                   TabBar(
-                    tabs: [
-                      if(AppConstants.ecoGemModelList.contains(widget.masterData.modelId))
-                        ...[
-                          const Tab(text: "Motor Cyclic Log",)
-                        ]
-                      else
-                        ...[
-                          const Tab(text: "Irrigation Log",),
-                          const Tab(text: "Standalone Log",),
-                        ],
-                      if(!AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? pumpList.isNotEmpty : true)
-                        const Tab(text: "Pump Log",)
-                      else
-                        Container()
-
-                    ]
-                ),
-                // SizedBox(height: 10,),
-                Expanded(
-                    child: TabBarView(
-                        children: [
-                          if(AppConstants.ecoGemModelList.contains(widget.masterData.modelId))
-                            MotorCyclicLog(userData: widget.userData)
-                          else
-                            ...[
-                              ListOfLogConfig(userData: widget.userData,),
-                              StandaloneLog(userData: widget.userData,),
-                            ],
-                          if(!AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? pumpList.isNotEmpty : true)
-                            PumpList(
-                              pumpList: pumpList,
-                              userId: widget.userData['customerId'],
-                              masterData: widget.masterData,
-                            )
-                          else
-                            Container()
-                        ]
-                    )
-                )
-              ],
-            )
-        )
+                      controller: tabController,
+                      tabs: [
+                        if(AppConstants.ecoGemModelList.contains(widget.masterData.modelId))
+                          ...[
+                            const Tab(text: "Motor Cyclic Log",)
+                          ]
+                        else
+                          ...[
+                            const Tab(text: "Irrigation Log",),
+                            const Tab(text: "Standalone Log",),
+                          ],
+                        if(!AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? pumpList.isNotEmpty : true)
+                          const Tab(text: "Pump Log",)
+                      ]
+                  ),
+                  // SizedBox(height: 10,),
+                  Expanded(
+                      child: TabBarView(
+                          controller: tabController,
+                          children: [
+                            if(AppConstants.ecoGemModelList.contains(widget.masterData.modelId))
+                              MotorCyclicLog(userData: widget.userData)
+                            else
+                              ...[
+                                ListOfLogConfig(userData: widget.userData,),
+                                StandaloneLog(userData: widget.userData,),
+                              ],
+                            if(!AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? pumpList.isNotEmpty : true)
+                              PumpList(
+                                pumpList: pumpList,
+                                userId: widget.userData['customerId'],
+                                masterData: widget.masterData,
+                              )
+                          ]
+                      )
+                  )
+                ],
+              )
+          )
       ),
     );
   }

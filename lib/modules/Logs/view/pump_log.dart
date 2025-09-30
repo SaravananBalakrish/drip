@@ -15,7 +15,8 @@ import '../widgets/time_line2.dart';
 class PumpLogScreen extends StatefulWidget {
   final int userId,controllerId, nodeControllerId;
   final MasterControllerModel masterData;
-  const PumpLogScreen({super.key, required this.userId, required this.controllerId, this.nodeControllerId = 0, required this.masterData});
+  final bool showMobileCalendar;
+  const PumpLogScreen({super.key, required this.userId, required this.controllerId, this.nodeControllerId = 0, required this.masterData, this.showMobileCalendar = false});
 
   @override
   State<PumpLogScreen> createState() => _PumpLogScreenState();
@@ -49,7 +50,7 @@ class _PumpLogScreenState extends State<PumpLogScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            if(!kIsWeb)
+            if(kIsWeb ? widget.showMobileCalendar : true)
               MobileCustomCalendar(
                 focusedDay: readProvider.focusedDay,
                 calendarFormat: readProvider.calendarFormat,

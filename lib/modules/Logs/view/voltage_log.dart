@@ -14,7 +14,8 @@ import '../widgets/custom_calendar_mobile.dart';
 class PumpVoltageLogScreen extends StatefulWidget {
   final int userId, controllerId, nodeControllerId;
   final MasterControllerModel masterData;
-  const PumpVoltageLogScreen({super.key, required this.userId, required this.controllerId, this.nodeControllerId = 0, required this.masterData});
+  final bool showMobileCalendar;
+  const PumpVoltageLogScreen({super.key, required this.userId, required this.controllerId, this.nodeControllerId = 0, required this.masterData, this.showMobileCalendar = false});
 
   @override
   State<PumpVoltageLogScreen> createState() => _PumpVoltageLogScreenState();
@@ -84,7 +85,7 @@ class _PumpVoltageLogScreenState extends State<PumpVoltageLogScreen> {
       body: SafeArea(
         child: (pumpControllerProvider.voltageData.isNotEmpty || pumpControllerProvider.message.isNotEmpty) ? Column(
           children: [
-            if(!kIsWeb)
+            if(kIsWeb ? widget.showMobileCalendar : true)
               MobileCustomCalendar(
                 focusedDay: pumpControllerProvider.focusedDay,
                 calendarFormat: pumpControllerProvider.calendarFormat,
