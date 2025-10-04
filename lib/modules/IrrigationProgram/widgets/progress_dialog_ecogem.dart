@@ -35,6 +35,8 @@ class _EcoGemProgressDialogState extends State<EcoGemProgressDialog> {
     "2602": "9 to 16 zones payload",
     "2603": "17 to 24 zones payload",
     "2604": "25 to 32 zones payload",
+    "7000": "Day count RTC payload",
+    "8000": "Program queue payload",
   };
 
   @override
@@ -57,8 +59,8 @@ class _EcoGemProgressDialogState extends State<EcoGemProgressDialog> {
   }
 
   void _checkAllProcessed() {
-    bool allProcessed = payloadStatuses.every((p) => p['status'] != 'Pending');
-    bool allSent = payloadStatuses.every((p) => p['status'] == 'Sent');
+    bool allProcessed = payloadStatuses.where((e) => e['selected']).every((p) => p['status'] != 'Pending');
+    bool allSent = payloadStatuses.where((e) => e['selected']).every((p) => p['status'] == 'Sent');
 
     if(mounted) {
       setState(() {
@@ -244,8 +246,8 @@ class _EcoGemProgressDialogState extends State<EcoGemProgressDialog> {
                       ],
                     ),
                   ),
-                  title: Text(status['reference']),
-                  subtitle: Text(message),
+                  title: Text(message),
+                  // subtitle: Text(message),
                   value: status['selected'],
                   onChanged: (bool? value) {
                     setState(() {

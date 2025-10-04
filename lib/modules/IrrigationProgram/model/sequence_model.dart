@@ -760,6 +760,9 @@ class ProgramQueueModel {
   List<String> queueOrderRestartTimes;
   bool skipDays;
   String noOfSkipDays;
+  bool runDays;
+  String noOfRunDays;
+  bool queueReset;
 
   ProgramQueueModel({
     required this.programQueue,
@@ -768,27 +771,50 @@ class ProgramQueueModel {
     required this.queueOrderRestartTimes,
     required this.skipDays,
     required this.noOfSkipDays,
+    required this.runDays,
+    required this.noOfRunDays,
+    required this.queueReset,
   });
+
+  // Helper method to safely convert a dynamic list to List<String>
+  static List<String> _listToString(List<dynamic>? input, List<String> defaultValue) {
+    if (input == null || input.isEmpty) {
+      return defaultValue;
+    }
+    return input.map((e) => e.toString()).toList();
+  }
 
   factory ProgramQueueModel.fromJson(Map<String, dynamic> json) {
     return ProgramQueueModel(
-      programQueue: json["dayCountRtc"] ?? false,
-      queueOrder: json["dayCountRtcTime"] ?? List<String>.from(['0', '0', '0', '0', '0', '0']),
+      programQueue: json["programQueue"] ?? false,
+      queueOrder: _listToString(
+        json["queueOrder"],
+        ['0', '0', '0', '0'],
+      ),
       autoQueueRestart: json["autoQueueRestart"] ?? false,
-      queueOrderRestartTimes: json["queueOrderRestartTimes"] ?? List.filled(6, '00:00:00'),
+      queueOrderRestartTimes: _listToString(
+        json["queueOrderRestartTimes"],
+        ['00:00:00', '00:00:00', '00:00:00', '00:00:00'],
+      ),
       skipDays: json["skipDays"] ?? false,
-      noOfSkipDays: json["skipDays"] ?? '0',
+      noOfSkipDays: json["noOfSkipDays"] ?? '0',
+      runDays: json["runDays"] ?? false,
+      noOfRunDays: json["noOfRunDays"] ?? '0',
+      queueReset: json["queueReset"] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      "dayCountRtc" : programQueue,
-      "dayCountRtcTime" : queueOrder,
-      "autoQueueRestart" : autoQueueRestart,
-      "queueOrderRestartTimes" : queueOrderRestartTimes,
-      "skipDays" : skipDays,
-      "noOfSkipDays" : noOfSkipDays
+      "programQueue": programQueue,
+      "queueOrder": queueOrder,
+      "autoQueueRestart": autoQueueRestart,
+      "queueOrderRestartTimes": queueOrderRestartTimes,
+      "skipDays": skipDays,
+      "noOfSkipDays": noOfSkipDays,
+      "runDays": runDays,
+      "noOfRunDays": noOfRunDays,
+      "queueReset": queueReset,
     };
   }
 }
