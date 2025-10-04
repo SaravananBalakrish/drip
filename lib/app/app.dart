@@ -9,6 +9,7 @@ import 'package:oro_drip_irrigation/modules/irrigation_report/view/zone_cyclic_l
 import '../Screens/Dealer/bLE_update.dart';
 import '../Screens/Dealer/ble_controllerlog_ftp.dart';
 import '../Screens/login_screenOTP/landing_screen.dart';
+import '../Screens/login_screenOTP/login_screenotp.dart';
 import '../flavors.dart';
 import '../modules/constant/view/constant_base_page.dart';
 import '../utils/Theme/smart_comm_theme.dart';
@@ -79,7 +80,8 @@ Widget navigateToInitialScreen(String route) {
   var isOro = F.appFlavor?.name.contains('oro') ?? false;
   switch (route) {
     case Routes.login:
-       return kIsWeb ? const LoginScreen() : isOro ? const LandingScreen() : const LoginScreen();
+       return LoginScreenOTP();
+       // return kIsWeb ? const LoginScreen() : isOro ? const LandingScreen() : const LoginScreen();
      case Routes.dashboard:
        return const ScreenController();
     default:

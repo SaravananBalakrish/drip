@@ -99,18 +99,22 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
       if (getUserDayCountRtcResult.statusCode == 200) {
         final responseJson = getUserDayCountRtcResult.body;
         final convertedJson = jsonDecode(responseJson);
+        print("convertedJson ::: $convertedJson");
         if(convertedJson['data']['dayCountRtc'] != null) {
           setState(() {
             dayCountRtcModel = DayCountRtcModel.fromJson(convertedJson['data']['dayCountRtc']);
-            // programQueueModel = ProgramQueueModel.fromJson(convertedJson['data']['programQueue']);
+            if(AppConstants.ecoGemPlusModelList.contains(widget.modelId)) {
+              programQueueModel = ProgramQueueModel.fromJson(convertedJson['data']['programQueue']);
+            }
           });
         }
       } else {
         log("HTTP Request failed or received an unexpected response.");
         throw Exception("HTTP Request failed or received an unexpected response.");
       }
-    } catch (e) {
-      log('Error: $e');
+    } catch (e, stackTrace) {
+      log('Error in getUserDayCountRtc : $e');
+      log('Stack Trace in getUserDayCountRtc: $stackTrace');
     }
   }
 
@@ -139,12 +143,12 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
         ),
         actions: [
           if(AppConstants.ecoGemAndPlusModelList.contains(widget.modelId))
-            IconButton(
+            FilledButton(
                 onPressed: () async{
                   await getUserDayCountRtc();
                   showIrrigationSettings(context);
                 },
-                icon: const Icon(Icons.schedule)
+                child: const Text("Day count RTC")
             )
         ],
       ),
@@ -335,12 +339,13 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: Text(
-                          'Program runs at this time daily!',
+                          'Program runs daily at this time!',
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                       ),
                     ],
                     const SizedBox(height: 20),
+                    // if(AppConstants.ecoGemAndPlusModelList.contains(widget.modelId))...[
                     if(AppConstants.ecoGemPlusModelList.contains(widget.modelId))...[
                       const Divider(),
                       // Program Queue Section
@@ -366,7 +371,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                       ),
                       if (programQueueModel.programQueue) ...[
                         SwitchListTile(
-                          title: const Text('Auto-Restart Queue'),
+                          title: const Text('Enable Queue Restart'),
                           value: programQueueModel.autoQueueRestart,
                           onChanged: (value) {
                             setState(() {
@@ -397,7 +402,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                                     child: Text('${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold),),
                                   ),
                                   title: DropdownButtonFormField<String>(
-                                    value: programQueueModel.queueOrder[index] != '0' ? programQueueModel.queueOrder[index] : '0',
+                                    initialValue: programQueueModel.queueOrder[index] != '0' ? programQueueModel.queueOrder[index] : '0',
                                     decoration: InputDecoration(
                                       // labelText: 'Program ${index + 1}',
                                       border: OutlineInputBorder(
@@ -496,7 +501,55 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                             },
                           ),
                         ],
-                        const SizedBox(height: 16),
+                        SwitchListTile(
+                          title: const Text('Enable Run Days'),
+                          value: programQueueModel.runDays,
+                          onChanged: (value) {
+                            setState(() {
+                              programQueueModel.runDays = value;
+                            });
+                          },
+                          activeColor: theme.primaryColor,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        if (programQueueModel.runDays) ...[
+                          const SizedBox(height: 16),
+                          ListTile(
+                            title: const Text('Number of Run Days'),
+                            subtitle: Text('${programQueueModel.noOfRunDays} days'),
+                            leading: Icon(Icons.calendar_today, color: theme.primaryColor),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            onTap: () async {
+                              final days = await showDialog<int>(
+                                context: context,
+                                builder: (context) => NumberPickerDialog(
+                                  initialValue: int.parse(programQueueModel.noOfRunDays),
+                                  minValue: 1,
+                                  maxValue: 30,
+                                ),
+                              );
+                              if (days != null) {
+                                setState(() {
+                                  programQueueModel.noOfRunDays = days.toString();
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                        SwitchListTile(
+                          title: const Text('Queue Reset'),
+                          value: programQueueModel.queueReset,
+                          onChanged: (value) {
+                            setState(() {
+                              programQueueModel.queueReset = value;
+                            });
+                          },
+                          activeColor: theme.primaryColor,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
                         const Text(
                           'Queue Preview',
                           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
@@ -520,38 +573,59 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                     ElevatedButton(
                       onPressed: () async{
                         try {
-                          final Map<String, dynamic> dataToMqtt = {
+                          final Map<String, dynamic> dayCountRtcToNova = {
                             "7000": {
                               "7001":
                               "${dayCountRtcModel.dayCountRtc ? 1 : 0},${DateFormat.Hm().format(DateTime.parse('2025-01-01 ${dayCountRtcModel.dayCountRtcTime}')).split(':').join(',')}"
                             }
                           };
-                          // MqttService().topicToPublishAndItsMessage(jsonEncode(dataToMqtt), "${Environment.mqttPublishTopic}/${widget.deviceId}",);
-                          await validatePayloadSent(
-                              dialogContext: context,
-                              context: context,
-                              acknowledgedFunction: () {
-                                setState(() {
-                                  controllerReadStatusForDayCount = "1";
-                                });
-                                // showSnackBar(message: "${mqttPayloadProvider.messageFromHw['Name']} from controller", context: context);
-                              },
-                              payload: dataToMqtt,
-                              payloadCode: "7000",
-                              deviceId: widget.deviceId
-                          ).whenComplete(() async {
-                            if(MqttService().acknowledgementPayload!['cM']['4201']['Code'] != "200") {
-                              setState(() {
-                                controllerReadStatusForDayCount = "0";
-                              });
+
+                          final Map<String, dynamic> programQueueToNova = {
+                            "8000": {
+                              "8001":
+                              "${programQueueModel.programQueue ? 1 : 0},"
+                                  "${programQueueModel.queueOrder.join(',')},"
+                                  "${programQueueModel.queueReset ? 1 : 0},"
+                                  "${programQueueModel.queueOrderRestartTimes.join(',').replaceAll(':', ',')},"
+                                  "${programQueueModel.skipDays ? 1 : 0},"
+                                  "${programQueueModel.noOfSkipDays},"
+                                  "${programQueueModel.runDays ? 1 : 0},"
+                                  "${programQueueModel.noOfRunDays},"
+                                  "${programQueueModel.queueReset ? 1 : 0}"
                             }
-                          });
+                          };
+
+                          final List<String> payloadList = [
+                            jsonEncode(dayCountRtcToNova),
+                            // if(AppConstants.ecoGemPlusModelList.contains(widget.modelId))
+                              jsonEncode(programQueueToNova)
+                          ];
+
+                          final result = await showDialog<String>(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return EcoGemProgressDialog(
+                                payloads: List<String>.from(payloadList),
+                                deviceId: widget.deviceId,
+                                mqttService: MqttService(),
+                              );
+                            },
+                          );
+
+                          if (result != null) {
+                            setState(() {
+                              controllerReadStatus = result;
+                            });
+                          }
 
                           Map<String, dynamic> userData = {
                             "userId": widget.customerId,
                             "controllerId": widget.controllerId,
                             "dayCountRtc": {
-                              "dayCountRtc": dayCountRtcModel.toJson()
+                              "dayCountRtc": dayCountRtcModel.toJson(),
+                              if(AppConstants.ecoGemPlusModelList.contains(widget.modelId))
+                                "programQueue": programQueueModel.toJson()
                             },
                             "createUser": widget.userId,
                             "controllerReadStatus": controllerReadStatusForDayCount
