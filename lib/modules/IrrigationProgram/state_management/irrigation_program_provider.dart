@@ -2421,8 +2421,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       }
     }
 
-    double selectedHeadUnits = selectedObjects!.firstWhere((e) => e.objectId == 2).sNo ?? 0.0;
-
+    double selectedHeadUnits = selectedObjects!.isNotEmpty ? selectedObjects?.firstWhere((e) => e.objectId == 2).sNo ?? 0.0 : 0.0;
     print("selectedHeadUnits :: $selectedHeadUnits");
     List<double> availableIrrigationPumps = [];
     // pumpStationFlowRate
