@@ -78,10 +78,15 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     alarmDL = mqttProvider.alarmDL;
 
     isNotCommunicate = isDeviceNotCommunicating(mqttProvider.liveDateAndTime);
-    if(activeDeviceId == mySiteList.data[sIndex].master[mIndex].deviceId){
+    if(activeDeviceId == mySiteList.data[sIndex].master[mIndex].deviceId) {
 
-      final decoded = jsonDecode(mqttProvider.receivedPayload);
-      mySiteList.data[sIndex].master[mIndex].live = LiveMessage.fromJson(decoded);
+      bool isGem = [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].
+      contains(mySiteList.data[sIndex].master[mIndex].modelId);
+
+      if(isGem){
+        final decoded = jsonDecode(mqttProvider.receivedPayload);
+        mySiteList.data[sIndex].master[mIndex].live = LiveMessage.fromJson(decoded);
+      }
 
       updateLivePayload(wifiStrength, liveDateAndTime, currentSchedule, lineLiveMessage);
     }
