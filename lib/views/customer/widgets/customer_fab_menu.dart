@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/views/customer/widgets/password_field.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/customer/site_model.dart';
@@ -14,11 +15,11 @@ import '../../../modules/bluetooth_low_energy/view/node_connection_page.dart';
 import '../../../services/communication_service.dart';
 import '../../../utils/constants.dart';
 import '../../../view_models/customer/customer_screen_controller_view_model.dart';
-import '../../mobile/mobile_screen_controller.dart';
 import '../input_output_connection_details.dart';
 import '../node_list/node_list.dart';
 import '../send_and_received/sent_and_received.dart';
 import '../stand_alone/stand_alone_narrow.dart';
+import 'bluetooth_scan_tile.dart';
 
 class CustomerFabMenu extends StatelessWidget {
   final dynamic currentMaster;
