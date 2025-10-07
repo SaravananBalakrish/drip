@@ -17,7 +17,7 @@ import '../../../../modules/calibration/view/calibration_screen.dart';
 import '../../../../modules/constant/view/constant_base_page.dart';
 import '../../../../modules/fertilizer_set/view/fertilizer_Set_screen.dart';
 import '../../../../modules/global_limit/view/global_limit_screen.dart';
-import '../../../mobile/general_setting.dart';
+import '../../../common/general_setting.dart';
 import '../../crop_advisory_form.dart';
 import '../wide/condition_library_wide.dart';
 import '../narrow/condition_library_narrow.dart';
