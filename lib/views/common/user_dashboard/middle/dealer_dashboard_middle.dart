@@ -15,6 +15,9 @@ class DealerDashboardMiddle extends StatelessWidget {
 
     final viewModel = context.watch<ProductStockViewModel>();
 
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    final screenHeight = MediaQuery.sizeOf(context).height;
+
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(3.0),
@@ -28,12 +31,8 @@ class DealerDashboardMiddle extends StatelessWidget {
                 child: Column(children: [
                   SizedBox(
                       width: MediaQuery.sizeOf(context).width,
-                      height: 400,
-                      child: const Card(
-                          elevation:1,
-                          color:Colors.white,
-                          child: AnalyticsView(isNarrow: false, userType: 2)
-                      )
+                      height: (screenWidth < 950 && screenHeight > 1000) ? 600 : 400,
+                      child: const AnalyticsView(screenType: 'Middle', userType: 2)
                   ),
                   SizedBox(
                       width: MediaQuery.sizeOf(context).width,
