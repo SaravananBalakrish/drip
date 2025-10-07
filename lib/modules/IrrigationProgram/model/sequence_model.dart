@@ -487,20 +487,27 @@ class NewAlarmList {
 }
 
 class ProgramLibrary {
-  List<String> programType;
+  List<String> defaultProgramTypes;
   List<Program> program;
   int programLimit;
   int agitatorCount;
 
   ProgramLibrary(
-      {required this.programType,
+      {required this.defaultProgramTypes,
         required this.program,
         required this.programLimit,
         required this.agitatorCount});
 
   factory ProgramLibrary.fromJson(Map<String, dynamic> json) {
+    List<String> programTypes = [json['data']['programType'][0] ?? 'Irrigation Program'];
+    if(json['data']['agitatorCount'] > 0) {
+      programTypes.add(json['data']['programType'][1]);
+    }
+    if(json['data']['fanCount'] > 0 || json['data']['foggerCount'] > 0 || json['data']['lightCount'] > 0) {
+      programTypes.add(json['data']['programType'][2]);
+    }
     return ProgramLibrary(
-      programType: List<String>.from(json['data']['programType'] ?? []),
+      defaultProgramTypes: List<String>.from(programTypes),
       // programLimit: 4,
       programLimit: json['data']['programLimit'],
       agitatorCount: json['data']['agitatorCount'] ?? 0,

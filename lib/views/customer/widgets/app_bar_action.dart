@@ -16,6 +16,7 @@ import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/enums.dart';
+import '../../../utils/helpers/screen_helper.dart';
 import '../../../utils/routes.dart';
 import '../../../utils/shared_preferences_helper.dart';
 import '../../../view_models/customer/customer_screen_controller_view_model.dart';
@@ -372,9 +373,9 @@ Widget _buildNonGemActions(BuildContext context, dynamic master,
               context,
               MaterialPageRoute(
                 builder: (context) => SentAndReceived(
-                  customerId: loggedInUser.id,
+                  customerId: viewedCustomer!.id,
                   controllerId: master.controllerId,
-                  isWide: true,
+                  isWide: ScreenHelper.getScreenType(MediaQuery.of(context).size.width) == ScreenType.wide,
                 ),
               ),
             );

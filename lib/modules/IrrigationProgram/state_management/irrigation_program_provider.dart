@@ -126,7 +126,9 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
 
         // print("_sampleIrrigationLine :: ${_sampleIrrigationLine!.map((e) => e.irrigationLine.toJson())}");
         if(_fertilizerSite != null) {
-          _agitators = fertilizerSite!.map((e) => e.agitator != null ? List<DeviceObjectModel>.from(e.agitator!) : [])
+          _agitators = fertilizerSite!.map((e) {
+            return e.agitator != null ? List<DeviceObjectModel>.from(e.agitator!) : [];
+          })
             .expand((list) => list)
             .whereType<DeviceObjectModel>()
             .toList();
@@ -2691,52 +2693,27 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
 
   void updateProgramName(dynamic newValue, String type) {
     switch (type) {
-      case 'programName':programName = newValue != '' ? newValue : programName;
-      break;
-      case 'priority':priority = newValue;
-      break;
-      case 'completion':isCompletionEnabled = newValue as bool;
-      break;
-      case 'programType':selectedProgramType = newValue as String;
-      break;
-      case "delayBetweenZones": _programDetails!.delayBetweenZones = newValue;
-      break;
-      case "adjustPercentage": _programDetails!.adjustPercentage = newValue;
-      break;
+      case 'programName':
+        programName = newValue != '' ? newValue : programName;
+        break;
+      case 'priority':
+        priority = newValue;
+        break;
+      case 'completion':
+        isCompletionEnabled = newValue as bool;
+        break;
+      case 'programType':
+        selectedProgramType = newValue as String;
+        break;
+      case "delayBetweenZones":
+        _programDetails!.delayBetweenZones = newValue;
+        break;
+      case "adjustPercentage":
+        _programDetails!.adjustPercentage = newValue;
+        break;
       default:
         log("Not found");
     }
-    notifyListeners();
-  }
-
-  bool isIrrigationProgram = false;
-  bool isAgitatorProgram = false;
-  bool showIrrigationPrograms = false;
-  bool showAgitatorPrograms = false;
-  bool showAllPrograms = true;
-  bool isActive = true;
-
-  void updateActiveProgram() {
-    isActive = !isActive;
-    notifyListeners();
-  }
-
-  void updateShowPrograms(all, irrigation, agitator, active) {
-    showAllPrograms = all;
-    showIrrigationPrograms = irrigation;
-    showAgitatorPrograms = agitator;
-    notifyListeners();
-  }
-
-  void updateIsIrrigationProgram() {
-    isIrrigationProgram = true;
-    isAgitatorProgram = false;
-    notifyListeners();
-  }
-
-  void updateIsAgitatorProgram() {
-    isAgitatorProgram = true;
-    isIrrigationProgram = false;
     notifyListeners();
   }
 
