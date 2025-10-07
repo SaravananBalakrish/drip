@@ -20,4 +20,5 @@ class UserChatRepository {
   Future<http.Response> createUserChat(body) async {
     return await apiService.postRequest('/user/chat/create', body);
   }
+
 }
