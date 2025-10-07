@@ -8,16 +8,16 @@ import 'sales_bar_chart.dart';
 
 
 class AnalyticsView extends StatelessWidget {
-  const AnalyticsView({super.key, required this.userType, required this.isNarrow});
+  const AnalyticsView({super.key, required this.userType, required this.screenType});
   final int userType;
-  final bool isNarrow;
+  final String screenType;
 
 
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<AnalyticsViewModel>();
 
-    if(isNarrow){
+    if(screenType=='Narrow'){
       return Container(
         color: Colors.white,
         child: buildContentBody(context, viewModel),
@@ -34,19 +34,23 @@ class AnalyticsView extends StatelessWidget {
   }
 
   Widget buildHeader(BuildContext context, AnalyticsViewModel viewModel) {
+
+    final screenWidth = MediaQuery.sizeOf(context).width;
+    print(screenWidth);
+
     return ListTile(
       tileColor: Colors.white,
-      leading: isNarrow ? totalSalesText(viewModel.totalSales) :
+      leading: (screenType=='Narrow' || screenType=='Middle') ? totalSalesText(viewModel.totalSales) :
       const Text(
         'Analytics Overview',
         style: TextStyle(fontSize: 20),
       ),
-      title: !isNarrow ? Row(
+      title: screenType!='Narrow' && screenType!='Middle' ? Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           totalSalesText(viewModel.totalSales),
         ],
-      ) : null,
+      )  : null,
       trailing: SegmentedButton<MySegment>(
         segments: const [
           ButtonSegment(value: MySegment.all, label: Text('All'), icon: Icon(Icons.calendar_view_day)),
@@ -80,6 +84,7 @@ class AnalyticsView extends StatelessWidget {
   }
 
   Widget buildContentBody(BuildContext context, AnalyticsViewModel viewModel) {
+
     return Padding(
       padding: const EdgeInsets.all(3.0),
       child: Column(
