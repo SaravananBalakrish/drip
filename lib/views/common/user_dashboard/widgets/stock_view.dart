@@ -176,9 +176,9 @@ class StockView extends StatelessWidget {
                     DataColumn2(label: Center(child: AppConstants().txtSNo), fixedWidth: 50),
                     DataColumn(label: AppConstants().txtCategory),
                     DataColumn2(label: AppConstants().txtModel, size: ColumnSize.L),
-                    DataColumn2(label: Center(child: AppConstants().txtIMEI), size: ColumnSize.S),
-                    DataColumn2(label: Center(child: AppConstants().txtMDate), fixedWidth: 150),
-                    DataColumn2(label: Center(child: AppConstants().txtWarranty), fixedWidth: 100),
+                    DataColumn2(label: Center(child: AppConstants().txtIMEI), fixedWidth: 140),
+                    DataColumn2(label: Center(child: AppConstants().txtMDate), fixedWidth: 130),
+                    DataColumn2(label: Center(child: AppConstants().txtWarranty), fixedWidth: 90),
                   ],
                   rows: List<DataRow>.generate(
                     viewModel.productStockList.length, (index) => DataRow(

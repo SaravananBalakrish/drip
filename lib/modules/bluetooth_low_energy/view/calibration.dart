@@ -27,7 +27,7 @@ class _CalibrationState extends State<Calibration> {
     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
-      borderSide: BorderSide(color: Colors.black54),
+      borderSide: const BorderSide(color: Colors.black54),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
@@ -117,7 +117,7 @@ class _CalibrationState extends State<Calibration> {
               color: Theme.of(context).primaryColorLight
           ),
           child: Center(
-            child: Text('${waterMeter[0]['name']}',style: TextStyle(color: Colors.white, fontSize: 14),),
+            child: Text('${waterMeter[0]['name']}',style: const TextStyle(color: Colors.white, fontSize: 14),),
           ),
         ),
         Container(
@@ -211,8 +211,6 @@ class _CalibrationState extends State<Calibration> {
                     )
                   ],
                 ),
-
-
               ],
             ),
           ),
@@ -341,11 +339,11 @@ class _CalibrationState extends State<Calibration> {
           width: 200,
           padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 8),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(5) ,topRight: Radius.circular(27.5), ),
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(5) ,topRight: Radius.circular(27.5), ),
               color: Theme.of(context).primaryColorLight
           ),
           child: Center(
-            child: Text(sensorName,style: TextStyle(color: Colors.white, fontSize: 14),),
+            child: Text(sensorName,style: const TextStyle(color: Colors.white, fontSize: 14),),
           ),
         ),
         Container(
@@ -610,14 +608,12 @@ class _CalibrationState extends State<Calibration> {
                             print("blePvd.calibrationPh1 : ${bleService.calibrationPh1}");
                           }else{
                             print("blePvd.calibrationPh2 : ${bleService.calibrationPh2}");
-
                           }
-
                         },
                         icon: const Icon(Icons.refresh, color: Colors.white,),
                         label: const Text("Get @0", style: TextStyle(color: Colors.white),),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xff005C8E),
+                          backgroundColor: Theme.of(context).primaryColor,
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(14),

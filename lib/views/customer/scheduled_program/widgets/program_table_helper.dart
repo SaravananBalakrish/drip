@@ -32,14 +32,19 @@ class ProgramTableHelper {
     required AiAdvisoryService aiService,
     required double currentLineSNo,
     required Function showConditionDialog,
-    required String deviceId,
-    required int userId,
+    required int userId, customerId,
     required int controllerId,
-    required int customerId,
+    required int modelId,
+    required int groupId,
+    required int categoryId,
+    required String deviceId,
     required bool prgOnOffPermission,
   }) {
-    var filteredPrograms = currentLineSNo == 0 ? programs :
-    programs.where((p) => p.irrigationLine.contains(currentLineSNo)).toList();
+
+    var filteredPrograms = currentLineSNo == 0 ? programs : programs.where((p) {
+      final irrigationLine = p.irrigationLine ?? [];
+      return irrigationLine.contains(currentLineSNo) || irrigationLine.isEmpty;
+    }).toList();
 
     return List<DataRow>.generate(filteredPrograms.length, (index) {
       final program = filteredPrograms[index];
@@ -174,16 +179,16 @@ class ProgramTableHelper {
                           builder: (context) => IrrigationProgram(
                             deviceId: deviceId,
                             userId: userId,
+                            customerId: customerId,
                             controllerId: controllerId,
                             serialNumber: program.serialNumber,
                             programType: program.programType,
                             conditionsLibraryIsNotEmpty: hasConditions,
                             fromDealer: false,
                             toDashboard: true,
-                            groupId: 0,
-                            categoryId: 0,
-                            customerId: customerId,
-                            modelId: 0,
+                            groupId: groupId,
+                            categoryId: categoryId,
+                            modelId: modelId,
                             deviceName: deviceId,
                             categoryName: '',
                           ),
@@ -218,7 +223,6 @@ class ProgramTableHelper {
             Center(child: Text('....', style: TextStyle(color: Colors.red))),
           ),
         ]
-
       ]);
     });
   }
