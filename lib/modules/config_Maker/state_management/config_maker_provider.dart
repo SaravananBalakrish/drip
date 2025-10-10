@@ -245,11 +245,22 @@ class ConfigMakerProvider extends ChangeNotifier{
     return list;
   }
 
-  Future<List<DeviceModel>> fetchData(masterDataFromSiteConfigure)async {
-    productStock = masterDataFromSiteConfigure['productStock'];
-    await Future.delayed(const Duration(seconds: 0));
-    reInitialize();
+  Future<List<DeviceModel>> fetchData(masterDataFromSiteConfigure, bool fromDashboard)async {
+
     try{
+      print("masterDataFromSiteConfigure : $masterDataFromSiteConfigure");
+      reInitialize();
+      if(!fromDashboard){
+        productStock = masterDataFromSiteConfigure['productStock'];
+      }
+      else{
+        print('get product list');
+        var productListResponse = await ConfigMakerRepository().getProductStock({'userId' : masterDataFromSiteConfigure['customerId']});
+        print("productListResponse : $productListResponse");
+        Map<String, dynamic> productListJsonData = jsonDecode(productListResponse.body);
+        productStock = productListJsonData['data'];
+      }
+      await Future.delayed(const Duration(seconds: 0));
       var body = {
         "userId" : masterDataFromSiteConfigure['customerId'],
         "controllerId" : masterDataFromSiteConfigure['controllerId'],

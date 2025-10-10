@@ -98,8 +98,6 @@ class _ProductLimitState extends State<ProductLimit> {
     );
   }
 
-
-
   Widget digitalObject(){
     print("widget.configPvd.getPossibleConnectingObjectId() : ${widget.configPvd.getPossibleConnectingObjectId()}");
     List<DeviceObjectModel> filteredList = widget.configPvd.listOfSampleObjectModel.where((object) {
@@ -116,8 +114,6 @@ class _ProductLimitState extends State<ProductLimit> {
       configPvd: widget.configPvd,
     );
   }
-
-
 
   Widget moistureObject(){
     List<DeviceObjectModel> filteredList = widget.configPvd.listOfSampleObjectModel.where((object) => object.objectId == AppConstants.moistureObjectId).toList();
@@ -139,7 +135,6 @@ class _ProductLimitState extends State<ProductLimit> {
 
   Widget i2cObject(){
     List<DeviceObjectModel> filteredList = widget.configPvd.listOfSampleObjectModel.where((object) => (object.type == '7' && widget.configPvd.getPossibleConnectingObjectId().contains(object.objectId))).toList();
-
     return ProductLimitGridListTile(
       listOfObjectModel: filteredList,
       title: 'I2c Input',
@@ -196,6 +191,7 @@ class _ProductLimitState extends State<ProductLimit> {
       )
     ];
   }
+
 }
 
 int getRelayLatchCount(List<DeviceModel> listOfDevices){
@@ -238,7 +234,6 @@ int getInputCount(int code, List<DeviceModel> listOfDevices){
       }
     }
   }
-  print('code (${getObjectTypeCodeToString(code)}) - $count');
   return count;
 }
 

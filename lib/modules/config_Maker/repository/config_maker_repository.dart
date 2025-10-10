@@ -5,6 +5,7 @@ class ConfigMakerRepository{
   HttpService httpService = HttpService();
 
   Future<http.Response> getUserConfigMaker(body) async {
+    print('config maker :: $body');
     return await httpService.postRequest('/user/configMaker/get', body);
   }
 
@@ -23,6 +24,10 @@ class ConfigMakerRepository{
 
   Future<http.Response> checkProduct(body) async {
     return await httpService.postRequest('/product/forReplace', body);
+  }
+
+  Future<http.Response> getProductStock(body) async {
+    return await httpService.postRequest('/product/getDealerStockForReplace', body);
   }
 
 }
