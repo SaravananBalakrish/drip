@@ -29,8 +29,6 @@ class CustomerHomeNarrow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final viewedCustomer = context.read<UserProvider>().viewedCustomer;
-
     final viewModel = Provider.of<CustomerScreenControllerViewModel>(context);
     final cM = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex];
 
@@ -69,7 +67,8 @@ class CustomerHomeNarrow extends StatelessWidget {
                           ),
                           Container(
                               color: Colors.white,
-                              child: buildPumpStation(context, line, viewedCustomer!.id, cM.controllerId, cM.modelId, cM.deviceId)
+                              child: buildPumpStation(context, line, viewModel.mySiteList.data[viewModel.sIndex].customerId,
+                                  cM.controllerId, cM.modelId, cM.deviceId)
                           )
                         ],
                       ),
@@ -131,7 +130,8 @@ class CustomerHomeNarrow extends StatelessWidget {
                               ],
                             ),
                           ),
-                          buildIrrigationLine(context, line, viewedCustomer.id, cM.controllerId, cM.modelId, cM.deviceId)
+                          buildIrrigationLine(context, line, viewModel.mySiteList.data[viewModel.sIndex].customerId,
+                              cM.controllerId, cM.modelId, cM.deviceId)
                         ],
                       ),
                     ),
@@ -362,7 +362,7 @@ class CustomerHomeNarrow extends StatelessWidget {
                         SizedBox(height: 2),
                         Text('Rtc & Cyclic', style: TextStyle(color: Colors.black45)),
                         SizedBox(height: 2),
-                        Text('Set Value', style: TextStyle(color: Colors.black45)),
+                        Text('Set (Dur/Flw)', style: TextStyle(color: Colors.black45)),
                         SizedBox(height: 2),
                       ],
                     ),
@@ -390,7 +390,7 @@ class CustomerHomeNarrow extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(convert24HourTo12Hour(values[11])),
+                          Text(MyFunction().convert24HourTo12Hour(values[11])),
                           const SizedBox(height: 2),
                           Text('${values[10]} of ${values[9]}'),
                           const SizedBox(height: 1),
@@ -460,14 +460,6 @@ class CustomerHomeNarrow extends StatelessWidget {
     }
   }
 
-  String convert24HourTo12Hour(String timeString) {
-    if(timeString=='-'){
-      return '-';
-    }
-    final parsedTime = DateFormat('HH:mm:ss').parse(timeString);
-    final formattedTime = DateFormat('hh:mm a').format(parsedTime);
-    return formattedTime;
-  }
 
   String getContentByCode(int code) {
     return GemProgramStartStopReasonCode.fromCode(code).content;
@@ -539,7 +531,9 @@ class CustomerHomeNarrow extends StatelessWidget {
           if (result['mqtt'] == true) debugPrint("Payload sent to MQTT Box");
           if (result['bluetooth'] == true) debugPrint("Payload sent via Bluetooth");
 
+          Navigator.pop(context);
           GlobalSnackBar.show(context, 'Comment sent successfully', 200);
+
         } : null,
         child: const Text('Skip', style: TextStyle(color: Colors.white, fontSize: 13)),
       );
@@ -558,7 +552,8 @@ class CustomerHomeNarrow extends StatelessWidget {
     );
   }
 
-  Widget buildPumpStation(BuildContext context, IrrigationLineModel irrLine, int customerId, int controllerId, int modelId, String deviceId) {
+  Widget buildPumpStation(BuildContext context, IrrigationLineModel irrLine,
+      int customerId, int controllerId, int modelId, String deviceId) {
 
     final inletWaterSources = {
       for (var source in irrLine.inletSources) source.sNo: source
@@ -706,7 +701,7 @@ class CustomerHomeNarrow extends StatelessWidget {
               children: [
                 Text(programName),
                 const SizedBox(height: 1),
-                Text(convert24HourTo12Hour(values[6])),
+                Text(MyFunction().convert24HourTo12Hour(values[6])),
                 const SizedBox(height: 3),
                 Text(values[3]),
                 const SizedBox(height: 2),
@@ -1096,7 +1091,12 @@ class IrrigationLine extends StatelessWidget {
       pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor.png',
     );
 
+    final lightWidgets = lights.asMap().entries.map((entry) {
+      return LightWidget(objLight: entry.value, isWide: false);
+    }).toList();
+
     final allItems = [
+      ...lightWidgets,
       ...mainValveWidgets,
       ...valveWidgets,
       ...pressureOutWidgets,

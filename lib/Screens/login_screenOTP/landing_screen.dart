@@ -52,7 +52,7 @@ class _LandingScreenState extends State<LandingScreen> with TickerProviderStateM
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Lottie.asset('assets/lottie/check.json'),
-          LinearProgressIndicator()
+          const LinearProgressIndicator()
         ],
       ),
     );
@@ -64,7 +64,7 @@ class _LandingScreenState extends State<LandingScreen> with TickerProviderStateM
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Lottie.asset('assets/lottie/error.json'),
-          Text('Already logged in!')
+          const Text('Already logged in!')
         ],
       ),
     );
