@@ -8,7 +8,7 @@ import '../../services/http_service.dart';
 import '../../utils/constants.dart';
 import '../../utils/enums.dart';
 import '../../view_models/customer/general_setting_view_model.dart';
-import '../common/user_profile/create_account.dart';
+import 'user_profile/create_account.dart';
 
 
 class GeneralSetting extends StatefulWidget {

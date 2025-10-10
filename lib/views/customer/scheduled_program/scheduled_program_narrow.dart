@@ -58,7 +58,8 @@ class _ScheduledProgramNarrowState extends State<ScheduledProgramNarrow> {
 
     var filteredScheduleProgram = widget.currentLineSNo == 0 ? master.programList :
     master.programList.where((program) {
-      return program.irrigationLine.contains(widget.currentLineSNo);
+      final irrigationLine = program.irrigationLine ?? [];
+      return irrigationLine.contains(widget.currentLineSNo) || irrigationLine.isEmpty;
     }).toList();
 
     return Padding(
@@ -223,15 +224,12 @@ class _ScheduledProgramNarrowState extends State<ScheduledProgramNarrow> {
                           Tooltip(
                             message: ProgramCodeHelper.getDescription(int.parse(program.prgOnOff)),
                             child: MaterialButton(
-                              color: int.parse(program.prgOnOff) >= 0
-                                  ? isStop
-                                  ? Colors.red
-                                  : isBypass
-                                  ? Colors.orange
-                                  : Colors.green
-                                  : Colors.grey.shade300,
+                              color: int.parse(program.prgOnOff) >= 0 ? isStop ? Colors.red :
+                              isBypass ? Colors.orange :
+                              Colors.green : Colors.grey.shade300,
                               textColor: Colors.white,
                               onPressed: () {
+
                                 String payload = '${program.serialNumber},${program.prgOnOff}';
                                 String payLoadFinal = jsonEncode({
                                   "2900": {"2901": payload}
@@ -322,11 +320,7 @@ class _ScheduledProgramNarrowState extends State<ScheduledProgramNarrow> {
     );
   }
 
-  void showConditionDialog(
-      BuildContext context,
-      String prgName,
-      List<ConditionModel> conditions,
-      ) {
+  void showConditionDialog(BuildContext context, String prgName, List<ConditionModel> conditions) {
     showDialog(
       context: context,
       builder: (BuildContext context) {

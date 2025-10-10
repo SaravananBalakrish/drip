@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:oro_drip_irrigation/Widgets/custom_buttons.dart';
@@ -9,7 +8,6 @@ import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/view/control_no
 import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/view/interface_setting.dart';
 import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/view/node_in_boot_mode.dart';
 import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/view/trace_screen.dart';
-import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/view/view_node.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_grid/responsive_grid.dart';
@@ -39,10 +37,6 @@ class _NodeDashboardState extends State<NodeDashboard> {
 
   Future<int> getData()async{
     try{
-      // if(bleService.nodeDataFromHw.isEmpty){
-      //   // second time updation nodeDataFromHw is empty...
-      //   return 200;
-      // }
       for(var i = 0; i < 30;i++){
         if(bleService.nodeDataFromHw.containsKey('MID')){
           print("wait until get mac..");
@@ -109,6 +103,7 @@ class _NodeDashboardState extends State<NodeDashboard> {
                                       userAcknowledgementForUpdatingFirmware();
                                     }
                                 ),
+                                if(showControlAndView())
                                   gridItemWidget(
                                   imagePath: 'assets/Images/Svg/SmartComm/control.svg',
                                   title: 'View & Control',
@@ -118,15 +113,16 @@ class _NodeDashboardState extends State<NodeDashboard> {
                                     }));
                                   },
                                 ),
-                                gridItemWidget(
-                                    imagePath: 'assets/Images/Svg/SmartComm/interface_setting.svg',
-                                    title: 'Interface Setting',
-                                    onTap: () {
-                                      Navigator.push(context, MaterialPageRoute(builder: (context){
-                                        return const InterfaceSetting();
-                                      }));
-                                    }
-                                ),
+                                if(showInterfaceSetting())
+                                  gridItemWidget(
+                                      imagePath: 'assets/Images/Svg/SmartComm/interface_setting.svg',
+                                      title: 'Interface Setting',
+                                      onTap: () {
+                                        Navigator.push(context, MaterialPageRoute(builder: (context){
+                                          return const InterfaceSetting();
+                                        }));
+                                      }
+                                  ),
                                 gridItemWidget(
                                   imagePath: 'assets/Images/Svg/SmartComm/trace_file.svg',
                                   title: 'Trace',
@@ -136,7 +132,7 @@ class _NodeDashboardState extends State<NodeDashboard> {
                                     }));
                                   },
                                 ),
-                                if(bleService.nodeDataFromServer.isNotEmpty && !bleService.nodeDataFromServer['hardwareLoraModel'].contains(bleService.nodeDataFromHw['MID']) && (!AppConstants.pumpWithValveModelList.contains(bleService.nodeData['modelId']) && !AppConstants.ecoGemModelList.contains(bleService.nodeData['modelId'])))
+                                if(showCalibration())
                                   gridItemWidget(
                                   imagePath: 'assets/Images/Svg/SmartComm/calibration.svg',
                                   title: 'Calibration',
@@ -171,7 +167,40 @@ class _NodeDashboardState extends State<NodeDashboard> {
         ),
       ),
     );
+  }
 
+  bool showCalibration(){
+    bool show = true;
+    if(bleService.nodeDataFromServer.isEmpty){
+      show = false;
+    }else if(bleService.nodeDataFromServer['hardwareLoraModel'].contains(bleService.nodeDataFromHw['MID'])){
+      show = false;
+    }else if(
+        AppConstants.pumpWithValveModelList.contains(bleService.nodeData['modelId'])
+        &&
+        AppConstants.ecoGemModelList.contains(bleService.nodeData['modelId'])
+        &&
+        AppConstants.smartPlusEcPhModel.contains(bleService.nodeData['modelId'])
+    ){
+      show = false;
+    }
+    return show;
+  }
+
+  bool showControlAndView(){
+    bool show = true;
+    if(bleService.nodeDataFromHw.keys.length < 4){
+      show = false;
+    }
+    return show;
+  }
+
+  bool showInterfaceSetting(){
+    bool show = true;
+    if(AppConstants.smartPlusEcPhModel.contains(bleService.nodeData['modelId'])){
+      show = false;
+    }
+    return show;
   }
 
   void userAcknowledgementForUpdatingFirmware(){

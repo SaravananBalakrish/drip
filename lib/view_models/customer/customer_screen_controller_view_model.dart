@@ -71,11 +71,23 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     final liveDateAndTime = mqttProvider.liveDateAndTime;
     final wifiStrength = mqttProvider.wifiStrength;
     final currentSchedule = mqttProvider.currentSchedule;
+
     lineLiveMessage = mqttProvider.lineLiveMessage;
+
     powerSupply = mqttProvider.powerSupply;
     alarmDL = mqttProvider.alarmDL;
+
     isNotCommunicate = isDeviceNotCommunicating(mqttProvider.liveDateAndTime);
-    if(activeDeviceId == mySiteList.data[sIndex].master[mIndex].deviceId){
+    if(activeDeviceId == mySiteList.data[sIndex].master[mIndex].deviceId) {
+
+      bool isGem = [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].
+      contains(mySiteList.data[sIndex].master[mIndex].modelId);
+
+      if(isGem){
+        final decoded = jsonDecode(mqttProvider.receivedPayload);
+        mySiteList.data[sIndex].master[mIndex].live = LiveMessage.fromJson(decoded);
+      }
+
       updateLivePayload(wifiStrength, liveDateAndTime, currentSchedule, lineLiveMessage);
     }
   }
@@ -342,20 +354,26 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
 
     final live = mySiteList.data[sIndex].master[mIndex].live;
 
+
+
     if ([1, 2, 3, 4, 56, 57, 58, 59].contains(mySiteList.data[sIdx].master[mIdx].modelId)) {
       updateMasterLine(sIdx, mIdx, lIdx);
       mqttProvider.updateReceivedPayload(
         live != null ? jsonEncode(live) : _defaultPayload(),
         true,
       );
-    }else{
-      final Map<String, dynamic> mapData = {
-        "cD": live!.cD,
-        "cT": live.cT,
-        "cC": live.cC,
-      };
-      final String payload = jsonEncode(mapData);
-      mqttProvider.updateLastSyncDateFromPumpControllerPayload(payload);
+    }
+    else{
+      if (live != null) {
+        final Map<String, dynamic> mapData = {
+          "cD": live.cD,
+          "cT": live.cT,
+          "cC": live.cC,
+        };
+
+        final String payload = jsonEncode(mapData);
+        mqttProvider.updateLastSyncDateFromPumpControllerPayload(payload);
+      }
     }
 
     _subscribeToDeviceTopic();

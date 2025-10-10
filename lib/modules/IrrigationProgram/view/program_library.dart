@@ -76,8 +76,9 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
     // overAllUse = Provider.of<OverAllUse>(context, listen: false);
     irrigationProgramMainProvider = Provider.of<IrrigationProgramMainProvider>(context, listen: false);
     // MqttService().topicToSubscribe('${Environment.mqttSubscribeTopic}/${widget.deviceId}');
-    irrigationProgramMainProvider.programLibraryData(widget.customerId,  widget.controllerId);
+    irrigationProgramMainProvider.programLibraryData(widget.customerId, widget.controllerId);
     // print("init state called");
+    // print("customerId :: ${widget.customerId}, ${widget.userId}");
     super.initState();
   }
 
@@ -99,18 +100,22 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
       if (getUserDayCountRtcResult.statusCode == 200) {
         final responseJson = getUserDayCountRtcResult.body;
         final convertedJson = jsonDecode(responseJson);
+        print("convertedJson ::: $convertedJson");
         if(convertedJson['data']['dayCountRtc'] != null) {
           setState(() {
             dayCountRtcModel = DayCountRtcModel.fromJson(convertedJson['data']['dayCountRtc']);
-            // programQueueModel = ProgramQueueModel.fromJson(convertedJson['data']['programQueue']);
+            if(AppConstants.ecoGemPlusModelList.contains(widget.modelId)) {
+              programQueueModel = ProgramQueueModel.fromJson(convertedJson['data']['programQueue']);
+            }
           });
         }
       } else {
         log("HTTP Request failed or received an unexpected response.");
         throw Exception("HTTP Request failed or received an unexpected response.");
       }
-    } catch (e) {
-      log('Error: $e');
+    } catch (e, stackTrace) {
+      log('Error in getUserDayCountRtc : $e');
+      log('Stack Trace in getUserDayCountRtc: $stackTrace');
     }
   }
 
@@ -138,13 +143,13 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
           },
         ),
         actions: [
-          if(AppConstants.ecoGemModelList.contains(widget.modelId))
-            IconButton(
+          if(AppConstants.ecoGemAndPlusModelList.contains(widget.modelId))
+            FilledButton(
                 onPressed: () async{
                   await getUserDayCountRtc();
-                  showIrrigationSettings();
+                  showIrrigationSettings(context);
                 },
-                icon: const Icon(Icons.schedule)
+                child: const Text("Day count RTC")
             )
         ],
       ),
@@ -248,7 +253,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
           : const Center(child: CircularProgressIndicator(),),
       floatingActionButton: MaterialButton(
         onPressed: () {
-          if(AppConstants.ecoGemModelList.contains(widget.modelId)) {
+          if(AppConstants.ecoGemAndPlusModelList.contains(widget.modelId)) {
             irrigationProgramMainProvider.programLibrary!.programLimit = 4;
           }
           createProgram(context, irrigationProgramMainProvider);
@@ -263,11 +268,11 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
     );
   }
 
-  void showIrrigationSettings() {
-    final theme = Theme.of(context);
+  void showIrrigationSettings(BuildContext parentContext) {
+    final theme = Theme.of(parentContext);
 
     showModalBottomSheet(
-      context: context,
+      context: parentContext,
       showDragHandle: true,
       isScrollControlled: false,
       scrollControlDisabledMaxHeightRatio: 0.7,
@@ -335,217 +340,293 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                         child: Text(
-                          'Program runs at this time daily!',
+                          'Program runs daily at this time!',
                           style: TextStyle(color: Colors.grey[600]),
                         ),
                       ),
                     ],
                     const SizedBox(height: 20),
-                    /*const Divider(),
-                    // Program Queue Section
-                    Text(
-                      'Program Queue',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: theme.primaryColor,
+                    // if(AppConstants.ecoGemAndPlusModelList.contains(widget.modelId))...[
+                    if(AppConstants.ecoGemPlusModelList.contains(widget.modelId))...[
+                      const Divider(),
+                      // Program Queue Section
+                      Text(
+                        'Program Queue',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: theme.primaryColor,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                    SwitchListTile(
-                      title: const Text('Enable Program Queue'),
-                      value: programQueueModel.programQueue,
-                      onChanged: (value) {
-                        setState(() {
-                          programQueueModel.programQueue = value;
-                        });
-                      },
-                      activeColor: theme.primaryColor,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                    ),
-                    if (programQueueModel.programQueue) ...[
+                      const SizedBox(height: 20),
                       SwitchListTile(
-                        title: const Text('Auto-Restart Queue'),
-                        value: programQueueModel.autoQueueRestart,
+                        title: const Text('Enable Program Queue'),
+                        value: programQueueModel.programQueue,
                         onChanged: (value) {
                           setState(() {
-                            programQueueModel.autoQueueRestart = value;
+                            programQueueModel.programQueue = value;
                           });
                         },
                         activeColor: theme.primaryColor,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                       ),
-                      const SizedBox(height: 8),
-                      ReorderableListView(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        onReorder: (oldIndex, newIndex) {
-                          setState(() {
-                            if (newIndex > oldIndex) newIndex--;
-                            final item = programQueueModel.queueOrder.removeAt(oldIndex);
-                            programQueueModel.queueOrder.insert(newIndex, item);
-                          });
-                        },
-                        children: programQueueModel.queueOrder.asMap().entries.map((entry) {
-                          final index = entry.key;
-                          return Column(
-                            key: ValueKey(index),
-                            children: [
-                              ListTile(
-                                leading: CircleAvatar(
-                                  child: Text('${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold),),
-                                ),
-                                title: DropdownButtonFormField<String>(
-                                  value: programQueueModel.queueOrder[index] != '0' ? programQueueModel.queueOrder[index] : '0',
-                                  decoration: InputDecoration(
-                                    // labelText: 'Program ${index + 1}',
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                  items: [
-                                    const DropdownMenuItem<String>(
-                                      value: '0',
-                                      child: Text('None'),
-                                    ),
-                                    ...irrigationProgramMainProvider.programLibrary!.program.map((program) {
-                                      return DropdownMenuItem<String>(
-                                        value: program.serialNumber.toString(),
-                                        child: Text(program.programName),
-                                      );
-                                    }),
-                                  ],
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      programQueueModel.queueOrder[index] = newValue ?? '0';
-                                    });
-                                  },
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                  side: BorderSide(color: Colors.grey[300]!),
-                                ),
-                              ),
-                              if(programQueueModel.autoQueueRestart)
-                                ListTile(
-                                  title: Text('Delay ${index + 1}→${index == 5 ? 1 : index + 2}'),
-                                  trailing: Text(programQueueModel.queueOrderRestartTimes[index]),
-                                  leading: Icon(Icons.timer, color: theme.primaryColor),
-                                  onTap: () async {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        final overAllPvd = context.read<OverAllUse>();
-                                        return AlertDialog(
-                                          title: HoursMinutesSeconds(
-                                            initialTime: programQueueModel.queueOrderRestartTimes[index],
-                                            onPressed: () {
-                                              setState(() {
-                                                programQueueModel.queueOrderRestartTimes[index] =
-                                                '${overAllPvd.hrs.toString().padLeft(2, '0')}:${overAllPvd.min.toString().padLeft(2, '0')}:${overAllPvd.sec.toString().padLeft(2, '0')}';
-                                              });
-                                              Navigator.pop(context);
-                                            },
-                                          ),
-                                        );
-                                      },
-                                    );
-                                  },
-                                )
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 16),
-                      SwitchListTile(
-                        title: const Text('Enable Skip Days'),
-                        value: programQueueModel.skipDays,
-                        onChanged: (value) {
-                          setState(() {
-                            programQueueModel.skipDays = value;
-                          });
-                        },
-                        activeColor: theme.primaryColor,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                      ),
-                      if (programQueueModel.skipDays) ...[
-                        const SizedBox(height: 16),
-                        ListTile(
-                          title: const Text('Number of Skip Days'),
-                          subtitle: Text('${programQueueModel.noOfSkipDays} days'),
-                          leading: Icon(Icons.calendar_today, color: theme.primaryColor),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            side: BorderSide(color: Colors.grey[300]!),
-                          ),
-                          onTap: () async {
-                            final days = await showDialog<int>(
-                              context: context,
-                              builder: (context) => NumberPickerDialog(
-                                initialValue: int.parse(programQueueModel.noOfSkipDays),
-                                minValue: 1,
-                                maxValue: 30,
-                              ),
-                            );
-                            if (days != null) {
-                              setState(() {
-                                programQueueModel.noOfSkipDays = days.toString();
-                              });
-                            }
+                      if (programQueueModel.programQueue) ...[
+                        SwitchListTile(
+                          title: const Text('Enable Queue Restart'),
+                          value: programQueueModel.autoQueueRestart,
+                          onChanged: (value) {
+                            setState(() {
+                              programQueueModel.autoQueueRestart = value;
+                            });
                           },
+                          activeColor: theme.primaryColor,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        const SizedBox(height: 8),
+                        ReorderableListView(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          onReorder: (oldIndex, newIndex) {
+                            setState(() {
+                              if (newIndex > oldIndex) newIndex--;
+                              final item = programQueueModel.queueOrder.removeAt(oldIndex);
+                              programQueueModel.queueOrder.insert(newIndex, item);
+                            });
+                          },
+                          children: programQueueModel.queueOrder.asMap().entries.map((entry) {
+                            final index = entry.key;
+                            return Column(
+                              key: ValueKey(index),
+                              children: [
+                                ListTile(
+                                  leading: CircleAvatar(
+                                    child: Text('${index + 1}', style: const TextStyle(fontWeight: FontWeight.bold),),
+                                  ),
+                                  title: DropdownButtonFormField<String>(
+                                    value: programQueueModel.queueOrder[index] != '0' ? programQueueModel.queueOrder[index] : '0',
+                                    decoration: InputDecoration(
+                                      // labelText: 'Program ${index + 1}',
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
+                                    items: [
+                                      const DropdownMenuItem<String>(
+                                        value: '0',
+                                        child: Text('None'),
+                                      ),
+                                      ...irrigationProgramMainProvider.programLibrary!.program.map((program) {
+                                        return DropdownMenuItem<String>(
+                                          value: program.serialNumber.toString(),
+                                          child: Text(program.programName),
+                                        );
+                                      }),
+                                    ],
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        programQueueModel.queueOrder[index] = newValue ?? '0';
+                                      });
+                                    },
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    side: BorderSide(color: Colors.grey[300]!),
+                                  ),
+                                ),
+                                if(programQueueModel.autoQueueRestart)
+                                  ListTile(
+                                    title: Text('Delay ${index + 1}→${index == 5 ? 1 : index + 2}'),
+                                    trailing: Text(programQueueModel.queueOrderRestartTimes[index]),
+                                    leading: Icon(Icons.timer, color: theme.primaryColor),
+                                    onTap: () async {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          final overAllPvd = context.read<OverAllUse>();
+                                          return AlertDialog(
+                                            title: HoursMinutesSeconds(
+                                              initialTime: programQueueModel.queueOrderRestartTimes[index],
+                                              onPressed: () {
+                                                setState(() {
+                                                  programQueueModel.queueOrderRestartTimes[index] =
+                                                  '${overAllPvd.hrs.toString().padLeft(2, '0')}:${overAllPvd.min.toString().padLeft(2, '0')}:${overAllPvd.sec.toString().padLeft(2, '0')}';
+                                                });
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  )
+                              ],
+                            );
+                          }).toList(),
+                        ),
+                        const SizedBox(height: 16),
+                        SwitchListTile(
+                          title: const Text('Enable Skip Days'),
+                          value: programQueueModel.skipDays,
+                          onChanged: (value) {
+                            setState(() {
+                              programQueueModel.skipDays = value;
+                            });
+                          },
+                          activeColor: theme.primaryColor,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        if (programQueueModel.skipDays) ...[
+                          const SizedBox(height: 16),
+                          ListTile(
+                            title: const Text('Number of Skip Days'),
+                            subtitle: Text('${programQueueModel.noOfSkipDays} days'),
+                            leading: Icon(Icons.calendar_today, color: theme.primaryColor),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            onTap: () async {
+                              final days = await showDialog<int>(
+                                context: context,
+                                builder: (context) => NumberPickerDialog(
+                                  initialValue: int.parse(programQueueModel.noOfSkipDays),
+                                  minValue: 1,
+                                  maxValue: 30,
+                                ),
+                              );
+                              if (days != null) {
+                                setState(() {
+                                  programQueueModel.noOfSkipDays = days.toString();
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                        SwitchListTile(
+                          title: const Text('Enable Run Days'),
+                          value: programQueueModel.runDays,
+                          onChanged: (value) {
+                            setState(() {
+                              programQueueModel.runDays = value;
+                            });
+                          },
+                          activeColor: theme.primaryColor,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        if (programQueueModel.runDays) ...[
+                          const SizedBox(height: 16),
+                          ListTile(
+                            title: const Text('Number of Run Days'),
+                            subtitle: Text('${programQueueModel.noOfRunDays} days'),
+                            leading: Icon(Icons.calendar_today, color: theme.primaryColor),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              side: BorderSide(color: Colors.grey[300]!),
+                            ),
+                            onTap: () async {
+                              final days = await showDialog<int>(
+                                context: context,
+                                builder: (context) => NumberPickerDialog(
+                                  initialValue: int.parse(programQueueModel.noOfRunDays),
+                                  minValue: 1,
+                                  maxValue: 30,
+                                ),
+                              );
+                              if (days != null) {
+                                setState(() {
+                                  programQueueModel.noOfRunDays = days.toString();
+                                });
+                              }
+                            },
+                          ),
+                        ],
+                        SwitchListTile(
+                          title: const Text('Queue Reset'),
+                          value: programQueueModel.queueReset,
+                          onChanged: (value) {
+                            setState(() {
+                              programQueueModel.queueReset = value;
+                            });
+                          },
+                          activeColor: theme.primaryColor,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                        ),
+                        const Text(
+                          'Queue Preview',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 8),
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            'Order: ${programQueueModel.queueOrder.map((sNo) => sNo == '0' ? "None" : irrigationProgramMainProvider.programLibrary!.program.firstWhere((p) => p.serialNumber.toString() == sNo).programName).join(" → ")}${programQueueModel.autoQueueRestart ? " (restarts)" : ""}${programQueueModel.skipDays ? ", skips every ${programQueueModel.noOfSkipDays} days" : ""}',
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(fontSize: 14),
+                          ),
                         ),
                       ],
-                      const SizedBox(height: 16),
-                      const Text(
-                        'Queue Preview',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]!),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          'Order: ${programQueueModel.queueOrder.map((sNo) => sNo == '0' ? "None" : irrigationProgramMainProvider.programLibrary!.program.firstWhere((p) => p.serialNumber.toString() == sNo).programName).join(" → ")}${programQueueModel.autoQueueRestart ? " (restarts)" : ""}${programQueueModel.skipDays ? ", skips every ${programQueueModel.noOfSkipDays} days" : ""}',
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ),
+                      const SizedBox(height: 20),
                     ],
-                    const SizedBox(height: 20),*/
                     ElevatedButton(
                       onPressed: () async{
                         try {
-
-                          final Map<String, dynamic> dataToMqtt = {"sentSms": "daycountrtctim,${dayCountRtcModel.dayCountRtc},${dayCountRtcModel.dayCountRtcTime}"};
-                          MqttService().topicToPublishAndItsMessage(jsonEncode(dataToMqtt), "${Environment.mqttPublishTopic}/${widget.deviceId}",);
-                          /*await validatePayloadSent(
-                              dialogContext: context,
-                              context: context,
-                              acknowledgedFunction: () {
-                                setState(() {
-                                  controllerReadStatusForDayCount = "1";
-                                });
-                                // showSnackBar(message: "${mqttPayloadProvider.messageFromHw['Name']} from controller", context: context);
-                              },
-                              payload: dataToMqtt,
-                              payloadCode: "2500",
-                              deviceId: widget.deviceId
-                          ).whenComplete(() async {
-                            if(MqttService().acknowledgementPayload!['cM']['4201']['Code'] != "200") {
-                              setState(() {
-                                controllerReadStatusForDayCount = "0";
-                              });
+                          final Map<String, dynamic> dayCountRtcToNova = {
+                            "7000": {
+                              "7001":
+                              "${dayCountRtcModel.dayCountRtc ? 1 : 0},${DateFormat.Hm().format(DateTime.parse('2025-01-01 ${dayCountRtcModel.dayCountRtcTime}')).split(':').join(',')}"
                             }
-                          });*/
+                          };
+
+                          final Map<String, dynamic> programQueueToNova = {
+                            "8000": {
+                              "8001":
+                              "${programQueueModel.programQueue ? 1 : 0},"
+                                  "${programQueueModel.queueOrder.join(',')},"
+                                  "${programQueueModel.queueReset ? 1 : 0},"
+                                  "${programQueueModel.queueOrderRestartTimes.join(',').replaceAll(':', ',')},"
+                                  "${programQueueModel.skipDays ? 1 : 0},"
+                                  "${programQueueModel.noOfSkipDays},"
+                                  "${programQueueModel.runDays ? 1 : 0},"
+                                  "${programQueueModel.noOfRunDays},"
+                                  "${programQueueModel.queueReset ? 1 : 0}"
+                            }
+                          };
+
+                          final List<String> payloadList = [
+                            jsonEncode(dayCountRtcToNova),
+                            // if(AppConstants.ecoGemPlusModelList.contains(widget.modelId))
+                              jsonEncode(programQueueToNova)
+                          ];
+
+                          final result = await showDialog<String>(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return EcoGemProgressDialog(
+                                payloads: List<String>.from(payloadList),
+                                deviceId: widget.deviceId,
+                                mqttService: MqttService(),
+                              );
+                            },
+                          );
+
+                          if (result != null) {
+                            setState(() {
+                              controllerReadStatus = result;
+                            });
+                          }
 
                           Map<String, dynamic> userData = {
                             "userId": widget.customerId,
                             "controllerId": widget.controllerId,
                             "dayCountRtc": {
-                              "dayCountRtc": dayCountRtcModel.toJson()
+                              "dayCountRtc": dayCountRtcModel.toJson(),
+                              if(AppConstants.ecoGemPlusModelList.contains(widget.modelId))
+                                "programQueue": programQueueModel.toJson()
                             },
                             "createUser": widget.userId,
                             "controllerReadStatus": controllerReadStatusForDayCount
@@ -561,10 +642,13 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                             log("HTTP Request failed or received an unexpected response.");
                             throw Exception("HTTP Request failed or received an unexpected response.");
                           }
-                        } catch (e) {
+                        } catch (e, stackTrace) {
+                          print("Error :: $e");
+                          print("stackTrace :: $stackTrace");
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'), backgroundColor: Colors.red,));
                           log('Error: $e');
                         }
+                        Future.delayed(const Duration(seconds: 1));
                         Navigator.pop(context);
                       },
                       style: ElevatedButton.styleFrom(
@@ -588,124 +672,99 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
   }
 
   void createProgram(BuildContext context, IrrigationProgramMainProvider programProvider) {
-    if(programProvider.programLibrary!.program.where((element) => element.programName.isNotEmpty).length < programProvider.programLibrary!.programLimit){
-      if(programProvider.programLibrary!.agitatorCount > 0) {
-        showAdaptiveDialog(
-          context: context,
-          builder: (BuildContext dialogContext) =>
-              Consumer<IrrigationProgramMainProvider>(
-                builder: (context, programProvider, child) {
-                  return AlertDialog(
-                    title: Text("Select Program type", style: TextStyle(color: Theme.of(context).primaryColor),),
-                    content: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: programProvider.programLibrary!.programType.map((e) {
-                        return RadioListTile(
-                            title: Text(e),
-                            value: e,
-                            groupValue: programProvider.selectedProgramType,
-                            onChanged: (newValue) => programProvider.updateProgramName(newValue, 'programType'));
-                      }).toList(),
-                    ),
-                    actions: [
-                      TextButton(
-                          onPressed: () => Navigator.pop(dialogContext),
-                          child: const Text('Cancel', style: TextStyle(color: Colors.red),)),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(dialogContext);
-                            if (programProvider.selectedProgramType == 'Irrigation Program') {
-                              programProvider.updateIsIrrigationProgram();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => IrrigationProgram(
-                                    userId:  widget.userId,
-                                    controllerId:  widget.controllerId,
-                                    serialNumber: programProvider.programLibrary!.program.any((element) => element.programName.isEmpty)
-                                        ? programProvider.programLibrary!.program.firstWhere((element) => element.programName.isEmpty).serialNumber : 0,
-                                    conditionsLibraryIsNotEmpty: programProvider.conditionsLibraryIsNotEmpty,
-                                    programType: irrigationProgramMainProvider.selectedProgramType, deviceId: widget.deviceId,
-                                    fromDealer: false,
-                                    // fromDealer: overAllUse.fromDealer,
-                                    customerId:  widget.customerId,
-                                    groupId:  widget.groupId,
-                                    categoryId:  widget.categoryId,
-                                    modelId: widget.modelId,
-                                    deviceName: widget.deviceName,
-                                    categoryName: widget.categoryName,
-                                  ),
-                                ),
-                              );
-                            } else if (programProvider.selectedProgramType == 'Agitator Program') {
-                              programProvider.updateIsAgitatorProgram();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => IrrigationProgram(
-                                    userId:  widget.userId,
-                                    controllerId:  widget.controllerId,
-                                    serialNumber: programProvider.programLibrary!.program.any((element) => element.programName.isEmpty)
-                                        ? programProvider.programLibrary!.program.firstWhere((element) => element.programName.isEmpty).serialNumber : 0,
-                                    conditionsLibraryIsNotEmpty: programProvider.conditionsLibraryIsNotEmpty,
-                                    programType: irrigationProgramMainProvider.selectedProgramType,
-                                    deviceId:  widget.deviceId,
-                                    fromDealer: false,
-                                    // fromDealer: overAllUse.fromDealer,
-                                    customerId:  widget.customerId,
-                                    groupId:  widget.groupId,
-                                    categoryId:  widget.categoryId,
-                                    modelId: widget.modelId,
-                                    deviceName: widget.deviceName,
-                                    categoryName: widget.categoryName,
-                                  ),
-                                ),
-                              );
-                            }
-                          },
-                          child: const Text('OK')),
-                    ],
-                  );
-                },
-              ),
-        );
-      } else {
-        programProvider.updateIsIrrigationProgram();
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => IrrigationProgram(
-              userId:  widget.userId,
-              controllerId:  widget.controllerId,
-              serialNumber: programProvider.programLibrary!.program.any((element) => element.programName.isEmpty)
-                  ? programProvider.programLibrary!.program.firstWhere((element) => element.programName.isEmpty).serialNumber : 0,
-              conditionsLibraryIsNotEmpty: programProvider.conditionsLibraryIsNotEmpty,
-              programType: irrigationProgramMainProvider.selectedProgramType, deviceId: widget.deviceId,
-              fromDealer: false,
-              // fromDealer: overAllUse.fromDealer,
-              customerId:  widget.customerId,
-              groupId:  widget.groupId,
-              categoryId:  widget.categoryId,
-              modelId: widget.modelId,
-              deviceName: widget.deviceName,
-              categoryName: widget.categoryName,
-            ),
-          ),
-        );
-      }
-    } else {
+    final programs = programProvider.programLibrary!.program;
+    final nonEmptyPrograms = programs.where((element) => element.programName.isNotEmpty).length;
+    final programLimit = programProvider.programLibrary!.programLimit;
+
+    if (nonEmptyPrograms >= programLimit) {
+      _showLimitExceededDialog(context);
+      return;
+    }
+
+    final serialNumber = programs.any((element) => element.programName.isEmpty)
+        ? programs.firstWhere((element) => element.programName.isEmpty).serialNumber
+        : 0;
+
+    Future navigateToIrrigationProgram() => Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => IrrigationProgram(
+          userId: widget.userId,
+          controllerId: widget.controllerId,
+          serialNumber: serialNumber,
+          conditionsLibraryIsNotEmpty: programProvider.conditionsLibraryIsNotEmpty,
+          programType: irrigationProgramMainProvider.selectedProgramType,
+          deviceId: widget.deviceId,
+          fromDealer: false,
+          customerId: widget.customerId,
+          groupId: widget.groupId,
+          categoryId: widget.categoryId,
+          modelId: widget.modelId,
+          deviceName: widget.deviceName,
+          categoryName: widget.categoryName,
+        ),
+      ),
+    );
+
+    if (programProvider.programLibrary!.defaultProgramTypes.length > 1) {
       showAdaptiveDialog(
         context: context,
-        builder: (BuildContext dialogContext) =>
-            CustomAlertDialog(
-                title: "Alert",
-                content: "The program limit is exceeded as defined in the Product limit!",
-                actions: [
-                  TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text("OK"))
-                ]
-            )
+        builder: (BuildContext dialogContext) => Consumer<IrrigationProgramMainProvider>(
+          builder: (context, provider, child) {
+            return AlertDialog(
+              title: Text(
+                "Select Program type",
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: provider.programLibrary!.defaultProgramTypes
+                    .map(
+                      (e) => RadioListTile(
+                    title: Text(e),
+                    value: e,
+                    groupValue: provider.selectedProgramType,
+                    onChanged: (newValue) => provider.updateProgramName(newValue, 'programType'),
+                  ),
+                )
+                    .toList(),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  child: const Text('Cancel', style: TextStyle(color: Colors.red)),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                    navigateToIrrigationProgram();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        ),
       );
+    } else {
+      navigateToIrrigationProgram();
     }
+  }
+
+  void _showLimitExceededDialog(BuildContext context) {
+    showAdaptiveDialog(
+      context: context,
+      builder: (BuildContext dialogContext) => CustomAlertDialog(
+        title: "Alert",
+        content: "The program limit is exceeded as defined in the Product limit!",
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget buildProgramItem({
@@ -850,7 +909,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                             var dataToMqtt = programItem.hardwareData;
 
                             try {
-                              if(AppConstants.ecoGemModelList.contains(widget.modelId)) {
+                              if(AppConstants.ecoGemAndPlusModelList.contains(widget.modelId)) {
                                 final result = await showDialog<String>(
                                   context: context,
                                   barrierDismissible: false,

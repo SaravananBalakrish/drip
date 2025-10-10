@@ -31,15 +31,15 @@ import 'StateManagement/mqtt_payload_provider.dart';
 import 'StateManagement/overall_use.dart';
 import 'modules/constant/state_management/constant_provider.dart';
 
-// Local notifications plugin
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-FlutterLocalNotificationsPlugin();
+
+// Initialize local notifications plugin
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-// Firebase background handler
+// Background message handler for Firebase
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  debugPrint("Handling background message: ${message.messageId}");
+  print("Handling a background message: ${message.messageId}");
 }
 
 // Permissions request
@@ -120,7 +120,6 @@ FutureOr<void> main() async {
   FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
     debugPrint("Message clicked: ${message.messageId}");
   });
-}
   runApp(
     MultiProvider(
       providers: [
@@ -152,6 +151,7 @@ FutureOr<void> main() async {
       child: const MyApp(),
     ),
   );
+
 }
 
 

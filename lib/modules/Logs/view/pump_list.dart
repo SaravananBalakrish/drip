@@ -27,7 +27,7 @@ class _PumpListState extends State<PumpList> {
           ? MediaQuery.of(context).size.width / 3
           : MediaQuery.of(context).size.width,
       minSpacing: 10,
-      children: List.generate(AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? 1: widget.pumpList.length, (index) {
+      children: List.generate(AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? 1: widget.pumpList.length, (index) {
         Map<String, dynamic> pumpItem = {};
         if(widget.pumpList.isNotEmpty) {
           pumpItem = widget.pumpList[index];
@@ -61,8 +61,8 @@ class _PumpListState extends State<PumpList> {
                   ),
                 ),
               ),
-              title: Text('${AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? widget.masterData.deviceName: pumpItem['deviceName']}'),
-              subtitle: Text('${AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? widget.masterData.deviceId : pumpItem['deviceId']}'),
+              title: Text('${AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? widget.masterData.deviceName: pumpItem['deviceName']}'),
+              subtitle: Text('${AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? widget.masterData.deviceId : pumpItem['deviceId']}'),
             ),
             subtitle: IntrinsicWidth(
               child: Row(
@@ -89,8 +89,9 @@ class _PumpListState extends State<PumpList> {
                           builder: (context) => PumpLogScreen(
                             userId: widget.userId,
                             controllerId: widget.masterData.controllerId,
-                            nodeControllerId: AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
+                            nodeControllerId: AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
                             masterData: widget.masterData,
+                            showMobileCalendar: true,
                           ),
                         ) : Navigator.push(
                                 context,
@@ -98,7 +99,7 @@ class _PumpListState extends State<PumpList> {
                                     builder: (context) => PumpLogScreen(
                                       userId: widget.userId,
                                       controllerId: widget.masterData.controllerId,
-                                      nodeControllerId: AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
+                                      nodeControllerId: AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
                                       masterData: widget.masterData,
                                     ))
                             ),
@@ -108,7 +109,7 @@ class _PumpListState extends State<PumpList> {
                           builder: (context) => PowerGraphScreen(
                             userId: widget.userId,
                             controllerId: widget.masterData.controllerId,
-                            nodeControllerId: AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
+                            nodeControllerId: AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
                             masterData: widget.masterData,
                           ),
                         ) : Navigator.push(
@@ -117,7 +118,7 @@ class _PumpListState extends State<PumpList> {
                                     builder: (context) => PowerGraphScreen(
                                       userId: widget.userId,
                                       controllerId: widget.masterData.controllerId,
-                                      nodeControllerId: AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
+                                      nodeControllerId: AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
                                       masterData: widget.masterData,
                                     ))
                             ),
@@ -127,8 +128,9 @@ class _PumpListState extends State<PumpList> {
                           builder: (context) => PumpVoltageLogScreen(
                             userId: widget.userId,
                             controllerId: widget.masterData.controllerId,
-                            nodeControllerId: AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
+                            nodeControllerId: AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
                             masterData: widget.masterData,
+                            showMobileCalendar: true,
                           ),
                         ) : Navigator.push(
                                 context,
@@ -136,7 +138,7 @@ class _PumpListState extends State<PumpList> {
                                     builder: (context) => PumpVoltageLogScreen(
                                       userId: widget.userId,
                                       controllerId: widget.masterData.controllerId,
-                                      nodeControllerId: AppConstants.ecoGemModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
+                                      nodeControllerId: AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? 0 : pumpItem['controllerId'],
                                       masterData: widget.masterData,
                                     ))
                             ),
