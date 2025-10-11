@@ -103,10 +103,12 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
       ),
       bottomNavigationBar: isGem ? CustomerBottomNav(index: navModel.index, onTap: navModel.setIndex) : null,
       banners: [
-        const NetworkConnectionBanner(),
-        Consumer<CustomerProvider>(
-          builder: (_, provider, __) => ConnectionBanner(vm: vm, commMode: provider.controllerCommMode ?? 0),
-        ),
+        if(isGem)
+          const NetworkConnectionBanner(),
+        if(isGem)
+          Consumer<CustomerProvider>(
+            builder: (_, provider, __) => ConnectionBanner(vm: vm, commMode: provider.controllerCommMode ?? 0),
+          ),
       ],
       body: IndexedStack(index: navModel.index, children: pages),
     );
