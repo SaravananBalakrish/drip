@@ -83,6 +83,7 @@ class _IrrigationProgramState extends State<IrrigationProgram> with SingleTicker
           serialNumber: widget.serialNumber,
           groupId: widget.groupId,
           categoryId: widget.categoryId,
+          modelId: widget.modelId,
         );
         irrigationProvider.scheduleData(widget.customerId, widget.controllerId, widget.serialNumber);
         irrigationProvider.getUserProgramCondition(widget.customerId, widget.controllerId, widget.serialNumber);
