@@ -253,99 +253,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                       ],
                     ),
                   ),
-                  Container(
-                    color: Colors.white,
-                    width: MediaQuery.of(context).size.width <= 500 ? MediaQuery.of(context).size.width : 400,
-                    padding: const EdgeInsets.only(bottom: 10),
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Column(
-                      children: [
-                        if(!AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId) || (snapshot.data!.pumps.firstWhere((pump) => pump is PumpValveModel) as PumpValveModel).phaseType != "1")
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              for(var index = 0; index < 3; index++)
-                                buildContainer(
-                                  title: AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId)
-                                      ? ["RN ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
-                                    "YN ${double.parse(snapshot.data!.voltage.split(',')[1]).toStringAsFixed(0)}",
-                                    "BN ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index]
-                                      : null,
-                                  value: (!AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId) && snapshot.data!.powerFactor != null)
-                                      ? ["RPF ${double.parse(snapshot.data!.powerFactor.split(',')[0]).toStringAsFixed(0)}",
-                                    "YPF ${double.parse(snapshot.data!.powerFactor.split(',')[1]).toStringAsFixed(0)}",
-                                    "BPF ${double.parse(snapshot.data!.powerFactor.split(',')[2]).toStringAsFixed(0)}"][index]
-                                      : (!AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId)) && F.name.contains('oro')
-                                      ? ["RN ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
-                                    "YN ${double.parse(snapshot.data!.voltage.split(',')[1]).toStringAsFixed(0)}",
-                                    "BN ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index]
-                                      : null,
-                                  value2: !AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId)
-                                      ? (snapshot.data!.power != null)
-                                      ? ["RP ${double.parse(snapshot.data!.power.split(',')[0]).toStringAsFixed(0)}",
-                                    "YP ${double.parse(snapshot.data!.power.split(',')[1]).toStringAsFixed(0)}",
-                                    "BP ${double.parse(snapshot.data!.power.split(',')[2]).toStringAsFixed(0)}"][index]
-                                      : ["RY ${calculatePhToPh(double.parse(snapshot.data!.voltage.split(',')[0]), double.parse(snapshot.data!.voltage.split(',')[1]))}",
-                                    "YB ${calculatePhToPh(double.parse(snapshot.data!.voltage.split(',')[1]), double.parse(snapshot.data!.voltage.split(',')[2]))}",
-                                    "BR ${calculatePhToPh(double.parse(snapshot.data!.voltage.split(',')[2]), double.parse(snapshot.data!.voltage.split(',')[0]))}"][index]
-                                      : null,
-                                  // value: snapshot.data!.voltage.split(',')[index],
-                                  color1: [
-                                    Colors.redAccent.shade100,
-                                    Colors.amberAccent.shade100,
-                                    Colors.lightBlueAccent.shade100,
-                                  ][index],
-                                  color2: [
-                                    Colors.redAccent.shade700,
-                                    Colors.amberAccent.shade700,
-                                    Colors.lightBlueAccent.shade700,
-                                  ][index],
-                                )
-                            ],
-                          )
-                        else
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 5),
-                            decoration: _boxDecoration(Theme.of(context).primaryColor, Theme.of(context).primaryColorDark),
-                            // padding: const EdgeInsets.symmetric(vertical: 5),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const Text("VOLTAGE : ", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400)),
-                                Text("${int.parse(snapshot.data!.voltage.split(',')[0]) + int.parse(snapshot.data!.voltage.split(',')[2])}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                              ],
-                            ),
-                          ),
-                        if(snapshot.data!.energyParameters != null && snapshot.data!.energyParameters.isNotEmpty)
-                          const SizedBox(height: 8,),
-                        if(snapshot.data!.energyParameters != null && snapshot.data!.energyParameters.isNotEmpty)
-                          Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                RichText(
-                                    text: TextSpan(
-                                        children: [
-                                          TextSpan(text: "Instant Energy:", style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
-                                          TextSpan(text: " ${snapshot.data!.energyParameters.split(',')[0]}", style: const TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)),
-                                        ]
-                                    )
-                                ),
-                                RichText(
-                                    text: TextSpan(
-                                        children: [
-                                          TextSpan(text: "Cumulative Energy:", style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
-                                          TextSpan(text: " ${snapshot.data!.energyParameters.split(',')[1]}", style: const TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)),
-                                        ]
-                                    )
-                                ),
-                              ],
-                            ),
-                          )
-                      ],
-                    ),
-                  ),
+                  _buildPhaseWidget(snapshot),
                   const Divider(),
                   const SizedBox(height: 15,),
                   for(var index = 0; index < int.parse(snapshot.data!.numberOfPumps); index++)
@@ -366,6 +274,110 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
             },
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildPhaseWidget(AsyncSnapshot<PumpControllerData?> snapshot) {
+    String phaseForPump = '';
+    if(AppConstants.pumpModelList.contains(widget.masterData.modelId)) {
+      // phaseForPump = ;
+    }
+    return Container(
+      color: Colors.white,
+      width: MediaQuery.of(context).size.width <= 500 ? MediaQuery.of(context).size.width : 400,
+      padding: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.symmetric(horizontal: 10),
+      child: Column(
+        children: [
+          if(!AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId) || (snapshot.data!.pumps.firstWhere((pump) => pump is PumpValveModel) as PumpValveModel).phaseType != "1")
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                for(var index = 0; index < 3; index++)
+                  buildContainer(
+                    title: AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId)
+                        ? ["RN ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
+                      "YN ${double.parse(snapshot.data!.voltage.split(',')[1]).toStringAsFixed(0)}",
+                      "BN ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index]
+                        : null,
+                    value: (!AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId) && snapshot.data!.powerFactor != null)
+                        ? ["RPF ${double.parse(snapshot.data!.powerFactor.split(',')[0]).toStringAsFixed(0)}",
+                      "YPF ${double.parse(snapshot.data!.powerFactor.split(',')[1]).toStringAsFixed(0)}",
+                      "BPF ${double.parse(snapshot.data!.powerFactor.split(',')[2]).toStringAsFixed(0)}"][index]
+                        : (!AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId)) && F.name.contains('oro')
+                        ? ["RN ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
+                      "YN ${double.parse(snapshot.data!.voltage.split(',')[1]).toStringAsFixed(0)}",
+                      "BN ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index]
+                        : null,
+                    value2: !AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId)
+                        ? (snapshot.data!.power != null)
+                        ? ["RP ${double.parse(snapshot.data!.power.split(',')[0]).toStringAsFixed(0)}",
+                      "YP ${double.parse(snapshot.data!.power.split(',')[1]).toStringAsFixed(0)}",
+                      "BP ${double.parse(snapshot.data!.power.split(',')[2]).toStringAsFixed(0)}"][index]
+                        : F.name.contains('oro')
+                        ? ["RY ${calculatePhToPh(double.parse(snapshot.data!.voltage.split(',')[0]), double.parse(snapshot.data!.voltage.split(',')[1]))}",
+                      "YB ${calculatePhToPh(double.parse(snapshot.data!.voltage.split(',')[1]), double.parse(snapshot.data!.voltage.split(',')[2]))}",
+                      "BR ${calculatePhToPh(double.parse(snapshot.data!.voltage.split(',')[2]), double.parse(snapshot.data!.voltage.split(',')[0]))}"][index]
+                        : ["RY ${double.parse(snapshot.data!.voltage.split(',')[0]).toStringAsFixed(0)}",
+                      "YB ${double.parse(snapshot.data!.voltage.split(',')[1]).toStringAsFixed(0)}",
+                      "BR ${double.parse(snapshot.data!.voltage.split(',')[2]).toStringAsFixed(0)}"][index]
+                        :  null,
+                    // value: snapshot.data!.voltage.split(',')[index],
+                    color1: [
+                      Colors.redAccent.shade100,
+                      Colors.amberAccent.shade100,
+                      Colors.lightBlueAccent.shade100,
+                    ][index],
+                    color2: [
+                      Colors.redAccent.shade700,
+                      Colors.amberAccent.shade700,
+                      Colors.lightBlueAccent.shade700,
+                    ][index],
+                  )
+              ],
+            )
+          else
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 5),
+              decoration: _boxDecoration(Theme.of(context).primaryColor, Theme.of(context).primaryColorDark),
+              // padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("VOLTAGE : ", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w400)),
+                  Text("${int.parse(snapshot.data!.voltage.split(',')[0]) + int.parse(snapshot.data!.voltage.split(',')[2])}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ),
+          if(snapshot.data!.energyParameters != null && snapshot.data!.energyParameters.isNotEmpty)
+            const SizedBox(height: 8,),
+          if(snapshot.data!.energyParameters != null && snapshot.data!.energyParameters.isNotEmpty)
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  RichText(
+                      text: TextSpan(
+                          children: [
+                            TextSpan(text: "Instant Energy:", style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
+                            TextSpan(text: " ${snapshot.data!.energyParameters.split(',')[0]}", style: const TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)),
+                          ]
+                      )
+                  ),
+                  RichText(
+                      text: TextSpan(
+                          children: [
+                            TextSpan(text: "Cumulative Energy:", style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 15, fontWeight: FontWeight.bold)),
+                            TextSpan(text: " ${snapshot.data!.energyParameters.split(',')[1]}", style: const TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.bold)),
+                          ]
+                      )
+                  ),
+                ],
+              ),
+            )
+        ],
       ),
     );
   }
@@ -866,13 +878,13 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                                   if(pumpItem.float.split(':')[i] != "-")
                                     _buildColumn(
                                         title1: i == 0
-                                            ? "Sump Bottom Float"//Changed as requested from Subash.D
+                                            ? "Sump Bottom Float"//Changed as requested by Subash.D
                                             : i == 1
                                             ? "Sump Top Float"
                                             : i == 2
-                                            ? "Tank Top Float"
-                                            : i == 3
                                             ? "Tank Bottom Float"
+                                            : i == 3
+                                            ? "Tank Top Float"
                                             : "Unknown",
                                         value1: pumpItem.float.split(':')[i].toString() == "1" ? "High" : "Low",
                                         constraints: constraints,
@@ -1005,7 +1017,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                           onTap: pumpData.dataFetchingStatus == 1 ? () async {
                             setState(() => pumpItem.light = "2");
                             var data = {
-                              "userId": widget.userId,
+                              "userId": widget.customerId,
                               "controllerId": widget.masterData.controllerId,
                               "data": {"sentSms": "lighton"},
                               "messageStatus": "Turned on light manually",
@@ -1024,7 +1036,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                           onTap: pumpData.dataFetchingStatus == 1 ? () async {
                             setState(() => pumpItem.light = "2");
                             var data = {
-                              "userId": widget.userId,
+                              "userId": widget.customerId,
                               "controllerId": widget.masterData.controllerId,
                               "data": {"sentSms": "lightoff"},
                               "messageStatus": "Turned off light manually",
@@ -1079,7 +1091,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
       onTap: pumpData.dataFetchingStatus == 1 ? () async {
         setState(() => pumpData.pumps[index].status = 2);
         var data = {
-          "userId": widget.userId,
+          "userId": widget.customerId,
           "controllerId": widget.masterData.controllerId,
           "data": {"sentSms": "motor${index+1}$command"},
           "messageStatus": "Motor${index+1} $label",
