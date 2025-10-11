@@ -69,7 +69,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
 
   List<dynamic> configObjects = [];
 
-  Future<void> getUserProgramSequence({required int userId, required int controllerId, required int serialNumber, required int groupId, required int categoryId}) async {
+  Future<void> getUserProgramSequence({required int userId, required int controllerId, required int serialNumber, required int groupId, required int categoryId, required int modelId}) async {
     try {
       var userData = {
         "userId": userId,
@@ -137,7 +137,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
             .whereType<DeviceObjectModel>()
             .toList();
 
-        Future.delayed(Duration.zero,() {
+        await Future.delayed(Duration.zero,() {
           _irrigationLine = SequenceModel.fromJson(sequenceJson);
           for (var element in _irrigationLine!.sequence) {
             print("element in sequence :: $element");
@@ -150,6 +150,12 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
             addNewSequence(serialNumber: serialNumber, zoneSno: 1);
           }
         });
+        if(AppConstants.ecoGemAndPlusModelList.contains(modelId)) {
+          for(int i = 0; i < _irrigationLine!.sequence.length; i++) {
+            _irrigationLine!.sequence[i]['sNo'] = '${i+1}';
+          }
+          print("Serial number :: ${_irrigationLine!.sequence.map((e) => e['sNo'])}");
+        }
       } else {
         log("HTTP Request failed or received an unexpected response.");
       }
@@ -310,11 +316,16 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
           "mainValve": [],
         });
 
+    if(AppConstants.ecoGemAndPlusModelList.contains(modelId)) {
+      for(int i = 0; i < _irrigationLine!.sequence.length; i++) {
+        _irrigationLine!.sequence[i]['sNo'] = '${i+1}';
+      }
+    }
+
     for(var i = 0; i < _irrigationLine!.sequence.length; i++) {
       if(_irrigationLine!.sequence[i]['name'].contains('Sequence')) {
         _irrigationLine!.sequence[i]['name'] = 'Sequence ${serialNumber == 0 ? serialNumberCreation : serialNumber}.${i+1}';
       }
-      print(_irrigationLine!.sequence[i]);
       // print("\n");
     }
     notifyListeners();
@@ -1625,7 +1636,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       // String valSerialNo = sq['valve'][v]['sNo'].toString().split('.')[1];
       // String zoneSerialNo = sequenceSerialNo.contains('.') ? sequenceSerialNo.split('.')[1] : sequenceSerialNo;
       Map<String, dynamic> jsonPayload = {
-        'Zone_No' : sequenceData.indexOf(sq) + 1,
+        'Zone_No' : sq['sNo'],
         'Program_No' : serialNumber,
         'SequenceData' : getValve.join(','),
         'ValveFlowrate' : getNominalFlow(),
