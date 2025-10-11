@@ -279,6 +279,10 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
   }
 
   Widget _buildPhaseWidget(AsyncSnapshot<PumpControllerData?> snapshot) {
+    String phaseForPump = '';
+    if(AppConstants.pumpModelList.contains(widget.masterData.modelId)) {
+      // phaseForPump = ;
+    }
     return Container(
       color: Colors.white,
       width: MediaQuery.of(context).size.width <= 500 ? MediaQuery.of(context).size.width : 400,
