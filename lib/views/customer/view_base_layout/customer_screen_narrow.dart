@@ -77,10 +77,22 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
       const SettingsMenuNarrow(),
     ] :
     [
-      PumpControllerHome(
+      vm.isChanged
+          ? PumpControllerHome(
         userId: loggedInUser.id,
         customerId: vm.mySiteList.data[vm.sIndex].customerId,
         masterData: cM,
+      ) : const Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Please wait...'),
+              SizedBox(height: 10),
+              CircularProgressIndicator(),
+            ],
+          ),
+        ),
       ),
     ];
 
