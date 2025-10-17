@@ -431,9 +431,8 @@ class NodeList extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          node.rlyStatus.any((rly) => rly.status == 2 || rly.status == 3)
-              ? const Icon(Icons.warning, color: Colors.orangeAccent)
-              : InkWell(
+          node.rlyStatus.any((rly) => rly.status == 2 || rly.status == 3) ?
+          const Icon(Icons.warning, color: Colors.orangeAccent) : InkWell(
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder: (context) => NodeConnectionPage(
                 nodeData: node.toJson(),

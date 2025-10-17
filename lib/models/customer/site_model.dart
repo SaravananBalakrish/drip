@@ -262,7 +262,6 @@ class WaterSourceModel {
 
   final bool isWaterInAndOut;
   final List<SensorModel> level;
-
   final List<SensorModel> floatSwitches;
 
   WaterSourceModel({
@@ -329,8 +328,7 @@ class WaterSourceModel {
       List<ConfigObject> configObjects,
       ) {
     final floatObjects = configObjects
-        .where((obj) => obj.objectName == 'Float')
-        .toList();
+        .where((obj) => obj.objectName == 'Float').toList();
 
     final waterSourcesRaw = config['waterSource'] as List? ?? [];
 
@@ -358,6 +356,7 @@ class WaterSourceModel {
             orElse: () => ConfigObject.empty(),
           );
           if (match.sNo != 0) {
+            match.setValue = field;
             assignedFloats.add(SensorModel.fromConfigObject(match));
           }
         }
@@ -433,17 +432,8 @@ class IrrigationLineModel {
         .map((obj) => LightModel.fromConfigObject(obj))
         .toList();
 
-    /*if([56, 57, 58, 59].contains(master.modelId)){
-
-    }*/
-
 
     final valveSNoSet = ((json['valve'] as List?) ?? []).map((e) => e).toSet();
-
-    /*final valveSNoSet = ((json['valve'] as List?) ?? []).map((e) {
-      if (e is num) { return e.toStringAsFixed(3); }
-      return e.toString();
-    }).toSet();*/
 
 
     final valves = configObjects
@@ -1312,6 +1302,7 @@ class SensorModel {
     return SensorModel(
       sNo: obj.sNo,
       name: obj.name,
+      value : obj.sNo.toString().split('.').first == '40' ? obj.setValue : '0',
     );
   }
 
@@ -1366,10 +1357,6 @@ class ValveModel {
         }
       }
     }
-
-    /*List<WaterSourceModel> sources = configObjects
-        .where((source) => assignedSNos.contains(source.sNo))
-        .toList();*/
 
 
     return ValveModel(
@@ -1623,7 +1610,7 @@ class NodeListModel{
       modelId: json['modelId'],
       modelName: json['modelName'],
       modelDescription: json['modelDescription'],
-      serialNumber: json['serialNumber'],
+      serialNumber: json['serialNumber'] ?? 0,
       referenceNumber: json['referenceNumber'],
       interfaceTypeId: json['interfaceTypeId'] ?? 0,
       interface: json['interface'] ?? '',
