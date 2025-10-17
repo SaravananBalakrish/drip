@@ -141,7 +141,6 @@ FutureOr<void> main() async {
         ChangeNotifierProvider(create: (_) => BleProvider()),
         ChangeNotifierProvider(create: (_) => SearchProvider()),
         ChangeNotifierProvider(create: (_) => ButtonLoadingProvider()),
-
         ProxyProvider2<MqttPayloadProvider, CustomerProvider, CommunicationService>(
           update: (BuildContext context, MqttPayloadProvider mqttProvider,
               CustomerProvider customer, CommunicationService? previous) {
