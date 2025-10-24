@@ -39,7 +39,7 @@ class _CalibrationState extends State<Calibration> {
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
-      borderSide: BorderSide(color: Colors.black54),
+      borderSide: const BorderSide(color: Colors.black54),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(16),
@@ -326,8 +326,6 @@ class _CalibrationState extends State<Calibration> {
                     )
                   ],
                 ),
-
-
               ],
             ),
           ),
