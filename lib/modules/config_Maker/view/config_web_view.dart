@@ -60,6 +60,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
   bool isDataSaved = false;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   HardwareAcknowledgementState payloadState = HardwareAcknowledgementState.notSent;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -112,7 +113,6 @@ class _ConfigWebViewState extends State<ConfigWebView> {
   }
 
   Widget getHardwareAcknowledgementWidget(HardwareAcknowledgementState state){
-    print('state : $state');
     if(state == HardwareAcknowledgementState.notSent){
       return const StatusBox(color:  Colors.black87,child: Text('Do you want to send payload..',),);
     }else if(state == HardwareAcknowledgementState.success){
@@ -174,7 +174,6 @@ class _ConfigWebViewState extends State<ConfigWebView> {
     };
     return hardwarePayload;
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -430,7 +429,6 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                             });
                           },
                           onTap: (){
-
                             showDialog(
                               context: context,
                               builder: (context) {

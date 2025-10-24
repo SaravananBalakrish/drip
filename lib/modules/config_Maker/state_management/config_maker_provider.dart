@@ -19,7 +19,7 @@ import '../view/connection.dart';
 
 class ConfigMakerProvider extends ChangeNotifier{
   double ratio = 1.0;
-  ConfigMakerTabs selectedTab = ConfigMakerTabs.siteConfigure;
+  ConfigMakerTabs selectedTab = ConfigMakerTabs.deviceList;
   Map<String, dynamic> configMakerDataFromHttp = {};
   Map<String, dynamic> defaultDataFromHttp = {};
   Map<int, String> configurationTab = {
@@ -32,7 +32,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     6 : 'Ec Configuration',
     7 : 'Ph Configuration',
   };
-  int selectedConfigurationTab = 6;
+  int selectedConfigurationTab = 0;
   int rangeStart = -1;
   int rangeEnd = -1;
   bool rangeMode = false;
@@ -661,6 +661,20 @@ class ConfigMakerProvider extends ChangeNotifier{
           if(object.sNo == filteredByNotConfigured[notConfiguredObject].sNo){
             object.connectionNo = selectedModelDefaultConnectionList[notConfiguredObject];
             object.controllerId = selectedDevice.controllerId;
+            if(object.objectId == AppConstants.ecObjectId){
+              for(var ecConfig in ec){
+                if(ecConfig.sNo == object.sNo){
+                  ecConfig.controllerId = object.controllerId!;
+                }
+              }
+            }
+            else if(object.objectId == AppConstants.ecObjectId){
+              for(var phConfig in ph){
+                if(phConfig.sNo == object.sNo){
+                  phConfig.controllerId = object.controllerId!;
+                }
+              }
+            }
             print('configuring object.sNo : ${object.toJson()}');
             break inner;
           }

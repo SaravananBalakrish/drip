@@ -532,5 +532,4 @@ class ConstantProvider extends ChangeNotifier{
       ].join(',');
     }).join(';');
   }
-
 }

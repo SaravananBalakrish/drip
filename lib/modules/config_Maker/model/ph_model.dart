@@ -3,10 +3,12 @@ class PhModel{
   double sNo;
   String name;
   int phControllerId;
+  int controllerId;
 
   PhModel({
     required this.sNo,
     required this.name,
+    this.controllerId = 0,
     this.phControllerId = 0,
   });
 
@@ -14,7 +16,8 @@ class PhModel{
     return PhModel(
         sNo: data['sNo'],
         name: data['name'],
-        phControllerId: data['phControllerId']
+        controllerId: data['controllerId'] ?? 0,
+        phControllerId: data['phControllerId'] ?? 0,
     );
   }
 
@@ -22,6 +25,7 @@ class PhModel{
     return {
       'sNo' : sNo,
       'name' : name,
+      'controllerId' : controllerId,
       'phControllerId' : phControllerId,
     };
   }

@@ -2,11 +2,13 @@
 class EcModel{
   double sNo;
   String name;
+  int controllerId;
   int ecControllerId;
 
   EcModel({
     required this.sNo,
     required this.name,
+    this.controllerId = 0,
     this.ecControllerId = 0,
   });
 
@@ -14,7 +16,8 @@ class EcModel{
     return EcModel(
         sNo: data['sNo'],
         name: data['name'],
-        ecControllerId: data['ecControllerId']
+        controllerId: data['controllerId'] ?? 0,
+        ecControllerId: data['ecControllerId'] ?? 0
     );
   }
 
@@ -22,6 +25,7 @@ class EcModel{
     return {
       'sNo' : sNo,
       'name' : name,
+      'controllerId' : controllerId,
       'ecControllerId' : ecControllerId,
     };
   }
