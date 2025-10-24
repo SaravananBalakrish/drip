@@ -104,9 +104,9 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
         if(convertedJson['data']['dayCountRtc'] != null) {
           setState(() {
             dayCountRtcModel = DayCountRtcModel.fromJson(convertedJson['data']['dayCountRtc']);
-            // if(AppConstants.ecoGemPlusModelList.contains(widget.modelId)) {
+            if(AppConstants.ecoGemPlusModelList.contains(widget.modelId)) {
               programQueueModel = ProgramQueueModel.fromJson(convertedJson['data']['programQueue']);
-            // }
+            }
           });
         }
       } else {
@@ -346,8 +346,8 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                       ),
                     ],
                     const SizedBox(height: 20),
-                    if(AppConstants.ecoGemAndPlusModelList.contains(widget.modelId))...[
-                    // if(AppConstants.ecoGemPlusModelList.contains(widget.modelId))...[
+                    // if(AppConstants.ecoGemAndPlusModelList.contains(widget.modelId))...[
+                    if(AppConstants.ecoGemPlusModelList.contains(widget.modelId))...[
                       const Divider(),
                       // Program Queue Section
                       Text(
@@ -383,16 +383,16 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                           contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                         ),
                         const SizedBox(height: 8),
-                        ReorderableListView(
+                        ListView(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          onReorder: (oldIndex, newIndex) {
+                          /*onReorder: (oldIndex, newIndex) {
                             setState(() {
                               if (newIndex > oldIndex) newIndex--;
                               final item = programQueueModel.queueOrder.removeAt(oldIndex);
                               programQueueModel.queueOrder.insert(newIndex, item);
                             });
-                          },
+                          },*/
                           children: programQueueModel.queueOrder.asMap().entries.map((entry) {
                             final index = entry.key;
                             return Column(
@@ -625,7 +625,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                             "controllerId": widget.controllerId,
                             "dayCountRtc": {
                               "dayCountRtc": dayCountRtcModel.toJson(),
-                              // if(AppConstants.ecoGemPlusModelList.contains(widget.modelId))
+                              if(AppConstants.ecoGemPlusModelList.contains(widget.modelId))
                                 "programQueue": programQueueModel.toJson()
                             },
                             "createUser": widget.userId,
