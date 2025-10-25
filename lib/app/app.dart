@@ -20,6 +20,8 @@ import '../views/common/login/login_screen.dart';
 import '../views/screen_controller.dart';
 import '../views/splash_screen.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
@@ -62,6 +64,7 @@ class _MyAppState extends State<MyApp> {
       builder: (context, snapshot) {
         var isOro = F.appFlavor?.name.contains('oro') ?? false;
         return MaterialApp(
+          navigatorKey: navigatorKey,
           debugShowCheckedModeBanner: false,
           theme: isOro ? OroTheme.lightTheme : SmartCommTheme.lightTheme,
           darkTheme: isOro ? OroTheme.darkTheme : SmartCommTheme.darkTheme,
@@ -80,7 +83,6 @@ Widget navigateToInitialScreen(String route) {
   switch (route) {
     case Routes.login:
        return kIsWeb ? const LoginScreen() : LoginScreenOTP();
-       // return kIsWeb ? const LoginScreen() : isOro ? const LandingScreen() : const LoginScreen();
      case Routes.dashboard:
        return const ScreenController();
     default:

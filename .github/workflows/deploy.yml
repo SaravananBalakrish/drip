@@ -49,7 +49,7 @@ jobs:
       - name: 🔍 Verify keystore
         run: |
           file android/app/release-key.jks
-          keytool -list -keystore android/app/release-key.jks -storepass ${{ secrets.KEYSTORE_PASSWORD }}
+          keytool -list -v -keystore android/app/release-key.jks -storepass ${{ secrets.KEYSTORE_PASSWORD }}
         env:
           JAVA_HOME: ${{ env.JAVA_HOME_17_X64 }}
       - name: 🔐 Create key.properties

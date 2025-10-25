@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/state_management/pump_controller_provider.dart';
 import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/state_management/ble_service.dart';
+import 'package:oro_drip_irrigation/providers/button_loading_provider.dart';
 import 'package:oro_drip_irrigation/providers/user_provider.dart';
 import 'package:oro_drip_irrigation/services/bluetooth_service.dart';
 import 'package:oro_drip_irrigation/services/communication_service.dart';
@@ -67,6 +69,7 @@ Future<void> requestAppPermissions() async {
   }
 }
 
+
 FutureOr<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -78,48 +81,37 @@ FutureOr<void> main() async {
   if (!kIsWeb && Platform.isAndroid) {
     await requestAppPermissions();
   }
-  if (!kIsWeb) {
   // Firebase init
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  if (!kIsWeb) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  // Firebase Messaging
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  await messaging.requestPermission(alert: true, badge: true, sound: true);
-  const initializationSettingsIOS = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true);
-  // Local notifications
-  const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-  const initSettings = InitializationSettings(
-      android: androidInit, iOS: initializationSettingsIOS);
-  await flutterLocalNotificationsPlugin.initialize(initSettings);
+    // Firebase Messaging
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    await messaging.requestPermission(alert: true, badge: true, sound: true);
 
+    // Local notifications
+    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const initSettings = InitializationSettings(android: androidInit);
+    await flutterLocalNotificationsPlugin.initialize(initSettings);
 
-  await flutterLocalNotificationsPlugin.initialize(
-    initSettings,
-    onDidReceiveNotificationResponse: (details) {
-      debugPrint("Notification tapped: ${details.payload}");
-    },
-  );
+    // Background messaging
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+    // Foreground
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        NotificationService().showNotification(
+          title: message.notification!.title,
+          body: message.notification!.body,
+        );
+      }
+    });
 
-  // Background messaging
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      debugPrint("Message clicked: ${message.messageId}");
+    });
+  }
 
-  // Foreground
-  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    if (message.notification != null) {
-      NotificationService().showNotification(
-        title: message.notification!.title,
-        body: message.notification!.body,
-      );
-    }
-  });
-
-  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-    debugPrint("Message clicked: ${message.messageId}");
-  });
   runApp(
     MultiProvider(
       providers: [
@@ -136,7 +128,7 @@ FutureOr<void> main() async {
         ChangeNotifierProvider(create: (_) => PumpControllerProvider()),
         ChangeNotifierProvider(create: (_) => BleProvider()),
         ChangeNotifierProvider(create: (_) => SearchProvider()),
-
+        ChangeNotifierProvider(create: (_) => ButtonLoadingProvider()),
         ProxyProvider2<MqttPayloadProvider, CustomerProvider, CommunicationService>(
           update: (BuildContext context, MqttPayloadProvider mqttProvider,
               CustomerProvider customer, CommunicationService? previous) {

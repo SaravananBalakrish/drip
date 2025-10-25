@@ -28,18 +28,9 @@ class StandAloneViewModel extends ChangeNotifier {
 
 
   List<ProgramModel> programList = [];
- /* StandAloneModel standAloneData = StandAloneModel(
-    startTogether: false,
-    time: '',
-    flow: '',
-    method: 0,
-    selection: [],
-    sequence: [],
-  );*/
 
   StandAloneModel? standAloneData;
 
-  //StandAloneModel standAloneData = StandAloneModel();
   bool visibleLoading = false;
   int ddCurrentPosition = 0;
   int serialNumber = 0;
@@ -466,7 +457,7 @@ class StandAloneViewModel extends ChangeNotifier {
         "800": {"801": '0,0,0,0,0'}
       });
       commService.sendCommand(serverMsg: '', payload: payLoadFinal);
-      print(payLoadFinal);
+      sentManualModeToServer(0, 0, standAloneMethod, strDuration, strFlow, standaloneSelection, payLoadFinal);
       Navigator.of(context).pop();
     }else{
       String strSldSqnNo = '';
@@ -485,7 +476,8 @@ class StandAloneViewModel extends ChangeNotifier {
         "3900": {"3901": '0,${programList[ddCurrentPosition].serialNumber},$strSldSqnNo,0,0,0,0,0,0,0,0'}
       });
       commService.sendCommand(serverMsg: '', payload: payLoadFinal);
-      print(payLoadFinal);
+      sentManualModeToServer(0, 0, standAloneMethod, strDuration, strFlow, standaloneSelection, payLoadFinal);
+
       Navigator.pop(context, 'OK');
     }
   }
@@ -507,6 +499,7 @@ class StandAloneViewModel extends ChangeNotifier {
     String strSldCtrlFrtBoosterSrlNo = extractCFrtBoosterSNos(masterData.irrigationLine,'central');
     String strSldCtrlFrtChannelSrlNo = extractCFrtChannelSNos(masterData.irrigationLine,'central');
     String strSldCtrlFrtAgitatorSrlNo = extractCFrtAgitatorSN(masterData.irrigationLine,'central');
+    String strSldCtrlFrtSelectorSrlNo = extractCFrtSelectorSN(masterData.irrigationLine,'central');
 
 
     if(ddCurrentPosition==0 && !isNova) {
@@ -552,6 +545,7 @@ class StandAloneViewModel extends ChangeNotifier {
         strSldCtrlFrtBoosterSrlNo,
         strSldCtrlFrtChannelSrlNo,
         strSldCtrlFrtAgitatorSrlNo,
+        strSldCtrlFrtSelectorSrlNo,
       ];
 
       print(allRelaySrlNo);
@@ -734,6 +728,22 @@ class StandAloneViewModel extends ChangeNotifier {
     return result.join('_');
   }
 
+  String extractCFrtSelectorSN(List<IrrigationLineModel> lines, String type) {
+    final List<String> result = [];
+    for (var line in lines) {
+      if(type=='central'){
+        if (line.centralFertilizerSite != null && line.centralFertilizerSite!.selector.isNotEmpty) {
+          final selectorSrlNo = getSelectedRelaySrlNo(line.centralFertilizerSite!.selector);
+          if (selectorSrlNo.isNotEmpty) {
+            result.add(selectorSrlNo);
+          }
+        }
+      }else{
+      }
+    }
+    return result.join('_');
+  }
+
 
 
   String getSelectedRelaySrlNo(itemList) {
@@ -801,7 +811,6 @@ class StandAloneViewModel extends ChangeNotifier {
         var response = await repository.updateStandAloneData(body);
         if (response.statusCode == 200) {
           standaloneSelection.clear();
-          //callbackFunction(jsonResponse['message']);
         }
       } catch (error, stackTrace) {
         debugPrint('Error fetching Product stock: $error');
