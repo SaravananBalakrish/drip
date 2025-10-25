@@ -89,7 +89,6 @@ class MqttPayloadProvider with ChangeNotifier {
    String get receivedPayload => _receivedPayload;
 
   int powerSupply = 0;
-  bool onRefresh = false;
   int wifiStrength = 0;
   String liveDateAndTime = '';
   String activeDeviceId = '';
@@ -191,8 +190,6 @@ class MqttPayloadProvider with ChangeNotifier {
      notifyListeners();
    }
 
-
-
    void updateWifiStatus(String status, bool loading) {
      _wifiStatus = status;
      wifiStateChanging = loading;
@@ -271,7 +268,7 @@ class MqttPayloadProvider with ChangeNotifier {
     }
     int seconds = 0;
     DataConvert dataConvert = DataConvert();
-    timerForLocalFertigation = Timer.periodic(Duration(milliseconds: 100), (Timer timer){
+    timerForLocalFertigation = Timer.periodic(const Duration(milliseconds: 100), (Timer timer){
       if(seconds == 1000){
         seconds = 0;
       }else{
@@ -357,7 +354,7 @@ class MqttPayloadProvider with ChangeNotifier {
     }
     int seconds = 0;
     DataConvert dataConvert = DataConvert();
-    timerForCentralFertigation = Timer.periodic(Duration(milliseconds: 100), (Timer timer){
+    timerForCentralFertigation = Timer.periodic(const Duration(milliseconds: 100), (Timer timer){
       if(seconds == 1000){
         seconds = 0;
       }else{
@@ -436,7 +433,7 @@ class MqttPayloadProvider with ChangeNotifier {
       timerForCentralFiltration!.cancel();
     }
     DataConvert dataConvert = DataConvert();
-    timerForCentralFiltration = Timer.periodic(Duration(seconds: 1), (Timer timer){
+    timerForCentralFiltration = Timer.periodic(const Duration(seconds: 1), (Timer timer){
       for(var i in filtersCentral){
         if(i['Status'] != 0 && i['Program'] != ''){
           int onDelay = dataConvert.parseTimeString(i['Duration']);
@@ -464,7 +461,7 @@ class MqttPayloadProvider with ChangeNotifier {
       timerForLocalFiltration!.cancel();
     }
     DataConvert dataConvert = DataConvert();
-    timerForLocalFiltration = Timer.periodic(Duration(seconds: 1), (Timer timer){
+    timerForLocalFiltration = Timer.periodic(const Duration(seconds: 1), (Timer timer){
       for(var i in filtersLocal){
         if(i['Status'] != 0 && i['Program'] != ''){
           int onDelay = dataConvert.parseTimeString(i['Duration']);
@@ -492,7 +489,7 @@ class MqttPayloadProvider with ChangeNotifier {
       timerForIrrigationPump!.cancel();
     }
     DataConvert dataConvert = DataConvert();
-    timerForIrrigationPump = Timer.periodic(Duration(seconds: 1), (Timer timer){
+    timerForIrrigationPump = Timer.periodic(const Duration(seconds: 1), (Timer timer){
       for(var i in irrigationPump){
         if(i['Status'] != 1 && i['Program'] != ''){
           if(i['OnDelay'] != i['OnDelayCompleted'] && i['OnDelayLeft'] != '00:00:00'){
@@ -553,7 +550,7 @@ class MqttPayloadProvider with ChangeNotifier {
       timerForSourcePump!.cancel();
     }
     DataConvert dataConvert = DataConvert();
-    timerForSourcePump = Timer.periodic(Duration(seconds: 1), (Timer timer){
+    timerForSourcePump = Timer.periodic(const Duration(seconds: 1), (Timer timer){
       for(var i in sourcePump){
         if((i['Status'] != 1 && i['Program'] != '') || (i['Status'] == 2 && i['OnDelayLeft'] != '00:00:00')){
           int onDelay = dataConvert.parseTimeString(i['OnDelay']);
@@ -609,7 +606,7 @@ class MqttPayloadProvider with ChangeNotifier {
 
       try {
         Map<String, dynamic> data = _receivedPayload.isNotEmpty? jsonDecode(_receivedPayload) : {};
-          // print('_receivedPayload------>:$_receivedPayload');
+          print('_receivedPayload------>:$_receivedPayload');
 
         if(data['mC']=='2400'){
           liveDateAndTime = '${data['cD']} ${data['cT']}';
@@ -686,12 +683,12 @@ class MqttPayloadProvider with ChangeNotifier {
             viewSettingsList.add(jsonEncode(data["cM"]));
           }
         }
-        if(data['cM'] is! List<dynamic>) {
+        if(data['cM'] is! List<dynamic> && data['cM'] is! String) {
           if (data['mC'] != null && data['cM'].containsKey('4201')) {
             messageFromHw = data['cM']['4201'];
           }
         }
-        if(data['cM'] is! List<dynamic>) {
+        if(data['cM'] is! List<dynamic> && data['cM'] is! String) {
            if (data['mC'] != null && data['cM'].containsKey('4201'))
             {
           if (data['cM']['4201']['PayloadCode'] == '2903') {
@@ -699,7 +696,7 @@ class MqttPayloadProvider with ChangeNotifier {
            }
         }
         }
-        if (data.containsKey("cM") && data["cM"] is! List) {
+        if (data.containsKey("cM") && data["cM"] is! List && data["cM"] is! String) {
           Map cM = data["cM"];
           if (cM.containsKey("6601")) {
             String msg = cM["6601"];
@@ -713,7 +710,7 @@ class MqttPayloadProvider with ChangeNotifier {
 
             String msg = cM["6602"];
             if (!uardMessagesSet.contains(msg)) {
-              uardLog += "\n" + msg;
+              uardLog += "\n$msg";
               uardMessagesSet.add(msg);
             }
           }
@@ -721,7 +718,7 @@ class MqttPayloadProvider with ChangeNotifier {
           if (cM.containsKey("6603")) {
             String msg = cM["6603"];
             if (!uard0MessagesSet.contains(msg)) {
-              uard0Log += "\n" + msg;
+              uard0Log += "\n$msg";
               uard0MessagesSet.add(msg);
             }
           }
@@ -729,7 +726,7 @@ class MqttPayloadProvider with ChangeNotifier {
           if (cM.containsKey("6604")) {
             String msg = cM["6604"];
             if (!uard4MessagesSet.contains(msg)) {
-              uard4Log += "\n" + msg;
+              uard4Log += "\n$msg";
               uard4MessagesSet.add(msg);
             }
           }
@@ -738,8 +735,8 @@ class MqttPayloadProvider with ChangeNotifier {
 
         if(data['mC']=='7400'){
 
-         String Loaraverssion = data['cM']['7401'];
-         final parts = Loaraverssion.split(',');
+         String loraVersion = data['cM']['7401'];
+         final parts = loraVersion.split(',');
          if(parts[0] == '1')
            {
              final rawFrequency = int.parse(parts[2]);
@@ -780,26 +777,12 @@ class MqttPayloadProvider with ChangeNotifier {
     updateLocalFiltrationSite();
   }
 
-  Timer? _timerForPumpController;
-
-  void updatePumpController(){
-    if(_timerForPumpController != null){
-      _timerForPumpController!.cancel();
-    }
-    _timerForPumpController = Timer.periodic(const Duration(seconds: 1), (Timer timer){
-     });
-  }
    void updatetracelog(status){
 
      traceLog = status;
      notifyListeners();
    }
 
-
-  void liveSyncCall(status){
-    onRefresh = status;
-    notifyListeners();
-  }
 
   void updateNodeLiveMessage(List<String> message) {
     nodeLiveMessage = message;

@@ -51,8 +51,7 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
       const DashboardLayoutSelector(userRole: UserRole.customer),
       Consumer<CustomerScreenControllerViewModel>(
         builder: (context, viewModel, _) {
-          final master =
-          viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex];
+          final master = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex];
           final lines = master.irrigationLine;
 
           final lineSNo = (viewModel.lIndex < lines.length) ? lines[viewModel.lIndex].sNo : 0;
@@ -77,10 +76,22 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
       const SettingsMenuNarrow(),
     ] :
     [
-      PumpControllerHome(
+      vm.isChanged
+          ? PumpControllerHome(
         userId: loggedInUser.id,
         customerId: vm.mySiteList.data[vm.sIndex].customerId,
         masterData: cM,
+      ) : const Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('Please wait...'),
+              SizedBox(height: 10),
+              CircularProgressIndicator(),
+            ],
+          ),
+        ),
       ),
     ];
 
@@ -103,10 +114,12 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
       ),
       bottomNavigationBar: isGem ? CustomerBottomNav(index: navModel.index, onTap: navModel.setIndex) : null,
       banners: [
-        const NetworkConnectionBanner(),
-        Consumer<CustomerProvider>(
-          builder: (_, provider, __) => ConnectionBanner(vm: vm, commMode: provider.controllerCommMode ?? 0),
-        ),
+        if(isGem)
+          const NetworkConnectionBanner(),
+        if(isGem)
+          Consumer<CustomerProvider>(
+            builder: (_, provider, __) => ConnectionBanner(vm: vm, commMode: provider.controllerCommMode ?? 0),
+          ),
       ],
       body: IndexedStack(index: navModel.index, children: pages),
     );

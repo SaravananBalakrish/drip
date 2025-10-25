@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../models/customer/site_model.dart';
+import '../../../views/customer/controller_settings/settings_menu_narrow.dart';
 import '../../../views/customer/controller_settings/wide/controller_settings_wide.dart';
 import '../../Logs/view/power_graph_screen.dart';
 import '../../Logs/view/pump_log.dart';
@@ -181,7 +182,9 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
                             ),
                             color: Colors.white,
                             surfaceTintColor: Colors.white,
-                            child: _getSelectedScreen(),
+                            child: context.read<PumpControllerProvider>().isLoading
+                                ? const Center(child: CircularProgressIndicator(),)
+                                : _getSelectedScreen(),
                           )
                         )
                     ),
@@ -223,11 +226,7 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
             controllerId: widget.masterData.controllerId,
           masterData: widget.masterData,
         ),
-        ControllerSettingWide(
-          userId: widget.userId,
-          customerId: widget.customerId,
-          masterController: widget.masterData,
-        ),
+        const SettingsMenuNarrow()
       ],
       onPageChanged: (index) {
         setState(() {
