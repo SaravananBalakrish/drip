@@ -251,7 +251,7 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
       ),
       focusedDay: _focusedDay,
       firstDay: DateTime.utc(2020, 10, 16),
-      lastDay: DateTime.utc(2100, 12, 31),
+      lastDay: DateTime.now(),
       calendarFormat: CalendarFormat.month,
       calendarStyle: CalendarStyle(
         cellMargin: const EdgeInsets.all(4),
