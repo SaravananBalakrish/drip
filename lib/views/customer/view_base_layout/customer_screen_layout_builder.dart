@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../StateManagement/customer_provider.dart';
 import '../../../providers/user_provider.dart';
+import '../../../repository/repository.dart';
+import '../../../services/http_service.dart';
 import '../../../utils/constants.dart';
 import '../../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../../../view_models/nav_rail_view_model.dart';
@@ -63,7 +67,22 @@ class CustomerScreenLayoutBuilder extends StatelessWidget {
             selectedIndex: navRail.selectedIndex,
             labelType: NavigationRailLabelType.all,
             elevation: 5,
-            onDestinationSelected: navRail.onDestinationSelectingChange,
+            onDestinationSelected: (index) async {
+              // Determine which index needs password check based on isGemRNova
+              if(isGemRNova && index == 5) {
+                final authorized = await _askPassword(context);
+                if (authorized == true) {
+                  navRail.onDestinationSelectingChange(index);
+                }
+              } else if (!isGemRNova && index == 4) {
+                final authorized = await _askPassword(context);
+                if (authorized == true) {
+                  navRail.onDestinationSelectingChange(index);
+                }
+              } else {
+                navRail.onDestinationSelectingChange(index);
+              }
+            },
             destinations: NavigationDestinationsBuilder.build(context, cMaster),
           ),
           Expanded(
@@ -106,6 +125,75 @@ class CustomerScreenLayoutBuilder extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<bool> _askPassword(BuildContext context) async {
+    final controller = TextEditingController();
+
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Enter Password'),
+          content: TextField(
+            controller: controller,
+            obscureText: true,
+            decoration: const InputDecoration(
+              labelText: 'Password',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                final userPsw = controller.text;
+
+                try {
+                  final Repository repository = Repository(HttpService());
+                  var getUserDetails = await repository.checkpassword({
+                    "passkey": userPsw,
+                  });
+
+                  if (getUserDetails.statusCode == 200) {
+                    var jsonData = jsonDecode(getUserDetails.body);
+                    if (jsonData['code'] == 200) {
+                      if (ctx.mounted) Navigator.pop(ctx, true);
+                      return;
+                    }
+                  }
+                  if (ctx.mounted) Navigator.pop(ctx, false);
+                } catch (e) {
+                  if (ctx.mounted) Navigator.pop(ctx, false);
+                }
+              },
+              child: const Text('Submit'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (result != true) {
+      showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+          title: const Text("Error"),
+          content: const Text("Incorrect Password!"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            )
+          ],
+        ),
+      );
+    }
+
+    return result == true;
   }
 
   int _getTotalPagesCount(CustomerScreenControllerViewModel vm) {
