@@ -42,7 +42,7 @@ class _ServiceRequestsTableState extends State<ServiceRequestsTable> {
       var getUserDetails = await repository.getUserServiceRequestForDealer({
         "userId": widget.userId,
       });
-      print("getUserDetails :: ${getUserDetails.body}");
+      // print("getUserDetails :: ${getUserDetails.body}");
       if (getUserDetails.statusCode == 200) {
         setState(() {
           var jsonData = jsonDecode(getUserDetails.body);
@@ -67,7 +67,7 @@ class _ServiceRequestsTableState extends State<ServiceRequestsTable> {
         "userId": widget.userId,
       });
       print("userId :: ${widget.userId}");
-      print("getUserCriticalAlarmForDealer ==>  ${getUserDetails.body}");
+      // print("getUserCriticalAlarmForDealer ==>  ${getUserDetails.body}");
       // final jsonData = jsonDecode(getUserDetails.body);
       if (getUserDetails.statusCode == 200) {
         setState(() {

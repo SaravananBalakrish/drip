@@ -57,7 +57,7 @@ class _TicketHomePageState extends State<TicketHomePage> {
       });
 
       print("userId ${widget.userId} controllerId ${widget.controllerId}");
-      print("getUserDetails.body ${getUserDetails.body}");
+      // print("getUserDetails.body ${getUserDetails.body}");
 
       if (getUserDetails.statusCode == 200) {
         var jsonData = jsonDecode(getUserDetails.body);
