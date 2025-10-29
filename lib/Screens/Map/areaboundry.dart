@@ -53,7 +53,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
         "userId": widget.userId,
         "controllerId" : widget.controllerId
       });
-      print('getUserDetails${getUserDetails.body.runtimeType}');
+      // print('getUserDetails${getUserDetails.body.runtimeType}');
       // final jsonData = jsonDecode(getUserDetails.body);
       if (getUserDetails.statusCode == 200) {
         setState(() {
