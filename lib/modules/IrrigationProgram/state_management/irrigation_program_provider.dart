@@ -3161,7 +3161,11 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   .expand((list) => list)
                   .whereType<DeviceObjectModel>()
                   .where((device) => selectedObjects!.any((obj) => obj.sNo == device.sNo))
-                  .toList().map((e) => e.sNo).join('_')
+                  .toList()
+                  .map((e) => e.sNo)
+                  .toSet()
+                  .toList()
+                  .join('_')
                   : "",/*CentralFertilizerSite*/
               "LocalFertilizerSite": localFertilizerSite.toList().isNotEmpty
                   ? sampleIrrigationLine!
@@ -3169,7 +3173,11 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   .expand((list) => list)
                   .whereType<DeviceObjectModel>()
                   .where((device) => selectedObjects!.any((obj) => obj.sNo == device.sNo))
-                  .toList().map((e) => e.sNo).join('_')
+                  .toList()
+                  .map((e) => e.sNo)
+                  .toSet()
+                  .toList()
+                  .join('_')
                   : "",/*LocalFertilizerSite*/
               "CentralFertilizerTankSelection": centralFertilizerSite.map((e) => e.selector != null ? List<DeviceObjectModel>.from(e.selector!) : [])
                   .expand((list) => list)
