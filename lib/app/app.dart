@@ -1,5 +1,6 @@
 import'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:oro_drip_irrigation/Constants/notifications_service.dart';
 import 'package:oro_drip_irrigation/modules/config_Maker/view/config_base_page.dart';
@@ -59,6 +60,10 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     debugPrint('Flavor is: ${F.appFlavor}');
     bool isDarkMode = false;
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return FutureBuilder<String>(
       future: getInitialRoute(),
       builder: (context, snapshot) {
