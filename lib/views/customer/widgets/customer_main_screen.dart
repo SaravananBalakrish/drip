@@ -83,38 +83,22 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
         customerId: cSite.customerId,
         masterController: cMaster,
       ) :
-      (role == UserRole.admin || role == UserRole.dealer) ? SiteConfig(
+       SiteConfig(
         userId: userId,
         customerId: cSite.customerId,
         customerName: cSite.customerName,
-        groupId: cSite.groupId,
-        groupName: cSite.groupName,
-      ) :
-      PasswordProtectedSiteConfig(
-        userId: userId,
-        customerId: cSite.customerId,
-        customerName: cSite.customerName,
-        allMaster: cSite.master,
         groupId: cSite.groupId,
         groupName: cSite.groupName,
       );
 
     case 5:
-      return (isGem || isNova) ? ((role == UserRole.admin || role == UserRole.dealer) ? SiteConfig(
+      return (isGem || isNova) ? SiteConfig(
         userId: userId,
         customerId: cSite.customerId,
         customerName: cSite.customerName,
         groupId: cSite.groupId,
         groupName: cSite.groupName,
       ) :
-      PasswordProtectedSiteConfig(
-        userId: userId,
-        customerId: cSite.customerId,
-        customerName: cSite.customerName,
-        allMaster: cSite.master,
-        groupId: cSite.groupId,
-        groupName: cSite.groupName,
-      )) :
       TicketHomePage(
         userId: cSite.customerId,
         controllerId: cMaster.controllerId,

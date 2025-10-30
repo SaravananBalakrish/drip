@@ -310,7 +310,7 @@ class _NamesState extends State<Names> {
      print('body:-$body');
 
      var getUserDetails = await repository.updateUserNames(body);
-       print('getUserDetails.body-:${getUserDetails.body}');
+       // print('getUserDetails.body-:${getUserDetails.body}');
       final jsonDataResponsePut = json.decode(getUserDetails.body);
       GlobalSnackBar.show(context, jsonDataResponsePut['message'], jsonDataResponsePut['code']);
 
