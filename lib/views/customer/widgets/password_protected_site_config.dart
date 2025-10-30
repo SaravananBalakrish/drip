@@ -76,7 +76,7 @@ class _PasswordProtectedSiteConfigState
                     print("jsonData $jsonData");
 
                     if (jsonData['code'] == 200) {
-                      print("getUserDetails.body: ${getUserDetails.body}");
+                      // print("getUserDetails.body: ${getUserDetails.body}");
                       if (ctx.mounted) Navigator.pop(ctx, true); // ✅ close dialog safely
                     } else {
                       if (ctx.mounted) Navigator.pop(ctx, false); // wrong password
