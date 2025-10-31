@@ -60,7 +60,8 @@ class MyMaterialButton extends StatelessWidget {
 
       // Optional delay
       await Future.delayed(const Duration(milliseconds: 100));
-
+      print("serverMsg:$serverMsg");
+      print("payLoadFinal:$payLoadFinal");
       await commService.sendCommand(
         serverMsg: serverMsg,
         payload: payLoadFinal,
