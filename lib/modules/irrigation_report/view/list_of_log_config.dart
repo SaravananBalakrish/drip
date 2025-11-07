@@ -169,10 +169,6 @@ class _ListOfLogConfigState extends State<ListOfLogConfig> {
           });
         }
       }
-
-      if (kDebugMode) {
-        // print('getUserLogConfig jsonData => $jsonData');
-      }
       if(jsonData['code'] == 200){
         setState(() {
           serverData = jsonData['data'];
