@@ -81,7 +81,7 @@ class ConnectorWidget extends StatelessWidget {
         ],
       );
     }
-    return connector(
+    return connector( 
         object: object,
         selectedConnector: selectedConnector,
         context: context,
@@ -181,5 +181,4 @@ class ConnectorWidget extends StatelessWidget {
     }
     return '$keyWord$editConnectionNo$specificSensor';
   }
-
 }
