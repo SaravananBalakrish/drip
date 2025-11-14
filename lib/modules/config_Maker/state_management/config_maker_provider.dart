@@ -1489,7 +1489,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         for(var src in source){
           if((src.inletPump.contains(pumpModel.commonDetails.sNo) || src.outletPump.contains(pumpModel.commonDetails.sNo)) && listOfLevel.any((levelObject) => levelObject.sNo == src.level)){
             DeviceObjectModel levelObject = listOfLevel.firstWhere((levelObject) => levelObject.sNo == src.level);
-            levelConnectionNo = levelObject.connectionNo!;
+            levelConnectionNo = (levelObject.connectionNo == null || levelObject.connectionNo == 0) ? 0 : 1;
           }
         }
         // for(var src in source){
