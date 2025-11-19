@@ -283,6 +283,8 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
     print("generalPayload : $generalPayload");
     var globalAlarmPayload = widget.constPvd.getGlobalAlarmPayload();
     print("globalAlarmPayload : $globalAlarmPayload");
+    var globalAlarmForEcoGem = widget.constPvd.getEcoGemPayloadForGlobalAlarm();
+    print("globalAlarmForEcoGem : $globalAlarmForEcoGem");
     var levelSensorPayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.level);
     print("levelSensorPayload : $levelSensorPayload");
     var pumpPayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.pump);
@@ -317,6 +319,8 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
         "308" : normalCriticalPayload,
         "309" : pumpPayload,
         "310" : filterPayload,
+        if(!isGem)
+          "311" : globalAlarmForEcoGem
       }
     };
     return hardwarePayload;
