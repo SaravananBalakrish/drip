@@ -319,8 +319,6 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
         "308" : normalCriticalPayload,
         "309" : pumpPayload,
         "310" : filterPayload,
-        if(!isGem)
-          "311" : globalAlarmForEcoGem
       }
     };
     return hardwarePayload;
