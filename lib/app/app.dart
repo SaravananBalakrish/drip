@@ -94,3 +94,39 @@ Widget navigateToInitialScreen(String route) {
       return const SplashScreen();
   }
 }
+
+class DraggableWidget extends StatefulWidget {
+  @override
+  _DraggableWidgetState createState() => _DraggableWidgetState();
+}
+
+class _DraggableWidgetState extends State<DraggableWidget> {
+  Offset position = Offset(100, 100); // Initial position
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      child: Stack(
+        children: [
+          Positioned(
+            left: position.dx,
+            top: position.dy,
+            child: GestureDetector(
+              onPanUpdate: (details) {
+                setState(() {
+                  position += details.delta;
+                });
+              },
+              child: Container(
+                width: 100,
+                height: 100,
+                color: Colors.blue,
+                child: Center(child: Text('Drag Me')),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

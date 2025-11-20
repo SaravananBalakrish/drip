@@ -489,6 +489,7 @@ class ConstantProvider extends ChangeNotifier{
   }
 
   String getNormalCriticalAlarmForEcoGem(){
+    print('eco gem payload start');
     List<dynamic> payloadList = [];
     for(var line in normalCriticalAlarm){
       for(var alarmIndex = 0;alarmIndex < line.normal.length;alarmIndex++){
@@ -496,7 +497,7 @@ class ConstantProvider extends ChangeNotifier{
             [
               line.normal[alarmIndex].sNo,
               ...line.normal[alarmIndex].setting.where((setting){
-                return ((AppConstants.gemModelList.contains(userData['modelId']) ?  setting.gemPayload : setting.ecoGemPayload) && setting.common == null);
+                return (setting.ecoGemPayload);
               }).map((setting){
                 return payloadValidate(setting.value.value);
               }),
