@@ -541,6 +541,26 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                         },
                       ),
                     ],
+                    const SizedBox(height: 20),
+                    Text(
+                      'Drip Standalone',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: theme.primaryColor,
+                      ),
+                    ),
+                    SwitchListTile(
+                      title: const Text('Drip Standalone Mode'),
+                      value: programQueueModel.dripStandaloneMode,
+                      onChanged: (value) {
+                        setState(() {
+                          programQueueModel.dripStandaloneMode = value;
+                        });
+                      },
+                      activeColor: theme.primaryColor,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+                    ),
                    /* SwitchListTile(
                       title: const Text('Enable Run Days'),
                       value: programQueueModel.runDays,
@@ -601,7 +621,8 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                                   "${programQueueModel.noOfSkipDays},"
                                   "${programQueueModel.runDays ? 1 : 0},"
                                   "${programQueueModel.noOfRunDays},"
-                                  "${0}"
+                                  "${0},"
+                                  "${programQueueModel.dripStandaloneMode ? 1 : 0}"
                                   // "${programQueueModel.queueReset ? 1 : 0}"
                             }
                           };
