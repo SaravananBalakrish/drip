@@ -770,6 +770,7 @@ class ProgramQueueModel {
   bool runDays;
   String noOfRunDays;
   bool queueReset;
+  bool dripStandaloneMode;
 
   ProgramQueueModel({
     required this.programQueue,
@@ -781,6 +782,7 @@ class ProgramQueueModel {
     required this.runDays,
     required this.noOfRunDays,
     required this.queueReset,
+    required this.dripStandaloneMode,
   });
 
   // Helper method to safely convert a dynamic list to List<String>
@@ -808,6 +810,7 @@ class ProgramQueueModel {
       runDays: json["runDays"] ?? false,
       noOfRunDays: json["noOfRunDays"] ?? '0',
       queueReset: json["queueReset"] ?? false,
+      dripStandaloneMode: json["dripStandaloneMode"] ?? false,
     );
   }
 
@@ -822,6 +825,7 @@ class ProgramQueueModel {
       "runDays": runDays,
       "noOfRunDays": noOfRunDays,
       "queueReset": queueReset,
+      "dripStandaloneMode": dripStandaloneMode,
     };
   }
 }
