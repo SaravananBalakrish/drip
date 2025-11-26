@@ -1,3 +1,5 @@
+import '../../../utils/constants.dart';
+
 class GeneralData {
   String deviceId;
   String controllerReadStatus;
@@ -78,7 +80,7 @@ class WidgetSetting {
     required this.serialNumber
   });
 
-  factory WidgetSetting.fromJson(Map<String, dynamic> json) {
+  factory WidgetSetting.fromJson(Map<String, dynamic> json, bool isNova) {
     final rtcData = json['value'];
     List<RtcTimeSetting>? rtcSettings;
     if (rtcData is List<dynamic> && json['title'].toString().toUpperCase() == "RTC TIMER") {
@@ -88,8 +90,13 @@ class WidgetSetting {
     }
 
     dynamic value;
-    if (json['title'].toString().toUpperCase() == "2 PHASE" ||
-        json['title'].toString().toUpperCase() == "AUTO RESTART 2 PHASE") {
+    if (json['title'].toString().toUpperCase() == "2 PHASE"
+        || json['title'].toString().toUpperCase() == "AUTO RESTART 2 PHASE"
+        || (isNova && (
+            json['title'].toString().toUpperCase() == "UPPER TANK LINEAR LEVEL SENSOR" ||
+                json['title'].toString().toUpperCase() == "LOWER TANK LINEAR LEVEL SENSOR"
+        ))
+    )  {
       value = json['value'] is bool ? List<bool>.filled(3, false) : json['value'];
     } else {
       switch (json['widgetTypeId']) {
@@ -152,11 +159,11 @@ class SettingList {
     required this.setting,
   });
 
-  factory SettingList.fromJson(Map<String, dynamic> json) {
+  factory SettingList.fromJson(Map<String, dynamic> json, {bool isNova = false}) {
     final settingsData = json['setting'] as List;
 
     final settings = settingsData.map((setting) {
-      return WidgetSetting.fromJson(setting);
+      return WidgetSetting.fromJson(setting, isNova);
     }).toList();
 
     return SettingList(
@@ -304,7 +311,7 @@ class CommonPumpSetting {
   factory CommonPumpSetting.fromJson(Map<String, dynamic> json) {
     // print("json in the common settings ==> $json");
     final settingsDats = json['settingList'] as List<dynamic>;
-    final settingsList = settingsDats.map((element) => SettingList.fromJson(element)).toList();
+    final settingsList = settingsDats.map((element) => SettingList.fromJson(element, isNova: AppConstants.ecoGemAndPlusModelList.contains(json['modelId']))).toList();
     return CommonPumpSetting(
         controllerId: json["controllerId"],
         categoryId: json["categoryId"] ?? 0,
