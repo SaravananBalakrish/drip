@@ -67,7 +67,7 @@ class PreferenceProvider extends ChangeNotifier {
 
   String get mode => _mode;
 
-  Future<void> getUserPreference({required int userId, required int controllerId, required int modelId}) async {
+  Future<void> getUserPreference({required int userId, required int controllerId}) async {
     final userData = {
       "userId": userId,
       "controllerId": controllerId

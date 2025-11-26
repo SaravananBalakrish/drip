@@ -194,13 +194,14 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   late bool isPumpWithValveModel;
   late bool isPumpOnly;
   late bool isValveSetting;
+  late bool isNova;
 
   @override
   void initState() {
     // TODO: implement initState
     preferenceProvider = Provider.of<PreferenceProvider>(context, listen: false);
     mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
-    preferenceProvider.getUserPreference(userId: widget.customerId, controllerId: widget.masterData['controllerId'], modelId: widget.masterData['modelId']).then((_) {
+    preferenceProvider.getUserPreference(userId: widget.customerId, controllerId: widget.masterData['controllerId']).then((_) {
       commonPumpTabController = TabController(
           length: preferenceProvider.commonPumpSettings?.length ?? 0,
           vsync: this
@@ -223,6 +224,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     isToGem = AppConstants.gemModelList.contains(widget.masterData['modelId']);
     isPumpWithValveModel = AppConstants.pumpWithValveModelList.contains(widget.masterData['modelId']);
     isPumpOnly = AppConstants.pumpModelList.contains(widget.masterData['modelId']);
+    isNova = AppConstants.ecoGemAndPlusModelList.contains(widget.masterData['modelId']);
     isValveSetting = [1, 2].contains(widget.selectedIndex);
     super.initState();
   }
@@ -253,14 +255,15 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             ? AppBar(
           title: const Text("Preference"),
           actions: [
-            FilledButton(
-                onPressed: (){
-                  setState(() {
-                    viewConfig = !viewConfig;
-                  });
-                },
-                child: const Text('View')
-            ),
+            if(selectedSetting == 0)
+              FilledButton(
+                  onPressed: (){
+                    setState(() {
+                      viewConfig = !viewConfig;
+                    });
+                  },
+                  child: const Text('View')
+              ),
             const SizedBox(width: 10,)
           ],
         )
@@ -324,14 +327,14 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                                           ),
                                                           TextButton(
                                                               onPressed: () async {
-                                                                if (AppConstants.gemModelList.contains(widget.masterData['modelId'])) {
+                                                                if (isNova || isToGem) {
                                                                   final pump = preferenceProvider.commonPumpSettings![preferenceProvider.selectedTabIndex];
                                                                   final payload = jsonEncode({"sentSms": "viewconfig,4"});
                                                                   final payload2 = jsonEncode({"0": payload});
                                                                   final viewConfig = {
                                                                     "5900": {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${pump.categoryId}"}
                                                                   };
-                                                                  mqttService.topicToPublishAndItsMessage(jsonEncode(viewConfig), "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
+                                                                  mqttService.topicToPublishAndItsMessage(isToGem ? jsonEncode(viewConfig) : payload, "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
                                                                 }
                                                                 await Future.delayed(Duration.zero, () {
                                                                   preferenceProvider.updateValidationCode();
@@ -743,7 +746,13 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                 for(var settingIndex = 0; settingIndex < settingList[categoryIndex].setting.length; settingIndex++)
                                   if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "RTC TIMER")
                                     _buildRtcTimer(categoryIndex, settingIndex, pumpIndex, settingList)
-                                  else if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "2 PHASE" || settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "AUTO RESTART 2 PHASE")
+                                  else if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "2 PHASE"
+                                      || settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "AUTO RESTART 2 PHASE"
+                                      || (isNova && (
+                                          settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "UPPER TANK LINEAR LEVEL SENSOR" ||
+                                              settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "LOWER TANK LINEAR LEVEL SENSOR"
+                                      ))
+                                  )
                                     _buildTwoPhaseCard(categoryIndex, settingIndex, pumpIndex, settingList)
                                   else
                                     buildCustomListTileWidget(
@@ -760,7 +769,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                       onValueChange: (newValue) => onChangeValue(categoryIndex, settingIndex, settingList, newValue),
                                       conditionToShow: getConditionToShow(type: settingList[categoryIndex].type, serialNumber: settingList[categoryIndex].setting[settingIndex].serialNumber, value: settingList[categoryIndex].setting[settingIndex].value,),
                                       subTitle: _getSubTitle(categoryIndex, settingIndex, settingList, pumpIndex),
-                                      hidden: settingList[categoryIndex].setting[settingIndex].title == "Schedule by Days"
+                                      hidden: (settingList[categoryIndex].setting[settingIndex].title == "Schedule by Days" 
+                                          || (!isNova && settingList[categoryIndex].type == 210 && [7,8].contains(settingList[categoryIndex].setting[settingIndex].serialNumber)))
                                           ? true
                                           : settingList[categoryIndex].setting[settingIndex].hidden,
                                       enabled: true,
@@ -922,31 +932,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                     });
                   }
               ),
-              /*Container(
-                margin: const EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(preferenceProvider.individualPumpSetting!
-                            .where((e) => e.controllerId == preferenceProvider.commonPumpSettings![pumpIndex].controllerId)
-                            .elementAt(index)
-                            .name),
-                        Switch(
-                            value: settingList[categoryIndex].setting[settingIndex].value[index],
-                            onChanged: (newValue) {
-                              setState(() {
-                                settingList[categoryIndex].setting[settingIndex].value[index] = newValue;
-                                settingList[categoryIndex].changed = true;
-                              });
-                            }
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              )*/
           ],
         )
       ],
@@ -983,7 +968,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   }
 
   dynamic _getSubTitle(int categoryIndex, int settingIndex, List settingList, int pumpIndex) {
-    return (isToGem &&
+    return ((isNova || isToGem) &&
         [208, 209, 210].contains(settingList[categoryIndex].type))
         ? "Last setting: ${(_getValue(
         type: settingList[categoryIndex].type,
@@ -1791,7 +1776,11 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
           }
         }
       } else {
-        if (setting.title.toUpperCase() == '2 PHASE' || setting.title.toUpperCase() == 'AUTO RESTART 2 PHASE') {
+        if (setting.title.toUpperCase() == '2 PHASE'
+            || setting.title.toUpperCase() == 'AUTO RESTART 2 PHASE'
+            || setting.title.toUpperCase() == 'UPPER TANK LINEAR LEVEL SENSOR'
+            || setting.title.toUpperCase() == 'LOWER TANK LINEAR LEVEL SENSOR'
+        ) {
           const phaseMap = {
             '[false, false, false]': '0',
             '[false, false, true]': '4',
