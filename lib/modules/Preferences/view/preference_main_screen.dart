@@ -332,7 +332,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                                                   final payload = jsonEncode({"sentSms": "viewconfig,4"});
                                                                   final payload2 = jsonEncode({"0": payload});
                                                                   final viewConfig = {
-                                                                    "5900": {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${pump.categoryId}"}
+                                                                    "5900": {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${4}"}
                                                                   };
                                                                   mqttService.topicToPublishAndItsMessage(isToGem ? jsonEncode(viewConfig) : payload, "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
                                                                 }
