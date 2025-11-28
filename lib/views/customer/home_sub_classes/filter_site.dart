@@ -124,7 +124,7 @@ class FilterWidget extends StatelessWidget {
               Stack(
                 children: [
                   SizedBox(width:70, height: 70, child: AppConstants.getAsset(isMobile ?
-                  'mobile filter':'filter', filter.status,'')),
+                  'mobile filter':'filter', filter.status,'${filter.filterMode}')),
                   filter.onDelayLeft != '00:00:00' && siteStatus != 0 ?
                   Positioned(
                     top: 52,

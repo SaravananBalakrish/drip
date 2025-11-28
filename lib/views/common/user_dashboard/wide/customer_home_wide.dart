@@ -65,7 +65,6 @@ class CustomerHomeWide extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-
               ...irrigationLine.map((line) => Padding(
                 padding: const EdgeInsets.only(left: 8, right: 8, top:8, bottom: 5),
                 child: Container(
