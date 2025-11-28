@@ -125,6 +125,19 @@ class IrrigationLineWide extends StatelessWidget {
       ...gateWidgets,
     ];
 
+    int cFrtChannelCount = 0;
+    int lFrtChannelCount = 0;
+
+    if(cFertilizerSite.isNotEmpty) {
+      cFrtChannelCount = (cFertilizerSite[0].channel.length + cFertilizerSite[0].agitator.length + 1);
+    }
+    if(lFertilizerSite.isNotEmpty){
+      lFrtChannelCount = (lFertilizerSite[0].channel.length + lFertilizerSite[0].agitator.length + 1);
+    }
+
+    int itemsPerRow = ((MediaQuery.sizeOf(context).width - 140) / 67).floor() -
+        (cFrtChannelCount + lFrtChannelCount);
+
     return Padding(
       padding: const EdgeInsets.only(top: 8),
       child: Align(
@@ -134,11 +147,10 @@ class IrrigationLineWide extends StatelessWidget {
           spacing: 0,
           runSpacing: 0,
           children: allItems.asMap().entries.map<Widget>((entry) {
+
             final index = entry.key;
             final item = entry.value;
-            if(cFertilizerSite.isNotEmpty){
-              int itemsPerRow = ((MediaQuery.sizeOf(context).width - 140) / 67).floor();
-
+            if(cFertilizerSite.isNotEmpty) {
               if (((item is ValveWidget) || (item is BuildMainValve)
                   ||(item is LightWidget)||(item is SensorWidget))
                   && index < itemsPerRow) {
