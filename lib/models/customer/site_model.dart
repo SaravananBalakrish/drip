@@ -41,10 +41,6 @@ class Group {
 
   factory Group.fromJson(Map<String, dynamic> json, String userType) {
 
-    String jsonString = jsonEncode(json);
-
-    print('all my site:$jsonString');
-
     return Group(
       customerId: json['customerId'],
       customerName:  json['customerName'],
@@ -802,26 +798,15 @@ class FilterSiteModel {
 
   factory FilterSiteModel.fromJson(Map<String, dynamic> json, List<ConfigObject> configObjects) {
 
-    /*final filterSNoSet = ((json['filters'] as List?) ?? [])
-        .map((e) => e.toStringAsFixed(3))
-        .toSet();*/
-
-    final filterSNoSet = ((json['filters'] as List?) ?? [])
-        .map((e) {
-      if (e is Map) {
-        // Object case: extract sNo
-        return (e['sNo'] as num).toStringAsFixed(3);
-      } else if (e is num) {
-        // Number case: directly format
-        return e.toStringAsFixed(3);
-      }
-      return null;
-    }).where((e) => e != null).toSet();
-
-    final filters = configObjects
-        .where((obj) => filterSNoSet.contains(obj.sNo.toStringAsFixed(3)))
-        .map(Filters.fromConfigObject)
-        .toList();
+    final filtersJson = json['filters'] as List? ?? [];
+    final filters = filtersJson.map((item) {
+      final sNo = (item['sNo'] as num).toDouble();
+      final match = configObjects.firstWhere(
+            (obj) => obj.sNo.toStringAsFixed(3) == sNo.toStringAsFixed(3),
+        orElse: () => throw Exception("ConfigObject missing for filter sNo $sNo"),
+      );
+      return Filters.fromConfigAndJson(match, item);
+    }).toList();
 
     final pressureInSNo = (json['pressureIn'] ?? 0) as num;
     PressureSensor? pressureIn;
@@ -889,40 +874,10 @@ class FilterSiteModel {
 
 }
 
-class PressureSensor {
-  final double sNo;
-  final String name;
-  String value;
-
-  PressureSensor({
-    required this.sNo,
-    required this.name,
-    this.value='0',
-  });
-
-  factory PressureSensor.fromJson(Map<String, dynamic> json) {
-    return PressureSensor(
-      sNo: (json['sNo'] as num?)?.toDouble() ?? 0.0,
-      name: json['name'] ?? '',
-    );
-  }
-
-  factory PressureSensor.fromConfigObject(ConfigObject obj) {
-    return PressureSensor(
-      sNo: obj.sNo,
-      name: obj.name,
-    );
-  }
-
-  Map<String, dynamic> toJson() => {
-    "sNo": sNo,
-    "name": name,
-  };
-}
-
 class Filters {
   double sNo;
   String name;
+  int filterMode;
   int status;
   bool selected;
   String onDelayLeft;
@@ -931,23 +886,18 @@ class Filters {
   Filters({
     required this.sNo,
     required this.name,
+    required this.filterMode,
     this.status = 0,
     this.selected=false,
     this.onDelayLeft='00:00:00',
     this.defPrsVal = '0.0',
   });
 
-  factory Filters.fromConfigObject(ConfigObject obj) {
+  factory Filters.fromConfigAndJson(ConfigObject obj, Map<String, dynamic> json) {
     return Filters(
       sNo: obj.sNo,
       name: obj.name,
-    );
-  }
-
-  factory Filters.fromJson(Map<String, dynamic> json) {
-    return Filters(
-      sNo: json['sNo'],
-      name: json['name'],
+      filterMode: json['filterMode'] ?? 0,
     );
   }
 }
@@ -1137,6 +1087,37 @@ class Channel implements FertilizerItem {
       'offTime': offTime,
     };
   }
+}
+
+class PressureSensor {
+  final double sNo;
+  final String name;
+  String value;
+
+  PressureSensor({
+    required this.sNo,
+    required this.name,
+    this.value='0',
+  });
+
+  factory PressureSensor.fromJson(Map<String, dynamic> json) {
+    return PressureSensor(
+      sNo: (json['sNo'] as num?)?.toDouble() ?? 0.0,
+      name: json['name'] ?? '',
+    );
+  }
+
+  factory PressureSensor.fromConfigObject(ConfigObject obj) {
+    return PressureSensor(
+      sNo: obj.sNo,
+      name: obj.name,
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+    "sNo": sNo,
+    "name": name,
+  };
 }
 
 class Ec {

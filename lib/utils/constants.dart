@@ -80,6 +80,11 @@ class AppConstants {
   static const String mobileFilterNotON = "m_dp_filter_y.png";
   static const String mobileFilterNotOFF = "m_dp_filter_r.png";
 
+  static const String mobileSandFilterOFF = "ms_dp_filter.png";
+  static const String mobileSandFilterON = "ms_dp_filter_g.png";
+  static const String mobileSandFilterNotON = "ms_dp_filter_y.png";
+  static const String mobileSandFilterNotOFF = "ms_dp_filter_r.png";
+
   static const String boosterPumpOFF = "dp_frt_booster_pump.png";
   static const String boosterPumpON = "dp_frt_booster_pump_g.gif";
   static const String boosterPumpNotON = "dp_frt_booster_pump_y.png";
@@ -228,7 +233,7 @@ class AppConstants {
         imagePathFinal = _getFilterImagePath(keyTwo);
         break;
       case 'mobile filter':
-        imagePathFinal = _getMobileFilterImagePath(keyTwo);
+        imagePathFinal = _getMobileFilterImagePath(keyTwo, int.parse(keyThree));
         break;
       case 'booster':
         imagePathFinal = _getBoosterImagePath(keyTwo);
@@ -356,21 +361,20 @@ class AppConstants {
     }
   }
 
-  static String _getMobileFilterImagePath(int status) {
+  static String _getMobileFilterImagePath(int status, int type) {
     switch (status) {
       case 0:
-        return mobileFilterOFF;
+        return type==1? mobileSandFilterOFF : mobileFilterOFF;
       case 1:
-        return mobileFilterON;
+        return type==1? mobileSandFilterON : mobileFilterON;
       case 2:
-        return mobileFilterNotON;
+        return type==1? mobileSandFilterNotON : mobileFilterNotON;
       case 3:
-        return mobileFilterNotOFF;
+        return type==1? mobileSandFilterNotOFF : mobileFilterNotOFF;
       default:
         return '';
     }
   }
-
 
   static String getFertilizerImage(int cIndex, int status, int cheLength, List agitatorList) {
     String imageName;
