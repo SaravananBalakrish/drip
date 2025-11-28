@@ -8,7 +8,6 @@ import '../../../utils/constants.dart';
 import '../../../utils/enums.dart';
 import '../../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../controller_settings/wide/controller_settings_wide.dart';
-import '../customer_home.dart';
 import '../customer_product.dart';
 import '../send_and_received/sent_and_received.dart';
 import '../site_config.dart';
@@ -25,13 +24,7 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
   switch (index) {
     case 0:
       return (isGem || isNova) ?
-      const DashboardLayoutSelector(userRole: UserRole.customer)
-      /*CustomerHome(
-        customerId: cSite.customerId,
-        controllerId: cMaster.controllerId,
-        deviceId: cMaster.deviceId,
-        modelId: cMaster.modelId,
-      )*/ :
+      const DashboardLayoutSelector(userRole: UserRole.customer) :
       vm.isChanged ? PumpControllerHome(
         userId: userId,
         customerId: cSite.customerId,
