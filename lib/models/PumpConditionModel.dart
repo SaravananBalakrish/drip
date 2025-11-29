@@ -28,20 +28,54 @@ class PumpConditionModel {
   };
 }
 
+// class Data {
+//   List<PumpCondition>? pumpCondition;
+//   String? controllerReadStatus;
+//   String novaselectmode;
+//
+//   Data({
+//     this.pumpCondition,
+//     this.controllerReadStatus,
+//     this.novaselectmode = "Alternative",
+//   });
+//
+//   factory Data.fromJson(Map<String, dynamic> json) => Data(
+//     pumpCondition: json["pumpCondition"] == null
+//         ? []
+//         : List<PumpCondition>.from(json["pumpCondition"].map((x) => PumpCondition.fromJson(x))),
+//     controllerReadStatus: json["controllerReadStatus"],
+//     novaselectmode: json["nova"],
+//   );
+//
+//   Map<String, dynamic> toJson() => {
+//     "pumpCondition": pumpCondition == null
+//         ? []
+//         : List<dynamic>.from(pumpCondition!.map((x) => x.toJson())),
+//     "controllerReadStatus": controllerReadStatus,
+//     "nova": novaselectmode,
+//   };
+// }
 class Data {
   List<PumpCondition>? pumpCondition;
   String? controllerReadStatus;
+  String novaselectmode;   // <-- not nullable, always has a value
 
   Data({
     this.pumpCondition,
     this.controllerReadStatus,
+    this.novaselectmode = "Alternative",   // <-- default value
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(
     pumpCondition: json["pumpCondition"] == null
         ? []
-        : List<PumpCondition>.from(json["pumpCondition"].map((x) => PumpCondition.fromJson(x))),
+        : List<PumpCondition>.from(
+        json["pumpCondition"].map((x) => PumpCondition.fromJson(x))),
     controllerReadStatus: json["controllerReadStatus"],
+
+    // IMPORTANT FIX:
+    // If "nova" key is missing OR null → default "Alternative"
+    novaselectmode: json["novaselectmode"] ?? "Alternative",
   );
 
   Map<String, dynamic> toJson() => {
@@ -49,6 +83,7 @@ class Data {
         ? []
         : List<dynamic>.from(pumpCondition!.map((x) => x.toJson())),
     "controllerReadStatus": controllerReadStatus,
+    "nova": novaselectmode,
   };
 }
 
