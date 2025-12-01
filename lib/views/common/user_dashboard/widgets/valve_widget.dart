@@ -99,18 +99,32 @@ class ValveWidget extends StatelessWidget {
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             backgroundColor: WidgetStateProperty.all(Colors.transparent),
                           ),
-                          child: CircleAvatar(
-                            radius: 15,
-                            backgroundColor: _getMoistureColor(
-                              valve.moistureSensors
-                                  .map((sensor) => {'name': sensor.name, 'value': sensor.value})
-                                  .toList(),
-                            ),
-                            child: Image.asset(
-                              'assets/png/moisture_sensor.png',
-                              width: 25,
-                              height: 25,
-                            ),
+                          child: Consumer<MqttPayloadProvider>(
+                            builder: (_, provider, __) {
+
+                              for (var sensor in valve.moistureSensors) {
+                                final sensorUpdate = provider.getSensorUpdatedValve(sensor.sNo.toString());
+                                final statusParts = sensorUpdate?.split(',') ?? [];
+                                if (statusParts.length > 1) {
+                                  sensor.value = statusParts[1];
+                                }
+                              }
+
+                              final sensorList = valve.moistureSensors.map((sensor) => {
+                                'name': sensor.name,
+                                'value': sensor.value,
+                              }).toList();
+
+                              return CircleAvatar(
+                                radius: 15,
+                                backgroundColor: _getMoistureColor(sensorList),
+                                child: Image.asset(
+                                  'assets/png/moisture_sensor.png',
+                                  width: 25,
+                                  height: 25,
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ),
@@ -275,18 +289,32 @@ class ValveWidget extends StatelessWidget {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       backgroundColor: WidgetStateProperty.all(Colors.transparent),
                     ),
-                    child: CircleAvatar(
-                      radius: 15,
-                      backgroundColor: _getMoistureColor(
-                        valve.moistureSensors
-                            .map((sensor) => {'name': sensor.name, 'value': sensor.value})
-                            .toList(),
-                      ),
-                      child: Image.asset(
-                        'assets/png/moisture_sensor.png',
-                        width: 25,
-                        height: 25,
-                      ),
+                    child: Consumer<MqttPayloadProvider>(
+                      builder: (_, provider, __) {
+
+                        for (var sensor in valve.moistureSensors) {
+                          final sensorUpdate = provider.getSensorUpdatedValve(sensor.sNo.toString());
+                          final statusParts = sensorUpdate?.split(',') ?? [];
+                          if (statusParts.length > 1) {
+                            sensor.value = statusParts[1];
+                          }
+                        }
+
+                        final sensorList = valve.moistureSensors.map((sensor) => {
+                          'name': sensor.name,
+                          'value': sensor.value,
+                        }).toList();
+
+                        return CircleAvatar(
+                          radius: 15,
+                          backgroundColor: _getMoistureColor(sensorList),
+                          child: Image.asset(
+                            'assets/png/moisture_sensor.png',
+                            width: 25,
+                            height: 25,
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ),
@@ -301,14 +329,16 @@ class ValveWidget extends StatelessWidget {
     if (sensors.isEmpty) return Colors.grey;
 
     final values = sensors
-        .map((ms) => double.tryParse(ms['value'] ?? '0') ?? 0.0)
+        .map((ms) => double.tryParse(ms['value']?.toString() ?? '0') ?? 0.0)
         .toList();
+
+    if (values.isEmpty) return Colors.grey;
 
     final averageValue = values.reduce((a, b) => a + b) / values.length;
 
-    if (averageValue < 20) {
+    if (averageValue < 55) {
       return Colors.green.shade200;
-    } else if (averageValue <= 60) {
+    } else if (averageValue <= 120) {
       return Colors.orange.shade200;
     } else {
       return Colors.red.shade200;

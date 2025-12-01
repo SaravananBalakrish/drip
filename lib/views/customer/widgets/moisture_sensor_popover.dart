@@ -13,18 +13,22 @@ class MoistureSensorPopover extends StatelessWidget {
   final ValveModel valve;
   final List<SensorHourlyDataModel> sensors;
 
-  const MoistureSensorPopover({
+  MoistureSensorPopover({
     super.key,
     required this.valve,
     required this.sensors,
   });
 
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
 
     return Scrollbar(
+      controller: _scrollController,
       thumbVisibility: true,
       child: SingleChildScrollView(
+        controller: _scrollController,
         child: Column(
           children: valve.moistureSensors.map((sensor) {
       
@@ -78,7 +82,7 @@ class MoistureSensorPopover extends StatelessWidget {
                                 maximum: 200,
                                 pointers: <GaugePointer>[
                                   NeedlePointer(
-                                      value: double.parse(valve.moistureSensors[0].value),
+                                      value: double.tryParse(sensor.value.toString()) ?? 0.0,
                                       needleEndWidth: 3, needleColor: Colors.black54),
                                   const RangePointer(
                                     value: 200.0,
