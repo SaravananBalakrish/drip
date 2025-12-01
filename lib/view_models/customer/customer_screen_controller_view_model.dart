@@ -50,6 +50,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   late SiteModel mySiteList = SiteModel(data: []);
 
   bool onRefresh = false;
+  bool mqttInitialized = false;
 
   CustomerScreenControllerViewModel(
       this.context,
@@ -62,21 +63,44 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
 
   // ---------------------- INIT FLOW ------------------------
   void _init() {
-    _initializeMqttConnection();
+
     mqttProvider.addListener(_onPayloadReceived);
 
     NetworkUtils.connectionStream.listen((connected) {
       if (_disposed) return;
       if (connected) {
+        if (mqttService.isConnected) return;
+        if (mqttInitialized) {
+          restartMqttSession();
+          return;
+        }
         _initializeMqttConnection();
-        mqttProvider.addListener(_onPayloadReceived);
       }
     });
+
   }
 
   // ---------------------- MQTT HANDLING ------------------------
 
   void _initializeMqttConnection() {
+    if (mqttInitialized) {
+      debugPrint("🔵 MQTT already initialized, skipping...");
+      return;
+    }
+
+    if (mySiteList.data.isEmpty) {
+      debugPrint("MQTT init deferred: mySiteList empty");
+      return;
+    }
+    final master = mySiteList.data[sIndex].master;
+    if (master.isEmpty) {
+      debugPrint("MQTT init deferred: master list empty");
+      return;
+    }
+
+    mqttInitialized = true;
+    debugPrint("🚀 Initializing MQTT...");
+
     mqttService.initializeMQTTClient(state: mqttProvider);
     mqttService.connect();
 
@@ -91,17 +115,14 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   void _handleMqttState(MqttConnectionState state) {
     switch (state) {
       case MqttConnectionState.connected:
-        debugPrint("✅ MQTT Connected");
         Future.delayed(const Duration(seconds: 1), _subscribeToDeviceTopic);
         break;
 
       case MqttConnectionState.connecting:
-        debugPrint("⏳ MQTT Connecting...");
         break;
 
       case MqttConnectionState.disconnected:
       default:
-        debugPrint("⚠️ MQTT Disconnected");
         _handleMqttReconnection();
     }
   }
@@ -109,21 +130,22 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   void _handleMqttReconnection() {
     if (_isConnecting || mqttService.isConnected) return;
 
-    if (NetworkUtils.isOnline) {
-      _isConnecting = true;
-      final delay = Duration(seconds: 2 * (1 << reconnectAttempts).clamp(1, 32));
+    debugPrint("🔄 Trying to reconnect MQTT...");
 
-      Future.delayed(delay, () async {
-        try {
-          await mqttService.connect();
-          reconnectAttempts = 0;
-        } catch (_) {
-          reconnectAttempts++;
-        } finally {
-          _isConnecting = false;
-        }
-      });
-    }
+    _isConnecting = true;
+
+    final delay = Duration(seconds: 2 * (1 << reconnectAttempts).clamp(1, 32));
+
+    Future.delayed(delay, () async {
+      try {
+        await mqttService.connect();
+        reconnectAttempts = 0;
+      } catch (_) {
+        reconnectAttempts++;
+      } finally {
+        _isConnecting = false;
+      }
+    });
   }
 
   Future<void> _subscribeToDeviceTopic() async {
@@ -144,9 +166,17 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     }
 
     final topic = '${AppConstants.subscribeTopic}/$deviceId';
+
     try {
       await mqttService.topicToSubscribe(topic);
-      Future.delayed(const Duration(seconds: 2), onRefreshClicked);
+
+      if (mqttService.isConnected) {
+        Future.delayed(
+          const Duration(seconds: 1),
+              () => onRefreshClicked(),
+        );
+      }
+
     } catch (e) {
       debugPrint("MQTT Subscribe failed: $e");
     }
@@ -264,6 +294,9 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
       debugPrint(errorMsg);
     } finally {
       setLoading(false);
+      if (!_disposed && !mqttInitialized && mySiteList.data.isNotEmpty) {
+        _initializeMqttConnection();
+      }
     }
   }
 
@@ -383,8 +416,9 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
 
   Future<void> onRefreshClicked() async {
     if (!mqttService.isConnected) {
-      debugPrint("Reconnecting MQTT...");
+      debugPrint("MQTT not connected — attempting to connect and abort refresh to avoid publish while connecting.");
       _initializeMqttConnection();
+      return;
     }
 
     final master = mySiteList.data[sIndex].master[mIndex];
@@ -402,16 +436,40 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
         serverMsg: '',
         payload: payload,
       );
-
-      if (result['mqtt'] == true) debugPrint("Sent via MQTT");
-      if (result['http'] == true) debugPrint("Sent via HTTP");
-      if (result['bluetooth'] == true) debugPrint("Sent via Bluetooth");
+      debugPrint("MQTT publishing result:$result");
     } catch (e) {
       debugPrint("Command error: $e");
     } finally {
       await Future.delayed(const Duration(seconds: 1));
       liveSyncCall(false);
     }
+  }
+
+  Future<void> restartMqttSession() async {
+    debugPrint("🔄 Restarting MQTT Session...");
+
+    try {
+      mqttSubscription?.cancel();
+      try { mqttProvider.removeListener(_onPayloadReceived); } catch (_) {}
+
+      await mqttService.disConnect();
+    } catch (e) {
+      debugPrint("Error while stopping old MQTT session: $e");
+    }
+
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    mqttSubscription = null;
+    mqttInitialized = false;
+    _isConnecting = false;
+    reconnectAttempts = 0;
+
+    _initializeMqttConnection();
+
+    try {
+      mqttProvider.removeListener(_onPayloadReceived);
+    } catch (_) {}
+    mqttProvider.addListener(_onPayloadReceived);
   }
 
   void liveSyncCall(status){

@@ -349,6 +349,16 @@ class _ScheduledProgramNarrowState extends State<ScheduledProgramNarrow> {
                             ],
                           ),
                           AiRecommendationButton(aiService: aiService, userId: widget.userId, controllerId: widget.master.controllerId),
+
+                          if(isNova)...[
+                            IconButton(
+                              tooltip: "Program Preview",
+                              icon: Icon(Icons.preview, color: Theme.of(context).primaryColor),
+                              onPressed: () {
+                                // Your action here
+                              },
+                            )
+                          ],
                         ],
                       ):
                       const Center(child: Text('The program is not ready', style: TextStyle(color: Colors.red))),

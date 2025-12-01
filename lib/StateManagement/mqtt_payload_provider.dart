@@ -119,6 +119,8 @@ class MqttPayloadProvider with ChangeNotifier {
    final Map<String, String> _boosterPumpOnOffStatusMap = {};
    final Map<String, String> _agitatorOnOffStatusMap = {};
 
+   final Map<String, String> _programPreviewMap = {};
+
 
    //for blue repository
    CustomDevice? _connectedDevice;
@@ -946,6 +948,8 @@ class MqttPayloadProvider with ChangeNotifier {
    String? getSensorUpdatedValve(String sNo) => _sensorValueMap[sNo];
    String? getBoosterPumpOnOffStatus(String sNo) => _boosterPumpOnOffStatusMap[sNo];
    String? getAgitatorOnOffStatus(String sNo) => _agitatorOnOffStatusMap[sNo];
+
+   String? getProgramPreview(String sNo) => _programPreviewMap[sNo];
 
   String get receivedDashboardPayload => dashBoardPayload;
   String get receivedSchedulePayload => schedulePayload;

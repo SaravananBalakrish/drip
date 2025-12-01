@@ -21,10 +21,24 @@ class Formatters {
     if (dateTimeString == null) {
       return "No feedback received";
     }
+
     try {
       DateTime dateTime = DateTime.parse(dateTimeString);
-      DateFormat formatter = DateFormat('MMM dd, yyyy hh:mm:ss a');
-      return formatter.format(dateTime);
+      DateTime now = DateTime.now();
+
+      DateTime today = DateTime(now.year, now.month, now.day);
+      DateTime yesterday = today.subtract(const Duration(days: 1));
+      DateTime givenDate = DateTime(dateTime.year, dateTime.month, dateTime.day);
+
+      String timeFormatted = DateFormat('hh:mm:ss a').format(dateTime);
+
+      if (givenDate == today) {
+        return "Today $timeFormatted";
+      } else if (givenDate == yesterday) {
+        return "Yesterday $timeFormatted";
+      } else {
+        return DateFormat('MMM dd, yyyy hh:mm:ss a').format(dateTime);
+      }
     } catch (e) {
       return "00 00, 0000, 00:00";
     }

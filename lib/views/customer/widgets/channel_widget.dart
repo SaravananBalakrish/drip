@@ -59,10 +59,12 @@ class ChannelWidget extends StatelessWidget {
                     Transform(
                       alignment: Alignment.center,
                       transform: Matrix4.rotationY(math.pi),
-                      child: Image.asset(AppConstants.getFertilizerImage(cIndex, channel.status, channelLength, agitator)),
+                      child: Image.asset(AppConstants.getFertilizerImage(cIndex, channel.status,
+                          channelLength, agitator, isMobile)),
                     ),
                   ]else...[
-                    Image.asset(AppConstants.getFertilizerImage(cIndex, channel.status, channelLength, agitator)),
+                    Image.asset(AppConstants.getFertilizerImage(cIndex, channel.status,
+                        channelLength, agitator, isMobile)),
                   ],
 
                   if(isMobile)...[
