@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import '../utils/enums.dart';
 import '../utils/helpers/screen_helper.dart';
 
-abstract class BaseScreenLayout extends StatelessWidget {
-  const BaseScreenLayout({super.key});
+abstract class ScreenLayoutBuilder extends StatelessWidget {
+  const ScreenLayoutBuilder({super.key});
 
   Widget buildNarrow(BuildContext context);
   Widget buildMiddle(BuildContext context);

@@ -23,9 +23,9 @@ import '../views/customer/view_base_layout/customer_screen_wide.dart';
 import '../views/dealer/dealer_screen_middle.dart';
 import '../views/dealer/dealer_screen_narrow.dart';
 import '../views/dealer/dealer_screen_wide.dart';
-import 'base_layout.dart';
+import 'layout_builder.dart';
 
-class LoginScreenLayout extends BaseScreenLayout {
+class LoginScreenLayout extends ScreenLayoutBuilder {
   const LoginScreenLayout({super.key});
 
   @override
@@ -36,7 +36,7 @@ class LoginScreenLayout extends BaseScreenLayout {
   Widget buildWide(BuildContext context) => const LoginWeb();
 }
 
-class AdminScreenLayout extends BaseScreenLayout with LayoutHelpers {
+class AdminScreenLayout extends ScreenLayoutBuilder with LayoutHelpers {
   const AdminScreenLayout({super.key});
 
   @override
@@ -51,7 +51,7 @@ class AdminScreenLayout extends BaseScreenLayout with LayoutHelpers {
   Widget buildWide(BuildContext context) => const AdminScreenWide();
 }
 
-class AdminDashboardLayout extends BaseScreenLayout with LayoutHelpers {
+class AdminDashboardLayout extends ScreenLayoutBuilder with LayoutHelpers {
   const AdminDashboardLayout({super.key});
 
   @override
@@ -66,7 +66,7 @@ class AdminDashboardLayout extends BaseScreenLayout with LayoutHelpers {
   Widget buildWide(BuildContext context) => const AdminDashboardWide();
 }
 
-class DealerScreenLayout extends BaseScreenLayout with LayoutHelpers {
+class DealerScreenLayout extends ScreenLayoutBuilder with LayoutHelpers {
   const DealerScreenLayout({super.key});
 
   @override
@@ -81,7 +81,7 @@ class DealerScreenLayout extends BaseScreenLayout with LayoutHelpers {
   Widget buildWide(BuildContext context) => const DealerScreenWide();
 }
 
-class DealerDashboardLayout extends BaseScreenLayout with LayoutHelpers {
+class DealerDashboardLayout extends ScreenLayoutBuilder with LayoutHelpers {
   const DealerDashboardLayout({super.key});
 
   @override
@@ -96,7 +96,7 @@ class DealerDashboardLayout extends BaseScreenLayout with LayoutHelpers {
   Widget buildWide(BuildContext context) => const DealerDashboardWide();
 }
 
-class CustomerScreenLayout extends BaseScreenLayout with LayoutHelpers {
+class CustomerScreenLayout extends ScreenLayoutBuilder with LayoutHelpers {
   const CustomerScreenLayout({super.key});
 
   @override
@@ -117,7 +117,7 @@ class CustomerScreenLayout extends BaseScreenLayout with LayoutHelpers {
 }
 
 
-class CustomerDashboardLayout extends BaseScreenLayout {
+class CustomerDashboardLayout extends ScreenLayoutBuilder {
   const CustomerDashboardLayout({super.key});
 
   @override

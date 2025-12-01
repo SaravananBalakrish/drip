@@ -238,9 +238,24 @@ class MqttService {
     }
   }
 
-  Future<void> topicToPublishAndItsMessage(String message, String topic) async {
+  /*Future<void> topicToPublishAndItsMessage(String message, String topic) async {
     final builder = MqttClientPayloadBuilder()..addString(message);
     _client!.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!);
+  }*/
+
+  Future<void> topicToPublishAndItsMessage(String message, String topic) async {
+    if (!isConnected) {
+      debugPrint("MQTT not connected. Cannot publish. Message dropped.");
+      return;
+    }
+
+    final builder = MqttClientPayloadBuilder()..addString(message);
+
+    try {
+      _client!.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!);
+    } catch (e) {
+      debugPrint("MQTT Publish Error: $e");
+    }
   }
 
   void onSubscribed(String topic) {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/layouts/user_layout.dart';
 import '../utils/enums.dart';
-import 'base_layout.dart';
+import 'layout_builder.dart';
 
 class UserLayoutSelector extends StatelessWidget {
   const UserLayoutSelector({super.key, required this.userRole});
   final UserRole userRole;
 
-  BaseScreenLayout getScreenLayout() {
+  ScreenLayoutBuilder getScreenLayout() {
     switch (userRole) {
       case UserRole.admin:
         return const AdminScreenLayout();
@@ -31,7 +31,7 @@ class DashboardLayoutSelector extends StatelessWidget {
   const DashboardLayoutSelector({super.key, required this.userRole});
   final UserRole userRole;
 
-  BaseScreenLayout getDashboardLayout() {
+  ScreenLayoutBuilder getDashboardLayout() {
     switch (userRole) {
       case UserRole.admin:
         return const AdminDashboardLayout();
