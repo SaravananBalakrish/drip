@@ -41,10 +41,12 @@ class BoosterWidget extends StatelessWidget {
                       Transform(
                         alignment: Alignment.center,
                         transform: Matrix4.rotationY(math.pi),
-                        child: AppConstants.getAsset('booster', fertilizerSite.boosterPump[0].status,''),
+                        child: AppConstants.getAsset(isMobile? 'mobile booster' : 'booster',
+                            fertilizerSite.boosterPump[0].status,''),
                       ),
                     ]else...[
-                      AppConstants.getAsset('booster', fertilizerSite.boosterPump[0].status,''),
+                      AppConstants.getAsset(isMobile? 'mobile booster' : 'booster',
+                          fertilizerSite.boosterPump[0].status,''),
                     ],
 
                     Positioned(
@@ -174,5 +176,4 @@ class BoosterWidget extends StatelessWidget {
       },
     );
   }
-
 }

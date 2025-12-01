@@ -102,7 +102,7 @@ class IrrigationLineWide extends StatelessWidget {
         ..._buildWaterSource(context, inletWaterSources, true, true, cFertilizerSite.isNotEmpty? true : false),
 
       if (outletWaterSources.isNotEmpty)
-        ..._buildWaterSource(context, outletWaterSources, inletWaterSources.isNotEmpty? true : false, false, cFertilizerSite.isNotEmpty? true : false),
+        ..._buildWaterSource(context, outletWaterSources, inletWaterSources.isNotEmpty, false, cFertilizerSite.isNotEmpty),
 
       if (cFilterSite.isNotEmpty)
         ...buildFilter(context, cFilterSite, cFertilizerSite.isNotEmpty, false),
@@ -175,6 +175,7 @@ class IrrigationLineWide extends StatelessWidget {
 
   List<Widget> _buildWaterSource(BuildContext context, List<WaterSourceModel> waterSources,
       bool isAvailInlet, bool isInlet, bool isAvailFertilizer) {
+
     final List<Widget> gridItems = [];
     for (int index = 0; index < waterSources.length; index++) {
       final source = waterSources[index];
