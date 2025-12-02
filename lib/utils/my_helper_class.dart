@@ -80,7 +80,7 @@ class MqttAckTracker {
 
     _timeoutTimers[buttonId]?.cancel();
 
-    _timeoutTimers[buttonId] = Timer(const Duration(seconds: 10), () {
+    _timeoutTimers[buttonId] = Timer(const Duration(seconds: 30), () {
       _onTimeout(buttonId);
     });
 
