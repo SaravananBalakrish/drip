@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:oro_drip_irrigation/views/common/user_dashboard/widgets/sensor_popover_content.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 
@@ -77,12 +78,12 @@ class ValveWidget extends StatelessWidget {
                         left: 33,
                         child: TextButton(
                           onPressed: () async {
-                            final sensors = await fetchSensorData();
 
                             showPopover(
                               context: context,
                               bodyBuilder: (context) {
-                                return MoistureSensorPopover(valve: valve, sensors: sensors);
+                                return MoistureSensorPopover(valve: valve,
+                                  customerId: customerId, controllerId: controllerId);
                               },
                               direction: PopoverDirection.bottom,
                               width: 580,
@@ -267,12 +268,13 @@ class ValveWidget extends StatelessWidget {
                   left: 33,
                   child: TextButton(
                     onPressed: () async {
-                      final sensors = await fetchSensorData();
+                      //final sensors = await fetchSensorData();
 
                       showPopover(
                         context: context,
                         bodyBuilder: (context) {
-                          return MoistureSensorPopover(valve: valve, sensors: sensors);
+                          return MoistureSensorPopover(valve: valve,
+                            customerId: customerId, controllerId: controllerId);
                         },
                         direction: PopoverDirection.bottom,
                         width: 580,
@@ -345,7 +347,7 @@ class ValveWidget extends StatelessWidget {
     }
   }
 
-  Future<List<SensorHourlyDataModel>> fetchSensorData() async {
+  /*Future<List<SensorHourlyDataModel>> fetchSensorData() async {
     List<SensorHourlyDataModel> sensors = [];
 
     try {
@@ -391,5 +393,5 @@ class ValveWidget extends StatelessWidget {
     }
 
     return sensors;
-  }
+  }*/
 }

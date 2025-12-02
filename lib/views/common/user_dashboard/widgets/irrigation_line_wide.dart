@@ -268,8 +268,8 @@ class IrrigationLineWide extends StatelessWidget {
           children: [
             Row(children: widgets),
             Positioned(
-              left: 5,
-              bottom: 1,
+              left: 3,
+              bottom: 0,
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(

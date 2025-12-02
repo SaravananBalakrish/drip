@@ -125,12 +125,11 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
       child: TextButton(
         onPressed: () async {
 
-          final sensors = await fetchSensorData();
-
           showPopover(
             context: context,
             bodyBuilder: (context) {
-              return MoistureSensorPopover(valve: valve, sensors: sensors);
+              return MoistureSensorPopover(valve: valve, customerId: widget.customerId,
+                  controllerId: widget.controllerId);
             },
             direction: PopoverDirection.bottom,
             width: 550,
@@ -250,61 +249,5 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
     } else {
       return Colors.red.shade200;
     }
-  }
-
-  Future<List<SensorHourlyDataModel>> fetchSensorData() async {
-    List<SensorHourlyDataModel> sensors = [];
-
-    try {
-      DateTime selectedDate = DateTime.now();
-      String date = DateFormat('yyyy-MM-dd').format(selectedDate);
-
-      Map<String, Object> body = {
-        "userId": widget.customerId,
-        "controllerId": widget.controllerId,
-        "fromDate": date,
-        "toDate": date,
-      };
-
-      final response = await Repository(HttpService()).fetchSensorHourlyData(body);
-      if (response.statusCode == 200) {
-        debugPrint(response.body);
-        final jsonData = jsonDecode(response.body);
-        if (jsonData["code"] == 200) {
-          sensors = (jsonData['data'] as List).map((item) {
-            final dateStr = item['date'] ?? '';
-            final Map<String, List<SensorHourlyData>> hourlyDataMap = {};
-
-            item.forEach((key, value) {
-              if (key == 'date') return;
-              if (value is String && value.isNotEmpty) {
-                final entries = value.split(';');
-                hourlyDataMap[key] = entries.map((entry) {
-                  return SensorHourlyData.fromCsv(entry, key, dateStr);
-                }).toList();
-              } else {
-                hourlyDataMap[key] = [];
-              }
-            });
-
-            return SensorHourlyDataModel(date: item['date'], data: hourlyDataMap);
-          }).toList();
-        }
-      }
-    } catch (error) {
-      debugPrint('Error fetching sensor hourly data: $error');
-    }
-
-    return sensors;
-  }
-
-  List<SensorHourlyData> getSensorDataById(String sensorId, List<SensorHourlyDataModel> sensorData) {
-    final result = <SensorHourlyData>[];
-    for (final model in sensorData) {
-      model.data.forEach((hour, sensorList) {
-        result.addAll(sensorList.where((sensor) => sensor.sensorId == sensorId));
-      });
-    }
-    return result;
   }
 }
