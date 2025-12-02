@@ -201,7 +201,7 @@ class ChannelWidget extends StatelessWidget {
                     ),
                     channel.status == 1 && channel.completedDrQ !='00:00:00' ?
                     Positioned(
-                      top: 103,
+                      top: 97,
                       left: 0,
                       child: Container(
                         width: 55,

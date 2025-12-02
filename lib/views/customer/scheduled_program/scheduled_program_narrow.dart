@@ -19,6 +19,7 @@ import '../../../utils/my_function.dart';
 import '../../../utils/snack_bar.dart';
 import '../../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../widgets/my_material_button.dart';
+import '../widgets/program_preview.dart';
 
 class ScheduledProgramNarrow extends StatefulWidget {
   const ScheduledProgramNarrow({super.key, required this.userId,
@@ -353,7 +354,18 @@ class _ScheduledProgramNarrowState extends State<ScheduledProgramNarrow> {
                               tooltip: "Program Preview",
                               icon: Icon(Icons.preview, color: Theme.of(context).primaryColor),
                               onPressed: () {
-                                // Your action here
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  elevation: 10,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+                                  ),
+                                  builder: (_) => ProgramPreview(
+                                    isMobile: false,
+                                    prgSNo: '${program.serialNumber}', prgName: program.programName,
+                                  ),
+                                );
                               },
                             )
                           ],
