@@ -265,7 +265,10 @@ class ProgramTableHelper {
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
                         ),
-                        builder: (_) => ProgramPreview(isMobile: false, prgSNo: '${program.serialNumber}'),
+                        builder: (_) => ProgramPreview(
+                          isMobile: false,
+                          prgSNo: '${program.serialNumber}', prgName: program.programName,
+                        ),
                       );
                     },
                   )
@@ -274,7 +277,7 @@ class ProgramTableHelper {
             ) :
             const Center(child: Text('The program is not ready', style: TextStyle(color: Colors.red))),
           ),
-        ]else...[
+        ] else...[
           const DataCell(
             Center(child: Text('....', style: TextStyle(color: Colors.red))),
           ),

@@ -119,8 +119,7 @@ class CustomerHomeWide extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 10)
                                 ]
-                              ]
-
+                              ],
                             ],
                           ),
                         ),
