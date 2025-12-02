@@ -361,10 +361,7 @@ class _ScheduledProgramNarrowState extends State<ScheduledProgramNarrow> {
                                   shape: const RoundedRectangleBorder(
                                     borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
                                   ),
-                                  builder: (_) => ProgramPreview(
-                                    isMobile: false,
-                                    prgSNo: '${program.serialNumber}', prgName: program.programName,
-                                  ),
+                                  builder: (_) => const ProgramPreview(),
                                 );
                               },
                             )
