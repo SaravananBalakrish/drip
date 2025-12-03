@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../modules/config_Maker/view/config_base_page.dart';
+import '../../modules/config_maker/view/config_base_page.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../view_models/customer/site_config_view_model.dart';

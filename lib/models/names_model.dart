@@ -1,13 +1,13 @@
 
 import 'dart:convert';
 
-import '../modules/config_Maker/model/device_object_model.dart';
-import '../modules/config_Maker/model/fertigation_model.dart';
-import '../modules/config_Maker/model/filtration_model.dart';
-import '../modules/config_Maker/model/irrigation_line_model.dart';
-import '../modules/config_Maker/model/moisture_model.dart';
-import '../modules/config_Maker/model/pump_model.dart';
-import '../modules/config_Maker/model/source_model.dart';
+import '../modules/config_maker/model/device_object_model.dart';
+import '../modules/config_maker/model/fertigation_model.dart';
+import '../modules/config_maker/model/filtration_model.dart';
+import '../modules/config_maker/model/irrigation_line_model.dart';
+import '../modules/config_maker/model/moisture_model.dart';
+import '../modules/config_maker/model/pump_model.dart';
+import '../modules/config_maker/model/source_model.dart';
 
 NamesConfigModel namesConfigModelFromJson(String str) => NamesConfigModel.fromJson(json.decode(str));
 

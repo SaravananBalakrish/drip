@@ -10,7 +10,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../Constants/constants.dart';
 import '../model/sequence_model.dart';
-import '../../config_Maker/model/device_object_model.dart';
+import '../../config_maker/model/device_object_model.dart';
 import '../repository/irrigation_program_repo.dart';
 import '../state_management/irrigation_program_provider.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';

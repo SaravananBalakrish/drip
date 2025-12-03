@@ -7,7 +7,7 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 import '../../../Constants/properties.dart';
 import '../../../Widgets/custom_buttons.dart';
 import '../../../Widgets/status_box.dart';
-import '../../config_Maker/view/config_web_view.dart';
+import '../../config_maker/view/config_web_view.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/environment.dart';
 import '../model/sensor_category_model.dart';

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/modules/config_Maker/view/ec_configuration.dart';
-import 'package:oro_drip_irrigation/modules/config_Maker/view/ph_configuration.dart';
-import 'package:oro_drip_irrigation/modules/config_Maker/view/pump_configuration.dart';
-import 'package:oro_drip_irrigation/modules/config_Maker/view/source_configuration.dart';
+import 'package:oro_drip_irrigation/modules/config_maker/view/ec_configuration.dart';
+import 'package:oro_drip_irrigation/modules/config_maker/view/ph_configuration.dart';
+import 'package:oro_drip_irrigation/modules/config_maker/view/pump_configuration.dart';
+import 'package:oro_drip_irrigation/modules/config_maker/view/source_configuration.dart';
 import '../model/device_object_model.dart';
 import '../state_management/config_maker_provider.dart';
 import 'fertilization_configuration.dart';
