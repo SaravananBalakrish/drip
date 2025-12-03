@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Widgets/sized_image.dart';
-import 'package:oro_drip_irrigation/modules/config_Maker/widget/toggle_text_form_field_connection.dart';
+import 'package:oro_drip_irrigation/modules/config_maker/widget/toggle_text_form_field_connection.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import '../../../Constants/communication_codes.dart';
 import '../model/device_model.dart';

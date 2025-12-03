@@ -4,8 +4,8 @@ import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
 
-import '../modules/config_Maker/model/device_object_model.dart';
-import '../modules/config_Maker/state_management/config_maker_provider.dart';
+import '../modules/config_maker/model/device_object_model.dart';
+import '../modules/config_maker/state_management/config_maker_provider.dart';
 import '../Widgets/custom_buttons.dart';
 
 

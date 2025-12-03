@@ -13,7 +13,7 @@ import '../../../Constants/properties.dart';
 import '../../../StateManagement/overall_use.dart';
 import '../../../Widgets/HoursMinutesSeconds.dart';
 import '../../../Widgets/status_box.dart';
-import '../../config_Maker/view/config_web_view.dart';
+import '../../config_maker/view/config_web_view.dart';
 
 enum SelectMode {select, unSelect, selectAll}
 

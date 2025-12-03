@@ -10,7 +10,7 @@ import '../../../services/mqtt_service.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/environment.dart';
 import '../../IrrigationProgram/widgets/custom_sliding_button.dart';
-import '../../config_Maker/view/config_web_view.dart';
+import '../../config_maker/view/config_web_view.dart';
 import '../repository/constant_repository.dart';
 
 class GlobalAlarmInConstant extends StatefulWidget {

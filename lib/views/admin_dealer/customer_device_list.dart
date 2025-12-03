@@ -1,6 +1,6 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/modules/config_Maker/view/config_base_page.dart';
+import 'package:oro_drip_irrigation/modules/config_maker/view/config_base_page.dart';
 import 'package:provider/provider.dart';
 import '../../models/admin_dealer/product_list_with_node.dart';
 import '../../models/admin_dealer/stock_model.dart';

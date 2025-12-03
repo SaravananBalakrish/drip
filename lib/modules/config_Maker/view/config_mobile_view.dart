@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/modules/config_Maker/view/product_limit.dart';
-import 'package:oro_drip_irrigation/modules/config_Maker/view/site_configure.dart';
+import 'package:oro_drip_irrigation/modules/config_maker/view/product_limit.dart';
+import 'package:oro_drip_irrigation/modules/config_maker/view/site_configure.dart';
 import 'package:provider/provider.dart';
 import '../../../Constants/dialog_boxes.dart';
 import '../model/device_model.dart';
