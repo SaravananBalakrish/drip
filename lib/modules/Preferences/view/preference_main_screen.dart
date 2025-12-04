@@ -983,11 +983,17 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         settingIndex: settingIndex
     ).split(',')[
     categoryIndex == 0
-    ? [0, 1, 2].contains(settingIndex) ? [0, 1, 2][settingIndex] : 0
-        : categoryIndex == 1
-    ? [0, 1, 2].contains(settingIndex) ? [0, 1, 2][settingIndex] : 0
-        : [0, 1, 2,3,4,5].contains(settingIndex) ? [0, 1, 2,3,4,5][settingIndex] : 0
-    ]) : "Loading..."}" : null;
+    ? ([0, 1, 2].contains(settingIndex)
+        ? [0, 1, 2][settingIndex]
+        : 0
+    ) : categoryIndex == 1
+    ? ([0, 1, 2].contains(settingIndex)
+        ? [0, 1, 2][settingIndex]
+        : 0
+    ) : ([0,1,2,3,4,5,6,7].contains(settingIndex)
+        ? [0,1,2,3,4,5,6,7][settingIndex]
+        : 0
+    )]) : "Loading..."}" : null;
   }
 
   dynamic _getInitialValue(int categoryIndex, int settingIndex, List settingList, int pumpIndex) {
