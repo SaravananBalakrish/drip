@@ -179,7 +179,6 @@ class _NodeDashboardState extends State<NodeDashboard> {
       [
         ...AppConstants.pumpWithValveModelList,
         ...AppConstants.ecoGemModelList,
-        ...AppConstants.smartPlusEcPhModel,
         ...AppConstants.ecModel,
         ...AppConstants.phModel,
       ].contains(bleService.nodeData['modelId'])
