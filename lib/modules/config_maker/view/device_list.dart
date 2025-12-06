@@ -128,7 +128,7 @@ class _DeviceListState extends State<DeviceList> {
                       ),
                     ],
                     rows: widget.listOfDevices
-                        .where((node) => node.masterId == configPvd.masterData['controllerId'])
+                        .where((node) => node.masterId == configPvd.masterData['controllerId'] && node.serialNumber != null)
                         .where((node) => configPvd.masterData['controllerId'] != node.controllerId)
                         .toList()
                         .asMap()
@@ -556,7 +556,8 @@ class _DeviceListState extends State<DeviceList> {
                                                       selectAllNode = !selectAllNode;
                                                       for(var device in configPvd.listOfDeviceModel){
                                                         List<int> nodeUnderPumpWithValveModel = [42];
-                                                        List<int> nodeNotUnderGemModel = [48, 49];
+                                                        List<int> ecPhModel = [64, 65];
+                                                        List<int> nodeNotUnderGemModel = [48, 49, ...ecPhModel];
                                                         if(AppConstants.pumpWithValveModelList.contains(configPvd.masterData['modelId']) && nodeUnderPumpWithValveModel.contains(device.modelId)){
                                                           /* this condition filter node for pump with valve model */
                                                           device.select = selectAllNode;

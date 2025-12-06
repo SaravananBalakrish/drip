@@ -26,7 +26,6 @@ class SiteConfig extends StatelessWidget {
       create: (_) => SiteConfigViewModel(Repository(HttpService()))..getCustomerSite(customerId),
       child: Consumer<SiteConfigViewModel>(
         builder: (context, viewModel, _) {
-
           return SizedBox(
             height: MediaQuery.of(context).size.height - 160,
             width: MediaQuery.of(context).size.width,

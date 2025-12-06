@@ -96,6 +96,24 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                           );
                                         }, icon: const Icon(Icons.dataset)
                                     ),
+                                    if(availability(AppConstants.sourceObjectId))
+                                      getLineParameter(
+                                          line: selectedIrrigationLine,
+                                          currentParameterValue: selectedIrrigationLine.waterSource,
+                                          parameterType: LineParameter.source,
+                                          objectId: AppConstants.sourceObjectId,
+                                          objectName: 'Source only for monitoring',
+                                          listOfObject: widget.configPvd.listOfGeneratedObject.where((object){
+                                            bool sourceThatOnlyForMonitoring = false;
+                                            for(var src in widget.configPvd.source){
+                                              if(src.commonDetails.sNo == object.sNo && src.inletPump.isEmpty && src.outletPump.isEmpty && src.valves.isEmpty){
+                                                sourceThatOnlyForMonitoring = true;
+                                              }
+                                            }
+                                            return sourceThatOnlyForMonitoring;
+                                          }).toList(),
+                                          validateAllLine: true
+                                      ),
                                     if(widget.configPvd.pump.any((pump) => pump.pumpType == 1))
                                       getLineParameter(
                                           line: selectedIrrigationLine,
@@ -290,7 +308,12 @@ class _LineConfigurationState extends State<LineConfiguration> {
     for(var src in widget.configPvd.source){
       if(src.valves.any((valves) => selectedIrrigationLine.valve.contains(valves))){
         externalSource.add(src);
-      }else if(src.inletPump.isNotEmpty && src.outletPump.isEmpty){
+      }else if(
+      (src.inletPump.isNotEmpty && src.inletPump.any((pump) => [...selectedIrrigationLine.sourcePump, ...selectedIrrigationLine.irrigationPump].contains(pump)))
+          && src.outletPump.isEmpty
+      ){
+        externalSource.add(src);
+      }else if(selectedIrrigationLine.waterSource.contains(src.commonDetails.sNo)){
         externalSource.add(src);
       }
     }
@@ -505,6 +528,13 @@ class _LineConfigurationState extends State<LineConfiguration> {
     bool singleSelection = false,
     List<DeviceObjectModel>? listOfObject
   }){
+    if(parameterType == LineParameter.source){
+      print('WWWWWW');
+      for(var obj in listOfObject!){
+        print('empty src : ${obj.name}');
+      }
+    }
+
     if(listOfObject != null){
       print("${parameterType.name}  ===== ${listOfObject.map((object) => object.toJson()).toList()}");
       if(listOfObject.isEmpty){
