@@ -7,6 +7,8 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 import '../../../Constants/properties.dart';
 import '../../../Widgets/custom_buttons.dart';
 import '../../../Widgets/status_box.dart';
+import '../../../repository/repository.dart';
+import '../../../services/http_service.dart';
 import '../../config_maker/view/config_web_view.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/environment.dart';
@@ -26,6 +28,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
   Set<int> selectedTab = {0};
   HardwareAcknowledgementState payloadState = HardwareAcknowledgementState.notSent;
   MqttService mqttService = MqttService();
+  final Repository repository = Repository(HttpService());
 
   @override
   void initState() {
@@ -160,14 +163,14 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                                 ),
                               ),
                             ),
-                            if(AppConstants.levelObjectId == object.objectId)
+                            if(AppConstants.levelObjectId == object.objectId && selectedTab.first == 1)
                               ListTile(
                               contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
                               leading: Icon(Icons.change_circle, color: Theme.of(context).primaryColorLight,),
                               title: Text('Calibration Count', style: Theme.of(context).textTheme.labelLarge, overflow: TextOverflow.ellipsis,),
                               trailing: IconButton(
                                   onPressed: (){
-                                    var payload = {"7600" : {"7601" : "${object.sNo},${sensorCategory.calibrationCount}"}};
+                                    var payload = {"7600" : {"7601" : "${object.sNo},${sensorCategory.calibrationCount},0"}};
                                     setState(() {
                                       payloadState = HardwareAcknowledgementState.notSent;
                                       mqttService.acknowledgementPayload = null;
@@ -229,6 +232,15 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                                                               break;
                                                             }
                                                           }
+                                                          var data = {
+                                                            "userId": widget.userData["customerId"],
+                                                            "controllerId": widget.userData["controllerId"],
+                                                            "data": payload,
+                                                            "messageStatus": "${object.name} - calibration",
+                                                            "createUser": widget.userData["customerId"],
+                                                            "hardware": payload,
+                                                          };
+                                                          await repository.sendManualOperationToServer(data);
                                                         },
                                                         title: 'Send',
                                                       ),
