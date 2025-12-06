@@ -119,7 +119,7 @@ void selectionDialogBox({
                           if(AppConstants.ecoGemModelList.contains(configPvd.masterData['modelId']) && object.objectId == AppConstants.pumpObjectId){
                             return true;
                           }else{
-                            if([AppConstants.fertilizerSiteObjectId, AppConstants.filterSiteObjectId].contains(object.objectId)){
+                            if([AppConstants.fertilizerSiteObjectId, AppConstants.filterSiteObjectId, AppConstants.sourceObjectId].contains(object.objectId)){
                               return true;
                             }
                             return object.controllerId != null;

@@ -536,6 +536,7 @@ class ConfigMakerProvider extends ChangeNotifier{
               line.add(
                   IrrigationLineModel(
                       commonDetails: deviceObjectModel,
+                      waterSource: [],
                       sourcePump: [],
                       irrigationPump: [],
                       valve: [],
