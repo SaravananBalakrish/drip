@@ -891,7 +891,10 @@ class ConfigMakerProvider extends ChangeNotifier{
     listOfSelectedSno.sort();
     for(var irrigationLine in line){
       if(irrigationLine.commonDetails.sNo == sNo){
-        if(parameter == LineParameter.sourcePump){
+        if(parameter == LineParameter.waterMeter){
+          irrigationLine.waterSource.clear();
+          irrigationLine.waterSource.addAll(listOfSelectedSno);
+        }else if(parameter == LineParameter.sourcePump){
           irrigationLine.sourcePump.clear();
           irrigationLine.sourcePump.addAll(listOfSelectedSno);
         }else if(parameter == LineParameter.irrigationPump){
