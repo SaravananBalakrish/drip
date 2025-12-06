@@ -760,6 +760,7 @@ class DayCountRtcModel {
   }
 }
 
+
 class ProgramQueueModel {
   bool programQueue;
   List<String> queueOrder;
@@ -771,6 +772,11 @@ class ProgramQueueModel {
   String noOfRunDays;
   bool queueReset;
   bool dripStandaloneMode;
+  bool agitatorOnOff;
+  String agitatorRTCOnTime;
+  String agitatorRTCOffTime;
+  String agitatorCycONTime;
+  String agitatorCycOffTime;
 
   ProgramQueueModel({
     required this.programQueue,
@@ -783,6 +789,11 @@ class ProgramQueueModel {
     required this.noOfRunDays,
     required this.queueReset,
     required this.dripStandaloneMode,
+    required this.agitatorOnOff,
+    required this.agitatorRTCOnTime,
+    required this.agitatorRTCOffTime,
+    required this.agitatorCycONTime,
+    required this.agitatorCycOffTime,
   });
 
   // Helper method to safely convert a dynamic list to List<String>
@@ -811,6 +822,11 @@ class ProgramQueueModel {
       noOfRunDays: json["noOfRunDays"] ?? '0',
       queueReset: json["queueReset"] ?? false,
       dripStandaloneMode: json["dripStandaloneMode"] ?? false,
+      agitatorOnOff: json["agitatorOnOff"] ?? false,
+      agitatorRTCOnTime: json["agitatorRTCOnTime"] ?? DateFormat('Hms').format(DateTime.now()),
+      agitatorRTCOffTime: json["agitatorRTCOffTime"] ?? DateFormat('Hms').format(DateTime.now()),
+      agitatorCycONTime: json["agitatorCycONTime"] ?? DateFormat('Hms').format(DateTime.now()),
+      agitatorCycOffTime: json["agitatorCycOffTime"] ?? DateFormat('Hms').format(DateTime.now()),
     );
   }
 
@@ -826,6 +842,11 @@ class ProgramQueueModel {
       "noOfRunDays": noOfRunDays,
       "queueReset": queueReset,
       "dripStandaloneMode": dripStandaloneMode,
+      "agitatorOnOff" : agitatorOnOff,
+      "agitatorRTCOnTime" : agitatorRTCOnTime,
+      "agitatorRTCOffTime" : agitatorRTCOffTime,
+      "agitatorCycONTime" : agitatorCycONTime,
+      "agitatorCycOffTime" : agitatorCycOffTime,
     };
   }
 }

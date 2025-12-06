@@ -574,19 +574,20 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                       ),
                     ),
                     SwitchListTile(
-                      title: const Text('Agitator RTC ON/OFF'),
-                      value: programQueueModel.dripStandaloneMode,
+                      title: const Text('Agitator ON/OFF'),
+                      value: programQueueModel.agitatorOnOff,
                       onChanged: (value) {
                         setState(() {
-                          programQueueModel.dripStandaloneMode = value;
+                          programQueueModel.agitatorOnOff = value;
                         });
                       },
                       activeColor: theme.primaryColor,
                       contentPadding: const EdgeInsets.symmetric(horizontal: 8),
                     ),
+            if (programQueueModel.agitatorOnOff) ...[
                     ListTile(
                       title: const Text('Agitator RTC ON Time'),
-                      trailing: Text(Constants.showHourAndMinuteOnly(dayCountRtcModel.dayCountRtcTime, widget.modelId)),
+                      trailing: Text(Constants.showHourAndMinuteOnly(programQueueModel.agitatorRTCOnTime, widget.modelId)),
                       leading: Icon(Icons.access_time, color: theme.primaryColor),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -599,10 +600,10 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                             final overAllPvd = context.read<OverAllUse>();
                             return AlertDialog(
                               title: HoursMinutesSeconds(
-                                initialTime: dayCountRtcModel.dayCountRtcTime,
+                                initialTime: programQueueModel.agitatorRTCOnTime,
                                 onPressed: () {
                                   setState(() {
-                                    dayCountRtcModel.dayCountRtcTime =
+                                    programQueueModel.agitatorRTCOnTime =
                                     '${overAllPvd.hrs.toString().padLeft(2, '0')}:${overAllPvd.min.toString().padLeft(2, '0')}:${overAllPvd.sec.toString().padLeft(2, '0')}';
                                   });
                                   Navigator.pop(context);
@@ -614,108 +615,96 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                       },
                     ),
                     const SizedBox(height: 20),
-                    ListTile(
-                      title: const Text('Agitator RTC OFF Time'),
-                      trailing: Text(Constants.showHourAndMinuteOnly(dayCountRtcModel.dayCountRtcTime, widget.modelId)),
-                      leading: Icon(Icons.access_time, color: theme.primaryColor),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(color: Colors.grey[300]!),
-                      ),
-                      onTap: () async {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            final overAllPvd = context.read<OverAllUse>();
-                            return AlertDialog(
-                              title: HoursMinutesSeconds(
-                                initialTime: dayCountRtcModel.dayCountRtcTime,
-                                onPressed: () {
-                                  setState(() {
-                                    dayCountRtcModel.dayCountRtcTime =
-                                    '${overAllPvd.hrs.toString().padLeft(2, '0')}:${overAllPvd.min.toString().padLeft(2, '0')}:${overAllPvd.sec.toString().padLeft(2, '0')}';
-                                  });
-                                  Navigator.pop(context);
-                                }, modelId: widget.modelId,
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 20),
-                    const Divider(),
+              ListTile(
+                title: const Text('Agitator RTC OFF Time'),
+                trailing: Text(Constants.showHourAndMinuteOnly(programQueueModel.agitatorRTCOffTime, widget.modelId)),
+                leading: Icon(Icons.access_time, color: theme.primaryColor),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Colors.grey[300]!),
+                ),
+                onTap: () async {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      final overAllPvd = context.read<OverAllUse>();
+                      return AlertDialog(
+                        title: HoursMinutesSeconds(
+                          initialTime: programQueueModel.agitatorRTCOffTime,
+                          onPressed: () {
+                            setState(() {
+                              programQueueModel.agitatorRTCOffTime =
+                              '${overAllPvd.hrs.toString().padLeft(2, '0')}:${overAllPvd.min.toString().padLeft(2, '0')}:${overAllPvd.sec.toString().padLeft(2, '0')}';
+                            });
+                            Navigator.pop(context);
+                          }, modelId: widget.modelId,
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
 
-                    SwitchListTile(
-                      title: const Text('Agitator Cyclic ON/OFF'),
-                      value: programQueueModel.dripStandaloneMode,
-                      onChanged: (value) {
-                        setState(() {
-                          programQueueModel.dripStandaloneMode = value;
-                        });
-                      },
-                      activeColor: theme.primaryColor,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                    ),
-                    ListTile(
-                      title: const Text('Agitator Cyclic ON Time'),
-                      trailing: Text(Constants.showHourAndMinuteOnly(dayCountRtcModel.dayCountRtcTime, widget.modelId)),
-                      leading: Icon(Icons.access_time, color: theme.primaryColor),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(color: Colors.grey[300]!),
-                      ),
-                      onTap: () async {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            final overAllPvd = context.read<OverAllUse>();
-                            return AlertDialog(
-                              title: HoursMinutesSeconds(
-                                initialTime: dayCountRtcModel.dayCountRtcTime,
-                                onPressed: () {
-                                  setState(() {
-                                    dayCountRtcModel.dayCountRtcTime =
-                                    '${overAllPvd.hrs.toString().padLeft(2, '0')}:${overAllPvd.min.toString().padLeft(2, '0')}:${overAllPvd.sec.toString().padLeft(2, '0')}';
-                                  });
-                                  Navigator.pop(context);
-                                }, modelId: widget.modelId,
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
                     const SizedBox(height: 20),
-                    ListTile(
-                      title: const Text('Agitator Cyclic OFF Time'),
-                      trailing: Text(Constants.showHourAndMinuteOnly(dayCountRtcModel.dayCountRtcTime, widget.modelId)),
-                      leading: Icon(Icons.access_time, color: theme.primaryColor),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                        side: BorderSide(color: Colors.grey[300]!),
-                      ),
-                      onTap: () async {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            final overAllPvd = context.read<OverAllUse>();
-                            return AlertDialog(
-                              title: HoursMinutesSeconds(
-                                initialTime: dayCountRtcModel.dayCountRtcTime,
-                                onPressed: () {
-                                  setState(() {
-                                    dayCountRtcModel.dayCountRtcTime =
-                                    '${overAllPvd.hrs.toString().padLeft(2, '0')}:${overAllPvd.min.toString().padLeft(2, '0')}:${overAllPvd.sec.toString().padLeft(2, '0')}';
-                                  });
-                                  Navigator.pop(context);
-                                }, modelId: widget.modelId,
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
+              ListTile(
+                title: const Text('Agitator Cyclic ON Time'),
+                trailing: Text(Constants.showHourAndMinuteOnly(programQueueModel.agitatorCycONTime, widget.modelId)),
+                leading: Icon(Icons.access_time, color: theme.primaryColor),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  side: BorderSide(color: Colors.grey[300]!),
+                ),
+                onTap: () async {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      final overAllPvd = context.read<OverAllUse>();
+                      return AlertDialog(
+                        title: HoursMinutesSeconds(
+                          initialTime: programQueueModel.agitatorCycONTime,
+                          onPressed: () {
+                            setState(() {
+                              programQueueModel.agitatorCycONTime =
+                              '${overAllPvd.hrs.toString().padLeft(2, '0')}:${overAllPvd.min.toString().padLeft(2, '0')}:${overAllPvd.sec.toString().padLeft(2, '0')}';
+                            });
+                            Navigator.pop(context);
+                          }, modelId: widget.modelId,
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+                    const SizedBox(height: 20),
+            ListTile(
+            title: const Text('Agitator Cyclic OFF Time'),
+            trailing: Text(Constants.showHourAndMinuteOnly(programQueueModel.agitatorCycOffTime, widget.modelId)),
+            leading: Icon(Icons.access_time, color: theme.primaryColor),
+            shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: BorderSide(color: Colors.grey[300]!),
+            ),
+            onTap: () async {
+            showDialog(
+            context: context,
+            builder: (context) {
+            final overAllPvd = context.read<OverAllUse>();
+            return AlertDialog(
+            title: HoursMinutesSeconds(
+            initialTime: programQueueModel.agitatorCycOffTime,
+            onPressed: () {
+            setState(() {
+            programQueueModel.agitatorCycOffTime =
+            '${overAllPvd.hrs.toString().padLeft(2, '0')}:${overAllPvd.min.toString().padLeft(2, '0')}:${overAllPvd.sec.toString().padLeft(2, '0')}';
+            });
+            Navigator.pop(context);
+            }, modelId: widget.modelId,
+            ),
+            );
+            },
+            );
+            },
+            ),],
                    /* SwitchListTile(
                       title: const Text('Enable Run Days'),
                       value: programQueueModel.runDays,
@@ -777,7 +766,12 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                                   "${programQueueModel.runDays ? 1 : 0},"
                                   "${programQueueModel.noOfRunDays},"
                                   "${0},"
-                                  "${programQueueModel.dripStandaloneMode ? 1 : 0}"
+                                  "${programQueueModel.dripStandaloneMode ? 1 : 0},"
+                                  "${programQueueModel.agitatorOnOff ? 1 : 0},"
+                                  "${programQueueModel.agitatorRTCOnTime.replaceAll(':', ',')},"
+                                  "${programQueueModel.agitatorRTCOffTime.replaceAll(':', ',')},"
+                                  "${programQueueModel.agitatorCycONTime.replaceAll(':', ',')},"
+                                  "${programQueueModel.agitatorCycOffTime.replaceAll(':', ',')}"
                                   // "${programQueueModel.queueReset ? 1 : 0}"
                             }
                           };
