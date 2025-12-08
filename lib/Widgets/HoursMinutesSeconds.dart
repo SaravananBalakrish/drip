@@ -48,8 +48,8 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
         overAllPvd.editTime('hrs', double.parse(widget.initialTime.split(':')[0]).toInt());
         overAllPvd.editTime('min', double.parse(widget.initialTime.split(':')[1]).toInt());
         overAllPvd.editTime('sec', double.parse(widget.initialTime.split(':')[2]).toInt());
-        print('hr : ${overAllPvd.hrs}');
-        print('initialTime : ${widget.initialTime}');
+        // print('hr : ${overAllPvd.hrs}');
+        // print('initialTime : ${widget.initialTime}');
       });
     }
   }
@@ -78,7 +78,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
       duration3 = parseTimeString('${overAllPvd.hrs}:${overAllPvd.min}:${overAllPvd.sec}');
     }
     var result = duration1 - (duration2 + duration3);
-    print(result);
+    // print(result);
     if(result > 0 || result == 0){
       setState(() {
         releaseTimeForPrePost = true;
@@ -111,7 +111,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
       fertilizer.add(parseTimeString(widget.fertilizerTime!['list'][i]));
     }
     var result = water - (pre + post);
-    print("result : ${result}");
+    // print("result : ${result}");
     if(result > 0 || result == 0){
       setState(() {
         releaseTimeForWater = true;
@@ -142,7 +142,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
     int post = parseTimeString(widget.postTime!);
     int fertilizer = parseTimeString('${overAllPvd.hrs!}:${overAllPvd.min!}:${overAllPvd.sec!}');
     var result = water - (pre + post);
-    print('result  : $result');
+    // print('result  : $result');
     if(fertilizer < result || fertilizer == result){
       setState(() {
         releaseTimeForFertilizer = true;

@@ -50,7 +50,7 @@ class _GeneralScreenState extends State<GeneralScreen> {
       final data = jsonDecode(result.body);
 
       if (result.statusCode == 200 && data['code'] == 200) {
-        print("loraFrequency :: ${data['loraFrequency']}");
+        // print("loraFrequency :: ${data['loraFrequency']}");
         if (data['loraFrequency'] != null && data['loraFrequency'].isNotEmpty) {
           final splitData = data['loraFrequency'].toString().split(',');
           if (splitData.length >= 3) {

@@ -140,7 +140,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         await Future.delayed(Duration.zero,() {
           _irrigationLine = SequenceModel.fromJson(sequenceJson);
           for (var element in _irrigationLine!.sequence) {
-            print("element in sequence :: $element");
+            // print("element in sequence :: $element");
            /* element['valve'].removeWhere((e) => configObjects.any((config) => config['sNo'] != e['sNo']));
             element['mainValve'].removeWhere((e) => configObjects.any((config) => config['sNo'] != e['sNo']));*/
           }
@@ -154,7 +154,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
           for(int i = 0; i < _irrigationLine!.sequence.length; i++) {
             _irrigationLine!.sequence[i]['sNo'] = '${i+1}';
           }
-          print("Serial number :: ${_irrigationLine!.sequence.map((e) => e['sNo'])}");
+          // print("Serial number :: ${_irrigationLine!.sequence.map((e) => e['sNo'])}");
         }
       } else {
         log("HTTP Request failed or received an unexpected response.");
@@ -235,7 +235,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         _irrigationLine!.sequence[i]['sNo'] = '${i+1}';
       }
     }
-    print("invoked");
+    // print("invoked");
     // print("Sequence after deletion :: ${_irrigationLine!.sequence}");
     notifyListeners();
   }
@@ -922,7 +922,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         "controllerId": controllerId,
         "serialNumber": serialNumber
       };
-      print("userData : ${userData}");
+      // print("userData : ${userData}");
       var getWaterAndFert = await repository.getUserProgramWaterAndFert(userData);
       var getRecipe = await repository.getUserFertilizerSet(userData);
       clearWaterFert();
@@ -1313,7 +1313,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     var myOldSeq = [];
     if(valSeqList.isNotEmpty){
       for(var i in valSeqList){
-        print("sequence sno == ${i['sNo']}");
+        // print("sequence sno == ${i['sNo']}");
         givenSeq.add(i['sNo']);
       }
     }
@@ -1394,7 +1394,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       segmentedControlCentralLocal = 1;
     }
     for(var seq in sequenceData){
-      print('seq ==== ${seq['sNo']}');
+      // print('seq ==== ${seq['sNo']}');
     }
 
     // print('after seq : ${sequenceData}');
@@ -1658,7 +1658,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       subLists.add(originalList.sublist(i, end));
     }
     payLoadList = subLists.map((e) => (e as List).join(';')).toList();
-    print('payLoadList :: ${jsonEncode(payLoadList)}');
+    // print('payLoadList :: ${jsonEncode(payLoadList)}');
     return payLoadList;
   }
 

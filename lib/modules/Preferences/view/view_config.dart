@@ -375,8 +375,8 @@ class _ViewConfigState extends State<ViewConfig> {
           selectedPayload.contains(key);
       return result;
     } else {
-      print('Key in the else :: $key');
-      print('Key in the else condition :: ${selectedPayload.contains(key)}');
+      // print('Key in the else :: $key');
+      // print('Key in the else condition :: ${selectedPayload.contains(key)}');
       switch(key) {
         case 'pumpconfig':
           return provider.viewSettingsList.isNotEmpty && jsonDecode(provider.viewSettingsList[0])[0][key] != null && selectedPayload.contains(key) && provider.cCList.contains(deviceId);

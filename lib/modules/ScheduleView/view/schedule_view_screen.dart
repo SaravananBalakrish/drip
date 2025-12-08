@@ -131,18 +131,18 @@ class _ScheduleViewScreenState extends State<ScheduleViewScreen> {
       if (getUserScheduleLog.statusCode == 200) {
         final responseJson = getUserScheduleLog.body;
         final convertedJson = jsonDecode(responseJson);
-        print("convertedJson in the getUserScheduleLog :: $convertedJson");
+        // print("convertedJson in the getUserScheduleLog :: $convertedJson");
         if(convertedJson["code"] == 200) {
           defaultData = convertedJson['data']['default'];
-          print('convertedJson: ${convertedJson['data'][0]}');
+          // print('convertedJson: ${convertedJson['data'][0]}');
           MqttService().schedulePayload = Constants.dataConversionForScheduleView(convertedJson['data']['log'][0]['irrigation']);
         } else {
           MqttService().schedulePayload = [{"message" : convertedJson['message']}];
         }
       }
     } catch (e, stackTrace) {
-      print('Error: $e');
-      print('stackTrace: $stackTrace');
+      // print('Error: $e');
+      // print('stackTrace: $stackTrace');
     }
   }
 
@@ -150,7 +150,7 @@ class _ScheduleViewScreenState extends State<ScheduleViewScreen> {
     Map<String, Object> body = {"userId": customerId, "controllerId": controllerId, "messageStatus": msg.isNotEmpty ? msg : 'Just sent without changes', "data": payLoad, "hardware": payLoad, "createUser": userId};
     final response = await repository.createUserSentAndReceivedMessageManually(body);
     if (response.statusCode == 200) {
-      print(response.body);
+      // print(response.body);
       // print("body ==> $body");
     } else {
       throw Exception('Failed to load data');
@@ -380,8 +380,8 @@ class _ScheduleViewScreenState extends State<ScheduleViewScreen> {
                     await sentToServer(sentMessage.join('\n'), dataToHardware, widget.userId, widget.controllerId, widget.customerId);
                     _requestScheduleData();
                   } catch(error, stackTrace) {
-                    print("error ==> $error");
-                    print("stackTrace ==> $stackTrace");
+                    // print("error ==> $error");
+                    // print("stackTrace ==> $stackTrace");
                   }
                 },
                 payload: dataToHardware,
@@ -390,7 +390,7 @@ class _ScheduleViewScreenState extends State<ScheduleViewScreen> {
             );
           } catch (error) {
             ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: 'Failed to update because of $error'));
-            print("Error: $error");
+            // print("Error: $error");
           }
         },
         label: const Text('Send'),

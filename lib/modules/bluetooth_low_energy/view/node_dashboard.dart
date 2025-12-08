@@ -39,7 +39,7 @@ class _NodeDashboardState extends State<NodeDashboard> {
     try{
       for(var i = 0; i < 30;i++){
         if(bleService.nodeDataFromHw.containsKey('MID')){
-          print("wait until get mac..");
+          // print("wait until get mac..");
           break;
         }else{
           await Future.delayed(const Duration(seconds: 1));
@@ -55,14 +55,14 @@ class _NodeDashboardState extends State<NodeDashboard> {
         "deviceId": widget.nodeData['deviceId'],
         "hardwareModelId" : bleService.nodeDataFromHw['MID']
       };
-      print("body : $body");
+      // print("body : $body");
       var nodeBluetoothResponse = await BleRepository().getNodeBluetoothSetting(body);
       Map<String, dynamic> nodeJsonData = jsonDecode(nodeBluetoothResponse.body);
       bleService.editNodeDataFromServer(nodeJsonData['data']['default'], widget.nodeData);
       return nodeJsonData['code'];
     }catch(e,stacktrace){
-      print('Error on getting constant data :: $e');
-      print('Stacktrace on getting constant data :: $stacktrace');
+      // print('Error on getting constant data :: $e');
+      // print('Stacktrace on getting constant data :: $stacktrace');
       rethrow;
     }
   }
@@ -269,9 +269,9 @@ class _NodeDashboardState extends State<NodeDashboard> {
       }
       await Future.delayed(const Duration(seconds: 2));
       bleService.requestingMac();
-      print("userShouldWaitUntilRestart seconds : ${waitLoop + 1}");
-      print("nodeDataFromHw : ${bleService.nodeDataFromHw}");
-      print("nodeDataFromHw : ${bleService.nodeDataFromHw}");
+      // print("userShouldWaitUntilRestart seconds : ${waitLoop + 1}");
+      // print("nodeDataFromHw : ${bleService.nodeDataFromHw}");
+      // print("nodeDataFromHw : ${bleService.nodeDataFromHw}");
     }
     if(closeDialog){
       Navigator.pop(context);

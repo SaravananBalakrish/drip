@@ -43,8 +43,8 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
   @override
   void initState() {
     super.initState();
-    print("userId : ${widget.userId}");
-    print("customerId : ${widget.customerId}");
+    // print("userId : ${widget.userId}");
+    // print("customerId : ${widget.customerId}");
     _focusedDay = DateTime.now();
     today = DateTime.now();
     _pageController = PageController(initialPage: _selectedIndex);
