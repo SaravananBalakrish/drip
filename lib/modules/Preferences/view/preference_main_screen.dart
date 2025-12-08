@@ -795,8 +795,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       );
     } catch(error, stackTrace) {
       // throw Exception('This is a test exception');
-      print("error ==> $error");
-      print("stackTrace ==> $stackTrace");
+      // print("error ==> $error");
+      // print("stackTrace ==> $stackTrace");
       return const Center(child: Text("Unexpected error"));
     }
   }
@@ -1395,8 +1395,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       
     } catch (error, stackTrace) {
       showSnackBar(message: "Failed to update due to: $error");
-      print("Error in preference sending: $error");
-      print("Stack trace in preference sending: $stackTrace");
+      // print("Error in preference sending: $error");
+      // print("Stack trace in preference sending: $stackTrace");
     }
   }
 
@@ -1443,7 +1443,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         }
       }
     }
-    print("payload ======= > ${jsonEncode(payload)}");
+    // print("payload ======= > ${jsonEncode(payload)}");
     return payload;
   }
 

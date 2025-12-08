@@ -81,7 +81,7 @@ class ValveGroup {
         required this.valve});
 
   factory ValveGroup.fromJson(Map<String, dynamic> json) {
-    print("json in the ValveGroup : ${json}");
+    // print("json in the ValveGroup : ${json}");
     var valveList = json['valve'] as List<dynamic>?;
 
     List<DeviceObjectModel> valves = valveList != null
@@ -742,13 +742,13 @@ class DayCountRtcModel {
 
   DayCountRtcModel({
     required this.dayCountRtc,
-    required this.dayCountRtcTime
+    required this.dayCountRtcTime,
   });
 
   factory DayCountRtcModel.fromJson(Map<String, dynamic> json) {
     return DayCountRtcModel(
         dayCountRtc: json["dayCountRtc"] ?? false,
-        dayCountRtcTime: json["dayCountRtcTime"] ?? DateFormat('Hms').format(DateTime.now())
+        dayCountRtcTime: json["dayCountRtcTime"] ?? DateFormat('Hms').format(DateTime.now()),
     );
   }
 
@@ -823,10 +823,10 @@ class ProgramQueueModel {
       queueReset: json["queueReset"] ?? false,
       dripStandaloneMode: json["dripStandaloneMode"] ?? false,
       agitatorOnOff: json["agitatorOnOff"] ?? false,
-      agitatorRTCOnTime: json["agitatorRTCOnTime"] ?? DateFormat('Hms').format(DateTime.now()),
-      agitatorRTCOffTime: json["agitatorRTCOffTime"] ?? DateFormat('Hms').format(DateTime.now()),
-      agitatorCycONTime: json["agitatorCycONTime"] ?? DateFormat('Hms').format(DateTime.now()),
-      agitatorCycOffTime: json["agitatorCycOffTime"] ?? DateFormat('Hms').format(DateTime.now()),
+      agitatorRTCOnTime: json["agitatorRTCOnTime"] ?? "00:00:00",
+      agitatorRTCOffTime: json["agitatorRTCOffTime"] ?? "00:00:00",
+      agitatorCycONTime: json["agitatorCycONTime"] ?? "00:00:00",
+      agitatorCycOffTime: json["agitatorCycOffTime"] ?? "00:00:00",
     );
   }
 

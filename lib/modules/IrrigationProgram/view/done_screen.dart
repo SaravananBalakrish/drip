@@ -398,7 +398,7 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
         }
       } catch(error) {
         ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: 'Failed to update because of $error'));
-        print("Error: $error");
+        // print("Error: $error");
       }
 
       Future.delayed(const Duration(milliseconds: 300), () async {

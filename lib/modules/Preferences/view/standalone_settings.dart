@@ -311,7 +311,7 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
             message: response['message'], context: context);
       } catch (error, stackTrace) {
         if (kDebugMode) {
-          print('Stack trace in the sending valve settings :: $stackTrace');
+          // print('Stack trace in the sending valve settings :: $stackTrace');
         }
         showSnackBar(message: '$error', context: context);
       }

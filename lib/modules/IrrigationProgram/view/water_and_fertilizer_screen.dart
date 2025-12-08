@@ -79,7 +79,7 @@ class _WaterAndFertilizerScreenState extends State<WaterAndFertilizerScreen> {
         });
       }
     });
-    print('isIrrigationProgram ::: ${widget.isIrrigationProgram}');
+    // print('isIrrigationProgram ::: ${widget.isIrrigationProgram}');
   }
 
   @override
@@ -926,7 +926,7 @@ class _WaterAndFertilizerScreenState extends State<WaterAndFertilizerScreen> {
                                                         onTap: (){
                                                           // programPvd.editGroupSiteInjector(programPvd.segmentedControlCentralLocal == 0 ? 'selectedCentralSite' : 'selectedLocalSite', index);
                                                           dynamic result = programPvd.editGroupSiteInjector('selectedRecipe', index);
-                                                          print('selectedRecipe finished');
+                                                          // print('selectedRecipe finished');
                                                           if(result != null){
                                                             showDialog(context: context, builder: (context){
                                                               return AlertDialog(

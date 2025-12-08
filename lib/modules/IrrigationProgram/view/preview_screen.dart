@@ -449,7 +449,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   }
 
   void sendFunction() async{
-    print("widget.modelId :::::: ${widget.modelId}");
+    // print("widget.modelId :::::: ${widget.modelId}");
     final mainProvider = Provider.of<IrrigationProgramMainProvider>(context, listen: false);
     Map<String, dynamic> dataToMqtt = mainProvider.dataToMqtt(widget.serialNumber == 0 ? mainProvider.serialNumberCreation : widget.serialNumber, widget.programType);
     Map<String, dynamic> dataToMqttEcoGem = {};
@@ -539,7 +539,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
         }
       } catch(error) {
         ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: 'Failed to update because of $error'));
-        print("Error: $error");
+        // print("Error: $error");
       }
 
       Future.delayed(const Duration(milliseconds: 300), () async {

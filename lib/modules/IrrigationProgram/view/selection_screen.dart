@@ -153,8 +153,8 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
                       trailing: Switch(
                           value: irrigationProgramProvider.isPumpStationMode,
                           onChanged: (newValue) {
-                            print(irrigationProgramProvider.selectedObjects!.where((pump) => pump.objectId == 5).map((e) => e.sNo).toList());
-                            print(irrigationLine.map((e) => e.irrigationPump ?? []).expand((list) => list).toList().map((e) => e.sNo));
+                            // print(irrigationProgramProvider.selectedObjects!.where((pump) => pump.objectId == 5).map((e) => e.sNo).toList());
+                            // print(irrigationLine.map((e) => e.irrigationPump ?? []).expand((list) => list).toList().map((e) => e.sNo));
                             irrigationProgramProvider.updatePumpStationMode(newValue, 0);
                           }
                       )

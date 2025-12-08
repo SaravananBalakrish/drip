@@ -137,7 +137,7 @@ class _EcoGemProgressDialogState extends State<EcoGemProgressDialog> {
 
       return isAcknowledged;
     } catch (error) {
-      print('Error in _waitForControllerResponse: $error');
+      // print('Error in _waitForControllerResponse: $error');
       return false;
     }
   }
@@ -250,9 +250,11 @@ class _EcoGemProgressDialogState extends State<EcoGemProgressDialog> {
                   // subtitle: Text(message),
                   value: status['selected'],
                   onChanged: (bool? value) {
-                    setState(() {
-                      payloadStatuses[index]['selected'] = value!;
-                    });
+                    if(payloadStatuses.length > 1) {
+                      setState(() {
+                        payloadStatuses[index]['selected'] = value!;
+                      });
+                    }
                   },
                 );
               },
