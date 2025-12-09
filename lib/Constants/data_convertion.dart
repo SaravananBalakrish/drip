@@ -58,10 +58,10 @@ class DataConvert{
     int hours = int.parse(parts[0]);
     int minutes = int.parse(parts[1]);
     int seconds = int.parse(parts[2]);
-    double totalTimeInHours = hours + (minutes / 60) + (seconds / 3600);
+    double totalTimeInHours = hours + (minutes / 60);
     double totalLiters = totalTimeInHours * rate;
 
-    return totalLiters.toString();
+    return totalLiters.toInt().toString();
   }
 
   //TODO: string liters to time(00:00:00)
