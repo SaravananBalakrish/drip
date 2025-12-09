@@ -167,7 +167,7 @@ class Constants {
   }
   static String showHourAndMinuteOnly(String time, int modelId){
     List<String> list = time.split(':');
-    return '${list[0]}:${list[1]}${AppConstants.ecoGemModelList.contains(modelId) ? '' :':${list[2]}'}';
+    return list.length > 1 ? '${list[0]}:${list[1]}${AppConstants.ecoGemModelList.contains(modelId) ? '' :':${list[2]}'}' : time;
   }
 
 }

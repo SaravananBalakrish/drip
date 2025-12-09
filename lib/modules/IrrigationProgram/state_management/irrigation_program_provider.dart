@@ -1635,14 +1635,14 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       String zoneTime = '';
       String zoneQuantity = '';
       zoneTime = DataConvert().convertLitersToTime(double.parse(sequenceData[selectedGroup]['quantityValue']), getNominalFlow());
-      zoneQuantity = DataConvert().convertTimeToLiters(sequenceData[selectedGroup]['timeValue'], getNominalFlow());
+      // zoneQuantity = DataConvert().convertTimeToLiters(sequenceData[selectedGroup]['timeValue'], getNominalFlow());
       Map<String, dynamic> jsonPayload = {
         'Zone_No' : sq['sNo'],
         'Program_No' : serialNumber,
         'SequenceData' : getValve.join(','),
         'ValveFlowRate' : getNominalFlow(),
         'IrrigationMethod' : sq['method'] == 'Time' ? 1 : 2,
-        'IrrigationDuration_Quantity' : timeAndQuantityForWaterValueInEcoGem(zoneTime, zoneQuantity),
+        'IrrigationDuration_Quantity' : timeAndQuantityForWaterValueInEcoGem(zoneTime, sequenceData[selectedGroup]['quantityValue']),
         'CentralFertOnOff' : sq['applyFertilizerForCentral'] == false ? 0 : sq['selectedCentralSite'] == -1 ? 0 : 1,
         // 'PrePostMethod' : sq['prePostMethod'] == 'Time' ? 1 : 2,
         'PreTime_PreQty' : timeAndQuantityForEcoGem(sq['preValue']),
