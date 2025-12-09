@@ -3336,7 +3336,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     for(var obj in selectedObject){
       print("obj in the for loop :: $obj");
       print("index in the for loop :: ${configObject.indexOf(obj)}");
-      int indexOfObject = configObject.indexOf(obj);
+      int indexOfObject = configObject.isEmpty ? 0 : configObject.indexOf(obj);
       payload[indexOfObject] = 1;
       print("payload[indexOfObject] :: ${payload[indexOfObject]}");
     }
