@@ -790,9 +790,8 @@ class _CalibrationState extends State<Calibration> {
                         print('crc : ${sumOfAscii % 256}');
                         print('fullData : ${fullData}');
                         print('payload : ${payload}');
-                        bleService.sendDataToHw(fullData);
                       }
-
+                      bleService.sendDataToHw(fullData);
                     },
                     icon: const Icon(Icons.send, color: Colors.white,),
                     label: const Text("Submit", style: TextStyle(color: Colors.white),),
