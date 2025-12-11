@@ -938,7 +938,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   }
 
   int _getWidgetType(int categoryIndex, int settingIndex, List settingList) {
-    return (settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "SENSOR HEIGHT" || settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "PRESSURE MAXIMUM VALUE")
+    return (settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "PRESSURE MAXIMUM VALUE")
         ? 7
         : settingList[categoryIndex].setting[settingIndex].widgetTypeId;
   }
