@@ -94,8 +94,10 @@ class LoginViewModel extends ChangeNotifier {
         'deviceToken': token ?? '',
         'isMobile' : kIsWeb? false : true,
       };
+      print("body: $body");
        final response = await repository.checkLoginAuth(body);
       final data = jsonDecode(response.body);
+      print("data: $data");
       if (response.statusCode == 200 && data['code'] == 200) {
         final userData = data['data']['user'];
         await PreferenceHelper.saveUserDetails(
@@ -106,7 +108,7 @@ class LoginViewModel extends ChangeNotifier {
           countryCode: cleanedCountryCode,
           mobileNumber: mobileNumber,
           email: userData['email'],
-          configPermission: userData['permissionDenied'],
+          configPermission: userData['permissionDenied'] ?? false,
          );
         onLoginSuccess(data['message']);
       } else {
@@ -115,6 +117,7 @@ class LoginViewModel extends ChangeNotifier {
         notifyListeners();
       }
     } catch (error) {
+      print("error:${error.toString()}");
       isLoading = false;
       debugPrint('$error');
       errorMessage = "Unexpected error occurred.";
