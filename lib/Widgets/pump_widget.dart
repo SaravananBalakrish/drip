@@ -193,7 +193,7 @@ class PumpWidget extends StatelessWidget {
 
               if (pump.reason == '11' || pump.reason == '22')
                 Positioned(
-                  top: pump.actualValue == '0.0' ? isMobile? 30 : 50 : isMobile? 20 : 40,
+                  top: pump.actualValue == '0.0' ? 50 : 40,
                   left: 0,
                   child: Container(
                     width: 67,
@@ -221,7 +221,7 @@ class PumpWidget extends StatelessWidget {
 
               else if (pump.reason == '8' && isTimeFormat(pump.actualValue.split('_').last))
                 Positioned(
-                  top: isMobile? 20:40,
+                  top: 40,
                   left: 0,
                   child: Container(
                     width: 67,

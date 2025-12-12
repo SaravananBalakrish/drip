@@ -95,9 +95,9 @@ class GeneralSettingViewModel extends ChangeNotifier {
           groupId = firstItem['groupId'];
 
           countryCode = firstItem['countryCode'];
-          simNumber = firstItem['simNumber'];
+          simNumber = firstItem['simNumber'] ?? "";
 
-          controllerVersion = firstItem['hwVersion'];
+          controllerVersion = firstItem['hwVersion'] ?? "";
           newVersion = firstItem['availableHwVersion'];
 
           controllerLocation = firstItem['controllerLocation'] ?? "";
