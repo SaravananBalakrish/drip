@@ -613,15 +613,43 @@ class MqttPayloadProvider with ChangeNotifier {
         // debugPrint('_receivedPayload------>:$_receivedPayload');
 
         if(data['mC']=='2400'){
-          liveDateAndTime = '${data['cD']} ${data['cT']}';
-          activeDeviceId = data['cC'];
-          activeDeviceVersion = data['cM']['Version'];
-          if (data['cM'].containsKey('LoraData')) {
-            activeLoraData = data['cM']['LoraData'];
+
+          try {
+            Map<String, dynamic> data =
+            _receivedPayload.isNotEmpty ? jsonDecode(_receivedPayload) : {};
+
+            if (data['mC'] == '2400') {
+
+              liveDateAndTime = '${data['cD'] ?? "--"} ${data['cT'] ?? "--"}';
+
+              activeDeviceId = data['cC'] ?? "";
+
+              activeDeviceVersion =
+              data['cM'] != null && data['cM'].containsKey('Version')
+                  ? data['cM']['Version']
+                  : "";
+
+              activeLoraData =
+              data['cM'] != null && data['cM'].containsKey('LoraData')
+                  ? data['cM']['LoraData']
+                  : null;
+
+              wifiStrength =
+              data['cM'] != null ? data['cM']['WifiStrength'] ?? 0 : 0;
+
+              powerSupply =
+              data['cM'] != null ? data['cM']['PowerSupply'] ?? 0 : 0;
+            }
+          } catch (e) {
+            debugPrint("Error: $e");
           }
 
-          wifiStrength = data['cM']['WifiStrength'];
-          powerSupply = data['cM']['PowerSupply'];
+          final cm = data['cM'];
+          if (cm == null || cm is! Map || !cm.containsKey('2401') || cm['2401'] == null ||
+              cm['2401'] is! String || (cm['2401'] as String).isEmpty) {
+            debugPrint("2401 key NOT FOUND → stopping execution");
+            return;
+          }
 
           updateNodeLiveMessage(data['cM']['2401'].split(";"));
 

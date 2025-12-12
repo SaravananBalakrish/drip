@@ -62,12 +62,12 @@ class SensorWidget extends StatelessWidget {
                         height: 18,
                         width: 45,
                         decoration: BoxDecoration(
-                          color: statusParts[1] == "1" ? Colors.green.shade300 : Colors.red.shade300,
+                          color: sensor.value == "1" ? Colors.green.shade300 : Colors.red.shade300,
                           borderRadius: BorderRadius.circular(3),
                         ),
                         child: Center(
                           child: Text(
-                            statusParts[1] == "1" ? 'Low' : 'High',
+                            sensor.value == "1" ? 'Low' : 'High',
                             style: const TextStyle(fontSize: 10, color: Colors.white),
                           ),
                         ),

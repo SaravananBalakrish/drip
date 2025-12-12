@@ -23,6 +23,7 @@ import '../widgets/pump_station_mobile.dart';
 class CustomerHomeNarrow extends StatelessWidget {
   const CustomerHomeNarrow({super.key});
 
+
   @override
   Widget build(BuildContext context) {
 
@@ -38,6 +39,7 @@ class CustomerHomeNarrow extends StatelessWidget {
 
     final hasProgramOnOff = cM.getPermissionStatus("Program On/Off Manually");
     final hasLinePP = cM.getPermissionStatus("Irrigation Line Pause/Resume Manually");
+
 
     return Scaffold(
       backgroundColor: Colors.white70,
@@ -102,13 +104,27 @@ class CustomerHomeNarrow extends StatelessWidget {
                       customerId, cM.controllerId),
                 ];
 
-                final positions = calculateLinePositions(
+                final result = calculateLinePositions(
                   hasCFertilizer: cFertilizerSite.isNotEmpty,
                   hasLFertilizer: lFertilizerSite.isNotEmpty,
                   hasPressureSwitch: prsSwitch.isNotEmpty,
                   hasPressureSensor: line.pressureIn.isNotEmpty,
                   hasWaterMeter: line.waterMeter.isNotEmpty,
-                  isNova: isNova
+                  isNova: isNova,
+                );
+
+                final linePositions = result.positions;
+                final startPosition = result.startPosition;
+
+                int valveCount = line.valveObjects.length + line.mainValveObjects.length;
+                for (final valve in line.valveObjects) {
+                  valveCount += (valve.waterSources.length);
+                }
+
+                final vp = calculateValveLinePositions(
+                  screenWidth: MediaQuery.sizeOf(context).width,
+                  valveLength: valveCount,
+                  isNova: isNova,
                 );
 
                 return Padding(
@@ -118,24 +134,29 @@ class CustomerHomeNarrow extends StatelessWidget {
                       Positioned(
                         top: (isNova && (cFertilizerSite.isNotEmpty || lFertilizerSite.isNotEmpty)) ? 126 : 4,
                         right: 3,
-                        bottom: line.pressureOut.isNotEmpty ? 17 : 0,
-                        child: Container(width: 4, color: Colors.grey.shade300),
+                        bottom: line.pressureOut.isNotEmpty ? 17 : 60,
+                        child: Container(width: 4, color: Colors.teal.shade50),
                       ),
                       buildConnectionLine(context,
                           (isNova && (cFertilizerSite.isNotEmpty || lFertilizerSite.isNotEmpty)) ? 126 : 4),
                       Positioned(
-                        bottom : line.pressureOut.isNotEmpty ? 17 : 0,
+                        bottom : line.pressureOut.isNotEmpty ? 17 : 60,
                         left: MediaQuery.sizeOf(context).width - 35 ,
                         right: 3,
                         child: Container(
                           height: 4,
-                          color: Colors.grey.shade300,
+                          color: Colors.teal.shade50,
                         ),
                       ),
 
-                      if (positions.isNotEmpty) ...[
-                        for (double p in positions)
+                      if (linePositions.isNotEmpty) ...[
+                        for (double p in linePositions)
                           buildConnectionLine(context, p),
+                      ],
+
+                      if (vp.isNotEmpty) ...[
+                        for (double p in vp)
+                          buildLineConnection(context, p + startPosition),
                       ],
 
                       Row(
@@ -292,7 +313,7 @@ class CustomerHomeNarrow extends StatelessWidget {
 
   }
 
-  List<double> calculateLinePositions({
+  LinePositionResult calculateLinePositions({
     required bool hasCFertilizer,
     required bool hasLFertilizer,
     required bool hasPressureSwitch,
@@ -301,55 +322,111 @@ class CustomerHomeNarrow extends StatelessWidget {
     required bool isNova,
   }) {
     List<double> p = [];
+    double startPos = 0;
 
     bool hasAnyFertilizer = hasCFertilizer || hasLFertilizer;
     bool hasBothFertilizers = hasCFertilizer && hasLFertilizer;
 
-    if(isNova){
-      if (hasPressureSensor && hasWaterMeter) {
+    if (isNova) {
+      if (hasAnyFertilizer && hasPressureSensor && hasWaterMeter) {
         p = [195, 235];
-      }else if (!hasPressureSensor && hasWaterMeter) {
+        startPos = 197;
+      }else if (hasAnyFertilizer && !hasPressureSensor && hasWaterMeter) {
+        p = [195];
+        startPos = 217;
+      }else if (hasAnyFertilizer && !hasPressureSensor && !hasWaterMeter) {
+        p = [195];
+        startPos = 217;
+      } else if (!hasAnyFertilizer && hasPressureSensor && hasWaterMeter) {
+        p = [195, 235];
+        startPos = 192;
+      } else if (!hasPressureSensor && hasWaterMeter) {
         p = [125];
+        startPos = 122;
+      }else{
+        p = [4];
+        startPos = 107;
       }
-    }else{
+    } else {
       if (hasBothFertilizers && hasPressureSwitch && hasPressureSensor && hasWaterMeter) {
         p = [215, 340, 380, 470, 510];
+        startPos = 532;
       }
       else if (hasBothFertilizers && !hasPressureSwitch && hasPressureSensor && hasWaterMeter) {
         p = [215, 340, 420, 460];
-      }
-      else if (hasAnyFertilizer && !hasPressureSwitch && hasPressureSensor && hasWaterMeter) {
-        p = [215, 295, 335];
-      }
-      else if (hasAnyFertilizer && hasPressureSwitch && !hasPressureSensor && !hasWaterMeter) {
-        p = [215, 255];
-      }
-      else if (hasAnyFertilizer && !hasPressureSwitch && hasPressureSensor && !hasWaterMeter) {
-        p = [215, 255];
-      }
-      else if (hasAnyFertilizer && !hasPressureSwitch && !hasPressureSensor && hasWaterMeter) {
-        p = [215, 295];
-      }
-      else if (hasAnyFertilizer) {
-        p = [215];
+        startPos = 482;
       }
       else if (!hasBothFertilizers && hasPressureSwitch && hasPressureSensor && hasWaterMeter) {
         p = [130, 220, 260];
+        startPos = 137;
       }
       else if (!hasBothFertilizers && hasPressureSwitch && hasPressureSensor) {
         p = [130, 220];
+        startPos = 242;
       }
       else if (!hasBothFertilizers && hasPressureSensor) {
         p = [170];
+        startPos = 191;
+      }
+      else if (hasAnyFertilizer && !hasPressureSwitch && hasPressureSensor && hasWaterMeter) {
+        p = [215, 295, 335];
+        startPos = 357;
+      }
+      else if (hasAnyFertilizer && hasPressureSwitch && !hasPressureSensor && !hasWaterMeter) {
+        p = [215, 255];
+        startPos = 327;
+      }
+      else if (hasAnyFertilizer && !hasPressureSwitch && hasPressureSensor && !hasWaterMeter) {
+        p = [215, 255];
+        startPos = 212;
+      }
+      else if (!hasAnyFertilizer && hasPressureSwitch && !hasPressureSensor && !hasWaterMeter) {
+        p = [130, 180];
+        startPos = 202;
+      }
+      else if (!hasAnyFertilizer && !hasPressureSwitch && hasPressureSensor && !hasWaterMeter) {
+        p = [130, 170];
+        startPos = 192;
+      }
+      else if (!hasAnyFertilizer && !hasPressureSwitch && hasPressureSensor && hasWaterMeter) {
+        p = [170, 210];
+        startPos = 232;
+      }
+      else if (hasAnyFertilizer && !hasPressureSwitch && !hasPressureSensor && hasWaterMeter) {
+        p = [215, 295];
+        startPos = 317;
+      }
+      else if (hasAnyFertilizer) {
+        p = [215];
+        startPos = 212;
       }
       else {
         p = [130];
+        startPos = 152;
       }
     }
 
     p.sort();
-    return p;
+
+    return LinePositionResult(p, startPos);
   }
+
+  List<double> calculateValveLinePositions({
+    required double screenWidth,
+    required int valveLength,
+    required bool isNova,
+  }) {
+    const double valveWidth = 72;
+    const double rowHeight = 65;
+
+    int perRow = screenWidth ~/ valveWidth;
+    if (perRow < 1) perRow = 1;
+
+    int totalRows = (valveLength / perRow).ceil();
+
+    return List.generate(totalRows, (i) => i * rowHeight);
+  }
+
 
   Widget buildConnectionLine(BuildContext context, double top) {
     return Positioned(
@@ -358,7 +435,19 @@ class CustomerHomeNarrow extends StatelessWidget {
       right: 3,
       child: Container(
         height: 4,
-        color: Colors.grey.shade300,
+        color: Colors.teal.shade50,
+      ),
+    );
+  }
+
+  Widget buildLineConnection(BuildContext context, double top) {
+    return Positioned(
+      top : top,
+      left: 33,
+      right: 6,
+      child: Container(
+        height: 4,
+        color: Colors.teal.shade50,
       ),
     );
   }
@@ -803,4 +892,11 @@ class CustomerHomeNarrow extends StatelessWidget {
       ],
     );
   }
+}
+
+class LinePositionResult {
+  final List<double> positions;
+  final double startPosition;
+
+  LinePositionResult(this.positions, this.startPosition);
 }

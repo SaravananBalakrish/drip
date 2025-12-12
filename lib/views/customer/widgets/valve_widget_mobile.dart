@@ -63,21 +63,21 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
   Widget _buildWithSource(ValveModel valve, bool hasMoisture) {
     return SizedBox(
       width: 140,
-      height: 60,
+      height: 65,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(width: 70, height: 60, child: _buildValveIcon(valve, hasMoisture)),
-          SizedBox(width: 70, height: 60, child: _buildWaterSource(valve)),
+          SizedBox(width: 70, height: 65, child: _buildValveIcon(valve, hasMoisture)),
+          SizedBox(width: 70, height: 65, child: _buildWaterSource(valve)),
         ],
       ),
     );
   }
 
   Widget _buildWithoutSource(ValveModel valve, bool hasMoisture) {
-    return SizedBox(width: 70, height: 60, child: _buildValveIcon(valve, hasMoisture));
+    return SizedBox(width: 70, height: 65, child: _buildValveIcon(valve, hasMoisture));
   }
 
   Widget _buildValveIcon(ValveModel valve, bool hasMoisture) {
@@ -98,11 +98,16 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
                 color: valve.status ==1 ? null : valveColor,
               ),
             ),
-            Text(
-              valve.name,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 10, color: Colors.black54),
-            ),
+            SizedBox(
+              width: 70,
+              child: Text(
+                valve.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 10, color: Colors.black54),
+              ),
+            )
           ],
         ),
         if (hasMoisture) _buildMoistureButton(valve),
