@@ -68,8 +68,12 @@ class CustomerHomeNarrow extends StatelessWidget {
 
               if(isNova)...[
                 const Padding(
-                  padding: EdgeInsets.only(left: 8, right: 8, top: 5),
-                  child: VoltageWidget(),
+                  padding: EdgeInsets.only(left: 7, right: 7, top: 5),
+                  child: Card(
+                    elevation: 1,
+                    color: Colors.white,
+                    surfaceTintColor: Colors.white,
+                      child: VoltageWidget()),
                 ),
               ],
 
@@ -135,7 +139,7 @@ class CustomerHomeNarrow extends StatelessWidget {
                         top: (isNova && (cFertilizerSite.isNotEmpty || lFertilizerSite.isNotEmpty)) ? 126 : 4,
                         right: 3,
                         bottom: line.pressureOut.isNotEmpty ? 17 : 60,
-                        child: Container(width: 4, color: Colors.teal.shade50),
+                        child: Container(width: 4, color: Colors.grey.shade200),
                       ),
                       buildConnectionLine(context,
                           (isNova && (cFertilizerSite.isNotEmpty || lFertilizerSite.isNotEmpty)) ? 126 : 4),
@@ -145,7 +149,7 @@ class CustomerHomeNarrow extends StatelessWidget {
                         right: 3,
                         child: Container(
                           height: 4,
-                          color: Colors.teal.shade50,
+                          color: Colors.grey.shade200,
                         ),
                       ),
 
@@ -435,7 +439,7 @@ class CustomerHomeNarrow extends StatelessWidget {
       right: 3,
       child: Container(
         height: 4,
-        color: Colors.teal.shade50,
+        color: Colors.grey.shade200,
       ),
     );
   }
@@ -447,7 +451,7 @@ class CustomerHomeNarrow extends StatelessWidget {
       right: 6,
       child: Container(
         height: 4,
-        color: Colors.teal.shade50,
+        color: Colors.grey.shade200,
       ),
     );
   }
