@@ -104,7 +104,7 @@ class PumpWidget extends StatelessWidget {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           hasVoltage?
-                                          _buildVoltagePopoverContent(context, voltages, columns) :
+                                          _buildVoltagePopoverContent(context, voltages, columns, isNova) :
                                           Container(),
                                           if (isSourcePump) _buildBottomControlButtons(context),
                                         ],
@@ -251,7 +251,8 @@ class PumpWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildVoltagePopoverContent(BuildContext context, voltages, columns) {
+  Widget _buildVoltagePopoverContent(BuildContext context,
+      voltages, columns, bool isNova) {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -261,15 +262,18 @@ class PumpWidget extends StatelessWidget {
             int.parse(pump.reason) > 0 &&
             int.parse(pump.reason) != 31)
           _buildReasonContainer(context),
-        const SizedBox(height: 5),
-        _buildPhaseInfo(),
-        const SizedBox(height: 8),
-        if (voltages.length == 6) ...[
-          _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+
+        if(!isNova)...[
           const SizedBox(height: 5),
-          _buildVoltageCurrentInfo(voltages.sublist(3, 6), ['RN', 'YN', 'BN']),
-        ] else ...[
-          _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+          _buildPhaseInfo(),
+          const SizedBox(height: 8),
+          if (voltages.length == 6) ...[
+            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+            const SizedBox(height: 5),
+            _buildVoltageCurrentInfo(voltages.sublist(3, 6), ['RN', 'YN', 'BN']),
+          ] else ...[
+            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+          ],
         ],
         const SizedBox(height: 8),
         _buildVoltageCurrentInfo(columns, ['RC', 'YC', 'BC']),
@@ -532,20 +536,25 @@ class VoltageWidget extends StatelessWidget {
 
         final pumpNames = getPumpConnectionNames(data);
 
-        return _buildVoltagePopoverContent(
-            context,
-            voltageList,
-            currentColumns,
-            pumpNames
+        return Column(
+          children: [
+            _buildPhaseInfo(context),
+            _buildVoltagePopoverContent(
+                context,
+                voltageList,
+                currentColumns,
+                pumpNames
+            ),
+          ],
         );
       },
     );
   }
 
-  Widget _buildPhaseInfo() {
+  Widget _buildPhaseInfo(BuildContext context) {
     int phase = int.tryParse("0") ?? 0;
     return Container(
-      width: 310,
+      width: MediaQuery.sizeOf(context).width,
       height: 25,
       color: Colors.transparent,
       child: Row(
@@ -619,6 +628,10 @@ class VoltageWidget extends StatelessWidget {
 
   Widget _buildVoltagePopoverContent(BuildContext context, voltages,
       columns, List<String> pumpNames) {
+
+    print(pumpNames);
+    print(voltages);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
