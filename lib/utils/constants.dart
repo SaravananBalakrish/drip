@@ -723,6 +723,7 @@ class AppConstants {
   static int fertilizerSiteObjectId = 3;
   static int channelObjectId = 10;
   static int boosterObjectId = 7;
+  static int agitatorObjectId = 9;
   static int ecObjectId = 27;
   static int phObjectId = 28;
   static int moistureObjectId = 25;
