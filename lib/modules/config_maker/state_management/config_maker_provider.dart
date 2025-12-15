@@ -1198,6 +1198,7 @@ class ConfigMakerProvider extends ChangeNotifier{
       List<DeviceObjectModel> valveList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.valveObjectId).toList();
       List<DeviceObjectModel> filterList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.filterObjectId).toList();
       List<DeviceObjectModel> boosterList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.boosterObjectId).toList();
+      List<DeviceObjectModel> agitatorList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.agitatorObjectId).toList();
       List<DeviceObjectModel> channelList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.channelObjectId).toList();
       List<DeviceObjectModel> moistureList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.moistureObjectId).toList();
       List<DeviceObjectModel> soilTemperatureList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.soilTemperatureObjectId).toList();
@@ -1206,6 +1207,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         ...filterList,
         ...boosterList,
         ...channelList,
+        ...agitatorList,
         ...moistureList,
         ...soilTemperatureList
       ];
