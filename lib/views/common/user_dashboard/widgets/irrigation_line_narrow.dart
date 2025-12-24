@@ -37,6 +37,9 @@ class IrrigationLineNarrow extends StatelessWidget {
 
       ...sensorList(sensors: waterMeter, type: 'Water Meter',
         imagePath: 'assets/png/water_meter_wj.png', customerId: customerId, controllerId: controllerId),
+
+      ...sensorList(sensors: pressureOut, type: 'Pressure Sensor',
+          imagePath: 'assets/png/pressure_sensor.png', customerId: customerId, controllerId: controllerId),
     ];
 
     final allItems = [
@@ -48,8 +51,8 @@ class IrrigationLineNarrow extends StatelessWidget {
       ...valveList(valves: valves, customerId: customerId,
         controllerId: controllerId, modelId: modelId, isMobile: true),
 
-      ...sensorList(sensors: pressureOut, type: 'Pressure Sensor',
-        imagePath: 'assets/png/pressure_sensor.png', customerId: customerId, controllerId: controllerId),
+      /*...sensorList(sensors: pressureOut, type: 'Pressure Sensor',
+        imagePath: 'assets/png/pressure_sensor.png', customerId: customerId, controllerId: controllerId),*/
     ];
 
     return Column(

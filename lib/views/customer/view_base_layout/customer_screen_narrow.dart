@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
 import 'package:oro_drip_irrigation/utils/helpers/mc_permission_helper.dart';
 import 'package:oro_drip_irrigation/views/customer/scheduled_program/scheduled_program_narrow.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/connection_banner.dart';
@@ -49,6 +50,8 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
 
     bool isGemOrNova = isGemOrNovaModel(cM.modelId);
 
+    bool hasWeatherStation = cM.irrigationLine.any((line) => line.hasWeatherStation);
+
     final pages = isGemOrNova ? [
       const DashboardLayoutSelector(userRole: UserRole.customer),
       Consumer<CustomerScreenControllerViewModel>(
@@ -75,6 +78,10 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
         },
         masterData: cM,
       ),
+      if(hasWeatherStation)...[
+        WeatherScreen(userId: vm.mySiteList.data[vm.sIndex].customerId,
+            controllerId: cM.controllerId, deviceID: cM.deviceId),
+      ],
       const SettingsMenuNarrow(),
     ] :
     [
@@ -117,7 +124,9 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
           cM.getPermissionStatus("View Controller Log"),
         ],
       ),
-      bottomNavigationBar: isGemOrNova ? CustomerBottomNav(index: navModel.index, onTap: navModel.setIndex) : null,
+      bottomNavigationBar: isGemOrNova ?
+      CustomerBottomNav(index: navModel.index, onTap: navModel.setIndex,
+        hasWeatherStation: hasWeatherStation) : null,
       banners: [
         if(isGemOrNova)
           const NetworkConnectionBanner(),

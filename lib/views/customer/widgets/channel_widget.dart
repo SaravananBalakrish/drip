@@ -247,16 +247,19 @@ class ChannelWidget extends StatelessWidget {
                 ],
               ),
             ),
-            if(kIsWeb || isNova)...[
-              if(isNova)...[
-                const SizedBox(height: 2.5),
-                Container(width: 70, height: 4.5, color: Colors.grey.shade300),
-              ]else...[
-                const SizedBox(height: 4),
-                Container(width: 70, height: 1, color: Colors.grey.shade300),
-                const SizedBox(height: 3.5),
-                Container(width: 70, height: 1, color: Colors.grey.shade300),
-              ],
+
+            if(!isMobile)...[
+              if(kIsWeb || isNova)...[
+                if(isNova)...[
+                  const SizedBox(height: 2.5),
+                  Container(width: 70, height: 4.5, color: Colors.grey.shade300),
+                ]else...[
+                  const SizedBox(height: 4),
+                  Container(width: 70, height: 1, color: Colors.grey.shade300),
+                  const SizedBox(height: 3.5),
+                  Container(width: 70, height: 1, color: Colors.grey.shade300),
+                ],
+              ]
             ]
           ],
         );

@@ -432,6 +432,7 @@ class IrrigationLineModel {
   final List<SensorModel> pressureIn;
   final List<SensorModel> pressureOut;
   final List<SensorModel> waterMeter;
+  final bool hasWeatherStation;
   int? linePauseFlag;
 
   IrrigationLineModel({
@@ -451,6 +452,7 @@ class IrrigationLineModel {
     required this.pressureIn,
     required this.pressureOut,
     required this.waterMeter,
+    required this.hasWeatherStation,
     this.linePauseFlag = 0,
   });
 
@@ -562,6 +564,10 @@ class IrrigationLineModel {
         .map(SensorModel.fromConfigObject)
         .toList();
 
+    bool hasWeatherStation =
+        json['weatherStation'] != null &&
+            (json['weatherStation'] as List).isNotEmpty;
+
     return IrrigationLineModel(
       sNo: json['sNo']?.toDouble() ?? 0,
       name: json['name'] ?? '',
@@ -582,6 +588,7 @@ class IrrigationLineModel {
       pressureIn: pressureIn,
       pressureOut: pressureOut,
       waterMeter: waterMeter,
+      hasWeatherStation: hasWeatherStation,
     );
   }
 
