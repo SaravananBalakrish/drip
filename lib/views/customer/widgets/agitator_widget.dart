@@ -37,7 +37,7 @@ class AgitatorWidget extends StatelessWidget {
                 ? agitatorWidget(true, fertilizerSite)
                 : agitatorWidget(false, fertilizerSite),
 
-            if(kIsWeb)...[
+            if(kIsWeb && !isMobile)...[
               SizedBox(height: fertilizerSite.agitator[0].status==1? 25:90),
               Container(width: 53, height: 1,color: Colors.grey.shade300),
               const SizedBox(height: 3.5),

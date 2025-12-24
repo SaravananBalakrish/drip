@@ -112,15 +112,17 @@ class CustomerHomeNarrow extends StatelessWidget {
                   hasCFertilizer: cFertilizerSite.isNotEmpty,
                   hasLFertilizer: lFertilizerSite.isNotEmpty,
                   hasPressureSwitch: prsSwitch.isNotEmpty,
-                  hasPressureSensor: line.pressureIn.isNotEmpty,
+                  hasPressureIN: line.pressureIn.isNotEmpty,
                   hasWaterMeter: line.waterMeter.isNotEmpty,
+                  hasPressureOUT: line.pressureOut.isNotEmpty,
                   isNova: isNova,
                 );
 
                 final linePositions = result.positions;
                 final startPosition = result.startPosition;
 
-                int valveCount = line.valveObjects.length + line.mainValveObjects.length;
+                int valveCount = line.valveObjects.length + line.mainValveObjects.length
+                    + line.lightObjects.length;
                 for (final valve in line.valveObjects) {
                   valveCount += (valve.waterSources.length);
                 }
@@ -138,22 +140,13 @@ class CustomerHomeNarrow extends StatelessWidget {
                       Positioned(
                         top: (isNova && (cFertilizerSite.isNotEmpty || lFertilizerSite.isNotEmpty)) ? 126 : 4,
                         right: 3,
-                        bottom: line.pressureOut.isNotEmpty ? 17 : 60,
-                        child: Container(width: 4, color: Colors.grey.shade200),
+                        bottom: 58,
+                        child: Container(width: 4.5, color: Colors.blueGrey.shade100),
                       ),
 
                       buildConnectionLine(context,
-                          (isNova && (cFertilizerSite.isNotEmpty || lFertilizerSite.isNotEmpty)) ? 126 : 4),
+                          (isNova && (cFertilizerSite.isNotEmpty || lFertilizerSite.isNotEmpty)) ? 126 : 4.5),
 
-                      Positioned(
-                        bottom : line.pressureOut.isNotEmpty ? 17 : 60,
-                        left: MediaQuery.sizeOf(context).width - 35 ,
-                        right: 3,
-                        child: Container(
-                          height: 4,
-                          color: Colors.grey.shade200,
-                        ),
-                      ),
 
                       if (linePositions.isNotEmpty) ...[
                         for (double p in linePositions)
@@ -326,8 +319,9 @@ class CustomerHomeNarrow extends StatelessWidget {
     required bool hasCFertilizer,
     required bool hasLFertilizer,
     required bool hasPressureSwitch,
-    required bool hasPressureSensor,
+    required bool hasPressureIN,
     required bool hasWaterMeter,
+    required bool hasPressureOUT,
     required bool isNova,
   }) {
     List<double> p = [];
@@ -337,83 +331,168 @@ class CustomerHomeNarrow extends StatelessWidget {
     bool hasBothFertilizers = hasCFertilizer && hasLFertilizer;
 
     if (isNova) {
-      if (hasAnyFertilizer && hasPressureSensor && hasWaterMeter) {
+      if (hasAnyFertilizer && hasPressureIN && hasWaterMeter) {
         p = [195, 235];
-        startPos = 197;
-      }else if (hasAnyFertilizer && !hasPressureSensor && hasWaterMeter) {
+        startPos = 200;
+      }else if (hasAnyFertilizer && !hasPressureIN && hasWaterMeter) {
         p = [195];
-        startPos = 217;
-      }else if (hasAnyFertilizer && !hasPressureSensor && !hasWaterMeter) {
+        startPos = 220;
+      }else if (hasAnyFertilizer && !hasPressureIN && !hasWaterMeter) {
         p = [195];
-        startPos = 217;
-      } else if (!hasAnyFertilizer && hasPressureSensor && hasWaterMeter) {
+        startPos = 220;
+      } else if (!hasAnyFertilizer && hasPressureIN && hasWaterMeter) {
         p = [195, 235];
-        startPos = 192;
-      }else if (!hasAnyFertilizer && hasPressureSensor && !hasWaterMeter) {
+        startPos = 195;
+      }else if (!hasAnyFertilizer && hasPressureIN && !hasWaterMeter) {
         p = [125];
-        startPos = 147;
-      } else if (!hasPressureSensor && hasWaterMeter) {
+        startPos = 150;
+      } else if (!hasPressureIN && hasWaterMeter) {
         p = [125];
-        startPos = 122;
+        startPos = 125;
       }else{
         p = [4];
-        startPos = 107;
+        startPos = 110;
       }
     } else {
-      if (hasBothFertilizers && hasPressureSwitch && hasPressureSensor && hasWaterMeter) {
+      if (hasBothFertilizers && hasPressureSwitch && hasPressureIN
+          && hasWaterMeter && !hasPressureOUT) {
         p = [215, 340, 380, 470, 510];
         startPos = 532;
       }
-      else if (hasBothFertilizers && !hasPressureSwitch && hasPressureSensor && hasWaterMeter) {
+      else if (hasBothFertilizers && hasPressureSwitch && hasPressureIN && !hasWaterMeter) {
+        p = [215, 340, 380, 470];
+        startPos = 495;
+      }
+      else if (hasBothFertilizers && hasPressureSwitch && !hasPressureIN && !hasWaterMeter) {
+        p = [215, 340, 380];
+        startPos = 452;
+      }
+      else if (hasBothFertilizers && !hasPressureSwitch && hasPressureIN
+          && hasWaterMeter && !hasPressureOUT) {
         p = [215, 340, 420, 460];
-        startPos = 482;
+        startPos = 485;
       }
-      else if (!hasBothFertilizers && hasPressureSwitch && hasPressureSensor && hasWaterMeter) {
-        p = [130, 220, 260];
-        startPos = 137;
+      else if (hasBothFertilizers && !hasPressureSwitch && hasPressureIN
+          && hasWaterMeter&& hasPressureOUT) {
+        p = [215, 340, 420, 460, 500];
+        startPos = 525;
       }
-      else if (!hasBothFertilizers && hasPressureSwitch && hasPressureSensor) {
-        p = [130, 220];
-        startPos = 242;
+      else if (hasBothFertilizers && !hasPressureSwitch && !hasPressureIN
+          && !hasWaterMeter && !hasPressureOUT) {
+        p = [215, 340];
+        startPos = 405;
       }
-      else if (!hasBothFertilizers && hasPressureSensor) {
-        p = [170];
-        startPos = 191;
+
+      else if (hasAnyFertilizer && hasPressureSwitch && hasPressureIN
+          && hasPressureOUT && hasWaterMeter) {
+        p = [215, 255, 345, 385, 425];
+        startPos = 450;
       }
-      else if (hasAnyFertilizer && !hasPressureSwitch && hasPressureSensor && hasWaterMeter) {
-        p = [215, 295, 335];
+      else if (hasAnyFertilizer && !hasPressureSwitch && hasPressureIN
+          && hasPressureOUT && hasWaterMeter) {
+        p = [215, 295, 335, 375];
+        startPos = 400;
+      }
+      else if (hasAnyFertilizer && !hasPressureSwitch && hasPressureIN
+          && !hasPressureOUT && hasWaterMeter) {
+        p = [215, 294, 334];
         startPos = 357;
       }
-      else if (hasAnyFertilizer && hasPressureSwitch && !hasPressureSensor && !hasWaterMeter) {
+      else if (hasAnyFertilizer && !hasPressureSwitch && hasPressureIN
+          && !hasWaterMeter && !hasPressureOUT) {
+        p = [215, 295];
+        startPos = 320;
+      }
+      else if (hasAnyFertilizer && !hasPressureSwitch && !hasPressureIN
+          && hasWaterMeter && !hasPressureOUT) {
+        p = [295];
+        startPos = 320;
+      }
+      else if (hasAnyFertilizer && !hasPressureSwitch && !hasPressureIN
+          && !hasWaterMeter&& !hasPressureOUT) {
+        p = [215];
+        startPos = 280;
+      }
+      else if (hasAnyFertilizer && hasPressureSwitch && !hasPressureIN
+          && !hasWaterMeter && !hasPressureOUT) {
         p = [215, 255];
-        startPos = 327;
+        startPos = 330;
       }
-      else if (hasAnyFertilizer && !hasPressureSwitch && hasPressureSensor && !hasWaterMeter) {
-        p = [215, 255];
-        startPos = 212;
+      else if (hasAnyFertilizer && !hasPressureSwitch && !hasPressureIN
+          && hasWaterMeter && hasPressureOUT) {
+        p = [295, 335];
+        startPos = 360;
       }
-      else if (!hasAnyFertilizer && hasPressureSwitch && !hasPressureSensor && !hasWaterMeter) {
-        p = [130, 180];
-        startPos = 202;
+      else if (hasAnyFertilizer && hasPressureSwitch && !hasPressureIN
+          && !hasWaterMeter && hasPressureOUT) {
+        p = [255, 345];
+        startPos = 370;
       }
-      else if (!hasAnyFertilizer && !hasPressureSwitch && hasPressureSensor && !hasWaterMeter) {
-        p = [130, 170];
-        startPos = 192;
+      else if (hasAnyFertilizer && !hasPressureSwitch && hasPressureIN
+          && !hasWaterMeter && hasPressureOUT) {
+        p = [295, 335];
+        startPos = 360;
       }
-      else if (!hasAnyFertilizer && !hasPressureSwitch && hasPressureSensor && hasWaterMeter) {
-        p = [170, 210];
+
+
+      else if (!hasAnyFertilizer && hasPressureSwitch &&
+          hasPressureIN && !hasWaterMeter && hasPressureOUT) {
+        p = [130, 220, 260];
+        startPos = 285;
+      }
+      else if (!hasAnyFertilizer && hasPressureSwitch &&
+          hasPressureIN && hasWaterMeter && hasPressureOUT) {
+        p = [130, 220, 260, 300];
+        startPos = 325;
+      }
+      else if (!hasAnyFertilizer && hasPressureSwitch &&
+          hasPressureIN && !hasPressureOUT && !hasWaterMeter) {
+        p = [130, 220];
+        startPos = 245;
+      }
+      else if (!hasAnyFertilizer && hasPressureSwitch &&
+          !hasPressureIN && hasPressureOUT && !hasWaterMeter) {
+        p = [130, 220];
+        startPos = 245;
+      }
+      else if (!hasAnyFertilizer && !hasPressureSwitch && hasPressureIN
+          && hasWaterMeter && hasPressureOUT) {
+        p = [170, 210, 250];
+        startPos = 275;
+      }
+      else if (!hasAnyFertilizer && !hasPressureSwitch && hasPressureIN
+          && hasWaterMeter && !hasPressureOUT) {
+        p = [170, 209];
         startPos = 232;
       }
-      else if (hasAnyFertilizer && !hasPressureSwitch && !hasPressureSensor && hasWaterMeter) {
-        p = [215, 295];
-        startPos = 317;
+      else if (!hasAnyFertilizer && !hasPressureSwitch && hasPressureIN
+          && !hasWaterMeter && !hasPressureOUT) {
+        p = [170];
+        startPos = 195;
       }
-      else if (hasAnyFertilizer) {
-        p = [215];
-        startPos = 212;
-      }
-      else {
+      else if (!hasAnyFertilizer && hasPressureSwitch && !hasPressureIN
+          && !hasWaterMeter && !hasPressureOUT) {
         p = [130];
+        startPos = 205;
+      }
+      else if (!hasAnyFertilizer && !hasPressureSwitch && !hasPressureIN
+          && !hasWaterMeter && hasPressureOUT) {
+        p = [170];
+        startPos = 195;
+      }
+      else if (!hasAnyFertilizer && !hasPressureSwitch && !hasPressureIN
+          && hasWaterMeter && !hasPressureOUT) {
+        p = [170];
+        startPos = 195;
+      }
+      else if (!hasAnyFertilizer && !hasPressureSwitch && !hasPressureIN
+          && !hasWaterMeter && !hasPressureOUT) {
+        p = [];
+        startPos = 155;
+      }
+
+      else {
+        p = [];
         startPos = 152;
       }
     }
@@ -443,11 +522,11 @@ class CustomerHomeNarrow extends StatelessWidget {
   Widget buildConnectionLine(BuildContext context, double top) {
     return Positioned(
       top : top,
-      left: MediaQuery.sizeOf(context).width - 35,
-      right: 3,
+      left: MediaQuery.sizeOf(context).width - 38,
+      right: 7,
       child: Container(
-        height: 4,
-        color: Colors.grey.shade200,
+        height: 3,
+        color: Colors.black12,
       ),
     );
   }
@@ -456,10 +535,10 @@ class CustomerHomeNarrow extends StatelessWidget {
     return Positioned(
       top : top,
       left: 33,
-      right: 6,
+      right: 7,
       child: Container(
-        height: 4,
-        color: Colors.grey.shade200,
+        height: 3.0,
+        color: Colors.blueGrey.shade50,
       ),
     );
   }

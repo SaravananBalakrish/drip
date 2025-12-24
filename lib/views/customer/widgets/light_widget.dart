@@ -23,7 +23,7 @@ class LightWidget extends StatelessWidget {
 
         return SizedBox(
           width: 70,
-          height: isWide? 100 : 70,
+          height: isWide? 100 : 65,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
