@@ -835,7 +835,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                                     // height: ,
                                   ),
                                   icon: Icons.propane_tank,
-                                  footer1: "${(num.parse(pumpItem.level.toString().split(',')[0]) * 3.2808399)} feet",
+                                  footer1: "${(num.parse(pumpItem.level.toString().split(',')[0]) * 3.2808399).toStringAsFixed(2)} feet",
                                   footer2: '',
                                   condition: pumpItem.waterMeter == "-" && pumpItem.pressure == "-"
                               ),
