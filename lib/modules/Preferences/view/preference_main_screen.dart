@@ -8,7 +8,6 @@ import 'package:oro_drip_irrigation/services/http_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
-import '../../../models/customer/site_model.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../Widgets/custom_animated_switcher.dart';
 import '../../IrrigationProgram/view/schedule_screen.dart';
@@ -194,13 +193,14 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   late bool isPumpWithValveModel;
   late bool isPumpOnly;
   late bool isValveSetting;
+  late bool isNova;
 
   @override
   void initState() {
     // TODO: implement initState
     preferenceProvider = Provider.of<PreferenceProvider>(context, listen: false);
     mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
-    preferenceProvider.getUserPreference(userId: widget.customerId, controllerId: widget.masterData['controllerId'], modelId: widget.masterData['modelId']).then((_) {
+    preferenceProvider.getUserPreference(userId: widget.customerId, controllerId: widget.masterData['controllerId']).then((_) {
       commonPumpTabController = TabController(
           length: preferenceProvider.commonPumpSettings?.length ?? 0,
           vsync: this
@@ -223,6 +223,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     isToGem = AppConstants.gemModelList.contains(widget.masterData['modelId']);
     isPumpWithValveModel = AppConstants.pumpWithValveModelList.contains(widget.masterData['modelId']);
     isPumpOnly = AppConstants.pumpModelList.contains(widget.masterData['modelId']);
+    isNova = AppConstants.ecoGemAndPlusModelList.contains(widget.masterData['modelId']);
     isValveSetting = [1, 2].contains(widget.selectedIndex);
     super.initState();
   }
@@ -253,14 +254,15 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             ? AppBar(
           title: const Text("Preference"),
           actions: [
-            FilledButton(
-                onPressed: (){
-                  setState(() {
-                    viewConfig = !viewConfig;
-                  });
-                },
-                child: const Text('View')
-            ),
+            if(selectedSetting == 0)
+              FilledButton(
+                  onPressed: (){
+                    setState(() {
+                      viewConfig = !viewConfig;
+                    });
+                  },
+                  child: const Text('View')
+              ),
             const SizedBox(width: 10,)
           ],
         )
@@ -324,14 +326,14 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                                           ),
                                                           TextButton(
                                                               onPressed: () async {
-                                                                if (AppConstants.gemModelList.contains(widget.masterData['modelId'])) {
+                                                                if (isNova || isToGem) {
                                                                   final pump = preferenceProvider.commonPumpSettings![preferenceProvider.selectedTabIndex];
                                                                   final payload = jsonEncode({"sentSms": "viewconfig,4"});
                                                                   final payload2 = jsonEncode({"0": payload});
                                                                   final viewConfig = {
-                                                                    "5900": {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${pump.categoryId}"}
+                                                                    "5900": {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${4}"}
                                                                   };
-                                                                  mqttService.topicToPublishAndItsMessage(jsonEncode(viewConfig), "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
+                                                                  mqttService.topicToPublishAndItsMessage(isToGem ? jsonEncode(viewConfig) : payload, "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
                                                                 }
                                                                 await Future.delayed(Duration.zero, () {
                                                                   preferenceProvider.updateValidationCode();
@@ -365,15 +367,15 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                               Expanded(
                                 child: _getDefaultTabController(),
                               ),
-                            if(MediaQuery.of(context).size.width > 500 && preferenceProvider.commonPumpSettings!.isNotEmpty)
-                              IconButton(
+                            if(selectedSetting == 0 && MediaQuery.of(context).size.width > 500 && preferenceProvider.commonPumpSettings!.isNotEmpty)
+                              FilledButton(
                                   onPressed: (){
                                     setState(() {
                                       viewConfig = !viewConfig;
                                     });
                                   },
-                                  icon: Icon(Icons.remove_red_eye_outlined, color: Theme.of(context).primaryColor,)
-                              ),
+                                  child: const Text('View')
+                              )
                           ],
                         ),
                       ),
@@ -743,7 +745,13 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                 for(var settingIndex = 0; settingIndex < settingList[categoryIndex].setting.length; settingIndex++)
                                   if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "RTC TIMER")
                                     _buildRtcTimer(categoryIndex, settingIndex, pumpIndex, settingList)
-                                  else if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "2 PHASE" || settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "AUTO RESTART 2 PHASE")
+                                  else if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "2 PHASE"
+                                      || settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "AUTO RESTART 2 PHASE"
+                                      || (isNova && (
+                                          settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "UPPER TANK LINEAR LEVEL SENSOR" ||
+                                              settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "LOWER TANK LINEAR LEVEL SENSOR"
+                                      ))
+                                  )
                                     _buildTwoPhaseCard(categoryIndex, settingIndex, pumpIndex, settingList)
                                   else
                                     buildCustomListTileWidget(
@@ -760,10 +768,11 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                       onValueChange: (newValue) => onChangeValue(categoryIndex, settingIndex, settingList, newValue),
                                       conditionToShow: getConditionToShow(type: settingList[categoryIndex].type, serialNumber: settingList[categoryIndex].setting[settingIndex].serialNumber, value: settingList[categoryIndex].setting[settingIndex].value,),
                                       subTitle: _getSubTitle(categoryIndex, settingIndex, settingList, pumpIndex),
-                                      hidden: settingList[categoryIndex].setting[settingIndex].title == "Schedule by Days"
+                                      hidden: (settingList[categoryIndex].setting[settingIndex].title == "Schedule by Days" 
+                                          || (!isNova && settingList[categoryIndex].type == 210 && [7,8].contains(settingList[categoryIndex].setting[settingIndex].serialNumber)))
                                           ? true
                                           : settingList[categoryIndex].setting[settingIndex].hidden,
-                                      enabled: true,
+                                      enabled: true, modelId: widget.masterData['modelId'],
                                     )
                               ],
                             ),
@@ -785,8 +794,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       );
     } catch(error, stackTrace) {
       // throw Exception('This is a test exception');
-      print("error ==> $error");
-      print("stackTrace ==> $stackTrace");
+      // print("error ==> $error");
+      // print("stackTrace ==> $stackTrace");
       return const Center(child: Text("Unexpected error"));
     }
   }
@@ -851,7 +860,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                   });
                                   // print(settingList[categoryIndex].changed);
                                 },
-                                is24HourMode: true,
+                                is24HourMode: true, modelId: 1,
                               ),
                             ),
                           ),
@@ -865,7 +874,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                     rtcSetting.offTime = newTime;
                                   });
                                 },
-                                is24HourMode: true,
+                                is24HourMode: true, modelId: 1,
                               ),
                             ),
                           ),
@@ -922,31 +931,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                     });
                   }
               ),
-              /*Container(
-                margin: const EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(preferenceProvider.individualPumpSetting!
-                            .where((e) => e.controllerId == preferenceProvider.commonPumpSettings![pumpIndex].controllerId)
-                            .elementAt(index)
-                            .name),
-                        Switch(
-                            value: settingList[categoryIndex].setting[settingIndex].value[index],
-                            onChanged: (newValue) {
-                              setState(() {
-                                settingList[categoryIndex].setting[settingIndex].value[index] = newValue;
-                                settingList[categoryIndex].changed = true;
-                              });
-                            }
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              )*/
           ],
         )
       ],
@@ -954,7 +938,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   }
 
   int _getWidgetType(int categoryIndex, int settingIndex, List settingList) {
-    return (settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "SENSOR HEIGHT" || settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "PRESSURE MAXIMUM VALUE")
+    return (settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "PRESSURE MAXIMUM VALUE")
         ? 7
         : settingList[categoryIndex].setting[settingIndex].widgetTypeId;
   }
@@ -983,7 +967,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   }
 
   dynamic _getSubTitle(int categoryIndex, int settingIndex, List settingList, int pumpIndex) {
-    return (isToGem &&
+    return ((isNova || isToGem) &&
         [208, 209, 210].contains(settingList[categoryIndex].type))
         ? "Last setting: ${(_getValue(
         type: settingList[categoryIndex].type,
@@ -998,11 +982,17 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         settingIndex: settingIndex
     ).split(',')[
     categoryIndex == 0
-    ? [0, 1, 2].contains(settingIndex) ? [0, 1, 2][settingIndex] : 0
-        : categoryIndex == 1
-    ? [0, 1, 2].contains(settingIndex) ? [0, 1, 2][settingIndex] : 0
-        : [0, 1, 2,3,4,5].contains(settingIndex) ? [0, 1, 2,3,4,5][settingIndex] : 0
-    ]) : "Loading..."}" : null;
+    ? ([0, 1, 2].contains(settingIndex)
+        ? [0, 1, 2][settingIndex]
+        : 0
+    ) : categoryIndex == 1
+    ? ([0, 1, 2].contains(settingIndex)
+        ? [0, 1, 2][settingIndex]
+        : 0
+    ) : ([0,1,2,3,4,5,6,7].contains(settingIndex)
+        ? [0,1,2,3,4,5,6,7][settingIndex]
+        : 0
+    )]) : "Loading..."}" : null;
   }
 
   dynamic _getInitialValue(int categoryIndex, int settingIndex, List settingList, int pumpIndex) {
@@ -1404,8 +1394,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       
     } catch (error, stackTrace) {
       showSnackBar(message: "Failed to update due to: $error");
-      print("Error in preference sending: $error");
-      print("Stack trace in preference sending: $stackTrace");
+      // print("Error in preference sending: $error");
+      // print("Stack trace in preference sending: $stackTrace");
     }
   }
 
@@ -1452,7 +1442,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         }
       }
     }
-    print("payload ======= > ${jsonEncode(payload)}");
+    // print("payload ======= > ${jsonEncode(payload)}");
     return payload;
   }
 
@@ -1791,7 +1781,11 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
           }
         }
       } else {
-        if (setting.title.toUpperCase() == '2 PHASE' || setting.title.toUpperCase() == 'AUTO RESTART 2 PHASE') {
+        if (setting.title.toUpperCase() == '2 PHASE'
+            || setting.title.toUpperCase() == 'AUTO RESTART 2 PHASE'
+            || setting.title.toUpperCase() == 'UPPER TANK LINEAR LEVEL SENSOR'
+            || setting.title.toUpperCase() == 'LOWER TANK LINEAR LEVEL SENSOR'
+        ) {
           const phaseMap = {
             '[false, false, false]': '0',
             '[false, false, true]': '4',
@@ -1835,6 +1829,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
 }
 
 Widget buildCustomListTileWidget({
+  required int modelId,
   required BuildContext context,
   required String title,
   String? subTitle,
@@ -1896,7 +1891,7 @@ Widget buildCustomListTileWidget({
         is24HourMode: true,
         onChanged: (newValue) {
           enabled ? onValueChange?.call(newValue) : null;
-        },
+        }, modelId: 1,
       ) : Text(value, overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.right,
         style: const TextStyle(fontSize: 14),

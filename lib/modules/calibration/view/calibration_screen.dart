@@ -7,7 +7,9 @@ import 'package:responsive_grid_list/responsive_grid_list.dart';
 import '../../../Constants/properties.dart';
 import '../../../Widgets/custom_buttons.dart';
 import '../../../Widgets/status_box.dart';
-import '../../config_Maker/view/config_web_view.dart';
+import '../../../repository/repository.dart';
+import '../../../services/http_service.dart';
+import '../../config_maker/view/config_web_view.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/environment.dart';
 import '../model/sensor_category_model.dart';
@@ -26,6 +28,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
   Set<int> selectedTab = {0};
   HardwareAcknowledgementState payloadState = HardwareAcknowledgementState.notSent;
   MqttService mqttService = MqttService();
+  final Repository repository = Repository(HttpService());
 
   @override
   void initState() {
@@ -100,85 +103,167 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
       for(var sensorCategory in data)
         if(defaultData[selectedTab.first == 0 ? 'maximum' : 'factor'].contains(sensorCategory.objectTypeId.toString()))
           Column(
-          spacing: 10,
-          children: [
-            sensorCategoryWidget(sensorCategory),
-            ResponsiveGridList(
-              horizontalGridMargin: 20,
-              verticalGridMargin: 10,
-              minItemWidth: 250,
-              shrinkWrap: true,
-              listViewBuilderOptions: ListViewBuilderOptions(
-                physics: const NeverScrollableScrollPhysics(),
-              ),
-              children: sensorCategory.calibrationObject.map((object){
-                return PhysicalModel(
-                  color: Theme.of(context).cardColor,
-                  elevation: 8,
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        // color: Theme.of(context).cardColor,
-                        // boxShadow: [
-                        //   BoxShadow(
-                        //       offset: const Offset(0,5),
-                        //       blurRadius: 10,
-                        //       color: Colors.black.withOpacity(0.06)
-                        //   ),
-                        //   BoxShadow(
-                        //       offset: const Offset(5,5),
-                        //       blurRadius: 5,
-                        //       color: Colors.black.withOpacity(0.06)
-                        //   ),
-                        // ]
-                    ),
-                    width: 250,
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                      title: Text('    ${object.objectName}', style: Theme.of(context).textTheme.labelLarge, overflow: TextOverflow.ellipsis,),
-                      trailing: Container(
+            spacing: 10,
+            children: [
+              sensorCategoryWidget(sensorCategory),
+              ResponsiveGridList(
+                  horizontalGridMargin: 20,
+                  verticalGridMargin: 10,
+                  minItemWidth: 250,
+                  shrinkWrap: true,
+                  listViewBuilderOptions: ListViewBuilderOptions(
+                    physics: const NeverScrollableScrollPhysics(),
+                  ),
+                  children: sensorCategory.calibrationObject.map((object){
+                    return PhysicalModel(
+                      color: Theme.of(context).cardColor,
+                      elevation: 8,
+                      borderRadius: BorderRadius.circular(10),
+                      child: Container(
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(5),
-                          border: Border.all(width: 1, color: const Color(0xffd7d7d7)),
-                          color: Theme.of(context).primaryColorDark.withOpacity(0.04),
                         ),
-                        width: 80,
-                        child: TextFormField(
-                          key: Key('${selectedTab.first}'),
-                          inputFormatters: AppProperties.regexForDecimal,
-                          initialValue: selectedTab.first == 0 ? object.maximumValue : object.calibrationFactor,
-                          onChanged: (value){
-                            setState(() {
-                              if(selectedTab.first == 0){
-                                object.maximumValue = value;
-                              }else{
-                                object.calibrationFactor = value;
-                              }
-                            });
-                  
-                          },
-                          textAlign: TextAlign.center,
-                          keyboardType: TextInputType.number,
-                          cursorHeight: 20,
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.only(bottom: 10),
-                            constraints: BoxConstraints(maxHeight: 35),
-                              counterText: '',
-                              border: OutlineInputBorder(
-                                borderSide: BorderSide.none
-                              )
-                          ),
+                        width: 250,
+                        child: Column(
+                          children: [
+                            ListTile(
+                              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                              title: Text('    ${object.objectName}', style: Theme.of(context).textTheme.labelLarge, overflow: TextOverflow.ellipsis,),
+                              trailing: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5),
+                                  border: Border.all(width: 1, color: const Color(0xffd7d7d7)),
+                                  color: Theme.of(context).primaryColorDark.withAlpha(4),
+                                ),
+                                width: 80,
+                                child: TextFormField(
+                                  key: Key('${selectedTab.first}'),
+                                  inputFormatters: AppProperties.regexForDecimal,
+                                  initialValue: selectedTab.first == 0 ? object.maximumValue : object.calibrationFactor,
+                                  onChanged: (value){
+                                    setState(() {
+                                      if(selectedTab.first == 0){
+                                        object.maximumValue = value;
+                                      }else{
+                                        object.calibrationFactor = value;
+                                      }
+                                    });
+                                  },
+                                  textAlign: TextAlign.center,
+                                  keyboardType: TextInputType.number,
+                                  cursorHeight: 20,
+                                  decoration: const InputDecoration(
+                                      contentPadding: EdgeInsets.only(bottom: 10),
+                                      constraints: BoxConstraints(maxHeight: 35),
+                                      counterText: '',
+                                      border: OutlineInputBorder(
+                                          borderSide: BorderSide.none
+                                      )
+                                  ),
+                                ),
+                              ),
+                            ),
+                            if(AppConstants.levelObjectId == object.objectId && selectedTab.first == 1)
+                              ListTile(
+                              contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+                              leading: Icon(Icons.change_circle, color: Theme.of(context).primaryColorLight,),
+                              title: Text('Calibration Count', style: Theme.of(context).textTheme.labelLarge, overflow: TextOverflow.ellipsis,),
+                              trailing: IconButton(
+                                  onPressed: (){
+                                    var payload = {"7600" : {"7601" : "${object.sNo},${sensorCategory.calibrationCount},0"}};
+                                    setState(() {
+                                      payloadState = HardwareAcknowledgementState.notSent;
+                                      mqttService.acknowledgementPayload = null;
+                                    });
+                                    showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (context){
+                                          return StatefulBuilder(
+                                              builder: (context, stateSetter){
+                                                return AlertDialog(
+                                                  title: Text('Send Payload', style: Theme.of(context).textTheme.labelLarge,),
+                                                  content: getHardwareAcknowledgementWidget(payloadState),
+                                                  actions: [
+                                                    if(payloadState != HardwareAcknowledgementState.sending && payloadState != HardwareAcknowledgementState.notSent)
+                                                      CustomMaterialButton(),
+                                                    if(payloadState == HardwareAcknowledgementState.notSent)
+                                                      CustomMaterialButton(title: 'Cancel',outlined: true,),
+                                                    if(payloadState == HardwareAcknowledgementState.notSent)
+                                                      CustomMaterialButton(
+                                                        onPressed: ()async{
+                                                          int delayDuration = 20;
+                                                          for(var delay = 0; delay < delayDuration; delay++){
+                                                            if(delay == 0){
+                                                              stateSetter((){
+                                                                setState((){
+                                                                  mqttService.topicToPublishAndItsMessage(jsonEncode(payload), '${Environment.mqttPublishTopic}/${widget.userData['deviceId']}');
+                                                                  payloadState = HardwareAcknowledgementState.sending;
+                                                                });
+                                                              });
+                                                            }
+                                                            stateSetter((){
+                                                              setState((){
+                                                                if(mqttService.acknowledgementPayload != null){
+                                                                  if(validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cC'], widget.userData['deviceId']) && validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cM', '4201', 'PayloadCode'], '7600')){
+                                                                    if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '200'){
+                                                                      payloadState = HardwareAcknowledgementState.success;
+                                                                    }else if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '90'){
+                                                                      payloadState = HardwareAcknowledgementState.programRunning;
+                                                                    }else if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '1'){
+                                                                      payloadState = HardwareAcknowledgementState.hardwareUnknownError;
+                                                                    }else{
+                                                                      payloadState = HardwareAcknowledgementState.errorOnPayload;
+                                                                    }
+                                                                    mqttService.acknowledgementPayload == null;
+                                                                  }
+                                                                }
+                                                              });
+                                                            });
+                                                            await Future.delayed(const Duration(seconds: 1));
+                                                            if(delay == delayDuration-1){
+                                                              stateSetter((){
+                                                                setState((){
+                                                                  payloadState = HardwareAcknowledgementState.failed;
+                                                                });
+                                                              });
+                                                            }
+                                                            if(payloadState != HardwareAcknowledgementState.sending){
+                                                              break;
+                                                            }
+                                                          }
+                                                          var data = {
+                                                            "userId": widget.userData["customerId"],
+                                                            "controllerId": widget.userData["controllerId"],
+                                                            "data": payload,
+                                                            "messageStatus": "${object.name} - calibration",
+                                                            "createUser": widget.userData["customerId"],
+                                                            "hardware": payload,
+                                                          };
+                                                          await repository.sendManualOperationToServer(data);
+                                                        },
+                                                        title: 'Send',
+                                                      ),
+
+                                                  ],
+                                                );
+                                              }
+                                          );
+                                        }
+                                    );
+                                  },
+                                  icon: const Icon(Icons.send_time_extension_rounded, color: Colors.green,)
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ),
-                );
-              }).toList()
-            ),
-            const SizedBox(height: 20,)
-          ],
-        )
+                    );
+                  }).toList()
+              ),
+              const SizedBox(height: 20,)
+            ],
+          )
     ];
   }
 
@@ -209,7 +294,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
   Widget getCalibrationCategory(){
     return SegmentedButton<int>(
       style: ButtonStyle(
-        shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)))
+          shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)))
       ),
       segments: [
         getButtonSegment(0, "Calibration"),
@@ -243,7 +328,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
           mqttService.acknowledgementPayload = null;
         });
         showDialog(
-          barrierDismissible: false,
+            barrierDismissible: false,
             context: context,
             builder: (context){
               return StatefulBuilder(
@@ -344,7 +429,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
     };
     return calibrationPayload;
   }
-  
+
   Widget getHardwareAcknowledgementWidget(HardwareAcknowledgementState state){
     print('state : $state');
     if(state == HardwareAcknowledgementState.notSent){

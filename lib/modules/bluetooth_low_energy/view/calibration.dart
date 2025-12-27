@@ -457,12 +457,13 @@ class _CalibrationState extends State<Calibration> {
                             }
 
                           }
+                          loadingDialog('Get @0 Command Send Successfully..');
 
                         },
                         icon: const Icon(Icons.refresh, color: Colors.white),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 100,
                         child: Text('Get @0', style: TextStyle(fontSize: 14),)
                     )
@@ -517,6 +518,7 @@ class _CalibrationState extends State<Calibration> {
                             }
 
                           }
+                          loadingDialog('Get @ 1.413 Command Send Successfully..');
                         },
                         icon: const Icon(Icons.refresh, color: Colors.white),
                       ),
@@ -678,9 +680,10 @@ class _CalibrationState extends State<Calibration> {
                               print("blePvd.calibrationPh2 : ${bleService.calibrationPh2}");
                             }
                           }
+                          loadingDialog('Get 4 Command Send Successfully..');
                         },
                         icon: const Icon(Icons.refresh, color: Colors.white,),
-                        label: const Text("Get 0", style: TextStyle(color: Colors.white),),
+                        label: const Text("Get 4", style: TextStyle(color: Colors.white),),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Theme.of(context).primaryColor,
                           padding: const EdgeInsets.symmetric(vertical: 14),
@@ -738,6 +741,7 @@ class _CalibrationState extends State<Calibration> {
                             }
 
                           }
+                          loadingDialog('Get 7.01 Command Send Successfully..');
                         },
                         icon: const Icon(Icons.refresh, color: Colors.white,),
                         label: const Text("Get 7.01", style: TextStyle(color: Colors.white),),
@@ -752,55 +756,58 @@ class _CalibrationState extends State<Calibration> {
                     )
                   ],
                 ),
-                Text('Last Updated Value : ${sensorCount == 1 ? ph_1 : ph_2}'),
-                SizedBox(
-                  width: 150,
-                  child: ElevatedButton.icon(
-                    onPressed: (){
-                      var one = sensorCount == 0 ? bleService.ph1Controller.text : bleService.ph2Controller.text;
-                      var two = sensorCount == 0 ? bleService.ph1_Controller.text : bleService.ph2_Controller.text;
-                      setState(() {
-                        if(sensorCount == 0){
-                          ph1 = one;
-                          ph_1 = two;
-                        }else{
-                          ph2 = one;
-                          ph_2 = two;
+                Text('Last Updated Value : ${sensorCount == 0 ? ph_1 : ph_2}'),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: SizedBox(
+                    width: 150,
+                    child: ElevatedButton.icon(
+                      onPressed: (){
+                        var one = sensorCount == 0 ? bleService.ph1Controller.text : bleService.ph2Controller.text;
+                        var two = sensorCount == 0 ? bleService.ph1_Controller.text : bleService.ph2_Controller.text;
+                        setState(() {
+                          if(sensorCount == 0){
+                            ph1 = one;
+                            ph_1 = two;
+                          }else{
+                            ph2 = one;
+                            ph_2 = two;
+                          }
+                        });
+                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ph${sensorCount+1}Submit']}$one:$two:';
+                        var sumOfAscii = 0;
+                        for(var i in payload.split('')){
+                          var bytes = i.codeUnitAt(0);
+                          sumOfAscii += bytes;
                         }
-                      });
-                      var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ph${sensorCount+1}Submit']}$one:$two:';
-                      var sumOfAscii = 0;
-                      for(var i in payload.split('')){
-                        var bytes = i.codeUnitAt(0);
-                        sumOfAscii += bytes;
-                      }
-                      var crcToByteLen = '${sumOfAscii % 256}';
-                      var balance = '';
-                      for(var i = 0;i < (3 - crcToByteLen.length);i++){
-                        balance += '0';
-                      }
-                      payload += '$balance$crcToByteLen:\r';
-                      List<int> fullData = [];
-                      for(var i in payload.split('')){
-                        var bytes = i.codeUnitAt(0);
-                        fullData.add(bytes);
-                      }
-                      if (kDebugMode) {
-                        print('sumOfAscii : $sumOfAscii');
-                        print('crc : ${sumOfAscii % 256}');
-                        print('fullData : ${fullData}');
-                        print('payload : ${payload}');
+                        var crcToByteLen = '${sumOfAscii % 256}';
+                        var balance = '';
+                        for(var i = 0;i < (3 - crcToByteLen.length);i++){
+                          balance += '0';
+                        }
+                        payload += '$balance$crcToByteLen:\r';
+                        List<int> fullData = [];
+                        for(var i in payload.split('')){
+                          var bytes = i.codeUnitAt(0);
+                          fullData.add(bytes);
+                        }
+                        if (kDebugMode) {
+                          print('sumOfAscii : $sumOfAscii');
+                          print('crc : ${sumOfAscii % 256}');
+                          print('fullData : ${fullData}');
+                          print('payload : ${payload}');
+                        }
                         bleService.sendDataToHw(fullData);
-                      }
-
-                    },
-                    icon: const Icon(Icons.send, color: Colors.white,),
-                    label: const Text("Submit", style: TextStyle(color: Colors.white),),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).primaryColorLight,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                        loadingDialog('Ph Calibration Setting Send Successfully..');
+                      },
+                      icon: const Icon(Icons.send, color: Colors.white,),
+                      label: const Text("Submit", style: TextStyle(color: Colors.white),),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).primaryColorLight,
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
                       ),
                     ),
                   ),

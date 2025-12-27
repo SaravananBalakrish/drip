@@ -80,10 +80,20 @@ class AppConstants {
   static const String mobileFilterNotON = "m_dp_filter_y.png";
   static const String mobileFilterNotOFF = "m_dp_filter_r.png";
 
+  static const String mobileSandFilterOFF = "ms_dp_filter.png";
+  static const String mobileSandFilterON = "ms_dp_filter_g.png";
+  static const String mobileSandFilterNotON = "ms_dp_filter_y.png";
+  static const String mobileSandFilterNotOFF = "ms_dp_filter_r.png";
+
   static const String boosterPumpOFF = "dp_frt_booster_pump.png";
   static const String boosterPumpON = "dp_frt_booster_pump_g.gif";
   static const String boosterPumpNotON = "dp_frt_booster_pump_y.png";
   static const String boosterPumpNotOFF = "dp_frt_booster_pump_r.png";
+
+  static const String mblBoosterPumpOFF = "m_dp_frt_booster_pump.png";
+  static const String mblBoosterPumpON = "m_dp_frt_booster_pump_g.gif";
+  static const String mblBoosterPumpNotON = "m_dp_frt_booster_pump_y.png";
+  static const String mblBoosterPumpNotOFF = "m_dp_frt_booster_pump_r.png";
 
   static const String soilMoistureSensor = "moisture_sensor.png";
   static const String pressureSensor = "pressure_sensor.png";
@@ -228,10 +238,12 @@ class AppConstants {
         imagePathFinal = _getFilterImagePath(keyTwo);
         break;
       case 'mobile filter':
-        imagePathFinal = _getMobileFilterImagePath(keyTwo);
+        imagePathFinal = _getMobileFilterImagePath(keyTwo, int.parse(keyThree));
         break;
       case 'booster':
         imagePathFinal = _getBoosterImagePath(keyTwo);
+      case 'mobile booster':
+        imagePathFinal = _getMobileBoosterImagePath(keyTwo);
         break;
       case 'sensor':
         imagePathFinal = _getSensorImagePath(keyThree);
@@ -273,7 +285,8 @@ class AppConstants {
     }
 
     return Image.asset(
-      '${(keyOne == 'mobile pump' || keyOne == 'mobile source' || keyOne == 'mobile filter') ?
+      '${(keyOne == 'mobile pump' || keyOne == 'mobile source'
+          || keyOne == 'mobile filter'|| keyOne == 'mobile booster') ?
       pngPathMobile : pngPath}$imagePathFinal',
       width: double.infinity,
       height: double.infinity,
@@ -301,7 +314,7 @@ class AppConstants {
       case 'First':
         return type==4 ? mobileBoreWellFirst : type==3 ? mobileWellFirst : mobileSumpFirst;
       case 'Center':
-        return type==4 ? mobileBoreWellCenter : type==3 ? mobileWellFirst : mobileSumpFirst;
+        return type==4 ? mobileBoreWellCenter : type==3 ? mobileWellCenter : mobileSumpCenter;
       case 'Last':
         return type==3 ? mobileWellCenter : mobileSumpCenter;
       case 'After Valve':
@@ -356,39 +369,41 @@ class AppConstants {
     }
   }
 
-  static String _getMobileFilterImagePath(int status) {
+  static String _getMobileFilterImagePath(int status, int type) {
     switch (status) {
       case 0:
-        return mobileFilterOFF;
+        return type==1? mobileSandFilterOFF : mobileFilterOFF;
       case 1:
-        return mobileFilterON;
+        return type==1? mobileSandFilterON : mobileFilterON;
       case 2:
-        return mobileFilterNotON;
+        return type==1? mobileSandFilterNotON : mobileFilterNotON;
       case 3:
-        return mobileFilterNotOFF;
+        return type==1? mobileSandFilterNotOFF : mobileFilterNotOFF;
       default:
         return '';
     }
   }
 
+  static String getFertilizerImage(int cIndex, int status,
+      int cheLength, List agitatorList, bool isMobile) {
 
-  static String getFertilizerImage(int cIndex, int status, int cheLength, List agitatorList) {
     String imageName;
+
     if(cIndex == cheLength - 1){
       if(agitatorList.isNotEmpty){
-        imageName='dp_frt_channel_last_aj';
+        imageName = isMobile ? 'm_dp_frt_channel_last_aj':'dp_frt_channel_last_aj';
       }else{
-        imageName='dp_frt_channel_last';
+        imageName = isMobile ? 'm_dp_frt_channel_last':'dp_frt_channel_last';
       }
     }else{
       if(agitatorList.isNotEmpty){
         if(cIndex==0){
-          imageName='dp_frt_channel_first_aj';
+          imageName = isMobile ? 'm_dp_frt_channel_first_aj':'dp_frt_channel_first_aj';
         }else{
-          imageName='dp_frt_channel_center_aj';
+          imageName = isMobile ? 'm_dp_frt_channel_center_aj':'dp_frt_channel_center_aj';
         }
       }else{
-        imageName='dp_frt_channel_center';
+        imageName = isMobile ? 'm_dp_frt_channel_center':'dp_frt_channel_center';
       }
     }
 
@@ -412,7 +427,7 @@ class AppConstants {
         imageName += '.png';
     }
 
-    return 'assets/png/$imageName';
+    return isMobile ? 'assets/png/mobile/$imageName' : 'assets/png/$imageName';
 
   }
 
@@ -426,6 +441,21 @@ class AppConstants {
         return boosterPumpNotON;
       case 3:
         return boosterPumpNotOFF;
+      default:
+        return '';
+    }
+  }
+
+  static String _getMobileBoosterImagePath(int status) {
+    switch (status) {
+      case 0:
+        return mblBoosterPumpOFF;
+      case 1:
+        return mblBoosterPumpON;
+      case 2:
+        return mblBoosterPumpNotON;
+      case 3:
+        return mblBoosterPumpNotOFF;
       default:
         return '';
     }
@@ -644,7 +674,7 @@ class AppConstants {
         }
       }
     } catch (e) {
-      print('error : $e');
+      debugPrint('error : $e');
     }
 
     if(key == 'name'){
@@ -693,6 +723,7 @@ class AppConstants {
   static int fertilizerSiteObjectId = 3;
   static int channelObjectId = 10;
   static int boosterObjectId = 7;
+  static int agitatorObjectId = 9;
   static int ecObjectId = 27;
   static int phObjectId = 28;
   static int moistureObjectId = 25;

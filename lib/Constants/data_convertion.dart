@@ -53,14 +53,29 @@ class DataConvert{
   }
 
   //TODO: string time(00:00:00) into string liters
-  double convertTimeToLiters(String time, int rate) {
+  String convertTimeToLiters(String time, int rate) {
     List<String> parts = time.split(':');
     int hours = int.parse(parts[0]);
     int minutes = int.parse(parts[1]);
     int seconds = int.parse(parts[2]);
-    double totalTimeInHours = hours + (minutes / 60) + (seconds / 3600);
+    double totalTimeInHours = hours + (minutes / 60);
     double totalLiters = totalTimeInHours * rate;
 
-    return totalLiters;
+    return totalLiters.toInt().toString();
   }
+
+  //TODO: string liters to time(00:00:00)
+  String convertLitersToTime(double liters, int rate) {
+    double totalTimeInHours = liters / rate;
+    int hours = totalTimeInHours.floor();
+    int minutes = ((totalTimeInHours - hours) * 60).floor();
+    int seconds = (((totalTimeInHours - hours) * 60 - minutes) * 60).round();
+    String formattedTime =
+        '${hours.toString().padLeft(2, '0')}:'
+        '${minutes.toString().padLeft(2, '0')}:'
+        '${seconds.toString().padLeft(2, '0')}';
+
+    return formattedTime;
+  }
+
 }

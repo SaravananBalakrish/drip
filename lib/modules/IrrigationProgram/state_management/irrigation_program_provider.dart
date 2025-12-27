@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/constants.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/repository/irrigation_program_repo.dart';
-import 'package:oro_drip_irrigation/modules/config_Maker/model/device_object_model.dart';
+import 'package:oro_drip_irrigation/modules/config_maker/model/device_object_model.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/model/LineDataModel.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import '../../../Constants/data_convertion.dart';
@@ -140,7 +140,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         await Future.delayed(Duration.zero,() {
           _irrigationLine = SequenceModel.fromJson(sequenceJson);
           for (var element in _irrigationLine!.sequence) {
-            print("element in sequence :: $element");
+            // print("element in sequence :: $element");
            /* element['valve'].removeWhere((e) => configObjects.any((config) => config['sNo'] != e['sNo']));
             element['mainValve'].removeWhere((e) => configObjects.any((config) => config['sNo'] != e['sNo']));*/
           }
@@ -154,7 +154,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
           for(int i = 0; i < _irrigationLine!.sequence.length; i++) {
             _irrigationLine!.sequence[i]['sNo'] = '${i+1}';
           }
-          print("Serial number :: ${_irrigationLine!.sequence.map((e) => e['sNo'])}");
+          // print("Serial number :: ${_irrigationLine!.sequence.map((e) => e['sNo'])}");
         }
       } else {
         log("HTTP Request failed or received an unexpected response.");
@@ -235,7 +235,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         _irrigationLine!.sequence[i]['sNo'] = '${i+1}';
       }
     }
-    print("invoked");
+    // print("invoked");
     // print("Sequence after deletion :: ${_irrigationLine!.sequence}");
     notifyListeners();
   }
@@ -922,7 +922,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         "controllerId": controllerId,
         "serialNumber": serialNumber
       };
-      print("userData : ${userData}");
+      // print("userData : ${userData}");
       var getWaterAndFert = await repository.getUserProgramWaterAndFert(userData);
       var getRecipe = await repository.getUserFertilizerSet(userData);
       clearWaterFert();
@@ -1313,7 +1313,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     var myOldSeq = [];
     if(valSeqList.isNotEmpty){
       for(var i in valSeqList){
-        print("sequence sno == ${i['sNo']}");
+        // print("sequence sno == ${i['sNo']}");
         givenSeq.add(i['sNo']);
       }
     }
@@ -1394,7 +1394,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       segmentedControlCentralLocal = 1;
     }
     for(var seq in sequenceData){
-      print('seq ==== ${seq['sNo']}');
+      // print('seq ==== ${seq['sNo']}');
     }
 
     // print('after seq : ${sequenceData}');
@@ -1632,13 +1632,21 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       // String sequenceSerialNo = sq['sNo'].toString();
       // String valSerialNo = sq['valve'][v]['sNo'].toString().split('.')[1];
       // String zoneSerialNo = sequenceSerialNo.contains('.') ? sequenceSerialNo.split('.')[1] : sequenceSerialNo;
+      String zoneTime = '';
+      String zoneQuantity = '';
+      zoneTime = DataConvert().convertLitersToTime(double.parse(sequenceData[selectedGroup]['quantityValue']), getNominalFlow());
+      zoneQuantity = DataConvert().convertTimeToLiters(sequenceData[selectedGroup]['timeValue'], getNominalFlow());
       Map<String, dynamic> jsonPayload = {
         'Zone_No' : sq['sNo'],
         'Program_No' : serialNumber,
         'SequenceData' : getValve.join(','),
-        'ValveFlowrate' : getNominalFlow(),
+        'ValveFlowRate' : getNominalFlow(),
         'IrrigationMethod' : sq['method'] == 'Time' ? 1 : 2,
-        'IrrigationDuration_Quantity' : timeAndQuantityForEcoGem(sq['method'] == 'Time' ? sq['timeValue'] : sq['quantityValue']),
+        'IrrigationDuration_Quantity' : timeAndQuantityForWaterValueInEcoGem(
+            sq['method'] == 'Time'
+                ? sequenceData[selectedGroup]['timeValue']
+                : zoneTime,
+            sequenceData[selectedGroup]['quantityValue']),
         'CentralFertOnOff' : sq['applyFertilizerForCentral'] == false ? 0 : sq['selectedCentralSite'] == -1 ? 0 : 1,
         // 'PrePostMethod' : sq['prePostMethod'] == 'Time' ? 1 : 2,
         'PreTime_PreQty' : timeAndQuantityForEcoGem(sq['preValue']),
@@ -1658,7 +1666,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       subLists.add(originalList.sublist(i, end));
     }
     payLoadList = subLists.map((e) => (e as List).join(';')).toList();
-    print('payLoadList :: ${jsonEncode(payLoadList)}');
+    // print('payLoadList :: ${jsonEncode(payLoadList)}');
     return payLoadList;
   }
 
@@ -1671,7 +1679,14 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     }
   }
 
+  String timeAndQuantityForWaterValueInEcoGem(String timeValue, String quantityValue){
+    var timePayload = timeValue.split(':').join(',');
+    return '$timePayload,$quantityValue';
+  }
+
   dynamic editWaterSetting(String title, String value){
+    print("water method updated...........111111");
+
     if(title == 'method'){
       var maxFertInSec = getMaxFertilizerValueForSelectedSequence();
       var diff = (postValueInSec() + preValueInSec() + maxFertInSec);
@@ -1693,6 +1708,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         sequenceData[selectedGroup]['quantityValue'] = '${quantity.toInt() == 0 ? 0 : quantity.toInt() + 1}';
         waterQuantity.text = '${quantity.toInt() == 0 ? 0 : quantity.toInt() + 1}';
       }
+
       sequenceData[selectedGroup]['method'] = value;
       if(sequenceData[selectedGroup]['method'] == 'Time'){
         if(sequenceData[selectedGroup]['timeValue'] == '00:00:00'){
@@ -1710,10 +1726,20 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
           refreshTime();
         }
       }
+      /*if(sequenceData[selectedGroup]['method'] == 'Time' && value == 'Time'){
+        // don't do anything...
+      }else if(value == 'Time'){
+        sequenceData[selectedGroup]['timeValue'] = DataConvert().convertLitersToTime(double.parse(sequenceData[selectedGroup]['quantityValue']), getNominalFlow());
+      }else{
+        sequenceData[selectedGroup]['quantityValue'] = DataConvert().convertTimeToLiters(sequenceData[selectedGroup]['timeValue'], getNominalFlow());
+      }
+      sequenceData[selectedGroup]['method'] = value;*/
+      print("water method updated...........");
     }else if(title == 'timeValue'){
       sequenceData[selectedGroup]['timeValue'] = value;
       refreshTime();
-    }else if(title == 'quantityValue'){
+    }
+    else if(title == 'quantityValue'){
       var maxFertInSec = getMaxFertilizerValueForSelectedSequence();
       int currentWaterValueInSec = waterValueInSec();
       if(currentWaterValueInSec > (24*3600)){
@@ -1740,8 +1766,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         sequenceData[selectedGroup]['quantityValue'] = (value == '' ? '0' : value);
       }
       refreshTime();
-    }else{
-      sequenceData[selectedGroup]['quantityValue'] = value;
     }
     notifyListeners();
   }
@@ -2057,7 +2081,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       if(fertilizerData['quantityValue'] == '0'){
         sec = 0;
       }else{
-        sec = ((fertilizerData['quantityValue'] != '' ? double.parse(fertilizerData['quantityValue']) : 0)/fertilizerFlowRate).round();
+        sec = ((fertilizerData['quantityValue'] != '' ? double.parse(fertilizerData['quantityValue'] == '' ? '0' : fertilizerData['quantityValue']) : 0)/fertilizerFlowRate).round();
       }
     }
     return sec;
@@ -3316,7 +3340,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     for(var obj in selectedObject){
       print("obj in the for loop :: $obj");
       print("index in the for loop :: ${configObject.indexOf(obj)}");
-      int indexOfObject = configObject.indexOf(obj);
+      int indexOfObject = configObject.isEmpty ? 0 : configObject.indexOf(obj);
       payload[indexOfObject] = 1;
       print("payload[indexOfObject] :: ${payload[indexOfObject]}");
     }

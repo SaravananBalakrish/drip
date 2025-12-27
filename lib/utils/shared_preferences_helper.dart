@@ -9,11 +9,8 @@ class PreferenceHelper {
   static const String _countryCodeKey = 'country_code';
   static const String _mobileNumberKey = 'mobile_number';
   static const String _emailKey = 'email';
-  static const String _appversionKey = 'appversion';
   static const String _deviceTokenKey = 'deviceToken';
-
-  //customer
-  static const String _customerIdKey = 'customer_id';
+  static const String _confPermissionKey = 'permissionDenied';
 
   static Future<void> saveUserDetails({
     required String token,
@@ -23,7 +20,8 @@ class PreferenceHelper {
     required String countryCode,
     required String mobileNumber,
     required String email,
-   }) async {
+    required bool configPermission,
+  }) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString(_authTokenKey, token);
     await prefs.setInt(_userIdKey, userId);
@@ -32,7 +30,8 @@ class PreferenceHelper {
     await prefs.setString(_countryCodeKey, countryCode);
     await prefs.setString(_mobileNumberKey, mobileNumber);
     await prefs.setString(_emailKey, email);
-   }
+    await prefs.setBool(_confPermissionKey, configPermission);
+  }
 
   static Future<String?> getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -46,10 +45,6 @@ class PreferenceHelper {
 
 
   static Future<String?> getUserRole() async { // admin,
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    return prefs.getString(_roleKey);
-  }
-  static Future<String?> getAppVersion() async { // admin,
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(_roleKey);
   }
@@ -82,5 +77,10 @@ class PreferenceHelper {
   static Future<String?> getDeviceToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString(_deviceTokenKey);
+  }
+
+  static Future<bool?> getConfigPermission() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_confPermissionKey);
   }
 }

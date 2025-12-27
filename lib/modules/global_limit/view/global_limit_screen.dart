@@ -10,7 +10,7 @@ import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import '../../../Widgets/custom_buttons.dart';
 import '../../../Widgets/status_box.dart';
 import '../../../utils/environment.dart';
-import '../../config_Maker/view/config_web_view.dart';
+import '../../config_maker/view/config_web_view.dart';
 import '../model/line_in_global_limit_model.dart';
 
 

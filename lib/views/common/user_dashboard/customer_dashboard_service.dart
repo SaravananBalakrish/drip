@@ -23,36 +23,51 @@ class CustomerDashboardService extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+
         ChangeNotifierProvider(
-          create: (_) => CustomerScreenControllerViewModel(context, Repository(HttpService()),
+          create: (_) => CustomerScreenControllerViewModel(
+            context,
+            Repository(HttpService()),
             Provider.of<MqttPayloadProvider>(context, listen: false),
           )..getAllMySites(context, customerId),
         ),
 
-        ChangeNotifierProxyProvider<CustomerScreenControllerViewModel, ControllerSettingsViewModel>(
+        ChangeNotifierProxyProvider<CustomerScreenControllerViewModel,
+            ControllerSettingsViewModel>(
           create: (_) => ControllerSettingsViewModel(Repository(HttpService())),
           update: (_, customerVm, settingsVm) {
 
             settingsVm ??= ControllerSettingsViewModel(Repository(HttpService()));
 
-            if (customerVm.mySiteList.data.isNotEmpty &&
-                customerVm.sIndex < customerVm.mySiteList.data.length &&
-                customerVm.mIndex < customerVm.mySiteList.data[customerVm.sIndex].master.length) {
+            if (customerVm.mySiteList.data.isEmpty) return settingsVm;
 
-              settingsVm.getSettingsMenu(customerVm.mySiteList.data[customerVm.sIndex].customerId,
-                  customerVm.mySiteList.data[customerVm.sIndex].master[customerVm.mIndex].controllerId,
-                  customerVm.mySiteList.data[customerVm.sIndex].master[customerVm.mIndex].modelId);
+            final sIndex = customerVm.sIndex;
+            final mIndex = customerVm.mIndex;
+
+            if (sIndex >= customerVm.mySiteList.data.length ||
+                mIndex >= customerVm.mySiteList.data[sIndex].master.length) {
+              return settingsVm;
             }
+
+            final site = customerVm.mySiteList.data[sIndex];
+            final master = site.master[mIndex];
+
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              settingsVm!.getSettingsMenu(
+                site.customerId,
+                master.controllerId,
+                master.modelId,
+              );
+            });
 
             return settingsVm;
           },
         ),
 
         ChangeNotifierProvider(create: (_) => BottomNavViewModel()),
-
         ChangeNotifierProvider(create: (_) => NavRailViewModel(Repository(HttpService()))),
-
       ],
+
       child: child,
     );
   }

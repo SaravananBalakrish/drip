@@ -197,6 +197,7 @@ class SettingsScreenFactory {
           customerId: ctx.customerId,
           controllerId: ctx.controllerId,
           imeiNo: ctx.imeiNo,
+          modelid:ctx.modelId,
         );
 
       case 'Controller Log':

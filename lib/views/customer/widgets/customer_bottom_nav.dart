@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 class CustomerBottomNav extends StatelessWidget {
   final int index;
   final ValueChanged<int> onTap;
-  const CustomerBottomNav({super.key, required this.index, required this.onTap});
+  final bool hasWeatherStation;
+  const CustomerBottomNav({super.key, required this.index,
+    required this.onTap, required this.hasWeatherStation});
 
   @override
   Widget build(BuildContext context) {
@@ -14,11 +16,14 @@ class CustomerBottomNav extends StatelessWidget {
       backgroundColor: Theme.of(context).primaryColor,
       selectedItemColor: Colors.white,
       unselectedItemColor: Colors.white70,
-      items: const [
-        BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-        BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Scheduled Program'),
-        BottomNavigationBarItem(icon: Icon(Icons.report_gmailerrorred), label: 'Log'),
-        BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: 'Settings'),
+      items: [
+        const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+        const BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Scheduled Program'),
+        const BottomNavigationBarItem(icon: Icon(Icons.report_gmailerrorred), label: 'Log'),
+        if(hasWeatherStation)...const [
+          BottomNavigationBarItem(icon: Icon(Icons.cloud_outlined), label: 'Weather'),
+        ],
+        const BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), label: 'Settings'),
       ],
     );
   }

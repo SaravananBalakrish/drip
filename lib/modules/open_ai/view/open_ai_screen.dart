@@ -167,7 +167,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
   void _scrollToBottom() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
-        print('Max Scroll Extent: ${_scrollController.position.maxScrollExtent}');
+        // print('Max Scroll Extent: ${_scrollController.position.maxScrollExtent}');
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
           duration: const Duration(milliseconds: 300),

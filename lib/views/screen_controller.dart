@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:new_version_plus/new_version_plus.dart';
@@ -24,6 +25,7 @@ class ScreenController extends StatelessWidget {
     final mobile = await PreferenceHelper.getMobileNumber();
     final email = await PreferenceHelper.getEmail();
     final role = getRoleFromString(roleString);
+    final configPermission = await PreferenceHelper.getConfigPermission();
 
     final user = UserModel(
       token: token,
@@ -33,6 +35,7 @@ class ScreenController extends StatelessWidget {
       countryCode: countryCode ?? '',
       mobileNo: mobile ?? '',
       email: email ?? '',
+      configPermission: configPermission ?? false,
     );
 
     final userProvider = context.read<UserProvider>();
@@ -102,7 +105,7 @@ class ScreenController extends StatelessWidget {
 
         /// 🔥 Call version check AFTER first frame
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          checkVersionDialog(context);
+          if(kIsWeb) checkVersionDialog(context);
         });
 
         final userRole = context.read<UserProvider>().loggedInUser.role;

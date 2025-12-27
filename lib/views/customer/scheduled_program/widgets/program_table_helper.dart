@@ -4,6 +4,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../../models/customer/site_model.dart';
 import '../../../../modules/IrrigationProgram/state_management/irrigation_program_provider.dart';
 import '../../../../modules/IrrigationProgram/view/irrigation_program_main.dart';
@@ -13,19 +14,43 @@ import '../../../../utils/formatters.dart';
 import '../../../../utils/helpers/program_code_helper.dart';
 import '../../../../utils/my_function.dart';
 import '../../widgets/my_material_button.dart';
+import '../../widgets/program_preview.dart';
 import 'ai_recommendation_button.dart';
 import 'clickable_submenu.dart';
 
 
 class ProgramTableHelper {
-  static List<DataColumn2> columns(TextStyle headerStyle, bool prgOnOffPermission, bool isNova) => [
+  static List<DataColumn2> columns(BuildContext context, TextStyle headerStyle,
+      bool prgOnOffPermission, bool isNova) => [
     DataColumn2(label: Text('Name', style: headerStyle), size: ColumnSize.M),
     DataColumn2(label: Text('Method', style: headerStyle), size: ColumnSize.M),
     DataColumn2(label: Text('Status or Reason', style: headerStyle), size: ColumnSize.L),
     DataColumn2(label: Center(child: Text('Zone', style: headerStyle)), fixedWidth: 50),
     DataColumn2(label: Center(child: Text('Start Date & Time', style: headerStyle)), size: ColumnSize.M),
     DataColumn2(label: Center(child: Text('End Date', style: headerStyle)), size: ColumnSize.S),
-    DataColumn2(label: const Text(''), fixedWidth: prgOnOffPermission ? isNova ? 230 : 315 : 100),
+    DataColumn2(
+      label: isNova ? Align(
+        alignment: Alignment.centerRight,
+        child: IconButton(
+          tooltip: "Program Preview",
+          icon: Icon(Icons.preview, color: Theme.of(context).primaryColor),
+          onPressed: () {
+            MqttPayloadProvider provider = Provider.of<MqttPayloadProvider>(context, listen: false);
+            provider.clearPreview();
+            showModalBottomSheet(
+              context: context,
+              isScrollControlled: true,
+              elevation: 10,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(top: Radius.circular(5)),
+              ),
+              builder: (_) => const ProgramPreview(isNarrow: false),
+            );
+          },
+        ),
+      ) : const Text(''),
+      fixedWidth: prgOnOffPermission ? (isNova ? 270 : 315) : 100,
+    ),
   ];
 
   static List<DataRow> rows({
@@ -255,7 +280,7 @@ class ProgramTableHelper {
             ) :
             const Center(child: Text('The program is not ready', style: TextStyle(color: Colors.red))),
           ),
-        ]else...[
+        ] else...[
           const DataCell(
             Center(child: Text('....', style: TextStyle(color: Colors.red))),
           ),

@@ -19,6 +19,7 @@ class SourceColumnWidget extends StatelessWidget {
   final int controllerId;
   final int modelId;
   final bool isMobile;
+  final bool isAvailFrtSite;
 
   const SourceColumnWidget({
     super.key,
@@ -33,6 +34,7 @@ class SourceColumnWidget extends StatelessWidget {
     required this.controllerId,
     required this.modelId,
     required this.isMobile,
+    required this.isAvailFrtSite,
   });
 
   @override

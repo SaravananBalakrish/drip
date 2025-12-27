@@ -39,7 +39,7 @@ class PumpControllerProvider extends ChangeNotifier {
       "toDate": DateFormat("yyyy-MM-dd").format(selectedDate),
     };
 
-    print("data from getUserPumpLog :: $data");
+    // print("data from getUserPumpLog :: $data");
     try {
       isLoading = true;
       final getPumpController = await repository.getUserPumpLog(data, nodeControllerId != 0);
@@ -71,7 +71,7 @@ class PumpControllerProvider extends ChangeNotifier {
           }
         } else {
           message = '${response['message']}';
-          print('Data is not a List');
+          // print('Data is not a List');
         }
 
         if (pumpLogData.isNotEmpty) {
@@ -86,15 +86,15 @@ class PumpControllerProvider extends ChangeNotifier {
           });
         }
       } else {
-        print('Failed to load data');
+        // print('Failed to load data');
       }
       await Future.delayed(const Duration(seconds: 1));
       isLoading = false;
       notifyListeners();
-      print("isLoading in the pump log : $isLoading");
+      // print("isLoading in the pump log : $isLoading");
     } catch (e, stackTrace) {
-      print("$e");
-      print("stackTrace ==> $stackTrace");
+      // print("$e");
+      // print("stackTrace ==> $stackTrace");
       isLoading = false;
       notifyListeners();
     }
@@ -173,7 +173,7 @@ class PumpControllerProvider extends ChangeNotifier {
       "toDate": DateFormat("yyyy-MM-dd").format(selectedDate),
     };
 
-    print("getUserVoltageLog :: $data");
+    // print("getUserVoltageLog :: $data");
     try {
       isLoading = true;
       final getPumpController = await repository.getUserVoltageLog(data, nodeControllerId != 0);
@@ -200,8 +200,8 @@ class PumpControllerProvider extends ChangeNotifier {
       isLoading = false;
     } catch (e, stackTrace) {
       message = 'Error occurred: $e';
-      print("$e");
-      print("stackTrace ==> $stackTrace");
+      // print("$e");
+      // print("stackTrace ==> $stackTrace");
     }
     notifyListeners();
   }

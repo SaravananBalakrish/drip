@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../utils/constants.dart';
@@ -9,7 +10,7 @@ class HttpService implements ApiService {
   Future<http.Response> getRequest(String endpoint, {String? type, Map<String, String>? queryParams}) async {
     final token = await PreferenceHelper.getToken();
     final uri = Uri.parse('${AppConstants.apiUrl}$endpoint').replace(queryParameters: queryParams);
-
+    print('uri:$uri');
     final headers = {
       'Content-Type': 'application/json',
       'auth_token': token?.isNotEmpty == true ? token! : 'default_token',
@@ -22,7 +23,8 @@ class HttpService implements ApiService {
 
   @override
   Future<http.Response> postRequest(String endpoint, Map<String, dynamic> bodyData) async {
-    // print('bodyData : ${bodyData}');
+
+    print('bodyData : $bodyData');
     print('${AppConstants.apiUrl}$endpoint');
     final token = await PreferenceHelper.getToken();
 

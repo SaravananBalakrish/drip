@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/modules/config_Maker/model/device_object_model.dart';
+import 'package:oro_drip_irrigation/modules/config_maker/model/device_object_model.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/schedule_screen.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/sequence_screen.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
@@ -153,8 +153,8 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
                       trailing: Switch(
                           value: irrigationProgramProvider.isPumpStationMode,
                           onChanged: (newValue) {
-                            print(irrigationProgramProvider.selectedObjects!.where((pump) => pump.objectId == 5).map((e) => e.sNo).toList());
-                            print(irrigationLine.map((e) => e.irrigationPump ?? []).expand((list) => list).toList().map((e) => e.sNo));
+                            // print(irrigationProgramProvider.selectedObjects!.where((pump) => pump.objectId == 5).map((e) => e.sNo).toList());
+                            // print(irrigationLine.map((e) => e.irrigationPump ?? []).expand((list) => list).toList().map((e) => e.sNo));
                             irrigationProgramProvider.updatePumpStationMode(newValue, 0);
                           }
                       )

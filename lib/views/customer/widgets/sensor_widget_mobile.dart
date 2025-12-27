@@ -50,12 +50,12 @@ class SensorWidgetMobile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: statusParts[1] == "1" ? Colors.green.shade300 : Colors.red.shade300,
+                  color: sensor.value == "1" ? Colors.green.shade300 : Colors.red.shade300,
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: Colors.grey, width: 0.5),
                 ),
                 child: Text(
-                  statusParts[1] == "1" ? 'Low' : 'High',
+                  sensor.value == "1" ? 'Low' : 'High',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,

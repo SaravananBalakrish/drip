@@ -124,7 +124,7 @@ class FilterWidget extends StatelessWidget {
               Stack(
                 children: [
                   SizedBox(width:70, height: 70, child: AppConstants.getAsset(isMobile ?
-                  'mobile filter':'filter', filter.status,'')),
+                  'mobile filter':'filter', filter.status,'${filter.filterMode}')),
                   filter.onDelayLeft != '00:00:00' && siteStatus != 0 ?
                   Positioned(
                     top: 52,
@@ -276,7 +276,13 @@ class PressureSensorWidget extends StatelessWidget {
                   ],
                 ),
               ),
-              Text(sensor.name, style: const TextStyle(fontSize: 11, color: Colors.black54)),
+              Text(sensor.name, maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  color: Colors.black54,
+                  fontSize: 11,
+                ),
+              )
             ],
           ),
         );
