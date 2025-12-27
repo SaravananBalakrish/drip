@@ -18,7 +18,6 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'Constants/notifi_service.dart';
-import 'Screens/Constant/ConstantPageProvider/changeNotifier_constantProvider.dart';
 import 'StateManagement/search_provider.dart';
 import 'app/app.dart';
 import 'StateManagement/customer_provider.dart';
@@ -28,7 +27,7 @@ import 'modules/PumpController/state_management/pump_controller_provider.dart';
 import 'modules/IrrigationProgram/state_management/irrigation_program_provider.dart';
 import 'modules/Preferences/state_management/preference_provider.dart';
 import 'modules/SystemDefinitions/state_management/system_definition_provider.dart';
-import 'modules/config_Maker/state_management/config_maker_provider.dart';
+import 'modules/config_maker/state_management/config_maker_provider.dart';
 import 'StateManagement/mqtt_payload_provider.dart';
 import 'StateManagement/overall_use.dart';
 import 'modules/constant/state_management/constant_provider.dart';
@@ -128,41 +127,37 @@ FutureOr<void> main() async {
     });
   }
 
-    runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => UserProvider()),
-          ChangeNotifierProvider(create: (_) => CustomerProvider()),
-          ChangeNotifierProvider(create: (_) => ConfigMakerProvider()),
-          ChangeNotifierProvider(
-              create: (_) => IrrigationProgramMainProvider()),
-          ChangeNotifierProvider(create: (_) => MqttPayloadProvider()),
-          ChangeNotifierProvider(create: (_) => OverAllUse()),
-          ChangeNotifierProvider(create: (_) => PreferenceProvider()),
-          ChangeNotifierProvider(create: (_) => SystemDefinitionProvider()),
-          ChangeNotifierProvider(create: (_) => ConstantProviderMani()),
-          ChangeNotifierProvider(create: (_) => ConstantProvider()),
-          ChangeNotifierProvider(create: (_) => PumpControllerProvider()),
-          ChangeNotifierProvider(create: (_) => BleProvider()),
-          ChangeNotifierProvider(create: (_) => SearchProvider()),
-          ChangeNotifierProvider(create: (_) => ButtonLoadingProvider()),
-          ProxyProvider2<MqttPayloadProvider,
-              CustomerProvider,
-              CommunicationService>(
-            update: (BuildContext context, MqttPayloadProvider mqttProvider,
-                CustomerProvider customer, CommunicationService? previous) {
-              return CommunicationService(
-                mqttService: MqttService(),
-                blueService: BluService(),
-                customerProvider: customer,
-              );
-            },
-          ),
-        ],
-        child: const MyApp(),
-      ),
-    );
-  }
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => CustomerProvider()),
+        ChangeNotifierProvider(create: (_) => ConfigMakerProvider()),
+        ChangeNotifierProvider(create: (_) => IrrigationProgramMainProvider()),
+        ChangeNotifierProvider(create: (_) => MqttPayloadProvider()),
+        ChangeNotifierProvider(create: (_) => OverAllUse()),
+        ChangeNotifierProvider(create: (_) => PreferenceProvider()),
+        ChangeNotifierProvider(create: (_) => SystemDefinitionProvider()),
+        ChangeNotifierProvider(create: (_) => ConstantProvider()),
+        ChangeNotifierProvider(create: (_) => PumpControllerProvider()),
+        ChangeNotifierProvider(create: (_) => BleProvider()),
+        ChangeNotifierProvider(create: (_) => SearchProvider()),
+        ChangeNotifierProvider(create: (_) => ButtonLoadingProvider()),
+        ProxyProvider2<MqttPayloadProvider, CustomerProvider, CommunicationService>(
+          update: (BuildContext context, MqttPayloadProvider mqttProvider,
+              CustomerProvider customer, CommunicationService? previous) {
+            return CommunicationService(
+              mqttService: MqttService(),
+              blueService: BluService(),
+              customerProvider: customer,
+            );
+          },
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 
+}
 
 

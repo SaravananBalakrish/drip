@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../modules/config_Maker/view/config_base_page.dart';
+import '../../modules/config_maker/view/config_base_page.dart';
+import '../../providers/user_provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../view_models/customer/site_config_view_model.dart';
@@ -18,11 +19,13 @@ class SiteConfig extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final loggedUser = Provider.of<UserProvider>(context, listen: false).loggedInUser;
+
     return ChangeNotifierProvider(
       create: (_) => SiteConfigViewModel(Repository(HttpService()))..getCustomerSite(customerId),
       child: Consumer<SiteConfigViewModel>(
         builder: (context, viewModel, _) {
-
           return SizedBox(
             height: MediaQuery.of(context).size.height - 160,
             width: MediaQuery.of(context).size.width,
@@ -60,7 +63,8 @@ class SiteConfig extends StatelessWidget {
                                   style: const TextStyle(fontSize: 12)),
                               trailing: SizedBox(
                                 width: 170,
-                                child: MaterialButton(
+                                child: !loggedUser.configPermission ?
+                                MaterialButton(
                                   onPressed: () {
                                     Navigator.push(
                                       context,
@@ -101,7 +105,7 @@ class SiteConfig extends StatelessWidget {
                                           style: TextStyle(color: Colors.white)),
                                     ],
                                   ),
-                                ),
+                                ): null,
                               ),
                             ),
                           ),

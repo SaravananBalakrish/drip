@@ -158,7 +158,7 @@ class _PayloadProgressDialogState extends State<PayloadProgressDialog> {
 
       return isAcknowledged;
     } catch (error) {
-      print(error);
+      // print(error);
       return false;
     }
   }

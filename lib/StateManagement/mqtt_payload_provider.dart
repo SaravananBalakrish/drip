@@ -102,9 +102,14 @@ class MqttPayloadProvider with ChangeNotifier {
   List<String> currentSchedule = [];
   List<String> nextSchedule = [];
   List<String> scheduledProgramPayload = [];
-   List<String> conditionPayload = [];
+  List<String> conditionPayload = [];
   List<String> lineLiveMessage = [];
   List<String> alarmDL = [];
+
+   String? _programPreview;
+   String? _sequencePreview;
+   List<String> _novaVoltage =[];
+
 
    final Map<String, String> _pumpOnOffStatusMap = {};
    final Map<String, String> _pumpOtherDetailMap = {};
@@ -118,7 +123,6 @@ class MqttPayloadProvider with ChangeNotifier {
    final Map<String, String> _sensorValueMap = {};
    final Map<String, String> _boosterPumpOnOffStatusMap = {};
    final Map<String, String> _agitatorOnOffStatusMap = {};
-
 
    //for blue repository
    CustomDevice? _connectedDevice;
@@ -167,7 +171,7 @@ class MqttPayloadProvider with ChangeNotifier {
            device.status = BlueConnectionSate.values[status];
            notifyListeners();
          } else {
-           print('Invalid status int: $status');
+           debugPrint('Invalid status int: $status');
          }
          break;
        }
@@ -587,8 +591,8 @@ class MqttPayloadProvider with ChangeNotifier {
          notifyListeners();
        }
        catch (e, stackTrace) {
-         print('Error parsing JSON: $e');
-         print('Stacktrace while parsing json : $stackTrace');
+         debugPrint('Error parsing JSON: $e');
+         debugPrint('Stacktrace while parsing json : $stackTrace');
        }
 
      }
@@ -606,18 +610,46 @@ class MqttPayloadProvider with ChangeNotifier {
 
       try {
         Map<String, dynamic> data = _receivedPayload.isNotEmpty? jsonDecode(_receivedPayload) : {};
-          print('_receivedPayload------>:$_receivedPayload');
+         debugPrint('_receivedPayload------>:$_receivedPayload');
 
         if(data['mC']=='2400'){
-          liveDateAndTime = '${data['cD']} ${data['cT']}';
-          activeDeviceId = data['cC'];
-          activeDeviceVersion = data['cM']['Version'];
-          if (data['cM'].containsKey('LoraData')) {
-            activeLoraData = data['cM']['LoraData'];
+
+          try {
+            Map<String, dynamic> data =
+            _receivedPayload.isNotEmpty ? jsonDecode(_receivedPayload) : {};
+
+            if (data['mC'] == '2400') {
+
+              liveDateAndTime = '${data['cD'] ?? "--"} ${data['cT'] ?? "--"}';
+
+              activeDeviceId = data['cC'] ?? "";
+
+              activeDeviceVersion =
+              data['cM'] != null && data['cM'].containsKey('Version')
+                  ? data['cM']['Version']
+                  : "";
+
+              wifiStrength =
+              data['cM'] != null ? data['cM']['WifiStrength'] ?? 0 : 0;
+
+              powerSupply =
+              data['cM'] != null ? data['cM']['PowerSupply'] ?? 0 : 0;
+
+              activeLoraData =
+              data['cM'] != null && data['cM'].containsKey('LoraData')
+                  ? data['cM']['LoraData']
+                  : "";
+            }
+          } catch (e) {
+            debugPrint("Error: $e");
           }
 
-          wifiStrength = data['cM']['WifiStrength'];
-          powerSupply = data['cM']['PowerSupply'];
+          final cm = data['cM'];
+          if (cm == null || cm is! Map || !cm.containsKey('2401') || cm['2401'] == null ||
+              cm['2401'] is! String || (cm['2401'] as String).isEmpty) {
+            debugPrint("2401 key NOT FOUND → stopping execution");
+            return;
+          }
 
           updateNodeLiveMessage(data['cM']['2401'].split(";"));
 
@@ -667,6 +699,10 @@ class MqttPayloadProvider with ChangeNotifier {
           updateScheduledProgram(data['cM']['2410'].split(";"));
           updateCondition(data['cM']['2411'].split(";"));
           updateAlarm(data['cM']['2412'].split(";"));
+
+          // for nova
+          _novaVoltage = data['cM']['2404'].split(";");
+
           notifyListeners();
         }
 
@@ -683,6 +719,7 @@ class MqttPayloadProvider with ChangeNotifier {
             viewSettingsList.add(jsonEncode(data["cM"]));
           }
         }
+
         if(data['cM'] is! List<dynamic> && data['cM'] is! String) {
           if (data['mC'] != null && data['cM'].containsKey('4201')) {
             messageFromHw = data['cM']['4201'];
@@ -753,9 +790,19 @@ class MqttPayloadProvider with ChangeNotifier {
 
         }
 
+        if (data["mC"] == "PRGVIEW") {
+          _programPreview = data["cM"];
+          notifyListeners();
+        }
+
+        if (data["mC"] == "SEQVIEW") {
+          _sequencePreview = data["cM"];
+          notifyListeners();
+        }
+
       } catch (e, stackTrace) {
-        print('Error parsing JSON: $e');
-        print('Stacktrace while parsing json : $stackTrace');
+        debugPrint('Error parsing JSON: $e');
+        debugPrint('Stacktrace while parsing json : $stackTrace');
       }
       finally{
         notifyListeners();
@@ -933,6 +980,12 @@ class MqttPayloadProvider with ChangeNotifier {
     unitList = units;
   }
 
+   void clearPreview() {
+     _programPreview = null;
+     _sequencePreview = null;
+     notifyListeners();
+   }
+
 
    String? getPumpOnOffStatus(String sNo) => _pumpOnOffStatusMap[sNo];
    String? getPumpOtherData(String sNo) => _pumpOtherDetailMap[sNo];
@@ -947,7 +1000,13 @@ class MqttPayloadProvider with ChangeNotifier {
    String? getBoosterPumpOnOffStatus(String sNo) => _boosterPumpOnOffStatusMap[sNo];
    String? getAgitatorOnOffStatus(String sNo) => _agitatorOnOffStatusMap[sNo];
 
+   String? getProgramPreview() => _programPreview;
+   String? getSequencePreview() => _sequencePreview;
+   List<String> getNovaVoltage() => _novaVoltage;
+
+
   String get receivedDashboardPayload => dashBoardPayload;
   String get receivedSchedulePayload => schedulePayload;
   MQTTConnectionState get getAppConnectionState => _appConnectionState;
+
 }

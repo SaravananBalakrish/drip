@@ -8,12 +8,14 @@ import '../../modules/IrrigationProgram/view/program_library.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../services/mqtt_service.dart';
+import '../../utils/constants.dart';
 import '../../utils/snack_bar.dart';
 
 class PumpConditionScreen extends StatefulWidget {
   final dynamic userId;
   final dynamic customerId;
   final dynamic controllerId;
+  final dynamic modelid;
   final String imeiNo;
   final bool? isProgram;
 
@@ -21,6 +23,7 @@ class PumpConditionScreen extends StatefulWidget {
     Key? key,
     required this.userId,
     required this.controllerId,
+    required this.modelid,
     required this.imeiNo,
     this.isProgram, this.customerId,
   }) : super(key: key);
@@ -32,9 +35,13 @@ class PumpConditionScreen extends StatefulWidget {
 class _PumpConditionScreenState extends State<PumpConditionScreen> {
   late PumpConditionModel pumpConditionModel = PumpConditionModel();
   late MqttPayloadProvider mqttPayloadProvider;
+  String selectedMode = "";
+  bool isNova = false;
 
   @override
   void initState() {
+     isNova = [...AppConstants.ecoGemModelList].contains(widget.modelid);
+
     super.initState();
     mqttPayloadProvider =
         Provider.of<MqttPayloadProvider>(context, listen: false);
@@ -53,6 +60,7 @@ class _PumpConditionScreenState extends State<PumpConditionScreen> {
         setState(() {
           var jsonData = jsonDecode(getUserDetails.body);
           pumpConditionModel = PumpConditionModel.fromJson(jsonData);
+          selectedMode = pumpConditionModel.data?.novaselectmode ?? "Alternative";
         });
       }
     } catch (e, stackTrace) {
@@ -84,15 +92,78 @@ class _PumpConditionScreenState extends State<PumpConditionScreen> {
   @override
   Widget build(BuildContext context) {
     final allPumps = pumpConditionModel.data?.pumpCondition ?? [];
-
-    return Scaffold(
+     return Scaffold(
       backgroundColor: const Color(0xffE6EDF5),
       appBar: MediaQuery.of(context).size.width <= 500 ? AppBar(
         title: const Text('Pump Conditions'),
       ) : null,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(8.0),
-        child: Wrap(
+        child: isNova ?  Card(
+        elevation: 4.0,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Center(
+                child: Text('Nova Pump Condition',
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              Container(height: 0.5, color: Colors.grey),
+              const SizedBox(height: 8.0),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text(
+                    "Select Pump Mode",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 20),
+
+                  /// --- TWO CHIPS WITH NEW NAMES ---
+                  Wrap(
+                    spacing: 10,
+                    children: [
+                      ChoiceChip(
+                        label: const Text("Alternative Pump"),
+                        selected: selectedMode == "Alternative",
+                        selectedColor: Colors.greenAccent.shade100,
+                        onSelected: (_) {
+                          setState(() {
+                            selectedMode = "Alternative";
+                          });
+                        },
+                      ),
+                      ChoiceChip(
+                        label: const Text("Combined Pumps"),
+                        selected: selectedMode == "combined",
+                        selectedColor: Colors.greenAccent.shade100,
+                        onSelected: (_) {
+                          setState(() {
+                            selectedMode = "combined";
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  /// Result Text
+                  Text(
+                    "Selected Mode: ${selectedMode.isEmpty ? 'None' : selectedMode}",
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ],
+              )
+
+          ],
+          ),
+        ),
+      )  : Wrap(
           spacing: 16.0,
           runSpacing: 16.0,
           children: allPumps.map((pumpCondition) {
@@ -192,12 +263,13 @@ class _PumpConditionScreenState extends State<PumpConditionScreen> {
     Map<String, dynamic> pumpConditionServerData = {
       "pumpCondition": pumpConditionJson["data"]?["pumpCondition"] ?? [],
       "controllerReadStatus": "0",
+      "novaMode": selectedMode,
     };
-
+     var novadata = selectedMode == "Alternative" ? "1" : "0";
     // MQTT Payload format
     Map<String, dynamic> payLoadFinal = {
       "7100":
-        {"7101": mqttSendData},
+        {"7101": isNova ? novadata : mqttSendData},
     };
 
     print("payLoadFinal,$payLoadFinal");

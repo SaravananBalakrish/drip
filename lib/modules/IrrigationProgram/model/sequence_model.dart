@@ -1,5 +1,5 @@
 import 'package:intl/intl.dart';
-import 'package:oro_drip_irrigation/modules/config_Maker/model/device_object_model.dart';
+import 'package:oro_drip_irrigation/modules/config_maker/model/device_object_model.dart';
 
 class SequenceModel {
   List<dynamic> sequence;
@@ -81,7 +81,7 @@ class ValveGroup {
         required this.valve});
 
   factory ValveGroup.fromJson(Map<String, dynamic> json) {
-    print("json in the ValveGroup : ${json}");
+    // print("json in the ValveGroup : ${json}");
     var valveList = json['valve'] as List<dynamic>?;
 
     List<DeviceObjectModel> valves = valveList != null
@@ -742,13 +742,13 @@ class DayCountRtcModel {
 
   DayCountRtcModel({
     required this.dayCountRtc,
-    required this.dayCountRtcTime
+    required this.dayCountRtcTime,
   });
 
   factory DayCountRtcModel.fromJson(Map<String, dynamic> json) {
     return DayCountRtcModel(
         dayCountRtc: json["dayCountRtc"] ?? false,
-        dayCountRtcTime: json["dayCountRtcTime"] ?? DateFormat('Hms').format(DateTime.now())
+        dayCountRtcTime: json["dayCountRtcTime"] ?? DateFormat('Hms').format(DateTime.now()),
     );
   }
 
@@ -760,6 +760,7 @@ class DayCountRtcModel {
   }
 }
 
+
 class ProgramQueueModel {
   bool programQueue;
   List<String> queueOrder;
@@ -770,6 +771,12 @@ class ProgramQueueModel {
   bool runDays;
   String noOfRunDays;
   bool queueReset;
+  bool dripStandaloneMode;
+  bool agitatorOnOff;
+  String agitatorRTCOnTime;
+  String agitatorRTCOffTime;
+  String agitatorCycONTime;
+  String agitatorCycOffTime;
 
   ProgramQueueModel({
     required this.programQueue,
@@ -781,6 +788,12 @@ class ProgramQueueModel {
     required this.runDays,
     required this.noOfRunDays,
     required this.queueReset,
+    required this.dripStandaloneMode,
+    required this.agitatorOnOff,
+    required this.agitatorRTCOnTime,
+    required this.agitatorRTCOffTime,
+    required this.agitatorCycONTime,
+    required this.agitatorCycOffTime,
   });
 
   // Helper method to safely convert a dynamic list to List<String>
@@ -808,6 +821,12 @@ class ProgramQueueModel {
       runDays: json["runDays"] ?? false,
       noOfRunDays: json["noOfRunDays"] ?? '0',
       queueReset: json["queueReset"] ?? false,
+      dripStandaloneMode: json["dripStandaloneMode"] ?? false,
+      agitatorOnOff: json["agitatorOnOff"] ?? false,
+      agitatorRTCOnTime: json["agitatorRTCOnTime"] ?? "00:00:00",
+      agitatorRTCOffTime: json["agitatorRTCOffTime"] ?? "00:00:00",
+      agitatorCycONTime: json["agitatorCycONTime"] ?? "00:00:00",
+      agitatorCycOffTime: json["agitatorCycOffTime"] ?? "00:00:00",
     );
   }
 
@@ -822,6 +841,12 @@ class ProgramQueueModel {
       "runDays": runDays,
       "noOfRunDays": noOfRunDays,
       "queueReset": queueReset,
+      "dripStandaloneMode": dripStandaloneMode,
+      "agitatorOnOff" : agitatorOnOff,
+      "agitatorRTCOnTime" : agitatorRTCOnTime,
+      "agitatorRTCOffTime" : agitatorRTCOffTime,
+      "agitatorCycONTime" : agitatorCycONTime,
+      "agitatorCycOffTime" : agitatorCycOffTime,
     };
   }
 }

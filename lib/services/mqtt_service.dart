@@ -1,4 +1,3 @@
-// mqtt_service.dart
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
@@ -7,13 +6,10 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart' if (dart.library.html) 'package:mqtt_client/mqtt_browser_client.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
-import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import '../Constants/constants.dart';
 import '../StateManagement/mqtt_payload_provider.dart';
-import '../app/app.dart';
 import '../modules/PumpController/model/pump_controller_data_model.dart';
-import '../providers/button_loading_provider.dart';
 import '../utils/constants.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -183,7 +179,7 @@ class MqttService {
         }
       });
     } catch (e, stacktrace) {
-      print('MQTT subscribe error: $e\n$stacktrace');
+      debugPrint('MQTT subscribe error: $e\n$stacktrace');
     }
   }
 
@@ -232,33 +228,34 @@ class MqttService {
     }
   }
 
-
   void _handleAcknowledgement(Map<String, dynamic> message) {
     final content = message['cM']?['4201'];
     final code = content?['Code'];
     final payloadCode = content?['PayloadCode'];
 
-    if (code == '200') {
-      final buttonId = MqttAckTracker.findButtonByPayload(payloadCode);
-      if (buttonId != null) {
-        final buttonProvider = Provider.of<ButtonLoadingProvider>(
-          navigatorKey.currentContext!,
-          listen: false,
-        );
-        buttonProvider.setLoading(buttonId, false);
-        MqttAckTracker.remove(buttonId);
-        debugPrint('✅ ACK received for buttonId=$buttonId payloadCode=$payloadCode');
-      } else {
-        debugPrint('⚠️No matching button found for payloadCode=$payloadCode');
-      }
-    } else {
-      debugPrint('⚠️ACK error: $code');
+    if (code == "200") {
+      MqttAckTracker.ackReceived(payloadCode);
     }
   }
 
-  Future<void> topicToPublishAndItsMessage(String message, String topic) async {
+  /*Future<void> topicToPublishAndItsMessage(String message, String topic) async {
     final builder = MqttClientPayloadBuilder()..addString(message);
     _client!.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!);
+  }*/
+
+  Future<void> topicToPublishAndItsMessage(String message, String topic) async {
+    if (!isConnected) {
+      debugPrint("MQTT not connected. Cannot publish. Message dropped.");
+      return;
+    }
+
+    final builder = MqttClientPayloadBuilder()..addString(message);
+
+    try {
+      _client!.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!);
+    } catch (e) {
+      debugPrint("MQTT Publish Error: $e");
+    }
   }
 
   void onSubscribed(String topic) {

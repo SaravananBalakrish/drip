@@ -63,21 +63,21 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
   Widget _buildWithSource(ValveModel valve, bool hasMoisture) {
     return SizedBox(
       width: 140,
-      height: 60,
+      height: 65,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(width: 70, height: 60, child: _buildValveIcon(valve, hasMoisture)),
-          SizedBox(width: 70, height: 60, child: _buildWaterSource(valve)),
+          SizedBox(width: 70, height: 65, child: _buildValveIcon(valve, hasMoisture)),
+          SizedBox(width: 70, height: 65, child: _buildWaterSource(valve)),
         ],
       ),
     );
   }
 
   Widget _buildWithoutSource(ValveModel valve, bool hasMoisture) {
-    return SizedBox(width: 70, height: 60, child: _buildValveIcon(valve, hasMoisture));
+    return SizedBox(width: 70, height: 65, child: _buildValveIcon(valve, hasMoisture));
   }
 
   Widget _buildValveIcon(ValveModel valve, bool hasMoisture) {
@@ -98,11 +98,16 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
                 color: valve.status ==1 ? null : valveColor,
               ),
             ),
-            Text(
-              valve.name,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 10, color: Colors.black54),
-            ),
+            SizedBox(
+              width: 70,
+              child: Text(
+                valve.name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 10, color: Colors.black54),
+              ),
+            )
           ],
         ),
         if (hasMoisture) _buildMoistureButton(valve),
@@ -125,12 +130,11 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
       child: TextButton(
         onPressed: () async {
 
-          final sensors = await fetchSensorData();
-
           showPopover(
             context: context,
             bodyBuilder: (context) {
-              return MoistureSensorPopover(valve: valve, sensors: sensors);
+              return MoistureSensorPopover(valve: valve, customerId: widget.customerId,
+                  controllerId: widget.controllerId);
             },
             direction: PopoverDirection.bottom,
             width: 550,
@@ -150,8 +154,9 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
         ),
         child: CircleAvatar(
           radius: 15,
-          backgroundColor: _getMoistureColor(valve.moistureSensors
+          backgroundColor: MyFunction().getMoistureColor(valve.moistureSensors
               .map((s) => {'name': s.name, 'value': s.value}).toList()),
+
           child: Image.asset('assets/png/moisture_sensor.png', width: 25, height: 25),
         ),
       ),
@@ -233,78 +238,5 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
         },
       ),
     );
-  }
-
-
-  Color _getMoistureColor(List<Map<String, dynamic>> sensors) {
-    if (sensors.isEmpty) return Colors.grey;
-
-    final values = sensors.map((ms) => double.tryParse((ms['value'] ?? '0').toString()) ?? 0.0).toList();
-
-    final averageValue = values.reduce((a, b) => a + b) / values.length;
-
-    if (averageValue < 20) {
-      return Colors.green.shade200;
-    } else if (averageValue <= 60) {
-      return Colors.orange.shade200;
-    } else {
-      return Colors.red.shade200;
-    }
-  }
-
-  Future<List<SensorHourlyDataModel>> fetchSensorData() async {
-    List<SensorHourlyDataModel> sensors = [];
-
-    try {
-      DateTime selectedDate = DateTime.now();
-      String date = DateFormat('yyyy-MM-dd').format(selectedDate);
-
-      Map<String, Object> body = {
-        "userId": widget.customerId,
-        "controllerId": widget.controllerId,
-        "fromDate": date,
-        "toDate": date,
-      };
-
-      final response = await Repository(HttpService()).fetchSensorHourlyData(body);
-      if (response.statusCode == 200) {
-        debugPrint(response.body);
-        final jsonData = jsonDecode(response.body);
-        if (jsonData["code"] == 200) {
-          sensors = (jsonData['data'] as List).map((item) {
-            final dateStr = item['date'] ?? '';
-            final Map<String, List<SensorHourlyData>> hourlyDataMap = {};
-
-            item.forEach((key, value) {
-              if (key == 'date') return;
-              if (value is String && value.isNotEmpty) {
-                final entries = value.split(';');
-                hourlyDataMap[key] = entries.map((entry) {
-                  return SensorHourlyData.fromCsv(entry, key, dateStr);
-                }).toList();
-              } else {
-                hourlyDataMap[key] = [];
-              }
-            });
-
-            return SensorHourlyDataModel(date: item['date'], data: hourlyDataMap);
-          }).toList();
-        }
-      }
-    } catch (error) {
-      debugPrint('Error fetching sensor hourly data: $error');
-    }
-
-    return sensors;
-  }
-
-  List<SensorHourlyData> getSensorDataById(String sensorId, List<SensorHourlyDataModel> sensorData) {
-    final result = <SensorHourlyData>[];
-    for (final model in sensorData) {
-      model.data.forEach((hour, sensorList) {
-        result.addAll(sensorList.where((sensor) => sensor.sensorId == sensorId));
-      });
-    }
-    return result;
   }
 }

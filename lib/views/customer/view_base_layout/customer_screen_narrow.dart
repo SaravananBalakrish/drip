@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
 import 'package:oro_drip_irrigation/utils/helpers/mc_permission_helper.dart';
 import 'package:oro_drip_irrigation/views/customer/scheduled_program/scheduled_program_narrow.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/connection_banner.dart';
@@ -46,9 +47,12 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
     if (vm.mySiteList.data.isEmpty) return const SiteLoadingOrEmpty(isLoading: false);
 
     final cM = vm.mySiteList.data[vm.sIndex].master[vm.mIndex];
-    final isGem = isGemModel(cM.modelId);
 
-    final pages = isGem ? [
+    bool isGemOrNova = isGemOrNovaModel(cM.modelId);
+
+    bool hasWeatherStation = cM.irrigationLine.any((line) => line.hasWeatherStation);
+
+    final pages = isGemOrNova ? [
       const DashboardLayoutSelector(userRole: UserRole.customer),
       Consumer<CustomerScreenControllerViewModel>(
         builder: (context, viewModel, _) {
@@ -74,6 +78,10 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
         },
         masterData: cM,
       ),
+      if(hasWeatherStation)...[
+        WeatherScreen(userId: vm.mySiteList.data[vm.sIndex].customerId,
+            controllerId: cM.controllerId, deviceID: cM.deviceId),
+      ],
       const SettingsMenuNarrow(),
     ] :
     [
@@ -116,13 +124,16 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
           cM.getPermissionStatus("View Controller Log"),
         ],
       ),
-      bottomNavigationBar: isGem ? CustomerBottomNav(index: navModel.index, onTap: navModel.setIndex) : null,
+      bottomNavigationBar: isGemOrNova ?
+      CustomerBottomNav(index: navModel.index, onTap: navModel.setIndex,
+        hasWeatherStation: hasWeatherStation) : null,
       banners: [
-        if(isGem)
+        if(isGemOrNova)
           const NetworkConnectionBanner(),
-        if(isGem)
+        if(isGemOrNova)
           Consumer<CustomerProvider>(
-            builder: (_, provider, __) => ConnectionBanner(vm: vm, commMode: provider.controllerCommMode ?? 0),
+            builder: (_, provider, __) => ConnectionBanner(
+                vm: vm, commMode: provider.controllerCommMode ?? 0),
           ),
       ],
       body: IndexedStack(index: navModel.index, children: pages),

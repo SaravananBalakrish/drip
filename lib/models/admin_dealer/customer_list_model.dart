@@ -8,10 +8,12 @@ class CustomerListModel
     this.emailId = '',
     this.serviceRequestCount = 0,
     this.criticalAlarmCount = 0,
+    this.configPermission = false,
   });
 
   int id,serviceRequestCount,criticalAlarmCount;
   String name, countryCode, mobileNumber, emailId;
+  bool configPermission;
 
   factory CustomerListModel.fromJson(Map<String, dynamic> json) => CustomerListModel(
     id: json['userId'],
@@ -22,6 +24,16 @@ class CustomerListModel
     serviceRequestCount: json['serviceRequestCount'],
     criticalAlarmCount: json['criticalAlarmCount'],
   );
+
+  factory CustomerListModel.fake() {
+    return CustomerListModel(
+      id: 0,
+      name: 'Loading...',
+      emailId: 'loading@example.com',
+      mobileNumber: '0000000000',
+      countryCode: '00',
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     'userId': id,

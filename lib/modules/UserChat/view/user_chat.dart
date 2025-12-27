@@ -55,7 +55,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
         setState(() {
           final response = jsonDecode(getUserDealerDetails.body);
           if (response['code'] == 200) {
-            print("userRole ::: ${userRole.runtimeType}");
+            // print("userRole ::: ${userRole.runtimeType}");
             isDealer = userRole == '2' || userRole == '1';
             dealerId = response['data']['userId'];
             dealerName = response['data']['userName'];
@@ -66,8 +66,8 @@ class _UserChatScreenState extends State<UserChatScreen> {
         });
       }
     } catch (error, stackTrace) {
-      print("Error in the user chat: $error");
-      print("Stack trace in user chat: $stackTrace");
+      // print("Error in the user chat: $error");
+      // print("Stack trace in user chat: $stackTrace");
     }
   }
 
@@ -77,7 +77,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
       "toUserId": isDealer ? widget.userId : dealerId,
     };
 
-    print("userdata in the chat :: $userData");
+    // print("userdata in the chat :: $userData");
     try {
       final getUserChat = await repository.getUserChat(userData);
       if (getUserChat.statusCode == 200) {
@@ -102,8 +102,8 @@ class _UserChatScreenState extends State<UserChatScreen> {
         });
       }
     } catch (error, stackTrace) {
-      print("Error in the user chat: $error");
-      print("Stack trace in user chat: $stackTrace");
+      // print("Error in the user chat: $error");
+      // print("Stack trace in user chat: $stackTrace");
     }
   }
 
@@ -126,8 +126,8 @@ class _UserChatScreenState extends State<UserChatScreen> {
         });
       }
     } catch (error, stackTrace) {
-      print("Error in the user chat: $error");
-      print("Stack trace in user chat: $stackTrace");
+      // print("Error in the user chat: $error");
+      // print("Stack trace in user chat: $stackTrace");
     }
   }
 
@@ -139,7 +139,7 @@ class _UserChatScreenState extends State<UserChatScreen> {
       "time": DateFormat("HH:mm:ss").format(time),
       "message": _messageController.text,
     };
-print('userData:$userData');
+// print('userData:$userData');
 
     try {
       final createUserChat = await repository.createUserChat(userData);
@@ -154,8 +154,8 @@ print('userData:$userData');
         }
       });
     } catch (error, stackTrace) {
-      print("Error in the user chat: $error");
-      print("Stack trace in user chat: $stackTrace");
+      // print("Error in the user chat: $error");
+      // print("Stack trace in user chat: $stackTrace");
     }
   }
 

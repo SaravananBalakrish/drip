@@ -67,7 +67,7 @@ class PreferenceProvider extends ChangeNotifier {
 
   String get mode => _mode;
 
-  Future<void> getUserPreference({required int userId, required int controllerId, required int modelId}) async {
+  Future<void> getUserPreference({required int userId, required int controllerId}) async {
     final userData = {
       "userId": userId,
       "controllerId": controllerId
@@ -80,8 +80,8 @@ class PreferenceProvider extends ChangeNotifier {
         generalData = GeneralData.fromJson(result['data'][0]);
       }
     } catch(error, stackTrace) {
-      print("Error parsing general data: $error");
-      print("Stack trace general data: $stackTrace");
+      // print("Error parsing general data: $error");
+      // print("Stack trace general data: $stackTrace");
     }
     try {
       final response = await repository.getUserPreferenceSetting(userData);
@@ -91,8 +91,8 @@ class PreferenceProvider extends ChangeNotifier {
         commonPumpSettings = List.from(result['data']['commonPumpSetting'].map((json) => CommonPumpSetting.fromJson(json)));
       }
     } catch(error, stackTrace) {
-      print("Error parsing setting data: $error");
-      print("Stack trace setting data: $stackTrace");
+      // print("Error parsing setting data: $error");
+      // print("Stack trace setting data: $stackTrace");
     }
     try {
       final response = await repository.getUserPreferenceCalibration(userData);
@@ -101,8 +101,8 @@ class PreferenceProvider extends ChangeNotifier {
         calibrationSetting = List.from(result['data'].map((json) => CommonPumpSetting.fromJson(json)));
       }
     } catch(error, stackTrace) {
-      print("Error parsing setting data: $error");
-      print("Stack trace setting data: $stackTrace");
+      // print("Error parsing setting data: $error");
+      // print("Stack trace setting data: $stackTrace");
     }
     notifyListeners();
   }
@@ -135,8 +135,8 @@ class PreferenceProvider extends ChangeNotifier {
       notifyListeners();
 
     } catch(error, stackTrace) {
-      print("Error parsing setting data: $error");
-      print("Stack trace setting data: $stackTrace");
+      // print("Error parsing setting data: $error");
+      // print("Stack trace setting data: $stackTrace");
     }
   }
 
@@ -159,8 +159,8 @@ class PreferenceProvider extends ChangeNotifier {
       final result = jsonDecode(response.body);
       passwordValidationCode = result['code'];
     } catch(error, stackTrace) {
-      print("Error parsing setting data: $error");
-      print("Stack trace setting data: $stackTrace");
+      // print("Error parsing setting data: $error");
+      // print("Stack trace setting data: $stackTrace");
     }
     notifyListeners();
   }

@@ -23,18 +23,19 @@ class PumpLogScreen extends StatefulWidget {
 }
 
 class _PumpLogScreenState extends State<PumpLogScreen> {
-  int selectedIndex = 0;
   bool showGraph = false;
 
   @override
   void initState() {
     super.initState();
     if(mounted) {
-      context.read<PumpControllerProvider>().getUserPumpLog(
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        context.read<PumpControllerProvider>().getUserPumpLog(
           widget.userId,
           widget.controllerId,
           widget.nodeControllerId,
-      );
+        );
+      });
     }
   }
 
@@ -80,10 +81,10 @@ class _PumpLogScreenState extends State<PumpLogScreen> {
                   if(readProvider.segments.isNotEmpty && readProvider.segments.length != 1)
                     CustomSegmentedControl(
                         segmentTitles: readProvider.segments,
-                        groupValue: selectedIndex,
+                        groupValue: readProvider.selectedIndex,
                         onChanged: (newValue) {
                           setState(() {
-                            selectedIndex = newValue!;
+                            readProvider.selectedIndex = newValue!;
                             readProvider.scrollController.animateTo(
                                 readProvider.scrollController.position.maxScrollExtent,
                                 duration: const Duration(milliseconds: 200),
@@ -110,7 +111,7 @@ class _PumpLogScreenState extends State<PumpLogScreen> {
                         return ValveLog(events: logData.motor1, masterData: widget.masterData,);
                       }
                       return Timeline2(
-                        events: selectedIndex == 1 ? logData.motor2 : selectedIndex == 2 ? logData.motor3 : logData.motor1,
+                        events: readProvider.selectedIndex == 1 ? logData.motor2 : readProvider.selectedIndex == 2 ? logData.motor3 : logData.motor1,
                       );
                     } else {
                       return Center(

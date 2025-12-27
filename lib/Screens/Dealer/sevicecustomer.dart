@@ -46,7 +46,7 @@ class _TicketHomePageState extends State<TicketHomePage> {
   Future<void> fetchData() async {
     // if you don’t use this, remove it
     // var overAllPvd = Provider.of<OverAllUse>(context, listen: false);
-    print("userId ${widget.userId} controllerId ${widget.controllerId}");
+    // print("userId ${widget.userId} controllerId ${widget.controllerId}");
 
     final prefs = await SharedPreferences.getInstance();
     try {

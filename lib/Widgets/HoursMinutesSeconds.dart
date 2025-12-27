@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import '../modules/IrrigationProgram/state_management/irrigation_program_provider.dart';
@@ -8,6 +9,7 @@ import '../StateManagement/overall_use.dart';
 
 class HoursMinutesSeconds extends StatefulWidget {
   final String initialTime;
+  final int modelId;
   String? validation;
   String? waterTime;
   String? preTime;
@@ -16,7 +18,7 @@ class HoursMinutesSeconds extends StatefulWidget {
   Map<String,dynamic>? fertilizerTime;
   void Function()? onPressed;
   HoursMinutesSeconds({
-    super.key, required this.initialTime,this.validation,this.waterTime,this.preTime,this.postTime,this.onPressed,this.fertilizerTime,this.index
+    super.key, required this.initialTime,this.validation,this.waterTime,this.preTime,this.postTime,this.onPressed,this.fertilizerTime,this.index, required this.modelId
   });
   @override
   State<HoursMinutesSeconds> createState() => _HoursMinutesSecondsState();
@@ -46,8 +48,8 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
         overAllPvd.editTime('hrs', double.parse(widget.initialTime.split(':')[0]).toInt());
         overAllPvd.editTime('min', double.parse(widget.initialTime.split(':')[1]).toInt());
         overAllPvd.editTime('sec', double.parse(widget.initialTime.split(':')[2]).toInt());
-        print('hr : ${overAllPvd.hrs}');
-        print('initialTime : ${widget.initialTime}');
+        // print('hr : ${overAllPvd.hrs}');
+        // print('initialTime : ${widget.initialTime}');
       });
     }
   }
@@ -76,7 +78,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
       duration3 = parseTimeString('${overAllPvd.hrs}:${overAllPvd.min}:${overAllPvd.sec}');
     }
     var result = duration1 - (duration2 + duration3);
-    print(result);
+    // print(result);
     if(result > 0 || result == 0){
       setState(() {
         releaseTimeForPrePost = true;
@@ -109,7 +111,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
       fertilizer.add(parseTimeString(widget.fertilizerTime!['list'][i]));
     }
     var result = water - (pre + post);
-    print("result : ${result}");
+    // print("result : ${result}");
     if(result > 0 || result == 0){
       setState(() {
         releaseTimeForWater = true;
@@ -140,7 +142,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
     int post = parseTimeString(widget.postTime!);
     int fertilizer = parseTimeString('${overAllPvd.hrs!}:${overAllPvd.min!}:${overAllPvd.sec!}');
     var result = water - (pre + post);
-    print('result  : $result');
+    // print('result  : $result');
     if(fertilizer < result || fertilizer == result){
       setState(() {
         releaseTimeForFertilizer = true;
@@ -181,8 +183,8 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
             children: [
               SizedBox(
                   width: 205,
-                  child: Center(child: Text(message,style: TextStyle(fontSize: 15,color: Colors.red),))),
-              SizedBox(width: 5,),
+                  child: Center(child: Text(message,style: const TextStyle(fontSize: 15,color: Colors.red),))),
+              const SizedBox(width: 5,),
               IconButton(
                   onPressed: (){
                     setState(() {
@@ -235,25 +237,29 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                   ),
                 ),
               ),
-              const Text(':',style: TextStyle(fontSize: 20),),
-              InkWell(
-                onTap: (){
-                  setState(() {
-                    selected = 2;
-                  });
-                },
-                child: Container(
-                  width: 70,
-                  height: 60,
-                  decoration: BoxDecoration(
-                      color: selected == 2 ?  Theme.of(context).primaryColor : Theme.of(context).primaryColor.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(10)
+              if(!AppConstants.ecoGemModelList.contains(widget.modelId))
+                ...[
+                  const Text(':',style: TextStyle(fontSize: 20),),
+                  InkWell(
+                    onTap: (){
+                      setState(() {
+                        selected = 2;
+                      });
+                    },
+                    child: Container(
+                      width: 70,
+                      height: 60,
+                      decoration: BoxDecoration(
+                          color: selected == 2 ?  Theme.of(context).primaryColor : Theme.of(context).primaryColor.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(10)
+                      ),
+                      child: Center(
+                        child: Text('${overAllPvd.sec} Sec',style: TextStyle(fontSize: 18,color: selected == 2 ? Colors.white : Colors.black)),
+                      ),
+                    ),
                   ),
-                  child: Center(
-                    child: Text('${overAllPvd.sec} Sec',style: TextStyle(fontSize: 18,color: selected == 2 ? Colors.white : Colors.black)),
-                  ),
-                ),
-              ),
+                ]
+
 
             ],
           ),
@@ -277,7 +283,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                           Center(
                             child: Transform.rotate(
                               angle: overAllPvd.hrs * 0.2617,
-                              child: Container(
+                              child: SizedBox(
                                   width: 145,
                                   height: 145,
                                   child: Image.asset('assets/Images/Png/clock_needle.png')
@@ -343,7 +349,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                               child: Transform.rotate(
                                 angle: (i) * 0.523,
                                 child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 2,vertical: 2),
+                                  padding: const EdgeInsets.symmetric(horizontal: 2,vertical: 2),
                                   // width: 20,
                                   height: 200,
                                   child: Column(
@@ -359,7 +365,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                                                 },
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(5.0),
-                                                  child: Text('${hrs[i][0]}',style: TextStyle(fontSize: 14,fontWeight: FontWeight.w900,color: overAllPvd.hrs == int.parse(hrs[i][0]) ? Colors.black : Colors.black54),),
+                                                  child: Text(hrs[i][0],style: TextStyle(fontSize: 14,fontWeight: FontWeight.w900,color: overAllPvd.hrs == int.parse(hrs[i][0]) ? Colors.black : Colors.black54),),
                                                 )
                                             )
                                         ),
@@ -373,7 +379,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                                                 },
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(5.0),
-                                                  child: Text('${hrs[i][1]}',style: TextStyle(fontSize: overAllPvd.hrs == int.parse(hrs[i][1]) ? 16 : 14,fontWeight: FontWeight.w900,color: overAllPvd.hrs == int.parse(hrs[i][1]) ? Colors.black : Colors.black54)),
+                                                  child: Text(hrs[i][1],style: TextStyle(fontSize: overAllPvd.hrs == int.parse(hrs[i][1]) ? 16 : 14,fontWeight: FontWeight.w900,color: overAllPvd.hrs == int.parse(hrs[i][1]) ? Colors.black : Colors.black54)),
                                                 )
                                             )
                                         ),
@@ -403,7 +409,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                           Center(
                             child: Transform.rotate(
                               angle: overAllPvd.min * 0.1047,
-                              child: Container(
+                              child: SizedBox(
                                   width: 145,
                                   height: 145,
                                   child: Image.asset('assets/Images/Png/clock_needle.png')
@@ -465,7 +471,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                             Center(
                               child: Transform.rotate(
                                 angle: (i) * 0.523,
-                                child: Container(
+                                child: SizedBox(
                                   height: 200,
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -480,7 +486,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                                           padding: const EdgeInsets.all(5.0),
                                           child: Transform.rotate(
                                               angle: 6.28 - ((i)*0.523),
-                                              child: Text('${mins[i][0]}',style: TextStyle(fontSize: 14,fontWeight: FontWeight.w900,color: overAllPvd.min == int.parse(mins[i][0]) ? Colors.black : Colors.black54),)
+                                              child: Text(mins[i][0],style: TextStyle(fontSize: 14,fontWeight: FontWeight.w900,color: overAllPvd.min == int.parse(mins[i][0]) ? Colors.black : Colors.black54),)
                                           ),
                                         ),
                                       ),
@@ -493,7 +499,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                                           padding: const EdgeInsets.all(5.0),
                                           child: Transform.rotate(
                                               angle: 6.28 - ((i)*0.523),
-                                              child: Text('${mins[i][1]}',style: TextStyle(fontSize: 14,fontWeight: FontWeight.w900,color: overAllPvd.min == int.parse(mins[i][1]) ? Colors.black : Colors.black54))
+                                              child: Text(mins[i][1],style: TextStyle(fontSize: 14,fontWeight: FontWeight.w900,color: overAllPvd.min == int.parse(mins[i][1]) ? Colors.black : Colors.black54))
                                           ),
                                         ),
                                       ),
@@ -532,7 +538,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                             ),
                           ),
                           Center(
-                            child: Container(
+                            child: SizedBox(
                               // color: Colors.green,
                               width: 210,
                               height: 210,
@@ -595,7 +601,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                                           padding: const EdgeInsets.all(5.0),
                                           child: Transform.rotate(
                                               angle: 6.28 - ((i)*0.523),
-                                              child: Text('${secs[i][0]}',style: TextStyle(fontSize: 14,fontWeight: FontWeight.w900,color: overAllPvd.sec == int.parse(secs[i][0]) ? Colors.black : Colors.black54),)
+                                              child: Text(secs[i][0],style: TextStyle(fontSize: 14,fontWeight: FontWeight.w900,color: overAllPvd.sec == int.parse(secs[i][0]) ? Colors.black : Colors.black54),)
                                           ),
                                         ),
                                       ),
@@ -607,7 +613,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                                           padding: const EdgeInsets.all(5.0),
                                           child: Transform.rotate(
                                               angle: 6.28 - ((i)*0.523),
-                                              child: Text('${secs[i][1]}',style: TextStyle(fontSize: 14,fontWeight: FontWeight.w900,color: overAllPvd.sec == int.parse(secs[i][1]) ? Colors.black : Colors.black54),)
+                                              child: Text(secs[i][1],style: TextStyle(fontSize: 14,fontWeight: FontWeight.w900,color: overAllPvd.sec == int.parse(secs[i][1]) ? Colors.black : Colors.black54),)
                                           ),
                                         ),
                                       ),
@@ -631,7 +637,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                   height: 100,
                   child: Column(
                     children: [
-                      Text('Hr'),
+                      const Text('Hr'),
                       TextFormField(
                         textAlign: TextAlign.center,
                         inputFormatters: AppProperties.regexForNumbers,
@@ -653,13 +659,13 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                   ),
                 ),
               ),
-              Text(':'),
+              const Text(':'),
               Expanded(
                 child: SizedBox(
                   height: 100,
                   child: Column(
                     children: [
-                      Text('Min'),
+                      const Text('Min'),
                       TextFormField(
                         textAlign: TextAlign.center,
                         inputFormatters: AppProperties.regexForNumbers,
@@ -681,13 +687,13 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                   ),
                 ),
               ),
-              Text(':'),
+              const Text(':'),
               Expanded(
                 child: SizedBox(
                   height: 100,
                   child: Column(
                     children: [
-                      Text('Sec'),
+                      const Text('Sec'),
                       TextFormField(
                         textAlign: TextAlign.center,
                         inputFormatters: AppProperties.regexForNumbers,
@@ -713,7 +719,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
           ),
 
         if(viewWidget == true)
-          Container(
+          SizedBox(
               width: 250,
               height: 200,
               child: Column(
@@ -723,7 +729,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                     Container(
                       color: Colors.blue.shade50,
                       child: ListTile(
-                        title: Text('Water'),
+                        title: const Text('Water'),
                         trailing: Text(widget.validation == 'water' ? '${overAllPvd.hrs < 10 ? '0' :''}${overAllPvd.hrs}:${overAllPvd.min < 10 ? '0' :''}${overAllPvd.min}:${overAllPvd.sec < 10 ? '0' :''}${overAllPvd.sec}' : '${widget.waterTime}'),
                       ),
                     ),
@@ -731,7 +737,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                     Container(
                       color: Colors.brown.shade50,
                       child: ListTile(
-                        title: Text('Pre time'),
+                        title: const Text('Pre time'),
                         trailing: Text(widget.validation == 'pre' ? '${overAllPvd.hrs < 10 ? '0' :''}${overAllPvd.hrs}:${overAllPvd.min < 10 ? '0' :''}${overAllPvd.min}:${overAllPvd.sec < 10 ? '0' :''}${overAllPvd.sec}' : '${widget.preTime}'),
                       ),
                     ),
@@ -739,7 +745,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                     Container(
                       color: Colors.brown.shade50,
                       child: ListTile(
-                        title: Text('Post time'),
+                        title: const Text('Post time'),
                         trailing: Text(widget.validation == 'post' ? '${overAllPvd.hrs < 10 ? '0' :''}${overAllPvd.hrs}:${overAllPvd.min < 10 ? '0' :''}${overAllPvd.min}:${overAllPvd.sec < 10 ? '0' :''}${overAllPvd.sec}' : '${widget.postTime}'),
                       ),
                     ),
@@ -756,7 +762,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                 ],
               )
           ),
-        SizedBox(height: 40,),
+        const SizedBox(height: 40,),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
@@ -809,7 +815,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                     print('widget : ${widget.validation}');
                   }
                 },
-                child: Text('Ok',style: TextStyle(color: Colors.white),)
+                child: const Text('Ok',style: TextStyle(color: Colors.white),)
             )
           ],
         )

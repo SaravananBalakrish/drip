@@ -170,9 +170,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     // List<String> unitlist = ['CB','CB','CB','CB','°C','°C','kPa','%','%','ppm','Lu','MM','km/h',''];
 
     String? irname = findIrrigationLine(weathernewlive.stations[i].deviceId)!;
-    print('irname : $irname');
-    debugPrint('test stations : ${weathernewlive.stations[0].toJson()}');
-    debugPrint('test sensror length : ${ weathernewlive.stations[0].sensors.length}');
+
 
     return Scaffold(body: Center(
       child: LayoutBuilder(
@@ -180,27 +178,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
             if (MediaQuery.sizeOf(context).width < 800) {
               //mobile view
               return SafeArea(
-                child: Container(color: Theme.of(context).primaryColorDark,
+                child: Container(color: Theme.of(context).scaffoldBackgroundColor,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
                         // Header
-                        const Padding(
-                          padding: EdgeInsets.only(left: 16.0, right: 8.0,bottom: 20.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Text(
-                                'Weather',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+
 
                         // Main Weather Display
                         SizedBox(
@@ -214,13 +197,13 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   const Icon(
                                     Icons.sunny_snowing, // Replace with a rain icon if available
                                     size: 100,
-                                    color: Colors.white,
+                                    color: Colors.black,
                                   ),
                                   const SizedBox(height: 16),
                                   const Text(
                                     '28°',
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                       fontSize: 80,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -228,7 +211,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   const Text(
                                     'Precipitations',
                                     style: TextStyle(
-                                      color: Colors.white70,
+                                      color: Colors.black,
                                       fontSize: 18,
                                     ),
                                   ),
@@ -236,7 +219,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   const Text(
                                     'MAX.: 31°  MIN.: 25°',
                                     style: TextStyle(
-                                      color: Colors.white70,
+                                      color: Colors.black,
                                       fontSize: 16,
                                     ),
                                   ),
@@ -394,11 +377,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               style: const TextStyle(fontWeight: FontWeight.w900),
                             ),
                           ),
+
 //${findIrrigationLine(weathernewlive.stations[i].deviceId) ?? ''}
                           Expanded(
                             flex: 3,
                             child: Container(
-                              color: Colors.grey.shade100,
+                              color: Colors.teal.shade100,
                               padding:
                               const EdgeInsets.only(left: 15, right: 15, bottom: 10),
                               // height: constraints.maxHeight * 0.59,
@@ -447,11 +431,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Widget _buildWeatherDetail(IconData icon, String value) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white70, size: 20),
+        Icon(icon, color: Colors.black, size: 20),
         const SizedBox(width: 4),
         Text(
           value,
-          style: const TextStyle(color: Colors.white70, fontSize: 16),
+          style: const TextStyle(color: Colors.black, fontSize: 16),
         ),
       ],
     );
@@ -464,10 +448,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
       child: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.2), // Adjust opacity and color
+          color: Theme.of(context).primaryColor.withOpacity(0.6), // Adjust opacity and color
           borderRadius: BorderRadius.circular(16), // Rounded corners
           border: Border.all(
-            color: Colors.white.withOpacity(0.3), // Subtle border
+            color: Colors.teal, // Subtle border
             width: 1,
           ),
         ),

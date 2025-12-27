@@ -19,12 +19,13 @@ class PumpWidget extends StatelessWidget {
   final bool isSourcePump;
   final String deviceId;
   final int customerId, controllerId, modelId;
-  final bool isMobile;
+  final bool isMobile, isNova, isAvailFrtSite;
   final String pumpPosition;
 
   PumpWidget({super.key, required this.pump, required this.isSourcePump,
     required this.deviceId, required this.customerId, required this.controllerId,
-    required this.isMobile, required this.modelId, required this.pumpPosition});
+    required this.isMobile, required this.modelId, required this.pumpPosition,
+    required this.isNova, required this.isAvailFrtSite});
 
   final ValueNotifier<int> popoverUpdateNotifier = ValueNotifier<int>(0);
 
@@ -101,7 +102,7 @@ class PumpWidget extends StatelessWidget {
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         hasVoltage?
-                                        _buildVoltagePopoverContent(context, voltages, columns) :
+                                        _buildVoltagePopoverContent(context, voltages, columns, isNova) :
                                         Container(),
                                         if (isSourcePump) _buildBottomControlButtons(context),
                                       ],
@@ -110,7 +111,7 @@ class PumpWidget extends StatelessWidget {
                                 },
                               );
                             },
-                            onPop: () => print('Popover was popped!'),
+                            onPop: () => debugPrint('Popover was popped!'),
                             direction: PopoverDirection.bottom,
                             width: 325,
                             arrowHeight: 15,
@@ -190,7 +191,7 @@ class PumpWidget extends StatelessWidget {
 
             if (pump.reason == '11' || pump.reason == '22')
               Positioned(
-                top: pump.actualValue == '0.0' ? isMobile? 30 : 50 : isMobile? 20 : 40,
+                top: pump.actualValue == '0.0' ? 50 : 40,
                 left: 0,
                 child: Container(
                   width: 67,
@@ -218,7 +219,7 @@ class PumpWidget extends StatelessWidget {
 
             else if (pump.reason == '8' && isTimeFormat(pump.actualValue.split('_').last))
               Positioned(
-                top: isMobile? 20:40,
+                top: 40,
                 left: 0,
                 child: Container(
                   width: 67,
@@ -247,7 +248,10 @@ class PumpWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildVoltagePopoverContent(BuildContext context, voltages, columns) {
+  Widget _buildVoltagePopoverContent(BuildContext context,
+      voltages, columns, bool isNova) {
+
+    print('columns:$columns');
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -257,21 +261,57 @@ class PumpWidget extends StatelessWidget {
             int.parse(pump.reason) > 0 &&
             int.parse(pump.reason) != 31)
           _buildReasonContainer(context),
-        const SizedBox(height: 5),
-        _buildPhaseInfo(),
-        const SizedBox(height: 8),
-        if (voltages.length == 6) ...[
-          _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+
+        if(!isNova)...[
           const SizedBox(height: 5),
-          _buildVoltageCurrentInfo(voltages.sublist(3, 6), ['RN', 'YN', 'BN']),
-        ] else ...[
-          _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+          _buildPhaseInfo(),
+          const SizedBox(height: 8),
+          if (voltages.length == 6)...[
+            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+            const SizedBox(height: 5),
+            _buildVoltageCurrentInfo(voltages.sublist(3, 6), ['RN', 'YN', 'BN']),
+          ]else ...[
+            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+          ],
+          const SizedBox(height: 8),
+          _buildVoltageCurrentInfo(columns, ['RC', 'YC', 'BC']),
+          const SizedBox(height: 10),
+        ]else...[
+          ListTile(
+            title: const Text(
+              'This pump connected with',
+              style: TextStyle(fontSize: 13, color: Colors.black54),
+            ),
+            trailing: Text(
+              getPumpConnectedPhaseNames(columns),
+              style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            dense: true,
+          ),
         ],
-        const SizedBox(height: 8),
-        _buildVoltageCurrentInfo(columns, ['RC', 'YC', 'BC']),
-        const SizedBox(height: 10),
       ],
     );
+  }
+
+  String getPumpConnectedPhaseNames(List<String> columns) {
+    const phaseNames = ['RC', 'YC', 'BC'];
+    List<String> connected = [];
+
+    for (int i = 0; i < columns.length && i < 3; i++) {
+      final value = columns[i].trim();
+
+      if (value != '-' && value.isNotEmpty) {
+        connected.add(phaseNames[i]);
+      }
+    }
+
+    if (connected.isEmpty) return '-';
+
+    return connected.join(' & ');
   }
 
   Widget _buildReasonContainer(BuildContext context) {
@@ -356,6 +396,7 @@ class PumpWidget extends StatelessWidget {
   }
 
   Widget _buildVoltageCurrentInfo(List<String> values, List<String> prefixes) {
+
     return Container(
       width: 320,
       height: 30,
@@ -408,7 +449,6 @@ class PumpWidget extends StatelessWidget {
       ),
     );
   }
-
 
   Widget _buildBottomControlButtons(BuildContext context) {
     return Padding(
@@ -473,9 +513,196 @@ class PumpWidget extends StatelessWidget {
     Map<String, Object> body = {"userId": customerId, "controllerId": controllerId, "messageStatus": msg, "hardware": jsonDecode(data), "createUser": customerId};
     final response = await Repository(HttpService()).sendManualOperationToServer(body);
     if (response.statusCode == 200) {
-      print(response.body);
+      debugPrint(response.body);
     } else {
       throw Exception('Failed to load data');
     }
+  }
+}
+
+class VoltageWidget extends StatelessWidget {
+  const VoltageWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<MqttPayloadProvider, List<String>?>(
+      selector: (_, provider) => provider.getNovaVoltage(),
+      builder: (_, data, __) {
+
+        if (data == null || data.isEmpty) {
+          return const SizedBox();
+        }
+
+        final pumpCount = data.length;
+
+        final payload = data.first;
+        final parts = payload.split(",");
+
+        if (parts.length < 7) return const SizedBox();
+
+        final voltageList = parts[5].split("_");
+
+        final currentRaw = parts[6].split("_");
+
+        String bcCurrentFromPump2 = "-";
+        if (pumpCount == 2) {
+          bcCurrentFromPump2 = getBcCurrentFromSecondPump(data);
+        }
+
+        List<String> currentColumns = ["0", "0", "0"];
+
+        for (var c in currentRaw) {
+          if (c.contains(":")) {
+            var sp = c.split(":");
+            var phase = int.tryParse(sp[0]) ?? 0;
+            var value = sp[1];
+
+            if (phase == 1) currentColumns[0] = value;
+            if (phase == 2) currentColumns[1] = value;
+            if (phase == 3) currentColumns[2] = value;
+          }
+        }
+
+        if (pumpCount == 2) {
+          currentColumns[2] = bcCurrentFromPump2;
+        }
+
+        return Column(
+          children: [
+            _buildPhaseInfo(context),
+            _buildVoltagePopoverContent(
+                context,
+                voltageList,
+                currentColumns,
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildPhaseInfo(BuildContext context) {
+    int phase = int.tryParse("0") ?? 0;
+    return Container(
+      width: MediaQuery.sizeOf(context).width,
+      height: 25,
+      color: Colors.transparent,
+      child: Row(
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(left: 9),
+            child: SizedBox(width: 100, child: Text('Phase', style: TextStyle(color: Colors.black54))),
+          ),
+          const Spacer(),
+          for (int i = 0; i < 3; i++)
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 7,
+                  backgroundColor: phase > i ? Colors.green : Colors.grey.shade400,
+                ),
+                const VerticalDivider(color: Colors.transparent),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  String getBcCurrentFromSecondPump(List<String> data) {
+    if (data.length < 2) return "-";
+
+    final payload = data[1];
+    final parts = payload.split(",");
+
+    if (parts.length < 7) return "-";
+
+    final currents = parts[6].split("_");
+
+    for (var pair in currents) {
+      var sp = pair.split(":");
+      if (sp.length == 2) {
+        int phase = int.parse(sp[0]);
+        if (phase == 3) {
+          return sp[1];
+        }
+      }
+    }
+
+    return "-";
+  }
+
+
+  Widget _buildVoltagePopoverContent(BuildContext context, voltages, columns) {
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 8),
+        if (voltages.length == 6) ...[
+          _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+          const SizedBox(height: 5),
+          _buildVoltageCurrentInfo(voltages.sublist(3, 6), ['RN', 'YN', 'BN']),
+        ] else ...[
+          _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+        ],
+        const SizedBox(height: 8),
+        _buildVoltageCurrentInfo(columns, ['RC', 'YC', 'BC']),
+        const SizedBox(height: 10),
+      ],
+    );
+  }
+
+  Widget _buildVoltageCurrentInfo(List<String> values, List<String> prefixes) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 8),
+      child: Row(
+        children: [
+          ...List.generate(3, (index) {
+            Color bgColor, borderColor;
+            switch (index) {
+              case 0:
+                bgColor = Colors.red.shade100;
+                borderColor = Colors.red;
+                break;
+              case 1:
+                bgColor = Colors.yellow.shade200;
+                borderColor = Colors.yellow;
+                break;
+              case 2:
+                bgColor = Colors.blue.shade100;
+                borderColor = Colors.blue;
+                break;
+              default:
+                bgColor = Colors.white;
+                borderColor = Colors.grey;
+            }
+
+            return Expanded(
+              child: Padding(
+                padding: const EdgeInsets.only(right: 7),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: bgColor,
+                    border: Border.all(color: borderColor, width: 0.7),
+                    borderRadius: BorderRadius.circular(3.0),
+                  ),
+                  width: 95,
+                  height: 30,
+                  child: Center(
+                    child: Text(
+                      '${prefixes[index]} : ${values[index]}',
+                      style: const TextStyle(fontSize: 11),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          }),
+        ],
+      ),
+    );
   }
 }
