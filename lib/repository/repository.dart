@@ -472,6 +472,11 @@ class Repository{
   Future<http.Response> getweather(body) async {
     return await apiService.postRequest('/user/live/weather/get', body);
   }
+  //http://13.235.254.21:5000/api/v1/user/live/weather/get
+  Future<http.Response> getweatherReport(body) async {
+    ///api/v1/user/log/weatherHourly/get
+    return await apiService.postRequest('/user/log/weatherHourly/get', body);
+  }
   Future<http.Response> updateUserDeviceFirmwareDetails(body) async {
     return await apiService.putRequest('/user/deviceList/updateFirmwareDetails', body);
   }
