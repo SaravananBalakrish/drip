@@ -361,7 +361,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                   SwitchListTile(
                     title: const Text('Enable Program Queue'),
                     value: programQueueModel.programQueue,
-                    activeThumbColor: theme.primaryColor,
+                    activeTrackColor: theme.primaryColor,
                     onChanged: (v) => setState(() => programQueueModel.programQueue = v),
                   ),
 
@@ -485,7 +485,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                 SwitchListTile(
                   title: const Text('Agitator ON/OFF'),
                   value: programQueueModel.agitatorOnOff,
-                  activeThumbColor: theme.primaryColor,
+                  activeTrackColor: theme.primaryColor,
                   onChanged: (v) => setState(() => programQueueModel.agitatorOnOff = v),
                 ),
 
