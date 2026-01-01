@@ -34,7 +34,7 @@ class WideLayout extends StatelessWidget {
     return Expanded(
       child: Container(
         height: double.infinity,
-        color: isATel ? Theme.of(context).primaryColor : Theme.of(context).primaryColorDark,
+        color: Theme.of(context).primaryColorDark,
         child: isOro ? Padding(
           padding: const EdgeInsets.all(50.0),
           child: SvgPicture.asset('assets/svg_images/login_left_picture.svg'),
