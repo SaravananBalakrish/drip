@@ -65,8 +65,8 @@ print('payLoadFinal:$payLoadFinal');
     {
       final Repository repository = Repository(HttpService());
       var getUserDetails = await repository.getweather({
-        "userId": 139 ,
-        "controllerId": 751
+        "userId": widget.userId ,
+        "controllerId": widget.controllerId
       });
 
       final jsonData = jsonDecode(getUserDetails.body);
