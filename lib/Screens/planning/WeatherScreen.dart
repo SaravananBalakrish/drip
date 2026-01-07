@@ -60,7 +60,6 @@ class _WeatherScreenState extends State<WeatherScreen> {
     Request();
     fetchDataSunRiseSet();
     fetchDataLive();
-    fetchDataLive();
 
   }
 

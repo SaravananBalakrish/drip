@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Screens/planning/WeatherScreen.dart';
+import 'package:oro_drip_irrigation/Screens/planning/weather/weather_page.dart';
 import 'package:oro_drip_irrigation/utils/helpers/mc_permission_helper.dart';
 import 'package:oro_drip_irrigation/views/customer/scheduled_program/scheduled_program_narrow.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/connection_banner.dart';
@@ -79,8 +80,9 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
         masterData: cM,
       ),
       if(hasWeatherStation)...[
-        WeatherScreen(userId: vm.mySiteList.data[vm.sIndex].customerId,
-            controllerId: cM.controllerId, deviceID: cM.deviceId),
+        // WeatherScreen(userId: vm.mySiteList.data[vm.sIndex].customerId,
+        //     controllerId: cM.controllerId, deviceID: cM.deviceId),
+        WeatherDashboardPage(userId: vm.mySiteList.data[vm.sIndex].customerId, controllerId: cM.controllerId, deviceID: cM.deviceId),
       ],
       const SettingsMenuNarrow(),
     ] :
