@@ -8,8 +8,15 @@ import '../repository/repository.dart';
 class CustomerListViewModel extends ChangeNotifier {
   final Repository repository;
   final int userId;
+
   List<CustomerListModel> myCustomerList = [];
   List<CustomerListModel> filteredCustomerList = [];
+
+  List<CustomerListModel> get subDealerList => filteredCustomerList
+      .where((c) => c.isSubdealer == "1").toList();
+
+  List<CustomerListModel> get customerList => filteredCustomerList
+      .where((c) => c.isSubdealer != "1").toList();
 
   bool isLoadingCustomer = false;
   bool accountCreated = false;
@@ -71,10 +78,18 @@ class CustomerListViewModel extends ChangeNotifier {
 
   void filterCustomer(String query) {
     searching = true;
-    filteredCustomerList = myCustomerList.where((customer) {
+
+    if (query.isEmpty) {
+      filteredCustomerList = List.from(myCustomerList);
+    } else {
       final q = query.toLowerCase();
-      return customer.name.toLowerCase().contains(q) || customer.mobileNumber.toLowerCase().contains(q);
-    }).toList();
+
+      filteredCustomerList = myCustomerList.where((customer) {
+        return customer.name.toLowerCase().contains(q) ||
+            customer.mobileNumber.toLowerCase().contains(q);
+      }).toList();
+    }
+
     notifyListeners();
   }
 

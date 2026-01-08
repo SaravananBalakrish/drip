@@ -30,6 +30,10 @@ class CustomerView extends StatelessWidget {
     final viewModel = context.watch<CustomerListViewModel>();
     final stockVM = context.watch<ProductStockViewModel>();
 
+    final hasDealers = viewModel.subDealerList.isNotEmpty;
+    final hasCustomers = viewModel.customerList.isNotEmpty;
+    final showHeaders = hasDealers && hasCustomers;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: _buildAppBar(viewModel),
@@ -64,23 +68,44 @@ class CustomerView extends StatelessWidget {
                     );
                   },
                 ) :
-                viewModel.filteredCustomerList.isNotEmpty ? ListView.builder(
+                viewModel.filteredCustomerList.isNotEmpty ?
+                ListView(
                   padding: const EdgeInsets.only(bottom: 80),
-                  itemCount: viewModel.filteredCustomerList.length,
-                  itemBuilder: (context, index) {
-                    final customer = viewModel.filteredCustomerList[index];
-                    return _buildCustomerTile(
-                      context,
-                      customer,
-                      viewModel,
-                      stockVM,
-                    );
-                  },
-                ) :
-                const Center(child: Text(
-                  'No customer available',
-                  style: TextStyle(color: Colors.black54, fontSize: 15),
-                )),
+                  children: [
+                    // Dealers section
+                    if (hasDealers) ...[
+                      if (showHeaders) _sectionHeader(
+                          viewModel.subDealerList.length>1 ? 'Dealers'  : 'Dealer'),
+                      ...viewModel.subDealerList.map(
+                            (customer) => _buildCustomerTile(
+                          context,
+                          customer,
+                          viewModel,
+                          stockVM,
+                        ),
+                      ),
+                    ],
+
+                    // Customers section
+                    if (hasCustomers) ...[
+                      if (showHeaders) _sectionHeader(viewModel.customerList.length>1 ?
+                      'Customers' : 'Customer'),
+                      ...viewModel.customerList.map(
+                            (customer) => _buildCustomerTile(
+                          context,
+                          customer,
+                          viewModel,
+                          stockVM,
+                        ),
+                      ),
+                    ],
+                  ],
+                ) : const Center(
+                  child: Text(
+                    'No customer available',
+                    style: TextStyle(color: Colors.black54, fontSize: 15),
+                  ),
+                ),
               ),
             ),
           ],
@@ -92,6 +117,20 @@ class CustomerView extends StatelessWidget {
         child: const Icon(Icons.add),
       ),
       floatingActionButtonAnimator: FloatingActionButtonAnimator.scaling,
+    );
+  }
+
+  Widget _sectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 15,
+          color: Colors.black54,
+        ),
+      ),
     );
   }
 
