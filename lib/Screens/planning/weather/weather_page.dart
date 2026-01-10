@@ -3,7 +3,10 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Screens/planning/weather/sensor_alert.dart';
+import 'package:oro_drip_irrigation/Screens/planning/weather/sensor_grid.dart';
 import 'package:oro_drip_irrigation/Screens/planning/weather/weather_card.dart';
+import 'package:oro_drip_irrigation/Screens/planning/weather/weather_header.dart';
 import 'package:oro_drip_irrigation/Screens/planning/weather/weather_helper.dart';
 import 'package:oro_drip_irrigation/Screens/planning/weather/weather_json_model.dart';
 import 'package:oro_drip_irrigation/Screens/planning/weather/weather_live_model.dart';
@@ -201,27 +204,40 @@ print('payLoadFinal:$payLoadFinal');
           ? const Center(child: CircularProgressIndicator())
           : uiData.isEmpty
           ? const Center(child: Text("No weather data"))
-          : Padding(
-        padding: const EdgeInsets.all(12),
-        child: GridView.builder(
-          itemCount: uiData.length,
-          gridDelegate:
-          const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            mainAxisSpacing: 12,
-            crossAxisSpacing: 12,
-            childAspectRatio: 1.5,
+          : const Padding(
+        padding: EdgeInsets.all(12),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              WeatherHeader(),
+              SizedBox(height: 20),
+              SensorGrid(),
+              SizedBox(height: 16),
+              SensorAlertBanner(),
+            ],
           ),
-          itemBuilder: (_, i) => WeatherCard(
-              title: uiData[i].objectName,
-              value: uiData[i].value,
-              unit: unit(uiData[i].sensorType) ,
-              errstatus: uiData[i].errorCode,
-              icon: _icon(uiData[i].sensorType) ,
-              minval:uiData[i].minValue,
-              maxval:uiData[i].maxValue,
-              otherval: uiData[i].otherValue,),
         ),
+
+
+        // child: GridView.builder(
+        //   itemCount: uiData.length,
+        //   gridDelegate:
+        //   const SliverGridDelegateWithFixedCrossAxisCount(
+        //     crossAxisCount: 3,
+        //     mainAxisSpacing: 12,
+        //     crossAxisSpacing: 12,
+        //     childAspectRatio: 1.5,
+        //   ),
+        //   itemBuilder: (_, i) => WeatherCard(
+        //       title: uiData[i].objectName,
+        //       value: uiData[i].value,
+        //       unit: unit(uiData[i].sensorType) ,
+        //       errstatus: uiData[i].errorCode,
+        //       icon: _icon(uiData[i].sensorType) ,
+        //       minval:uiData[i].minValue,
+        //       maxval:uiData[i].maxValue,
+        //       otherval: uiData[i].otherValue,),
+        // ),
       ),
     );
   }
