@@ -208,9 +208,10 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
       date: weatherModel.data.weatherLive.cD,
       time: weatherModel.data.weatherLive.cT,
     );
+    final time = weatherModel.data.weatherLive.cT;
     final formattedtime = DateTimeHelper.formatDateTime(dt);
      return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: Colors.grey.shade200,
       appBar: _appBar(),
       body: loading
           ? const Center(child: CircularProgressIndicator())
@@ -220,7 +221,7 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
           child:  gridSensors.isNotEmpty ? Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LeftWeatherPanel(city: "Coimbatore",date: formattedtime,  wind: windSpeed?.value ?? "0", temp: temp?.value ?? "0", humidity: hummitituy?.value ?? "0"),
+              LeftWeatherPanel(city: "Coimbatore",date: formattedtime,time: time,  wind: windSpeed?.value ?? "0", temp: temp?.value ?? "0", humidity: hummitituy?.value ?? "0"),
               SizedBox(width: 16),
               Expanded(child: RightDashboardPanel(gridSensors: gridSensors, windSpeed: windSpeed, windDirection: windDirection, co2: co2, rain: rain, iconResolver: _icon, unitResolver: unit)),
             ],
@@ -235,6 +236,7 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
 class LeftWeatherPanel extends StatelessWidget {
   final String city;
    final String date;
+   final String time;
    final String wind;
   final String temp;
   final String humidity;
@@ -243,6 +245,7 @@ class LeftWeatherPanel extends StatelessWidget {
     super.key,
     required this.city,
      required this.date,
+     required this.time,
      required this.wind,
     required this.temp,
     required this.humidity,
@@ -257,7 +260,8 @@ class LeftWeatherPanel extends StatelessWidget {
           weatherCardLeft(
             city: city,
              date: "$date",
-            temperature: "$temp °C", // optional if you add temp sensor later
+             time: time,
+            temperature: "$temp °C",
             feelsLike: temp,
             weatherIcon: Icons.wb_sunny,
             wind: "$wind km/h",
@@ -402,3 +406,4 @@ class DateTimeHelper {
         "$amPm";
   }
 }
+
