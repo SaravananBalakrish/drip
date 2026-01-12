@@ -43,7 +43,7 @@ Widget weatherCardLeft({
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                  Text(feelsLike),
+                  Text("Feel Like $feelsLike °C"),
                 ],
               ),
               const SizedBox(width: 20),

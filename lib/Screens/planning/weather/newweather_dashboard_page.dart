@@ -2,10 +2,10 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
  import 'package:oro_drip_irrigation/Screens/planning/weather/weather_helper.dart';
 import 'package:oro_drip_irrigation/Screens/planning/weather/weather_left_side_card.dart';
 import 'package:oro_drip_irrigation/Screens/planning/weather/weather_sensor_tile.dart';
-
 import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
 import '../../../services/mqtt_service.dart';
@@ -47,21 +47,43 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
   @override
   void initState() {
     super.initState();
+     print("call _ initstate");
     _weatherLiveRequest();
     _fetchWeatherJson();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+   print("didChangeDependencies call $loading ");
+    if (loading) {
+      _weatherLiveRequest();
+      _fetchWeatherJson();
+      loading = false;
+    }
+  }
+
+  void _refreshWeather() async {
+    setState(() => loading = true);
+    _weatherLiveRequest();
+    // ⏳ Give device time to respond
+    await Future.delayed(const Duration(seconds: 2));
+    await _fetchWeatherJson();
+  }
+
   void _weatherLiveRequest() {
+    print("Call _weatherLiveRequest");
     final payload = jsonEncode({
       "5000": {"5001": ""}
     });
-
     manager.topicToPublishAndItsMessage(
       payload,
       '${Environment.mqttPublishTopic}/${widget.deviceID}',
     );
   }
+
   Future<void> _fetchWeatherJson() async {
+    print("Call _fetchWeatherJson");
     try {
       final repository = Repository(HttpService());
 
@@ -82,19 +104,25 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
           weatherModel,
           selectedSerialNumber!,
         );
+        setState(() {
+        });
       }
     } catch (e) {
       debugPrint("Weather fetch error: $e");
     }
-
     setState(() => loading = false);
   }
 
   WeatherLiveUIModel? _findSensor(String key) {
     try {
-      return uiData.firstWhere(
-            (e) => e.sensorType.toLowerCase().contains(key.toLowerCase()),
-      );
+      final searchKey = key.toLowerCase();
+
+      for (final sensor in uiData) {
+        if (sensor.sensorType.toLowerCase() == searchKey) {
+          return sensor;
+        }
+      }
+
     } catch (_) {
       return null;
     }
@@ -123,9 +151,6 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
     return '';
   }
 
-  // ---------------------------------------------------------------------------
-  // APP BAR
-  // ---------------------------------------------------------------------------
   PreferredSizeWidget _appBar() {
     return AppBar(
       title: devices.isEmpty
@@ -191,7 +216,8 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
       date: weatherModel.data.weatherLive.cD,
       time: weatherModel.data.weatherLive.cT,
     );
-    return Scaffold(
+    final formattedtime = DateTimeHelper.formatDateTime(dt);
+     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: _appBar(),
       body: loading
@@ -199,20 +225,18 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
           :  Padding(
         padding: EdgeInsets.all(16),
         child: SingleChildScrollView(
-          child: Row(
+          child:  gridSensors.isNotEmpty ? Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LeftWeatherPanel(city: "Coimbatore",date: dt.toString(),  wind: windSpeed?.value ?? "0", temp: temp?.value ?? "0", humidity: hummitituy?.value ?? "0"),
+              LeftWeatherPanel(city: "Coimbatore",date: formattedtime,  wind: windSpeed?.value ?? "0", temp: temp?.value ?? "0", humidity: hummitituy?.value ?? "0"),
               SizedBox(width: 16),
               Expanded(child: RightDashboardPanel(gridSensors: gridSensors, windSpeed: windSpeed, windDirection: windDirection, co2: co2, rain: rain, iconResolver: _icon, unitResolver: unit)),
             ],
-          ),
+          ) : Center(child: Text("Weather data is currently unavailable. Please check the sensor connection or try again later.")),
         ),
       ),
     );
   }
-
-
 }
 
 
@@ -241,7 +265,7 @@ class LeftWeatherPanel extends StatelessWidget {
           weatherCardLeft(
             city: city,
              date: "$date",
-            temperature: temp, // optional if you add temp sensor later
+            temperature: "$temp °C", // optional if you add temp sensor later
             feelsLike: temp,
             weatherIcon: Icons.wb_sunny,
             wind: "$wind km/h",
@@ -357,9 +381,8 @@ class RightDashboardPanel extends StatelessWidget {
 }
 
 
-
 class DateTimeHelper {
-  /// Combines API date (cD) + time (cT) into DateTime
+  /// Combines API date + time into DateTime
   static DateTime fromApi({
     required DateTime date,
     required String time,
@@ -368,26 +391,22 @@ class DateTimeHelper {
     return DateTime.parse('$d $time');
   }
 
-  /// Format: Friday, 10 Jan 2026
-  static String formatDate(DateTime dt) {
-    const days = [
-      'Monday','Tuesday','Wednesday',
-      'Thursday','Friday','Saturday','Sunday'
-    ];
+  /// Format: Jan 12 2026, 09:53:13 AM
+  static String formatDateTime(DateTime dt) {
     const months = [
-      'Jan','Feb','Mar','Apr','May','Jun',
-      'Jul','Aug','Sep','Oct','Nov','Dec'
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
     ];
 
-    return "${days[dt.weekday - 1]}, "
-        "${dt.day.toString().padLeft(2, '0')} "
-        "${months[dt.month - 1]} ${dt.year}";
-  }
+    final hour12 = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
+    final amPm = dt.hour >= 12 ? 'PM' : 'AM';
 
-  /// Format: 3:46 PM
-  static String formatTime(DateTime dt) {
-    final hour = dt.hour % 12 == 0 ? 12 : dt.hour % 12;
-    final amPm = dt.hour >= 12 ? "PM" : "AM";
-    return "$hour:${dt.minute.toString().padLeft(2, '0')} $amPm";
+    return "${months[dt.month - 1]} "
+        "${dt.day.toString().padLeft(2, '0')} "
+        "${dt.year}, "
+        "${hour12.toString().padLeft(2, '0')}:"
+        "${dt.minute.toString().padLeft(2, '0')}:"
+        "${dt.second.toString().padLeft(2, '0')} "
+        "$amPm";
   }
 }

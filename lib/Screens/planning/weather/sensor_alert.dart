@@ -14,8 +14,8 @@ class SensorAlertBanner extends StatelessWidget {
           color: Colors.red.shade50,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Row(
-          children: const [
+        child: const Row(
+          children: [
             Icon(Icons.warning, color: Colors.red),
             SizedBox(width: 10),
             Expanded(
