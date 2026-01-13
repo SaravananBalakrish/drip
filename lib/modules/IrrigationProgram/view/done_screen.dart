@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/program_library.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/schedule_screen.dart';
 import 'package:provider/provider.dart';
+import '../../../Constants/constants.dart';
 import '../../../services/mqtt_service.dart';
 import '../../../utils/constants.dart';
 import '../repository/irrigation_program_repo.dart';
@@ -255,12 +256,17 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
                                     child: Text(doneProvider.priority, style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
                                 ),
                                 CustomNativeTimePicker(
-                                  initialValue: doneProvider.delayBetweenZones != "" ? doneProvider.delayBetweenZones : "00:00:00",
+                                  initialValue: Constants.showHourAndMinuteOnly(doneProvider.delayBetweenZones != ""
+                                      ? doneProvider.delayBetweenZones.length > 5
+                                      ? doneProvider.delayBetweenZones
+                                      : '${doneProvider.delayBetweenZones}:00'
+                                      : "00:00:00", widget.modelId),
                                   is24HourMode: false,
                                   style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
                                   onChanged: (newTime){
                                     doneProvider.updateProgramName(newTime, 'delayBetweenZones');
-                                  }, modelId: widget.modelId,
+                                  },
+                                  modelId: widget.modelId,
                                 ),
                                 IntrinsicWidth(
                                   child: Row(
@@ -315,16 +321,21 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
     final mainProvider = Provider.of<IrrigationProgramMainProvider>(context, listen: false);
     Map<String, dynamic> dataToMqtt = mainProvider.dataToMqtt(widget.serialNumber == 0 ? mainProvider.serialNumberCreation : widget.serialNumber, widget.programType);
     Map<String, dynamic> dataToMqttEcoGem = mainProvider.dataToMqttForEcoGem(widget.serialNumber == 0 ? mainProvider.serialNumberCreation : widget.serialNumber, widget.programType);
-    final ecoGemWFPayload = mainProvider.ecoGemPayloadForWF(widget.serialNumber == 0 ? mainProvider.serialNumberCreation : widget.serialNumber);
+    dynamic ecoGemWFPayload;
+    if(AppConstants.ecoGemAndPlusModelList.contains(widget.modelId)) {
+      ecoGemWFPayload = mainProvider.ecoGemPayloadForWF(widget.serialNumber == 0 ? mainProvider.serialNumberCreation : widget.serialNumber);
+    }
     List<String> ecoGemWFPayloadList = [];
     ecoGemWFPayloadList.add(jsonEncode(dataToMqttEcoGem));
-    for(int i = 0; i < ecoGemWFPayload.length; i++) {
-      final payload = {
-        "260${i + 1}": {
-          "2501": ecoGemWFPayload[i]
-        }
-      };
-      ecoGemWFPayloadList.add(jsonEncode(payload));
+    if(AppConstants.ecoGemAndPlusModelList.contains(widget.modelId)) {
+      for(int i = 0; i < ecoGemWFPayload.length; i++) {
+        final payload = {
+          "260${i + 1}": {
+            "2501": ecoGemWFPayload[i]
+          }
+        };
+        ecoGemWFPayloadList.add(jsonEncode(payload));
+      }
     }
     Map<String, dynamic> userData = {
       "defaultProgramName": mainProvider.defaultProgramName,
@@ -358,9 +369,6 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
         "hardware": AppConstants.ecoGemAndPlusModelList.contains(widget.modelId) ? ecoGemWFPayloadList : dataToMqtt
       };
       userData.addAll(dataToSend);
-      // print("ecoGemWFPayloadList :: $ecoGemWFPayloadList");
-      // print("dataToMqtt :: ${dataToMqtt['2500']['2501']}");
-      // print("dataToMqtt :: ${dataToMqtt['2500']['2502']}");
       try {
         if(AppConstants.ecoGemAndPlusModelList.contains(widget.modelId)) {
           final result = await showDialog<String>(

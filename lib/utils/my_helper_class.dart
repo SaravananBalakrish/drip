@@ -88,13 +88,13 @@ class MqttAckTracker {
   }
 
   static void ackReceived(String payloadKey) {
-    final String? buttonId = _pendingButtons.entries
+    final String buttonId = _pendingButtons.entries
         .firstWhere(
             (entry) => entry.value == payloadKey,
         orElse: () => const MapEntry("", ""))
         .key;
 
-    if (buttonId == null || buttonId.isEmpty) {
+    if (buttonId.isEmpty) {
       debugPrint("⚠ ACK arrived but no button matched payloadKey=$payloadKey");
       return;
     }

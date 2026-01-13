@@ -30,8 +30,8 @@ class LightWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
-                width: isWide? 70 : 40,
-                height: isWide? 70 : 40,
+                width: isWide? 70 : 43,
+                height: isWide? 70 : 43,
                 child: AppConstants.getAsset(isWide ? 'light':'light_mbl', objLight.status, ''),
               ),
               Text(

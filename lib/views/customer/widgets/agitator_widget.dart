@@ -10,10 +10,9 @@ import '../../../utils/constants.dart';
 class AgitatorWidget extends StatelessWidget {
   final FertilizerSiteModel fertilizerSite;
   final bool isMobile;
-  final bool isNova;
   const AgitatorWidget({
     super.key,
-    required this.fertilizerSite, required this.isMobile, required this.isNova,
+    required this.fertilizerSite, required this.isMobile,
   });
 
   @override
@@ -37,7 +36,7 @@ class AgitatorWidget extends StatelessWidget {
                 ? agitatorWidget(true, fertilizerSite)
                 : agitatorWidget(false, fertilizerSite),
 
-            if(kIsWeb)...[
+            if(kIsWeb && !isMobile)...[
               SizedBox(height: fertilizerSite.agitator[0].status==1? 25:90),
               Container(width: 53, height: 1,color: Colors.grey.shade300),
               const SizedBox(height: 3.5),
@@ -63,7 +62,7 @@ class AgitatorWidget extends StatelessWidget {
       ),
     );
 
-    if (isMobile && !isNova) {
+    if (isMobile) {
       content = Transform(
         alignment: Alignment.center,
         transform: Matrix4.rotationY(math.pi),
