@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
+import 'package:oro_drip_irrigation/Screens/planning/weather_reports.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 import '../../models/weather_modelnew.dart';
 import '../../Widgets/animated_cloud.dart';
@@ -59,6 +60,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     Request();
     fetchDataSunRiseSet();
     fetchDataLive();
+
   }
 
   @override
@@ -79,14 +81,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
     }
     else if (weathernewlive.stations.isEmpty) {
       // return const Center(child: Text('Currently No Weather Data Available'));
-      return Column(
+      return const Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Center(
+          Center(
               child: Text('Currently No Weather Data Available...')),
-          // TextButton.icon(onPressed: (){
-          // Navigator.push(context, MaterialPageRoute(builder: (context) => WebViewExample(userid: widget.userId,controllerid: widget.controllerId,)));
-          // }, label: Text('Click To Open External Weather Data')),
+
 
         ],
       );
@@ -170,9 +170,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
     // List<String> unitlist = ['CB','CB','CB','CB','°C','°C','kPa','%','%','ppm','Lu','MM','km/h',''];
 
     String? irname = findIrrigationLine(weathernewlive.stations[i].deviceId)!;
-    print('irname : $irname');
-    debugPrint('test stations : ${weathernewlive.stations[0].toJson()}');
-    debugPrint('test sensror length : ${ weathernewlive.stations[0].sensors.length}');
+
 
     return Scaffold(body: Center(
       child: LayoutBuilder(
@@ -180,27 +178,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
             if (MediaQuery.sizeOf(context).width < 800) {
               //mobile view
               return SafeArea(
-                child: Container(color: Theme.of(context).primaryColorDark,
+                child: Container(color: Theme.of(context).scaffoldBackgroundColor,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
                         // Header
-                        const Padding(
-                          padding: EdgeInsets.only(left: 16.0, right: 8.0,bottom: 20.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Text(
-                                'Weather',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+
 
                         // Main Weather Display
                         SizedBox(
@@ -214,13 +197,13 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   const Icon(
                                     Icons.sunny_snowing, // Replace with a rain icon if available
                                     size: 100,
-                                    color: Colors.white,
+                                    color: Colors.black,
                                   ),
                                   const SizedBox(height: 16),
                                   const Text(
                                     '28°',
                                     style: TextStyle(
-                                      color: Colors.white,
+                                      color: Colors.black,
                                       fontSize: 80,
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -228,7 +211,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   const Text(
                                     'Precipitations',
                                     style: TextStyle(
-                                      color: Colors.white70,
+                                      color: Colors.black,
                                       fontSize: 18,
                                     ),
                                   ),
@@ -236,7 +219,7 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                   const Text(
                                     'MAX.: 31°  MIN.: 25°',
                                     style: TextStyle(
-                                      color: Colors.white70,
+                                      color: Colors.black,
                                       fontSize: 16,
                                     ),
                                   ),
@@ -394,11 +377,12 @@ class _WeatherScreenState extends State<WeatherScreen> {
                               style: const TextStyle(fontWeight: FontWeight.w900),
                             ),
                           ),
+
 //${findIrrigationLine(weathernewlive.stations[i].deviceId) ?? ''}
                           Expanded(
                             flex: 3,
                             child: Container(
-                              color: Colors.grey.shade100,
+                              color: Colors.teal.shade100,
                               padding:
                               const EdgeInsets.only(left: 15, right: 15, bottom: 10),
                               // height: constraints.maxHeight * 0.59,
@@ -414,10 +398,27 @@ class _WeatherScreenState extends State<WeatherScreen> {
                                         for (var index = 0;
                                         index < weathernewlive.stations[i].sensors.length;
                                         index++)
-                                          gaugeViewWeather(
-                                              getConfigObjectNameBySNo(weatherdataconfigobjects,weathernewlive.stations[i].sensors[index].sno)!,
-                                              i,
-                                              index)
+                                      GestureDetector(
+                                      onDoubleTap: (){
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ReportPage(
+                                          sensorsrno: weatherdataconfigobjects[index].sNo ,
+                                            devicesnro: 6,
+                                            userId:widget.userId,
+                                            controllerId:widget.controllerId,
+                                            deviceID: widget.deviceID,
+                                            initialReportType: getReportType(weatherdataconfigobjects[index].objectName,weatherdataconfigobjects[index].sNo) ?? "SoilMoisture1",
+                                       ),
+                                    ));
+                                  },
+                                            child: gaugeViewWeather(
+                                                getConfigObjectNameBySNo(weatherdataconfigobjects,weathernewlive.stations[i].sensors[index].sno)!,
+                                                i,
+                                                index),
+                                          )
+
                                       ],
                                     ),
                                   );
@@ -447,11 +448,11 @@ class _WeatherScreenState extends State<WeatherScreen> {
   Widget _buildWeatherDetail(IconData icon, String value) {
     return Row(
       children: [
-        Icon(icon, color: Colors.white70, size: 20),
+        Icon(icon, color: Colors.black, size: 20),
         const SizedBox(width: 4),
         Text(
           value,
-          style: const TextStyle(color: Colors.white70, fontSize: 16),
+          style: const TextStyle(color: Colors.black, fontSize: 16),
         ),
       ],
     );
@@ -464,10 +465,10 @@ class _WeatherScreenState extends State<WeatherScreen> {
       child: Container(
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
-          color: Colors.grey.withOpacity(0.2), // Adjust opacity and color
+          color: Theme.of(context).primaryColor.withOpacity(0.6), // Adjust opacity and color
           borderRadius: BorderRadius.circular(16), // Rounded corners
           border: Border.all(
-            color: Colors.white.withOpacity(0.3), // Subtle border
+            color: Colors.teal, // Subtle border
             width: 1,
           ),
         ),
@@ -549,6 +550,68 @@ class _WeatherScreenState extends State<WeatherScreen> {
       ),
     );
   }
+
+
+  String? getReportType(String objectName, double sNo) {
+    print("objectNamecall$objectName");
+    print("sNo$sNo");
+    // Static reportTypes
+    const List<String> reportTypes = [
+      'SoilMoisture1',
+      'SoilMoisture2',
+      'SoilMoisture3',
+      'SoilMoisture4',
+      'SoilTemperature',
+      'Humidity',
+      'WindDirection',
+      'WindSpeed',
+      'temperature',
+      'AtmosphericPressure',
+      'LeafWetness',
+      'Rainfall',
+      'CO2',
+      'LDR',
+      'Lux'
+    ];
+
+    // Static objectName → base mapping
+    const Map<String, String> objectNameToBase = {
+      'Moisture Sensor': 'SoilMoisture',
+      'Temperature Sensor': 'temperature',
+      'Soil Temperature Sensor': 'SoilTemperature',
+      'Wind Direction Sensor': 'WindDirection',
+      'Wind Speed Sensor': 'WindSpeed',
+      'Humidity Sensor': 'Humidity',
+      'Leaf Wetness Sensor': 'LeafWetness',
+      'Rain Fall Sensor': 'Rainfall',
+      'Co2 Sensor': 'CO2',
+      'LUX Sensor': 'Lux',
+      'LDR Sensor': 'LDR',
+      'Atmospheric Pressure': 'AtmosphericPressure',
+    };
+
+    // 1️⃣ get base
+    final base = objectNameToBase[objectName];
+    if (base == null) return null;
+
+    // 2️⃣ Moisture Sensor → needs index
+    if (base == 'SoilMoisture') {
+      // 25.001 → 1, 25.002 → 2
+      final index = ((sNo * 1000).round() % 1000);
+      final value = '$base$index';
+print("value$value");
+      return reportTypes.contains(value) ? value : "SoilMoisture1";
+    }
+
+    // 3️⃣ Other sensors
+    print("value$base");
+
+    return reportTypes.contains(base) ? base : "SoilMoisture1";
+  }
+
+
+
+
 
   Color Getcolor(String val) {
     if (val == '1') {

@@ -835,7 +835,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                                     // height: ,
                                   ),
                                   icon: Icons.propane_tank,
-                                  footer1: "${pumpItem.level.toString().split(',')[0]} feet",
+                                  footer1: "${(num.parse(pumpItem.level.toString().split(',')[0]) * 3.2808399).toStringAsFixed(2)} feet",
                                   footer2: '',
                                   condition: pumpItem.waterMeter == "-" && pumpItem.pressure == "-"
                               ),
@@ -1343,7 +1343,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(footer1, style: const TextStyle(fontWeight: FontWeight.bold, ),),
+                          Text(footer1, style: const TextStyle(fontWeight: FontWeight.bold, ), overflow: TextOverflow.ellipsis,),
                           const SizedBox(height: 5,),
                           if(footer2 != '')
                             Text(footer2.split(':')[1], style: const TextStyle(fontWeight: FontWeight.bold, ),),

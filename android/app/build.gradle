@@ -12,8 +12,8 @@ if (localPropertiesFile.exists()) {
 }
 
 def keyProperties = new Properties()
-def keyPropertiesFile = rootProject.file('key.properties')
-//def keyPropertiesFile = rootProject.file('android/key.properties')
+//def keyPropertiesFile = rootProject.file('key.properties')
+def keyPropertiesFile = rootProject.file('android/key.properties')
 if (keyPropertiesFile.exists()) {
     println "key.properties found at: ${keyPropertiesFile.absolutePath}"
     keyProperties.load(keyPropertiesFile.newDataInputStream())
@@ -43,6 +43,11 @@ android {
             dimension "flavor-type"
             applicationId "com.niagaraautomations.smartComm"
             resValue "string", "app_name", "SMART COMM"
+        }
+        agritel {
+            dimension "flavor-type"
+            applicationId "com.niagaraautomations.agritel"
+            resValue "string", "app_name", "Agritel"
         }
     }
 
@@ -80,8 +85,13 @@ android {
     defaultConfig {
         applicationId = "com.niagaraautomations.oroDripirrigation"
         //minSdk = flutter.minSdkVersion
+<<<<<<< HEAD
         minSdkVersion flutter.minSdkVersion
         //minSdkVersion = flutter.minSdkVersion
+=======
+//        minSdkVersion flutter.minSdkVersion
+        minSdkVersion = 23
+>>>>>>> f57a5dda84cded4e6d14442dee5cb3d9d979bc6f
         targetSdk = flutter.targetSdkVersion
         versionCode = 1686
         versionName = "1.2.56"

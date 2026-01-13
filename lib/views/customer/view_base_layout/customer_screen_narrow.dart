@@ -1,6 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/utils/helpers/mc_permission_helper.dart';
+ import 'package:oro_drip_irrigation/utils/helpers/mc_permission_helper.dart';
 import 'package:oro_drip_irrigation/views/customer/scheduled_program/scheduled_program_narrow.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/connection_banner.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/customer_drawer.dart';
@@ -8,7 +8,8 @@ import 'package:oro_drip_irrigation/views/customer/widgets/customer_fab_menu.dar
 import 'package:provider/provider.dart';
 
 import '../../../Screens/Logs/irrigation_and_pump_log.dart';
-import '../../../StateManagement/customer_provider.dart';
+import '../../../Screens/planning/weather/newweather_dashboard_page.dart';
+ import '../../../StateManagement/customer_provider.dart';
 import '../../../Widgets/network_connection_banner.dart';
 import '../../../layouts/layout_selector.dart';
 import '../../../modules/PumpController/view/pump_controller_home.dart';
@@ -49,6 +50,8 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
 
     bool isGemOrNova = isGemOrNovaModel(cM.modelId);
 
+    bool hasWeatherStation = cM.irrigationLine.any((line) => line.hasWeatherStation);
+
     final pages = isGemOrNova ? [
       const DashboardLayoutSelector(userRole: UserRole.customer),
       Consumer<CustomerScreenControllerViewModel>(
@@ -75,6 +78,12 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
         },
         masterData: cM,
       ),
+      if(hasWeatherStation)...[
+        WeatherDashboardPage(userId: vm.mySiteList.data[vm.sIndex].customerId, controllerId: cM.controllerId, deviceID: cM.deviceId),
+        // WeatherScreen(userId: vm.mySiteList.data[vm.sIndex].customerId,
+        //     controllerId: cM.controllerId, deviceID: cM.deviceId),
+        // WeatherDashboardPage(userId: vm.mySiteList.data[vm.sIndex].customerId, controllerId: cM.controllerId, deviceID: cM.deviceId),
+      ],
       const SettingsMenuNarrow(),
     ] :
     [
@@ -106,7 +115,8 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
           customerMobileNo: viewedCustomer.mobileNo
       ),
 
-      floatingActionButton: CustomerFabMenu(
+      floatingActionButton: navModel.index==0?
+      CustomerFabMenu(
         currentMaster: cM,
         loggedInUser: loggedInUser,
         vm: vm,
@@ -116,8 +126,10 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
           cM.getPermissionStatus("Standalone On/Off"),
           cM.getPermissionStatus("View Controller Log"),
         ],
-      ),
-      bottomNavigationBar: isGemOrNova ? CustomerBottomNav(index: navModel.index, onTap: navModel.setIndex) : null,
+      ) : null,
+      bottomNavigationBar: isGemOrNova ?
+      CustomerBottomNav(index: navModel.index, onTap: navModel.setIndex,
+        hasWeatherStation: hasWeatherStation) : null,
       banners: [
         if(isGemOrNova)
           const NetworkConnectionBanner(),

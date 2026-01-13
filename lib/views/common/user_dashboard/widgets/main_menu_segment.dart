@@ -16,6 +16,7 @@ class MainMenuSegmentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return ConstrainedBox(
       constraints: const BoxConstraints(maxWidth: 500),
       child: SegmentedButton<MainMenuSegment>(
@@ -57,7 +58,10 @@ class MainMenuSegmentWidget extends StatelessWidget {
             const Icon(Icons.warehouse_outlined),
           ][index];
 
-          return ButtonSegment(value: segmentValue, label: Text(title), icon: icon);
+          return ButtonSegment(value: segmentValue, label: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(title),
+          ), icon: icon);
         }),
         selected: {viewModel.mainMenuSegmentView},
         onSelectionChanged: (Set<MainMenuSegment> newSelection) {

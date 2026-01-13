@@ -12,6 +12,8 @@ import '../app_info.dart';
 import '../customer_product.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 
+import '../help_support.dart';
+
 
 class CustomerDrawer extends StatelessWidget {
   final int customerId;
@@ -59,7 +61,19 @@ class CustomerDrawer extends StatelessWidget {
           _buildDrawerItem(
             context,
             icon: Icons.help_outline,
-            text: "Help",
+            text: "Help & Support",
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const DashboardHelpPage(),
+              ),
+            ),
+          ),
+          _divider(),
+          _buildDrawerItem(
+            context,
+            icon: Icons.feedback_outlined,
+            text: "Send Feedback",
             onTap: () => Navigator.push(
               context,
               MaterialPageRoute(
@@ -70,13 +84,6 @@ class CustomerDrawer extends StatelessWidget {
                 ),
               ),
             ),
-          ),
-          _divider(),
-          _buildDrawerItem(
-            context,
-            icon: Icons.feedback_outlined,
-            text: "Send Feedback",
-            onTap: () {},
           ),
           _divider(),
           _buildDrawerItem(
@@ -220,9 +227,11 @@ class CustomerDrawer extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          F.appFlavor!.name.contains('oro')
-              ? Image.asset('assets/png/company_logo_nia.png', width: 60)
-              : SizedBox(
+          F.appFlavor!.name.contains('oro') ?
+          Image.asset('assets/png/company_logo_nia.png', width: 60) :
+          F.appFlavor!.name.contains('agritel') ?
+          Image.asset('assets/png/agritel_logo.png', width: 157) :
+          SizedBox(
             height: 60,
             child: Image.asset('assets/png/company_logo.png'),
           ),

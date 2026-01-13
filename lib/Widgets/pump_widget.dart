@@ -79,173 +79,170 @@ class PumpWidget extends StatelessWidget {
           }
         }
 
-        return Padding(
-          padding:  EdgeInsets.only(top: (isNova && isAvailFrtSite) ? 39.5 : 0),
-          child: Stack(
-            children: [
-              SizedBox(
-                width: 70,
-                height: 100,
-                child: Column(
-                  children: [
-                    Builder(
-                      builder: (buttonContext) => Tooltip(
-                        message: 'View more details',
-                        child: TextButton(
-                          onPressed: () {
-                            showPopover(
-                              context: buttonContext,
-                              bodyBuilder: (context) {
-                                return ValueListenableBuilder<int>(
-                                  valueListenable: popoverUpdateNotifier,
-                                  builder: (context, _, __) {
-                                    return Material(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          hasVoltage?
-                                          _buildVoltagePopoverContent(context, voltages, columns, isNova) :
-                                          Container(),
-                                          if (isSourcePump) _buildBottomControlButtons(context),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              onPop: () => debugPrint('Popover was popped!'),
-                              direction: PopoverDirection.bottom,
-                              width: 325,
-                              arrowHeight: 15,
-                              arrowWidth: 30,
-                            );
-                          },
-                          style: ButtonStyle(
-                            padding: WidgetStateProperty.all(EdgeInsets.zero),
-                            minimumSize: WidgetStateProperty.all(Size.zero),
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            backgroundColor: WidgetStateProperty.all(Colors.transparent),
-                          ),
-                          child: SizedBox(
-                            height : 70,
-                            child: AppConstants.getAsset(isMobile ? 'mobile pump' : 'pump', pump.status, ''),
-                          ),
+        return Stack(
+          children: [
+            SizedBox(
+              width: 70,
+              height: 100,
+              child: Column(
+                children: [
+                  Builder(
+                    builder: (buttonContext) => Tooltip(
+                      message: 'View more details',
+                      child: TextButton(
+                        onPressed: () {
+                          showPopover(
+                            context: buttonContext,
+                            bodyBuilder: (context) {
+                              return ValueListenableBuilder<int>(
+                                valueListenable: popoverUpdateNotifier,
+                                builder: (context, _, __) {
+                                  return Material(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        hasVoltage?
+                                        _buildVoltagePopoverContent(context, voltages, columns, isNova) :
+                                        Container(),
+                                        if (isSourcePump) _buildBottomControlButtons(context),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            onPop: () => debugPrint('Popover was popped!'),
+                            direction: PopoverDirection.bottom,
+                            width: 325,
+                            arrowHeight: 15,
+                            arrowWidth: 30,
+                          );
+                        },
+                        style: ButtonStyle(
+                          padding: WidgetStateProperty.all(EdgeInsets.zero),
+                          minimumSize: WidgetStateProperty.all(Size.zero),
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                        ),
+                        child: SizedBox(
+                          height : 70,
+                          child: AppConstants.getAsset(isMobile ? 'mobile pump' : 'pump', pump.status, ''),
                         ),
                       ),
                     ),
-                    Text(
-                      pump.name,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 10, color: Colors.black54),
+                  ),
+                  Text(
+                    pump.name,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 10, color: Colors.black54),
+                  ),
+                ],
+              ),
+            ),
+
+            if (pump.onDelayLeft != '00:00:00' && Formatters().isValidTimeFormat(pump.onDelayLeft))
+              Positioned(
+                top: isMobile? 20:40,
+                left: 7.5,
+                child: Container(
+                  width: 55,
+                  decoration: BoxDecoration(
+                    color: Colors.greenAccent,
+                    borderRadius: const BorderRadius.all(Radius.circular(2)),
+                    border: Border.all(color: Colors.green, width: 0.5),
+                  ),
+                  child: ChangeNotifierProvider(
+                    create: (_) => DecreaseDurationNotifier(pump.onDelayLeft),
+                    child: Consumer<DecreaseDurationNotifier>(
+                      builder: (context, notifier, _) {
+                        return Center(
+                          child: Column(
+                            children: [
+                              const Text("On delay", style: TextStyle(fontSize: 10, color: Colors.black)),
+                              const Divider(height: 0, color: Colors.grey),
+                              Text(notifier.onDelayLeft, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 10)),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                  ],
+                  ),
                 ),
               ),
 
-              if (pump.onDelayLeft != '00:00:00' && Formatters().isValidTimeFormat(pump.onDelayLeft))
-                Positioned(
-                  top: isMobile? 20:40,
-                  left: 7.5,
-                  child: Container(
-                    width: 55,
-                    decoration: BoxDecoration(
-                      color: Colors.greenAccent,
-                      borderRadius: const BorderRadius.all(Radius.circular(2)),
-                      border: Border.all(color: Colors.green, width: 0.5),
-                    ),
-                    child: ChangeNotifierProvider(
-                      create: (_) => DecreaseDurationNotifier(pump.onDelayLeft),
-                      child: Consumer<DecreaseDurationNotifier>(
-                        builder: (context, notifier, _) {
-                          return Center(
-                            child: Column(
-                              children: [
-                                const Text("On delay", style: TextStyle(fontSize: 10, color: Colors.black)),
-                                const Divider(height: 0, color: Colors.grey),
-                                Text(notifier.onDelayLeft, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 10)),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+            if (int.tryParse(pump.reason) case final reason? when reason > 0 && reason != 31)
+              Positioned(
+                top: 1,
+                left: 37.5,
+                child: Tooltip(
+                  message: getContentByCode(reason),
+                  textStyle: const TextStyle(color: Colors.black54),
+                  decoration: BoxDecoration(
+                    color: Colors.orangeAccent,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: const CircleAvatar(
+                    radius: 11,
+                    backgroundColor: Colors.deepOrangeAccent,
+                    child: Icon(Icons.info_outline, size: 17, color: Colors.white),
                   ),
                 ),
+              ),
 
-              if (int.tryParse(pump.reason) case final reason? when reason > 0 && reason != 31)
-                Positioned(
-                  top: 1,
-                  left: isMobile? 3 : 37.5,
-                  child: Tooltip(
-                    message: getContentByCode(reason),
-                    textStyle: const TextStyle(color: Colors.black54),
-                    decoration: BoxDecoration(
-                      color: Colors.orangeAccent,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: const CircleAvatar(
-                      radius: 11,
-                      backgroundColor: Colors.deepOrangeAccent,
-                      child: Icon(Icons.info_outline, size: 17, color: Colors.white),
-                    ),
+            if (pump.reason == '11' || pump.reason == '22')
+              Positioned(
+                top: pump.actualValue == '0.0' ? 50 : 40,
+                left: 0,
+                child: Container(
+                  width: 67,
+                  decoration: BoxDecoration(
+                    color: pump.status == 1 ? Colors.greenAccent : Colors.yellowAccent,
+                    borderRadius: const BorderRadius.all(Radius.circular(2)),
+                    border: Border.all(color: Colors.grey, width: 0.5),
                   ),
-                ),
-
-              if (pump.reason == '11' || pump.reason == '22')
-                Positioned(
-                  top: pump.actualValue == '0.0' ? 50 : 40,
-                  left: 0,
-                  child: Container(
-                    width: 67,
-                    decoration: BoxDecoration(
-                      color: pump.status == 1 ? Colors.greenAccent : Colors.yellowAccent,
-                      borderRadius: const BorderRadius.all(Radius.circular(2)),
-                      border: Border.all(color: Colors.grey, width: 0.5),
-                    ),
-                    child: Center(
-                      child: Column(
-                        children: [
-                          if(pump.actualValue!='0.0')...[
-                            Text('Max: ${pump.actualValue}', style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
-                            const Divider(height: 0, color: Colors.grey, thickness: 0.5),
-                          ],
-                          Text(
-                            pump.status == 1 ? 'cRm: ${pump.setValue}' : 'Brk: ${pump.setValue}',
-                            style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                )
-
-              else if (pump.reason == '8' && isTimeFormat(pump.actualValue.split('_').last))
-                Positioned(
-                  top: 40,
-                  left: 0,
-                  child: Container(
-                    width: 67,
-                    decoration: BoxDecoration(
-                      color: pump.status == 1 ? Colors.greenAccent : Colors.yellowAccent,
-                      borderRadius: const BorderRadius.all(Radius.circular(2)),
-                      border: Border.all(color: Colors.grey, width: 0.5),
-                    ),
-                    child: Center(
-                      child: Column(
-                        children: [
-                          const Text('Restart within', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        if(pump.actualValue!='0.0')...[
+                          Text('Max: ${pump.actualValue}', style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
                           const Divider(height: 0, color: Colors.grey, thickness: 0.5),
-                          Text(
-                            pump.actualValue.split('_').last,
-                            style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
-                          ),
                         ],
-                      ),
+                        Text(
+                          pump.status == 1 ? 'cRm: ${pump.setValue}' : 'Brk: ${pump.setValue}',
+                          style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-            ],
-          ),
+              )
+
+            else if (pump.reason == '8' && isTimeFormat(pump.actualValue.split('_').last))
+              Positioned(
+                top: 40,
+                left: 0,
+                child: Container(
+                  width: 67,
+                  decoration: BoxDecoration(
+                    color: pump.status == 1 ? Colors.greenAccent : Colors.yellowAccent,
+                    borderRadius: const BorderRadius.all(Radius.circular(2)),
+                    border: Border.all(color: Colors.grey, width: 0.5),
+                  ),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        const Text('Restart within', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
+                        const Divider(height: 0, color: Colors.grey, thickness: 0.5),
+                        Text(
+                          pump.actualValue.split('_').last,
+                          style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+          ],
         );
       },
     );
@@ -371,7 +368,10 @@ class PumpWidget extends StatelessWidget {
   }
 
   Widget _buildPhaseInfo() {
+
     int phase = int.tryParse(pump.phase) ?? 0;
+    print("phase:$phase");
+
     return Container(
       width: 310,
       height: 25,
@@ -380,19 +380,31 @@ class PumpWidget extends StatelessWidget {
         children: [
           const Padding(
             padding: EdgeInsets.only(left: 9),
-            child: SizedBox(width: 100, child: Text('Phase', style: TextStyle(color: Colors.black54))),
+            child: SizedBox(width: 100, child: Text('Trip phase', style: TextStyle(color: Colors.black54))),
           ),
           const Spacer(),
-          for (int i = 0; i < 3; i++)
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 7,
-                  backgroundColor: phase > i ? Colors.green : Colors.grey.shade400,
-                ),
-                const VerticalDivider(color: Colors.transparent),
-              ],
-            ),
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 7,
+                backgroundColor: phase ==0 ? Colors.grey.shade400 :
+                phase == 1 ? Colors.red : Colors.green,
+              ),
+              const VerticalDivider(color: Colors.transparent),
+              CircleAvatar(
+                radius: 7,
+                backgroundColor: phase ==0 ? Colors.grey.shade400 :
+                phase == 2 ? Colors.red : Colors.green,
+              ),
+              const VerticalDivider(color: Colors.transparent),
+              CircleAvatar(
+                radius: 7,
+                backgroundColor: phase ==0 ? Colors.grey.shade400 :
+                phase == 3 ? Colors.red : Colors.green,
+              ),
+              const VerticalDivider(color: Colors.transparent),
+            ],
+          ),
         ],
       ),
     );
@@ -466,7 +478,7 @@ class PumpWidget extends StatelessWidget {
             textColor: Colors.white,
             onPressed: () {
               String payload = '${pump.sNo},1,1';
-              if (modelId == 56 || modelId == 57 || modelId == 58 || modelId == 59) {
+              if(AppConstants.ecoGemModelList.contains(modelId)) {
                 payload = payload.replaceAll(RegExp(r'[.]'), ',');
               }
 
@@ -484,7 +496,7 @@ class PumpWidget extends StatelessWidget {
             textColor: Colors.white,
             onPressed: () {
               String payload = '${pump.sNo},0,1';
-              if (modelId == 56 || modelId == 57 || modelId == 58 || modelId == 59) {
+              if(AppConstants.ecoGemModelList.contains(modelId)) {
                 payload = payload.replaceAll(RegExp(r'[.]'), ',');
               }
 
@@ -586,6 +598,7 @@ class VoltageWidget extends StatelessWidget {
 
   Widget _buildPhaseInfo(BuildContext context) {
     int phase = int.tryParse("0") ?? 0;
+    print("phase:$phase");
     return Container(
       width: MediaQuery.sizeOf(context).width,
       height: 25,
@@ -594,19 +607,31 @@ class VoltageWidget extends StatelessWidget {
         children: [
           const Padding(
             padding: EdgeInsets.only(left: 9),
-            child: SizedBox(width: 100, child: Text('Phase', style: TextStyle(color: Colors.black54))),
+            child: SizedBox(width: 100, child: Text('Trip phase', style: TextStyle(color: Colors.black54))),
           ),
           const Spacer(),
-          for (int i = 0; i < 3; i++)
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 7,
-                  backgroundColor: phase > i ? Colors.green : Colors.grey.shade400,
-                ),
-                const VerticalDivider(color: Colors.transparent),
-              ],
-            ),
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 7,
+                backgroundColor: phase ==0 ? Colors.grey.shade400 :
+                phase == 1 ? Colors.red : Colors.green,
+              ),
+              const VerticalDivider(color: Colors.transparent),
+              CircleAvatar(
+                radius: 7,
+                backgroundColor: phase ==0 ? Colors.grey.shade400 :
+                phase == 2 ? Colors.red : Colors.green,
+              ),
+              const VerticalDivider(color: Colors.transparent),
+              CircleAvatar(
+                radius: 7,
+                backgroundColor: phase ==0 ? Colors.grey.shade400 :
+                phase == 3 ? Colors.red : Colors.green,
+              ),
+              const VerticalDivider(color: Colors.transparent),
+            ],
+          ),
         ],
       ),
     );
