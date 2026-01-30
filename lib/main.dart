@@ -76,7 +76,7 @@ FutureOr<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   tz.initializeTimeZones();
-  F.appFlavor = Flavor.oroProduction;
+  // F.appFlavor = Flavor.oroProduction;
   await NetworkUtils.initialize();
 
   // Request runtime permissions before providers start

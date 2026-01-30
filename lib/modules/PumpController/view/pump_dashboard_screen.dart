@@ -190,7 +190,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedImageMedium(imagePath: 'assets/Images/Png/${F.name.contains('oro') ? 'Oro' : 'SmartComm'}/category_${2}.png'),
+                         SizedImageMedium(imagePath: 'assets/Images/Png/${F.name.contains('oro') ? 'Oro' : F.name.contains('agritel') ? 'Agritel' : 'SmartComm'}/category_${2}.png'),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
