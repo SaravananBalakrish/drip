@@ -553,7 +553,6 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
     super.dispose();
   }
 }
-
 class ScrollableTextWithSearch extends StatefulWidget {
   final String text;
 
@@ -576,15 +575,14 @@ class _ScrollableTextWithSearchState extends State<ScrollableTextWithSearch> {
   @override
   void initState() {
     super.initState();
-    // Add listener to the searchController to update the search query when text changes
     _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
-    // Always dispose controllers when done
-    _scrollController.dispose();
     _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -598,29 +596,27 @@ class _ScrollableTextWithSearchState extends State<ScrollableTextWithSearch> {
 
   // Highlights the matched text and returns a list of TextSpan
   List<TextSpan> _highlightText(String text, List<int> matchPositions) {
+    if (_searchQuery.isEmpty) return [TextSpan(text: text)];
+
     List<TextSpan> children = [];
     int start = 0;
 
-    for (int i = 0; i < matchPositions.length; i++) {
-      if (start < matchPositions[i]) {
-        children.add(TextSpan(text: text.substring(start, matchPositions[i])));
-      }
+    for (int pos in matchPositions) {
+      if (start < pos) children.add(TextSpan(text: text.substring(start, pos)));
       children.add(TextSpan(
-        text: text.substring(matchPositions[i], matchPositions[i] + _searchQuery.length),
-        style: TextStyle(backgroundColor: Colors.yellow), // Highlight color
+        text: text.substring(pos, pos + _searchQuery.length),
+        style: TextStyle(backgroundColor: Colors.yellow),
       ));
-      start = matchPositions[i] + _searchQuery.length;
+      start = pos + _searchQuery.length;
     }
 
-    if (start < text.length) {
-      children.add(TextSpan(text: text.substring(start)));
-    }
-
+    if (start < text.length) children.add(TextSpan(text: text.substring(start)));
     return children;
   }
 
   // Finds matches and returns a list of start positions of the matches
   List<int> _findMatches(String text, String query) {
+    if (query.isEmpty) return [];
     List<int> matches = [];
     int start = 0;
 
@@ -637,26 +633,41 @@ class _ScrollableTextWithSearchState extends State<ScrollableTextWithSearch> {
     return matches;
   }
 
+  // Auto-scroll to bottom
+  void _scrollToBottom() {
+    if (!_scrollController.hasClients) return;
+
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
+  // Detect new text and scroll
   @override
-  Widget build(BuildContext context)
-  {
-    // Get the list of match positions
-    final List<int> matches = _searchQuery.isEmpty
-        ? []
-        : _findMatches(widget.text, _searchQuery);
-    _matchCount = matches.length;
-    // Scroll to the first match if needed
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   if (_scrollController.hasClients) {
-    //     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    //   }
-    // });
+  void didUpdateWidget(covariant ScrollableTextWithSearch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // If new text is added, scroll to bottom
+    if (widget.text.length > oldWidget.text.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _matches = _searchQuery.isEmpty ? [] : _findMatches(widget.text, _searchQuery);
+    _matchCount = _matches.length;
+
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
-            controller: _searchController,  // Use passed controller
+            controller: _searchController,
             decoration: InputDecoration(
               labelText: 'Search',
               border: OutlineInputBorder(),
@@ -683,7 +694,7 @@ class _ScrollableTextWithSearchState extends State<ScrollableTextWithSearch> {
               padding: const EdgeInsets.all(8.0),
               child: SelectableText.rich(
                 TextSpan(
-                  children: _highlightText(widget.text, matches),
+                  children: _highlightText(widget.text, _matches),
                 ),
               ),
             ),
@@ -693,3 +704,144 @@ class _ScrollableTextWithSearchState extends State<ScrollableTextWithSearch> {
     );
   }
 }
+
+
+// class ScrollableTextWithSearch extends StatefulWidget {
+//   final String text;
+//
+//   ScrollableTextWithSearch({
+//     required this.text,
+//   });
+//
+//   @override
+//   _ScrollableTextWithSearchState createState() =>
+//       _ScrollableTextWithSearchState();
+// }
+//
+// class _ScrollableTextWithSearchState extends State<ScrollableTextWithSearch> {
+//   String _searchQuery = '';  // Query text to match
+//   ScrollController _scrollController = ScrollController();
+//   List<int> _matches = [];   // List of match positions
+//   TextEditingController _searchController = TextEditingController();
+//   int _matchCount = 0;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     // Add listener to the searchController to update the search query when text changes
+//     _searchController.addListener(_onSearchChanged);
+//   }
+//
+//   @override
+//   void dispose() {
+//     // Always dispose controllers when done
+//     _scrollController.dispose();
+//     _searchController.removeListener(_onSearchChanged);
+//     super.dispose();
+//   }
+//
+//   // Handle search query change from the controller
+//   void _onSearchChanged() {
+//     setState(() {
+//       _searchQuery = _searchController.text;
+//       _matches = _findMatches(widget.text, _searchQuery);
+//     });
+//   }
+//
+//   // Highlights the matched text and returns a list of TextSpan
+//   List<TextSpan> _highlightText(String text, List<int> matchPositions) {
+//     List<TextSpan> children = [];
+//     int start = 0;
+//
+//     for (int i = 0; i < matchPositions.length; i++) {
+//       if (start < matchPositions[i]) {
+//         children.add(TextSpan(text: text.substring(start, matchPositions[i])));
+//       }
+//       children.add(TextSpan(
+//         text: text.substring(matchPositions[i], matchPositions[i] + _searchQuery.length),
+//         style: TextStyle(backgroundColor: Colors.yellow), // Highlight color
+//       ));
+//       start = matchPositions[i] + _searchQuery.length;
+//     }
+//
+//     if (start < text.length) {
+//       children.add(TextSpan(text: text.substring(start)));
+//     }
+//
+//     return children;
+//   }
+//
+//   // Finds matches and returns a list of start positions of the matches
+//   List<int> _findMatches(String text, String query) {
+//     List<int> matches = [];
+//     int start = 0;
+//
+//     String lowerText = text.toLowerCase();
+//     String lowerQuery = query.toLowerCase();
+//
+//     while (start < lowerText.length) {
+//       start = lowerText.indexOf(lowerQuery, start);
+//       if (start == -1) break;
+//       matches.add(start);
+//       start += lowerQuery.length;
+//     }
+//
+//     return matches;
+//   }
+//
+//   @override
+//   Widget build(BuildContext context)
+//   {
+//     // Get the list of match positions
+//     final List<int> matches = _searchQuery.isEmpty
+//         ? []
+//         : _findMatches(widget.text, _searchQuery);
+//     _matchCount = matches.length;
+//     // Scroll to the first match if needed
+//     // WidgetsBinding.instance.addPostFrameCallback((_) {
+//     //   if (_scrollController.hasClients) {
+//     //     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
+//     //   }
+//     // });
+//     return Column(
+//       children: [
+//         Padding(
+//           padding: const EdgeInsets.all(8.0),
+//           child: TextField(
+//             controller: _searchController,  // Use passed controller
+//             decoration: InputDecoration(
+//               labelText: 'Search',
+//               border: OutlineInputBorder(),
+//               suffixIcon: IconButton(
+//                 icon: Icon(Icons.search),
+//                 onPressed: () {
+//                   setState(() {
+//                     _searchQuery = _searchController.text;
+//                     _matches = _findMatches(widget.text, _searchQuery);
+//                   });
+//                 },
+//               ),
+//             ),
+//           ),
+//         ),
+//         Padding(
+//           padding: const EdgeInsets.all(8.0),
+//           child: Text('Matches found: $_matchCount', style: TextStyle(fontSize: 16)),
+//         ),
+//         Expanded(
+//           child: SingleChildScrollView(
+//             controller: _scrollController,
+//             child: Padding(
+//               padding: const EdgeInsets.all(8.0),
+//               child: SelectableText.rich(
+//                 TextSpan(
+//                   children: _highlightText(widget.text, matches),
+//                 ),
+//               ),
+//             ),
+//           ),
+//         ),
+//       ],
+//     );
+//   }
+// }
