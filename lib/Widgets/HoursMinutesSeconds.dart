@@ -808,7 +808,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                     print('widget1 : ${widget.validation}');
                     checkCondition2(overAllPvd);
                     if(widget.validation!.contains('fertilizer') && releaseTimeForFertilizer){
-                      programPvd.editParticularChannelDetails('timeValue', programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing','${overAllPvd.hrs < 10 ? '0' :''}${overAllPvd.hrs}:${overAllPvd.min < 10 ? '0' :''}${overAllPvd.min}:${overAllPvd.sec < 10 ? '0' :''}${overAllPvd.sec}',widget.index);
+                      programPvd.editParticularChannelDetails('timeValue', programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing','${overAllPvd.hrs < 10 ? '0' :''}${overAllPvd.hrs}:${overAllPvd.min < 10 ? '0' :''}${overAllPvd.min}:${overAllPvd.sec < 10 ? '0' :''}${overAllPvd.sec}',widget.index!);
                       Navigator.pop(context);
                     }
                   }else{

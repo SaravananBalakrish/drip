@@ -1906,7 +1906,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
               }else{
                 var diff = waterValueInSec() - preValueInSec() - postValueInSec();
                 selectedInjector = value;
-                var flowRate = getFlowRate();
+                var flowRate = getFlowRate(selectedIndex);
                 if((channel['quantityValue'] != '' ? int.parse(channel['quantityValue']) : 0)/flowRate > diff){
                   apply = false;
                   return {'message' : '${recipe[selectedIndex]['recipeName']} setting is not match with your current setting'};
@@ -2056,11 +2056,10 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       if(sequenceData[selectedGroup]['quantityValue'] == '0'){
         sec = 0;
       }else{
+        print(sequenceData[selectedGroup]['quantityValue']);
         sec = ((sequenceData[selectedGroup]['quantityValue'] != '' ? int.parse(sequenceData[selectedGroup]['quantityValue']) : 0)/valveFlowRate).round();
       }
     }
-    print('water finished');
-    print('sec : $sec');
     return sec;
   }
 
@@ -2215,7 +2214,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     if(sequenceData[selectedGroup]['centralDosing'].isNotEmpty){
       for(var i = 0;i < sequenceData[selectedGroup]['centralDosing'][0]['fertilizer'].length;i++){
         int fertInSec = fertilizerValueInSec(fertilizerData: sequenceData[selectedGroup]['centralDosing'][0]['fertilizer'][i]);
-        // print('central fert ${i+1} => $fertInSec');
         if(fertInSec > maxFertInSec){
           maxFertInSec = fertInSec;
         }
@@ -2308,50 +2306,52 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  double getFlowRate(){
+  double getFlowRate(int index){
     var nominalFlowRate = 0;
     for(var channelInConstant in constantSetting['fertilizerChannel']){
-      if(channelInConstant['sNo'] == sequenceData[selectedGroup][segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][selectedInjector]['sNo']){
+      if(channelInConstant['sNo'] == sequenceData[selectedGroup][segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing'][0]['fertilizer'][index]['sNo']){
+        print("channelInConstant => $channelInConstant");
         var channelFlowRate = channelInConstant['setting'][0]['value'].toString();
         nominalFlowRate = channelFlowRate == '' ? 0 : int.parse(channelFlowRate);
       }
     }
+    print("nominalFlowRate => $nominalFlowRate");
     return nominalFlowRate * 0.0002778;
   }
 
-  dynamic editParticularChannelDetails(String title,String centralOrLocal,dynamic value,[int? index]){
+  dynamic editParticularChannelDetails(String title,String centralOrLocal,dynamic value,int index){
     switch(title){
       case ('method') : {
         sequenceData[selectedGroup][centralOrLocal][centralOrLocal == 'centralDosing' ? selectedCentralSite : selectedLocalSite]['fertilizer'][index ?? selectedInjector]['method'] = value;
         break;
       }
       case ('quantityValue') : {
-        var editingSelectedFertilizer = sequenceData[selectedGroup][centralOrLocal][centralOrLocal == 'centralDosing' ? selectedCentralSite : selectedLocalSite]['fertilizer'][index ?? selectedInjector];
+        var editingSelectedFertilizer = sequenceData[selectedGroup][centralOrLocal][centralOrLocal == 'centralDosing' ? selectedCentralSite : selectedLocalSite]['fertilizer'][index];
         var diff = waterValueInSec() - preValueInSec() - postValueInSec();
         var waterFlowRate = getNominalFlow();
         var literForOneSeconds = waterFlowRate/3600;
         var fertilizerGapInLiters = literForOneSeconds * diff;
         var userInput = value != '' ? double.parse(value) : 0;
         var howMany1000In_fertilizerGapInLiters = fertilizerGapInLiters/1000;
-        print('fertilizerGapInLiters :::: $fertilizerGapInLiters');
-        print('howMany1000In_fertilizerGapInLiters :::: $howMany1000In_fertilizerGapInLiters');
         var injectorPer1000L = howMany1000In_fertilizerGapInLiters * userInput;
-        var flowRate = getFlowRate();
-        var maxFertilizerLimitInLiters = (diff * flowRate).toInt();
-        print('howMany1000In_fertilizerGapInLiters=> $howMany1000In_fertilizerGapInLiters  fertilizerGapInLiters => $fertilizerGapInLiters injectorPer1000L => $injectorPer1000L  maxFertilizerLimitInLiters => $maxFertilizerLimitInLiters');
+        var flowRate = getFlowRate(index);
+        var maxFertilizerLimitInLiters = diff * flowRate;
+        print('howMany1000In_fertilizerGapInLiters => $howMany1000In_fertilizerGapInLiters  fertilizerGapInLiters => $fertilizerGapInLiters injectorPer1000L => $injectorPer1000L  maxFertilizerLimitInLiters => $maxFertilizerLimitInLiters');
         if(editingSelectedFertilizer['method'] == 'Pro.quant per 1000L'){
           if(injectorPer1000L > maxFertilizerLimitInLiters){
-            editingSelectedFertilizer['quantityValue'] = '${(maxFertilizerLimitInLiters~/howMany1000In_fertilizerGapInLiters)}';
-            getInjectorController(index ?? selectedInjector).text = editingSelectedFertilizer['quantityValue'].toString() ?? '';
-            return {'message' : 'fertilizer value limit up to ${getInjectorController(index ?? selectedInjector).text}'};
+            editingSelectedFertilizer['quantityValue'] = ((maxFertilizerLimitInLiters /
+                howMany1000In_fertilizerGapInLiters) - 0.1)
+                .toStringAsFixed(1); // 0.2 for ensure always fertilizer is less than water
+            getInjectorController(index).text = editingSelectedFertilizer['quantityValue'].toString();
+            return {'message' : 'fertilizer value limit up to ${getInjectorController(index).text}'};
           }else{
             editingSelectedFertilizer['quantityValue'] = (value == '' ? '0' : value);
           }
         }else{
           if(userInput/flowRate > diff){
             editingSelectedFertilizer['quantityValue'] = '${(diff * flowRate).toInt()}';
-            getInjectorController(index ?? selectedInjector).text = editingSelectedFertilizer['quantityValue'].toString() ?? '';
-            return {'message' : 'fertilizer value limit up to ${getInjectorController(index ?? selectedInjector).text} because of (water - pre + post + current channels)value in liters'};
+            getInjectorController(index).text = editingSelectedFertilizer['quantityValue'].toString() ?? '';
+            return {'message' : 'fertilizer value limit up to ${getInjectorController(index).text} because of (water - pre + post + current channels)value in liters'};
           }else{
             editingSelectedFertilizer['quantityValue'] = (value == '' ? '0' : value);
           }
@@ -2359,7 +2359,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         break;
       }
       case ('timeValue') : {
-        sequenceData[selectedGroup][centralOrLocal][centralOrLocal == 'centralDosing' ? selectedCentralSite : selectedLocalSite]['fertilizer'][index ?? selectedInjector]['timeValue'] = value;
+        sequenceData[selectedGroup][centralOrLocal][centralOrLocal == 'centralDosing' ? selectedCentralSite : selectedLocalSite]['fertilizer'][index]['timeValue'] = value;
         break;
       }
     }

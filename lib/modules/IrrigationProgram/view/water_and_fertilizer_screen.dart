@@ -2066,30 +2066,77 @@ List<double> generateValuesLiters(double givenValue) {
   return values;
 }
 
-
 List<Widget> generateTimeValues(String inputTime) {
+  print("inputTime => $inputTime");
   List<Widget> values = [];
 
-  if(inputTime != ''){
+  if (inputTime.isNotEmpty) {
     List<String> parts = inputTime.split(':');
     int hours = int.parse(parts[0]);
     int minutes = int.parse(parts[1]);
     int seconds = int.parse(parts[2]);
-    double totalHours = hours + (minutes / 60) + (seconds / 3600);
-    double step = totalHours / 4;
 
-    for (double i = 0; i <= totalHours; i += step) {
-      int remainingHours = i.floor();
-      int remainingMinutes = ((i - remainingHours) * 60).floor();
-      values.add(Text('${remainingHours.toString().padLeft(2, '0')}:${remainingMinutes.toString().padLeft(2, '0')}:00',style: graphTextStyle));
+    // Convert everything into total seconds
+    int totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
+    if(totalSeconds <= 10){
+      values = List.generate(3, (index) => Text('00:00:00', style: graphTextStyle,));
+      values.add(Text('00:00:00', style: graphTextStyle,));
+    }else{
+      // Step size = divide total seconds into 4 equal parts
+      int step = (totalSeconds / 4).round();
+
+      for (int i = 0; i <= totalSeconds; i += step) {
+        int h = i ~/ 3600;
+        int m = (i % 3600) ~/ 60;
+        int s = i % 60;
+
+        values.add(Text(
+          '${h.toString().padLeft(2, '0')}:${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}',
+          style: graphTextStyle,
+        ));
+      }
+
+      // Ensure last value is exactly inputTime
+      if (values.last is! Text ||
+          (values.last as Text).data != inputTime) {
+        values.add(Text('${hours.toString().padLeft(2, '0')}:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}', style: graphTextStyle));
+      }
     }
-    if (values.length < 5) {
-      values.add(Text(inputTime,style: graphTextStyle));
-    }
+
+
   }
 
   return values;
 }
+// List<Widget> generateTimeValues(String inputTime) {
+//   print("inputTime => $inputTime");
+//   List<Widget> values = [];
+//
+//   if(inputTime != ''){
+//     List<String> parts = inputTime.split(':');
+//     int hours = int.parse(parts[0]);
+//     int minutes = int.parse(parts[1]);
+//     int seconds = int.parse(parts[2]);
+//     double totalHours = hours + (minutes / 60) + (seconds / 3600);
+//     double step = totalHours / 4;
+//
+//     for (double i = 0; i <= totalHours; i += step) {
+//       int remainingHours = i.floor();
+//       int remainingMinutes = ((i - remainingHours) * 60).floor();
+//       int remainingSeconds = ((i - remainingHours - remainingMinutes)).floor();
+//       values.add(Text('${remainingHours.toString().padLeft(2, '0')}:${remainingMinutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}',style: graphTextStyle));
+//     }
+//     // if(values.length == 5){
+//     //   values.removeAt(4);
+//     //   values.add(Text(inputTime, style: graphTextStyle,));
+//     // }
+//     if (values.length < 5) {
+//       values.add(Text(inputTime,style: graphTextStyle));
+//     }
+//   }
+//
+//   return values;
+// }
 
 String formatTime(int seconds) {
   int hours = seconds ~/ 3600;
