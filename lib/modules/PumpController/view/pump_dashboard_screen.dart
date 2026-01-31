@@ -285,7 +285,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
     dynamic title;
     dynamic value;
     dynamic value2;
-    if(F.name.contains('oro')) {
+    if(F.name.contains('oro') || F.name.contains('agritel')) {
       title = !(double.parse(voltage[0]) > 300 && double.parse(voltage[1]) > 300 && double.parse(voltage[2]) > 300)
           ? ["RN ${double.parse(voltage[0]).toStringAsFixed(0)}",
         "YN ${double.parse(voltage[1]).toStringAsFixed(0)}",
