@@ -44,14 +44,42 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
   final List<String> versions = ['Version 1.0', 'Version 1.1'];
   TextEditingController _macController = TextEditingController();
   final Repository repository = Repository(HttpService());
+  String _lastPayload = '';
+
   @override
   void initState() {
     super.initState();
     mqttPayloadProvider =
         Provider.of<MqttPayloadProvider>(context, listen: false);
+
+    mqttPayloadProvider.addListener(_onPayloadChanged);
     fetchData();
     _macController.text = widget.deviceID;
     macAddress = widget.deviceID;
+  }
+  @override
+  void dispose() {
+    mqttPayloadProvider.removeListener(_onPayloadChanged);
+    super.dispose();
+  }
+
+  void _onPayloadChanged() {
+    final provider =
+    Provider.of<MqttPayloadProvider>(context, listen: false);
+
+    final payload = provider.receivedPayload;
+
+
+    if (payload.isNotEmpty && payload != _lastPayload) {
+      _lastPayload = payload;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+         SnackBar(
+          content: Text("${!payload.contains("6801") ? payload : ""}"),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   Future<void> fetchData() async {
@@ -178,6 +206,8 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
         });
         final result = await context.read<CommunicationService>().sendCommand(payload: payLoadFinal,
             serverMsg: '');
+        debugPrint("Payload sent to Server$payLoadFinal");
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Settings sent Ble")),
         );
@@ -395,6 +425,162 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
 
   }
 
+  Future<void> updateCodeonly() async {
+    if(widget.communicationType == "MQTT") {
+      List checkTopic =
+      getMqttTopic(selectedPlatform!, selectedVersion!, selectedDealer!);
+      String topic = checkTopic[0];
+      String oldnewcheck = checkTopic[1];
+      if (oldnewcheck == '1') {
+        final payload = {
+          "5700": [
+            {"5701": "3"},
+          ]
+        };
+        MqttService().topicToPublishAndItsMessage(
+          jsonEncode(payload),
+          "$topic${_macController.text}",
+        );
+        var data = {
+          "userId": widget.userId,
+          "controllerId": widget.controllerId,
+          "data": {
+            "5700": [
+              {"5701": "3"},
+            ]
+          },
+          "messageStatus": "updateCode",
+          "createUser": widget.userId,
+          "hardware": {
+            "5700": [
+              {"5701": "3"},
+            ]
+          },
+        };
+        await repository.sendManualOperationToServer(data);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("update settings sent")),
+        );
+        print('payload $payload  \n $topic${_macController.text}');
+      } else {
+        final payload = {
+          "5700": {"5701": "3"}
+        };
+        MqttService().topicToPublishAndItsMessage(
+          jsonEncode(payload),
+          "$topic${_macController.text}",
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("update settings sent")),
+        );
+        print('payload $payload  \n $topic${_macController.text}');
+      }
+    } else   {
+      //bluetooth
+      try {
+        String payLoadFinal = jsonEncode({
+          "5700": {"5701": "3"}
+        });
+        final result = await context.read<CommunicationService>().sendCommand(payload: payLoadFinal,
+            serverMsg: '');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("update settings sent Ble")),
+        );
+        if (result['http'] == true) {
+          debugPrint("Payload sent to Server");
+        }
+        if (result['mqtt'] == true) {
+          debugPrint("Payload sent to MQTT Box");
+        }
+        if (result['bluetooth'] == true) {
+          debugPrint("Payload sent via Bluetooth");
+        }
+
+      } finally {
+        setState(() => isLoading = false);
+      }
+    }
+
+  }
+  Future<void> Restart() async {
+    if(widget.communicationType == "MQTT") {
+      List checkTopic =
+      getMqttTopic(selectedPlatform!, selectedVersion!, selectedDealer!);
+      String topic = checkTopic[0];
+      String oldnewcheck = checkTopic[1];
+      if (oldnewcheck == '1') {
+        final payload = {
+          "5700": [
+            {"5701": "2"},
+          ]
+        };
+        MqttService().topicToPublishAndItsMessage(
+          jsonEncode(payload),
+          "$topic${_macController.text}",
+        );
+        var data = {
+          "userId": widget.userId,
+          "controllerId": widget.controllerId,
+          "data": {
+            "5700": [
+              {"5701": "2"},
+            ]
+          },
+          "messageStatus": "Restart",
+          "createUser": widget.userId,
+          "hardware": {
+            "5700": [
+              {"5701": "2"},
+            ]
+          },
+        };
+        await repository.sendManualOperationToServer(data);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Restart settings sent")),
+        );
+        print('payload $payload  \n $topic${_macController.text}');
+      } else {
+        final payload = {
+          "5700": {"5701": "2"}
+        };
+        MqttService().topicToPublishAndItsMessage(
+          jsonEncode(payload),
+          "$topic${_macController.text}",
+        );
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Restart settings sent")),
+        );
+        print('payload $payload  \n $topic${_macController.text}');
+      }
+    } else   {
+      //bluetooth
+      try {
+        String payLoadFinal = jsonEncode({
+          "5700": {"5701": "2"}
+        });
+        final result = await context.read<CommunicationService>().sendCommand(payload: payLoadFinal,
+            serverMsg: '');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Restart settings sent Ble")),
+        );
+        if (result['http'] == true) {
+          debugPrint("Payload sent to Server");
+        }
+        if (result['mqtt'] == true) {
+          debugPrint("Payload sent to MQTT Box");
+        }
+        if (result['bluetooth'] == true) {
+          debugPrint("Payload sent via Bluetooth");
+        }
+
+      } finally {
+        setState(() => isLoading = false);
+      }
+    }
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     mqttPayloadProvider =
@@ -463,7 +649,7 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
                     value == 'AWS'
                         ? F.appFlavor = Flavor.oroProduction
                         : F.appFlavor = Flavor.smartComm;
-                    print('flaVOR ${F.appFlavor}');
+
                     print('flaVOR ${F.appFlavor}');
                     print('${AppConstants.mqttUrl}');
                     selectedPlatform = value;
@@ -517,30 +703,13 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
               ),
               const SizedBox(height: 20),
 
-              // if (formattedConfig != null)
-              //   widget.communicationType == "MQTT" ? Container(
-              //     padding: const EdgeInsets.all(12.0),
-              //     decoration: BoxDecoration(
-              //       color: Colors.grey[100],
-              //       border: Border.all(color: Colors.grey),
-              //       borderRadius: BorderRadius.circular(8),
-              //     ),
-              //     child: SingleChildScrollView(
-              //       scrollDirection: Axis.horizontal,
-              //       child: Text(
-              //         formattedConfig!,
-              //         style: const TextStyle(
-              //           fontFamily: 'monospace',
-              //           fontSize: 14,
-              //         ),
-              //       ),
-              //     ),
-              //   ):Container(),
               const SizedBox(height: 20),
 
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
+        Wrap(
+          alignment: WrapAlignment.spaceEvenly,
+          spacing: 10,        // horizontal space between buttons
+          runSpacing: 12,     // vertical space when wrapped
+                 children: [
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
@@ -618,18 +787,102 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      backgroundColor: Colors.blue,
+                      backgroundColor: Colors.brown,
                     ),
                     onPressed: viewsettings,
                     child: const Text('View Settings'),
                   ),
+                   widget.communicationType != "MQTT" ? ElevatedButton(
+                     style: ElevatedButton.styleFrom(
+                       foregroundColor: Colors.white,
+                       backgroundColor: Colors.teal,
+                     ),
+                     onPressed: () {
+                       showDialog(
+                         context: context,
+                         builder: (BuildContext context) {
+                           return AlertDialog(
+                             title: const Text("Confirm Settings Update"),
+                             content: const Text("Are you sure you want to update settings?"),
+                             actions: [
+                               TextButton(
+                                 onPressed: () {
+                                   Navigator.of(context).pop(); // Close the dialog
+                                 },
+                                 child: const Text("Cancel"),
+                               ),
+                               ElevatedButton(
+                                 style: ElevatedButton.styleFrom(
+                                   backgroundColor: Colors.green,
+                                   foregroundColor: Colors.white,
+                                 ),
+                                 onPressed: () {
+                                   Navigator.of(context).pop(); // Close dialog
+                                   updateCodeonly(); // Call your function
+                                 },
+                                 child: const Text("Yes"),
+                               ),
+                             ],
+                           );
+                         },
+                       );
+                     },
+                     child: const Text(' Update '),
+                   ) : Container(),
+                   widget.communicationType != "MQTT" ?ElevatedButton(
+                     style: ElevatedButton.styleFrom(
+                       foregroundColor: Colors.white,
+                       backgroundColor: Colors.red,
+                     ),
+                     onPressed: ()  {
+                       showDialog(
+                         context: context,
+                         builder: (BuildContext context) {
+                           return AlertDialog(
+                             title: const Text("Confirm Restart"),
+                             content: const Text("Are you sure you want to Restart?"),
+                             actions: [
+                               TextButton(
+                                 onPressed: () {
+                                   Navigator.of(context).pop(); // Close the dialog
+                                 },
+                                 child: const Text("Cancel"),
+                               ),
+                               ElevatedButton(
+                                 style: ElevatedButton.styleFrom(
+                                   backgroundColor: Colors.green,
+                                   foregroundColor: Colors.white,
+                                 ),
+                                 onPressed: () {
+                                   Navigator.of(context).pop(); // Close dialog
+                                   Restart(); // Call your function
+                                 },
+                                 child: const Text("Yes, Restart"),
+                               ),
+                             ],
+                           );
+                         },
+                       );
+                     },
+                     child: const Text(' Restart '),
+                   ) : Container(),
                 ],
               ),
              // widget.communicationType == "MQTT" ? Padding(
              //    padding: const EdgeInsets.all(8.0),
              //    child: Text(mqttPayloadProvider.receivedPayload),
              //  ) : Container(),
-            ],
+SizedBox(height: 10,),
+
+              //  SingleChildScrollView(
+              //   padding: const EdgeInsets.all(16),
+              //   child: Text(
+              //     mqttPayloadProvider.receivedPayload,
+              //     style: const TextStyle(fontSize: 14),
+              //   ),
+              // )
+
+        ],
           ),
         ),
       ),

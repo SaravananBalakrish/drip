@@ -43,11 +43,11 @@ class Environment {
     'smartComm' : {
       'apiUrl': 'https://smartcomm-wms.com:5000/api/v1',
       'apiKey': 'prod-api-key',
-      'mqttWebUrl': 'wss://52.172.214.208:9001/mqtt',
+      'mqttWebUrl': 'wss://smartcomm-wms.com:9443/mqtt',
       'mqttMobileUrl': '52.172.214.208',
       'publishTopic': 'AppToFirmware',
       'subscribeTopic': 'FirmwareToApp',
-      'mqttWebPort': 9001,
+      'mqttWebPort': 9443,
       'mqttMobilePort': 1883,
       'sftpIpAddress': '54.179.114.89',
       'sftpPort': 22,
