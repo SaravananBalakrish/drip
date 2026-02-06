@@ -874,13 +874,13 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
              //  ) : Container(),
 SizedBox(height: 10,),
 
-              //  SingleChildScrollView(
-              //   padding: const EdgeInsets.all(16),
-              //   child: Text(
-              //     mqttPayloadProvider.receivedPayload,
-              //     style: const TextStyle(fontSize: 14),
-              //   ),
-              // )
+               SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Text(
+                  mqttPayloadProvider.receivedPayload,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              )
 
         ],
           ),
