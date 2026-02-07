@@ -279,9 +279,12 @@ class BluService {
 
 
   void _processData(String jsonString) {
+    print("_processData call $jsonString");
     try {
       final data = json.decode(jsonString);
       final jsonStr = json.encode(data);
+
+      providerState?.updateReceivedPayload(jsonStr, false);
 
       switch (data['mC'].toString()) {
         case '7300':

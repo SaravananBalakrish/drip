@@ -153,6 +153,7 @@ class MqttPayloadProvider with ChangeNotifier {
    int traceLogSize = 0;
    int totalTraceLogSize = 0;
 
+
    void updateConnectedDeviceStatus(CustomDevice? device) {
      _connectedDevice = device;
      notifyListeners();
@@ -799,7 +800,6 @@ class MqttPayloadProvider with ChangeNotifier {
           _sequencePreview = data["cM"];
           notifyListeners();
         }
-
       } catch (e, stackTrace) {
         debugPrint('Error parsing JSON: $e');
         debugPrint('Stacktrace while parsing json : $stackTrace');

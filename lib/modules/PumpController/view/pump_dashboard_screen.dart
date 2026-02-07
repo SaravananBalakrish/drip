@@ -190,7 +190,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedImageMedium(imagePath: 'assets/Images/Png/${F.name.contains('oro') ? 'Oro' : 'SmartComm'}/category_${2}.png'),
+                         SizedImageMedium(imagePath: 'assets/Images/Png/${F.name.contains('oro') ? 'Oro' : F.name.contains('agritel') ? 'Agritel' : 'SmartComm'}/category_${2}.png'),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -285,7 +285,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
     dynamic title;
     dynamic value;
     dynamic value2;
-    if(F.name.contains('oro')) {
+    if(F.name.contains('oro') || F.name.contains('agritel')) {
       title = !(double.parse(voltage[0]) > 300 && double.parse(voltage[1]) > 300 && double.parse(voltage[2]) > 300)
           ? ["RN ${double.parse(voltage[0]).toStringAsFixed(0)}",
         "YN ${double.parse(voltage[1]).toStringAsFixed(0)}",

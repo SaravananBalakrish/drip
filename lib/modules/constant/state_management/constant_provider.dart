@@ -429,13 +429,8 @@ class ConstantProvider extends ChangeNotifier{
   }
 
   String getFertilizerSitePayload(){
-    print("ecPhSensor : ${ecPhSensor}");
     print(AppConstants.gemModelList.contains(userData['modelId']) ?  'Gem' : 'Ecogem');
     return List.generate(fertilizerSite.length, (siteIndex){
-      print(ecPhSensor);
-      print(siteIndex);
-      print(ecPhSensor[siteIndex].ecPopup);
-      print(ecPhSensor.isNotEmpty && ecPhSensor.length > siteIndex && ecPhSensor[siteIndex].ecPopup.isNotEmpty);
       return [
         fertilizerSite[siteIndex].sNo,
         ...fertilizerSite[siteIndex].setting.where((setting){
