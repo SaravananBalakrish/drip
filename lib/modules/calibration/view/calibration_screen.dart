@@ -75,6 +75,9 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
             return Scaffold(
               backgroundColor: Colors.white,
               floatingActionButton: getFloatingActionButton(snapshot.data!),
+              appBar: MediaQuery.of(context).size.width < 500 ? AppBar(
+                title: const Text('Calibration'),
+              ): null,
               body: SafeArea(
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
