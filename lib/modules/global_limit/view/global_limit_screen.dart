@@ -83,6 +83,9 @@ class _GlobalLimitScreenState extends State<GlobalLimitScreen> {
             return Scaffold(
               backgroundColor: Colors.white,
               floatingActionButton: getFloatingActionButton(),
+              appBar: MediaQuery.of(context).size.width < 500 ? AppBar(
+                title: const Text('Global Limit'),
+              ): null,
               body: SafeArea(
                 child: Padding(
                     padding: const EdgeInsets.all(8.0),
