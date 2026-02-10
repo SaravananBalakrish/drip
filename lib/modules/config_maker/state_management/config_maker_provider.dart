@@ -299,7 +299,7 @@ class ConfigMakerProvider extends ChangeNotifier{
       masterData = masterDataFromSiteConfigure;
 
       /* hardcoded for pushing master to deviceList*/
-      if(![1, 2, 4].contains(masterDataFromSiteConfigure['modelId'])){
+      if(!AppConstants.gemModelList.contains(masterDataFromSiteConfigure['modelId'])){
         // if([...AppConstants.pumpWithValveModelList, ...AppConstants.pumpModelList].contains(masterDataFromSiteConfigure['modelId'])){
         //   selectedTab = ConfigMakerTabs.productLimit;
         // }else{
@@ -330,7 +330,6 @@ class ConfigMakerProvider extends ChangeNotifier{
       }
 
       List<int> senseNodeNotToAddInDeviceList = [44, 45];
-
       listOfDeviceModel = (defaultData['deviceList'] as List<dynamic>).where((device) => !senseNodeNotToAddInDeviceList.contains(device['modelId']))
           .map((devices) {
         Map<String, dynamic> deviceProperty = defaultData['productModel'].firstWhere((product) => devices['modelId'] == product['modelId']);
