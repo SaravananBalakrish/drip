@@ -263,29 +263,27 @@ class _NamesState extends State<Names> {
       );
     }
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: kIsWeb ? null  : AppBar(title: Text('Names'),),
-        body: Column(
-          children: [
-            getTabBarViewWidget(),
-            Expanded(
-              child: buildTab(selectedCategory),
-            ),
-          ],
-        ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Theme.of(context).primaryColorDark,
-          foregroundColor: Colors.white,
-          onPressed: () {
-            setState(() {
-              updateAllNames();
-              updateUserNames();
-            });
-          },
-          tooltip: 'Send',
-          child: const Icon(Icons.send),
-        ),
+    return Scaffold(
+      appBar: kIsWeb ? null  : AppBar(title: Text('Names'),),
+      body: Column(
+        children: [
+          getTabBarViewWidget(),
+          Expanded(
+            child: buildTab(selectedCategory),
+          ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColorDark,
+        foregroundColor: Colors.white,
+        onPressed: () {
+          setState(() {
+            updateAllNames();
+            updateUserNames();
+          });
+        },
+        tooltip: 'Send',
+        child: const Icon(Icons.send),
       ),
     );
   }

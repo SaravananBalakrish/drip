@@ -85,15 +85,12 @@ class SettingsScreenFactory {
         }
 
       case 'Name':
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Names(
-            userID: ctx.userId,
-            customerID: ctx.customerId,
-            controllerId: ctx.controllerId,
-            menuId: 0,
-            imeiNo: ctx.imeiNo,
-          ),
+        return Names(
+          userID: ctx.userId,
+          customerID: ctx.customerId,
+          controllerId: ctx.controllerId,
+          menuId: 0,
+          imeiNo: ctx.imeiNo,
         );
 
       case 'Fertilizer Set':
