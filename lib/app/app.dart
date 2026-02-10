@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oro_drip_irrigation/Constants/notifications_service.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/irrigation_program_main.dart';
+import 'package:oro_drip_irrigation/modules/irrigation_report/view/list_of_log_config.dart';
 import 'package:oro_drip_irrigation/utils/Theme/agritel_theme.dart';
 import '../Screens/login_screenOTP/login_screenotp.dart';
 import '../flavors.dart';
@@ -74,8 +75,9 @@ class _MyAppState extends State<MyApp> {
           darkTheme: isOro ? OroTheme.darkTheme : isATel ? ATelTheme.darkTheme :
           SmartCommTheme.darkTheme,
           themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          home: navigateToInitialScreen(snapshot.data ?? Routes.login),
-          onGenerateRoute: Routes.generateRoute,
+          home: ListOfLogConfig(userData: {"userId": 2, "controllerId": 1569, "customerId": 398}),
+          // home: navigateToInitialScreen(snapshot.data ?? Routes.login),
+          // onGenerateRoute: Routes.generateRoute,
         );
       },
     );

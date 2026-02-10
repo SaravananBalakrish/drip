@@ -246,6 +246,7 @@ class IrrigationLogModel {
   }
 
   Map<String,dynamic> editValveWise(dynamic dataSource,List<dynamic> noOfValve){
+    print("noOfValve => ${noOfValve}");
     var generalColumn = [...getColumn(generalParameterList)];
     var generalColumnData = [];
     var fixedColumnData = [];
@@ -306,7 +307,7 @@ class IrrigationLogModel {
         for(var date in dataSource['log']){
           if(date['irrigation'].isNotEmpty){
             for(var howManyValve = 0;howManyValve < date['irrigation']['SequenceData'].length;howManyValve++){
-              if(date['irrigation']['SequenceData'][howManyValve].contains(findValve['name'])){
+              if(date['irrigation']['SequenceData'][howManyValve].split('_').contains(findValve['name'])){
                 fixedColumnData.add(getName(findValve['name']));
                 var myList = [];
                 var waterList = [];
