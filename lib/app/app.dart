@@ -75,9 +75,8 @@ class _MyAppState extends State<MyApp> {
           darkTheme: isOro ? OroTheme.darkTheme : isATel ? ATelTheme.darkTheme :
           SmartCommTheme.darkTheme,
           themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
-          home: ListOfLogConfig(userData: {"userId": 2, "controllerId": 1569, "customerId": 398}),
-          // home: navigateToInitialScreen(snapshot.data ?? Routes.login),
-          // onGenerateRoute: Routes.generateRoute,
+          home: navigateToInitialScreen(snapshot.data ?? Routes.login),
+          onGenerateRoute: Routes.generateRoute,
         );
       },
     );
