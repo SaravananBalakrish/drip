@@ -1108,15 +1108,24 @@ class ConfigMakerProvider extends ChangeNotifier{
     List<dynamic> devicePayload = [];
     for (var i = 0; i < listOfDeviceModel.length; i++) {
       var device = listOfDeviceModel[i];
+      String extendDeviceId = '';
+      if(AppConstants.gemModelList.contains(masterData['modelId'])){
+        for(var d in listOfDeviceModel){
+          if(d.controllerId == device.extendControllerId){
+            extendDeviceId = d.deviceId;
+            break;
+          }
+        }
+      }
       if (device.masterId != null && device.serialNumber != null) {
         devicePayload.add({
           "S_No": device.serialNumber,
           "DeviceTypeNumber": validateDeviceTypeNumber(device),
           "DeviceRunningNumber": findOutReferenceNumber(device),
           "DeviceId": device.deviceId,
-          "InterfaceType": device.interfaceTypeId,
+          "InterfaceType": extendDeviceId.isNotEmpty ? 4 : device.interfaceTypeId,
           if(AppConstants.gemModelList.contains(masterData['modelId']))
-            "ExtendNode": device.extendControllerId ?? '',
+            "ExtendNode": extendDeviceId,
           if(AppConstants.gemModelList.contains(masterData['modelId']))
             "Name" : device.deviceName
         }.entries.map((e) => e.value).join(","));

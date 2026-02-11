@@ -154,13 +154,13 @@ class _DeviceListState extends State<DeviceList> {
                               SelectableText(device.deviceId, style: TextStyle(color: themeData.primaryColorDark),),
                             ),
                             DataCell(
-                                (![44, 45, 46, 47,].contains(device.modelId) && configPvd.listOfDeviceModel.any((device) => device.categoryId == 10 && device.masterId != null))
+                                (![44, 45, 46, 47,].contains(device.modelId) && configPvd.listOfDeviceModel.any((device) => device.categoryId == 10 && device.masterId != null) && device.interfaceTypeId != 1)
                                     ? CustomDropDownButton(
                                     value: getInitialExtendValue(device.extendControllerId),
                                     list: [
                                       '-',
                                       ...configPvd.listOfDeviceModel
-                                          .where((device) => (device.masterId != null && device.categoryId == 10))
+                                          .where((device) => (device.masterId != null && device.categoryId == 10 && !AppConstants.extendLoraList.contains(device.modelId)))
                                           .map((device) => '${device.deviceName}\n${device.deviceId}')
                                     ],
                                     onChanged: (String? newValue) {
