@@ -624,7 +624,7 @@ class _DeviceListState extends State<DeviceList> {
                                                   Column(
                                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                     children: [
-                                                      Text(device.deviceName,style: themeData.textTheme.headlineSmall,),
+                                                      Text(device.deviceName, overflow: TextOverflow.ellipsis,maxLines: 1, style: const TextStyle(fontSize: 9),),
                                                       Text(device.modelDescription, style: TextStyle(fontWeight: FontWeight.normal, color: Theme.of(context).primaryColor, fontSize: 10)),
                                                     ],
                                                   )
