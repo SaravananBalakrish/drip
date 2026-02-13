@@ -103,6 +103,7 @@ class MqttService {
       );
       _client!.websocketProtocols = ['mqtt'];
       _client!.port = AppConstants.mqttWebPort;
+
     } else {
       _client = MqttServerClient(
         Environment.mqttMobileUrl,

@@ -211,6 +211,8 @@ class CustomerHomeMiddle extends StatelessWidget {
       pressureIn: irrLine.pressureIn,
       pressureOut: irrLine.pressureOut,
       waterMeter: irrLine.waterMeter,
+      humidity: irrLine.humiditySensor,
+      co2: irrLine.co2Sensor,
       customerId: customerId,
       controllerId: controllerId,
       containerWidth: MediaQuery.sizeOf(context).width,
