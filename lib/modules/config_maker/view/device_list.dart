@@ -154,7 +154,7 @@ class _DeviceListState extends State<DeviceList> {
                               SelectableText(device.deviceId, style: TextStyle(color: themeData.primaryColorDark),),
                             ),
                             DataCell(
-                                (![44, 45, 46, 47,].contains(device.modelId) && configPvd.listOfDeviceModel.any((device) => device.categoryId == 10 && device.masterId != null) && device.interfaceTypeId != 1)
+                                (![44, 45, 46, 47,].contains(device.modelId) && configPvd.listOfDeviceModel.any((device) => device.categoryId == 10 && device.masterId != null) && device.interfaceTypeId == 1)
                                     ? CustomDropDownButton(
                                     value: getInitialExtendValue(device.extendControllerId),
                                     list: [
