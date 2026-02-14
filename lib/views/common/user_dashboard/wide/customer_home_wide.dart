@@ -212,6 +212,7 @@ class CustomerHomeWide extends StatelessWidget {
       waterMeter: irrLine.waterMeter,
       humidity: irrLine.humiditySensor,
       co2: irrLine.co2Sensor,
+      soilTemperature: irrLine.soilTemperature,
       customerId: customerId,
       controllerId: controllerId,
       containerWidth: MediaQuery.sizeOf(context).width,

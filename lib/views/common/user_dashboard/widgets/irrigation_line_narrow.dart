@@ -15,6 +15,7 @@ class IrrigationLineNarrow extends StatelessWidget {
   final List<SensorModel> waterMeter;
   final List<SensorModel> humidity;
   final List<SensorModel> co2;
+  final List<SensorModel> soilTemperature;
 
   const IrrigationLineNarrow({
     super.key,
@@ -27,6 +28,7 @@ class IrrigationLineNarrow extends StatelessWidget {
     required this.waterMeter,
     required this.co2,
     required this.humidity,
+    required this.soilTemperature,
     required this.customerId,
     required this.controllerId,
     required this.deviceId,
@@ -50,6 +52,9 @@ class IrrigationLineNarrow extends StatelessWidget {
 
       ...sensorList(sensors: co2, type: 'CO2 Sensor',
           imagePath: 'assets/png/mobile/m_Co2_sensor.png', customerId: customerId, controllerId: controllerId),
+
+      ...sensorList(sensors: soilTemperature, type: 'Soil Temperature Sensor',
+          imagePath: 'assets/png/mobile/m_soil_temperature.png', customerId: customerId, controllerId: controllerId),
 
     ];
 

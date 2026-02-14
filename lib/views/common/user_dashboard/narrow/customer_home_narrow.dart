@@ -202,6 +202,7 @@ class CustomerHomeNarrow extends StatelessWidget {
                                   waterMeter: line.waterMeter,
                                   co2: line.co2Sensor,
                                   humidity: line.humiditySensor,
+                                  soilTemperature: line.soilTemperature,
                                   customerId: customerId,
                                   controllerId: cM.controllerId,
                                   deviceId: cM.deviceId,
