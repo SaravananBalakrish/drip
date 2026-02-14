@@ -37,6 +37,7 @@ class IrrigationLineWide extends StatelessWidget {
   final List<SensorModel> waterMeter;
   final List<SensorModel> humidity;
   final List<SensorModel> co2;
+  final List<SensorModel> soilTemperature;
   final double containerWidth;
   final bool isNava;
 
@@ -59,6 +60,7 @@ class IrrigationLineWide extends StatelessWidget {
     required this.waterMeter,
     required this.humidity,
     required this.co2,
+    required this.soilTemperature,
     required this.customerId,
     required this.controllerId,
     required this.deviceId,
@@ -127,6 +129,7 @@ class IrrigationLineWide extends StatelessWidget {
       ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wjl.png', cFertilizerSite.isNotEmpty),
       ..._buildSensorItems(co2, 'CO2 Sensor', 'assets/png/co2_sensor_wj.png', cFertilizerSite.isNotEmpty),
       ..._buildSensorItems(humidity, 'Humidity Sensor', 'assets/png/humidity_sensor_wj.png', cFertilizerSite.isNotEmpty),
+      ..._buildSensorItems(soilTemperature, 'Soil Temperature Sensor', 'assets/png/Soil_temperature.png', cFertilizerSite.isNotEmpty),
       ...gateWidgets,
     ];
 

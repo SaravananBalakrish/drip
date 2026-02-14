@@ -434,6 +434,7 @@ class IrrigationLineModel {
   final List<SensorModel> waterMeter;
   final List<SensorModel> co2Sensor;
   final List<SensorModel> humiditySensor;
+  final List<SensorModel> soilTemperature;
   final bool hasWeatherStation;
   int? linePauseFlag;
 
@@ -456,6 +457,7 @@ class IrrigationLineModel {
     required this.waterMeter,
     required this.co2Sensor,
     required this.humiditySensor,
+    required this.soilTemperature,
     required this.hasWeatherStation,
     this.linePauseFlag = 0,
   });
@@ -498,6 +500,12 @@ class IrrigationLineModel {
     final co2SNoSet = ((json['co2'] as List?) ?? []).map((e) => e).toSet();
     final co2 = configObjects
         .where((obj) => co2SNoSet.contains(obj.sNo))
+        .map((obj) => SensorModel.fromConfigObject(obj))
+        .toList();
+
+    final soilTemperatureSNoSet = ((json['soilTemperature'] as List?) ?? []).map((e) => e).toSet();
+    final soilTemperature = configObjects
+        .where((obj) => soilTemperatureSNoSet.contains(obj.sNo))
         .map((obj) => SensorModel.fromConfigObject(obj))
         .toList();
 
@@ -607,6 +615,7 @@ class IrrigationLineModel {
 
       co2Sensor: co2,
       humiditySensor: humidity,
+      soilTemperature: soilTemperature,
 
       hasWeatherStation: hasWeatherStation,
     );
