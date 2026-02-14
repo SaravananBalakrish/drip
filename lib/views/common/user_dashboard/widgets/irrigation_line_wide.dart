@@ -126,7 +126,7 @@ class IrrigationLineWide extends StatelessWidget {
       ...allValveWidgets,
       ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wjl.png', cFertilizerSite.isNotEmpty),
       ..._buildSensorItems(co2, 'CO2 Sensor', 'assets/png/co2_sensor_wj.png', cFertilizerSite.isNotEmpty),
-      ..._buildSensorItems(humidity, 'Humdity Sensor', 'assets/png/humidity_sensor_wj.png', cFertilizerSite.isNotEmpty),
+      ..._buildSensorItems(humidity, 'Humidity Sensor', 'assets/png/humidity_sensor_wj.png', cFertilizerSite.isNotEmpty),
       ...gateWidgets,
     ];
 
