@@ -13,6 +13,9 @@ class IrrigationLineNarrow extends StatelessWidget {
   final List<SensorModel> pressureIn;
   final List<SensorModel> pressureOut;
   final List<SensorModel> waterMeter;
+  final List<SensorModel> humidity;
+  final List<SensorModel> co2;
+  final List<SensorModel> soilTemperature;
 
   const IrrigationLineNarrow({
     super.key,
@@ -23,6 +26,9 @@ class IrrigationLineNarrow extends StatelessWidget {
     required this.pressureIn,
     required this.pressureOut,
     required this.waterMeter,
+    required this.co2,
+    required this.humidity,
+    required this.soilTemperature,
     required this.customerId,
     required this.controllerId,
     required this.deviceId,
@@ -33,13 +39,22 @@ class IrrigationLineNarrow extends StatelessWidget {
   Widget build(BuildContext context) {
     final baseSensors = [
       ...sensorList(sensors: pressureIn, type: 'Pressure Sensor',
-          imagePath: 'assets/png/pressure_sensor.png', customerId: customerId, controllerId: controllerId),
+          imagePath: 'assets/png/mobile/m_pressure_sensor.png', customerId: customerId, controllerId: controllerId),
 
       ...sensorList(sensors: pressureOut, type: 'Pressure Sensor',
-          imagePath: 'assets/png/pressure_sensor.png', customerId: customerId, controllerId: controllerId),
+          imagePath: 'assets/png/mobile/m_pressure_sensor.png', customerId: customerId, controllerId: controllerId),
 
       ...sensorList(sensors: waterMeter, type: 'Water Meter',
-        imagePath: 'assets/png/water_meter_wj.png', customerId: customerId, controllerId: controllerId),
+        imagePath: 'assets/png/mobile/m_water_meter.png', customerId: customerId, controllerId: controllerId),
+
+      ...sensorList(sensors: humidity, type: 'Humidity Sensor',
+          imagePath: 'assets/png/mobile/m_humidity_sensor.png', customerId: customerId, controllerId: controllerId),
+
+      ...sensorList(sensors: co2, type: 'CO2 Sensor',
+          imagePath: 'assets/png/mobile/m_Co2_sensor.png', customerId: customerId, controllerId: controllerId),
+
+      ...sensorList(sensors: soilTemperature, type: 'Soil Temperature Sensor',
+          imagePath: 'assets/png/mobile/m_soil_temperature.png', customerId: customerId, controllerId: controllerId),
 
     ];
 

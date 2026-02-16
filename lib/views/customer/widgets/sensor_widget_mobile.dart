@@ -56,11 +56,7 @@ class SensorWidgetMobile extends StatelessWidget {
                 width: 40,
                 height: 40,
                 child: Image(
-                  image: AssetImage(
-                    sensorType == 'Pressure Sensor'
-                        ? 'assets/png/mobile/m_pressure_sensor.png'
-                        : 'assets/png/mobile/m_water_meter.png',
-                  ),
+                  image: AssetImage(imagePath),
                   color: Colors.black,
                 ),
               ),
