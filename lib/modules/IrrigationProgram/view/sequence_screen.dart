@@ -93,6 +93,7 @@ class _SequenceScreenState extends State<SequenceScreen> {
   String get _irrProgram => "Irrigation Program";
   String get _agiProgram => "Agitator Program";
   String get _othProgram => "Other Programs";
+  String get _aeratorProgram => "Aerator Program";
 
   bool get _isIrrigationProgram => _provider.programDetails!.programType == _irrProgram ||
       _provider.selectedProgramType == _irrProgram;
@@ -102,6 +103,9 @@ class _SequenceScreenState extends State<SequenceScreen> {
 
   bool get _isOtherProgram => _provider.programDetails!.programType == _othProgram ||
       _provider.selectedProgramType == _othProgram;
+
+  bool get _isAeratorProgram => _provider.programDetails!.programType == _aeratorProgram ||
+      _provider.selectedProgramType == _aeratorProgram;
 
   Widget _buildSequenceHeader() {
     final sequence = _provider.irrigationLine!.sequence;
@@ -591,6 +595,18 @@ class _SequenceScreenState extends State<SequenceScreen> {
         context: context,
         title: 'Agitators',
         items: _provider.agitators!,
+        leading: _buildLeadingIcon('assets/png/dp_agitator_right.png'),
+      ));
+    }
+
+    print("_isAeratorProgram => $_isAeratorProgram  |  _provider.aerators => ${_provider.aerators}");
+
+    // Aerators
+    if (_isAeratorProgram && _provider.aerators != null) {
+      sections.add(_buildIrrigationSection(
+        context: context,
+        title: 'Aerators',
+        items: _provider.aerators!,
         leading: _buildLeadingIcon('assets/png/dp_agitator_right.png'),
       ));
     }

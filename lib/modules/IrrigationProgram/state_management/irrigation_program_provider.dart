@@ -58,8 +58,10 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
   List<ProgramMoistureSensor>? _moistureSensor;
   List<ProgramMoistureSensor>? get moistureSensor => _moistureSensor;
   List<DeviceObjectModel>? _agitators;
+  List<DeviceObjectModel>? _aerators;
   List<DeviceObjectModel>? _mainValves;
   List<DeviceObjectModel>? get agitators => _agitators;
+  List<DeviceObjectModel>? get aerators => _aerators;
   List<DeviceObjectModel>? get mainValves => _mainValves;
 
   List<DeviceObjectModel>? _selectedObjects;
@@ -94,6 +96,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       _moistureSensor = null;
       _irrigationLine = null;
       _agitators = null;
+      _aerators = null;
       _mainValves = null;
       configObjects.clear();
       irrigationLineFromConfigMaker.clear();
@@ -131,6 +134,11 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
             .whereType<DeviceObjectModel>()
             .toList();
         }
+
+        _aerators = _sampleIrrigationLine!.map((e) => e.aerator != null ? List<DeviceObjectModel>.from(e.aerator!) : [])
+            .expand((list) => list)
+            .whereType<DeviceObjectModel>()
+            .toList();
 
         _mainValves = _sampleIrrigationLine!.map((e) => e.mainValve != null ? List<DeviceObjectModel>.from(e.mainValve!) : [])
             .expand((list) => list)

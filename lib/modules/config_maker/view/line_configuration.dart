@@ -133,6 +133,12 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                             return widget.configPvd.pump.any((pump) => pump.commonDetails.sNo == pumpObject.sNo && pump.pumpType == 2);
                                           }).toList()
                                       ),
+                                    if(widget.configPvd.pump.any((pump) => pump.pumpType == 3))
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.aerator, parameterType: LineParameter.aerator, objectId: AppConstants.pumpObjectId, objectName: 'Aerator Pump', validateAllLine: false,
+                                          listOfObject: widget.configPvd.listOfGeneratedObject.where((pumpObject){
+                                            return widget.configPvd.pump.any((pump) => pump.commonDetails.sNo == pumpObject.sNo && pump.pumpType == 3);
+                                          }).toList()
+                                      ),
                                     if(availability(AppConstants.valveObjectId))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.valve, parameterType: LineParameter.valve, objectId: AppConstants.valveObjectId, objectName: 'Valve', validateAllLine: true),
                                     if(availability(AppConstants.mainValveObjectId))

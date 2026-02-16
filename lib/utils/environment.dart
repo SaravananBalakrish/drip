@@ -56,7 +56,7 @@ class Environment {
       "mqttPassword" : '2L9((WonMr',
     },
     'oroProduction': {
-      'apiUrl': 'http://13.235.254.21:5000/api/v1',
+      'apiUrl': 'http://13.203.84.47:5000/api/v1',
       'apiKey': 'dev-api-key',
       'mqttWebUrl': 'ws://13.235.254.21/mqtt',
       'mqttMobileUrl': '13.235.254.21',

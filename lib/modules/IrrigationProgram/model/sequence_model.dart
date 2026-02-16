@@ -506,6 +506,9 @@ class ProgramLibrary {
     if(json['data']['fanCount'] > 0 || json['data']['foggerCount'] > 0 || json['data']['lightCount'] > 0) {
       programTypes.add(json['data']['programType'][2]);
     }
+    if(json['data']['aeratorCount'] > 0) {
+      programTypes.add(json['data']['programType'][3]);
+    }
     return ProgramLibrary(
       defaultProgramTypes: List<String>.from(programTypes),
       // programLimit: 4,
