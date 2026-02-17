@@ -31,8 +31,7 @@ class _GeneralSettingWideState extends State<GeneralSettingWide> {
       create: (_) => GeneralSettingViewModel(Repository(HttpService()))
         ..initIds(customerId: widget.customerId, controllerId: widget.controllerId, userId: widget.userId, isSubUser: widget.isSubUser)
         ..getControllerInfo()
-        ..getSubUserList()
-        ..getLanguage(),
+        ..getSubUserList(),
       child: Consumer<GeneralSettingViewModel>(
         builder: (context, viewModel, _) {
           return Scaffold(
