@@ -25,7 +25,7 @@ class UserProfile extends StatelessWidget {
         viewedCustomer.mobileNo,
         viewedCustomer.email,
         viewedCustomer.role.name,
-      )..getLanguage(),
+      ),
       child: Consumer<UserSettingViewModel>(
         builder: (context, viewModel, _) {
           return Scaffold(

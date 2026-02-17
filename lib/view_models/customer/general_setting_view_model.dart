@@ -118,27 +118,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> getLanguage() async
-  {
-    setLoading(true);
-    try {
-      var response = await repository.fetchLanguageByActive({"active": "1"});
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-        if (jsonData["code"] == 200) {
-          final cntList = jsonData["data"] as List;
-          for (int i=0; i < cntList.length; i++) {
-            languageList.add(LanguageList.fromJson(cntList[i]));
-          }
-        }
-      }
-    } catch (error) {
-      debugPrint('Error fetching language list: $error');
-    } finally {
-      setLoading(false);
-    }
-  }
-
 
   Future<void> getSubUserList() async {
     if (customerId == null) return;
