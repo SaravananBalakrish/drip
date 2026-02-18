@@ -41,7 +41,7 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
     try {
       final Repository repository = Repository(HttpService());
       final response = await repository.getgeography({
-        "userId": widget.userId,
+        "userId": widget.customerId,
         "controllerId": widget.controllerId,
       });
 

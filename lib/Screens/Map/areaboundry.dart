@@ -6,9 +6,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:oro_drip_irrigation/Screens/Map/MapAreaModel.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
+import 'oro_map/getlatlong.dart';
 
-
-// MapScreenArea widget
+ // MapScreenArea widget
 class MapScreenArea extends StatefulWidget {
   const MapScreenArea({Key? key,
     required this.userId,
@@ -25,10 +25,8 @@ class MapScreenArea extends StatefulWidget {
 
 class _MapScreenAreaState extends State<MapScreenArea> {
   late GoogleMapController _mapController;
-  static const CameraPosition _initialPosition = CameraPosition(
-    target: LatLng(11.1387361, 76.9764367),
-    zoom: 15,
-  );
+  bool _isDrawerOpen = false;
+  double _drawerWidth = 280;
 
   final Set<Polygon> _polygons = {};
   final Set<Marker> _markers = {};
@@ -50,7 +48,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
     try{
       final Repository repository = Repository(HttpService());
       var getUserDetails = await repository.getgeographyArea({
-        "userId": widget.userId,
+        "userId": widget.customerId,
         "controllerId" : widget.controllerId
       });
       // print('getUserDetails${getUserDetails.body.runtimeType}');
@@ -132,32 +130,31 @@ class _MapScreenAreaState extends State<MapScreenArea> {
     }
   }
 
-  void _searchLocation() {
+
+  Future<void> _searchLocation() async {
     try {
       final input = _searchController.text.trim();
-      final extracted = extractCoordinates(input);
-      final coords = extracted.split(',');
 
-      if (coords.length == 2) {
-        final lat = double.parse(coords[0].trim());
-        final long = double.parse(coords[1].trim());
-        _mapController.moveCamera(
-          CameraUpdate.newLatLng(
-            LatLng(lat, long),
-          ),
+      final LatLng? result = await getLatLngFromInput(input);
+
+      if (result != null) {
+        _mapController.animateCamera(
+          CameraUpdate.newLatLngZoom(result, 15),
         );
-        // _updateMarker(lat, long);
       } else {
-        throw Exception('Invalid coordinate format');
+        throw Exception("Invalid location");
       }
     } catch (_) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Enter coordinates as "lat, long" (e.g., 11.1326952, 76.9767822)'),
+          content: Text(
+            'Enter valid area name, map link, DMS, or "lat, long"',
+          ),
         ),
       );
     }
   }
+
 
   String extractCoordinates(String input) {
     final regExp = RegExp(r"@(-?\d+\.\d+),(-?\d+\.\d+)");
@@ -268,7 +265,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
     final allPoints = _valves.values.expand((v) => v.area).toList();
     if (allPoints.isEmpty) return;
     final bounds = _calculateBounds(allPoints);
-    _mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+    _mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
   }
 
   LatLngBounds _calculateBounds(List<LatLng> points) {
@@ -286,11 +283,95 @@ class _MapScreenAreaState extends State<MapScreenArea> {
     );
   }
 
+  CameraPosition _getInitialCameraPosition() {
+    // 1️⃣ If selected valve has at least one valid point
+    if (selectedValve != null && selectedValve!.area.isNotEmpty) {
+      final firstPoint = selectedValve!.area.first;
+      return CameraPosition(
+        target: firstPoint,
+        zoom: 15,
+      );
+    }
+
+    // 2️⃣ If any valve has valid area points
+    for (var valve in _valves.values) {
+      if (valve.area.isNotEmpty) {
+        return CameraPosition(
+          target: valve.area.first,
+          zoom: 15,
+        );
+      }
+    }
+
+    // 3️⃣ Final fallback (Safe default)
+    return const CameraPosition(
+      target: LatLng(11.1387361, 76.9764367),
+      zoom: 15,
+    );
+  }
+
+
+  Widget _buildTopSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: _searchController,
+              textInputAction: TextInputAction.search,
+              onSubmitted: (_) => _searchLocation(),
+              decoration: const InputDecoration(
+                hintText:
+                'Search Area (e.g., 11.1326952, 76.9767822,Coimbatore)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: _searchLocation,
+            child: const Text(
+              'Search',
+              style: TextStyle(color: Colors.blue),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Map Area with Valves'),
+        title: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: const Text('Map Area with Valves'),
+        ),
+        leadingWidth: 110,
+        leading: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: IconButton(
+                icon: Icon(
+                  _isDrawerOpen ? Icons.close : Icons.menu,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isDrawerOpen = !_isDrawerOpen;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
         actions: [
           IconButton(icon: const Icon(Icons.undo), onPressed: _undo),
           IconButton(icon: const Icon(Icons.clear), onPressed: _clearBoundary),
@@ -298,75 +379,96 @@ class _MapScreenAreaState extends State<MapScreenArea> {
           IconButton(icon: const Icon(Icons.send), onPressed: _sendSelectedValveToServer),
         ],
       ),
-      body: Column(
+
+      body: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
+          /// ✅ Side Drawer
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: _isDrawerOpen ? _drawerWidth : 0,
+            color: Colors.white,
+            child: _isDrawerOpen
+                ? Column(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: const InputDecoration(
-                      hintText: 'Search Area (e.g., 11.1326952, 76.9767822)',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                ),
-                TextButton(
-                  onPressed: _searchLocation,
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16),
+                  color: Colors.teal,
                   child: const Text(
-                    'Search',
-                    style: TextStyle(color: Colors.blue),
+                    "Valves",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18),
                   ),
                 ),
+                Expanded(
+                  child: _valves.isEmpty
+                      ? const Center(child: Text("No Valves"))
+                      : ListView.builder(
+                    itemCount: _valves.length,
+                    itemBuilder: (context, index) {
+                      final valve =
+                      _valves.values.toList()[index];
+
+                      return ListTile(
+                        selected:
+                        selectedValve?.name ==
+                            valve.name,
+                        selectedTileColor:
+                        Colors.blue.withOpacity(0.2),
+                        title: Text(valve.name),
+                        subtitle: Text(
+                            "Points: ${valve.area.length}\nStatus: ${valve.status == 1 ? "ON" : "OFF"}"),
+                        onTap: () {
+                          _selectValve(valve.name);
+
+                          if (valve.area.isNotEmpty) {
+                            _mapController.animateCamera(
+                              CameraUpdate.newLatLngZoom(
+                                valve.area.first,
+                                15,
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    },
+                  ),
+                )
               ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 10),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(5),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
-                  blurRadius: 5,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: DropdownButton<String>(
-              hint: const Text('Select Valve'),
-              value: selectedValve?.name,
-              isExpanded: true,
-              items: _valves.keys.map((valveName) {
-                return DropdownMenuItem<String>(
-                  value: valveName,
-                  child: Text(valveName),
-                );
-              }).toList(),
-              onChanged: _selectValve,
-            ),
-          ),
-          Expanded(
-            child: GoogleMap(
-              initialCameraPosition: _initialPosition,
-              onMapCreated: (GoogleMapController controller) {
-                _mapController = controller;
-                if (_valves.isNotEmpty) {
-                  _zoomToValves();
-                }
-              },
-              mapType: MapType.hybrid,
-              markers: _markers,
-              polygons: _polygons,
-              onTap: _onMapTapped,
-            ),
+            )
+                : null,
           ),
 
+          /// ✅ Map Section
+          Expanded(
+            child: Column(
+              children: [
+                _buildTopSearchBar(),
+                SizedBox(height: 30,child: Text(selectedValve?.name ?? ''),),
+                Expanded(
+                  child: GoogleMap(
+                    initialCameraPosition:
+                    _getInitialCameraPosition(),
+                    onMapCreated:
+                        (GoogleMapController controller) {
+                      _mapController = controller;
+                      if (_valves.isNotEmpty) {
+                        _zoomToValves();
+                      }
+                    },
+                    mapType: MapType.hybrid,
+                    markers: _markers,
+                    polygons: _polygons,
+                    onTap: _onMapTapped,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
+
     );
   }
 }
