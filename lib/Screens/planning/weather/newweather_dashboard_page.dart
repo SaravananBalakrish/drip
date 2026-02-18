@@ -191,6 +191,11 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
   }
 
   @override
+  void dispose() {
+     super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final windSpeed = _findSensor('Wind Speed Sensor');
     final windDirection = _findSensor('Wind Direction Sensor');

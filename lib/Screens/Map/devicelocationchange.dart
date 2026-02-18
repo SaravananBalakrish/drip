@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 
 import '../../StateManagement/mqtt_payload_provider.dart';
 import 'googlemap_model.dart';
+import 'oro_map/getlatlong.dart';
 
 class MapScreendevice extends StatefulWidget {
   const MapScreendevice({Key? key}) : super(key: key);
@@ -12,15 +18,20 @@ class MapScreendevice extends StatefulWidget {
   _MapScreendeviceState createState() => _MapScreendeviceState();
 }
 
+
+
 class _MapScreendeviceState extends State<MapScreendevice> {
   GoogleMapController? _mapController;
   final TextEditingController _searchController = TextEditingController();
   Set<Marker> _markers = {};
   LatLng? _selectedPosition;
   DeviceList? _selectedDevice;
-  int _selectedDeviceindex = 0;
+  int _selectedDeviceIndex = 0;
 
   late MqttPayloadProvider mqttPayloadProvider;
+
+  bool _isDrawerOpen = false;
+  double _drawerWidth = 280;
 
   @override
   void initState() {
@@ -28,31 +39,37 @@ class _MapScreendeviceState extends State<MapScreendevice> {
     mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final devices = mqttPayloadProvider.mapModelInstance.data?.deviceList ?? [];
-
-      if (devices.isNotEmpty) {
-        setState(() {
-          _selectedDevice = devices[_selectedDeviceindex];
-
-          if (_selectedDevice!.geography?.lat != null && _selectedDevice!.geography?.long != null) {
-            _selectedPosition = LatLng(
-              _selectedDevice!.geography!.lat!,
-              _selectedDevice!.geography!.long!,
-            );
-
-            _mapController?.animateCamera(
-              CameraUpdate.newLatLngZoom(_selectedPosition!, 15),
-            );
-          }
-        });
-      }
-
+      _initializeSelectedDevice();
       _addAllDeviceMarkers();
     });
   }
 
+  void _initializeSelectedDevice() {
+    final devices = mqttPayloadProvider.mapModelInstance.data?.deviceList ?? [];
+    if (devices.isNotEmpty) {
+      // Select first device with valid lat/long
+      for (int i = 0; i < devices.length; i++) {
+        final dev = devices[i];
+        if (dev.geography?.lat != null && dev.geography?.long != null) {
+          _selectedDevice = dev;
+          _selectedDeviceIndex = i;
+          _selectedPosition = LatLng(dev.geography!.lat!, dev.geography!.long!);
+          _mapController?.animateCamera(
+            CameraUpdate.newLatLngZoom(_selectedPosition!, 12),
+          );
+          break;
+        }
+      }
+    }
+  }
+
   void _onMapCreated(GoogleMapController controller) {
     _mapController = controller;
+    if (_selectedPosition != null) {
+      _mapController!.animateCamera(
+        CameraUpdate.newLatLngZoom(_selectedPosition!, 12),
+      );
+    }
   }
 
   void _addAllDeviceMarkers() {
@@ -82,6 +99,7 @@ class _MapScreendeviceState extends State<MapScreendevice> {
                 setState(() {
                   _selectedDevice = device;
                   _selectedPosition = position;
+                  _selectedDeviceIndex = devices.indexOf(device);
                 });
                 _mapController?.animateCamera(CameraUpdate.newLatLngZoom(position, 15));
               },
@@ -98,141 +116,169 @@ class _MapScreendeviceState extends State<MapScreendevice> {
 
   void _updateMarker(double lat, double long) {
     final deviceList = mqttPayloadProvider.mapModelInstance.data?.deviceList;
-
-    if (deviceList == null || _selectedDeviceindex < 0 || _selectedDeviceindex >= deviceList.length) return;
+    if (deviceList == null || _selectedDeviceIndex < 0 || _selectedDeviceIndex >= deviceList.length) return;
 
     final position = LatLng(lat, long);
 
     setState(() {
-      deviceList[_selectedDeviceindex].geography ??= Geography();
-      deviceList[_selectedDeviceindex].geography!.lat = lat;
-      deviceList[_selectedDeviceindex].geography!.long = long;
+      deviceList[_selectedDeviceIndex].geography ??= Geography();
+      deviceList[_selectedDeviceIndex].geography!.lat = lat;
+      deviceList[_selectedDeviceIndex].geography!.long = long;
 
-      _selectedDevice = deviceList[_selectedDeviceindex]; // Keep local selected device updated
+      _selectedDevice = deviceList[_selectedDeviceIndex];
       _selectedPosition = position;
     });
 
-    mqttPayloadProvider.notifyListeners();  // Notify provider changes
-
-    _addAllDeviceMarkers();  // Refresh markers
+    mqttPayloadProvider.notifyListeners();
+    _addAllDeviceMarkers();
     _mapController?.animateCamera(CameraUpdate.newLatLngZoom(position, 15));
   }
 
-  void _searchLocation() {
-    try {
-      final input = _searchController.text.trim();
-      final extracted = extractCoordinates(input);
-      final coords = extracted.split(',');
+  void _searchLocation() async {
+    final input = _searchController.text;
+    final LatLng? result = await getLatLngFromInput(input);
 
-      if (coords.length == 2) {
-        final lat = double.parse(coords[0].trim());
-        final long = double.parse(coords[1].trim());
-        _updateMarker(lat, long);
-      } else {
-        throw Exception('Invalid coordinate format');
-      }
-    } catch (_) {
+    if (result != null) {
+      _updateMarker(result.latitude, result.longitude);
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Enter coordinates as "lat, long" (e.g., 11.1326952, 76.9767822)'),
+          content: Text("Enter valid area name, map link or lat,long"),
         ),
       );
     }
   }
 
-  String extractCoordinates(String input) {
-    final regExp = RegExp(r"@(-?\d+\.\d+),(-?\d+\.\d+)");
-    final match = regExp.firstMatch(input);
-
-    if (match != null) {
-      return '${match.group(1)},${match.group(2)}';
+  LatLng _getInitialCameraPosition() {
+    if (_selectedDevice?.geography?.lat != null && _selectedDevice?.geography?.long != null) {
+      return LatLng(_selectedDevice!.geography!.lat!, _selectedDevice!.geography!.long!);
     }
 
-    var coords = input.split(",");
-    if (coords.length == 2) {
-      return '${coords[0].trim()},${coords[1].trim()}';
+    final devices = mqttPayloadProvider.mapModelInstance.data?.deviceList ?? [];
+    for (var dev in devices) {
+      if (dev.geography?.lat != null && dev.geography?.long != null) {
+        return LatLng(dev.geography!.lat!, dev.geography!.long!);
+      }
     }
 
-    return "Invalid coordinates format.";
+    // fallback
+    return const LatLng(11.5937, 78.9629);
   }
 
   @override
   Widget build(BuildContext context) {
-    final deviceList = mqttPayloadProvider.mapModelInstance.data?.deviceList ?? [];
+    final devices = mqttPayloadProvider.mapModelInstance.data?.deviceList ?? [];
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Set Device Locations')),
-      body: Column(
+      appBar: AppBar(
+        title: const Text('Set Device Locations'),
+        leading: IconButton(
+          icon: Icon(_isDrawerOpen ? Icons.close : Icons.menu),
+          onPressed: () {
+            setState(() {
+              _isDrawerOpen = !_isDrawerOpen;
+            });
+          },
+        ),
+      ),
+      body: Row(
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: DropdownButton<DeviceList>(
-              value: _selectedDevice,
-              hint: const Text('Select Device'),
-              onChanged: (DeviceList? device) {
-                 if (device != null ) {
-                   final lat = device.geography!.lat ?? 11.5937;
-                  final long = device.geography!.long ?? 78.9629;
-                  final position = LatLng(lat, long);
-
-                  final index = deviceList.indexWhere((d) => d.deviceId == device.deviceId);
-
-                  setState(() {
-                    _selectedDevice = device;
-                    _selectedDeviceindex = index;
-                    _selectedPosition = position;
-                  });
-
-                  _addAllDeviceMarkers();
-
-                  _mapController?.animateCamera(CameraUpdate.newLatLngZoom(position, 12));
-                }
-                else
-                  {
-                    print("device else ");
-                  }
-
-              },
-              isExpanded: true,
-              items: deviceList.map((device) {
-                final lat = device.geography?.lat?.toStringAsFixed(5) ?? 'N/A';
-                final long = device.geography?.long?.toStringAsFixed(5) ?? 'N/A';
-                return DropdownMenuItem<DeviceList>(
-                  value: device,
-                  child: Text('${device.deviceName ?? "Device"} (Lat: $lat, Long: $long)'),
-                );
-              }).toList(),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
+          // Side Drawer
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            width: _isDrawerOpen ? _drawerWidth : 0,
+            color: Colors.white,
+            child: _isDrawerOpen
+                ? Column(
               children: [
-                Expanded(
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: const InputDecoration(
-                      hintText: 'Search Area (e.g., 11.1326952, 76.9767822)',
-                      border: OutlineInputBorder(),
-                    ),
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  width: double.infinity,
+                  color: Colors.teal.shade500,
+                  child: const Text(
+                    "Devices",
+                    style: TextStyle(color: Colors.white, fontSize: 18),
                   ),
                 ),
-                TextButton(
-                  onPressed: _searchLocation,
-                  child: const Text('Search', style: TextStyle(color: Colors.blue)),
+                Expanded(
+                  child: devices.isEmpty
+                      ? const Center(child: Text("No Devices"))
+                      : ListView.builder(
+                    itemCount: devices.length,
+                    itemBuilder: (context, index) {
+                      final device = devices[index];
+                      return ListTile(
+                        selected: device.deviceId == _selectedDevice?.deviceId,
+                        selectedTileColor: Colors.blue.withOpacity(0.2),
+                        title: Text(device.deviceName ?? "Device"),
+                        subtitle: Text(
+                            "Lat: ${device.geography?.lat ?? '-'}, Long: ${device.geography?.long ?? '-'}\nStatus: ${device.geography?.status ?? 'Unknown'}"),
+                        onTap: () {
+                          final position = device.geography?.lat != null &&
+                              device.geography?.long != null
+                              ? LatLng(device.geography!.lat!, device.geography!.long!)
+                              : _getInitialCameraPosition();
+
+                          setState(() {
+                            _selectedDevice = device;
+                            _selectedDeviceIndex = index;
+                            _selectedPosition = position;
+                          });
+
+                          _addAllDeviceMarkers();
+
+                          _mapController?.animateCamera(
+                              CameraUpdate.newLatLngZoom(position, 12));
+                        },
+                      );
+                    },
+                  ),
                 ),
               ],
-            ),
+            )
+                : null,
           ),
+
+          // Map Area
           Expanded(
-            child: GoogleMap(
-              mapType: MapType.hybrid,
-              onMapCreated: _onMapCreated,
-              initialCameraPosition: const CameraPosition(target: LatLng(0, 0), zoom: 2),
-              markers: _markers,
-              onTap: (LatLng latLng) {
-                _updateMarker(latLng.latitude, latLng.longitude);
-              },
+            child: Column(
+              children: [
+                // Search bar
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: const InputDecoration(
+                            hintText: 'Search Area (lat,long or name)',
+                            border: OutlineInputBorder(),
+                          ),
+                          textInputAction: TextInputAction.search,
+                          onSubmitted: (value) => _searchLocation(),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: _searchLocation,
+                        child: const Text('Search', style: TextStyle(color: Colors.blue)),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Map
+                Expanded(
+                  child: GoogleMap(
+                    mapType: MapType.hybrid,
+                    onMapCreated: _onMapCreated,
+                    initialCameraPosition:
+                    CameraPosition(target: _getInitialCameraPosition(), zoom: 12),
+                    markers: _markers,
+                    onTap: (LatLng latLng) => _updateMarker(latLng.latitude, latLng.longitude),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -240,3 +286,4 @@ class _MapScreendeviceState extends State<MapScreendevice> {
     );
   }
 }
+
