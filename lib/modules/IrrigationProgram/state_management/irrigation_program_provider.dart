@@ -2600,6 +2600,10 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
   ProgramDetails? get programDetails => _programDetails;
   String get delayBetweenZones => _programDetails!.delayBetweenZones;
   String get adjustPercentage => _programDetails!.adjustPercentage;
+  String get cyclicOnTime => _programDetails!.cyclicOnTime;
+  String get cyclicOffTime => _programDetails!.cyclicOffTime;
+  bool get enablePressure => _programDetails!.enablePressure;
+  String get pressureValue => _programDetails!.pressureValue;
 
   Future<void> doneData(int userId, int controllerId, int serialNumber) async {
     try {
@@ -2749,6 +2753,18 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         break;
       case "adjustPercentage":
         _programDetails!.adjustPercentage = newValue;
+        break;
+      case "cyclicOnTime":
+        _programDetails!.cyclicOnTime = newValue;
+        break;
+      case "cyclicOffTime":
+        _programDetails!.cyclicOffTime = newValue;
+        break;
+      case "enablePressure":
+        _programDetails!.enablePressure = newValue;
+        break;
+      case "pressureValue":
+        _programDetails!.pressureValue = newValue;
         break;
       default:
         log("Not found");
@@ -3332,7 +3348,11 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   : totalAgitators
                   .where((agitator) => !(selectedAgitators ?? []).contains(agitator))
                   .toList().join(','),/*HeadUnitToPause*/
-              "Name": programName,/*Name*/
+              "Name": programName,
+              "CyclicOnTime": cyclicOnTime,
+              "CyclicOffTime": cyclicOffTime,
+              "EnablePressure": enablePressure,
+              "PressureValue": pressureValue,
             }.entries.map((e) => e.value).join(",")
         };"
       }
