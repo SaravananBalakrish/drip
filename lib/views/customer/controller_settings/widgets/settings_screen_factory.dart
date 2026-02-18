@@ -5,6 +5,7 @@ import '../../../../Screens/Dealer/controllerlogfile.dart';
 import '../../../../Screens/Dealer/dealer_definition.dart';
 import '../../../../Screens/Map/CustomerMap.dart';
 import '../../../../Screens/Map/allAreaBoundry.dart';
+import '../../../../Screens/Map/oro_map/map_valve.dart';
 import '../../../../Screens/planning/PumpCondition.dart';
 import '../../../../Screens/planning/frost_productionScreen.dart';
 import '../../../../Screens/planning/names_form.dart';
@@ -173,12 +174,18 @@ class SettingsScreenFactory {
         }
 
       case 'Geography':
-        return MapScreenall(
+        return MapScreenValve(
           userId: ctx.userId,
           customerId: ctx.customerId,
           controllerId: ctx.controllerId,
           imeiNo: ctx.imeiNo,
         );
+        // return MapScreenall(
+        //   userId: ctx.userId,
+        //   customerId: ctx.customerId,
+        //   controllerId: ctx.controllerId,
+        //   imeiNo: ctx.imeiNo,
+        // );
 
       case 'Geography Area':
         return MapScreenAllArea(
