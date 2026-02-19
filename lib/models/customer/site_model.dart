@@ -250,7 +250,7 @@ class MasterControllerModel {
       deviceId: json['deviceId'] ?? '',
       deviceName: json['deviceName'] ?? '',
       categoryId: json['categoryId'] ?? 0,
-      categoryName: json['categoryName'] ?? '',
+      categoryName: isSubUser ? json['groupName'] ?? '' : json['categoryName'] ?? '',
       modelId: json['modelId'] ?? 0,
       modelName: json['modelName'] ?? '',
       modelDescription: json['modelDescription'] ?? '',
