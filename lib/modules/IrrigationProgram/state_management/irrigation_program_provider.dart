@@ -2512,7 +2512,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     try {
       final response = await repository.getUserProgramSelection(userData);
       final jsonData = json.decode(response.body);
-      // print("selected objects :: ${jsonData['data']['selection']['selected']}");
+      print("selected objects :: ${jsonData['data']['selection']['selected']}");
       _additionalData = null;
       _selectedObjects = [];
 
@@ -2521,8 +2521,8 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
             .map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>))
             .toList();
 
-        // print("configObjects: $configObjects");
-        // print("selectedObjects before filter: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
+        print("configObjects: $configObjects");
+        print("selectedObjects before filter: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
 
         if (configObjects.isNotEmpty) {
           _selectedObjects!.removeWhere((element) => !configObjects.any((element2) {
@@ -2532,7 +2532,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
               irrigationPumpSnoList.contains(element.sNo);
               // sampleIrrigationLine!.map((e) => e.irrigationPump
             }
-            // print("Comparing element.sNo: ${element.sNo} with configSNo: $configSNo");
+            print("Comparing element.sNo: ${element.sNo} with configSNo: $configSNo");
             return element.objectId == 5
                 ? sampleIrrigationLine!.map((e) => e.irrigationPump ?? []).expand((list) => list).toList().map((ele) => ele.sNo).toList().contains(element.sNo)
                 : configSNo == element.sNo;
@@ -2543,7 +2543,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       } else {
         _selectedObjects = [];
       }
-      // print("selected objects in the get function :: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
+      print("selected objects in the get function :: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
       _additionalData = AdditionalData.fromJson(jsonData['data']['selection']);
     } catch (e) {
       log('Error: $e');
@@ -2600,6 +2600,10 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
   ProgramDetails? get programDetails => _programDetails;
   String get delayBetweenZones => _programDetails!.delayBetweenZones;
   String get adjustPercentage => _programDetails!.adjustPercentage;
+  String get cyclicOnTime => _programDetails!.cyclicOnTime;
+  String get cyclicOffTime => _programDetails!.cyclicOffTime;
+  bool get enablePressure => _programDetails!.enablePressure;
+  String get pressureValue => _programDetails!.pressureValue;
 
   Future<void> doneData(int userId, int controllerId, int serialNumber) async {
     try {
@@ -2749,6 +2753,18 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         break;
       case "adjustPercentage":
         _programDetails!.adjustPercentage = newValue;
+        break;
+      case "cyclicOnTime":
+        _programDetails!.cyclicOnTime = newValue;
+        break;
+      case "cyclicOffTime":
+        _programDetails!.cyclicOffTime = newValue;
+        break;
+      case "enablePressure":
+        _programDetails!.enablePressure = newValue;
+        break;
+      case "pressureValue":
+        _programDetails!.pressureValue = newValue;
         break;
       default:
         log("Not found");
@@ -3332,7 +3348,11 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   : totalAgitators
                   .where((agitator) => !(selectedAgitators ?? []).contains(agitator))
                   .toList().join(','),/*HeadUnitToPause*/
-              "Name": programName,/*Name*/
+              "Name": programName,
+              "CyclicOnTime": cyclicOnTime,
+              "CyclicOffTime": cyclicOffTime,
+              "EnablePressure": enablePressure,
+              "PressureValue": pressureValue,
             }.entries.map((e) => e.value).join(",")
         };"
       }

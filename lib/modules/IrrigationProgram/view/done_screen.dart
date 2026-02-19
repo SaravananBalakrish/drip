@@ -6,6 +6,7 @@ import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/program_libra
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/schedule_screen.dart';
 import 'package:provider/provider.dart';
 import '../../../Constants/constants.dart';
+import '../../../Constants/properties.dart';
 import '../../../services/mqtt_service.dart';
 import '../../../utils/constants.dart';
 import '../repository/irrigation_program_repo.dart';
@@ -77,14 +78,14 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
                   margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05, vertical: MediaQuery.of(context).size.width * 0.025),
                   child: ListView(
                     children: [
-                      for(var index = 0; index < ((widget.isIrrigationProgram && !isEcoGem) ? 4 : 3); index++)
+                      for(var index = 0; index < ((widget.isIrrigationProgram && !isEcoGem) ? 8 : 3); index++)
                         Column(
                           children: [
                             buildListTile(
                               padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width > 1200 ? 8 : 0),
                               context: context,
                               title: isEcoGem ? ['Program Name', 'Valve Off Delay', 'Scale factor'][index].toUpperCase()
-                                  : ['Program Name', 'Priority', 'Valve Off Delay', 'Scale factor'][index].toUpperCase(),
+                                  : ['Program Name', 'Priority', 'Valve Off Delay', 'Scale factor', 'Cyclic OnTime', 'Cyclic OffTime', 'Enable Pressure', 'Pressure Value'][index].toUpperCase(),
                               subTitle: isEcoGem ? [tempProgramName != '' ? tempProgramName : widget.serialNumber == 0
                                   ? "Program ${doneProvider.programCount}"
                                   : doneProvider.programDetails!.programName.isNotEmpty ? programName : doneProvider.programDetails!.defaultProgramName,
@@ -92,11 +93,11 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
                                   : [tempProgramName != '' ? tempProgramName : widget.serialNumber == 0
                                   ? "Program ${doneProvider.programCount}"
                                   : doneProvider.programDetails!.programName.isNotEmpty ? programName : doneProvider.programDetails!.defaultProgramName,
-                                'Prioritize the program to run', 'Set valve off delay', 'Adjust duration or flow'][index],
+                                'Prioritize the program to run', 'Set valve off delay', 'Adjust duration or flow', 'Set Cyclic On Time', 'Set Cyclic Off Time', 'Enable Pressure', 'Set Pressure Value'][index],
                               textColor: Colors.black,
                               icon: isEcoGem
                                   ? [Icons.drive_file_rename_outline_rounded, Icons.timer_outlined, Icons.safety_check][index]
-                                  : [Icons.drive_file_rename_outline_rounded, Icons.priority_high, Icons.timer_outlined, Icons.safety_check][index],
+                                  : [Icons.drive_file_rename_outline_rounded, Icons.priority_high, Icons.timer_outlined, Icons.safety_check, Icons.timer, Icons.timer, Icons.check_box, Icons.speed][index],
                               trailing: isEcoGem ? [
                                 InkWell(
                                   child: Icon(Icons.drive_file_rename_outline_rounded, color: Theme.of(context).primaryColor,),
@@ -294,7 +295,54 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
                                       Text("%", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
                                     ],
                                   ),
-                                )
+                                ),
+                                CustomNativeTimePicker(
+                                  initialValue: Constants.showHourAndMinuteOnly(doneProvider.cyclicOnTime, widget.modelId),
+                                  is24HourMode: false,
+                                  style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                  onChanged: (newTime){
+                                    doneProvider.updateProgramName(newTime, 'cyclicOnTime');
+                                  },
+                                  modelId: widget.modelId,
+                                ),
+                                CustomNativeTimePicker(
+                                  initialValue: Constants.showHourAndMinuteOnly(doneProvider.cyclicOffTime, widget.modelId),
+                                  is24HourMode: false,
+                                  style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                  onChanged: (newTime){
+                                    doneProvider.updateProgramName(newTime, 'cyclicOffTime');
+                                  },
+                                  modelId: widget.modelId,
+                                ),
+                                Checkbox(
+                                    value: doneProvider.enablePressure,
+                                    onChanged: (newValue){
+                                      doneProvider.updateProgramName(newValue, 'enablePressure');
+                                    }
+                                ),
+                                IntrinsicWidth(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        child: TextFormField(
+                                          initialValue: doneProvider.pressureValue,
+                                          decoration: const InputDecoration(
+                                            // hintText: '0%',
+                                          ),
+                                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: AppProperties.regexForDecimal,
+                                          onChanged: (newValue){
+                                            doneProvider.updateProgramName(newValue, 'pressureValue');
+                                          },
+                                        ),
+                                      ),
+                                      Text("bar", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
+                                    ],
+                                  ),
+                                ),
                               ][index],
                             ),
                             const SizedBox(height: 45,)
