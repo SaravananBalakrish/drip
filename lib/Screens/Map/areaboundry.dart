@@ -344,10 +344,10 @@ class _MapScreenAreaState extends State<MapScreenArea> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: FittedBox(
+        title: const FittedBox(
           fit: BoxFit.scaleDown,
           alignment: Alignment.center,
-          child: const Text(
+          child: Text(
             'Set Valves Area',
             maxLines: 1,
             style: TextStyle(fontWeight: FontWeight.w600),
