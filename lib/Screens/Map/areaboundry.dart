@@ -310,7 +310,6 @@ class _MapScreenAreaState extends State<MapScreenArea> {
     );
   }
 
-
   Widget _buildTopSearchBar() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
