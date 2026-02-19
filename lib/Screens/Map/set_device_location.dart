@@ -172,13 +172,26 @@ class _MapScreendeviceState extends State<MapScreendevice> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Set Device Locations'),
-        leading: IconButton(
-          icon: Icon(_isDrawerOpen ? Icons.close : Icons.menu),
-          onPressed: () {
-            setState(() {
-              _isDrawerOpen = !_isDrawerOpen;
-            });
-          },
+        leadingWidth: 110,
+        leading: Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                setState(() {
+               Navigator.pop(context);
+                });
+              },
+            ),
+            IconButton(
+              icon: Icon(_isDrawerOpen ? Icons.close : Icons.menu),
+              onPressed: () {
+                setState(() {
+                  _isDrawerOpen = !_isDrawerOpen;
+                });
+              },
+            ),
+          ],
         ),
       ),
       body: Row(
