@@ -59,8 +59,7 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
   void _refreshWeather() async {
     setState(() => loading = true);
     _weatherLiveRequest();
-    // ⏳ Give device time to respond
-    await Future.delayed(const Duration(seconds: 2));
+     await Future.delayed(const Duration(seconds: 2));
     await _fetchWeatherJson();
   }
 
@@ -75,7 +74,7 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
     );
   }
 
-  Future<void> _fetchWeatherJson() async {
+   Future<void> _fetchWeatherJson() async {
     print("Call _fetchWeatherJson");
     try {
       final repository = Repository(HttpService());
@@ -89,22 +88,40 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
 
       if (jsonData['code'] == 200) {
         weatherModel = WeatherJsonModel.fromJson(jsonData);
-        devices = weatherModel.data.deviceList;
-        selectedDevice ??= devices.first;
-         selectedSerialNumber ??= devices.first.serialNumber;
+        print("Call weatherModel:${weatherModel.data.toJson()}.");
 
-        uiData = parseWeatherLive(
-          weatherModel,
-          selectedSerialNumber!,
-        );
-        setState(() {
-        });
+        devices = weatherModel.data.deviceList ?? [];
+        print("Call devices:$devices");
+
+        /// ✅ IMPORTANT FIX
+        if (devices.isNotEmpty) {
+          selectedDevice ??= devices.first;
+          selectedSerialNumber ??= devices.first.serialNumber;
+
+          print("Call selectedDevice:$selectedDevice");
+          print("Call selectedSerialNumber:$selectedSerialNumber");
+
+          uiData = parseWeatherLive(
+            weatherModel,
+            selectedSerialNumber!,
+          );
+        } else {
+          debugPrint("⚠️ No devices found for this controller");
+          selectedDevice = null;
+          selectedSerialNumber = null;
+          uiData = [];
+        }
+
+        setState(() {});
       }
-    } catch (e) {
+    } catch (e, s) {
       debugPrint("Weather fetch error: $e");
+      debugPrint("StackTrace: $s");
     }
+
     setState(() => loading = false);
   }
+
 
   WeatherLiveUIModel? _findSensor(String key) {
     try {
