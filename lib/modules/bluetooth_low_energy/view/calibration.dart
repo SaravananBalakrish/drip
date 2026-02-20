@@ -265,7 +265,7 @@ class _CalibrationState extends State<Calibration> {
           width: 200,
           padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 8),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(5) ,topRight: Radius.circular(27.5), ),
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(5) ,topRight: Radius.circular(27.5), ),
               color: Theme.of(context).primaryColorLight
           ),
           child: const Center(
@@ -737,6 +737,111 @@ class _CalibrationState extends State<Calibration> {
                 //   ],
                 // ),
                 // Text('Last Updated Value : ${sensorCount == 0 ? ec_1 : ec_2}'),
+                if([57, 58].contains(bleService.nodeDataFromHw['MID']))
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Calibration Factor 3',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            SizedBox(height: 6),
+                            TextFormField(
+                              controller: sensorCount == 0 ? bleService.ec1__FactorController : bleService.ec2__FactorController,
+                              decoration: InputDecoration(
+                                hintText: 'Enter value',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                contentPadding:
+                                EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                              offset: Offset(2, 2),
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.refresh, color: Colors.white),
+                          onPressed: (){
+                            bleService.onRefresh();
+                            setState(() {
+                              if(sensorCount == 0){
+                                bleService.calibrationEc1 = 'ec__${sensorCount+1}';
+                                bleService.calibrationEc2 = '';
+
+                              }else{
+                                bleService.calibrationEc2 = 'ec__${sensorCount+1}';
+                                bleService.calibrationEc1 = '';
+                              }
+                            });
+                            if(sensorCount == 0){
+                              if (kDebugMode) {
+                                print("blePvd.calibrationEc1 : ${bleService.calibrationEc1}");
+                              }
+                            }else{
+                              if (kDebugMode) {
+                                print("blePvd.calibrationEc2 : ${bleService.calibrationEc2}");
+                              }
+
+                            }
+                            loadingDialog('Get @ ${sensorCount == 0 ? bleService.ec1__FactorController.text : bleService.ec2__FactorController.text} Command Send Successfully..');
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Sensor Value',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            SizedBox(height: 6),
+                            TextFormField(
+                              controller: sensorCount == 0 ? bleService.ec1__Controller : bleService.ec2__Controller,
+                              decoration: InputDecoration(
+                                suffix: Text('(${sensorCount == 0 ? bleService.nodeDataFromHw['EC1_3'] : bleService.nodeDataFromHw['EC2_3']})'),
+                                hintText: 'Enter value',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                contentPadding:
+                                EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: SizedBox(
@@ -745,6 +850,9 @@ class _CalibrationState extends State<Calibration> {
                       onPressed: (){
                         var one = sensorCount == 0 ? bleService.ec1Controller.text : bleService.ec2Controller.text;
                         var two = sensorCount == 0 ? bleService.ec1_Controller.text : bleService.ec2_Controller.text;
+                        var factor1 = sensorCount == 0 ? bleService.ec1FactorController.text : bleService.ec2FactorController.text;
+                        var factor2 = sensorCount == 0 ? bleService.ec1_FactorController.text : bleService.ec2_FactorController.text;
+                        var factor3 = sensorCount == 0 ? bleService.ec1__FactorController.text : bleService.ec2__FactorController.text;
                         setState(() {
                           if(sensorCount == 0){
                             ec1 = one;
@@ -754,7 +862,7 @@ class _CalibrationState extends State<Calibration> {
                             ec_2 = two;
                           }
                         });
-                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ec${sensorCount+1}Submit']}$one:$two:';
+                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ec${sensorCount+1}Submit']}$one:$two:$factor1:$factor2:$factor3:';
                         var sumOfAscii = 0;
                         for(var i in payload.split('')){
                           var bytes = i.codeUnitAt(0);
@@ -793,7 +901,6 @@ class _CalibrationState extends State<Calibration> {
                     ),
                   ),
                 )
-
               ],
             ),
           ),
@@ -1180,6 +1287,8 @@ class _CalibrationState extends State<Calibration> {
                       onPressed: (){
                         var one = sensorCount == 0 ? bleService.ph1Controller.text : bleService.ph2Controller.text;
                         var two = sensorCount == 0 ? bleService.ph1_Controller.text : bleService.ph2_Controller.text;
+                        var factor1 = sensorCount == 0 ? bleService.ph1FactorController.text : bleService.ph2FactorController.text;
+                        var factor2 = sensorCount == 0 ? bleService.ph1_FactorController.text : bleService.ph2_FactorController.text;
                         setState(() {
                           if(sensorCount == 0){
                             ph1 = one;
@@ -1189,7 +1298,7 @@ class _CalibrationState extends State<Calibration> {
                             ph_2 = two;
                           }
                         });
-                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ph${sensorCount+1}Submit']}$one:$two:';
+                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ph${sensorCount+1}Submit']}$one:$two:$factor1:$factor2:';
                         var sumOfAscii = 0;
                         for(var i in payload.split('')){
                           var bytes = i.codeUnitAt(0);
