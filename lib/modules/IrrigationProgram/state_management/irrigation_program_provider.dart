@@ -2512,7 +2512,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     try {
       final response = await repository.getUserProgramSelection(userData);
       final jsonData = json.decode(response.body);
-      // print("selected objects :: ${jsonData['data']['selection']['selected']}");
+      print("selected objects :: ${jsonData['data']['selection']['selected']}");
       _additionalData = null;
       _selectedObjects = [];
 
@@ -2521,8 +2521,8 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
             .map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>))
             .toList();
 
-        // print("configObjects: $configObjects");
-        // print("selectedObjects before filter: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
+        print("configObjects: $configObjects");
+        print("selectedObjects before filter: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
 
         if (configObjects.isNotEmpty) {
           _selectedObjects!.removeWhere((element) => !configObjects.any((element2) {
@@ -2532,7 +2532,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
               irrigationPumpSnoList.contains(element.sNo);
               // sampleIrrigationLine!.map((e) => e.irrigationPump
             }
-            // print("Comparing element.sNo: ${element.sNo} with configSNo: $configSNo");
+            print("Comparing element.sNo: ${element.sNo} with configSNo: $configSNo");
             return element.objectId == 5
                 ? sampleIrrigationLine!.map((e) => e.irrigationPump ?? []).expand((list) => list).toList().map((ele) => ele.sNo).toList().contains(element.sNo)
                 : configSNo == element.sNo;
@@ -2543,7 +2543,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       } else {
         _selectedObjects = [];
       }
-      // print("selected objects in the get function :: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
+      print("selected objects in the get function :: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
       _additionalData = AdditionalData.fromJson(jsonData['data']['selection']);
     } catch (e) {
       log('Error: $e');

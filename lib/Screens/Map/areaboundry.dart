@@ -310,7 +310,6 @@ class _MapScreenAreaState extends State<MapScreenArea> {
     );
   }
 
-
   Widget _buildTopSearchBar() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -344,34 +343,36 @@ class _MapScreenAreaState extends State<MapScreenArea> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: const Text('Map Area with Valves'),
+        title: const FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.center,
+          child: Text(
+            'Set Valves Area',
+            maxLines: 1,
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
         ),
-        leadingWidth: 110,
-        leading: Row(
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: IconButton(
-                icon: Icon(
-                  _isDrawerOpen ? Icons.close : Icons.menu,
-                ),
+         centerTitle: true, // 👈 important
+         leadingWidth: 96,
+        leading: SizedBox(
+          width: 96,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.pop(context),
+              ),
+              IconButton(
+                icon: Icon(_isDrawerOpen ? Icons.close : Icons.menu),
                 onPressed: () {
-                  setState(() {
-                    _isDrawerOpen = !_isDrawerOpen;
-                  });
+                  setState(() => _isDrawerOpen = !_isDrawerOpen);
                 },
               ),
-            ),
-          ],
+            ],
+          ),
         ),
+
         actions: [
           IconButton(icon: const Icon(Icons.undo), onPressed: _undo),
           IconButton(icon: const Icon(Icons.clear), onPressed: _clearBoundary),
@@ -379,6 +380,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
           IconButton(icon: const Icon(Icons.send), onPressed: _sendSelectedValveToServer),
         ],
       ),
+
 
       body: Row(
         children: [

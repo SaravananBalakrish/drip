@@ -36,7 +36,6 @@ class WeatherDashboardPage extends StatefulWidget {
 class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
   late WeatherJsonModel weatherModel;
 
-
   final MqttService manager = MqttService();
 
   List<WeatherLiveUIModel> uiData = [];
@@ -53,8 +52,6 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
     _weatherLiveRequest();
     _fetchWeatherJson();
   }
-
-
 
   void _refreshWeather() async {
     setState(() => loading = true);
@@ -298,7 +295,6 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
   }
 }
 
-
 class LeftWeatherPanel extends StatelessWidget {
   final String city;
    final String date;
@@ -499,7 +495,6 @@ class RightDashboardPanel extends StatelessWidget {
     );
   }
 }
-
 
 class DateTimeHelper {
   /// Combines API date + time into DateTime

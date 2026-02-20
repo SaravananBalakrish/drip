@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,6 +11,7 @@ import 'package:oro_drip_irrigation/modules/IrrigationProgram/widgets/custom_sec
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
 import '../../../Screens/planning/valve_group_screen.dart';
+import '../../config_maker/model/device_object_model.dart';
 import '../state_management/irrigation_program_provider.dart';
 import '../widgets/custom_animated_switcher.dart';
 import '../../SystemDefinitions/widgets/custom_snack_bar.dart';
@@ -552,7 +555,15 @@ class _SequenceScreenState extends State<SequenceScreen> {
     if (_isIrrigationProgram && sampleIrrigationLine != null) {
       // Main Valves
       final mainValves = sampleIrrigationLine.expand((e) => e.mainValve ?? []).toList();
-      if (mainValves.isNotEmpty) {
+      // final List<DeviceObjectModel> mainValves =
+      // sampleIrrigationLine
+      //     .expand<DeviceObjectModel>((e) => e.mainValve ?? [])
+      //     .toList();
+      print(
+        "mainValves JSON: ${jsonEncode(mainValves.map((e) => e.toJson()).toList())}",
+      );
+      print("mainValves:${mainValves[0].toJson()}");
+       if (mainValves.isNotEmpty) {
         sections.add(_buildIrrigationSection(
           context: context,
           title: 'Main valves',
@@ -657,7 +668,7 @@ class _SequenceScreenState extends State<SequenceScreen> {
     Widget? leading,
     Widget? trailing,
   }) {
-    return Column(
+     return Column(
       children: [
         buildLineAndValveContainerUpdated(
           context: context,
@@ -714,7 +725,8 @@ class _SequenceScreenState extends State<SequenceScreen> {
     List<dynamic>? dataList,
     int lineIndex = 0,
     bool isMainValve = false,
-  }) {
+  })
+  {
     final sequence = _provider.irrigationLine!.sequence;
     final indexToShow = _getIndexToShow;
     final isSelected = sequence.isEmpty || indexToShow >= sequence.length
@@ -724,6 +736,8 @@ class _SequenceScreenState extends State<SequenceScreen> {
         : isMainValve
         ? sequence[indexToShow]['mainValve']?.any((e) => e['sNo'] == item.sNo) ?? false
         : sequence[indexToShow]['valve']?.any((e) => e['sNo'] == item.sNo) ?? false;
+    print("isSelected:$isSelected");
+    print("mainValve:$isMainValve");
 
     return buildListOfContainer(
       context: context,
