@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -557,6 +559,9 @@ class _SequenceScreenState extends State<SequenceScreen> {
       // sampleIrrigationLine
       //     .expand<DeviceObjectModel>((e) => e.mainValve ?? [])
       //     .toList();
+      print(
+        "mainValves JSON: ${jsonEncode(mainValves.map((e) => e.toJson()).toList())}",
+      );
       print("mainValves:${mainValves[0].toJson()}");
        if (mainValves.isNotEmpty) {
         sections.add(_buildIrrigationSection(
@@ -720,7 +725,8 @@ class _SequenceScreenState extends State<SequenceScreen> {
     List<dynamic>? dataList,
     int lineIndex = 0,
     bool isMainValve = false,
-  }) {
+  })
+  {
     final sequence = _provider.irrigationLine!.sequence;
     final indexToShow = _getIndexToShow;
     final isSelected = sequence.isEmpty || indexToShow >= sequence.length
@@ -730,6 +736,8 @@ class _SequenceScreenState extends State<SequenceScreen> {
         : isMainValve
         ? sequence[indexToShow]['mainValve']?.any((e) => e['sNo'] == item.sNo) ?? false
         : sequence[indexToShow]['valve']?.any((e) => e['sNo'] == item.sNo) ?? false;
+    print("isSelected:$isSelected");
+    print("mainValve:$isMainValve");
 
     return buildListOfContainer(
       context: context,

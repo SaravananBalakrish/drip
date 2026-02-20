@@ -34,8 +34,7 @@ class WeatherDashboardPage extends StatefulWidget {
 }
 
 class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
-  WeatherJsonModel? weatherModel;
-
+  late WeatherJsonModel weatherModel;
 
   final MqttService manager = MqttService();
 
@@ -54,12 +53,11 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
     _fetchWeatherJson();
   }
 
-
-
   void _refreshWeather() async {
     setState(() => loading = true);
     _weatherLiveRequest();
-     await Future.delayed(const Duration(seconds: 2));
+    // ⏳ Give device time to respond
+    await Future.delayed(const Duration(seconds: 2));
     await _fetchWeatherJson();
   }
 
@@ -74,7 +72,7 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
     );
   }
 
-   Future<void> _fetchWeatherJson() async {
+  Future<void> _fetchWeatherJson() async {
     print("Call _fetchWeatherJson");
     try {
       final repository = Repository(HttpService());
@@ -88,40 +86,22 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
 
       if (jsonData['code'] == 200) {
         weatherModel = WeatherJsonModel.fromJson(jsonData);
-        print("Call weatherModel:${weatherModel?.data.toJson()}.");
+        devices = weatherModel.data.deviceList;
+        selectedDevice ??= devices.first;
+         selectedSerialNumber ??= devices.first.serialNumber;
 
-        devices = weatherModel?.data.deviceList ?? [];
-        print("Call devices:$devices");
-
-        /// ✅ IMPORTANT FIX
-        if (devices.isNotEmpty) {
-          selectedDevice ??= devices.first;
-          selectedSerialNumber ??= devices.first.serialNumber;
-
-          print("Call selectedDevice:$selectedDevice");
-          print("Call selectedSerialNumber:$selectedSerialNumber");
-
-          uiData = parseWeatherLive(
-            weatherModel!,
-            selectedSerialNumber!,
-          );
-        } else {
-          debugPrint("⚠️ No devices found for this controller");
-          selectedDevice = null;
-          selectedSerialNumber = null;
-          uiData = [];
-        }
-
-        setState(() {});
+        uiData = parseWeatherLive(
+          weatherModel,
+          selectedSerialNumber!,
+        );
+        setState(() {
+        });
       }
-    } catch (e, s) {
+    } catch (e) {
       debugPrint("Weather fetch error: $e");
-      debugPrint("StackTrace: $s");
     }
-
     setState(() => loading = false);
   }
-
 
   WeatherLiveUIModel? _findSensor(String key) {
     try {
@@ -230,10 +210,10 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
     }).toList();
 
     final dt = DateTimeHelper.fromApi(
-      date: weatherModel!.data.weatherLive.cD,
-      time: weatherModel!.data.weatherLive.cT,
+      date: weatherModel.data.weatherLive.cD,
+      time: weatherModel.data.weatherLive.cT,
     );
-    final time = weatherModel?.data.weatherLive.cT;
+    final time = weatherModel.data.weatherLive.cT;
     final formattedtime = DateTimeHelper.formatDateTime(dt);
      return Scaffold(
        backgroundColor: Colors.teal.shade100,
@@ -253,7 +233,7 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
                  LeftWeatherPanel(
                    city: "Coimbatore",
                    date: formattedtime,
-                   time: time ?? "0",
+                   time: time,
                    wind: windSpeed?.value ?? "0",
                    temp: temp?.value ?? "0",
                    humidity: hummitity?.value ?? "0",
@@ -282,7 +262,7 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
                  city: "Coimbatore",
                  temperature: temp?.value ?? "0",
                  feelsLike: temp?.value ?? "0",
-                 time: time ?? '0',
+                 time: time,
                  sunrise: "06:37 AM",
                  sunset: "06:37 PM",
                  humidity: hummitity?.value ?? "0",
@@ -314,7 +294,6 @@ class _WeatherDashboardPageState extends State<WeatherDashboardPage> {
      );
   }
 }
-
 
 class LeftWeatherPanel extends StatelessWidget {
   final String city;
@@ -516,7 +495,6 @@ class RightDashboardPanel extends StatelessWidget {
     );
   }
 }
-
 
 class DateTimeHelper {
   /// Combines API date + time into DateTime
