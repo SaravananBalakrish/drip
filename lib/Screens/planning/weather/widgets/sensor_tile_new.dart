@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Screens/planning/weather/weather_rainfall_card.dart';
+import 'package:oro_drip_irrigation/Screens/planning/weather/weather_wind_card.dart';
 
 import '../view/weather_screen_new.dart';
+import '../weather_co2_card.dart';
 
 class SensorTileNew extends StatelessWidget {
   final IconData icon;
@@ -26,7 +29,18 @@ class SensorTileNew extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+if(title.contains('Co2'))
+  {
+    return CO2Card(co2Value: int.parse('$value'), maxValue: 2000,title: title,message:'');
+  }
+if(title.contains('Rain Fall'))
+{
+  return RainfallCard(rainfallValue: '$value', forecastText: '', description: '');
+}
+if(title.contains('Wind Direction'))
+{
+  return WindCard(directionAngle: value);
+}
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

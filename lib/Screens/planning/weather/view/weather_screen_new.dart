@@ -9,6 +9,7 @@ import '../../../../utils/formatters.dart';
 import '../../../../views/common/widgets/build_loading_indicator.dart';
 import '../model/weather_model.dart';
 import '../view_model/weather_view_model.dart';
+import '../weather_report_page.dart';
 import '../widgets/info_box.dart';
 import '../widgets/sensor_chip.dart';
 import '../widgets/sun_time_card.dart';
@@ -133,13 +134,13 @@ class _WeatherScreenNewState extends State<WeatherScreenNew>
                 controller: _tabController,
                 children: [
                   for (final line in lines)
-                    _LineTabView(line: line, vm: vm, isNarrow: widget.isNarrow),
+                    _LineTabView(line: line, vm: vm, isNarrow: widget.isNarrow,customerId: widget.customerId,userId: widget.controllerId,),
                 ],
               ),
             );
           }else {
             return Scaffold(
-              body: _LineTabView(line: lines[0], vm: vm, isNarrow: widget.isNarrow),
+              body: _LineTabView(line: lines[0], vm: vm, isNarrow: widget.isNarrow,customerId: widget.customerId,userId: widget.controllerId,),
             );
           }
         },
@@ -152,11 +153,13 @@ class _LineTabView extends StatefulWidget {
   final WeatherViewModel vm;
   final IrrigationLineExpanded line;
   final bool isNarrow;
+  final int customerId;
+  final int userId;
 
   const _LineTabView({
     required this.vm,
     required this.line,
-    required this.isNarrow,
+    required this.isNarrow, required this.customerId, required this.userId,
   });
 
   @override
@@ -284,11 +287,28 @@ class _LineTabViewState extends State<_LineTabView> {
                     spacing: 12,
                     runSpacing: 12,
                     children: station.sensors.map<Widget>((s) {
-                      return SensorChip(
-                        sensor: s,
-                        vm: widget.vm,
-                        device: device,
-                        isNarrow:  widget.isNarrow,
+                      return GestureDetector(
+                        onTap: (){
+                          // print('deviceID ->${station.device[selectedStationIndex].deviceId}');
+                          print('device ->${station.device.controllerId}');
+                          print('deviceID ->${station}');
+                           // print('userId ->${widget.userId} customerId ->${widget.customerId}');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => SensorHourlyReportPage(
+                                deviceSrNo: '${station.device.serialNumber}',
+                                sensorSrNo: s.sNo.toString(), sensorName: s.name, userId: '${widget.customerId}', controllerId: "${widget.userId}",
+                              ),
+                            ),
+                          );
+                        },
+                        child: SensorChip(
+                          sensor: s,
+                          vm: widget.vm,
+                          device: device,
+                          isNarrow:  widget.isNarrow,
+                        ),
                       );
                     }).toList(),
                   ),
