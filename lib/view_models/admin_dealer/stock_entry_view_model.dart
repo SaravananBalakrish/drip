@@ -200,12 +200,6 @@ class StockEntryViewModel extends ChangeNotifier {
         final jsonData = jsonDecode(response.body);
         if (jsonData["code"] == 200) {
           _clearForm();
-          Map<String, dynamic> result = {
-            'status': 'success',
-            'message': 'Stock Added successfully',
-            'data': jsonData["data"],
-            'products': addedProductList,
-          };
           addedProductList.clear();
           notifyListeners();
         }else{

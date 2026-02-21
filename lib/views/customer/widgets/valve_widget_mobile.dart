@@ -1,15 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 
 import '../../../StateManagement/mqtt_payload_provider.dart';
-import '../../../models/customer/sensor_hourly_data_model.dart';
 import '../../../models/customer/site_model.dart';
-import '../../../repository/repository.dart';
-import '../../../services/http_service.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/my_function.dart';
 import 'float_switch_popover.dart';
