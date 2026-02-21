@@ -100,16 +100,18 @@ class _CalibrationState extends State<Calibration> {
               if(waterMeter.isNotEmpty)
                 cumulativeWidget(),
               batteryCalibration(),
-              for(int ec = 0;ec < (["57", "58"].contains(bleService.nodeDataFromHw['MID']) ? 2 : ecSensorList.length);ec++)
-                ecSensorWidget(
-                    sensorCount: ec,
-                    sensorName: ecSensorList[ec]['name']
-                ),
-              for(int ph = 0;ph < (["57", "58"].contains(bleService.nodeDataFromHw['MID']) ? 2 : phSensorList.length);ph++)
-                phSensorWidget(
-                    sensorCount: ph,
-                    sensorName: phSensorList[ph]['name']
-                ),
+              if(bleService.nodeDataFromHw["MID"] != "58")
+                for(int ec = 0;ec < (["57", "58"].contains(bleService.nodeDataFromHw['MID']) ? 1 : ecSensorList.length);ec++)
+                  ecSensorWidget(
+                      sensorCount: ec,
+                      sensorName: ecSensorList[ec]['name']
+                  ),
+              if(bleService.nodeDataFromHw["MID"] != "57")
+                for(int ph = 0;ph < (["57", "58"].contains(bleService.nodeDataFromHw['MID']) ? 1 : phSensorList.length);ph++)
+                  phSensorWidget(
+                      sensorCount: ph,
+                      sensorName: phSensorList[ph]['name']
+                  ),
               const SizedBox(height: 50,)
             ],
           ),
@@ -726,6 +728,7 @@ class _CalibrationState extends State<Calibration> {
                       onPressed: (){
                         var one = sensorCount == 0 ? bleService.ec1Controller.text : bleService.ec2Controller.text;
                         var two = sensorCount == 0 ? bleService.ec1_Controller.text : bleService.ec2_Controller.text;
+                        var three = sensorCount == 0 ? bleService.ec1__Controller.text : bleService.ec2__Controller.text;
                         var factor1 = sensorCount == 0 ? bleService.ec1FactorController.text : bleService.ec2FactorController.text;
                         var factor2 = sensorCount == 0 ? bleService.ec1_FactorController.text : bleService.ec2_FactorController.text;
                         var factor3 = sensorCount == 0 ? bleService.ec1__FactorController.text : bleService.ec2__FactorController.text;
@@ -738,7 +741,7 @@ class _CalibrationState extends State<Calibration> {
                             ec_2 = two;
                           }
                         });
-                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ec${sensorCount+1}Submit']}$one:$two:$factor1:$factor2:$factor3:';
+                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ec${sensorCount+1}Submit']}$one:$two:$three:$factor1:$factor2:$factor3:';
                         var sumOfAscii = 0;
                         for(var i in payload.split('')){
                           var bytes = i.codeUnitAt(0);
