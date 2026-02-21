@@ -1,6 +1,4 @@
 
-import 'dart:convert';
-
 import '../../modules/PumpController/model/pump_controller_data_model.dart';
 
 abstract class FertilizerItem {
@@ -904,7 +902,7 @@ class FilterSiteModel {
         }
       }).toList();
     } else {
-      throw FormatException('filters is not a list');
+      throw const FormatException('filters is not a list');
     }
   }
 
@@ -1493,7 +1491,7 @@ class ValveModel {
 
   factory ValveModel.fromConfigObject(ConfigObject obj, List<WaterSourceModel> ws) {
 
-    List<double> assignedSNos = (obj.assignObject ?? [])
+    List<double> assignedSNos = (obj.assignObject)
         .map((e) => (e as num).toDouble())
         .toList();
 

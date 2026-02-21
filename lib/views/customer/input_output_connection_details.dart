@@ -22,10 +22,10 @@ class InputOutputConnectionDetails extends StatelessWidget {
         crossAxisSpacing: 0,
         itemCount: nodes.length,
         itemBuilder: (context, index) {
-          double dynamicHeight = ((int.tryParse(nodes[index].relayOutput ?? '0') ?? 0) +
-              (int.tryParse(nodes[index].latchOutput ?? '0') ?? 0) +
-              (int.tryParse(nodes[index].analogInput ?? '0') ?? 0) +
-              (int.tryParse(nodes[index].digitalInput ?? '0') ?? 0)) * 35 + 100;
+          double dynamicHeight = ((int.tryParse(nodes[index].relayOutput) ?? 0) +
+              (int.tryParse(nodes[index].latchOutput) ?? 0) +
+              (int.tryParse(nodes[index].analogInput) ?? 0) +
+              (int.tryParse(nodes[index].digitalInput) ?? 0)) * 35 + 100;
           return Tile(
             index: index,
             masterIndex: masterInx,

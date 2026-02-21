@@ -69,7 +69,7 @@ class AlarmListItems extends StatelessWidget {
                       "4100": {"4101": finalPayload}
                     });
 
-                    final result = await context
+                    await context
                         .read<CommunicationService>()
                         .sendCommand(
                       serverMsg:
