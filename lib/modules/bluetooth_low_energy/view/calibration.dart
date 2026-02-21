@@ -741,7 +741,7 @@ class _CalibrationState extends State<Calibration> {
                             ec_2 = two;
                           }
                         });
-                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ec${sensorCount+1}Submit']}$one:$two:$three:$factor1:$factor2:$factor3:';
+                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ec${sensorCount+1}Submit']}${checkEmptyValue(one)}:${checkEmptyValue(two)}:${checkEmptyValue(three)}:${checkEmptyValue(factor1)}:${checkEmptyValue(factor2)}:${checkEmptyValue(factor3)}:';
                         var sumOfAscii = 0;
                         for(var i in payload.split('')){
                           var bytes = i.codeUnitAt(0);
@@ -786,6 +786,10 @@ class _CalibrationState extends State<Calibration> {
         )
       ],
     );
+  }
+
+  String checkEmptyValue(String value){
+    return value.isEmpty ? '0': value;
   }
 
   Widget phSensorWidget({
@@ -1052,7 +1056,7 @@ class _CalibrationState extends State<Calibration> {
                             ph_2 = two;
                           }
                         });
-                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ph${sensorCount+1}Submit']}$one:$two:$factor1:$factor2:';
+                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ph${sensorCount+1}Submit']}${checkEmptyValue(one)}:${checkEmptyValue(two)}:${checkEmptyValue(factor1)}:${checkEmptyValue(factor2)}:';
                         var sumOfAscii = 0;
                         for(var i in payload.split('')){
                           var bytes = i.codeUnitAt(0);
