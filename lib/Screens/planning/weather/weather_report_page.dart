@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -43,6 +45,8 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
 
 
   Future<void> fetchHourlyData() async {
+
+
     try {
       final repository = Repository(HttpService());
       final response = await repository.getweatherReport({
@@ -51,6 +55,8 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
         "fromDate": selectedDate,
         "toDate": selectedDate,
       });
+      print(response.body);
+      print(json.decode(response.body));
        final model = weatherReportModelFromJson(response.body);
 
       if (model.data.isEmpty) {

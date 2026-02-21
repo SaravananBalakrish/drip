@@ -5,37 +5,20 @@ import 'dart:math' as math;
 import 'package:flutter_svg/svg.dart';
 
 class WindCard extends StatelessWidget {
-  final String windSpeed;
-  final String gusts;
-  final String directionText;
-  final double directionAngle;
+    final double directionAngle;
 
   const WindCard({
     super.key,
-    required this.windSpeed,
-    required this.gusts,
-    required this.directionText,
-    required this.directionAngle,
+      required this.directionAngle,
   });
 
   @override
   Widget build(BuildContext context) {
     return _baseCard(
       title: "Wind",
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _KeyValueRow("Wind Speed", windSpeed),
-                // const SizedBox(height: 8),
-                // _KeyValueRow("Gusts", gusts),
-                const SizedBox(height: 8),
-                _KeyValueRow("Wind Direction ", directionText),
-              ],
-            ),
-          ),
+          _KeyValueRow("Wind Direction ", '$directionAngle'),
           const SizedBox(width: 12),
           _WindCompass(angle: directionAngle),
         ],

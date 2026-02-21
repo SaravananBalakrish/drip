@@ -53,7 +53,8 @@ class SensorChip extends StatelessWidget {
     if (type.contains('temperature')) return '°C';
     if (type.contains('humidity')) return '%';
     if (type.contains('co2')) return 'ppm';
-    if (type.contains('wind')) return 'km/h';
+    // if (type.contains('Wind Direction')) return '°';
+    if (type.contains('Wind')) return 'km/h';
     if (type.contains('rain')) return 'mm';
     return '';
   }
