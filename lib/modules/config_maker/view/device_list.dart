@@ -413,9 +413,9 @@ class _DeviceListState extends State<DeviceList> {
         context: context,
         useRootNavigator: true,
         builder: (context){
-          return PopScope(
+          return const PopScope(
             canPop: false,
-            child: const AlertDialog(
+            child: AlertDialog(
               content: Row(
                 spacing: 20,
                 children: [

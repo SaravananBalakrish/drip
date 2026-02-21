@@ -100,12 +100,12 @@ class _CalibrationState extends State<Calibration> {
               if(waterMeter.isNotEmpty)
                 cumulativeWidget(),
               batteryCalibration(),
-              for(int ec = 0;ec < ecSensorList.length;ec++)
+              for(int ec = 0;ec < ([57, 58].contains(bleService.nodeDataFromHw['MID']) ? 2 : ecSensorList.length);ec++)
                 ecSensorWidget(
                     sensorCount: ec,
                     sensorName: ecSensorList[ec]['name']
                 ),
-              for(int ph = 0;ph < ecSensorList.length;ph++)
+              for(int ph = 0;ph < ([57, 58].contains(bleService.nodeDataFromHw['MID']) ? 2 : phSensorList.length);ph++)
                 phSensorWidget(
                     sensorCount: ph,
                     sensorName: phSensorList[ph]['name']
@@ -509,70 +509,6 @@ class _CalibrationState extends State<Calibration> {
                     ),
                   ],
                 ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   children: [
-                //     Column(
-                //       children: [
-                //         SizedBox(
-                //           width: 150,
-                //           child: TextFormField(
-                //             controller: sensorCount == 0 ? bleService.ec1Controller : bleService.ec2Controller,
-                //             keyboardType: TextInputType.number,
-                //             decoration: inputDecoration.copyWith(
-                //               prefixIcon: Padding(
-                //                 padding: const EdgeInsets.all(8.0),
-                //                 child: SvgPicture.asset(
-                //                   'assets/Images/Svg/objectId_${AppConstants.ecObjectId}.svg',
-                //                   height: 20,
-                //                   color: Colors.black,
-                //                 ),
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //       ],
-                //     ),
-                //     Container(
-                //       decoration: BoxDecoration(
-                //         color: Theme.of(context).primaryColor,
-                //         shape: BoxShape.circle, // or BoxShape.rectangle
-                //       ),
-                //       child: IconButton(
-                //         onPressed: (){
-                //           bleService.onRefresh();
-                //           setState(() {
-                //             if(sensorCount == 0){
-                //               bleService.calibrationEc1 = 'ec${sensorCount+1}';
-                //               bleService.calibrationEc2 = '';
-                //             }else{
-                //               bleService.calibrationEc2 = 'ec${sensorCount+1}';
-                //               bleService.calibrationEc1 = '';
-                //             }
-                //           });
-                //           if(sensorCount == 0){
-                //             if (kDebugMode) {
-                //               print("blePvd.calibrationEc1 : ${bleService.calibrationEc1}");
-                //             }
-                //           }else{
-                //             if (kDebugMode) {
-                //               print("blePvd.calibrationEc2 : ${bleService.calibrationEc2}");
-                //             }
-                //
-                //           }
-                //           loadingDialog('Get @0 Command Send Successfully..');
-                //
-                //         },
-                //         icon: const Icon(Icons.refresh, color: Colors.white),
-                //       ),
-                //     ),
-                //     const SizedBox(
-                //       width: 100,
-                //         child: Text('Get @0', style: TextStyle(fontSize: 14),)
-                //     )
-                //   ],
-                // ),
-                // Text('Last Updated Value : ${sensorCount == 0 ? bleService.nodeDataFromHw['EC1_1'] : bleService.nodeDataFromHw['EC2_1']}'),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -677,66 +613,6 @@ class _CalibrationState extends State<Calibration> {
                     ),
                   ],
                 ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   children: [
-                //     SizedBox(
-                //       width: 150,
-                //       child: TextFormField(
-                //         controller: sensorCount == 0 ? bleService.ec1_Controller : bleService.ec2_Controller,
-                //         keyboardType: TextInputType.number,
-                //         decoration: inputDecoration.copyWith(
-                //           prefixIcon: Padding(
-                //             padding: const EdgeInsets.all(8.0),
-                //             child: SvgPicture.asset(
-                //               'assets/Images/Svg/objectId_${AppConstants.ecObjectId}.svg',
-                //               height: 20,
-                //               color: Colors.black,
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //     Container(
-                //       decoration: BoxDecoration(
-                //         color: Theme.of(context).primaryColor,
-                //         shape: BoxShape.circle, // or BoxShape.rectangle
-                //       ),
-                //       child: IconButton(
-                //         onPressed: (){
-                //           bleService.onRefresh();
-                //           setState(() {
-                //             if(sensorCount == 0){
-                //               bleService.calibrationEc1 = 'ec_${sensorCount+1}';
-                //               bleService.calibrationEc2 = '';
-                //
-                //             }else{
-                //               bleService.calibrationEc2 = 'ec_${sensorCount+1}';
-                //               bleService.calibrationEc1 = '';
-                //             }
-                //           });
-                //           if(sensorCount == 0){
-                //             if (kDebugMode) {
-                //               print("blePvd.calibrationEc1 : ${bleService.calibrationEc1}");
-                //             }
-                //           }else{
-                //             if (kDebugMode) {
-                //               print("blePvd.calibrationEc2 : ${bleService.calibrationEc2}");
-                //             }
-                //
-                //           }
-                //           loadingDialog('Get @ 1.413 Command Send Successfully..');
-                //         },
-                //         icon: const Icon(Icons.refresh, color: Colors.white),
-                //       ),
-                //     ),
-                //     const SizedBox(
-                //         width: 100,
-                //         child: Text('Get @ 1.413', style: TextStyle(fontSize: 14),)
-                //     )
-                //   ],
-                // ),
-                // Text('Last Updated Value : ${sensorCount == 0 ? ec_1 : ec_2}'),
                 if([57, 58].contains(bleService.nodeDataFromHw['MID']))
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -1015,7 +891,7 @@ class _CalibrationState extends State<Calibration> {
                               print("blePvd.calibrationPh2 : ${bleService.calibrationPh2}");
                             }
                           }
-                          loadingDialog('Get ${sensorCount == 0 ? bleService.ph1FactorController : bleService.ph2FactorController} Command Send Successfully..');
+                          loadingDialog('Get ${sensorCount == 0 ? bleService.ph1FactorController.text : bleService.ph2FactorController.text} Command Send Successfully..');
                         },
                       ),
                     ),
@@ -1050,70 +926,6 @@ class _CalibrationState extends State<Calibration> {
                     ),
                   ],
                 ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                //   children: [
-                //     Column(
-                //       children: [
-                //         SizedBox(
-                //           width: 150,
-                //           child: TextFormField(
-                //             controller: sensorCount == 0 ? bleService.ph1Controller : bleService.ph2Controller,
-                //             keyboardType: TextInputType.number,
-                //             decoration: inputDecoration.copyWith(
-                //               prefixIcon: Padding(
-                //                 padding: const EdgeInsets.all(8.0),
-                //                 child: SvgPicture.asset(
-                //                   'assets/Images/Svg/objectId_${AppConstants.phObjectId}.svg',
-                //                   height: 40,
-                //                   color: Colors.black,
-                //                 ),
-                //               ),
-                //             ),
-                //           ),
-                //         ),
-                //       ],
-                //     ),
-                //     SizedBox(
-                //       width: 150,
-                //       child: ElevatedButton.icon(
-                //         onPressed: (){
-                //           bleService.onRefresh();
-                //           setState(() {
-                //             if(sensorCount == 0){
-                //               bleService.calibrationPh1 = 'ph${sensorCount+1}';
-                //               bleService.calibrationPh2 = '';
-                //             }else{
-                //               print("update ph 2");
-                //               bleService.calibrationPh2 = 'ph${sensorCount+1}';
-                //               bleService.calibrationPh1 = '';
-                //             }
-                //           });
-                //           if(sensorCount == 0){
-                //             if (kDebugMode) {
-                //               print("blePvd.calibrationPh1 : ${bleService.calibrationPh1}");
-                //             }
-                //           }else{
-                //             if (kDebugMode) {
-                //               print("blePvd.calibrationPh2 : ${bleService.calibrationPh2}");
-                //             }
-                //           }
-                //           loadingDialog('Get 4 Command Send Successfully..');
-                //         },
-                //         icon: const Icon(Icons.refresh, color: Colors.white,),
-                //         label: const Text("Get 4", style: TextStyle(color: Colors.white),),
-                //         style: ElevatedButton.styleFrom(
-                //           backgroundColor: Theme.of(context).primaryColor,
-                //           padding: const EdgeInsets.symmetric(vertical: 14),
-                //           shape: RoundedRectangleBorder(
-                //             borderRadius: BorderRadius.circular(14),
-                //           ),
-                //         ),
-                //       ),
-                //     )
-                //   ],
-                // ),
-                // Text('Last Updated Value : ${sensorCount == 0 ? ph1 : ph2}'),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -1218,67 +1030,6 @@ class _CalibrationState extends State<Calibration> {
                     ),
                   ],
                 ),
-                // Row(
-                //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                //   children: [
-                //     SizedBox(
-                //       width: 150,
-                //       child: TextFormField(
-                //         controller: sensorCount == 0 ? bleService.ph1_Controller : bleService.ph2_Controller,
-                //         keyboardType: TextInputType.number,
-                //         decoration: inputDecoration.copyWith(
-                //           prefixIcon: Padding(
-                //             padding: const EdgeInsets.all(8.0),
-                //             child: SvgPicture.asset(
-                //               'assets/Images/Svg/objectId_${AppConstants.phObjectId}.svg',
-                //               height: 40,
-                //               color: Colors.black,
-                //             ),
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //     SizedBox(
-                //       width: 150,
-                //       child: ElevatedButton.icon(
-                //         onPressed: (){
-                //           bleService.onRefresh();
-                //           setState(() {
-                //             if(sensorCount == 0){
-                //               bleService.calibrationPh1 = 'ph_${sensorCount+1}';
-                //               bleService.calibrationPh2 = '';
-                //
-                //             }else{
-                //               bleService.calibrationPh2 = 'ph_${sensorCount+1}';
-                //               bleService.calibrationPh1 = '';
-                //             }
-                //           });
-                //           if(sensorCount == 0){
-                //             if (kDebugMode) {
-                //               print("blePvd.calibrationPh1 : ${bleService.calibrationPh1}");
-                //             }
-                //           }else{
-                //             if (kDebugMode) {
-                //               print("blePvd.calibrationPh2 : ${bleService.calibrationPh2}");
-                //             }
-                //
-                //           }
-                //           loadingDialog('Get 7.01 Command Send Successfully..');
-                //         },
-                //         icon: const Icon(Icons.refresh, color: Colors.white,),
-                //         label: const Text("Get 7.01", style: TextStyle(color: Colors.white),),
-                //         style: ElevatedButton.styleFrom(
-                //           backgroundColor: Theme.of(context).primaryColor,
-                //           padding: const EdgeInsets.symmetric(vertical: 14),
-                //           shape: RoundedRectangleBorder(
-                //             borderRadius: BorderRadius.circular(14),
-                //           ),
-                //         ),
-                //       ),
-                //     )
-                //   ],
-                // ),
-                // Text('Last Updated Value : ${sensorCount == 0 ? ph_1 : ph_2}'),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: SizedBox(
