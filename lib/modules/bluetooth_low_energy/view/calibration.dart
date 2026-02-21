@@ -100,12 +100,12 @@ class _CalibrationState extends State<Calibration> {
               if(waterMeter.isNotEmpty)
                 cumulativeWidget(),
               batteryCalibration(),
-              for(int ec = 0;ec < ([57, 58].contains(bleService.nodeDataFromHw['MID']) ? 2 : ecSensorList.length);ec++)
+              for(int ec = 0;ec < (["57", "58"].contains(bleService.nodeDataFromHw['MID']) ? 2 : ecSensorList.length);ec++)
                 ecSensorWidget(
                     sensorCount: ec,
                     sensorName: ecSensorList[ec]['name']
                 ),
-              for(int ph = 0;ph < ([57, 58].contains(bleService.nodeDataFromHw['MID']) ? 2 : phSensorList.length);ph++)
+              for(int ph = 0;ph < (["57", "58"].contains(bleService.nodeDataFromHw['MID']) ? 2 : phSensorList.length);ph++)
                 phSensorWidget(
                     sensorCount: ph,
                     sensorName: phSensorList[ph]['name']
@@ -613,7 +613,7 @@ class _CalibrationState extends State<Calibration> {
                     ),
                   ],
                 ),
-                if([57, 58].contains(bleService.nodeDataFromHw['MID']))
+                if(["57", "58"].contains(bleService.nodeDataFromHw['MID']))
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
