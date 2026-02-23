@@ -201,7 +201,10 @@ class _MapScreenValveState extends State<MapScreenValve> {
         return markerIcons["green"]!;
       } else if (status == 0 && percentage == 0) {
         return markerIcons["gray"]!;
-      } else {
+      } else if (status == 0 && percentage! > 0) {
+        return markerIcons["yellow"]!;
+      }
+      else {
         return markerIcons["blue"]!;
       }
     }
