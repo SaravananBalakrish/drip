@@ -386,6 +386,7 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
             onPressed: () {
               _showSnackBar("Yesterday log send FTP...");
               uploadToFile('$currentLogType');
+
             },
           ) : Container(),
           const SizedBox(width: 10),
