@@ -35,7 +35,7 @@ class BoosterWidget extends StatelessWidget {
                 height: 119,
                 child : Stack(
                   children: [
-                    AppConstants.getAsset('booster', fertilizerSite.boosterPump[0].status,''),
+                    AppConstants.getAsset('booster', fertilizerSite.boosterPump[0].status,'', 0),
 
                     Positioned(
                       top: 85,

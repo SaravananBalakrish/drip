@@ -67,7 +67,7 @@ class SourceColumnWidget extends StatelessWidget {
                     child: AppConstants.getAsset(
                       isMobile ? 'mobile source' : 'source',
                       source.sourceType,
-                      position,
+                      position, 0,
                     ),
                   ),
                 ),
