@@ -24,10 +24,10 @@ class ValveWidget extends StatelessWidget {
       double.parse(valve.sNo.toString()).toStringAsFixed(3): valve.sNo.toString()),
       builder: (_, status, __) {
 
-
         final statusParts = status?.split(',') ?? [];
         if(statusParts.isNotEmpty){
           valve.status = int.parse(statusParts[1]);
+          valve.completePercent = int.parse(statusParts[2]);
         }
 
         bool hasMoisture = valve.moistureSensors.isNotEmpty;
@@ -57,7 +57,7 @@ class ValveWidget extends StatelessWidget {
                         SizedBox(
                           width: 70,
                           height: 70,
-                          child: AppConstants.getAsset('valve_cws', valve.status, ''),
+                          child: AppConstants.getAsset('valve_cws', valve.status, '', valve.completePercent),
                         ),
                         Text(
                           valve.name,
@@ -140,7 +140,7 @@ class ValveWidget extends StatelessWidget {
                         SizedBox(
                           width: 70,
                           height: 70,
-                          child: AppConstants.getAsset('source', 0, 'After Valve'),
+                          child: AppConstants.getAsset('source', 0, 'After Valve', 0),
                         ),
                         Text(
                           valve.waterSources[0].name,
@@ -245,7 +245,7 @@ class ValveWidget extends StatelessWidget {
                   SizedBox(
                     width: 70,
                     height: 70,
-                    child: AppConstants.getAsset(isLastValve? 'valve_lj' : 'valve', valve.status, ''),
+                    child: AppConstants.getAsset(isLastValve? 'valve_lj' : 'valve', valve.status, '', valve.completePercent),
                   ),
                   Text(
                     valve.name,

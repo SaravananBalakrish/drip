@@ -55,6 +55,7 @@ class AgitatorWidget extends StatelessWidget {
         'agitator',
         agitator.status,
         '',
+        0,
       ),
     );
 

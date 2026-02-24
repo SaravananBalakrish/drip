@@ -10,6 +10,7 @@ import '../../../customer/home_sub_classes/next_schedule.dart';
 import '../../../customer/scheduled_program/scheduled_program_wide.dart';
 import '../../../customer/widgets/my_material_button.dart';
 import '../widgets/irrigation_line_wide.dart';
+import '../widgets/valve_status_legend.dart';
 
 class CustomerHomeWide extends StatelessWidget {
   const CustomerHomeWide({super.key});
@@ -46,125 +47,146 @@ class CustomerHomeWide extends StatelessWidget {
     );
   }
 
-  Widget _buildWebLayout(BuildContext context, int customerId, int controllerId, int modelId,
-      String deviceId, List<IrrigationLineModel> irrigationLine,
-      scheduledProgram, CustomerScreenControllerViewModel viewModel, bool isNova) {
+  Widget _buildWebLayout(
+      BuildContext context,
+      int customerId,
+      int controllerId,
+      int modelId,
+      String deviceId,
+      List<IrrigationLineModel> irrigationLine,
+      scheduledProgram,
+      CustomerScreenControllerViewModel viewModel,
+      bool isNova,
+      ) {
+    return Consumer<CustomerScreenControllerViewModel>(
+      builder: (context, viewModel, _) {
 
-    return SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Consumer<CustomerScreenControllerViewModel>(
-        builder: (context, viewModel, _) {
+        final cM = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex];
+        final scheduledProgram = cM.programList;
+        final hasProgramOnOff = cM.getPermissionStatus("Program On/Off Manually");
+        final hasLinePP = cM.getPermissionStatus("Irrigation Line Pause/Resume Manually");
 
-          final cM = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex];
-          final scheduledProgram = cM.programList;
+        return Column(
+          children: [
+            buildValveStatusLegend("Wide"),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
 
-          final hasProgramOnOff = cM.getPermissionStatus("Program On/Off Manually");
-          final hasLinePP = cM.getPermissionStatus("Irrigation Line Pause/Resume Manually");
-
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              ...irrigationLine.map((line) => Padding(
-                padding: const EdgeInsets.only(left: 8, right: 8, top:8, bottom: 5),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      color: Colors.grey.shade400,
-                      width: 0.5,
-                    ),
-                    borderRadius: const BorderRadius.all(Radius.circular(5)),
-                  ),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.sizeOf(context).width,
-                        height: 40,
-                        child: Card(
+                    ...irrigationLine.map((line) => Padding(
+                      padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 5),
+                      child: Container(
+                        decoration: BoxDecoration(
                           color: Colors.white,
-                          elevation: 0.6,
-                          surfaceTintColor: Colors.white,
-                          margin: EdgeInsets.zero,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(5),
-                              topRight: Radius.circular(5),
-                            ),
+                          border: Border.all(
+                            color: Colors.grey.shade400,
+                            width: 0.5,
                           ),
-                          child: Row(
-                            children: [
-                              const SizedBox(width: 16),
-                              Text(
-                                line.name.toUpperCase(),
-                                textAlign: TextAlign.left,
-                                style: const TextStyle(color: Colors.black54, fontSize: 15, fontWeight: FontWeight.bold),
-                              ),
-
-                              if(!isNova)...[
-                                if(hasLinePP)...[
-                                  const Spacer(),
-                                  SizedBox(
-                                    height: 27,
-                                    child: MyMaterialButton(
-                                      buttonId: 'line_${line.sNo}_4900',
-                                      label: line.linePauseFlag == 0 ? 'Pause the line' : 'Resume the line',
-                                      payloadKey: "4900",
-                                      payloadValue: "${line.sNo},${line.linePauseFlag == 0 ? 1 : 0}",
-                                      color: line.linePauseFlag == 0 ? Colors.orangeAccent : Colors.green,
-                                      textColor: Colors.white,
-                                      serverMsg: line.linePauseFlag == 0 ? 'Paused the ${line.name}'
-                                          : 'Resumed the ${line.name}',
-                                    ),
+                          borderRadius: const BorderRadius.all(Radius.circular(5)),
+                        ),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.sizeOf(context).width,
+                              height: 40,
+                              child: Card(
+                                color: Colors.white,
+                                elevation: 0.6,
+                                margin: EdgeInsets.zero,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius:
+                                  BorderRadius.only(
+                                    topLeft:
+                                    Radius.circular(5),
+                                    topRight:
+                                    Radius.circular(5),
                                   ),
-                                  const SizedBox(width: 10)
-                                ]
-                              ],
-                            ],
-                          ),
+                                ),
+                                child: Row(
+                                  children: [
+                                    const SizedBox(width: 16),
+                                    Text(
+                                      line.name.toUpperCase(),
+                                      style: const TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 15,
+                                        fontWeight:
+                                        FontWeight.bold,
+                                      ),
+                                    ),
+
+                                    if (!isNova && hasLinePP) ...[
+                                      const Spacer(),
+                                      SizedBox(
+                                        height: 27,
+                                        child:
+                                        MyMaterialButton(buttonId: 'line_${line.sNo}_4900',
+                                          label: line.linePauseFlag == 0 ? 'Pause the line' : 'Resume the line',
+                                          payloadKey:
+                                          "4900",
+                                          payloadValue:
+                                          "${line.sNo},${line.linePauseFlag == 0 ? 1 : 0}",
+                                          color: line.linePauseFlag == 0 ? Colors.orangeAccent : Colors.green,
+                                          textColor: Colors.white,
+                                          serverMsg: line.linePauseFlag == 0 ? 'Paused the ${line.name}' : 'Resumed the ${line.name}',
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10)
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            ),
+                            buildIrrigationLine(context, line, customerId, controllerId, modelId, deviceId),
+                          ],
                         ),
                       ),
-                      buildIrrigationLine(context, line, customerId, controllerId, modelId, deviceId),
-                    ],
-                  ),
-                ),
-              )),
+                    )),
 
-              CurrentProgram(
-                scheduledPrograms: scheduledProgram,
-                deviceId: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].deviceId,
-                customerId: customerId,
-                controllerId: controllerId,
-                currentLineSNo: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].
-                irrigationLine[viewModel.lIndex].sNo,
-                modelId: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].modelId,
-                skipPermission: hasProgramOnOff,
+                    CurrentProgram(
+                      scheduledPrograms: scheduledProgram,
+                      deviceId: cM.deviceId,
+                      customerId: customerId,
+                      controllerId: controllerId,
+                      currentLineSNo:
+                      cM.irrigationLine[viewModel.lIndex].sNo,
+                      modelId: cM.modelId,
+                      skipPermission: hasProgramOnOff,
+                    ),
+
+                    if (scheduledProgram.isNotEmpty)
+                      NextSchedule(
+                          scheduledPrograms: scheduledProgram),
+
+                    if (scheduledProgram.isNotEmpty)
+                      ScheduledProgramWide(
+                        userId: customerId,
+                        scheduledPrograms:
+                        scheduledProgram,
+                        controllerId: cM.controllerId,
+                        deviceId: cM.deviceId,
+                        customerId: customerId,
+                        currentLineSNo: cM.irrigationLine[viewModel.lIndex].sNo,
+                        groupId: viewModel.mySiteList.data[viewModel.sIndex].groupId,
+                        categoryId: cM.categoryId,
+                        modelId: cM.modelId,
+                        deviceName: cM.deviceName,
+                        categoryName:
+                        cM.categoryName,
+                        prgOnOffPermission:
+                        hasProgramOnOff,
+                      ),
+
+                    const SizedBox(height: 8),
+                  ],
+                ),
               ),
-
-              if (scheduledProgram.isNotEmpty)
-                NextSchedule(scheduledPrograms: scheduledProgram),
-
-              if (scheduledProgram.isNotEmpty)
-                ScheduledProgramWide(
-                  userId: customerId,
-                  scheduledPrograms: scheduledProgram,
-                  controllerId: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].controllerId,
-                  deviceId: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].deviceId,
-                  customerId: customerId,
-                  currentLineSNo: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].irrigationLine[viewModel.lIndex].sNo,
-                  groupId: viewModel.mySiteList.data[viewModel.sIndex].groupId,
-                  categoryId: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].categoryId,
-                  modelId: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].modelId,
-                  deviceName: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].deviceName,
-                  categoryName: viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].categoryName,
-                  prgOnOffPermission: hasProgramOnOff,
-                ),
-
-              const SizedBox(height: 8),
-            ],
-          );
-        },
-      ),
+            ),
+          ],
+        );
+      },
     );
   }
 

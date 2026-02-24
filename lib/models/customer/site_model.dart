@@ -1478,6 +1478,7 @@ class ValveModel {
   final String name;
   final List<WaterSourceModel> waterSources;
   int status;
+  int completePercent;
   bool isOn;
   List<MoistureSensorModel> moistureSensors = [];
 
@@ -1486,6 +1487,7 @@ class ValveModel {
     required this.name,
     required this.waterSources,
     this.status = 0,
+    this.completePercent = 0,
     this.isOn = false,
   });
 
@@ -1507,7 +1509,6 @@ class ValveModel {
         }
       }
     }
-
 
     return ValveModel(
       sNo: obj.sNo,
