@@ -395,7 +395,7 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
             color: Colors.blue,
             icon: Icons.cloud_upload,
             onPressed: () {
-              _showSnackBar("Today log send FTP...");
+              _showSnackBar("Today log send FTP... ");
               uploadToFile('$currentLogType');
             },
           ) : Container(),
