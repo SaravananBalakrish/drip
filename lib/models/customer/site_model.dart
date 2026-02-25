@@ -1,6 +1,4 @@
 
-import 'dart:convert';
-
 import '../../modules/PumpController/model/pump_controller_data_model.dart';
 
 abstract class FertilizerItem {
@@ -904,7 +902,7 @@ class FilterSiteModel {
         }
       }).toList();
     } else {
-      throw FormatException('filters is not a list');
+      throw const FormatException('filters is not a list');
     }
   }
 
@@ -1480,6 +1478,7 @@ class ValveModel {
   final String name;
   final List<WaterSourceModel> waterSources;
   int status;
+  int completePercent;
   bool isOn;
   List<MoistureSensorModel> moistureSensors = [];
 
@@ -1488,12 +1487,13 @@ class ValveModel {
     required this.name,
     required this.waterSources,
     this.status = 0,
+    this.completePercent = 0,
     this.isOn = false,
   });
 
   factory ValveModel.fromConfigObject(ConfigObject obj, List<WaterSourceModel> ws) {
 
-    List<double> assignedSNos = (obj.assignObject ?? [])
+    List<double> assignedSNos = (obj.assignObject)
         .map((e) => (e as num).toDouble())
         .toList();
 
@@ -1509,7 +1509,6 @@ class ValveModel {
         }
       }
     }
-
 
     return ValveModel(
       sNo: obj.sNo,

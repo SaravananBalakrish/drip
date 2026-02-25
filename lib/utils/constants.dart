@@ -105,19 +105,25 @@ class AppConstants {
   static const String mainValveNotOFF = "main_valve_red.png";
 
   static const String valveOFF = "valve_gray.png";
-  static const String valveON = "valve_green.png";
+  static const String valveCompleted= "valve_green.png";
   static const String valveNotON = "valve_orange.png";
   static const String valveNotOFF = "valve_red.png";
+  static const String valveRunning = "valve_blue.png";
+  static const String valvePending = "valve_yellow.png";
 
   static const String valveLjOFF = "valve_gray_lj.png";
-  static const String valveLjON = "valve_green_lj.png";
+  static const String valveLjCompleted= "valve_green_lj.png";
   static const String valveLjNotON = "valve_orange_lj.png";
   static const String valveLjNotOFF = "valve_red_lj.png";
+  static const String valveLjRunning = "valve_blue_lj.png";
+  static const String valveLjPending = "valve_yellow_lj.png";
 
   static const String valveCwsOFF = "valve_gray_cws.png";
-  static const String valveCwsON = "valve_green_cws.png";
+  static const String valveCwsCompleted = "valve_green_cws.png";
   static const String valveCwsNotON = "valve_orange_cws.png";
   static const String valveCwsNotOFF = "valve_red_cws.png";
+  static const String valveCwsRunning = "valve_blue_cws.png";
+  static const String valveCwsPending = "valve_yellow_cws.png";
 
   static const String lightOFF = "light_gray.png";
   static const String lightON = "light_yellow.png";
@@ -215,7 +221,7 @@ class AppConstants {
   static String getAddressError(UserRole role) =>
       getErrorMessage(role, addressErrors);
 
-  static Widget getAsset(String keyOne, int keyTwo, String keyThree) {
+  static Widget getAsset(String keyOne, int keyTwo, String keyThree, int cpr) {
     String imagePathFinal;
     switch (keyOne) {
       case 'source':
@@ -246,13 +252,13 @@ class AppConstants {
       case 'main_valve':
         imagePathFinal = _getMainValveImagePath(keyTwo);
       case 'valve':
-        imagePathFinal = _getValveImagePath(keyTwo);
+        imagePathFinal = _getValveImagePath(keyTwo, cpr);
         break;
       case 'valve_lj':
-        imagePathFinal = _getValveLjImagePath(keyTwo);
+        imagePathFinal = _getValveLjImagePath(keyTwo, cpr);
         break;
       case 'valve_cws':
-        imagePathFinal = _getValveCWSImagePath(keyTwo);
+        imagePathFinal = _getValveCWSImagePath(keyTwo, cpr);
         break;
       case 'light':
         imagePathFinal = _getLightImagePath(keyTwo);
@@ -480,12 +486,17 @@ class AppConstants {
     }
   }
 
-  static String _getValveImagePath(int status) {
+  static String _getValveImagePath(int status, cPer) {
     switch (status) {
       case 0:
+        if (cPer == 100) {
+          return valveCompleted;
+        }else if (cPer > 0 && cPer < 100) {
+          return valvePending;
+        }
         return valveOFF;
       case 1:
-        return valveON;
+        return valveRunning;
       case 2:
         return valveNotON;
       case 3:
@@ -497,12 +508,17 @@ class AppConstants {
 
 
 
-  static String _getValveLjImagePath(int status) {
+  static String _getValveLjImagePath(int status, int cPer) {
     switch (status) {
       case 0:
+        if (cPer == 100) {
+          return valveLjCompleted;
+        }else if (cPer > 0 && cPer < 100) {
+          return valveLjPending;
+        }
         return valveLjOFF;
       case 1:
-        return valveLjON;
+        return valveLjRunning;
       case 2:
         return valveLjNotON;
       case 3:
@@ -512,12 +528,17 @@ class AppConstants {
     }
   }
 
-  static String _getValveCWSImagePath(int status) {
+  static String _getValveCWSImagePath(int status, int cPer) {
     switch (status) {
-      case 0:
+      case 0 :
+        if (cPer == 100) {
+          return valveCwsCompleted;
+        }else if (cPer > 0 && cPer < 100) {
+          return valveCwsPending;
+        }
         return valveCwsOFF;
       case 1:
-        return valveCwsON;
+        return valveCwsRunning;
       case 2:
         return valveCwsNotON;
       case 3:

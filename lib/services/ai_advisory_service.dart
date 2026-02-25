@@ -1,7 +1,5 @@
 import 'dart:convert';
 
-import 'package:oro_drip_irrigation/utils/snack_bar.dart';
-
 import '../repository/repository.dart';
 import '../services/http_service.dart';
 import '../services/weather_service.dart';

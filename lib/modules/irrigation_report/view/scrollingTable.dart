@@ -209,7 +209,7 @@ class _ScrollingTableState extends State<ScrollingTable> {
                                         // color: Color(0xffEAEAEA),
                                         color: Colors.orange.shade200,
                                         padding: const EdgeInsets.only(left: 8),
-                                        width: widget.generalColumn[i] == 'Status' ? 150 : ['Start Stop Reason','Pause Resume Reason'].contains(widget.generalColumn[i]) ? 200 : 100,
+                                        width: widget.generalColumn[i] == 'Status' ? 150 : ['Start Stop Reason','Pause Resume Reason', 'Pump CT Average', 'Pump CT Maximum', 'Pump CT Minimum', 'Pressure Average', 'Pressure Maximum', 'Pressure Minimum'].contains(widget.generalColumn[i]) ? 200 : 100,
                                         height: 50,
                                         alignment: Alignment.centerLeft,
                                         child: Text('${widget.generalColumn[i]}',style: TextStyle(color: Colors.black),),
@@ -425,7 +425,7 @@ class _ScrollingTableState extends State<ScrollingTable> {
                                               height:getBoxHeight(widget.filterColumnData, i),
                                               child: CustomPaint(
                                                 painter: VerticalDotBorder(),
-                                                size: Size(10,50),
+                                                size: const Size(10,50),
                                               ),
                                             ),
                                             for(var j = 0;j < widget.generalColumnData[i].length;j++)
@@ -459,11 +459,29 @@ class _ScrollingTableState extends State<ScrollingTable> {
                                                   ),
                                                   child: Container(
                                                       width: 200,
-                                                      padding: EdgeInsets.all(5),
+                                                      padding: const EdgeInsets.all(5),
                                                       decoration: BoxDecoration(
                                                         borderRadius: BorderRadius.circular(20),
                                                       ),
-                                                      child: Text('${programStartStopReason(code: widget.generalColumnData[i][j])}',textAlign: TextAlign.center,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: getStatus(widget.generalColumnData[i][j])['textColor']),overflow: TextOverflow.ellipsis,)
+                                                      child: Text(programStartStopReason(code: widget.generalColumnData[i][j]),textAlign: TextAlign.center,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: getStatus(widget.generalColumnData[i][j])['textColor']),overflow: TextOverflow.ellipsis,)
+                                                  ),
+                                                )
+                                              else if(['Pump CT Average', 'Pump CT Maximum', 'Pump CT Minimum', 'Pressure Average', 'Pressure Maximum', 'Pressure Minimum'].contains(widget.generalColumn[j]))
+                                                Container(
+                                                  padding: const EdgeInsets.only(left: 8),
+                                                  width: 200,
+                                                  height: getBoxHeight(widget.filterColumnData, i),
+                                                  alignment: Alignment.centerLeft,
+                                                  decoration: BoxDecoration(
+                                                    border: seperatingLength(i) ? const Border(bottom: BorderSide(width: 1)) : null,
+                                                  ),
+                                                  child: Container(
+                                                      width: 200,
+                                                      padding: const EdgeInsets.all(5),
+                                                      decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(20),
+                                                      ),
+                                                      child: Text(widget.generalColumnData[i][j],textAlign: TextAlign.center,style: TextStyle(fontSize: 12,fontWeight: FontWeight.bold,color: getStatus(widget.generalColumnData[i][j])['textColor']),overflow: TextOverflow.ellipsis,)
                                                   ),
                                                 )
                                               else
@@ -500,7 +518,7 @@ class _ScrollingTableState extends State<ScrollingTable> {
                                             for(var j = 0;j < widget.waterColumnData[i].length;j++)
                                               Container(
                                                 decoration: BoxDecoration(
-                                                  border: seperatingLength(i) ? Border(bottom: BorderSide(width: 1)) : null,
+                                                  border: seperatingLength(i) ? const Border(bottom: BorderSide(width: 1)) : null,
                                                 ),
                                                 padding: const EdgeInsets.only(left: 8),
                                                 width: 100,
@@ -543,7 +561,7 @@ class _ScrollingTableState extends State<ScrollingTable> {
                                               height: getBoxHeight(widget.filterColumnData, i),
                                               child: CustomPaint(
                                                 painter: VerticalDotBorder(),
-                                                size: Size(0,50),
+                                                size: const Size(0,50),
                                               ),
                                             )
                                           ],
@@ -560,7 +578,7 @@ class _ScrollingTableState extends State<ScrollingTable> {
                                             for(var j = 0;j < widget.prePostColumnData[i].length;j++)
                                               Container(
                                                 decoration: BoxDecoration(
-                                                  border: seperatingLength(i) ? Border(bottom: BorderSide(width: 1)) : null,
+                                                  border: seperatingLength(i) ? const Border(bottom: BorderSide(width: 1)) : null,
                                                 ),
                                                 padding: const EdgeInsets.only(left: 8),
                                                 width: 100,

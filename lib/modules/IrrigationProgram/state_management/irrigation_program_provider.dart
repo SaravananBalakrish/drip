@@ -3143,7 +3143,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         "2502": "${
             {
               "S_No": '$serialNumber',/*S_No*/
-              "ProgramType": '${programType == "Irrigation Program" ? 1 : 2}',/*ProgramType*/
+              "ProgramType": '${programType == "Irrigation Program" ? 1 : programType.contains('Aerator') ? 4 : 2}',/*ProgramType*/
               "ProgramCategory": '${programType == "Irrigation Program"
                   ? selectedObjects!.any((element) => element.objectId == 5)
                   ? sampleIrrigationLine!.where((line) => selectedObjects!
@@ -3351,7 +3351,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
               "Name": programName,
               "CyclicOnTime": cyclicOnTime,
               "CyclicOffTime": cyclicOffTime,
-              "EnablePressure": enablePressure,
+              "EnablePressure": enablePressure ? '1' : '0',
               "PressureValue": pressureValue,
             }.entries.map((e) => e.value).join(",")
         };"
