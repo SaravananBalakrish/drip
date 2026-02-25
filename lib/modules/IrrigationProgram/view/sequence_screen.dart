@@ -559,10 +559,6 @@ class _SequenceScreenState extends State<SequenceScreen> {
       // sampleIrrigationLine
       //     .expand<DeviceObjectModel>((e) => e.mainValve ?? [])
       //     .toList();
-      print(
-        "mainValves JSON: ${jsonEncode(mainValves.map((e) => e.toJson()).toList())}",
-      );
-      print("mainValves:${mainValves[0].toJson()}");
        if (mainValves.isNotEmpty) {
         sections.add(_buildIrrigationSection(
           context: context,
