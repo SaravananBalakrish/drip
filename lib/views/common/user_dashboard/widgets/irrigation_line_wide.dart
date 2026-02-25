@@ -2,9 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/views/common/user_dashboard/widgets/sensor_widget.dart';
 import 'package:oro_drip_irrigation/views/common/user_dashboard/widgets/valve_widget.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../Widgets/pump_widget.dart';
 import '../../../../models/customer/site_model.dart';
+import '../../../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../../../customer/widgets/agitator_widget.dart';
 import '../../../customer/widgets/booster_widget.dart';
 import '../../../customer/widgets/channel_widget.dart';
@@ -278,7 +280,30 @@ class IrrigationLineWide extends StatelessWidget {
         width: ((site.boosterPump.length + site.channel.length + site.agitator.length ) * 70) + 5,
         child: Stack(
           children: [
-            Row(children: widgets),
+            Row(
+              children: widgets.map((w) {
+                return InkWell(
+                  onTap: () {
+                    final customerVM =
+                    context.read<CustomerScreenControllerViewModel>();
+
+                    showRightSheet(
+                      context,
+                      ChangeNotifierProvider.value(
+                        value: customerVM,
+                        child: FertilizerLivePanel(
+                          deviceId: deviceId,
+                          controllerId: controllerId,
+                          customerId: customerId,
+                        ),
+                      ),
+                    );
+                  },
+                  child: w,
+                );
+              }).toList(),
+            ),
+            // Row(children: widgets),
             Positioned(
               left: 3,
               bottom: 0,
@@ -323,5 +348,160 @@ class IrrigationLineWide extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void showRightSheet(BuildContext context, Widget child) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "LiveData",
+      barrierColor: Colors.black45,
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (_, __, ___) {
+        return Align(
+          alignment: Alignment.centerRight,
+          child: Material(
+            color: Colors.white,
+            elevation: 10,
+            child: SizedBox(
+              width: 380,
+              height: double.infinity,
+              child: child,
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (_, animation, __, child) {
+        return SlideTransition(
+          position: Tween(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        );
+      },
+    );
+  }
+}
+
+class FertilizerLivePanel extends StatefulWidget {
+  final String deviceId;
+  final int controllerId;
+  final int customerId;
+
+  const FertilizerLivePanel({
+    super.key,
+    required this.deviceId,
+    required this.controllerId,
+    required this.customerId,
+  });
+
+  @override
+  State<FertilizerLivePanel> createState() => _FertilizerLivePanelState();
+}
+
+class _FertilizerLivePanelState extends State<FertilizerLivePanel> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context
+          .read<CustomerScreenControllerViewModel>()
+          .onFertilizerLiveSync();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => FertilizerLiveViewModel()
+        ..fetchLiveData(widget.customerId, widget.controllerId, widget.deviceId),
+      child: Consumer<FertilizerLiveViewModel>(
+        builder: (context, vm, _) {
+          if (vm.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          return Column(
+            children: [
+              AppBar(
+                title: const Text("Fertilizer Live Data"),
+                automaticallyImplyLeading: false,
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  )
+                ],
+              ),
+
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(16),
+                  children: [
+                    _liveTile("EC", vm.ecValue, "mS/cm"),
+                    _liveTile("pH", vm.phValue, ""),
+                    _liveTile("Flow Rate", vm.flowRate, "L/min"),
+                    _liveTile("Tank Level", vm.tankLevel, "%"),
+                    _liveTile("Injection Rate", vm.injectionRate, "L/h"),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _liveTile(String label, String value, String unit) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ListTile(
+        title: Text(label),
+        trailing: Text(
+          "$value $unit",
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class FertilizerLiveViewModel extends ChangeNotifier {
+  bool isLoading = true;
+
+  String ecValue = "--";
+  String phValue = "--";
+  String flowRate = "--";
+  String tankLevel = "--";
+  String injectionRate = "--";
+
+  Future<void> fetchLiveData(
+      int customerId,
+      int controllerId,
+      String deviceId,
+      ) async {
+    isLoading = true;
+    notifyListeners();
+
+    // call API here
+    await Future.delayed(const Duration(seconds: 1));
+
+    // mock data
+    ecValue = "1.8";
+    phValue = "6.5";
+    flowRate = "12";
+    tankLevel = "75";
+    injectionRate = "4.2";
+
+    isLoading = false;
+    notifyListeners();
   }
 }

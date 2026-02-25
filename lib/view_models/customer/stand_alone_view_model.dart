@@ -594,7 +594,6 @@ class StandAloneViewModel extends ChangeNotifier {
     }
     else {
       String strSldSqnNo = '';
-      String strSldSqnLocation = '';
 
       String strSldMainValveId = '';
       String strSldCtrlFilterId = '';
@@ -606,7 +605,6 @@ class StandAloneViewModel extends ChangeNotifier {
       for (var lineOrSq in standAloneData!.sequence) {
         if(lineOrSq.selected){
           strSldSqnNo = lineOrSq.sNo;
-          strSldSqnLocation = lineOrSq.location;
           standaloneSelection.add({
             'id': lineOrSq.id,
             'sNo': lineOrSq.sNo,

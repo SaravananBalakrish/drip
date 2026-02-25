@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
@@ -153,7 +152,6 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
         message = 'Fertilizer should be given between pre time and post time';
       });
     }
-    print('releaseTimeForFertilizer : $releaseTimeForFertilizer');
   }
 
   String message1(){
@@ -479,7 +477,6 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                                     children: [
                                       InkWell(
                                         onTap: (){
-                                          print('tap function work');
                                           overAllPvd.editTime('min', int.parse(mins[i][0]));
                                         },
                                         child: Padding(

@@ -1348,7 +1348,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         "CentralFilterSite": serialNoOrEmpty(lineModelObject.centralFiltration),
         "LocalFertSite": serialNoOrEmpty(lineModelObject.localFertilization),
         "LocalFilterSite": serialNoOrEmpty(lineModelObject.localFiltration),
-        "SourcePump": [lineModelObject.sourcePump, lineModelObject.aerator].join('_'),
+        "SourcePump": [...lineModelObject.sourcePump, ...lineModelObject.aerator].join('_'),
         "IrrigationPump": lineModelObject.irrigationPump.join('_'),
         "PressureIn": serialNoOrEmpty(lineModelObject.pressureIn),
         "PressureOut": serialNoOrEmpty(lineModelObject.pressureOut),

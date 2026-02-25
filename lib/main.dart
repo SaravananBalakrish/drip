@@ -80,7 +80,7 @@ FutureOr<void> main() async {
   // F.appFlavor = Flavor.oroProduction;
   await NetworkUtils.initialize();
 
-  await dotenv.load(fileName: ".env.apikey");
+  // await dotenv.load(fileName: ".env.apikey");
 
 
   // Request runtime permissions before providers start

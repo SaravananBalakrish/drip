@@ -237,7 +237,7 @@ class MqttPayloadProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void editPublishTopic(String topic){
+  void x(String topic){
     publishTopic = topic;
     notifyListeners();
   }
