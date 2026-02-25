@@ -82,3 +82,4 @@ Future<LatLng?> getLatLngFromInput(String input) async {
     return null;
   }
 }
+
