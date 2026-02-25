@@ -68,7 +68,7 @@ class CustomerHomeWide extends StatelessWidget {
 
         return Column(
           children: [
-            buildValveStatusLegend("Wide"),
+            buildValveStatusLegend(),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -157,8 +157,7 @@ class CustomerHomeWide extends StatelessWidget {
                     ),
 
                     if (scheduledProgram.isNotEmpty)
-                      NextSchedule(
-                          scheduledPrograms: scheduledProgram),
+                      NextSchedule(scheduledPrograms: scheduledProgram),
 
                     if (scheduledProgram.isNotEmpty)
                       ScheduledProgramWide(

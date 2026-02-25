@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-Widget buildValveStatusLegend(String screenType) {
+Widget buildValveStatusLegend() {
+
   Widget legendItem(Color color, String text) {
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -45,23 +46,25 @@ Widget buildValveStatusLegend(String screenType) {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 10, right: 10),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Container(height: 20, width: 1, color: Colors.black26),
         ),
-        Wrap(
-          spacing: 10,
-          runSpacing: 8,
-          children: [
-            legendItem(Colors.black54, "Default"),
-            legendItem(Colors.blue, "Running"),
-            legendItem(Colors.green, "Completed"),
-            legendItem(Colors.yellow, "Pending"),
-            legendItem(Colors.orange, "Not Open"),
-            legendItem(Colors.red, "Not Closed"),
-
-          ],
+        Expanded(
+          child: Wrap(
+            spacing: 10,
+            runSpacing: 8,
+            children: [
+              legendItem(Colors.black54, "Default"),
+              legendItem(Colors.blue, "Running"),
+              legendItem(Colors.green, "Completed"),
+              legendItem(Colors.yellow, "Pending"),
+              legendItem(Colors.orange, "Not Open"),
+              legendItem(Colors.red, "Not Closed"),
+            ],
+          ),
         ),
       ],
     ),
   );
 }
+
