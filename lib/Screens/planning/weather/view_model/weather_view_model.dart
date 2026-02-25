@@ -41,6 +41,7 @@ class WeatherViewModel extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        print('data:$data');
 
         if (data["code"] == 200) {
           weatherModel = WeatherModelNew.fromJson(data["data"]);
