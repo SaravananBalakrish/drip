@@ -41,6 +41,11 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
         final statusParts = status?.split(',') ?? [];
         if (statusParts.isNotEmpty) {
           valve.status = int.tryParse(statusParts[1]) ?? valve.status;
+          if(statusParts.length > 2){
+            valve.completePercent = int.parse(statusParts[2]);
+          }else{
+            valve.completePercent = 0;
+          }
         }
 
         final bool hasMoisture = valve.moistureSensors.isNotEmpty;
