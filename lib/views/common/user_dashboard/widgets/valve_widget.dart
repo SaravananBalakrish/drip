@@ -27,7 +27,11 @@ class ValveWidget extends StatelessWidget {
         final statusParts = status?.split(',') ?? [];
         if(statusParts.isNotEmpty){
           valve.status = int.parse(statusParts[1]);
-          valve.completePercent = int.parse(statusParts[2]);
+          if(statusParts.length > 2){
+            valve.completePercent = int.parse(statusParts[2]);
+          }else{
+            valve.completePercent = 0;
+          }
         }
 
         bool hasMoisture = valve.moistureSensors.isNotEmpty;
