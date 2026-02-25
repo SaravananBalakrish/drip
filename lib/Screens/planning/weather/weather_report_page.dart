@@ -110,7 +110,6 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
       debugPrint('Hourly Report Error: $e');
     }
   }
-
   // ------------------ DATE PICKER ------------------
 
   Future<void> _selectDate() async {
@@ -128,7 +127,6 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
       fetchHourlyData();
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -204,7 +202,7 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
         minWidth: 600,
         headingRowHeight: 50,
         headingRowColor: MaterialStateProperty.all(Colors.teal),
-        border: TableBorder(
+        border: const TableBorder(
           horizontalInside: BorderSide(color: Colors.teal, width: 1),
         ),
         columns: const [
