@@ -298,7 +298,7 @@ class _LineTabViewState extends State<_LineTabView> {
                             MaterialPageRoute(
                               builder: (_) => SensorHourlyReportPage(
                                 deviceSrNo: '${station.device.serialNumber}',
-                                sensorSrNo: s.sNo.toString(), sensorName: s.name, userId: '${widget.customerId}', controllerId: "${widget.userId}",
+                                sensorSrNo: s.sNo.toString(), sensorName: s.name, userId: '${widget.customerId}', controllerId: "${widget.userId}" ,unit:unit(s.name),
                               ),
                             ),
                           );
@@ -319,6 +319,18 @@ class _LineTabViewState extends State<_LineTabView> {
         ),
       ],
     );
+  }
+  String unit(String type) {
+    type = type.toLowerCase();
+    if (type.contains('moisture')) return 'CB';
+    if (type.contains('temperature')) return '°C';
+    if (type.contains('humidity')) return '%';
+    if (type.contains('co2')) return 'ppm';
+    if (type.contains('direction')) return '°';
+    if (type.contains('Wind')) return 'km/h';
+    if (type.contains('rain')) return 'mm';
+    if (type.contains('lux')) return 'Lu';
+    return '';
   }
 
   Widget _buildNarrowLayout(

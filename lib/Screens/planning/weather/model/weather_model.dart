@@ -203,10 +203,7 @@ extension WeatherModelTreeBuilder on WeatherModelNew {
         );
 
         final sensors = configObject.where((c) {
-          print("controllerId:$controllerId,line.sNo:${line.sNo}");
-          print(c.name);
-          print(c.controllerId);
-          print(c.location);
+
           return c.controllerId == controllerId;
         }
         ).toList();

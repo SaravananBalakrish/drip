@@ -26,7 +26,6 @@ class SensorChip extends StatelessWidget {
     );
 
     if (live == null) return const SizedBox.shrink();
-
     return Container(
       width: isNarrow ? double.infinity : 230,
       padding: const EdgeInsets.all(10),
@@ -49,13 +48,15 @@ class SensorChip extends StatelessWidget {
   }
 
   String unit(String type) {
-    type = type.toLowerCase();
+     type = type.toLowerCase();
+     if (type.contains('moisture')) return 'CB';
     if (type.contains('temperature')) return '°C';
     if (type.contains('humidity')) return '%';
     if (type.contains('co2')) return 'ppm';
-    // if (type.contains('Wind Direction')) return '°';
+    if (type.contains('direction')) return '°';
     if (type.contains('Wind')) return 'km/h';
     if (type.contains('rain')) return 'mm';
+    if (type.contains('lux')) return 'Lu';
     return '';
   }
 }

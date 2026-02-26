@@ -15,6 +15,7 @@ class SensorHourlyReportPage extends StatefulWidget {
   final String sensorSrNo;
   final String sensorName;
   final String userId;
+  final String unit;
   final String controllerId;
 
   const SensorHourlyReportPage({
@@ -24,6 +25,7 @@ class SensorHourlyReportPage extends StatefulWidget {
     required this.sensorName,
     required this.userId,
     required this.controllerId,
+    required this.unit,
   });
 
   @override
@@ -242,10 +244,10 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
                         ), cells: [
             DataCell(Text(
                 r.hour, style: const TextStyle(fontWeight: FontWeight.w500))),
-            DataCell(Text(r.value)),
-            DataCell(Text(r.minValue)),
-            DataCell(Text(r.maxValue)),
-            DataCell(Text(r.averageValue)),
+            DataCell(Text('${r.value} ${r.value != "NA" ? widget.unit : ''}')),
+            DataCell(Text('${r.minValue} ${r.minValue != "NA" ? widget.unit : ''}')),
+            DataCell(Text('${r.maxValue} ${r.maxValue != "NA" ? widget.unit : ''}')),
+            DataCell(Text('${r.averageValue} ${r.averageValue != "NA" ? widget.unit : ''}')),
             DataCell(
               _buildStatusBadge(r.errorCode),
             ),
