@@ -55,8 +55,8 @@ Widget buildValveStatusLegend() {
             runSpacing: 8,
             children: [
               legendItem(Colors.black54, "Default"),
-              legendItem(Colors.blue, "Running"),
-              legendItem(Colors.green, "Completed"),
+              legendItem(Colors.green, "Running"),
+              legendItem(Colors.blue, "Completed"),
               legendItem(Colors.yellow, "Pending"),
               legendItem(Colors.orange, "Not Open"),
               legendItem(Colors.red, "Not Closed"),
