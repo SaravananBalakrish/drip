@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/state_management/pump_controller_provider.dart';
 import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/state_management/ble_service.dart';
 import 'package:oro_drip_irrigation/providers/button_loading_provider.dart';
@@ -77,8 +78,11 @@ FutureOr<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   tz.initializeTimeZones();
-  F.appFlavor = Flavor.oroProduction;
+  // F.appFlavor = Flavor.oroProduction;
   await NetworkUtils.initialize();
+
+  // await dotenv.load(fileName: ".env.apikey");
+
 
   // Request runtime permissions before providers start
   if (!kIsWeb && Platform.isAndroid) {

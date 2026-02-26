@@ -675,7 +675,8 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
           },
         ),
       );
-    } else {
+    }
+    else {
       navigateToIrrigationProgram();
     }
   }

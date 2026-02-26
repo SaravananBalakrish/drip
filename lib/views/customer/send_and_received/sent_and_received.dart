@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../StateManagement/customer_provider.dart';
+import '../../../flavors.dart';
 import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
 import '../../../view_models/customer/sent_and_received_view_model.dart';
@@ -200,7 +201,14 @@ class SentAndReceived extends StatelessWidget {
               TextButton(
                 onPressed: () {
                   final enteredPassword = viewModel.passwordController.text;
-                  if (enteredPassword == 'Oro@321') {
+                  if (enteredPassword ==
+                      (F.name.toLowerCase().contains('oro')
+                          ? 'Oro@321'
+                          : F.name.toLowerCase().contains('smart')
+                          ? 'LK@321'
+                          : F.name.toLowerCase().contains('agritel')
+                          ? 'Agritel@321'
+                          : 'Oro@321')) {
                     viewModel.hasPayloadViewPermission = true;
                     Navigator.of(context).pop();
                     ScaffoldMessenger.of(context).showSnackBar(

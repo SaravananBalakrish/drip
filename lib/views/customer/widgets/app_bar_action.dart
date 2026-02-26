@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../../Screens/Dealer/controllerverssionupdate.dart';
 import '../../../Screens/planning/FactoryReset.dart';
+import '../../../flavors.dart';
 import '../../../models/customer/site_model.dart';
 import '../../../modules/PumpController/view/node_settings.dart';
 import '../../../modules/UserChat/view/user_chat.dart';
@@ -220,7 +221,13 @@ Widget _buildHelpMenu(
                     } else {
                       showPasswordDialog(
                           context,
-                          'Oro@321',
+                           F.name.toLowerCase().contains('oro')
+                          ? 'Oro@321'
+                          : F.name.toLowerCase().contains('smart')
+                          ? 'LK@321'
+                          : F.name.toLowerCase().contains('agritel')
+                          ? 'Agritel@321'
+                          : 'Oro@321',
                           vm.mySiteList.data[vm.sIndex].customerId,
                           master.controllerId,
                           master.deviceId,

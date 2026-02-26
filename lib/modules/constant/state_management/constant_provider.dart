@@ -429,13 +429,9 @@ class ConstantProvider extends ChangeNotifier{
   }
 
   String getFertilizerSitePayload(){
-    print("ecPhSensor : ${ecPhSensor}");
     print(AppConstants.gemModelList.contains(userData['modelId']) ?  'Gem' : 'Ecogem');
     return List.generate(fertilizerSite.length, (siteIndex){
-      print(ecPhSensor);
-      print(siteIndex);
-      print(ecPhSensor[siteIndex].ecPopup);
-      print(ecPhSensor.isNotEmpty && ecPhSensor.length > siteIndex && ecPhSensor[siteIndex].ecPopup.isNotEmpty);
+      print('ecPhSensor ::: $ecPhSensor');
       return [
         fertilizerSite[siteIndex].sNo,
         ...fertilizerSite[siteIndex].setting.where((setting){
@@ -443,8 +439,8 @@ class ConstantProvider extends ChangeNotifier{
         }).map((setting){
           return payloadValidate(setting.value.value);
         }),
-        if(ecPhSensor.isNotEmpty && ecPhSensor[siteIndex].ecPopup.isNotEmpty)
-          ...ecPhSensor[siteIndex].setting[0].where((setting){
+        if(ecPhSensor.isNotEmpty && ecPhSensor[siteIndex].ecSetting.isNotEmpty)
+          ...ecPhSensor[siteIndex].ecSetting.where((setting){
             return AppConstants.gemModelList.contains(userData['modelId']) ?  setting.gemPayload : setting.ecoGemPayload;
           }).map((setting){
             return payloadValidate(setting.value.value);
@@ -453,8 +449,8 @@ class ConstantProvider extends ChangeNotifier{
           ...List.generate(defaultEcPhSetting.length, (index){
             return payloadValidate(defaultEcPhSetting[index].value.value);
           }),
-        if(ecPhSensor.isNotEmpty && ecPhSensor[siteIndex].phPopup.isNotEmpty)
-          ...ecPhSensor[siteIndex].setting[ecPhSensor[siteIndex].ecPopup.isEmpty ? 0 : 1].where((setting){
+        if(ecPhSensor.isNotEmpty && ecPhSensor[siteIndex].phSetting.isNotEmpty)
+          ...ecPhSensor[siteIndex].phSetting.where((setting){
             return AppConstants.gemModelList.contains(userData['modelId']) ?  setting.gemPayload : setting.ecoGemPayload;
           }).map((setting){
             return payloadValidate(setting.value.value);

@@ -62,7 +62,7 @@ class _ScheduledProgramNarrowState extends State<ScheduledProgramNarrow> {
 
     var filteredScheduleProgram = widget.currentLineSNo == 0 ? master.programList :
     master.programList.where((program) {
-      final irrigationLine = program.irrigationLine ?? [];
+      final irrigationLine = program.irrigationLine;
       return irrigationLine.contains(widget.currentLineSNo) || irrigationLine.isEmpty;
     }).toList();
 
@@ -292,7 +292,6 @@ class _ScheduledProgramNarrowState extends State<ScheduledProgramNarrow> {
                                   icon: const Icon(Icons.more_vert),
                                   onSelected: (result) {
                                     if (result == 'Edit program') {
-                                      bool hasConditions = program.conditions.isNotEmpty;
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -333,7 +332,7 @@ class _ScheduledProgramNarrowState extends State<ScheduledProgramNarrow> {
                                                 Offset.zero & overlay.size,
                                               );
 
-                                              final selected = await showMenu<String>(
+                                              await showMenu<String>(
                                                 context: context,
                                                 position: position,
                                                 items: program.sequence.asMap().entries.map((entry) {

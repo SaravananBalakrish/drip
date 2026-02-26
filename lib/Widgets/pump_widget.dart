@@ -126,7 +126,7 @@ class PumpWidget extends StatelessWidget {
                         ),
                         child: SizedBox(
                           height : 70,
-                          child: AppConstants.getAsset(isMobile ? 'mobile pump' : 'pump', pump.status, ''),
+                          child: AppConstants.getAsset(isMobile ? 'mobile pump' : 'pump', pump.status, '', 0),
                         ),
                       ),
                     ),

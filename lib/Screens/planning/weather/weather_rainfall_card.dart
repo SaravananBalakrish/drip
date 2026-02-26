@@ -18,40 +18,33 @@ class RainfallCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(color: Colors.white70),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            rainfallValue,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            forecastText,
-            style: const TextStyle(color: Colors.white70),
-          ),
-          const SizedBox(height: 12),
-          Text(
-            description,
-            style: const TextStyle(color: Colors.white),
-          ),
-        ],
-      ),
-    );
+    return Column(
+     crossAxisAlignment: CrossAxisAlignment.start,
+     children: [
+       Text(
+         title,
+         style: const TextStyle(color: Colors.black),
+       ),
+       const SizedBox(height: 12),
+       Text(
+         '$rainfallValue mm',
+         style: const TextStyle(
+           color: Colors.black,
+           fontSize: 24,
+           fontWeight: FontWeight.bold,
+         ),
+       ),
+       const SizedBox(height: 6),
+       Text(
+         forecastText,
+         style: const TextStyle(color: Colors.black),
+       ),
+       const SizedBox(height: 12),
+       Text(
+         description,
+         style: const TextStyle(color: Colors.black),
+       ),
+     ],
+          );
   }
 }

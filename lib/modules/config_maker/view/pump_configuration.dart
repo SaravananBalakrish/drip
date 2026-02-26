@@ -73,7 +73,7 @@ class _PumpConfigurationState extends State<PumpConfiguration> {
                                 trailing: !pumpModelList.contains(widget.configPvd.masterData['modelId']) ? IntrinsicWidth(
                                   child: CustomDropDownButton(
                                       value: getPumpTypeCodeToString(pump.pumpType),
-                                      list: const ['source', 'irrigation'],
+                                      list: const ['source', 'irrigation', 'aerator'],
                                       onChanged: (value){
                                         setState(() {
                                           for(var line in widget.configPvd.line){

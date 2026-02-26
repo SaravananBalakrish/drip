@@ -61,6 +61,23 @@ class _IrrigationProgramState extends State<IrrigationProgram> with SingleTicker
   void initState() {
     super.initState();
     final irrigationProvider = Provider.of<IrrigationProgramMainProvider>(context, listen: false);
+    print(
+      {
+        'userId': widget.userId,
+        'customerId': widget.customerId,
+        'groupId': widget.groupId,
+        'categoryId': widget.categoryId,
+        'controllerId': widget.controllerId,
+        'deviceId': widget.deviceId,
+        'serialNumber': widget.serialNumber,
+        'programType': widget.programType,
+        'fromDealer': widget.fromDealer,
+        'toDashboard': widget.toDashboard,
+        'modelId': widget.modelId,
+        'deviceName': widget.deviceName,
+        'categoryName': widget.categoryName,
+      }
+    );
     mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
 
     final result = irrigationProvider.getLabelAndIcon(

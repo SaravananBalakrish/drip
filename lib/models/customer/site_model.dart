@@ -1,6 +1,4 @@
 
-import 'dart:convert';
-
 import '../../modules/PumpController/model/pump_controller_data_model.dart';
 
 abstract class FertilizerItem {
@@ -250,7 +248,7 @@ class MasterControllerModel {
       deviceId: json['deviceId'] ?? '',
       deviceName: json['deviceName'] ?? '',
       categoryId: json['categoryId'] ?? 0,
-      categoryName: json['categoryName'] ?? '',
+      categoryName: isSubUser ? json['groupName'] ?? '' : json['categoryName'] ?? '',
       modelId: json['modelId'] ?? 0,
       modelName: json['modelName'] ?? '',
       modelDescription: json['modelDescription'] ?? '',
@@ -432,6 +430,9 @@ class IrrigationLineModel {
   final List<SensorModel> pressureIn;
   final List<SensorModel> pressureOut;
   final List<SensorModel> waterMeter;
+  final List<SensorModel> co2Sensor;
+  final List<SensorModel> humiditySensor;
+  final List<SensorModel> soilTemperature;
   final bool hasWeatherStation;
   int? linePauseFlag;
 
@@ -452,6 +453,9 @@ class IrrigationLineModel {
     required this.pressureIn,
     required this.pressureOut,
     required this.waterMeter,
+    required this.co2Sensor,
+    required this.humiditySensor,
+    required this.soilTemperature,
     required this.hasWeatherStation,
     this.linePauseFlag = 0,
   });
@@ -483,6 +487,24 @@ class IrrigationLineModel {
     final lights = configObjects
         .where((obj) => lightSNoSet.contains(obj.sNo))
         .map((obj) => LightModel.fromConfigObject(obj))
+        .toList();
+
+    final humiditySNoSet = ((json['humidity'] as List?) ?? []).map((e) => e).toSet();
+    final humidity = configObjects
+        .where((obj) => humiditySNoSet.contains(obj.sNo))
+        .map((obj) => SensorModel.fromConfigObject(obj))
+        .toList();
+
+    final co2SNoSet = ((json['co2'] as List?) ?? []).map((e) => e).toSet();
+    final co2 = configObjects
+        .where((obj) => co2SNoSet.contains(obj.sNo))
+        .map((obj) => SensorModel.fromConfigObject(obj))
+        .toList();
+
+    final soilTemperatureSNoSet = ((json['soilTemperature'] as List?) ?? []).map((e) => e).toSet();
+    final soilTemperature = configObjects
+        .where((obj) => soilTemperatureSNoSet.contains(obj.sNo))
+        .map((obj) => SensorModel.fromConfigObject(obj))
         .toList();
 
 
@@ -588,6 +610,11 @@ class IrrigationLineModel {
       pressureIn: pressureIn,
       pressureOut: pressureOut,
       waterMeter: waterMeter,
+
+      co2Sensor: co2,
+      humiditySensor: humidity,
+      soilTemperature: soilTemperature,
+
       hasWeatherStation: hasWeatherStation,
     );
   }
@@ -875,7 +902,7 @@ class FilterSiteModel {
         }
       }).toList();
     } else {
-      throw FormatException('filters is not a list');
+      throw const FormatException('filters is not a list');
     }
   }
 
@@ -1451,6 +1478,7 @@ class ValveModel {
   final String name;
   final List<WaterSourceModel> waterSources;
   int status;
+  int completePercent;
   bool isOn;
   List<MoistureSensorModel> moistureSensors = [];
 
@@ -1459,12 +1487,13 @@ class ValveModel {
     required this.name,
     required this.waterSources,
     this.status = 0,
+    this.completePercent = 0,
     this.isOn = false,
   });
 
   factory ValveModel.fromConfigObject(ConfigObject obj, List<WaterSourceModel> ws) {
 
-    List<double> assignedSNos = (obj.assignObject ?? [])
+    List<double> assignedSNos = (obj.assignObject)
         .map((e) => (e as num).toDouble())
         .toList();
 
@@ -1480,7 +1509,6 @@ class ValveModel {
         }
       }
     }
-
 
     return ValveModel(
       sNo: obj.sNo,

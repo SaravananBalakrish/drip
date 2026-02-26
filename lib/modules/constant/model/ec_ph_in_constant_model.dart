@@ -14,6 +14,8 @@ class EcPhInConstantModel{
   List<PopUpItemModel> ecPopup;
   List<PopUpItemModel> phPopup;
   List<List<ConstantSettingModel>> setting = [];
+  List<ConstantSettingModel> ecSetting = [];
+  List<ConstantSettingModel> phSetting = [];
 
   EcPhInConstantModel({
     required this.objectId,
@@ -24,6 +26,8 @@ class EcPhInConstantModel{
     required this.setting,
     required this.ecPopup,
     required this.phPopup,
+    required this.ecSetting,
+    required this.phSetting,
   });
 
   factory EcPhInConstantModel.fromJson({
@@ -132,7 +136,9 @@ class EcPhInConstantModel{
             generatePh,
         ],
         ecPopup: ec.isNotEmpty ? ecPopUpList : [],
-        phPopup: ph.isNotEmpty ? phPopUpList : []
+        phPopup: ph.isNotEmpty ? phPopUpList : [],
+        ecSetting: ec.isNotEmpty ? generateEc : [],
+        phSetting: ph.isNotEmpty ? generatePh : [],
     );
   }
 

@@ -103,7 +103,7 @@ class _ListOfLogConfigState extends State<ListOfLogConfig> {
   void initState() {
     // TODO: implement initState
     getUserLogConfig();
-
+    print("userData => ${widget.userData}");
     super.initState();
   }
 

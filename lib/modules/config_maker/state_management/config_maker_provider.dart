@@ -299,7 +299,7 @@ class ConfigMakerProvider extends ChangeNotifier{
       masterData = masterDataFromSiteConfigure;
 
       /* hardcoded for pushing master to deviceList*/
-      if(![1, 2, 4].contains(masterDataFromSiteConfigure['modelId'])){
+      if(!AppConstants.gemModelList.contains(masterDataFromSiteConfigure['modelId'])){
         // if([...AppConstants.pumpWithValveModelList, ...AppConstants.pumpModelList].contains(masterDataFromSiteConfigure['modelId'])){
         //   selectedTab = ConfigMakerTabs.productLimit;
         // }else{
@@ -330,7 +330,6 @@ class ConfigMakerProvider extends ChangeNotifier{
       }
 
       List<int> senseNodeNotToAddInDeviceList = [44, 45];
-
       listOfDeviceModel = (defaultData['deviceList'] as List<dynamic>).where((device) => !senseNodeNotToAddInDeviceList.contains(device['modelId']))
           .map((devices) {
         Map<String, dynamic> deviceProperty = defaultData['productModel'].firstWhere((product) => devices['modelId'] == product['modelId']);
@@ -539,6 +538,7 @@ class ConfigMakerProvider extends ChangeNotifier{
                       waterSource: [],
                       sourcePump: [],
                       irrigationPump: [],
+                      aerator: [],
                       valve: [],
                       mainValve: [],
                       light: [],
@@ -900,6 +900,9 @@ class ConfigMakerProvider extends ChangeNotifier{
         }else if(parameter == LineParameter.irrigationPump){
           irrigationLine.irrigationPump.clear();
           irrigationLine.irrigationPump.addAll(listOfSelectedSno);
+        }else if(parameter == LineParameter.aerator){
+          irrigationLine.aerator.clear();
+          irrigationLine.aerator.addAll(listOfSelectedSno);
         }else if(parameter == LineParameter.valve){
           irrigationLine.valve.clear();
           irrigationLine.valve.addAll(listOfSelectedSno);
@@ -1062,7 +1065,7 @@ class ConfigMakerProvider extends ChangeNotifier{
       if(pumpIsConnected){
         Map<String, dynamic> payload = {
           "S_No": pumpModelObject.commonDetails.sNo,
-          "PumpCategory": pumpModelObject.pumpType,
+          "PumpCategory": pumpModelObject.pumpType == 3 ? 1 : pumpModelObject.pumpType,
           "PressureIn" : serialNoOrEmpty(pumpModelObject.pressureIn),
           "PressureOut" : serialNoOrEmpty(pumpModelObject.pressureOut),
           "WaterMeter": serialNoOrEmpty(pumpModelObject.waterMeter),
@@ -1109,15 +1112,24 @@ class ConfigMakerProvider extends ChangeNotifier{
     List<dynamic> devicePayload = [];
     for (var i = 0; i < listOfDeviceModel.length; i++) {
       var device = listOfDeviceModel[i];
+      String extendDeviceId = '';
+      if(AppConstants.gemModelList.contains(masterData['modelId'])){
+        for(var d in listOfDeviceModel){
+          if(d.controllerId == device.extendControllerId){
+            extendDeviceId = d.deviceId;
+            break;
+          }
+        }
+      }
       if (device.masterId != null && device.serialNumber != null) {
         devicePayload.add({
           "S_No": device.serialNumber,
           "DeviceTypeNumber": validateDeviceTypeNumber(device),
           "DeviceRunningNumber": findOutReferenceNumber(device),
           "DeviceId": device.deviceId,
-          "InterfaceType": device.interfaceTypeId,
+          "InterfaceType": extendDeviceId.isNotEmpty ? 4 : device.interfaceTypeId,
           if(AppConstants.gemModelList.contains(masterData['modelId']))
-            "ExtendNode": device.extendControllerId ?? '',
+            "ExtendNode": extendDeviceId,
           if(AppConstants.gemModelList.contains(masterData['modelId']))
             "Name" : device.deviceName
         }.entries.map((e) => e.value).join(","));
@@ -1336,7 +1348,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         "CentralFilterSite": serialNoOrEmpty(lineModelObject.centralFiltration),
         "LocalFertSite": serialNoOrEmpty(lineModelObject.localFertilization),
         "LocalFilterSite": serialNoOrEmpty(lineModelObject.localFiltration),
-        "SourcePump": lineModelObject.sourcePump.join('_'),
+        "SourcePump": [...lineModelObject.sourcePump, ...lineModelObject.aerator].join('_'),
         "IrrigationPump": lineModelObject.irrigationPump.join('_'),
         "PressureIn": serialNoOrEmpty(lineModelObject.pressureIn),
         "PressureOut": serialNoOrEmpty(lineModelObject.pressureOut),

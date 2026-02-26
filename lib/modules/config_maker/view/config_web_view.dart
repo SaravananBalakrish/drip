@@ -454,7 +454,14 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                                             validator: (value) {
                                               if (value == null || value.isEmpty) {
                                                 return 'Please enter your password';
-                                              } else if (value != (F.title.contains('ORO') ? 'Oro@321' : 'LK@321')) {
+                                              } else if (value !=
+                                                  (F.title.toLowerCase().contains('oro')
+                                                      ? 'Oro@321'
+                                                      : F.title.toLowerCase().contains('smart')
+                                                      ? 'LK@321'
+                                                      : F.title.toLowerCase().contains('agritel')
+                                                      ? 'Agritel@321'
+                                                      : 'Oro@321')) {
                                                 return 'Invalid password';
                                               }
                                               return null;

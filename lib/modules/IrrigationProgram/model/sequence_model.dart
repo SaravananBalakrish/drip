@@ -506,6 +506,9 @@ class ProgramLibrary {
     if(json['data']['fanCount'] > 0 || json['data']['foggerCount'] > 0 || json['data']['lightCount'] > 0) {
       programTypes.add(json['data']['programType'][2]);
     }
+    if(json['data']['aeratorCount'] > 0) {
+      programTypes.add(json['data']['programType'][3]);
+    }
     return ProgramLibrary(
       defaultProgramTypes: List<String>.from(programTypes),
       // programLimit: 4,
@@ -573,6 +576,10 @@ class ProgramDetails {
   String controllerReadStatus;
   String delayBetweenZones;
   String adjustPercentage;
+  String cyclicOnTime;
+  String cyclicOffTime;
+  bool enablePressure;
+  String pressureValue;
 
   ProgramDetails(
       {
@@ -585,7 +592,12 @@ class ProgramDetails {
         required this.completionOption,
         required this.delayBetweenZones,
         required this.controllerReadStatus,
-        required this.adjustPercentage});
+        required this.adjustPercentage,
+        required this.cyclicOnTime,
+        required this.cyclicOffTime,
+        required this.enablePressure,
+        required this.pressureValue,
+      });
 
   factory ProgramDetails.fromJson(Map<String, dynamic> json) {
     return ProgramDetails(
@@ -598,6 +610,10 @@ class ProgramDetails {
         completionOption: json['data']['incompleteRestart'] == "1" ? true : false,
         delayBetweenZones: json["data"]["delayBetweenZones"],
         adjustPercentage: json["data"]["adjustPercentage"] == "0" ? "100" : json["data"]["adjustPercentage"],
+        cyclicOnTime: json["data"]["cyclicOnTime"] ?? "00:00:00",
+        cyclicOffTime: json["data"]["cyclicOffTime"] ?? "00:00:00",
+        enablePressure: json["data"]["isPressureEnabled"] == '1' ? true : false,
+        pressureValue: json["data"]["pressure"] ?? "0",
         controllerReadStatus: json['data']['controllerReadStatus'] ?? "0"
     );
   }

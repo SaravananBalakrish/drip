@@ -1,16 +1,10 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:oro_drip_irrigation/views/common/user_dashboard/widgets/sensor_popover_content.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../StateManagement/mqtt_payload_provider.dart';
-import '../../../../models/customer/sensor_hourly_data_model.dart';
 import '../../../../models/customer/site_model.dart';
-import '../../../../repository/repository.dart';
-import '../../../../services/http_service.dart';
 import '../../../../utils/constants.dart';
 import '../../../../utils/my_function.dart';
 import '../../../customer/widgets/float_switch_popover.dart';
@@ -30,10 +24,14 @@ class ValveWidget extends StatelessWidget {
       double.parse(valve.sNo.toString()).toStringAsFixed(3): valve.sNo.toString()),
       builder: (_, status, __) {
 
-
         final statusParts = status?.split(',') ?? [];
         if(statusParts.isNotEmpty){
           valve.status = int.parse(statusParts[1]);
+          if(statusParts.length > 2){
+            valve.completePercent = int.parse(statusParts[2]);
+          }else{
+            valve.completePercent = 0;
+          }
         }
 
         bool hasMoisture = valve.moistureSensors.isNotEmpty;
@@ -63,7 +61,7 @@ class ValveWidget extends StatelessWidget {
                         SizedBox(
                           width: 70,
                           height: 70,
-                          child: AppConstants.getAsset('valve_cws', valve.status, ''),
+                          child: AppConstants.getAsset('valve_cws', valve.status, '', valve.completePercent),
                         ),
                         Text(
                           valve.name,
@@ -146,7 +144,7 @@ class ValveWidget extends StatelessWidget {
                         SizedBox(
                           width: 70,
                           height: 70,
-                          child: AppConstants.getAsset('source', 0, 'After Valve'),
+                          child: AppConstants.getAsset('source', 0, 'After Valve', 0),
                         ),
                         Text(
                           valve.waterSources[0].name,
@@ -251,7 +249,7 @@ class ValveWidget extends StatelessWidget {
                   SizedBox(
                     width: 70,
                     height: 70,
-                    child: AppConstants.getAsset(isLastValve? 'valve_lj' : 'valve', valve.status, ''),
+                    child: AppConstants.getAsset(isLastValve? 'valve_lj' : 'valve', valve.status, '', valve.completePercent),
                   ),
                   Text(
                     valve.name,

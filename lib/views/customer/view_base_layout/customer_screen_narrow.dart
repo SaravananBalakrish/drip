@@ -8,8 +8,8 @@ import 'package:oro_drip_irrigation/views/customer/widgets/customer_fab_menu.dar
 import 'package:provider/provider.dart';
 
 import '../../../Screens/Logs/irrigation_and_pump_log.dart';
-import '../../../Screens/planning/weather/newweather_dashboard_page.dart';
- import '../../../StateManagement/customer_provider.dart';
+ import '../../../Screens/planning/weather/view/weather_screen_new.dart';
+import '../../../StateManagement/customer_provider.dart';
 import '../../../Widgets/network_connection_banner.dart';
 import '../../../layouts/layout_selector.dart';
 import '../../../modules/PumpController/view/pump_controller_home.dart';
@@ -79,8 +79,8 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
         masterData: cM,
       ),
       if(hasWeatherStation)...[
-        WeatherDashboardPage(userId: vm.mySiteList.data[vm.sIndex].customerId, controllerId: cM.controllerId, deviceID: cM.deviceId),
-
+        WeatherScreenNew(customerId:  vm.mySiteList.data[vm.sIndex].customerId,
+            controllerId: cM.controllerId, deviceID: cM.deviceId, isNarrow: true),
       ],
       const SettingsMenuNarrow(),
     ] :

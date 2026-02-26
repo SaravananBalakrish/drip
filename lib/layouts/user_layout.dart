@@ -41,7 +41,8 @@ class AdminScreenLayout extends ScreenLayoutBuilder with LayoutHelpers {
 
   @override
   Widget build(BuildContext context) =>
-      wrapWithBaseHeader(context, menuTitles: ['Dashboard', 'Inventory', 'Stock'], child: super.build(context));
+      wrapWithBaseHeader(context, menuTitles: ['Dashboard', 'Inventory', 'Stock'],
+          child: super.build(context));
 
   @override
   Widget buildNarrow(BuildContext context) => const AdminScreenNarrow();
