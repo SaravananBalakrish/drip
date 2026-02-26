@@ -105,24 +105,24 @@ class AppConstants {
   static const String mainValveNotOFF = "main_valve_red.png";
 
   static const String valveOFF = "valve_gray.png";
-  static const String valveCompleted= "valve_green.png";
+  static const String valveRunning = "valve_green.png";
+  static const String valveCompleted= "valve_blue.png";
   static const String valveNotON = "valve_orange.png";
   static const String valveNotOFF = "valve_red.png";
-  static const String valveRunning = "valve_blue.png";
   static const String valvePending = "valve_yellow.png";
 
   static const String valveLjOFF = "valve_gray_lj.png";
-  static const String valveLjCompleted= "valve_green_lj.png";
+  static const String valveLjRunning = "valve_green_lj.png";
+  static const String valveLjCompleted= "valve_blue_lj.png";
   static const String valveLjNotON = "valve_orange_lj.png";
   static const String valveLjNotOFF = "valve_red_lj.png";
-  static const String valveLjRunning = "valve_blue_lj.png";
   static const String valveLjPending = "valve_yellow_lj.png";
 
   static const String valveCwsOFF = "valve_gray_cws.png";
-  static const String valveCwsCompleted = "valve_green_cws.png";
+  static const String valveCwsRunning = "valve_green_cws.png";
+  static const String valveCwsCompleted = "valve_blue_cws.png";
   static const String valveCwsNotON = "valve_orange_cws.png";
   static const String valveCwsNotOFF = "valve_red_cws.png";
-  static const String valveCwsRunning = "valve_blue_cws.png";
   static const String valveCwsPending = "valve_yellow_cws.png";
 
   static const String lightOFF = "light_gray.png";
