@@ -75,7 +75,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
   }
 
   Future<void> fetchData() async {
-     try{
+    try{
       final Repository repository = Repository(HttpService());
       var response = await repository.getUserDeviceFirmwareDetails({"userId": widget.userId});
       if (response.statusCode == 200) {
@@ -83,7 +83,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
           print("widget.userId:${widget.userId}");
           var jsondata = jsonDecode(response.body);
           print('jsondata:$jsondata');
-           valAssing(jsondata['data']);
+          valAssing(jsondata['data']);
 
           MqttService().connect();
         });
@@ -111,7 +111,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
         userRole = role;
       });
     });
-   }
+  }
 
   ResetAll(int index) async {
     sendHttp("2","Controller Restart");
@@ -184,28 +184,28 @@ class _ResetVerssionState extends State<ResetVerssion> {
 
   @override
   Widget build(BuildContext context) {
-     bool checkRole = false;
+    bool checkRole = false;
     checkrole().then((role) {
-       if (role == 'admin') {
+      if (role == 'admin') {
         checkRole = true;
       } else {
         checkRole = false;
       }
     });
-     mqttPayloadProvider =
+    mqttPayloadProvider =
         Provider.of<MqttPayloadProvider>(context, listen: true);
     status();
-     double progressValue = double.parse(mqttPayloadProvider.proogressstatus.replaceAll('%', '')) / 100;
+    double progressValue = double.parse(mqttPayloadProvider.proogressstatus.replaceAll('%', '')) / 100;
 
-     final screenWidth = MediaQuery.of(context).size.width;
+    final screenWidth = MediaQuery.of(context).size.width;
 
-        return SafeArea(
-          child: Scaffold(
-                backgroundColor: Colors.teal.shade100,
-                appBar: AppBar(
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.teal.shade100,
+        appBar: AppBar(
           title: const Text('Controller Info'),
-                ),
-                body: RefreshIndicator(
+        ),
+        body: RefreshIndicator(
           onRefresh: fetchData,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -214,6 +214,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
                 crossAxisCount: kIsWeb? 3:1,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 40,
+                mainAxisExtent: 500,
               ),
               padding: const EdgeInsets.all(5),
               itemCount: mergedList.length,
@@ -237,7 +238,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
                           const SizedBox(
                             width: 10,
                           ),
-          
+
                           Tooltip(
                             message: "Controller Log",
                             child: IconButton(
@@ -251,8 +252,8 @@ class _ResetVerssionState extends State<ResetVerssion> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => ControllerLog(
-                                          deviceID: '${mergedList[index]['deviceId'
-                                          ]!}', communicationType: 'MQTT',),
+                                        deviceID: '${mergedList[index]['deviceId'
+                                        ]!}', communicationType: 'MQTT',),
                                     ),
                                   );
                                 });
@@ -268,34 +269,34 @@ class _ResetVerssionState extends State<ResetVerssion> {
                                 style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty.all(
                                         Colors.teal.shade100)),
-                                  onPressed: () {
-                                    setState(() {
-                                      print('mergedList[index]:${mergedList[index]['modelId']}');
-                                      selectindex = index;
-                                      if (AppConstants.pumpList.contains(mergedList[index]['modelId'])) {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => PumpTopicChangePage(
-                                              deviceID: '${mergedList[index]['deviceId'
-                                              ]!}', userId: widget.userId, controllerId: widget.controllerId, modelId:mergedList[index]['modelId'],communicationType: "MQTT",),
-                                          ),
-                                        );
-                                      }
-                                      else{
-                                       Navigator.push(
+                                onPressed: () {
+                                  setState(() {
+                                    print('mergedList[index]:${mergedList[index]['modelId']}');
+                                    selectindex = index;
+                                    if (AppConstants.pumpList.contains(mergedList[index]['modelId'])) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => PumpTopicChangePage(
+                                            deviceID: '${mergedList[index]['deviceId'
+                                            ]!}', userId: widget.userId, controllerId: widget.controllerId, modelId:mergedList[index]['modelId'],communicationType: "MQTT",),
+                                        ),
+                                      );
+                                    }
+                                    else{
+                                      Navigator.push(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => ConfigureMqtt(
-                                              deviceID: '${mergedList[index]['deviceId'
-                                              ]!}', userId: widget.userId, controllerId: widget.controllerId, communicationType: "MQTT",),
+                                            deviceID: '${mergedList[index]['deviceId'
+                                            ]!}', userId: widget.userId, controllerId: widget.controllerId, communicationType: "MQTT",),
                                         ),
                                       ) ;
 
-                                      }
+                                    }
 
-                                    });
-                                  },
+                                  });
+                                },
                                 icon: const Icon(Icons.settings_outlined),
                               ),
                             ),
@@ -341,7 +342,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
                               ),
                             ),
                           ),
-          
+
                           userRole == 'admin' ?  Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Tooltip(
@@ -353,18 +354,18 @@ class _ResetVerssionState extends State<ResetVerssion> {
                                 onPressed: () {
                                   setState(() {
                                     selectindex = index;
-          
+
                                     //Call Siva Ble update Lora class
-          
+
                                   });
                                 },
                                 icon: const Icon(Icons.upgrade),
                               ),
                             ),
                           ): Container(),
-          
-          
-          
+
+
+
                         ],
                       ),
                       Container(
@@ -377,14 +378,14 @@ class _ResetVerssionState extends State<ResetVerssion> {
                       SelectableText(mergedList[index]['deviceId']!,
                         style:
                         const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),),
-          
+
                       const SizedBox(height: 10),
                       Text(
                         'SiteName:${mergedList[index]['groupName'] ?? ''}',
                         style:
                         const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                       ),
-          
+
                       const SizedBox(height: 10),
                       Text(
                         'Model:${mergedList[index]['modelName'] ?? ''}',
@@ -423,20 +424,20 @@ class _ResetVerssionState extends State<ResetVerssion> {
                             fontSize: 14, fontWeight: FontWeight.bold),
                       )
                           : const Text('Status'),
-          
+
                       mergedList[index]['status'] != 'Status'
                           ?  Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           children: [
                             IconButton(
-          
+
                               onPressed: () {
                                 setState(() {
                                   statusCheck(index);
-          
+
                                   //Call Siva Ble update Lora class
-          
+
                                 });
                               },
                               icon: const Icon(Icons.refresh),
@@ -455,7 +456,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
                           ],
                         ),
                       ) : Container(),
-          
+
                       // Center(child: Text('${mqttPayloadProvider.messageFromHw ?? 'Status'} ',style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),)),
                       Container(
                         height: 1,
@@ -513,9 +514,9 @@ class _ResetVerssionState extends State<ResetVerssion> {
               },
             ),
           ),
-                ),
-              ),
-        );
+        ),
+      ),
+    );
   }
 
   void _showSnackBar(String message) {
@@ -530,7 +531,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
   sendHttp(String val, String msgstatus) async {
     Map<String, dynamic> payLoadFinal = {
       "5700":
-        {"5701": "$val"},
+      {"5701": "$val"},
 
     };
     Map<String, dynamic> body = {
@@ -555,10 +556,10 @@ class _ResetVerssionState extends State<ResetVerssion> {
     }
   }
 
-   status() {
-     if (selectindex != null) {
+  status() {
+    if (selectindex != null) {
       Map<String, dynamic>? ctrldata = mqttPayloadProvider.messageFromHw;
-       if ((ctrldata != null && ctrldata.isNotEmpty)) {
+      if ((ctrldata != null && ctrldata.isNotEmpty)) {
         var name = ctrldata['Name'];
         // String message = ctrldata['Message'];
         var code = ctrldata['Code'];
@@ -605,7 +606,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
           // checkupdatediable = 0;
           // selectindex = null;
         }
-       }
+      }
     }
   }
 
@@ -661,7 +662,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
     sf2 = sf2.isEmpty ? "0" : sf2;
     Map<String, dynamic> payLoadFinal = {
       "6500":
-        {"6501": "$firstfreequnce1,$sf1,$firstfreequnce2,$sf2"},
+      {"6501": "$firstfreequnce1,$sf1,$firstfreequnce2,$sf2"},
 
     };
     Map<String, dynamic> body = {
@@ -675,9 +676,9 @@ class _ResetVerssionState extends State<ResetVerssion> {
     final Repository repository = Repository(HttpService());
     var response = await repository.updateUserDeviceFirmwareDetails(body);
 
-     if (response.statusCode == 200) {
+    if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
-       if (data["code"] == 200) {
+      if (data["code"] == 200) {
         _showSnackBar(data["message"]);
       } else {
         _showSnackBar(data["message"]);
@@ -686,9 +687,9 @@ class _ResetVerssionState extends State<ResetVerssion> {
     print("selectindex----$selectindex");
 
     print("payLoadFinal----$payLoadFinal");
-print("payLoadFinal----${Environment.mqttPublishTopic}/${mergedList[selectindex!]["deviceId"]}");
+    print("payLoadFinal----${Environment.mqttPublishTopic}/${mergedList[selectindex!]["deviceId"]}");
     MqttService().topicToPublishAndItsMessage(jsonEncode(payLoadFinal), '${Environment.mqttPublishTopic}/${mergedList[selectindex ?? 0]["deviceId"]}');
-     fetchData();
+    fetchData();
   }
   bool _isValidFrequency(String freq) {
     final regex = RegExp(r'^\d{1,3}\.\d$');
@@ -746,7 +747,7 @@ print("payLoadFinal----${Environment.mqttPublishTopic}/${mergedList[selectindex!
     showDialog(
       context: context,
       builder: (BuildContext context) {
-         String loravalue =  mergedList[index]['loraFrequency'] ?? '';
+        String loravalue =  mergedList[index]['loraFrequency'] ?? '';
 
         if( loravalue.isNotEmpty)
         {
@@ -809,12 +810,12 @@ print("payLoadFinal----${Environment.mqttPublishTopic}/${mergedList[selectindex!
                           child: const Text('View'),
                         ),
                         TextButton(
-                        onPressed: () {
+                          onPressed: () {
 
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('Cancel'),
-                      ),
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Cancel'),
+                        ),
                         TextButton(
                           onPressed: () {
                             String freq1 = frequency1Controller.text;

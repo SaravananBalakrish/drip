@@ -3,8 +3,8 @@ import 'package:oro_drip_irrigation/views/customer/controller_settings/wide/noti
 
 import '../../../../Screens/Dealer/controllerlogfile.dart';
 import '../../../../Screens/Dealer/dealer_definition.dart';
-import '../../../../Screens/Map/CustomerMap.dart';
 import '../../../../Screens/Map/allAreaBoundry.dart';
+import '../../../../Screens/Map/oro_map/map_valve.dart';
 import '../../../../Screens/planning/PumpCondition.dart';
 import '../../../../Screens/planning/frost_productionScreen.dart';
 import '../../../../Screens/planning/names_form.dart';
@@ -85,15 +85,12 @@ class SettingsScreenFactory {
         }
 
       case 'Name':
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Names(
-            userID: ctx.userId,
-            customerID: ctx.customerId,
-            controllerId: ctx.controllerId,
-            menuId: 0,
-            imeiNo: ctx.imeiNo,
-          ),
+        return Names(
+          userID: ctx.userId,
+          customerID: ctx.customerId,
+          controllerId: ctx.controllerId,
+          menuId: 0,
+          imeiNo: ctx.imeiNo,
         );
 
       case 'Fertilizer Set':
@@ -176,12 +173,18 @@ class SettingsScreenFactory {
         }
 
       case 'Geography':
-        return MapScreenall(
+        return MapScreenValve(
           userId: ctx.userId,
           customerId: ctx.customerId,
           controllerId: ctx.controllerId,
           imeiNo: ctx.imeiNo,
         );
+        // return MapScreenall(
+        //   userId: ctx.userId,
+        //   customerId: ctx.customerId,
+        //   controllerId: ctx.controllerId,
+        //   imeiNo: ctx.imeiNo,
+        // );
 
       case 'Geography Area':
         return MapScreenAllArea(

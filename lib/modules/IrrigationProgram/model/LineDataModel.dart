@@ -165,6 +165,7 @@ class ProgramIrrigationLine with DiagnosticableTreeMixin {
   final List<DeviceObjectModel>? source;
   final List<DeviceObjectModel>? sourcePump;
   final List<DeviceObjectModel>? irrigationPump;
+  final List<DeviceObjectModel>? aerator;
   final DeviceObjectModel? centralFiltration;
   final DeviceObjectModel? localFiltration;
   final DeviceObjectModel? centralFertilization;
@@ -194,6 +195,7 @@ class ProgramIrrigationLine with DiagnosticableTreeMixin {
     this.source,
     this.sourcePump,
     this.irrigationPump,
+    this.aerator,
     this.centralFiltration,
     this.localFiltration,
     this.centralFertilization,
@@ -257,6 +259,7 @@ class ProgramIrrigationLine with DiagnosticableTreeMixin {
       source: _parseList(json['source']),
       sourcePump: _parseList(json['sourcePump']),
       irrigationPump: _parseList(json['irrigationPump']),
+      aerator: _parseList(json['aerator']),
       centralFiltration: _parseObject(json['centralFiltration']),
       localFiltration: _parseObject(json['localFiltration']),
       centralFertilization: _parseObject(json['centralFertilization']),

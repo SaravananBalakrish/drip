@@ -32,7 +32,7 @@ class LightWidget extends StatelessWidget {
               SizedBox(
                 width: isWide? 70 : 43,
                 height: isWide? 70 : 43,
-                child: AppConstants.getAsset(isWide ? 'light':'light_mbl', objLight.status, ''),
+                child: AppConstants.getAsset(isWide ? 'light':'light_mbl', objLight.status, '', 0),
               ),
               Text(
                 objLight.name,

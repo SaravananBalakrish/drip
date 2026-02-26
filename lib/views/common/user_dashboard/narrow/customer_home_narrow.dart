@@ -19,6 +19,7 @@ import '../../../customer/widgets/my_material_button.dart';
 import '../../../customer/widgets/sensor_widget_mobile.dart';
 import '../widgets/irrigation_line_narrow.dart';
 import '../widgets/pump_station_mobile.dart';
+import '../widgets/valve_status_legend.dart';
 
 class CustomerHomeNarrow extends StatelessWidget {
   const CustomerHomeNarrow({super.key});
@@ -52,6 +53,7 @@ class CustomerHomeNarrow extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 130),
           child: Column(
             children: [
+
               Consumer<CustomerScreenControllerViewModel>(
                 builder: (context, viewModel, _) {
                   return viewModel.onRefresh ? Padding(
@@ -65,6 +67,8 @@ class CustomerHomeNarrow extends StatelessWidget {
                   ) : const SizedBox();
                 },
               ),
+
+              buildValveStatusLegend(),
 
               if(isNova)...[
                 const Padding(
@@ -200,6 +204,9 @@ class CustomerHomeNarrow extends StatelessWidget {
                                   pressureIn: line.pressureIn,
                                   pressureOut: line.pressureOut,
                                   waterMeter: line.waterMeter,
+                                  co2: line.co2Sensor,
+                                  humidity: line.humiditySensor,
+                                  soilTemperature: line.soilTemperature,
                                   customerId: customerId,
                                   controllerId: cM.controllerId,
                                   deviceId: cM.deviceId,

@@ -35,11 +35,11 @@ SensorHourReport? parseSensorHourData({
     hour: hour,
     deviceSrNo: deviceSrNo,
     sensorSrNo: targetSensor,
-    value: '0',
-    errorCode: '0',
-    minValue: '0',
-    maxValue: '0',
-    averageValue: '0',
+    value: 'NA',
+    errorCode: 'NA',
+    minValue: 'NA',
+    maxValue: 'NA',
+    averageValue: 'NA',
   );
   if (raw.trim().isEmpty) return zeroReport();
 

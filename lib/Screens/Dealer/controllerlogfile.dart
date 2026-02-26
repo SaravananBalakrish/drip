@@ -354,8 +354,9 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
           ) : Container()
         ],
       )
-          : Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+          : Wrap(
+        spacing: 5,
+        runSpacing: 5,
         children: [
           _buildButton(
             label: 'Today Mqtt FTP',
@@ -376,6 +377,28 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
               getlog(21);
             },
           ),
+
+
+          widget.communicationType != "MQTT" ? _buildButton(
+            label: 'Yesterday FTP Upload BLE',
+            color: Colors.blue,
+            icon: Icons.cloud_upload,
+            onPressed: () {
+              _showSnackBar("Yesterday log send FTP...");
+              uploadToFile('$currentLogType');
+
+            },
+          ) : Container(),
+          const SizedBox(width: 10),
+          widget.communicationType != "MQTT" ? _buildButton(
+            label: 'Today FTP upload BLE',
+            color: Colors.blue,
+            icon: Icons.cloud_upload,
+            onPressed: () {
+              _showSnackBar("Today log send FTP... ");
+              uploadToFile('$currentLogType');
+            },
+          ) : Container(),
         ],
       ),
     );
@@ -553,7 +576,6 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
     super.dispose();
   }
 }
-
 class ScrollableTextWithSearch extends StatefulWidget {
   final String text;
 
@@ -576,15 +598,14 @@ class _ScrollableTextWithSearchState extends State<ScrollableTextWithSearch> {
   @override
   void initState() {
     super.initState();
-    // Add listener to the searchController to update the search query when text changes
     _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
-    // Always dispose controllers when done
-    _scrollController.dispose();
     _searchController.removeListener(_onSearchChanged);
+    _searchController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -598,29 +619,27 @@ class _ScrollableTextWithSearchState extends State<ScrollableTextWithSearch> {
 
   // Highlights the matched text and returns a list of TextSpan
   List<TextSpan> _highlightText(String text, List<int> matchPositions) {
+    if (_searchQuery.isEmpty) return [TextSpan(text: text)];
+
     List<TextSpan> children = [];
     int start = 0;
 
-    for (int i = 0; i < matchPositions.length; i++) {
-      if (start < matchPositions[i]) {
-        children.add(TextSpan(text: text.substring(start, matchPositions[i])));
-      }
+    for (int pos in matchPositions) {
+      if (start < pos) children.add(TextSpan(text: text.substring(start, pos)));
       children.add(TextSpan(
-        text: text.substring(matchPositions[i], matchPositions[i] + _searchQuery.length),
-        style: TextStyle(backgroundColor: Colors.yellow), // Highlight color
+        text: text.substring(pos, pos + _searchQuery.length),
+        style: TextStyle(backgroundColor: Colors.yellow),
       ));
-      start = matchPositions[i] + _searchQuery.length;
+      start = pos + _searchQuery.length;
     }
 
-    if (start < text.length) {
-      children.add(TextSpan(text: text.substring(start)));
-    }
-
+    if (start < text.length) children.add(TextSpan(text: text.substring(start)));
     return children;
   }
 
   // Finds matches and returns a list of start positions of the matches
   List<int> _findMatches(String text, String query) {
+    if (query.isEmpty) return [];
     List<int> matches = [];
     int start = 0;
 
@@ -637,26 +656,41 @@ class _ScrollableTextWithSearchState extends State<ScrollableTextWithSearch> {
     return matches;
   }
 
+  // Auto-scroll to bottom
+  void _scrollToBottom() {
+    if (!_scrollController.hasClients) return;
+
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: Duration(milliseconds: 300),
+      curve: Curves.easeOut,
+    );
+  }
+
+  // Detect new text and scroll
   @override
-  Widget build(BuildContext context)
-  {
-    // Get the list of match positions
-    final List<int> matches = _searchQuery.isEmpty
-        ? []
-        : _findMatches(widget.text, _searchQuery);
-    _matchCount = matches.length;
-    // Scroll to the first match if needed
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   if (_scrollController.hasClients) {
-    //     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
-    //   }
-    // });
+  void didUpdateWidget(covariant ScrollableTextWithSearch oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // If new text is added, scroll to bottom
+    if (widget.text.length > oldWidget.text.length) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _scrollToBottom();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _matches = _searchQuery.isEmpty ? [] : _findMatches(widget.text, _searchQuery);
+    _matchCount = _matches.length;
+
     return Column(
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
-            controller: _searchController,  // Use passed controller
+            controller: _searchController,
             decoration: InputDecoration(
               labelText: 'Search',
               border: OutlineInputBorder(),
@@ -683,7 +717,7 @@ class _ScrollableTextWithSearchState extends State<ScrollableTextWithSearch> {
               padding: const EdgeInsets.all(8.0),
               child: SelectableText.rich(
                 TextSpan(
-                  children: _highlightText(widget.text, matches),
+                  children: _highlightText(widget.text, _matches),
                 ),
               ),
             ),
@@ -693,3 +727,5 @@ class _ScrollableTextWithSearchState extends State<ScrollableTextWithSearch> {
     );
   }
 }
+
+
