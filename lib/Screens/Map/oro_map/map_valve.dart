@@ -198,14 +198,16 @@ class _MapScreenValveState extends State<MapScreenValve> {
   BitmapDescriptor _getIcon(String type, int? status, int? percentage) {
     if (type.contains("Valve")) {
       if (status == 1 && percentage == 100) {
-        return markerIcons["green"]!;
+        return markerIcons["blue"]!;
       } else if (status == 0 && percentage == 0) {
         return markerIcons["gray"]!;
       } else if (status == 0 && percentage! > 0) {
         return markerIcons["yellow"]!;
+      } else if (status == 1 && percentage! <= 100) {
+        return markerIcons["green"]!;
       }
       else {
-        return markerIcons["blue"]!;
+        return markerIcons["gray"]!;
       }
     }
 

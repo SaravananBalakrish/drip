@@ -144,19 +144,20 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
     }
     return LatLng(lat / points.length, lng / points.length);
   }
+  //COLOR FOR MAP
   Color getColorByStatus(int? status, int? percentage) {
     print('status:$status,percentage:$percentage');
     if (status == 1 || status == 2) {
       if (percentage == 100) {
-        return Colors.green;
-      } else {
         return Colors.blue;
+      } else {
+        return Colors.green;
       }
     } else if (status == 0 || status == 3) {
       if (percentage == 0) {
-        return Colors.grey;
-      } else {
         return Colors.red;
+      } else {
+        return Colors.yellow;
       }
     } else {
       return Colors.grey;
