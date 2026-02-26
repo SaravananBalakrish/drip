@@ -92,7 +92,7 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
               width: 43,
               height: 43,
               child: Image.asset(
-                valve.status == 1 ? 'assets/gif/m_valve_blue.gif' : 'assets/png/m_valve_grey.png',
+                valve.status == 1 ? 'assets/gif/m_valve_green.gif' : 'assets/png/m_valve_grey.png',
                 color: valve.status == 1 ? null : valveColor,
               ),
             ),
@@ -115,7 +115,7 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
 
   Color _valveColor(int status, int cPer) {
     if (status == 0 && cPer == 0) return Colors.black54;
-    if (status == 0 && cPer == 100) return Colors.green;
+    if (status == 0 && cPer == 100) return Colors.blue;
     if (status == 0 && cPer > 0 && cPer < 100) return Colors.yellow;
     if (status == 2) return Colors.orange;
     return Colors.red;
