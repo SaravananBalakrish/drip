@@ -27,11 +27,12 @@ class SensorTileNew extends StatelessWidget {
     required this.otherValue,
   });
 
+
   @override
   Widget build(BuildContext context) {
 if(title.contains('Co2'))
   {
-    return CO2Card(co2Value: int.parse('$value'), maxValue: 2000,title: title,message:'');
+     return CO2Card(co2Value: value.toInt(), maxValue: 2000,title: title,message:'');
   }
 if(title.contains('Rain Fall'))
 {
