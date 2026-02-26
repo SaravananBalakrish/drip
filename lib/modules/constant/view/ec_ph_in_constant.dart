@@ -80,19 +80,40 @@ class _EcPhInConstantState extends State<EcPhInConstant> {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        AnimatedBuilder(
-                            animation: fertilizerSite.setting[0][index].value,
+                        // AnimatedBuilder(
+                        //     animation: fertilizerSite.setting[0][index].value,
+                        //     builder: (context, child){
+                        //       return SizedBox(
+                        //         height: 40,
+                        //         width: cellWidth,
+                        //         child: FindSuitableWidget(
+                        //           constantSettingModel: fertilizerSite.setting[0][index],
+                        //           onUpdate: (value){
+                        //             fertilizerSite.setting[0][index].value.value = value;
+                        //           },
+                        //           onOk: (){
+                        //             fertilizerSite.setting[0][index].value.value = widget.overAllPvd.getTime();
+                        //             Navigator.pop(context);
+                        //           },
+                        //           popUpItemModelList: fertilizerSite.ecPopup,
+                        //         ),
+                        //       );
+                        //     }
+                        // ),
+                        if(fertilizerSite.ecSetting.isNotEmpty)
+                          AnimatedBuilder(
+                            animation: fertilizerSite.ecSetting[index].value,
                             builder: (context, child){
                               return SizedBox(
                                 height: 40,
                                 width: cellWidth,
                                 child: FindSuitableWidget(
-                                  constantSettingModel: fertilizerSite.setting[0][index],
+                                  constantSettingModel: fertilizerSite.ecSetting[index],
                                   onUpdate: (value){
-                                    fertilizerSite.setting[0][index].value.value = value;
+                                    fertilizerSite.ecSetting[index].value.value = value;
                                   },
                                   onOk: (){
-                                    fertilizerSite.setting[0][index].value.value = widget.overAllPvd.getTime();
+                                    fertilizerSite.ecSetting[index].value.value = widget.overAllPvd.getTime();
                                     Navigator.pop(context);
                                   },
                                   popUpItemModelList: fertilizerSite.ecPopup,
@@ -101,20 +122,41 @@ class _EcPhInConstantState extends State<EcPhInConstant> {
                             }
                         ),
 
-                        if(fertilizerSite.setting.length > 1)
+                        if(fertilizerSite.phSetting.isNotEmpty)
+                        // if(fertilizerSite.setting.length > 1)
+                          // AnimatedBuilder(
+                          //     animation: fertilizerSite.setting[1][index].value,
+                          //     builder: (context, child){
+                          //       return SizedBox(
+                          //         width: cellWidth,
+                          //         height: 40,
+                          //         child: FindSuitableWidget(
+                          //           constantSettingModel: fertilizerSite.setting[1][index],
+                          //           onUpdate: (value){
+                          //             fertilizerSite.setting[1][index].value.value = value;
+                          //           },
+                          //           onOk: (){
+                          //             fertilizerSite.setting[1][index].value.value = widget.overAllPvd.getTime();
+                          //             Navigator.pop(context);
+                          //           },
+                          //           popUpItemModelList: fertilizerSite.phPopup,
+                          //         ),
+                          //       );
+                          //     }
+                          // )
                           AnimatedBuilder(
-                              animation: fertilizerSite.setting[1][index].value,
+                              animation: fertilizerSite.phSetting[index].value,
                               builder: (context, child){
                                 return SizedBox(
                                   width: cellWidth,
                                   height: 40,
                                   child: FindSuitableWidget(
-                                    constantSettingModel: fertilizerSite.setting[1][index],
+                                    constantSettingModel: fertilizerSite.phSetting[index],
                                     onUpdate: (value){
-                                      fertilizerSite.setting[1][index].value.value = value;
+                                      fertilizerSite.phSetting[index].value.value = value;
                                     },
                                     onOk: (){
-                                      fertilizerSite.setting[1][index].value.value = widget.overAllPvd.getTime();
+                                      fertilizerSite.phSetting[index].value.value = widget.overAllPvd.getTime();
                                       Navigator.pop(context);
                                     },
                                     popUpItemModelList: fertilizerSite.phPopup,

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../models/customer/site_model.dart';
 import '../../../utils/constants.dart';
-import '../../../view_models/customer/customer_screen_controller_view_model.dart';
 
 class NavigationDestinationsBuilder {
 

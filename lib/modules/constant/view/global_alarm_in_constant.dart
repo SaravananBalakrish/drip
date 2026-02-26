@@ -204,30 +204,17 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
 
   Map<String, dynamic> getConstantHardwarePayload(){
     var generalPayload = widget.constPvd.getGeneralPayload();
-    print("generalPayload : $generalPayload");
     var globalAlarmPayload = widget.constPvd.getGlobalAlarmPayload();
-    print("globalAlarmPayload : $globalAlarmPayload");
     var globalAlarmForEcoGem = widget.constPvd.getEcoGemPayloadForGlobalAlarm();
-    print("globalAlarmForEcoGem : $globalAlarmForEcoGem");
     var levelSensorPayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.level);
-    print("levelSensorPayload : $levelSensorPayload");
     var pumpPayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.pump);
-    print("pumpPayload : $pumpPayload");
     var channelPayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.channel);
-    print("channelPayload : $channelPayload");
     var fertilizerSitePayload = widget.constPvd.getFertilizerSitePayload();
-    print('web');
-    print("fertilizerSitePayload : $fertilizerSitePayload");
     var waterMeterPayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.waterMeter);
-    print("waterMeterPayload : $waterMeterPayload");
     var mainValvePayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.mainValve);
-    print("mainValvePayload : $mainValvePayload");
     var valvePayload = widget.constPvd.getObjectInConstantPayload(widget.constPvd.valve);
-    print("valvePayload : $valvePayload");
     var normalCriticalPayload = AppConstants.ecoGemModelList.contains(widget.userData['modelId']) ? widget.constPvd.getNormalCriticalAlarmForEcoGem() : widget.constPvd.getNormalCriticalAlarm();
-    print("normalCriticalPayload : $normalCriticalPayload");
     var filterPayload = widget.constPvd.getFilterSitePayload();
-    print("filterPayload : $filterPayload");
     bool isGem = AppConstants.gemModelList.contains(widget.constPvd.userData['modelId']);
     var hardwarePayload = {
       "300" : {

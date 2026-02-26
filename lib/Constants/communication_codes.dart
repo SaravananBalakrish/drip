@@ -126,8 +126,10 @@ String getPumpTypeCodeToString(int code){
   switch(code){
     case 1 :
       return 'source';
-    default :
+    case 2 :
       return 'irrigation';
+    default :
+      return 'aerator';
   }
 }
 
@@ -135,8 +137,10 @@ int getPumpTypeStringToCode(String type){
   switch(type){
     case 'source' :
       return 1;
-    default :
+    case 'irrigation' :
       return 2;
+    default :
+      return 3;
   }
 }
 

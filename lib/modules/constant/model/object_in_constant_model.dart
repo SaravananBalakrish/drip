@@ -5,7 +5,7 @@ class ObjectInConstantModel{
   final double sNo;
   final String name;
   final String objectName;
-  final double location;
+  final double? location;
   final int? controllerId;
   final int? connectionNo;
   List<ConstantSettingModel> setting = [];

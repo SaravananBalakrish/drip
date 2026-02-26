@@ -154,13 +154,13 @@ class _DeviceListState extends State<DeviceList> {
                               SelectableText(device.deviceId, style: TextStyle(color: themeData.primaryColorDark),),
                             ),
                             DataCell(
-                                (![44, 45, 46, 47,].contains(device.modelId) && configPvd.listOfDeviceModel.any((device) => device.categoryId == 10 && device.masterId != null))
+                                (![44, 45, 46, 47,].contains(device.modelId) && configPvd.listOfDeviceModel.any((device) => device.categoryId == 10 && device.masterId != null) && device.interfaceTypeId == 1)
                                     ? CustomDropDownButton(
                                     value: getInitialExtendValue(device.extendControllerId),
                                     list: [
                                       '-',
                                       ...configPvd.listOfDeviceModel
-                                          .where((device) => (device.masterId != null && device.categoryId == 10))
+                                          .where((device) => (device.masterId != null && device.categoryId == 10 && !AppConstants.extendLoraList.contains(device.modelId)))
                                           .map((device) => '${device.deviceName}\n${device.deviceId}')
                                     ],
                                     onChanged: (String? newValue) {
@@ -413,9 +413,9 @@ class _DeviceListState extends State<DeviceList> {
         context: context,
         useRootNavigator: true,
         builder: (context){
-          return PopScope(
+          return const PopScope(
             canPop: false,
-            child: const AlertDialog(
+            child: AlertDialog(
               content: Row(
                 spacing: 20,
                 children: [
@@ -624,7 +624,7 @@ class _DeviceListState extends State<DeviceList> {
                                                   Column(
                                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                     children: [
-                                                      Text(device.deviceName,style: themeData.textTheme.headlineSmall,),
+                                                      Text(device.deviceName, overflow: TextOverflow.ellipsis,maxLines: 1, style: const TextStyle(fontSize: 9),),
                                                       Text(device.modelDescription, style: TextStyle(fontWeight: FontWeight.normal, color: Theme.of(context).primaryColor, fontSize: 10)),
                                                     ],
                                                   )

@@ -116,9 +116,6 @@ class Repository{
     return await apiService.postRequest('/user/sentAndReceivedMessage/getHardwarePayload', body);
   }
 
-  Future<http.Response> fetchLanguageByActive(body) async {
-    return await apiService.postRequest('/language/getByActive', body);
-  }
 
   Future<http.Response> createCustomerAccount(body) async {
     return await apiService.postRequest('/user/create', body);
