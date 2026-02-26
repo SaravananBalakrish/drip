@@ -274,7 +274,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
 
-        // debugPrint('My Site Data:${response.body}');
+        debugPrint('My Site Data:${response.body}');
 
         if (jsonData["code"] == 200) {
           _handleFetchedSites(jsonData, 'customer', preserveSelection);
@@ -430,6 +430,37 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
 
     final payload = isGem
         ? jsonEncode({"3000": {"3001": ""}})
+        : jsonEncode({"sentSms": "#live"});
+
+    liveSyncCall(true);
+
+    try {
+      final result = await context.read<CommunicationService>().sendCommand(
+        serverMsg: '',
+        payload: payload,
+      );
+      debugPrint("MQTT publishing result:$result");
+    } catch (e) {
+      debugPrint("Command error: $e");
+    } finally {
+      await Future.delayed(const Duration(seconds: 1));
+      liveSyncCall(false);
+    }
+  }
+
+  Future<void> onFertilizerLiveSync() async {
+    if (!mqttService.isConnected) {
+      debugPrint("MQTT not connected — attempting to connect and abort refresh to avoid publish while connecting.");
+      _initializeMqttConnection();
+      return;
+    }
+
+    final master = mySiteList.data[sIndex].master[mIndex];
+    final isGem = [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList]
+        .contains(master.modelId);
+
+    final payload = isGem
+        ? jsonEncode({"3000": {"3001": "0"}})
         : jsonEncode({"sentSms": "#live"});
 
     liveSyncCall(true);

@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Screens/Map/set_device_location.dart';
  import 'package:provider/provider.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
-import 'MapValveLocationChange.dart';
-import 'devicelocationchange.dart';
+import 'SetSelectValveLocation.dart';
 import 'googlemap_model.dart';
 
 class DeviceListScreen extends StatefulWidget {
@@ -162,7 +162,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                                      ),
                                      const SizedBox(height: 8.0),
                                      Text('Device ID: ${device.deviceId ?? "-"}'),
-                                     Text('Location: ${device.geography!.lat },${device.geography!.lat }'),
+                                     Text('Location: ${device.geography!.lat },${device.geography!.long }'),
                                      Text('Model: ${device.modelName ?? "-"}'),
                                      Text('Category: ${device.categoryName ?? "-"}'),
                                    ],

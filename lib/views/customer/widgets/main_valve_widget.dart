@@ -54,7 +54,7 @@ class BuildMainValve extends StatelessWidget {
                     child: isNarrow ? Image.asset('assets/png/m_main_valve_gray.png',
                       color: valve.status == 0 ? Colors.black54 : valve.status == 1 ? Colors.green
                           : valve.status == 1 ? Colors.orange : Colors.red,
-                    ) : AppConstants.getAsset('main_valve', valve.status, ''),
+                    ) : AppConstants.getAsset('main_valve', valve.status, '', valve.completePercent),
                   ),
                   Text(
                     valve.name,

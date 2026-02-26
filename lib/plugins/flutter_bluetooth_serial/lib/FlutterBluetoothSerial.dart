@@ -4,12 +4,12 @@ class FlutterBluetoothSerial {
   // Plugin
   static const String namespace = 'flutter_bluetooth_serial';
 
-  static FlutterBluetoothSerial _instance = new FlutterBluetoothSerial._();
+  static final FlutterBluetoothSerial _instance = FlutterBluetoothSerial._();
 
   static FlutterBluetoothSerial get instance => _instance;
 
-  static final MethodChannel _methodChannel =
-      const MethodChannel('$namespace/methods');
+  static const MethodChannel _methodChannel =
+      MethodChannel('$namespace/methods');
 
   FlutterBluetoothSerial._() {
     _methodChannel.setMethodCallHandler((MethodCall call) async {
@@ -40,8 +40,8 @@ class FlutterBluetoothSerial {
   @Deprecated('Use `isEnabled` instead')
   Future<bool?> get isOn async => await _methodChannel.invokeMethod('isOn');
 
-  static final EventChannel _stateChannel =
-      const EventChannel('$namespace/state');
+  static const EventChannel _stateChannel =
+      EventChannel('$namespace/state');
 
   /// Allows monitoring the Bluetooth adapter state changes.
   Stream<BluetoothState> onStateChanged() => _stateChannel
@@ -210,7 +210,7 @@ class FlutterBluetoothSerial {
     late StreamSubscription subscription;
     StreamController controller;
 
-    controller = new StreamController(
+    controller = StreamController(
       onCancel: () {
         // `cancelDiscovery` happens automaticly by platform code when closing event sink
         subscription.cancel();

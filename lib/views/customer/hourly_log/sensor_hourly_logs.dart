@@ -48,7 +48,6 @@ class SensorHourlyLogs extends StatelessWidget {
               scrollDirection: Axis.vertical,
               child: Column(
                 children: viewModel.sensorsBySNo.entries.map((entry) {
-                  String nodeId = entry.key;
                   List<SensorHourlyData> chartData = entry.value;
                   return SfCartesianChart(
                     primaryXAxis: const CategoryAxis(),

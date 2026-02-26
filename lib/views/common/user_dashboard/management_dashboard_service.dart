@@ -27,23 +27,34 @@ class ManagementDashboardService extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => AnalyticsViewModel(Repository(HttpService()), userId)
-            ..getMySalesData(MySegment.all, userType),
+          create: (_) => AnalyticsViewModel(
+            Repository(HttpService()),
+            userId,
+          )..getMySalesData(MySegment.all, userType),
+          lazy: false,
         ),
         ChangeNotifierProvider(
-          create: (_) => ProductStockViewModel(Repository(HttpService()))
-            ..getMyStock(userId, userType),
+          create: (_) => ProductStockViewModel(
+            Repository(HttpService()),
+          )..getMyStock(userId, userType),
+          lazy: false,
         ),
         ChangeNotifierProvider(
-          create: (_) => CustomerListViewModel(Repository(HttpService()), userId)
-            ..getMyCustomers(userType),
+          create: (_) => CustomerListViewModel(
+            Repository(HttpService()),
+            userId,
+          )..getMyCustomers(userType),
+          lazy: false,
         ),
         ChangeNotifierProvider(
-          create: (_) => ProductCategoryViewModel(Repository(HttpService()))
-            ..getMyProductCategory(),
+          create: (_) => ProductCategoryViewModel(
+            Repository(HttpService()),
+          )..getMyProductCategory(),
+          lazy: false,
         ),
         ChangeNotifierProvider(
           create: (_) => BottomNavViewModel(),
+          lazy: false,
         ),
       ],
       child: child,
