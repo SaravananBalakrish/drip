@@ -22,8 +22,14 @@ class SensorChip extends StatelessWidget {
     final live = vm.getSensorLiveBySerial(
       serial: device.serialNumber,
       objectName: sensor.objectName,
+      objectSno: sensor.sNo,
       controllerId: device.controllerId,
     );
+    print("serialNumber:${device.serialNumber}");
+    print("objectName:${sensor.objectName}");
+    print("sensor.name:${sensor.name}");
+    print("live.value:${live?.value}");
+
 
     if (live == null) return const SizedBox.shrink();
     return Container(
