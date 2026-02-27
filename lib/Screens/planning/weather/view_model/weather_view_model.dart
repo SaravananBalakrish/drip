@@ -161,15 +161,22 @@ class WeatherViewModel extends ChangeNotifier {
     required int serial,
     required String objectName,
     required int controllerId,
+    double? objectSno,
   }) {
-    final config = configIndex["${controllerId}_$objectName"];
+     final config = configIndex["${controllerId}_$objectName"];
     if (config == null) return null;
 
     final list = liveCache[serial];
     if (list == null) return null;
 
     return list.firstWhere(
-          (e) => e.sNo.toInt() == config.sNo.toInt(),
+          (e) {
+         if (objectSno != null) {
+          return e.sNo == objectSno;
+        } else {
+          return e.sNo == config.sNo;
+        }
+      },
       orElse: () => LiveSensorValue(
         sNo: 0,
         value: 0,
