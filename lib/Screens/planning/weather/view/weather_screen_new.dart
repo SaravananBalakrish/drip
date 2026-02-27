@@ -110,7 +110,7 @@ class _WeatherScreenNewState extends State<WeatherScreenNew>
           );
 
           if(lines.length > 1){
-            return Scaffold(
+             return Scaffold(
               appBar: AppBar(
                 title: const Text("Weather"),
                 bottom: TabBar(
@@ -139,8 +139,8 @@ class _WeatherScreenNewState extends State<WeatherScreenNew>
               ),
             );
           }else {
-            return Scaffold(
-              body: _LineTabView(line: lines[0], vm: vm, isNarrow: widget.isNarrow,customerId: widget.customerId,userId: widget.controllerId,),
+             return Scaffold(
+               body: _LineTabView(line: lines[0], vm: vm, isNarrow: widget.isNarrow,customerId: widget.customerId,userId: widget.controllerId,),
             );
           }
         },
@@ -194,6 +194,7 @@ class _LineTabViewState extends State<_LineTabView> {
       serial: device.serialNumber,
       objectName: "Temperature Sensor",
       controllerId: device.controllerId,
+
     );
 
     final wind = vm.getSensorLiveBySerial(
@@ -264,7 +265,7 @@ class _LineTabViewState extends State<_LineTabView> {
             width: 320,
             child: Column(
               children: [
-                _weatherSummaryCard(
+                 _weatherSummaryCard(
                   formattedDT,
                   tempText,
                   windText,
