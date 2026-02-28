@@ -1045,6 +1045,7 @@ class _CalibrationState extends State<Calibration> {
                       onPressed: (){
                         var one = sensorCount == 0 ? bleService.ph1Controller.text : bleService.ph2Controller.text;
                         var two = sensorCount == 0 ? bleService.ph1_Controller.text : bleService.ph2_Controller.text;
+                        var three = sensorCount == 0 ? bleService.ph1_Controller.text : bleService.ph2_Controller.text;
                         var factor1 = sensorCount == 0 ? bleService.ph1FactorController.text : bleService.ph2FactorController.text;
                         var factor2 = sensorCount == 0 ? bleService.ph1_FactorController.text : bleService.ph2_FactorController.text;
                         setState(() {
