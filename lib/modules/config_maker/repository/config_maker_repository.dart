@@ -13,7 +13,6 @@ class ConfigMakerRepository{
     return await httpService.postRequest('/product/replace', body);
   }
 
-
   Future<http.Response> createUserConfigMaker(body) async {
     return await httpService.postRequest('/user/configMaker/create', body);
   }

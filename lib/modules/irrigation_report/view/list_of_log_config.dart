@@ -8,7 +8,6 @@ import '../model/data_parsing_and_sorting_model.dart';
 import '../model/general_parameter_model.dart';
 import 'log_home.dart';
 
-
 class ListOfLogConfig extends StatefulWidget {
   final Map<String, dynamic> userData;
   const ListOfLogConfig({super.key, required this.userData,});
@@ -19,77 +18,7 @@ class ListOfLogConfig extends StatefulWidget {
 
 class _ListOfLogConfigState extends State<ListOfLogConfig> {
 
-  Map<String,dynamic> irrigationLogParameterFromServer = {
-    'general' : {
-      'ProgramName' : ['Program',true],
-      'Status' : ['Status',true],
-      'SequenceData' : ['Valve',true],
-      // 'ZoneName' : ['Sequence',true],
-      'Date' : ['Date',true],
-      'ScheduledStartTime' : ['Start Time',true],
-      'overAll' : ['over all',true]
-    },
-    'irrigation' : {
-      'IrrigationMethod' : ['Method',true],
-      'IrrigationDuration_Quantity' : ['Planned',true],
-      'IrrigationDurationCompleted/IrrigationQuantityCompleted' : ['Actual',true],
-      'overAll' : ['over all',true]
-    },
-    'centralEcPh' : {
-      'CentralPhSetValue' : ['Central Ph Avg',true],
-      'CentralEcSetValue' : ['Central Ec Avg',true],
-      'overAll' : ['over all',true]
-    },
-    '<C - CH1>' : {
-      'CentralFertMethod' : ['Method',true],
-      'CentralFertilizerChannelDuration/CentralFertilizerChannelQuantity' : ['Planned',true],
-      'CentralFertilizerChannelDurationCompleted/CentralFertilizerChannelQuantityCompleted' : ['Actual',true],
-      'overAll' : ['over all',true]
-    },
-    '<C - CH2>' : {
-      'CentralFertMethod' : ['Method',true],
-      'CentralFertilizerChannelDuration/CentralFertilizerChannelQuantity' : ['Planned',true],
-      'CentralFertilizerChannelDurationCompleted/CentralFertilizerChannelQuantityCompleted' : ['Actual',true],
-      'overAll' : ['over all',true]
-    },
-    '<C - CH3>' : {
-      'CentralFertMethod' : ['Method',true],
-      'CentralFertilizerChannelDuration/CentralFertilizerChannelQuantity' : ['Planned',true],
-      'CentralFertilizerChannelDurationCompleted/CentralFertilizerChannelQuantityCompleted' : ['Actual',true],
-      'overAll' : ['over all',true]
-    },
-    '<C - CH4>' : {
-      'CentralFertMethod' : ['Method',true],
-      'CentralFertilizerChannelDuration/CentralFertilizerChannelQuantity' : ['Planned',true],
-      'CentralFertilizerChannelDurationCompleted/CentralFertilizerChannelQuantityCompleted' : ['Actual',true],
-      'overAll' : ['over all',true]
-    },
-    '<C - CH5>' : {
-      'CentralFertMethod' : ['Method',true],
-      'CentralFertilizerChannelDuration/CentralFertilizerChannelQuantity' : ['Planned',true],
-      'CentralFertilizerChannelDurationCompleted/CentralFertilizerChannelQuantityCompleted' : ['Actual',true],
-      'overAll' : ['over all',true]
-    },
-    '<C - CH6>' : {
-      'CentralFertMethod' : ['Method',true],
-      'CentralFertilizerChannelDuration/CentralFertilizerChannelQuantity' : ['Planned',true],
-      'CentralFertilizerChannelDurationCompleted/CentralFertilizerChannelQuantityCompleted' : ['Actual',true],
-      'overAll' : ['over all',true]
-    },
-    '<C - CH7>' : {
-      'CentralFertMethod' : ['Method',true],
-      'CentralFertilizerChannelDuration/CentralFertilizerChannelQuantity' : ['Planned',true],
-      'CentralFertilizerChannelDurationCompleted/CentralFertilizerChannelQuantityCompleted' : ['Actual',true],
-      'overAll' : ['over all',true]
-    },
-    '<C - CH8>' : {
-      'CentralFertMethod' : ['Method',true],
-      'CentralFertilizerChannelDuration/CentralFertilizerChannelQuantity' : ['Planned',true],
-      'CentralFertilizerChannelDurationCompleted/CentralFertilizerChannelQuantityCompleted' : ['Actual',true],
-      'overAll' : ['over all',true]
-    },
-
-  };
+  Map<String,dynamic> irrigationLogParameterFromServer = {};
   dynamic serverData;
   IrrigationLogModel irrigationParameterArray = IrrigationLogModel();
   IrrigationLogModel irrigationParameterArrayDuplicate = IrrigationLogModel();
@@ -219,6 +148,7 @@ class _ListOfLogConfigState extends State<ListOfLogConfig> {
           padding: const EdgeInsets.all(8.0),
           child: SingleChildScrollView(
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   padding: EdgeInsets.all(8),
@@ -239,6 +169,71 @@ class _ListOfLogConfigState extends State<ListOfLogConfig> {
                   ),
                 ),
                 SizedBox(height: 20,),
+                Text('Pre Configured Log',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                if(constraint.maxWidth > 300)
+                  customizeGridView(
+                      maxWith: 300,
+                      maxHeight: 100,
+                      screenWidth: constraint.maxWidth,
+                      listOfWidget: [
+                        if(serverData != null)
+                          if(serverData['staticLogConfig'].isNotEmpty)
+                            for(var i = 0;i < serverData['staticLogConfig'].length;i++)
+                              Container(
+                                margin: EdgeInsets.only(bottom: 20),
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                    color:  Colors.white,
+                                    boxShadow: customBoxShadow,
+                                    borderRadius: BorderRadius.circular(10)
+                                ),
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundColor: Color(0xff2B565B),
+                                        radius: 20,
+                                        child: Center(
+                                          child: Text('${i+1}',style: TextStyle(color: Colors.white),),
+                                        ),
+                                      ),
+                                      title: Text('${serverData['staticLogConfig'][i]['logName']}'),
+                                      trailing: IconButton(
+                                          style: ButtonStyle(
+                                              backgroundColor: MaterialStateProperty.all(Color(0xffEFFFFB))
+                                          ),
+                                          onPressed: () {
+                                            Navigator.push(context, MaterialPageRoute(builder: (context){
+                                              return LogHome(serverData: serverData['staticLogConfig'][i], userData: widget.userData, nameData: names,);
+                                            }));
+                                          },
+                                          icon: const Icon(Icons.visibility,color: Colors.green,)
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                      ]
+                  )
+                else
+                  if(serverData != null)
+                    if(serverData['logConfig'].isNotEmpty)
+                      for(var i = 0;i < serverData['logConfig'].length;i++)
+                        Container(
+                          margin: EdgeInsets.only(bottom: 20),
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                              color:  Colors.white,
+                              boxShadow: customBoxShadow,
+                              borderRadius: BorderRadius.circular(10)
+                          ),
+                          child: Column(
+                            children: [
+                            ],
+                          ),
+                        ),
+                const SizedBox(height: 20,),
+                const Text('Customized Log',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
                 if(constraint.maxWidth > 300)
                   customizeGridView(
                       maxWith: 300,
@@ -1008,5 +1003,4 @@ class _ListOfLogConfigState extends State<ListOfLogConfig> {
       },
     );
   }
-
 }

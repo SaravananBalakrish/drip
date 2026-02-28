@@ -291,137 +291,141 @@ class _LogHomeState extends State<LogHome> {
         if(dataSource['log'] != null){
           for(var data in dataSource['log']){
             if(data['irrigation'].isNotEmpty){
-              if(data['irrigation']['Date'] != null){
-                //Todo date
-                try{
-                  if(data['irrigation']['Date'] != null){
-                    for(var howManyDate in data['irrigation']['Date']){
-                      setState(() {
-                        if (!date.any((element) => element['name'] == howManyDate)) {
-                          date.add({
-                            'name' : howManyDate,
-                            'show' : true
-                          });
-                          dateDuplicate.add({
-                            'name' : howManyDate,
-                            'show' : true
-                          });
-                        }
-                      });
-                    }
-                  }
-                }catch(e,stackTrace){
-                  log('Error on Date : ${e.toString()}');
-                  print('Stack Trace: $stackTrace');
-                }
-
-                //Todo Status
-                try{
-                  if(data['irrigation']['Status'] != null){
-                    for(var howManyStatus in data['irrigation']['Status']){
-                      setState(() {
-                        if (!status.any((element) => element['name'] == howManyStatus)) {
-                          status.add({
-                            'name' : howManyStatus,
-                            'show' : true
-                          });
-                          statusDuplicate.add({
-                            'name' : howManyStatus,
-                            'show' : true
-                          });
-                        }
-                      });
-                    }
-                  }
-                }catch(e,stackTrace){
-                  log('Error on Status : ${e.toString()}');
-                  print('Stack Trace: $stackTrace');
-                }
-
-                //Todo ProgramS_No
-                try{
-                  if(data['irrigation']['ProgramS_No'] != null){
-                    for(var howManyProgram = 0;howManyProgram < data['irrigation']['ProgramS_No'].length;howManyProgram++){
-                      setState(() {
-                        if (!program.any((element) => element['name'] == data['irrigation']['ProgramS_No'][howManyProgram])) {
-                          program.add({
-                            'name' : data['irrigation']['ProgramS_No'][howManyProgram],
-                            'show' : true,
-                            'programName' : irrigationParameterArray.getProgramName(dataSource['default']['program'], data['irrigation']['ProgramS_No'][howManyProgram])
-                          });
-
-
-                          programDuplicate.add({
-                            'name' : data['irrigation']['ProgramS_No'][howManyProgram],
-                            'show' : true,
-                            'programName' : irrigationParameterArray.getProgramName(dataSource['default']['program'], data['irrigation']['ProgramS_No'][howManyProgram])
-                          });
-                        }
-                      });
-                    }
-                  }
-                }catch(e,stackTrace){
-                  log('Error on ProgramS_No : ${e.toString()}');
-                  print('Stack Trace: $stackTrace');
-                }
-
-                //Todo ProgramCategory  && ProgramCategoryName
-                try{
-                  if(data['irrigation']['ProgramCategory'] != null && data['irrigation']['HeadUnit'] != null){
-                    for(var howManyLine = 0;howManyLine < data['irrigation']['ProgramCategory'].length;howManyLine++){
-                      for(var splitLine in data['irrigation']['ProgramCategory'][howManyLine].split('_')){
+              bool checkItIsNotIrrigationLog = data['irrigation']['HeadUnit'].any((e) => !e.contains('2.'));
+              if(!checkItIsNotIrrigationLog){
+                if(data['irrigation']['Date'] != null){
+                  //Todo date
+                  try{
+                    if(data['irrigation']['Date'] != null){
+                      for(var howManyDate in data['irrigation']['Date']){
                         setState(() {
-                          print("data['irrigation']['HeadUnit']  : ${data['irrigation']['HeadUnit']}");
-                          if (!line.any((element) => element['name'] == splitLine)) {
-                            line.add({
-                              'name' : splitLine,
-                              'show' : true,
-                              'lineName' : data['irrigation']['HeadUnit'][howManyLine].split('_')
+                          if (!date.any((element) => element['name'] == howManyDate)) {
+                            date.add({
+                              'name' : howManyDate,
+                              'show' : true
                             });
-                            lineDuplicate.add({
-                              'name' : splitLine,
-                              'show' : true,
-                              'lineName' : data['irrigation']['HeadUnit'][howManyLine].split('_')
+                            dateDuplicate.add({
+                              'name' : howManyDate,
+                              'show' : true
                             });
                           }
                         });
                       }
                     }
+                  }catch(e,stackTrace){
+                    log('Error on Date : ${e.toString()}');
+                    print('Stack Trace: $stackTrace');
                   }
-                }catch(e,stackTrace){
-                  log('Error on HeadUnit : ${e.toString()}');
-                  print('Stack Trace: $stackTrace');
-                }
 
-                //Todo SequenceData
-                try{
-                  if(data['irrigation']['SequenceData'] != null){
-                    for(var howManyValve in data['irrigation']['SequenceData']){
-                      for(var splitValve in howManyValve.split('_')){
+                  //Todo Status
+                  try{
+                    if(data['irrigation']['Status'] != null){
+                      for(var howManyStatus in data['irrigation']['Status']){
                         setState(() {
-                          if(splitValve.contains('13')){
-                            if (!valve.any((element) => element['name'] == splitValve)) {
-                              valve.add({
-                                'name' : splitValve,
+                          if (!status.any((element) => element['name'] == howManyStatus)) {
+                            status.add({
+                              'name' : howManyStatus,
+                              'show' : true
+                            });
+                            statusDuplicate.add({
+                              'name' : howManyStatus,
+                              'show' : true
+                            });
+                          }
+                        });
+                      }
+                    }
+                  }catch(e,stackTrace){
+                    log('Error on Status : ${e.toString()}');
+                    print('Stack Trace: $stackTrace');
+                  }
+
+                  //Todo ProgramS_No
+                  try{
+                    if(data['irrigation']['ProgramS_No'] != null){
+                      for(var howManyProgram = 0;howManyProgram < data['irrigation']['ProgramS_No'].length;howManyProgram++){
+                        setState(() {
+                          if (!program.any((element) => element['name'] == data['irrigation']['ProgramS_No'][howManyProgram])) {
+                            program.add({
+                              'name' : data['irrigation']['ProgramS_No'][howManyProgram],
+                              'show' : true,
+                              'programName' : irrigationParameterArray.getProgramName(dataSource['default']['program'], data['irrigation']['ProgramS_No'][howManyProgram])
+                            });
+
+
+                            programDuplicate.add({
+                              'name' : data['irrigation']['ProgramS_No'][howManyProgram],
+                              'show' : true,
+                              'programName' : irrigationParameterArray.getProgramName(dataSource['default']['program'], data['irrigation']['ProgramS_No'][howManyProgram])
+                            });
+                          }
+                        });
+                      }
+                    }
+                  }catch(e,stackTrace){
+                    log('Error on ProgramS_No : ${e.toString()}');
+                    print('Stack Trace: $stackTrace');
+                  }
+
+                  //Todo ProgramCategory  && ProgramCategoryName
+                  try{
+                    if(data['irrigation']['ProgramCategory'] != null && data['irrigation']['HeadUnit'] != null){
+                      for(var howManyLine = 0;howManyLine < data['irrigation']['ProgramCategory'].length;howManyLine++){
+                        for(var splitLine in data['irrigation']['ProgramCategory'][howManyLine].split('_')){
+                          setState(() {
+                            print("data['irrigation']['HeadUnit']  : ${data['irrigation']['HeadUnit']}");
+                            if (!line.any((element) => element['name'] == splitLine)) {
+                              line.add({
+                                'name' : splitLine,
                                 'show' : true,
+                                'lineName' : data['irrigation']['HeadUnit'][howManyLine].split('_')
                               });
-                              valveDuplicate.add({
-                                'name' : splitValve,
+                              lineDuplicate.add({
+                                'name' : splitLine,
                                 'show' : true,
+                                'lineName' : data['irrigation']['HeadUnit'][howManyLine].split('_')
                               });
                             }
-
-                          }
-                        });
+                          });
+                        }
                       }
                     }
+                  }catch(e,stackTrace){
+                    log('Error on HeadUnit : ${e.toString()}');
+                    print('Stack Trace: $stackTrace');
                   }
-                }catch(e,stackTrace){
-                  log('Error on SequenceData : ${e.toString()}');
-                  print('Stack Trace: $stackTrace');
-                }
 
+                  //Todo SequenceData
+                  try{
+                    if(data['irrigation']['SequenceData'] != null){
+                      for(var howManyValve in data['irrigation']['SequenceData']){
+                        for(var splitValve in howManyValve.split('_')){
+                          setState(() {
+                            if(splitValve.contains('13')){
+                              if (!valve.any((element) => element['name'] == splitValve)) {
+                                valve.add({
+                                  'name' : splitValve,
+                                  'show' : true,
+                                });
+                                valveDuplicate.add({
+                                  'name' : splitValve,
+                                  'show' : true,
+                                });
+                              }
+
+                            }
+                          });
+                        }
+                      }
+                    }
+                  }catch(e,stackTrace){
+                    log('Error on SequenceData : ${e.toString()}');
+                    print('Stack Trace: $stackTrace');
+                  }
+
+                }
               }
+
             }
           }
           print('get function doubt......');
@@ -455,6 +459,7 @@ class _LogHomeState extends State<LogHome> {
               line.sort((a, b) {
                 var aParts = a['name'].split('.');
                 var bParts = b['name'].split('.');
+                print("aParts : ${aParts}  bParts : ${bParts}");
                 if (aParts.length > 1 && bParts.length > 1) {
                   return int.parse(aParts[1]).compareTo(int.parse(bParts[1]));
                 }
