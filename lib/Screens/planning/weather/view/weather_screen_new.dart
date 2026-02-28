@@ -110,7 +110,7 @@ class _WeatherScreenNewState extends State<WeatherScreenNew>
           );
 
           if(lines.length > 1){
-            return Scaffold(
+             return Scaffold(
               appBar: AppBar(
                 title: const Text("Weather"),
                 bottom: TabBar(
@@ -139,8 +139,8 @@ class _WeatherScreenNewState extends State<WeatherScreenNew>
               ),
             );
           }else {
-            return Scaffold(
-              body: _LineTabView(line: lines[0], vm: vm, isNarrow: widget.isNarrow,customerId: widget.customerId,userId: widget.controllerId,),
+             return Scaffold(
+               body: _LineTabView(line: lines[0], vm: vm, isNarrow: widget.isNarrow,customerId: widget.customerId,userId: widget.controllerId,),
             );
           }
         },
@@ -194,6 +194,7 @@ class _LineTabViewState extends State<_LineTabView> {
       serial: device.serialNumber,
       objectName: "Temperature Sensor",
       controllerId: device.controllerId,
+
     );
 
     final wind = vm.getSensorLiveBySerial(
@@ -264,7 +265,7 @@ class _LineTabViewState extends State<_LineTabView> {
             width: 320,
             child: Column(
               children: [
-                _weatherSummaryCard(
+                 _weatherSummaryCard(
                   formattedDT,
                   tempText,
                   windText,
@@ -298,7 +299,7 @@ class _LineTabViewState extends State<_LineTabView> {
                             MaterialPageRoute(
                               builder: (_) => SensorHourlyReportPage(
                                 deviceSrNo: '${station.device.serialNumber}',
-                                sensorSrNo: s.sNo.toString(), sensorName: s.name, userId: '${widget.customerId}', controllerId: "${widget.userId}",
+                                sensorSrNo: s.sNo.toString(), sensorName: s.name, userId: '${widget.customerId}', controllerId: "${widget.userId}" ,unit:unit(s.name),
                               ),
                             ),
                           );
@@ -319,6 +320,18 @@ class _LineTabViewState extends State<_LineTabView> {
         ),
       ],
     );
+  }
+  String unit(String type) {
+    type = type.toLowerCase();
+    if (type.contains('moisture')) return 'CB';
+    if (type.contains('temperature')) return '°C';
+    if (type.contains('humidity')) return '%';
+    if (type.contains('co2')) return 'ppm';
+    if (type.contains('direction')) return '°';
+    if (type.contains('Wind')) return 'km/h';
+    if (type.contains('rain')) return 'mm';
+    if (type.contains('lux')) return 'Lu';
+    return '';
   }
 
   Widget _buildNarrowLayout(

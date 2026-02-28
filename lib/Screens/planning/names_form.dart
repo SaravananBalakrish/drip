@@ -223,8 +223,16 @@ class _NamesState extends State<Names> {
                       ],
                       onChanged: (val) {
                         setState(() {
+                          // bool nameExists = (configModel.configObject ?? []).any(
+                          //         (element) => element.name == val && element != data);
+                          print(data.location);
                           bool nameExists = (configModel.configObject ?? []).any(
-                                  (element) => element.name == val && element != data);
+                                  (element) =>
+                              element != data &&
+                                  element.name?.trim().toLowerCase() == val.trim().toLowerCase() &&
+                                  element.objectName == "Valve" &&
+                                  element.location == data.location
+                          );
                           if (nameExists) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Name Already Exists')),
