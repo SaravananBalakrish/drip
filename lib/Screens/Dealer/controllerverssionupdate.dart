@@ -309,13 +309,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
                                 style: ButtonStyle(
                                     backgroundColor: MaterialStateProperty.all(
                                         Colors.teal.shade100)),
-                                // onPressed: () {
-                                //   setState(() {
-                                //     selectindex = index;
-                                //     _showFrequencyDialog(context, index, trudwe);
-                                //
-                                //   });
-                                // },
+
                                 onPressed: () {
                                   setState(() {
                                     selectindex = index;
@@ -684,10 +678,13 @@ class _ResetVerssionState extends State<ResetVerssion> {
         _showSnackBar(data["message"]);
       }
     }
-    print("selectindex----$selectindex");
+    if(kDebugMode) {
+      print("selectindex----$selectindex");
 
-    print("payLoadFinal----$payLoadFinal");
-    print("payLoadFinal----${Environment.mqttPublishTopic}/${mergedList[selectindex!]["deviceId"]}");
+      print("payLoadFinal----$payLoadFinal");
+      print("payLoadFinal----${Environment
+          .mqttPublishTopic}/${mergedList[selectindex!]["deviceId"]}");
+    }
     MqttService().topicToPublishAndItsMessage(jsonEncode(payLoadFinal), '${Environment.mqttPublishTopic}/${mergedList[selectindex ?? 0]["deviceId"]}');
     fetchData();
   }
