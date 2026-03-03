@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../Widgets/pump_widget.dart';
 import '../../../../models/customer/site_model.dart';
+import '../../../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../../../customer/widgets/agitator_widget.dart';
 import '../../../customer/widgets/booster_widget.dart';
 import '../../../customer/widgets/channel_widget.dart';
 import '../../../customer/widgets/filter_builder.dart';
 import '../../../customer/widgets/source_column_widget.dart';
+import 'fertilizer_live_panel.dart';
 
 class PumpStationMobile extends StatelessWidget {
   final int customerId, controllerId, modelId;
@@ -39,7 +43,6 @@ class PumpStationMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-
     final wsAndFilterItems = [
       if (inletWaterSources.isNotEmpty)
         ..._buildWaterSource(context, inletWaterSources, true, true),
@@ -52,7 +55,6 @@ class PumpStationMobile extends StatelessWidget {
 
       if (lFilterSite.isNotEmpty)
         ...buildFilter(context, lFilterSite, (cFertilizerSite.isNotEmpty || lFertilizerSite.isNotEmpty), true, isNova),
-
     ];
 
     final fertilizerItemsCentral = cFertilizerSite.isNotEmpty
@@ -98,11 +100,27 @@ class PumpStationMobile extends StatelessWidget {
                   child: IntrinsicWidth(
                     child: Align(
                       alignment: Alignment.topRight,
-                      child: Wrap(
-                        alignment: WrapAlignment.end,
-                        spacing: 0,
-                        runSpacing: 0,
-                        children: fertilizerItemsCentral,
+                      child: InkWell(
+                        onTap: () {
+                          final customerVM = context.read<CustomerScreenControllerViewModel>();
+                          showRightSheet(
+                            context,
+                            ChangeNotifierProvider.value(
+                              value: customerVM,
+                              child: FertilizerLivePanel(
+                                deviceId: deviceId,
+                                controllerId: controllerId,
+                                customerId: customerId,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Wrap(
+                          alignment: WrapAlignment.end,
+                          spacing: 0,
+                          runSpacing: 0,
+                          children: fertilizerItemsCentral,
+                        ),
                       ),
                     ),
                   ),
@@ -112,8 +130,39 @@ class PumpStationMobile extends StatelessWidget {
         );
       },
     );
+  }
 
-
+  void showRightSheet(BuildContext context, Widget child) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "LiveData",
+      barrierColor: Colors.black45,
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (_, __, ___) {
+        return Align(
+          alignment: Alignment.centerRight,
+          child: Material(
+            color: Colors.white,
+            elevation: 10,
+            child: SizedBox(
+              width: 600,
+              height: double.infinity,
+              child: child,
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (_, animation, __, child) {
+        return SlideTransition(
+          position: Tween(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        );
+      },
+    );
   }
 
   List<Widget> _buildWaterSource(BuildContext context, List<WaterSourceModel> waterSources,
@@ -200,5 +249,4 @@ class PumpStationMobile extends StatelessWidget {
       );
     }).toList();
   }
-
 }

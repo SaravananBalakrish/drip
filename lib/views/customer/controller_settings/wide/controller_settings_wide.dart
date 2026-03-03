@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/view_models/customer/controller_settings_view_model.dart';
 import 'package:provider/provider.dart';
+import '../../../../StateManagement/customer_provider.dart';
 import '../../../../models/customer/controller_context.dart';
 import '../../../../models/customer/site_model.dart';
 import '../../../../repository/repository.dart';
@@ -35,6 +36,7 @@ class ControllerSettingWide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
+      key: ValueKey(Provider.of<CustomerProvider>(context).controllerId),
       create: (_) => ControllerSettingsViewModel(Repository(HttpService()))
         ..getSettingsMenu(customerId, masterController.controllerId, masterController.modelId),
       child: Consumer<ControllerSettingsViewModel>(
