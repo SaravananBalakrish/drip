@@ -484,7 +484,7 @@ class Repository{
     return await apiService.postRequest('/user/log/weatherHourly/get', body);
   }
   Future<http.Response> updateUserDeviceFirmwareDetails(body) async {
-    return await apiService.putRequest('/user/deviceList/updateFirmwareDetails', body);
+    return await apiService.putRequest('/user/deviceList/loraFrequency/update', body);
   }
 
   Future<http.Response> getresetAccumulation(body) async {

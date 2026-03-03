@@ -495,7 +495,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
         "adjustPercentage": mainProvider.programDetails!.adjustPercentage,
         "cyclicOnTime": mainProvider.programDetails!.cyclicOnTime,
         "cyclicOffTime": mainProvider.programDetails!.cyclicOffTime,
-        "isPressureEnabled": mainProvider.programDetails!.enablePressure,
+        "isPressureEnabled": mainProvider.programDetails!.enablePressure ? '1' : '0',
         "pressure": mainProvider.programDetails!.pressureValue,
         "incompleteRestart": mainProvider.isCompletionEnabled ? "1" : "0",
         "controllerReadStatus": '0',
