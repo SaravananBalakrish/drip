@@ -31,14 +31,12 @@ class Category {
   int categoryId;
   String categoryName;
   int totalProduct;
-  int inStock;
   Color color;
 
   Category({
     required this.categoryId,
     required this.categoryName,
     required this.totalProduct,
-    required this.inStock,
     required this.color,
   });
 
@@ -47,7 +45,6 @@ class Category {
       categoryId: json['categoryId'],
       categoryName: json['categoryName'],
       totalProduct: json['totalProduct'],
-      inStock: json['inStock'],
       color: _parseColor(json['colorCode']),
     );
   }

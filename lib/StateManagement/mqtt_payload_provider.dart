@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import '../Constants/data_convertion.dart';
 import '../models/Weather_model.dart';
 import '../Screens/Map/googlemap_model.dart';
+import '../models/customer/fertilizer_site_live_model.dart';
 import '../services/bluetooth_service.dart';
 import '../utils/enums.dart';
 
@@ -123,6 +124,9 @@ class MqttPayloadProvider with ChangeNotifier {
    final Map<String, String> _sensorValueMap = {};
    final Map<String, String> _boosterPumpOnOffStatusMap = {};
    final Map<String, String> _agitatorOnOffStatusMap = {};
+
+   final Map<String, FertilizerSiteLiveModel> _fertilizerSiteMap = {};
+   final Map<String, FertilizerChannelLiveModel> _fertilizerChannelMap = {};
 
    //for blue repository
    CustomDevice? _connectedDevice;
@@ -706,7 +710,6 @@ class MqttPayloadProvider with ChangeNotifier {
 
           notifyListeners();
         }
-
         else if(data.containsKey('3600') && data['3600'] != null && data['3600'].isNotEmpty){
           schedulePayload = _receivedPayload;
         }
@@ -721,19 +724,41 @@ class MqttPayloadProvider with ChangeNotifier {
           }
         }
 
+        if (data['mC'] == '7700') {
+          final cm = data['cM'];
+
+          if (cm != null && cm is Map) {
+
+            List<String> fertilizerSite = [];
+            List<String> fertilizerChannel = [];
+
+            if (cm.containsKey('7701') && cm['7701'] is List) {
+              fertilizerSite = List<String>.from(cm['7701']);
+            }
+
+            if (cm.containsKey('7702') && cm['7702'] is List) {
+              fertilizerChannel = List<String>.from(cm['7702']);
+            }
+
+            updateFertilizer7700Payloads(fertilizerSite, fertilizerChannel);
+          }
+        }
+
         if(data['cM'] is! List<dynamic> && data['cM'] is! String) {
           if (data['mC'] != null && data['cM'].containsKey('4201')) {
             messageFromHw = data['cM']['4201'];
           }
         }
+
         if(data['cM'] is! List<dynamic> && data['cM'] is! String) {
-           if (data['mC'] != null && data['cM'].containsKey('4201'))
-            {
-          if (data['cM']['4201']['PayloadCode'] == '2903') {
-             proogressstatus = data['cM']['4201']['Status'];
-           }
+          if (data['mC'] != null && data['cM'].containsKey('4201'))
+          {
+            if (data['cM']['4201']['PayloadCode'] == '2903') {
+              proogressstatus = data['cM']['4201']['Status'];
+            }
+          }
         }
-        }
+
         if (data.containsKey("cM") && data["cM"] is! List && data["cM"] is! String) {
           Map cM = data["cM"];
           if (cM.containsKey("6601")) {
@@ -956,29 +981,53 @@ class MqttPayloadProvider with ChangeNotifier {
      }
    }
 
-  void updateCurrentProgram(List<String> program) {
-    currentSchedule = program;
-  }
+   void updateFertilizer7700Payloads(
+       List<String> fertilizerSitePayload,
+       List<String> fertilizerChannelPayload,
+       ) {
+     _fertilizerSiteMap.clear();
+     _fertilizerChannelMap.clear();
 
-  void updateNextProgram(List<String> program) {
-    nextSchedule = program;
-  }
+     for (final entry in fertilizerSitePayload) {
+       if (entry.trim().isEmpty) continue;
+
+       final model = FertilizerSiteLiveModel.fromCsv(entry);
+       _fertilizerSiteMap[model.sNo] = model;
+     }
+
+     for (final entry in fertilizerChannelPayload) {
+       if (entry.trim().isEmpty) continue;
+
+       final model = FertilizerChannelLiveModel.fromCsv(entry);
+       _fertilizerChannelMap[model.sNo] = model;
+     }
+
+     notifyListeners();
+   }
+
+   void updateCurrentProgram(List<String> program) {
+     currentSchedule = program;
+   }
+
+   void updateNextProgram(List<String> program) {
+     nextSchedule = program;
+   }
 
    void updateAlarm(List<String> alm) {
      alarmDL = alm;
    }
 
-  void updateScheduledProgram(List<String> program) {
-    scheduledProgramPayload = program;
-  }
+   void updateScheduledProgram(List<String> program) {
+     scheduledProgramPayload = program;
+   }
 
    void updateCondition(List<String> con) {
      conditionPayload = con;
    }
 
-  void saveUnits(List<dynamic> units) {
-    unitList = units;
-  }
+   void saveUnits(List<dynamic> units) {
+     unitList = units;
+   }
 
    void clearPreview() {
      _programPreview = null;
@@ -999,6 +1048,9 @@ class MqttPayloadProvider with ChangeNotifier {
    String? getSensorUpdatedValve(String sNo) => _sensorValueMap[sNo];
    String? getBoosterPumpOnOffStatus(String sNo) => _boosterPumpOnOffStatusMap[sNo];
    String? getAgitatorOnOffStatus(String sNo) => _agitatorOnOffStatusMap[sNo];
+
+   Map<String, FertilizerSiteLiveModel> get fertilizerSiteMap => _fertilizerSiteMap;
+   Map<String, FertilizerChannelLiveModel> get fertilizerChannelMap => _fertilizerChannelMap;
 
    String? getProgramPreview() => _programPreview;
    String? getSequencePreview() => _sequencePreview;
