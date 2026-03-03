@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/standalone.dart' as tz;
-import '../../models/admin_dealer/language_list.dart';
 import '../../repository/repository.dart';
 import '../../services/communication_service.dart';
 import '../../utils/constants.dart';
@@ -22,7 +21,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
   int? userId;
   bool? isSubUser;
 
-  final List<LanguageList> languageList = <LanguageList>[];
   List<Map<String, dynamic>> subUsers = [];
 
   String farmName = '';
@@ -174,8 +172,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
         AppConstants.ecoGemModelList.contains(modelId) ? simNumber : null,
         "modifyUser": userId,
       };
-
-      print(body);
 
       final payLoadFinal = jsonEncode({"6800": {"6801": selectedTimeZone}});
       final commService = Provider.of<CommunicationService>(context, listen: false);

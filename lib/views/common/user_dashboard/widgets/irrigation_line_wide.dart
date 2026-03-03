@@ -16,6 +16,7 @@ import '../../../customer/widgets/light_widget.dart';
 import '../../../customer/widgets/main_valve_widget.dart';
 import '../../../customer/widgets/source_column_widget.dart';
 import 'customer_widget_builders.dart';
+import 'fertilizer_live_panel.dart';
 
 class IrrigationLineWide extends StatelessWidget {
   final int customerId, controllerId, modelId;
@@ -284,8 +285,7 @@ class IrrigationLineWide extends StatelessWidget {
               children: widgets.map((w) {
                 return InkWell(
                   onTap: () {
-                    final customerVM =
-                    context.read<CustomerScreenControllerViewModel>();
+                    final customerVM = context.read<CustomerScreenControllerViewModel>();
 
                     showRightSheet(
                       context,
@@ -364,7 +364,7 @@ class IrrigationLineWide extends StatelessWidget {
             color: Colors.white,
             elevation: 10,
             child: SizedBox(
-              width: 380,
+              width: 600,
               height: double.infinity,
               child: child,
             ),
@@ -381,127 +381,5 @@ class IrrigationLineWide extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-class FertilizerLivePanel extends StatefulWidget {
-  final String deviceId;
-  final int controllerId;
-  final int customerId;
-
-  const FertilizerLivePanel({
-    super.key,
-    required this.deviceId,
-    required this.controllerId,
-    required this.customerId,
-  });
-
-  @override
-  State<FertilizerLivePanel> createState() => _FertilizerLivePanelState();
-}
-
-class _FertilizerLivePanelState extends State<FertilizerLivePanel> {
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      context
-          .read<CustomerScreenControllerViewModel>()
-          .onFertilizerLiveSync();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => FertilizerLiveViewModel()
-        ..fetchLiveData(widget.customerId, widget.controllerId, widget.deviceId),
-      child: Consumer<FertilizerLiveViewModel>(
-        builder: (context, vm, _) {
-          if (vm.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          return Column(
-            children: [
-              AppBar(
-                title: const Text("Fertilizer Live Data"),
-                automaticallyImplyLeading: false,
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  )
-                ],
-              ),
-
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    _liveTile("EC", vm.ecValue, "mS/cm"),
-                    _liveTile("pH", vm.phValue, ""),
-                    _liveTile("Flow Rate", vm.flowRate, "L/min"),
-                    _liveTile("Tank Level", vm.tankLevel, "%"),
-                    _liveTile("Injection Rate", vm.injectionRate, "L/h"),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _liveTile(String label, String value, String unit) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        title: Text(label),
-        trailing: Text(
-          "$value $unit",
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class FertilizerLiveViewModel extends ChangeNotifier {
-  bool isLoading = true;
-
-  String ecValue = "--";
-  String phValue = "--";
-  String flowRate = "--";
-  String tankLevel = "--";
-  String injectionRate = "--";
-
-  Future<void> fetchLiveData(
-      int customerId,
-      int controllerId,
-      String deviceId,
-      ) async {
-    isLoading = true;
-    notifyListeners();
-
-    // call API here
-    await Future.delayed(const Duration(seconds: 1));
-
-    // mock data
-    ecValue = "1.8";
-    phValue = "6.5";
-    flowRate = "12";
-    tankLevel = "75";
-    injectionRate = "4.2";
-
-    isLoading = false;
-    notifyListeners();
   }
 }
