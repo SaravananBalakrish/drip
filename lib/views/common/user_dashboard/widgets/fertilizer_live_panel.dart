@@ -13,12 +13,14 @@ class FertilizerLivePanel extends StatefulWidget {
   final String deviceId;
   final int controllerId;
   final int customerId;
+  final bool isWide;
 
   const FertilizerLivePanel({
     super.key,
     required this.deviceId,
     required this.controllerId,
     required this.customerId,
+    required this.isWide,
   });
 
   @override
@@ -32,29 +34,25 @@ class _FertilizerLivePanelState extends State<FertilizerLivePanel> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (!mounted) return;
-      await Future.delayed(const Duration(milliseconds: 300));
-      if (!mounted) return;
-      context
-          .read<CustomerScreenControllerViewModel>()
-          .onFertilizerLiveSync();
-    });
 
     _tooltipBehavior = TooltipBehavior(
       enable: true,
       header: '',
       format: 'point.x : point.y',
     );
+
+    // Initial call
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context
+          .read<CustomerScreenControllerViewModel>()
+          .onFertilizerLiveSync();
+    });
   }
 
   @override
   void dispose() {
     _isDisposed = true;
-    if (mounted) {
-      context.read<CustomerScreenControllerViewModel>().liveSyncCall(false);
-    }
-
     super.dispose();
   }
 
@@ -74,7 +72,15 @@ class _FertilizerLivePanelState extends State<FertilizerLivePanel> {
           );
         }
 
+        if (mqtt.fertilizerSiteMap.isEmpty ||
+            mqtt.fertilizerSiteMap.values.first.valve.isEmpty) {
+          return const Scaffold(
+            body: Center(child: Text("No Live Data Available"),),
+          );
+        }
+
         final site = mqtt.fertilizerSiteMap.values.first;
+
         final viewModel = Provider.of<CustomerScreenControllerViewModel>(context);
         final scheduledProgram = viewModel.mySiteList.data[viewModel.sIndex]
             .master[viewModel.mIndex].programList;
@@ -114,7 +120,6 @@ class _FertilizerLivePanelState extends State<FertilizerLivePanel> {
         site.boosterStatus.split('_') : [];
 
         //sensors==================================================================
-
         List<double> pressureInSerials = site.pressureIn.isNotEmpty ? site.pressureIn.split('_')
             .map((e) => double.tryParse(e) ?? 0).toList() : [];
         List<String> pressureInNames = pressureInSerials
@@ -141,23 +146,27 @@ class _FertilizerLivePanelState extends State<FertilizerLivePanel> {
         List<String> waterMeterValues = site.waterMeterValue.isNotEmpty ?
         site.waterMeterValue.split('_') : [];
 
-        //fert channel--------------------------------------------------------
+        //frt channel--------------------------------------------------------
         List<ChannelDurationBarModel> chartData = [];
 
-        if (mqtt.fertilizerChannelMap.isNotEmpty) {
-          for (final channel in mqtt.fertilizerChannelMap.values) {
-            chartData.add(
-              ChannelDurationBarModel(
-                channel: "CH ${channel.sNo}",
-                total: _parseDuration(channel.fertilizerChannelDuration),
-                completed: _parseDuration(channel.fertilizerChannelDurationCompleted),
-              ),
-            );
-          }
+        List<double> channelSerials = site.fertilizerChannel.isNotEmpty
+            ? site.fertilizerChannel.split('_').map((e) => double.tryParse(e) ?? 0).toList() : [];
+
+        for (final serial in channelSerials) {
+          final channel = mqtt.fertilizerChannelMap[serial.toString()];
+          if (channel == null) continue;
+          final channelName = configObjects.getObjectName(serial);
+          chartData.add(
+            ChannelDurationBarModel(
+              channel: channelName,
+              total: _parseDuration(channel.fertilizerChannelDuration),
+              completed: _parseDuration(channel.fertilizerChannelDurationCompleted),
+            ),
+          );
         }
 
         return Container(
-            width: 600,
+            width: widget.isWide ? 600 : MediaQuery.sizeOf(context).width,
             decoration: BoxDecoration(
               color: Colors.white10,
               borderRadius: const BorderRadius.only(
@@ -252,14 +261,25 @@ class _FertilizerLivePanelState extends State<FertilizerLivePanel> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          InkWell(
-            onTap: () => Navigator.pop(context),
-            child: const CircleAvatar(
-              radius: 15,
-              backgroundColor: Colors.white,
-              child: Icon(Icons.close_outlined, size: 20, color: Colors.black54),
-            ),
-          )
+
+          Row(
+            children: [
+              IconButton(onPressed: () {
+                context
+                    .read<CustomerScreenControllerViewModel>()
+                    .onFertilizerLiveSync();
+              }, icon: const Icon(Icons.refresh)),
+              const SizedBox(width: 8),
+              InkWell(
+                onTap: () => Navigator.pop(context),
+                child: const CircleAvatar(
+                  radius: 15,
+                  backgroundColor: Colors.white,
+                  child: Icon(Icons.close_outlined, size: 20, color: Colors.black54),
+                ),
+              )
+            ],
+          ),
         ],
       ),
     );
