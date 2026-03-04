@@ -286,7 +286,6 @@ class IrrigationLineWide extends StatelessWidget {
                 return InkWell(
                   onTap: () {
                     final customerVM = context.read<CustomerScreenControllerViewModel>();
-
                     showRightSheet(
                       context,
                       ChangeNotifierProvider.value(
@@ -295,6 +294,7 @@ class IrrigationLineWide extends StatelessWidget {
                           deviceId: deviceId,
                           controllerId: controllerId,
                           customerId: customerId,
+                          isWide: true,
                         ),
                       ),
                     );

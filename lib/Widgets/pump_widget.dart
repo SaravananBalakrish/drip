@@ -257,8 +257,6 @@ class PumpWidget extends StatelessWidget {
   Widget _buildVoltagePopoverContent(BuildContext context,
       voltages, columns, bool isNova) {
 
-    print('columns:$columns');
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
