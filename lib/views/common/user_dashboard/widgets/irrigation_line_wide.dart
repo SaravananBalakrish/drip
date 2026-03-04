@@ -92,7 +92,8 @@ class IrrigationLineWide extends StatelessWidget {
         customerId: customerId,
         controllerId: controllerId,
         modelId: modelId,
-        isMobile: false,
+        isNarrow: false,
+        prsOutIsAval: pressureOut.isNotEmpty,
       ),
 
     ];
@@ -125,14 +126,14 @@ class IrrigationLineWide extends StatelessWidget {
         ..._buildFertilizer(context, lFertilizerSite, isNava),
 
       ...lightWidgets,
-      ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch_wj.png', cFertilizerSite.isNotEmpty),
-      ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png', cFertilizerSite.isNotEmpty),
-      ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter_wj.png', cFertilizerSite.isNotEmpty),
+      ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch_wj.png'),
+      ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png'),
+      ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter_wj.png'),
       ...allValveWidgets,
-      ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wjl.png', cFertilizerSite.isNotEmpty),
-      ..._buildSensorItems(co2, 'CO2 Sensor', 'assets/png/co2_sensor_wj.png', cFertilizerSite.isNotEmpty),
-      ..._buildSensorItems(humidity, 'Humidity Sensor', 'assets/png/humidity_sensor_wj.png', cFertilizerSite.isNotEmpty),
-      ..._buildSensorItems(soilTemperature, 'Soil Temperature Sensor', 'assets/png/Soil_temperature.png', cFertilizerSite.isNotEmpty),
+      ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wjl.png'),
+      ..._buildSensorItems(co2, 'CO2 Sensor', 'assets/png/co2_sensor_wj.png'),
+      ..._buildSensorItems(humidity, 'Humidity Sensor', 'assets/png/humidity_sensor_wj.png'),
+      ..._buildSensorItems(soilTemperature, 'Soil Temperature Sensor', 'assets/png/Soil_temperature.png'),
       ...gateWidgets,
     ];
 
@@ -140,10 +141,10 @@ class IrrigationLineWide extends StatelessWidget {
     int lFrtChannelCount = 0;
 
     if(cFertilizerSite.isNotEmpty) {
-      cFrtChannelCount = (cFertilizerSite[0].channel.length + cFertilizerSite[0].agitator.length + 1);
+      cFrtChannelCount = (cFertilizerSite[0].channel.length + cFertilizerSite[0].agitator.length + 2);
     }
     if(lFertilizerSite.isNotEmpty){
-      lFrtChannelCount = (lFertilizerSite[0].channel.length + lFertilizerSite[0].agitator.length + 1);
+      lFrtChannelCount = (lFertilizerSite[0].channel.length + lFertilizerSite[0].agitator.length + 2);
     }
 
     int itemsPerRow = ((MediaQuery.sizeOf(context).width - 140) / 67).floor() -
@@ -156,11 +157,11 @@ class IrrigationLineWide extends StatelessWidget {
         child: Wrap(
           alignment: WrapAlignment.start,
           spacing: 0,
-          runSpacing: 0,
           children: allItems.asMap().entries.map<Widget>((entry) {
 
             final index = entry.key;
             final item = entry.value;
+
             if(cFertilizerSite.isNotEmpty) {
               if (((item is ValveWidget) || (item is BuildMainValve)
                   ||(item is LightWidget)||(item is SensorWidget))
@@ -226,17 +227,14 @@ class IrrigationLineWide extends StatelessWidget {
     return gridItems;
   }
 
-  List<Widget> _buildSensorItems(List<SensorModel> sensors, String type, String imagePath, bool isAvailFertilizer) {
+  List<Widget> _buildSensorItems(List<SensorModel> sensors, String type, String imagePath) {
     return sensors.map((sensor) {
-      return Padding(
-        padding: EdgeInsets.only(top: isAvailFertilizer? 30 : 0),
-        child: SensorWidget(
-          sensor: sensor,
-          sensorType: type,
-          imagePath: imagePath,
-          customerId: customerId,
-          controllerId: controllerId,
-        ),
+      return SensorWidget(
+        sensor: sensor,
+        sensorType: type,
+        imagePath: imagePath,
+        customerId: customerId,
+        controllerId: controllerId,
       );
     }).toList();
   }
