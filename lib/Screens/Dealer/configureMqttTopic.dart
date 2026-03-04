@@ -106,8 +106,6 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
       }
     } catch (e, stacktrace) {
       setState(() {
-        print(e);
-        print(stacktrace);
         errorMessage = 'Error fetching data: $e,';
         isLoading = false;
       });

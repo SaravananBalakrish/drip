@@ -35,9 +35,7 @@ extension ConfigObjectFinder on List<ConfigObject> {
 
   ConfigObject? findBySerial(double serial) {
     try {
-      return firstWhere(
-            (obj) => obj.sNo.toInt() == serial.toInt(),
-      );
+      return firstWhere((obj) => obj.sNo == serial);
     } catch (_) {
       return null;
     }
@@ -46,8 +44,8 @@ extension ConfigObjectFinder on List<ConfigObject> {
   String getObjectName(double serial) {
     final obj = findBySerial(serial);
     if (obj == null) return serial.toInt().toString();
-    return obj.name.isNotEmpty
-        ? obj.name
+    return obj.name.isNotEmpty ? obj.name
         : serial.toInt().toString();
   }
+
 }

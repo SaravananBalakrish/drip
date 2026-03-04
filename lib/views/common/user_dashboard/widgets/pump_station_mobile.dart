@@ -111,6 +111,7 @@ class PumpStationMobile extends StatelessWidget {
                                 deviceId: deviceId,
                                 controllerId: controllerId,
                                 customerId: customerId,
+                                isWide: false,
                               ),
                             ),
                           );
