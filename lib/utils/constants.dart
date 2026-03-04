@@ -308,7 +308,6 @@ class AppConstants {
   }
 
   static Widget getAssetForFrtLive(String item, int status) {
-    print(item);
     String imagePathFinal;
     switch (item) {
       case 'pump':
