@@ -319,7 +319,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
     // print("build center:$center");
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Geography new "),
+      appBar: AppBar(title: const Text("Geography"),
           actions: [
           IconButton(
           icon: Icon(Icons.map_outlined),
