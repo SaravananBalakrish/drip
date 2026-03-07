@@ -335,6 +335,7 @@ class _MapScreenState extends State<MapScreen> {
                     },
                     myLocationButtonEnabled: true,
                     myLocationEnabled: true,
+
                     compassEnabled: true,
                   ),
                 ),
