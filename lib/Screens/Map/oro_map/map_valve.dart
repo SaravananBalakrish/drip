@@ -60,6 +60,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
       "green": await load('assets/png/markergreen.png'),
       "red": await load('assets/png/markerred.png'),
       "blue": await load('assets/png/markerblue.png'),
+      "yellow": await load('assets/png/markeryellow.png'),
       "pump": await load('assets/png/markerpump.png'),
       "sensor": await load('assets/png/markersensor.png'),
       "fert": await load('assets/png/markerfertilizer.png'),
