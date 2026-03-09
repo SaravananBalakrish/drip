@@ -128,47 +128,6 @@ class MqttService {
     _client!.connectionMessage = connMess;
   }
 
-  /*void initializeMQTTClient({MqttPayloadProvider? state}) {
-    providerState = state;
-    String uniqueId = const Uuid().v4();
-
-    if (_client == null) {
-      if (kIsWeb) {
-        var isLK = F.appFlavor?.name.contains('smart comm') ?? false;
-        _client = MqttBrowserClient(Environment.mqttWebUrl, uniqueId);
-
-        if(isLK){
-          print('inside websocketProtocols');
-          _client!.websocketProtocols = ['mqtt'];
-        }else{
-          (_client as MqttBrowserClient).websocketProtocols = MqttClientConstants.protocolsSingleDefault;
-          _client!.port = AppConstants.mqttWebPort;
-        }
-
-      } else {
-        _client = MqttServerClient(Environment.mqttMobileUrl, uniqueId);
-        _client!.port = AppConstants.mqttMobilePort;
-      }
-
-      _client!.keepAlivePeriod = 30;
-      _client!.logging(on: false);
-      _client!.onDisconnected = onDisconnected;
-      _client!.onConnected = onConnected;
-      _client!.onSubscribed = onSubscribed;
-      _client!.websocketProtocols = MqttClientConstants.protocolsSingleDefault;
-
-      final connMess = MqttConnectMessage()
-          .withClientIdentifier(uniqueId)
-          .withWillTopic('will-topic')
-          .withWillMessage('My Will message')
-          .authenticateAs(AppConstants.mqttUserName, AppConstants.mqttPassword)
-          .startClean()
-          .withWillQos(MqttQos.atLeastOnce);
-
-      _client!.connectionMessage = connMess;
-    }
-  }*/
-
   Future<void> connect() async {
     if (_client == null ||
         isConnected ||
@@ -286,11 +245,6 @@ class MqttService {
       MqttAckTracker.ackReceived(payloadCode);
     }
   }
-
-  /*Future<void> topicToPublishAndItsMessage(String message, String topic) async {
-    final builder = MqttClientPayloadBuilder()..addString(message);
-    _client!.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!);
-  }*/
 
   Future<void> topicToPublishAndItsMessage(String message, String topic) async {
     if (!isConnected) {

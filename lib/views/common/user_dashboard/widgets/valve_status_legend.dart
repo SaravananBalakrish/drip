@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget buildValveStatusLegend() {
+Widget buildValveStatusLegend(bool isAquaculture) {
 
   Widget legendItem(Color color, String text) {
     return Row(
@@ -37,9 +37,9 @@ Widget buildValveStatusLegend() {
     child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          "Valve Status",
-          style: TextStyle(
+        Text(
+          isAquaculture ? "Aerator Status" : "Valve Status",
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
             color: Colors.black87,

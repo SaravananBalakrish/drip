@@ -14,7 +14,7 @@ extension ProgramListFinder on List<ProgramList> {
 
   String getProgramName(String programId) {
     final program = findByProgramId(programId);
-    if (program == null) return "-";
+    if (program == null) return "StandAlone - Manual";
     return program.programName.isNotEmpty
         ? program.programName
         : program.defaultProgramName;
