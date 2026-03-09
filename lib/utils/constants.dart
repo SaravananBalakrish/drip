@@ -64,10 +64,30 @@ class AppConstants {
   static const String pumpNotON = "dp_irr_pump_y.png";
   static const String pumpNotOFF = "dp_irr_pump_r.png";
 
+  static const String frtPumpOFF = "dp_pump.png";
+  static const String frtPumpON = "dp_pump_green.gif";
+  static const String frtPumpNotON = "dp_pump_orange.png";
+  static const String frtPumpNotOFF = "dp_pump_red.png";
+
+  static const String frtValveOFF = "valve_grey_wol.png";
+  static const String frtValveON = "valve_green_wol.gif";
+  static const String frtValveNotON = "valve_orange_wol.png";
+  static const String frtValveNotOFF = "valve_red_wol.png";
+
+  static const String frtBoosterOFF = "booster_pump.png";
+  static const String frtBoosterON = "booster_pump_g.gif";
+  static const String frtBoosterNotON = "booster_pump_o.png";
+  static const String frtBoosterNotOFF = "booster_pump_r.png";
+
   static const String mblPumpOFF = "m_pump_first_g.png";
   static const String mblPumpON = "m_pump_first.gif";
   static const String mblPumpNotON = "m_pump_first_y.png";
   static const String mblPumpNotOFF = "m_pump_first_r.png";
+
+  static const String aeratorPumpOFF = "aerators_grey.png";
+  static const String aeratorPumpON = "aerators_g.png";
+  static const String aeratorPumpNotON = "aerators_o.png";
+  static const String aeratorPumpNotOFF = "aerators_r.png";
 
 
   static const String filterOFF = "dp_filter.png";
@@ -235,6 +255,9 @@ class AppConstants {
       case 'mobile pump':
         imagePathFinal = _getMobilePumpImagePath(keyTwo, keyThree);
         break;
+      case 'aerator':
+        imagePathFinal = _getAeratorPumpImagePath(keyTwo, keyThree);
+        break;
       case 'filter':
         imagePathFinal = _getFilterImagePath(keyTwo);
         break;
@@ -292,6 +315,30 @@ class AppConstants {
     );
   }
 
+  static Widget getAssetForFrtLive(String item, int status) {
+    String imagePathFinal;
+    switch (item) {
+      case 'pump':
+        imagePathFinal = _getFLPPumpImagePath(status);
+      case 'valve':
+        imagePathFinal = _getFLPValveImagePath(status);
+        break;
+      case 'booster':
+        imagePathFinal = _getFLPBoosterImagePath(status);
+        break;
+
+      default:
+        imagePathFinal = '';
+    }
+
+    return Image.asset(
+      '$pngPath$imagePathFinal',
+      width: double.infinity,
+      height: double.infinity,
+      fit: BoxFit.fill,
+    );
+  }
+
   static String _getSourceImagePath(int type, String position) {
     switch (position) {
       case 'First':
@@ -337,6 +384,51 @@ class AppConstants {
     }
   }
 
+  static String _getFLPPumpImagePath(int status) {
+    switch (status) {
+      case 0:
+        return frtPumpOFF;
+      case 1:
+        return frtPumpON;
+      case 2:
+        return frtPumpNotON;
+      case 3:
+        return frtPumpNotOFF;
+      default:
+        return '';
+    }
+  }
+
+  static String _getFLPValveImagePath(int status) {
+    switch (status) {
+      case 0:
+        return frtValveOFF;
+      case 1:
+        return frtValveON;
+      case 2:
+        return frtValveNotON;
+      case 3:
+        return frtValveNotOFF;
+      default:
+        return '';
+    }
+  }
+
+  static String _getFLPBoosterImagePath(int status) {
+    switch (status) {
+      case 0:
+        return frtBoosterOFF;
+      case 1:
+        return frtBoosterON;
+      case 2:
+        return frtBoosterNotON;
+      case 3:
+        return frtBoosterNotOFF;
+      default:
+        return '';
+    }
+  }
+
   static String _getMobilePumpImagePath(int status, String position) {
     switch (status) {
       case 0:
@@ -347,6 +439,21 @@ class AppConstants {
         return mblPumpNotON;
       case 3:
         return mblPumpNotOFF;
+      default:
+        return '';
+    }
+  }
+
+  static String _getAeratorPumpImagePath(int status, String position) {
+    switch (status) {
+      case 0:
+        return aeratorPumpOFF;
+      case 1:
+        return aeratorPumpON;
+      case 2:
+        return aeratorPumpNotON;
+      case 3:
+        return aeratorPumpNotOFF;
       default:
         return '';
     }
@@ -761,5 +868,7 @@ class AppConstants {
   static List<int> extendLoraList = [46];
   static List<int> extendGsmList = [47];
   static List<int> extendList = [...extendLoraList, ...extendGsmList];
+
+  static List<int> aquacultureModelList = [72];
 
 }

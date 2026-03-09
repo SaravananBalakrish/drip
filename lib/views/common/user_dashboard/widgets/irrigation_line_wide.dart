@@ -16,6 +16,7 @@ import '../../../customer/widgets/light_widget.dart';
 import '../../../customer/widgets/main_valve_widget.dart';
 import '../../../customer/widgets/source_column_widget.dart';
 import 'customer_widget_builders.dart';
+import 'fertilizer_live_panel.dart';
 
 class IrrigationLineWide extends StatelessWidget {
   final int customerId, controllerId, modelId;
@@ -91,7 +92,8 @@ class IrrigationLineWide extends StatelessWidget {
         customerId: customerId,
         controllerId: controllerId,
         modelId: modelId,
-        isMobile: false,
+        isNarrow: false,
+        prsOutIsAval: pressureOut.isNotEmpty,
       ),
 
     ];
@@ -124,14 +126,14 @@ class IrrigationLineWide extends StatelessWidget {
         ..._buildFertilizer(context, lFertilizerSite, isNava),
 
       ...lightWidgets,
-      ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch_wj.png', cFertilizerSite.isNotEmpty),
-      ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png', cFertilizerSite.isNotEmpty),
-      ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter_wj.png', cFertilizerSite.isNotEmpty),
+      ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch_wj.png'),
+      ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png'),
+      ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter_wj.png'),
       ...allValveWidgets,
-      ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wjl.png', cFertilizerSite.isNotEmpty),
-      ..._buildSensorItems(co2, 'CO2 Sensor', 'assets/png/co2_sensor_wj.png', cFertilizerSite.isNotEmpty),
-      ..._buildSensorItems(humidity, 'Humidity Sensor', 'assets/png/humidity_sensor_wj.png', cFertilizerSite.isNotEmpty),
-      ..._buildSensorItems(soilTemperature, 'Soil Temperature Sensor', 'assets/png/Soil_temperature.png', cFertilizerSite.isNotEmpty),
+      ..._buildSensorItems(pressureOut, 'Pressure Sensor', 'assets/png/pressure_sensor_wjl.png'),
+      ..._buildSensorItems(co2, 'CO2 Sensor', 'assets/png/co2_sensor_wj.png'),
+      ..._buildSensorItems(humidity, 'Humidity Sensor', 'assets/png/humidity_sensor_wj.png'),
+      ..._buildSensorItems(soilTemperature, 'Soil Temperature Sensor', 'assets/png/Soil_temperature.png'),
       ...gateWidgets,
     ];
 
@@ -139,10 +141,10 @@ class IrrigationLineWide extends StatelessWidget {
     int lFrtChannelCount = 0;
 
     if(cFertilizerSite.isNotEmpty) {
-      cFrtChannelCount = (cFertilizerSite[0].channel.length + cFertilizerSite[0].agitator.length + 1);
+      cFrtChannelCount = (cFertilizerSite[0].channel.length + cFertilizerSite[0].agitator.length + 2);
     }
     if(lFertilizerSite.isNotEmpty){
-      lFrtChannelCount = (lFertilizerSite[0].channel.length + lFertilizerSite[0].agitator.length + 1);
+      lFrtChannelCount = (lFertilizerSite[0].channel.length + lFertilizerSite[0].agitator.length + 2);
     }
 
     int itemsPerRow = ((MediaQuery.sizeOf(context).width - 140) / 67).floor() -
@@ -155,11 +157,11 @@ class IrrigationLineWide extends StatelessWidget {
         child: Wrap(
           alignment: WrapAlignment.start,
           spacing: 0,
-          runSpacing: 0,
           children: allItems.asMap().entries.map<Widget>((entry) {
 
             final index = entry.key;
             final item = entry.value;
+
             if(cFertilizerSite.isNotEmpty) {
               if (((item is ValveWidget) || (item is BuildMainValve)
                   ||(item is LightWidget)||(item is SensorWidget))
@@ -225,17 +227,14 @@ class IrrigationLineWide extends StatelessWidget {
     return gridItems;
   }
 
-  List<Widget> _buildSensorItems(List<SensorModel> sensors, String type, String imagePath, bool isAvailFertilizer) {
+  List<Widget> _buildSensorItems(List<SensorModel> sensors, String type, String imagePath) {
     return sensors.map((sensor) {
-      return Padding(
-        padding: EdgeInsets.only(top: isAvailFertilizer? 30 : 0),
-        child: SensorWidget(
-          sensor: sensor,
-          sensorType: type,
-          imagePath: imagePath,
-          customerId: customerId,
-          controllerId: controllerId,
-        ),
+      return SensorWidget(
+        sensor: sensor,
+        sensorType: type,
+        imagePath: imagePath,
+        customerId: customerId,
+        controllerId: controllerId,
       );
     }).toList();
   }
@@ -284,9 +283,7 @@ class IrrigationLineWide extends StatelessWidget {
               children: widgets.map((w) {
                 return InkWell(
                   onTap: () {
-                    final customerVM =
-                    context.read<CustomerScreenControllerViewModel>();
-
+                    final customerVM = context.read<CustomerScreenControllerViewModel>();
                     showRightSheet(
                       context,
                       ChangeNotifierProvider.value(
@@ -295,6 +292,7 @@ class IrrigationLineWide extends StatelessWidget {
                           deviceId: deviceId,
                           controllerId: controllerId,
                           customerId: customerId,
+                          isWide: true,
                         ),
                       ),
                     );
@@ -364,7 +362,7 @@ class IrrigationLineWide extends StatelessWidget {
             color: Colors.white,
             elevation: 10,
             child: SizedBox(
-              width: 380,
+              width: 600,
               height: double.infinity,
               child: child,
             ),
@@ -381,127 +379,5 @@ class IrrigationLineWide extends StatelessWidget {
         );
       },
     );
-  }
-}
-
-class FertilizerLivePanel extends StatefulWidget {
-  final String deviceId;
-  final int controllerId;
-  final int customerId;
-
-  const FertilizerLivePanel({
-    super.key,
-    required this.deviceId,
-    required this.controllerId,
-    required this.customerId,
-  });
-
-  @override
-  State<FertilizerLivePanel> createState() => _FertilizerLivePanelState();
-}
-
-class _FertilizerLivePanelState extends State<FertilizerLivePanel> {
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      context
-          .read<CustomerScreenControllerViewModel>()
-          .onFertilizerLiveSync();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => FertilizerLiveViewModel()
-        ..fetchLiveData(widget.customerId, widget.controllerId, widget.deviceId),
-      child: Consumer<FertilizerLiveViewModel>(
-        builder: (context, vm, _) {
-          if (vm.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          return Column(
-            children: [
-              AppBar(
-                title: const Text("Fertilizer Live Data"),
-                automaticallyImplyLeading: false,
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  )
-                ],
-              ),
-
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(16),
-                  children: [
-                    _liveTile("EC", vm.ecValue, "mS/cm"),
-                    _liveTile("pH", vm.phValue, ""),
-                    _liveTile("Flow Rate", vm.flowRate, "L/min"),
-                    _liveTile("Tank Level", vm.tankLevel, "%"),
-                    _liveTile("Injection Rate", vm.injectionRate, "L/h"),
-                  ],
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _liveTile(String label, String value, String unit) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ListTile(
-        title: Text(label),
-        trailing: Text(
-          "$value $unit",
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class FertilizerLiveViewModel extends ChangeNotifier {
-  bool isLoading = true;
-
-  String ecValue = "--";
-  String phValue = "--";
-  String flowRate = "--";
-  String tankLevel = "--";
-  String injectionRate = "--";
-
-  Future<void> fetchLiveData(
-      int customerId,
-      int controllerId,
-      String deviceId,
-      ) async {
-    isLoading = true;
-    notifyListeners();
-
-    // call API here
-    await Future.delayed(const Duration(seconds: 1));
-
-    // mock data
-    ecValue = "1.8";
-    phValue = "6.5";
-    flowRate = "12";
-    tankLevel = "75";
-    injectionRate = "4.2";
-
-    isLoading = false;
-    notifyListeners();
   }
 }

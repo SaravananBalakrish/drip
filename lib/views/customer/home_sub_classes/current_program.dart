@@ -4,6 +4,7 @@ import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import '../../../models/customer/extensions/program_extensions.dart';
 import '../../../models/customer/site_model.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../services/communication_service.dart';
@@ -49,6 +50,7 @@ class CurrentProgram extends StatelessWidget {
   }
 
   Widget buildWebTable(BuildContext context, List<String> schedule) {
+
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, top: 20),
       child: Column(
@@ -118,13 +120,17 @@ class CurrentProgram extends StatelessWidget {
                     ],
                     rows: List<DataRow>.generate(schedule.length, (index) {
                       List<String> values = schedule[index].split(",");
+
+                      final programName = scheduledPrograms.getProgramName(values[0]);
+                      final sequenceName = scheduledPrograms.getSequenceName(values[0], values[1]);
+
                       return DataRow(cells: [
                         DataCell(
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(getProgramNameById(int.parse(values[0]))),
+                              Text(programName),
                               Text(
                                 getContentByCode(int.parse(values[15])),
                                 style: const TextStyle(fontSize: 10, color: Colors.black87),
@@ -134,18 +140,15 @@ class CurrentProgram extends StatelessWidget {
                         ),
                         DataCell(Text('${values[10]}/${values[9]}')),
                         DataCell(Text(
-                          getProgramNameById(int.parse(values[0])) == 'StandAlone - Manual'
-                              ? '--'
-                              : getSequenceName(int.parse(values[0]), values[1]) ?? '--',
+                          programName == 'StandAlone - Manual' ? '--' : sequenceName,
                         )),
                         DataCell(Center(child: Text(Formatters().formatRtcValues(values[6], values[5])))),
                         DataCell(Center(child: Text(Formatters().formatRtcValues(values[8], values[7])))),
                         DataCell(Center(child: Text(convert24HourTo12Hour(values[11])))),
-                        DataCell(Center(child: Text(getProgramNameById(int.parse(values[0])) == 'StandAlone - Manual' &&
+                        DataCell(Center(child: Text(programName == 'StandAlone - Manual' &&
                             (values[3] == '00:00:00' || values[3] == '0') ? 'Timeless' : values[3]))),
-                        //DataCell(Center(child: Text('${values[16]}-L/hr'))),
                         DataCell(Center(child: Text('${values[16]} l/s'))),
-                        DataCell(Center(child: Text(getProgramNameById(int.parse(values[0])) == 'StandAlone - Manual' &&
+                        DataCell(Center(child: Text(programName == 'StandAlone - Manual' &&
                               (values[3] == '00:00:00' || values[3] == '0')
                               ? '----'
                               : values[4],
@@ -188,7 +191,12 @@ class CurrentProgram extends StatelessWidget {
 
 
   Widget buildActionButton(BuildContext context, List<String> values) {
-    final programName = getProgramNameById(int.parse(values[0]));
+
+    final programName = scheduledPrograms.getProgramName(values[0]);
+    //final programRnReason = getContentByCode(int.parse(values[15]));
+    final sequenceName = scheduledPrograms.getSequenceName(values[0], values[1]);
+
+
     if (programName == 'StandAlone - Manual') {
       return MaterialButton(
         color: Colors.redAccent,
@@ -199,7 +207,7 @@ class CurrentProgram extends StatelessWidget {
           });
 
           final result = await context.read<CommunicationService>().sendCommand(
-            serverMsg: '${getProgramNameById(int.parse(values[0]))} Stopped manually',
+            serverMsg: '$programName Stopped manually',
             payload: payLoadFinal);
 
           if (result['http'] == true) debugPrint("Payload sent to Server");
@@ -210,7 +218,7 @@ class CurrentProgram extends StatelessWidget {
         }: null,
         child: const Text('Stop'),
       );
-    } else if (programName.contains('StandAlone'))  {
+    } else if (programName.contains('StandAlone')) {
       return MaterialButton(
         color: Colors.redAccent,
         textColor: Colors.white,
@@ -222,7 +230,7 @@ class CurrentProgram extends StatelessWidget {
           });
 
           final result = await context.read<CommunicationService>().sendCommand(
-            serverMsg: '${getProgramNameById(int.parse(values[0]))} Stopped manually',
+            serverMsg: '$programName Stopped manually',
             payload: payLoadFinal);
 
           if (result['http'] == true) debugPrint("Payload sent to Server");
@@ -245,7 +253,7 @@ class CurrentProgram extends StatelessWidget {
           });
 
           final result = await context.read<CommunicationService>().sendCommand(
-              serverMsg: '${getProgramNameById(int.parse(values[0]))} - ${getSequenceName(int.parse(values[0]), values[1])} skipped manually',
+              serverMsg: '$programName - $sequenceName skipped manually',
               payload: payLoadFinal);
 
           if (result['http'] == true) debugPrint("Payload sent to Server");
@@ -261,7 +269,10 @@ class CurrentProgram extends StatelessWidget {
 
 
   Widget buildScheduleRow(BuildContext context, List<String> values) {
-    final programName = getProgramNameById(int.parse(values[0]));
+
+    final programName = scheduledPrograms.getProgramName(values[0]);
+    final sequenceName = scheduledPrograms.getSequenceName(values[0], values[1]);
+
     return SizedBox(
       width: MediaQuery.sizeOf(context).width,
       height: 143,
@@ -343,7 +354,7 @@ class CurrentProgram extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(programName == 'StandAlone - Manual' ? '--' :
-                      getSequenceName(int.parse(values[0]), values[1]) ?? '--',),
+                      sequenceName ?? '--'),
                       const SizedBox(height: 3),
                     ],
                   ),
@@ -429,7 +440,7 @@ class CurrentProgram extends StatelessWidget {
                                   ),
                                 ),
                                 Center(child: Text(
-                                  getProgramNameById(int.parse(values[0])) == 'StandAlone - Manual' &&
+                                  programName == 'StandAlone - Manual' &&
                                       (values[3] == '00:00:00' || values[3] == '0')
                                       ? '----'
                                       : values[4],
@@ -454,38 +465,6 @@ class CurrentProgram extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String getProgramNameById(int id) {
-    try {
-      return scheduledPrograms.firstWhere((program) => program.serialNumber == id).programName;
-    } catch (e) {
-      return "StandAlone - Manual";
-    }
-  }
-
-  ProgramList? getProgramById(int id) {
-    try {
-      return scheduledPrograms.firstWhere((program) => program.serialNumber == id);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  String? getSequenceName(int programId, String sequenceId) {
-    ProgramList? program = getProgramById(programId);
-    if (program != null) {
-      return getSequenceNameById(program, sequenceId);
-    }
-    return null;
-  }
-
-  String? getSequenceNameById(ProgramList program, String sequenceId) {
-    try {
-      return program.sequence.firstWhere((seq) => seq.sNo == sequenceId).name;
-    } catch (e) {
-      return null;
-    }
   }
 
   String convert24HourTo12Hour(String timeString) {

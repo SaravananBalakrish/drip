@@ -52,14 +52,14 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
                   SizedBox(
                     width: 400,
                     height: ([...AppConstants.ecoGemModelList].contains(widget.masterData.modelId)) ? 50 :
-                    viewModel.ddCurrentPosition!=0 && viewModel.segmentWithFlow.index!=0 ? 133: viewModel.programList.length > 1? 90:60,
+                    viewModel.ddCurrentPosition != 0 && viewModel.segmentWithFlow.index!=0 ? 133 : viewModel.programList.length > 1? 90:60,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          viewModel.programList.length > 1? Row(
+                          viewModel.programList.length > 1 ? Row(
                             children: [
                               const Text(
                                 'Select by:',
@@ -97,7 +97,7 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
                           const SizedBox(height: 8),
 
                           if(![...AppConstants.ecoGemModelList].contains(widget.masterData.modelId))...[
-                            viewModel.ddCurrentPosition==0 ?Row(
+                            viewModel.ddCurrentPosition==0 ? Row(
                               children: [
                                 SizedBox(
                                   width: 275,
@@ -155,7 +155,7 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
                                 ):
                                 Container(),
                               ],
-                            ):
+                            ) :
                             Column(
                               children: [
                                 SizedBox(
@@ -264,6 +264,25 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
   Widget displayLineOrSequence(MasterControllerModel masterData, StandAloneViewModel vm, int ddPosition){
 
     bool isNova = [...AppConstants.ecoGemModelList].contains(masterData.modelId);
+    bool isAerator = [...AppConstants.aquacultureModelList].contains(masterData.modelId);
+
+
+    if(isAerator) {
+      final aerator = masterData.irrigationLine
+          .expand((line) => line.aeratorSources)
+          .expand((ws) => ws.outletPump)
+          .toList();
+
+      final allAerator = aerator.fold<Map<double, PumpModel>>({}, (map, pump) {
+        map[pump.sNo] = pump;
+        return map;
+      }).values.toList();
+
+      return AeratorCard(
+        pumps: allAerator,
+        onChanged: (pump, val) => setState(() => pump.selected = val),
+      );
+    }
 
     final sourcePumps = masterData.irrigationLine
         .expand((line) => line.inletSources)
@@ -285,6 +304,7 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
       return map;
     }).values.toList();
 
+
     final cFilterSites = masterData.irrigationLine
         .map((line) => line.centralFilterSite)
         .whereType<FilterSiteModel>()
@@ -304,6 +324,7 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
         .map((line) => line.localFertilizerSite)
         .whereType<FertilizerSiteModel>()
         .toList();
+
 
     return Column(
       children: [

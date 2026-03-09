@@ -459,6 +459,9 @@ class _MapScreenAreaState extends State<MapScreenArea> {
                         _zoomToValves();
                       }
                     },
+                    myLocationButtonEnabled: true,
+                    myLocationEnabled: true,
+                    compassEnabled: true,
                     mapType: MapType.hybrid,
                     markers: _markers,
                     polygons: _polygons,
