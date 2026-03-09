@@ -124,7 +124,6 @@ class CurrentProgram extends StatelessWidget {
                       final programName = scheduledPrograms.getProgramName(values[0]);
                       final sequenceName = scheduledPrograms.getSequenceName(values[0], values[1]);
 
-
                       return DataRow(cells: [
                         DataCell(
                           Column(
@@ -141,8 +140,7 @@ class CurrentProgram extends StatelessWidget {
                         ),
                         DataCell(Text('${values[10]}/${values[9]}')),
                         DataCell(Text(
-                          programName == 'StandAlone - Manual' ? '--'
-                              : sequenceName ?? '--',
+                          programName == 'StandAlone - Manual' ? '--' : sequenceName,
                         )),
                         DataCell(Center(child: Text(Formatters().formatRtcValues(values[6], values[5])))),
                         DataCell(Center(child: Text(Formatters().formatRtcValues(values[8], values[7])))),
@@ -195,6 +193,7 @@ class CurrentProgram extends StatelessWidget {
   Widget buildActionButton(BuildContext context, List<String> values) {
 
     final programName = scheduledPrograms.getProgramName(values[0]);
+    //final programRnReason = getContentByCode(int.parse(values[15]));
     final sequenceName = scheduledPrograms.getSequenceName(values[0], values[1]);
 
 
@@ -219,7 +218,7 @@ class CurrentProgram extends StatelessWidget {
         }: null,
         child: const Text('Stop'),
       );
-    } else if (programName.contains('StandAlone'))  {
+    } else if (programName.contains('StandAlone')) {
       return MaterialButton(
         color: Colors.redAccent,
         textColor: Colors.white,

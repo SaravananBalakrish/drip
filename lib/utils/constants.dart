@@ -84,6 +84,11 @@ class AppConstants {
   static const String mblPumpNotON = "m_pump_first_y.png";
   static const String mblPumpNotOFF = "m_pump_first_r.png";
 
+  static const String aeratorPumpOFF = "aerators_grey.png";
+  static const String aeratorPumpON = "aerators_g.png";
+  static const String aeratorPumpNotON = "aerators_o.png";
+  static const String aeratorPumpNotOFF = "aerators_r.png";
+
 
   static const String filterOFF = "dp_filter.png";
   static const String filterON = "dp_filter_g.png";
@@ -249,6 +254,9 @@ class AppConstants {
         break;
       case 'mobile pump':
         imagePathFinal = _getMobilePumpImagePath(keyTwo, keyThree);
+        break;
+      case 'aerator':
+        imagePathFinal = _getAeratorPumpImagePath(keyTwo, keyThree);
         break;
       case 'filter':
         imagePathFinal = _getFilterImagePath(keyTwo);
@@ -421,7 +429,6 @@ class AppConstants {
     }
   }
 
-
   static String _getMobilePumpImagePath(int status, String position) {
     switch (status) {
       case 0:
@@ -432,6 +439,21 @@ class AppConstants {
         return mblPumpNotON;
       case 3:
         return mblPumpNotOFF;
+      default:
+        return '';
+    }
+  }
+
+  static String _getAeratorPumpImagePath(int status, String position) {
+    switch (status) {
+      case 0:
+        return aeratorPumpOFF;
+      case 1:
+        return aeratorPumpON;
+      case 2:
+        return aeratorPumpNotON;
+      case 3:
+        return aeratorPumpNotOFF;
       default:
         return '';
     }
@@ -846,5 +868,7 @@ class AppConstants {
   static List<int> extendLoraList = [46];
   static List<int> extendGsmList = [47];
   static List<int> extendList = [...extendLoraList, ...extendGsmList];
+
+  static List<int> aquacultureModelList = [72];
 
 }

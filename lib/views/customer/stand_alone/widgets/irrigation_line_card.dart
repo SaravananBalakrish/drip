@@ -19,7 +19,11 @@ class IrrigationLineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (line.name == 'All irrigation line') return const SizedBox();
+
+    if (line.name == 'All irrigation line' ||
+        line.name == 'All Aquaculture line') {
+      return const SizedBox();
+    }
 
     final rows = [
       ...line.mainValveObjects.map((mainValve) => DataRow(cells: [
