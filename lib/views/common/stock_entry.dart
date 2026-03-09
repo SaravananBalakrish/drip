@@ -730,6 +730,7 @@ class _StockEntryState extends State<StockEntry> {
       readOnly: readOnly,
       maxLength: maxLength,
       inputFormatters: inputFormatters,
+      maxLengthEnforcement: MaxLengthEnforcement.enforced,
       validator: validator,
       onTap: onTap,
       decoration: InputDecoration(
