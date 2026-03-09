@@ -67,7 +67,6 @@ class Filter{
   });
 
   factory Filter.fromJson(data){
-    print("data : $data");
     return Filter(
         sNo: data['sNo'],
         filterMode: data['filterMode'] ?? 1
