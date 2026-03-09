@@ -7,7 +7,7 @@ import '../utils/enums.dart';
 
 class AnalyticsViewModel extends SafeChangeNotifier {
   final Repository repository;
-  SalesDataModel mySalesData = SalesDataModel(graph: {}, total: []);
+  SalesDataModel mySalesData = SalesDataModel(graph: {});
   int totalSales = 0;
   final int userId;
 

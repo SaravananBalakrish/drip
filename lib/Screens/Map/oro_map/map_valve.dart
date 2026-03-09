@@ -60,6 +60,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
       "green": await load('assets/png/markergreen.png'),
       "red": await load('assets/png/markerred.png'),
       "blue": await load('assets/png/markerblue.png'),
+      "yellow": await load('assets/png/markeryellow.png'),
       "pump": await load('assets/png/markerpump.png'),
       "sensor": await load('assets/png/markersensor.png'),
       "fert": await load('assets/png/markerfertilizer.png'),
@@ -77,17 +78,18 @@ class _MapScreenValveState extends State<MapScreenValve> {
         "userId": widget.customerId,
         "controllerId": widget.controllerId,
       });
-
-      print("_fetchData response:$response");
+       // print('getgeography userId${widget.userId},ctrl id ${widget.controllerId}');
       if (response.statusCode != 200) return;
 
       final data = jsonDecode(response.body);
+      // print("_fetchData data:$data");
+
       final deviceList = data["data"]["deviceList"] ?? [];
 
       Set<Marker> newMarkers = {};
 
       for (var device in deviceList) {
-        final geo = device["geography"];
+         final geo = device["geography"];
         if (geo != null &&
             geo["lat"] != null &&
             geo["long"] != null) {
@@ -104,14 +106,17 @@ class _MapScreenValveState extends State<MapScreenValve> {
 
         for (var obj in device["connectedObject"] ?? []) {
           if (obj["lat"] != null && obj["long"] != null) {
+
+            var resultstaus = getStatusPercentage(obj["sNo"],data["data"]["liveMessage"]);
+
             newMarkers.add(_createMarker(
               id: "obj-${obj["sNo"]}",
               lat: obj["lat"],
               lng: obj["long"],
               title: obj["name"] ?? obj["objectName"],
               type: obj["objectName"],
-              status: obj["status"],
-              percentage: obj["percentage"] ?? 0,
+              status: resultstaus["status"] ?? 0,
+              percentage: resultstaus["percentage"] ?? 0,
             ));
           }
         }
@@ -122,12 +127,59 @@ class _MapScreenValveState extends State<MapScreenValve> {
         markers = newMarkers;
         if (initialCenter != null) {
           center = initialCenter;
-          print("center:$center");
-        }
+         }
       });
 
     } catch (e) {
       debugPrint("Error: $e");
+    }
+  }
+
+  Map<String, int> getStatusPercentage(
+      double serialNumber, Map<String, dynamic>? liveMessage)
+  {
+     try {
+      // 1. Safe extraction of the nested map and string
+      if (liveMessage == null || liveMessage["cM"] == null) {
+        return {"status": 0, "percentage": 0};
+      }
+
+      // Cast cM safely
+      final dynamic cMData = liveMessage["cM"];
+      if (cMData is! Map) return {"status": 0, "percentage": 0};
+
+      final String? data = cMData["2402"]?.toString();
+
+      if (data == null || data.isEmpty) {
+        print('data is empty or null');
+        return {"status": 0, "percentage": 0};
+      }
+
+      final List<String> values = data.split(";");
+
+      for (var value in values) {
+        final List<String> parts = value.split(",");
+
+        if (parts.length >= 3) {
+          // 2. Convert string ID to double to ensure 13.010 == 13.01
+          double? partId = double.tryParse(parts[0]);
+
+          if (partId != null && partId == serialNumber) {
+             return {
+              "status": int.tryParse(parts[1]) ?? 0,
+              "percentage": int.tryParse(parts[2]) ?? 0,
+            };
+          }
+        }
+      }
+
+      print('No match found for serialNumber');
+      return {"status": 0, "percentage": 0};
+
+    } catch (e, stacktrace) {
+      print("Error getting valve data: $e");
+      print("Stacktrace: $stacktrace");
+      return {"status": 0, "percentage": 0};
     }
   }
 
@@ -140,7 +192,6 @@ class _MapScreenValveState extends State<MapScreenValve> {
             obj["objectName"].toString().contains("Valve") &&
             obj["lat"] != null &&
             obj["long"] != null) {
-          print("valve:%:${LatLng(obj["lat"], obj["long"])}");
 
           return LatLng(obj["lat"], obj["long"]);
         }
@@ -152,7 +203,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
       for (var obj in device["connectedObject"] ?? []) {
         if (obj["lat"] != null && obj["long"] != null) {
 
-          print("object:%:${LatLng(obj["lat"], obj["long"])}");
+          // print("object:%:${LatLng(obj["lat"], obj["long"])}");
           return LatLng(obj["lat"], obj["long"]);
         }
       }
@@ -164,7 +215,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
       if (geo != null &&
           geo["lat"] != null &&
           geo["long"] != null) {
-        print("geography:%:${LatLng(geo["lat"], geo["long"])}");
+        // print("geography:%:${LatLng(geo["lat"], geo["long"])}");
 
         return LatLng(geo["lat"], geo["long"]);
       }
@@ -194,30 +245,52 @@ class _MapScreenValveState extends State<MapScreenValve> {
     );
   }
 
-  // ---------------- ICON LOGIC ----------------
+
+
   BitmapDescriptor _getIcon(String type, int? status, int? percentage) {
+
+    int st = status ?? 0;
+    int per = percentage ?? 0;
+
     if (type.contains("Valve")) {
-      if (status == 1 && percentage == 100) {
-        return markerIcons["blue"]!;
-      } else if (status == 0 && percentage == 0) {
-        return markerIcons["gray"]!;
-      } else if (status == 0 && percentage! > 0) {
-        return markerIcons["yellow"]!;
-      } else if (status == 1 && percentage! <= 100) {
-        return markerIcons["green"]!;
+      if (st == 1 && per == 100) {
+        return markerIcons["blue"] ?? BitmapDescriptor.defaultMarker;
+      }
+      else if (st == 0 && per == 0) {
+        return markerIcons["gray"] ?? BitmapDescriptor.defaultMarker;
+      }
+      else if (st == 0 && per > 0) {
+        return markerIcons["yellow"] ?? BitmapDescriptor.defaultMarker;
+      }
+      else if (st == 1 && per <= 100) {
+        return markerIcons["green"] ?? BitmapDescriptor.defaultMarker;
       }
       else {
-        return markerIcons["gray"]!;
+        return markerIcons["gray"] ?? BitmapDescriptor.defaultMarker;
       }
     }
 
-    if (type.contains("Pump")) return markerIcons["pump"]!;
-    if (type.contains("Sensor")) return markerIcons["sensor"]!;
-    if (type.contains("Filter")) return markerIcons["filter"]!;
-    if (type.contains("fertilizer")) return markerIcons["fert"]!;
-    if (type.contains("Injector")) return markerIcons["injector"]!;
+    if (type.contains("Pump")) {
+      return markerIcons["pump"] ?? BitmapDescriptor.defaultMarker;
+    }
 
-    return markerIcons["blue"]!;
+    if (type.contains("Sensor")) {
+      return markerIcons["sensor"] ?? BitmapDescriptor.defaultMarker;
+    }
+
+    if (type.contains("Filter")) {
+      return markerIcons["filter"] ?? BitmapDescriptor.defaultMarker;
+    }
+
+    if (type.contains("fertilizer")) {
+      return markerIcons["fert"] ?? BitmapDescriptor.defaultMarker;
+    }
+
+    if (type.contains("Injector")) {
+      return markerIcons["injector"] ?? BitmapDescriptor.defaultMarker;
+    }
+
+    return markerIcons["blue"] ?? BitmapDescriptor.defaultMarker;
   }
 
   // ---------------- MAP CREATED ----------------
@@ -243,10 +316,10 @@ class _MapScreenValveState extends State<MapScreenValve> {
   // ---------------- UI ----------------
   @override
   Widget build(BuildContext context) {
-    print("build center:$center");
+    // print("build center:$center");
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Geography new "),
+      appBar: AppBar(title: const Text("Geography"),
           actions: [
           IconButton(
           icon: Icon(Icons.map_outlined),

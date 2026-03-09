@@ -37,7 +37,8 @@ List<Widget> sensorList({
         imagePath: imagePath,
         customerId: customerId,
         controllerId: controllerId,
-      ) : SensorWidget(
+      ) :
+      SensorWidget(
         sensor: sensor,
         sensorType: type,
         imagePath: imagePath,
@@ -53,12 +54,13 @@ List<Widget> valveList({
   required int customerId,
   required int controllerId,
   required int modelId,
-  bool isMobile = false,
+  required bool prsOutIsAval,
+  bool isNarrow = false,
 }) {
   return mapWidgets(
     list: valves,
     builder: (valve, index) {
-      return isMobile ?
+      return isNarrow ?
       ValveWidgetMobile(
         valve: valve,
         customerId: customerId,
@@ -70,7 +72,7 @@ List<Widget> valveList({
         customerId: customerId,
         controllerId: controllerId,
         modelId: modelId,
-        isLastValve: index == valves.length - 1,
+        isLastValve: prsOutIsAval ? false : index == valves.length - 1,
       );
     },
   );

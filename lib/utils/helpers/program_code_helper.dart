@@ -12,14 +12,6 @@ class ProgramCodeHelper {
       'button': "Cond Couldn't",
       'description': "Started By Condition Couldn't Stop",
     },
-    -3: {
-      'button': "Started By Rtc",
-      'description': "Started By Rtc Couldn't Stop",
-    },
-    -4: {
-      'button': "Cond Couldn't",
-      'description': "Stopped by Condition, Couldn't bypass and Start",
-    },
     7: {
       'button': "Stop Manually",
       'description': "Stop Manually",
@@ -52,10 +44,23 @@ class ProgramCodeHelper {
       'button': "Cont Manually",
       'description': "Continue Manually",
     },
+    -3: {
+      'button': "Started By Rtc",
+      'description': "Started By Rtc Couldn't Stop",
+    },
     5: {
       'button': "Bypass Start Rtc",
       'description': "ByPass And Start By Rtc",
     },
+    -4: {
+      'button': "Cond Couldn't",
+      'description': "Stopped by Condition, Couldn't bypass and Start",
+    },
+    6: {
+      'button': "Bypass",
+      'description': "Bypass Cyclic Off Time",
+    },
+
   };
 
   static String getButtonName(int code) {

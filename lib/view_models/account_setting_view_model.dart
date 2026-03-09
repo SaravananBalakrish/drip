@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../models/admin_dealer/language_list.dart';
 import '../repository/repository.dart';
 
 class UserSettingViewModel extends ChangeNotifier {
@@ -9,7 +8,6 @@ class UserSettingViewModel extends ChangeNotifier {
   bool isLoading = false;
   String errorMsg = '';
 
-  final List<LanguageList> languageList = <LanguageList>[];
   String mySelection = 'English';
 
   String userName, mobileNo, emailId;
