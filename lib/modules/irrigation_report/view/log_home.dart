@@ -177,15 +177,14 @@ class _LogHomeState extends State<LogHome> {
   @override
   void initState() {
     // TODO: implement initState
-    print('parameters => ${parameters}');
+    if (kDebugMode) {
+      print('parameters => $parameters');
+    }
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (mounted) {
         IrrigationLogParameterFromServer = widget.serverData['irrigationLog'];
-        print('irrigationLogParameterFromServer => $IrrigationLogParameterFromServer');
         for(var globalParameter in IrrigationLogParameterFromServer.keys){
-          print('see : ${IrrigationLogParameterFromServer[globalParameter]}');
           for(var localParameter in IrrigationLogParameterFromServer[globalParameter].keys){
-            // print('hw : ${localParameter}  data => ${irrigationLogParameterFromServer[globalParameter][localParameter]}');
             var data = IrrigationLogParameterFromServer[globalParameter][localParameter];
             var split = localParameter.split('/');
             if(data[1] == true){
@@ -199,7 +198,6 @@ class _LogHomeState extends State<LogHome> {
             }
           }
         }
-        print('parameters : $parameters');
         getData();
       }
     });
@@ -211,8 +209,6 @@ class _LogHomeState extends State<LogHome> {
     _horizontalScroll1 = _scrollable2.addAndGet();
     _horizontalScroll2 = _scrollable2.addAndGet();
     super.initState();
-    print("name :::: ${widget.nameData}");
-    print('initState finished');
   }
 
   // void didChangeDependencies() {
@@ -227,16 +223,34 @@ class _LogHomeState extends State<LogHome> {
     return number.toString().padLeft(2, '0');
   }
 
+  void loadingDialog()async{
+    showDialog(
+        barrierDismissible: false,
+        context: context, builder: (context){
+      return const PopScope(
+        canPop: false,
+        child: AlertDialog(
+          content: Row(
+            spacing: 20,
+            children: [
+              CircularProgressIndicator(),
+              Text('Please wait...')
+            ],
+          ),
+        ),
+      );
+    }
+    );
+  }
+
+
   void getData()async{
-    print('data request to the server.............');
+    loadingDialog();
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('dd/MM/yyyy').format(now);
-    print('_selectedDate : $_selectedDate');
     _selectedDate = _selectedDate == '' ? '$formattedDate - $formattedDate' : _selectedDate;
-    print('_selectedDate : $_selectedDate');
     String dateString1 = _selectedDate.split(' - ')[0];
     String dateString2 = _selectedDate.split(' - ')[1];
-    print("dateString2 ==> $dateString2");
 
     List<String> parts1 = dateString1.split('/');
     List<String> parts2 = dateString2.split('/');
@@ -256,7 +270,6 @@ class _LogHomeState extends State<LogHome> {
     irrigationParameterArrayDuplicate.editName(widget.nameData);
     try{
       String? startMonth = selectedDateRange?.start.month.toString();
-      print('startMonth : $startMonth');
 
       String? startday = selectedDateRange?.start.day.toString();
       String? endMonth = selectedDateRange?.end.month.toString();
@@ -271,8 +284,6 @@ class _LogHomeState extends State<LogHome> {
       };
       var response = await IrrigationRepository().getLogDateWise(body);
       Map<String, dynamic> jsonData = jsonDecode(response.body);
-      print('jsonData $jsonData');
-      print('js == > ${jsonData['data']}');
       if(jsonData['code'] == 200){
         setState(() {
           dataSource = jsonData['data'];
@@ -373,7 +384,6 @@ class _LogHomeState extends State<LogHome> {
                       for(var howManyLine = 0;howManyLine < data['irrigation']['ProgramCategory'].length;howManyLine++){
                         for(var splitLine in data['irrigation']['ProgramCategory'][howManyLine].split('_')){
                           setState(() {
-                            print("data['irrigation']['HeadUnit']  : ${data['irrigation']['HeadUnit']}");
                             if (!line.any((element) => element['name'] == splitLine)) {
                               line.add({
                                 'name' : splitLine,
@@ -428,13 +438,9 @@ class _LogHomeState extends State<LogHome> {
 
             }
           }
-          print('get function doubt......');
           setState(() {
             // Check if the valve list has elements before splitting and sorting
             if (valve.isNotEmpty) {
-              for (var val in valve) {
-                print(val['name'].split('VL.'));
-              }
               valve.sort((a, b) {
                 var aParts = a['name'].split('VL.');
                 var bParts = b['name'].split('VL.');
@@ -459,7 +465,6 @@ class _LogHomeState extends State<LogHome> {
               line.sort((a, b) {
                 var aParts = a['name'].split('.');
                 var bParts = b['name'].split('.');
-                print("aParts : ${aParts}  bParts : ${bParts}");
                 if (aParts.length > 1 && bParts.length > 1) {
                   return int.parse(aParts[1]).compareTo(int.parse(bParts[1]));
                 }
@@ -483,7 +488,6 @@ class _LogHomeState extends State<LogHome> {
             }
           });
 
-          print('get function ended......');
           setState(() {
             if(_irrigationOptionWise[0][1] == true){
               dataToShow = irrigationParameterArray.editDateWise(dataSource, date);
@@ -497,7 +501,9 @@ class _LogHomeState extends State<LogHome> {
               dataToShow = irrigationParameterArray.editStatusWise(dataSource, status);
             }
           });
-          print('get function completed......');
+          if (kDebugMode) {
+            print('get function completed......');
+          }
         }
         setState(() {
           httpError = 0;
@@ -510,8 +516,9 @@ class _LogHomeState extends State<LogHome> {
           selectedPages = 1;
         });
       }
-
+      Navigator.pop(context);
     }catch(e,stackTrace){
+      Navigator.pop(context);
       setState(() {
         httpError = 1;
       });
@@ -555,13 +562,11 @@ class _LogHomeState extends State<LogHome> {
   // }
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-    print('args : ${args}');
     setState(() {
       if (args.value is PickerDateRange) {
         _selectedDate  = '${DateFormat('dd/MM/yyyy').format(args.value.startDate)} -'
             ' ${DateFormat('dd/MM/yyyy').format(args.value.endDate ?? args.value.startDate)}';
 
-        print('_selectedDate : $_selectedDate');
       } else if (args.value is DateTime) {
         _selectedDate = args.value.toString();
       } else if (args.value is List<DateTime>) {
@@ -569,7 +574,6 @@ class _LogHomeState extends State<LogHome> {
       } else {
         _rangeCount = args.value.length.toString();
       }
-      print("range: ${_range},rangecount:${_rangeCount},Select date:${_selectedDate}");
     });
   }
 
@@ -581,7 +585,7 @@ class _LogHomeState extends State<LogHome> {
             title: Column(
               children: [
                 const Text('Irrigation Log'),
-                Text('${_selectedDate}',style: const TextStyle(fontSize: 12),),
+                Text(_selectedDate,style: const TextStyle(fontSize: 12),),
               ],
             ),
             actions: [
