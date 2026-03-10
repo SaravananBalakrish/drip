@@ -159,6 +159,55 @@ class MqttService {
   Future<void> topicToSubscribe(String topic) async {
     try {
       int retries = 0;
+      // Wait until real MQTT connection is ready
+      while ((_client?.connectionStatus?.state !=
+          MqttConnectionState.connected) &&
+          retries < 10) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        retries++;
+      }
+
+      if (_client?.connectionStatus?.state !=
+          MqttConnectionState.connected) {
+        debugPrint('MQTT not connected. Cannot subscribe to topic: $topic');
+        return;
+      }
+
+      // Unsubscribe previous topic safely
+      if (currentTopic != null && currentTopic != topic) {
+        _client?.unsubscribe(currentTopic!);
+      }
+
+      await _subscription?.cancel();
+
+      _client?.subscribe(topic, MqttQos.atLeastOnce);
+      currentTopic = topic;
+
+      _subscription = _client?.updates?.listen(
+            (List<MqttReceivedMessage<MqttMessage?>>? c) {
+          if (c != null && c.isNotEmpty) {
+            final MqttPublishMessage recMess =
+            c[0].payload as MqttPublishMessage;
+
+            final String pt =
+            MqttPublishPayload.bytesToStringAsString(
+                recMess.payload.message);
+
+            onMqttPayloadReceived(pt);
+          }
+        },
+      );
+
+      debugPrint("Subscribed to $topic");
+
+    } catch (e, stacktrace) {
+      debugPrint('MQTT subscribe error: $e\n$stacktrace');
+    }
+  }
+
+  /*Future<void> topicToSubscribe(String topic) async {
+    try {
+      int retries = 0;
       while (!isConnected && retries < 10) {
         await Future.delayed(const Duration(milliseconds: 500));
         retries++;
@@ -189,7 +238,7 @@ class MqttService {
     } catch (e, stacktrace) {
       debugPrint('MQTT subscribe error: $e\n$stacktrace');
     }
-  }
+  }*/
 
   void topicToUnSubscribe(String topic) {
     if (_client == null) return;
