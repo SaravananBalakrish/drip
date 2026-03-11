@@ -9,6 +9,7 @@ import '../../../customer/home_sub_classes/current_program.dart';
 import '../../../customer/home_sub_classes/next_schedule.dart';
 import '../../../customer/scheduled_program/scheduled_program_wide.dart';
 import '../../../customer/widgets/my_material_button.dart';
+import '../widgets/aquaculture_line.dart';
 import '../widgets/irrigation_line_wide.dart';
 import '../widgets/valve_status_legend.dart';
 
@@ -23,16 +24,19 @@ class CustomerHomeMiddle extends StatelessWidget {
     final cM = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex];
 
     bool isNova = [...AppConstants.ecoGemModelList].contains(cM.modelId);
+    bool isAquaculture = [...AppConstants.aquacultureModelList].contains(
+        cM.modelId);
 
     final irrigationLines = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].irrigationLine;
     final scheduledProgram = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex].programList;
 
-    final linesToDisplay = (viewModel.myCurrentIrrLine == "All irrigation line" || viewModel.myCurrentIrrLine.isEmpty)
+    final linesToDisplay = (viewModel.myCurrentIrrLine == "All irrigation line" ||
+        viewModel.myCurrentIrrLine == "All Aquaculture line" || viewModel.myCurrentIrrLine.isEmpty)
         ? irrigationLines.where((line) => line.name != viewModel.myCurrentIrrLine).toList()
         : irrigationLines.where((line) => line.name == viewModel.myCurrentIrrLine).toList();
 
     return _buildWebLayout(context, customerId, cM.controllerId, cM.modelId, cM.deviceId,
-        linesToDisplay, scheduledProgram, viewModel, isNova);
+        linesToDisplay, scheduledProgram, viewModel, isNova, isAquaculture);
   }
 
   Widget displayLinearProgressIndicator() {
@@ -49,7 +53,7 @@ class CustomerHomeMiddle extends StatelessWidget {
 
   Widget _buildWebLayout(BuildContext context, int customerId, int controllerId, int modelId,
       String deviceId, List<IrrigationLineModel> irrigationLine,
-      scheduledProgram, CustomerScreenControllerViewModel viewModel, bool isNova) {
+      scheduledProgram, CustomerScreenControllerViewModel viewModel, bool isNova, bool isAquaculture) {
 
     return Consumer<CustomerScreenControllerViewModel>(
       builder: (context, viewModel, _) {
@@ -62,7 +66,7 @@ class CustomerHomeMiddle extends StatelessWidget {
 
         return Column(
           children: [
-            buildValveStatusLegend(),
+            buildValveStatusLegend(isAquaculture),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -130,6 +134,8 @@ class CustomerHomeMiddle extends StatelessWidget {
                                 ),
                               ),
                             ),
+                            isAquaculture ? AquacultureLine(irrLine: line, customerId: customerId,
+                                controllerId: controllerId, modelId: modelId, deviceId: deviceId) :
                             buildIrrigationLine(context, line, customerId, controllerId, modelId, deviceId),
                           ],
                         ),

@@ -65,7 +65,7 @@ class IrrigationLineNarrow extends StatelessWidget {
         controllerId: controllerId, modelId: modelId, isNarrow: true),
 
       ...valveList(valves: valves, customerId: customerId,
-        controllerId: controllerId, modelId: modelId, isMobile: true),
+        controllerId: controllerId, modelId: modelId, isNarrow: true, prsOutIsAval: false),
     ];
 
     return LayoutBuilder(

@@ -78,7 +78,9 @@ class IrrigationLineModel{
         waterSource: data['waterSource'] != null ? (data['waterSource'] as List<dynamic>).map((sNo) => sNo as double).toList() : [],
         sourcePump: (data['sourcePump'] as List<dynamic>).map((sNo) => sNo as double).toList(),
         irrigationPump: (data['irrigationPump'] as List<dynamic>).map((sNo) => sNo as double).toList(),
-        aerator: data['aerator'] != null ? (data['aerator'] as List<dynamic>).map((sNo) => sNo as double).toList() : [],
+        aerator: data.containsKey('aerator') && data['aerator'] != null
+            ? (data['aerator'] as List<dynamic>).map((sNo) => sNo as double).toList()
+            : [],
         centralFiltration: intOrDoubleValidate(data['centralFiltration']),
         localFiltration: intOrDoubleValidate(data['localFiltration']),
         centralFertilization: intOrDoubleValidate(data['centralFertilization']),
