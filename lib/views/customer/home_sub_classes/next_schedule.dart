@@ -87,13 +87,6 @@ class NextSchedule extends StatelessWidget {
                           DataCell(Center(child: Center(child: Text(getSequenceName(int.parse(values[0]), values[1]) ?? '--')))),
                           DataCell(Center(child: Text(convert24HourTo12Hour(values[6])))),
                           DataCell(Center(child: Text(values[3]))),
-                          /*DataCell(Text(widget.programQueue[index].schMethod==1?'No Schedule':widget.programQueue[index].schMethod==2?'Schedule by days':
-                          widget.programQueue[index].schMethod==3?'Schedule as run list':'Day count schedule')),
-                          DataCell(Text(widget.programQueue[index].programCategory)),
-                          DataCell(Center(child: Text('${widget.programQueue[index].currentZone}'))),
-                          DataCell(Center(child: Center(child: Text(widget.programQueue[index].zoneName)))),
-                          DataCell(Center(child: Text(convert24HourTo12Hour(widget.programQueue[index].startTime)))),
-                          DataCell(Center(child: Text(widget.programQueue[index].totalDurORQty))),*/
                         ]);
                       }),
                     ),

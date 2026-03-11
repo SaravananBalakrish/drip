@@ -282,7 +282,7 @@ class CustomerHomeNarrow extends StatelessWidget {
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.only(left: 5, right: 16),
+          padding: const EdgeInsets.only(left: 5, right: 100),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -665,7 +665,8 @@ class CustomerHomeNarrow extends StatelessWidget {
       return Row(
         children: List.generate(nextSchedule.length, (index) {
 
-          List<String> values = nextSchedule[index ~/ 2].split(',');
+          List<String> values = nextSchedule[index].split(',');
+
           final programName =  MyFunction().getProgramNameById(int.parse(values[0]), scheduledPrograms);
           final sqName =  MyFunction().getSequenceName(int.parse(values[0]), values[1], scheduledPrograms) ?? '--';
 
