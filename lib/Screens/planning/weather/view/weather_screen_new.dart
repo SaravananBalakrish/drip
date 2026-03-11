@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +7,8 @@ import 'package:provider/provider.dart';
 import '../../../../StateManagement/customer_provider.dart';
 import '../../../../repository/repository.dart';
 import '../../../../services/http_service.dart';
+import '../../../../services/mqtt_service.dart';
+import '../../../../utils/environment.dart';
 import '../../../../utils/formatters.dart';
 import '../../../../views/common/widgets/build_loading_indicator.dart';
 import '../model/weather_model.dart';
@@ -49,11 +53,21 @@ class WeatherScreenNew extends StatefulWidget {
 class _WeatherScreenNewState extends State<WeatherScreenNew>
     with TickerProviderStateMixin {
   TabController? _tabController;
+  final MqttService manager = MqttService();
 
   @override
   void dispose() {
     _tabController?.dispose();
     super.dispose();
+  }
+
+  Request() {
+    String payLoadFinal = jsonEncode({
+      "5000":
+      {"5001": ""},
+    });
+    manager.topicToPublishAndItsMessage(
+        payLoadFinal, '${Environment.mqttPublishTopic}/${widget.deviceID}');
   }
 
   @override
@@ -84,6 +98,7 @@ class _WeatherScreenNewState extends State<WeatherScreenNew>
                     IconButton(
                       icon:  const Icon(Icons.refresh),
                       onPressed: () {
+                        Request();
                         vm.fetchWeatherData(
                           widget.customerId,
                           widget.controllerId,
@@ -123,6 +138,7 @@ class _WeatherScreenNewState extends State<WeatherScreenNew>
                 actions: [IconButton(
                   icon:  const Icon(Icons.refresh),
                   onPressed: () {
+                    Request();
                     vm.fetchWeatherData(
                       widget.customerId,
                       widget.controllerId,
@@ -134,13 +150,13 @@ class _WeatherScreenNewState extends State<WeatherScreenNew>
                 controller: _tabController,
                 children: [
                   for (final line in lines)
-                    _LineTabView(line: line, vm: vm, isNarrow: widget.isNarrow,customerId: widget.customerId,userId: widget.controllerId,),
+                    _LineTabView(line: line, vm: vm, isNarrow: widget.isNarrow,customerId: widget.customerId,userId: widget.controllerId,deviceId: widget.deviceID,),
                 ],
               ),
             );
           }else {
              return Scaffold(
-               body: _LineTabView(line: lines[0], vm: vm, isNarrow: widget.isNarrow,customerId: widget.customerId,userId: widget.controllerId,),
+               body: _LineTabView(line: lines[0], vm: vm, isNarrow: widget.isNarrow,customerId: widget.customerId,userId: widget.controllerId,deviceId: widget.deviceID,),
             );
           }
         },
@@ -155,11 +171,12 @@ class _LineTabView extends StatefulWidget {
   final bool isNarrow;
   final int customerId;
   final int userId;
+  final String deviceId;
 
   const _LineTabView({
     required this.vm,
     required this.line,
-    required this.isNarrow, required this.customerId, required this.userId,
+    required this.isNarrow, required this.customerId, required this.userId,required this.deviceId,
   });
 
   @override
@@ -168,7 +185,16 @@ class _LineTabView extends StatefulWidget {
 
 class _LineTabViewState extends State<_LineTabView> {
   int selectedStationIndex = 0;
+  final MqttService manager = MqttService();
 
+  Request() {
+    String payLoadFinal = jsonEncode({
+      "5000":
+      {"5001": ""},
+    });
+    manager.topicToPublishAndItsMessage(
+        payLoadFinal, '${Environment.mqttPublishTopic}/${widget.deviceId}');
+  }
   @override
   Widget build(BuildContext context) {
     final vm = widget.vm;
@@ -248,7 +274,7 @@ class _LineTabViewState extends State<_LineTabView> {
       ],
     );
   }
-
+//web
   Widget _buildWideLayout(
       station,
       device,
@@ -265,6 +291,18 @@ class _LineTabViewState extends State<_LineTabView> {
             width: 320,
             child: Column(
               children: [
+                Row(
+                  children: [
+                    IconButton(
+                      icon:  const Icon(Icons.refresh),
+                      onPressed: () {
+                        Request();
+                        widget.vm.fetchWeatherData(widget.customerId, widget.userId);
+                      },
+                    ),
+                    Text("Get Live Data")
+                  ],
+                ),
                  _weatherSummaryCard(
                   formattedDT,
                   tempText,
@@ -278,8 +316,14 @@ class _LineTabViewState extends State<_LineTabView> {
             ),
           ),
         ),
-        Expanded(
-          child: ListView(
+              Expanded(
+    child: RefreshIndicator(
+    onRefresh: () async {
+    widget.vm.fetchWeatherData(widget.customerId, widget.userId);
+    // Wait a little to show the indicator
+    await Future.delayed(const Duration(milliseconds: 500));
+    },
+    child: ListView(
             children: [
               Card(
                 child: Padding(
@@ -317,7 +361,7 @@ class _LineTabViewState extends State<_LineTabView> {
               ),
             ],
           ),
-        ),
+        ),)
       ],
     );
   }
@@ -342,37 +386,63 @@ class _LineTabViewState extends State<_LineTabView> {
       String windText,
       String humidityText,
       ) {
-    return ListView(
-      padding: const EdgeInsets.all(8),
-      children: [
-        _weatherSummaryCard(
-          formattedDT,
-          tempText,
-          windText,
-          humidityText,
-          widget.vm.weatherModel!.weatherLive.cT,
-        ),
-        const SizedBox(height: 16),
-        sunCard(),
-        const SizedBox(height: 16),
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: Wrap(
-              spacing: 12,
-              runSpacing: 12,
-              children: station.sensors.map<Widget>((s) {
-                return SensorChip(
-                  sensor: s,
-                  vm: widget.vm,
-                  device: device,
-                  isNarrow: widget.isNarrow,
-                );
-              }).toList(),
+    return   ListView(
+        padding: const EdgeInsets.all(8),
+        children: [
+          Row(
+            children: [
+              IconButton(
+                icon:  const Icon(Icons.refresh),
+                onPressed: () {
+                  Request();
+                  widget.vm.fetchWeatherData(widget.customerId, widget.userId);
+                },
+              ),
+              Text("Get Live Data")
+            ],
+          ),
+          _weatherSummaryCard(
+            formattedDT,
+            tempText,
+            windText,
+            humidityText,
+            widget.vm.weatherModel!.weatherLive.cT,
+          ),
+          const SizedBox(height: 16),
+          sunCard(),
+          const SizedBox(height: 16),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Wrap(
+                spacing: 12,
+                runSpacing: 12,
+                children: station.sensors.map<Widget>((s) {
+                  return GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => SensorHourlyReportPage(
+                            deviceSrNo: '${station.device.serialNumber}',
+                            sensorSrNo: s.sNo.toString(), sensorName: s.name, userId: '${widget.customerId}', controllerId: "${widget.userId}" ,unit:unit(s.name),
+                          ),
+                        ),
+                      );
+                    },
+                    child: SensorChip(
+                      sensor: s,
+                      vm: widget.vm,
+                      device: device,
+                      isNarrow: widget.isNarrow,
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+
     );
   }
 
