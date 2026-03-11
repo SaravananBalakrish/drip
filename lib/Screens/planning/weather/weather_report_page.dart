@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +15,7 @@ class SensorHourlyReportPage extends StatefulWidget {
   final String sensorSrNo;
   final String sensorName;
   final String userId;
+  final String unit;
   final String controllerId;
 
   const SensorHourlyReportPage({
@@ -22,6 +25,7 @@ class SensorHourlyReportPage extends StatefulWidget {
     required this.sensorName,
     required this.userId,
     required this.controllerId,
+    required this.unit,
   });
 
   @override
@@ -51,16 +55,14 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
         "fromDate": selectedDate,
         "toDate": selectedDate,
       });
-       final model = weatherReportModelFromJson(response.body);
+      final model = weatherReportModelFromJson(response.body);
 
       if (model.data.isEmpty) {
-
         setState(() => isLoading = false);
         return;
       }
 
       final datum = model.data.first;
-
 
 
       final Map<String, String> hours = {
@@ -89,7 +91,7 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
         "23:00": datum.the2300,
         "00:00": datum.the0000,
       };
-       final List<SensorHourReport> temp = [];
+      final List<SensorHourReport> temp = [];
 
       hours.forEach((hour, raw) {
         final data = parseSensorHourData(
@@ -98,11 +100,11 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
           deviceSrNo: widget.deviceSrNo,
           targetSensor: widget.sensorSrNo,
         );
-         if (data != null) temp.add(data);
+        if (data != null) temp.add(data);
       });
 
       setState(() {
-         report = temp;
+        report = temp;
         isLoading = false;
       });
     } catch (e) {
@@ -110,7 +112,6 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
       debugPrint('Hourly Report Error: $e');
     }
   }
-
   // ------------------ DATE PICKER ------------------
 
   Future<void> _selectDate() async {
@@ -129,15 +130,15 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-         title: Column(
+        title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${widget.sensorName} Hourly Report'),
+            Text('${widget.sensorName} Report'),
             Text(
               selectedDate,
               style: const TextStyle(fontSize: 12),
@@ -156,50 +157,123 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
           : report.isEmpty
           ? const Center(child: Text('No data available'))
           : Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 8),
-            Expanded( // ✅ REQUIRED
-              child: DataTable2(
-                minWidth: 700,
-                headingRowColor: MaterialStateProperty.all(
-                  Colors.green.shade100,
+        padding: const EdgeInsets.all(16.0),
+        child: Center(
+          child: Container(
+            constraints: const BoxConstraints(maxWidth: 1000), // Better for Web
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeaderSummary(),
+                const SizedBox(height: 5),
+                Expanded(
+                  child: _buildDataTable(),
                 ),
-                columns: const [
-                  DataColumn2(label: Text('Hour',style: TextStyle(fontWeight: FontWeight.bold),), fixedWidth: 80,),
-                  DataColumn2(label: Text('Value',style: TextStyle(fontWeight: FontWeight.bold),)),
-                  DataColumn2(label: Text('Min',style: TextStyle(fontWeight: FontWeight.bold),)),
-                  DataColumn2(label: Text('Max',style: TextStyle(fontWeight: FontWeight.bold),)),
-                  DataColumn2(label: Text('Avg',style: TextStyle(fontWeight: FontWeight.bold),)),
-                  DataColumn2(label: Text('Error',style: TextStyle(fontWeight: FontWeight.bold),)),
-                ],
-                rows: report.map((r) {
-                  return DataRow(cells: [
-                    DataCell(Text(r.hour)),
-                    DataCell(Text(r.value)),
-                    DataCell(Text(r.minValue)),
-                    DataCell(Text(r.maxValue)),
-                    DataCell(Text(r.averageValue)),
-                    DataCell(
-                      Text(
-                        r.errorCode,
-                        style: TextStyle(
-                          color: r.errorCode == '255'
-                              ? Colors.green
-                              : Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ]);
-                }).toList(),
-              ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
+    );
+  }
 
+  Widget _buildHeaderSummary() {
+    return  Padding(
+      padding: EdgeInsets.only(left: 4.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text("${widget.sensorName}",
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          Text(selectedDate,
+              style: TextStyle(color: Colors.grey)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDataTable() {
+
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      clipBehavior: Clip.antiAlias, // Ensures table header matches card corners
+      child: DataTable2(
+         columnSpacing: 12,
+        horizontalMargin: 12,
+        minWidth: 600,
+        headingRowHeight: 50,
+        headingRowColor: MaterialStateProperty.all(Colors.teal),
+        border: const TableBorder(
+          horizontalInside: BorderSide(color: Colors.teal, width: 1),
+        ),
+        columns: const [
+          DataColumn2(
+            label: Text('Hour', style: TextStyle(fontWeight: FontWeight.bold)),
+            fixedWidth: 80,
+          ),
+          DataColumn2(label: Text(
+              'Value', style: TextStyle(fontWeight: FontWeight.bold))),
+          DataColumn2(label: Text(
+              'Min', style: TextStyle(fontWeight: FontWeight.bold))),
+          DataColumn2(label: Text(
+              'Max', style: TextStyle(fontWeight: FontWeight.bold))),
+          DataColumn2(label: Text(
+              'Avg', style: TextStyle(fontWeight: FontWeight.bold))),
+          DataColumn2(
+            label: Text(
+                'Status', style: TextStyle(fontWeight: FontWeight.bold)),
+            fixedWidth: 100,
+            numeric: true,
+          ),
+        ],
+        rows: report.map((r) {
+          Color rowColor;
+
+          if (r.errorCode == '255') {
+            rowColor = Colors.green.shade50;
+          } else if (r.errorCode == 'NA') {
+            rowColor = Colors.grey.shade300;
+          } else {
+            rowColor = Colors.red.shade50;
+          }
+           return DataRow( color: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                            return rowColor;
+                          },
+                        ), cells: [
+            DataCell(Text(
+                r.hour, style: const TextStyle(fontWeight: FontWeight.w500))),
+            DataCell(Text('${r.value} ${r.value != "NA" ? widget.unit : ''}')),
+            DataCell(Text('${r.minValue} ${r.minValue != "NA" ? widget.unit : ''}')),
+            DataCell(Text('${r.maxValue} ${r.maxValue != "NA" ? widget.unit : ''}')),
+            DataCell(Text('${r.averageValue} ${r.averageValue != "NA" ? widget.unit : ''}')),
+            DataCell(
+              _buildStatusBadge(r.errorCode),
+            ),
+          ]);
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildStatusBadge(String code) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color:  Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+            color: code == '255' ? Colors.green.shade50 : code == 'NA' ?  Colors.grey.shade50 : Colors.red.shade50,),
+      ),
+      child: Text(
+        code == '255' ? 'Normal' : code == 'NA' ?  '$code' : 'ERR-$code',
+        style:  TextStyle(
+          color: code == '255' ? Colors.green : code == 'NA' ?  Colors.grey : Colors.red,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
+      ),
     );
   }
 }

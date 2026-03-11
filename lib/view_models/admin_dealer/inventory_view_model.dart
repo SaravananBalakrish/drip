@@ -7,8 +7,9 @@ import '../../models/admin_dealer/stock_model.dart';
 import '../../repository/repository.dart';
 import '../../utils/enums.dart';
 import '../../utils/snack_bar.dart';
+import '../safe_change_notifier.dart';
 
-class InventoryViewModel extends ChangeNotifier {
+class InventoryViewModel extends SafeChangeNotifier {
 
   final Repository repository;
   final int userId;
@@ -16,7 +17,10 @@ class InventoryViewModel extends ChangeNotifier {
 
   List<InventoryModel> productInventoryList = [];
   List<InventoryModel> filterProductInventoryList = [];
-  bool isLoading = false, isLoadingMore = false;
+
+  bool isLoading = false;
+  bool isLoadingMore = false;
+
   final ScrollController scrollController = ScrollController();
 
   int totalProduct = 0;
@@ -33,25 +37,33 @@ class InventoryViewModel extends ChangeNotifier {
   int selectedProductId = 0;
 
   InventoryViewModel(this.repository, this.userId, this.userRole){
-    scrollController.addListener(() {
-      if (scrollController.position.pixels >= scrollController.position.maxScrollExtent - 100) {
-        if (totalProduct > productInventoryList.length && !isLoadingMore) {
-          isLoadingMore = true;
-          notifyListeners();
-          loadMoreData();
-        }
-      }
-    });
+    scrollController.addListener(_scrollListener);
   }
 
-  void loadMoreData() async {
+  void _scrollListener() {
+    if (isDisposed) return;
+
+    if (scrollController.position.pixels >=
+        scrollController.position.maxScrollExtent - 100) {
+
+      if (totalProduct > productInventoryList.length && !isLoadingMore) {
+        isLoadingMore = true;
+        safeNotify();
+        loadMoreData();
+      }
+    }
+  }
+
+  Future<void> loadMoreData() async {
     try {
-      await Future.delayed(const Duration(seconds: 3), () {
-        loadInventoryData(getSetNumber(productInventoryList.length));
-      });
+      await Future.delayed(const Duration(seconds: 2));
+      if (isDisposed) return;
+      await loadInventoryData(getSetNumber(productInventoryList.length));
     } finally {
-      isLoadingMore = false;
-      notifyListeners();
+      if (!isDisposed) {
+        isLoadingMore = false;
+        safeNotify();
+      }
     }
   }
 
@@ -61,44 +73,58 @@ class InventoryViewModel extends ChangeNotifier {
   }
 
   Future<void> loadInventoryData(int set) async {
-    if(set==1){
+
+    if (set == 1) {
       isLoading = true;
-      notifyListeners();
       productInventoryList.clear();
-    }else{
+    } else {
       isLoadingMore = true;
-      notifyListeners();
     }
+
+    safeNotify();
 
     try {
       Map<String, dynamic> body = {
         "userId": userId,
-        "userType": userRole.name == 'admin'?1:2,
+        "userType": userRole.name == 'admin' ? 1 : 2,
         "set": set,
         "limit": batchSize,
       };
+
       var response = await repository.fetchAllMyInventory(body);
+
+      if (isDisposed) return;
+
       if (response.statusCode == 200) {
-        final Map<String, dynamic> responseBody = jsonDecode(response.body);
+        final responseBody = jsonDecode(response.body);
+
         if (responseBody["code"] == 200) {
           final data = responseBody["data"];
+
           if (data != null) {
             totalProduct = data["totalProduct"] ?? 0;
+
             List<dynamic> productList = data["product"] ?? [];
-            productInventoryList.addAll(productList.map((e) => InventoryModel.fromJson(e)));
+
+            productInventoryList.addAll(
+              productList.map((e) => InventoryModel.fromJson(e)),
+            );
           }
-        } else {
-          debugPrint("API Error: ${responseBody['message']}");
         }
       }
-    } catch (error) {
-      debugPrint("Error: $error");
+    } catch (e) {
+      debugPrint("Inventory error: $e");
     } finally {
-      isLoading = false;
-      isLoadingMore = false;
-      notifyListeners();
+      if (!isDisposed) {
+        isLoading = false;
+        isLoadingMore = false;
+        safeNotify();
+      }
     }
   }
+
+
+
 
   Future<void> getModelByActiveList(
       BuildContext context,
@@ -138,7 +164,7 @@ class InventoryViewModel extends ChangeNotifier {
       debugPrint(stackTrace.toString());
     } finally {
       isLoading = false;
-      notifyListeners();
+      safeNotify();
     }
   }
 
@@ -287,7 +313,7 @@ class InventoryViewModel extends ChangeNotifier {
                       debugPrint('Error fetching models: $error');
                       debugPrint(stackTrace.toString());
                     } finally {
-                      notifyListeners();
+                      safeNotify();
                     }
                   }
                 },
@@ -432,61 +458,46 @@ class InventoryViewModel extends ChangeNotifier {
     );
   }
 
-  Future<void> fetchFilterData(dynamic categoryId, dynamic modelId, dynamic value) async {
+  Future<void> fetchFilterData(
+      dynamic categoryId,
+      dynamic modelId,
+      dynamic value) async {
+
     filterProductInventoryList.clear();
 
-    // Prevent empty or null search
     if (value == null || value.toString().trim().isEmpty) {
-      notifyListeners();
+      safeNotify();
       return;
     }
 
-    String searchValue = value.toString().trim();
-    bool isNameInput = RegExp(r'^[a-zA-Z\s]+$').hasMatch(searchValue);
-
-    int userType = userRole.name == 'admin' ? 1
-        : userRole.name == 'dealer' ? 2
-        : 3;
-
-    // NULL when not used
-    String? sendDeviceId = !isNameInput ? searchValue : null;
-    String? sendUserName = isNameInput ? searchValue : null;
-
-    // Do not send 0 values to API
-    dynamic sendCategory = (categoryId == null || categoryId == 0) ? null : categoryId;
-    dynamic sendModel = (modelId == null || modelId == 0) ? null : modelId;
-
-    Map<String, dynamic> body = {
-      "userId": userId,
-      "userType": userType,
-      "categoryId": sendCategory,
-      "modelId": sendModel,
-      "deviceId": sendDeviceId,
-      "userName": sendUserName,
-    };
-
     try {
-      var response = await repository.fetchFilteredProduct(body);
+      var response = await repository.fetchFilteredProduct({
+        "userId": userId,
+        "userType": userRole.name == 'admin' ? 1 : 2,
+        "categoryId": categoryId == 0 ? null : categoryId,
+        "modelId": modelId == 0 ? null : modelId,
+        "deviceId": value,
+      });
+
+      if (isDisposed) return;
+
       if (response.statusCode == 200) {
-        final Map<String, dynamic> res = jsonDecode(response.body);
+        final res = jsonDecode(response.body);
 
         if (res["code"] == 200) {
           List<dynamic> data = res["data"] ?? [];
 
           filterProductInventoryList =
               data.map((e) => InventoryModel.fromJson(e)).toList();
-          notifyListeners();
-          print("completed model process");
-        } else {
-          debugPrint("API Error: ${res['message']}");
         }
       }
-    } catch (err) {
-      debugPrint("Filter Error: $err");
-    } finally {
-      //notifyListeners();
+    } catch (e) {
+      debugPrint("Filter error: $e");
     }
+
+    safeNotify();
   }
+
 
   bool isName(String value) {
     final nameRegex = RegExp(r'^[a-zA-Z\s]+$');
@@ -495,7 +506,14 @@ class InventoryViewModel extends ChangeNotifier {
 
   void clearSearch() {
     filterProductInventoryList.clear();
-    notifyListeners();
+    safeNotify();
+  }
+
+  @override
+  void dispose() {
+    scrollController.removeListener(_scrollListener);
+    scrollController.dispose();
+    super.dispose();
   }
 
 }

@@ -116,9 +116,6 @@ class Repository{
     return await apiService.postRequest('/user/sentAndReceivedMessage/getHardwarePayload', body);
   }
 
-  Future<http.Response> fetchLanguageByActive(body) async {
-    return await apiService.postRequest('/language/getByActive', body);
-  }
 
   Future<http.Response> createCustomerAccount(body) async {
     return await apiService.postRequest('/user/create', body);
@@ -487,7 +484,7 @@ class Repository{
     return await apiService.postRequest('/user/log/weatherHourly/get', body);
   }
   Future<http.Response> updateUserDeviceFirmwareDetails(body) async {
-    return await apiService.putRequest('/user/deviceList/updateFirmwareDetails', body);
+    return await apiService.putRequest('/user/deviceList/loraFrequency/update', body);
   }
 
   Future<http.Response> getresetAccumulation(body) async {

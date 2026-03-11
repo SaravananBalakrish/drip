@@ -6,6 +6,7 @@ class IrrigationLineModel{
   List<double> sourcePump;
   List<double> waterSource;
   List<double> irrigationPump;
+  List<double> aerator;
   double centralFiltration;
   double localFiltration;
   double centralFertilization;
@@ -38,6 +39,7 @@ class IrrigationLineModel{
     required this.waterSource,
     required this.sourcePump,
     required this.irrigationPump,
+    required this.aerator,
     this.centralFiltration = 0.00,
     this.localFiltration = 0.00,
     this.centralFertilization = 0.00,
@@ -76,6 +78,9 @@ class IrrigationLineModel{
         waterSource: data['waterSource'] != null ? (data['waterSource'] as List<dynamic>).map((sNo) => sNo as double).toList() : [],
         sourcePump: (data['sourcePump'] as List<dynamic>).map((sNo) => sNo as double).toList(),
         irrigationPump: (data['irrigationPump'] as List<dynamic>).map((sNo) => sNo as double).toList(),
+        aerator: data.containsKey('aerator') && data['aerator'] != null
+            ? (data['aerator'] as List<dynamic>).map((sNo) => sNo as double).toList()
+            : [],
         centralFiltration: intOrDoubleValidate(data['centralFiltration']),
         localFiltration: intOrDoubleValidate(data['localFiltration']),
         centralFertilization: intOrDoubleValidate(data['centralFertilization']),
@@ -111,6 +116,7 @@ class IrrigationLineModel{
       'waterSource' : waterSource,
       'sourcePump' : sourcePump,
       'irrigationPump' : irrigationPump,
+      'aerator' : aerator,
       'centralFiltration' : centralFiltration,
       'localFiltration' : localFiltration,
       'centralFertilization' : centralFertilization,
@@ -180,5 +186,5 @@ double intOrDoubleValidate(value){
   }
 }
 
-enum LineParameter{source, sourcePump, irrigationPump, centralFiltration, localFiltration, centralFertilization, localFertilization, valve, mainValve, light, gate, fan, fogger,mist, pesticides, heater, screen, vent, powerSupply, pressureSwitch, waterMeter, pressureIn, pressureOut, moisture, temperature, soilTemperature, humidity, co2}
+enum LineParameter{source, sourcePump, irrigationPump, aerator, centralFiltration, localFiltration, centralFertilization, localFertilization, valve, mainValve, light, gate, fan, fogger,mist, pesticides, heater, screen, vent, powerSupply, pressureSwitch, waterMeter, pressureIn, pressureOut, moisture, temperature, soilTemperature, humidity, co2}
 

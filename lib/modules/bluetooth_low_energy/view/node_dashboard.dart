@@ -11,6 +11,7 @@ import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/view/trace_scre
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
 import 'package:responsive_grid/responsive_grid.dart';
+import '../../../flavors.dart';
 import '../repository/ble_repository.dart';
 import '../state_management/ble_service.dart';
 
@@ -27,6 +28,7 @@ class _NodeDashboardState extends State<NodeDashboard> {
   late BleProvider bleService;
   late int fileNameResponse;
   late Future<int> nodeBluetoothResponse;
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -179,8 +181,8 @@ class _NodeDashboardState extends State<NodeDashboard> {
       [
         ...AppConstants.pumpWithValveModelList,
         ...AppConstants.ecoGemModelList,
-        ...AppConstants.ecModel,
-        ...AppConstants.phModel,
+        // ...AppConstants.ecModel,
+        // ...AppConstants.phModel,
       ].contains(bleService.nodeData['modelId'])
     ){
       show = false;
@@ -216,11 +218,96 @@ class _NodeDashboardState extends State<NodeDashboard> {
             title: Text('Do you want to update firmware', style: TextStyle(fontSize: 14),),
             actions: [
               CustomMaterialButton(
+                outlined: true,
+                title: 'No',
+                onPressed: (){
+                  Navigator.pop(context);
+                },
+              ),
+              CustomMaterialButton(
                 title: 'Yes',
                 onPressed: (){
-                  bleService.changingNodeToBootMode();
                   Navigator.pop(context);
-                  userShouldWaitUntilRestart();
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return StatefulBuilder(builder: (context, stateSetter) {
+                        return AlertDialog(
+                          title: const Text('Password to Update Firmware'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Password',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Color(0xff475467),
+                                ),
+                              ),
+                              Form(
+                                key: formKey,
+                                child: TextFormField(
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter your password';
+                                    } else if (value !=
+                                        (F.title.toLowerCase().contains('oro')
+                                            ? 'Oro@321'
+                                            : F.title.toLowerCase().contains('smart')
+                                            ? 'LK@321'
+                                            : F.title.toLowerCase().contains('agritel')
+                                            ? 'Agritel@321'
+                                            : 'Oro@321')) {
+                                      return 'Invalid password';
+                                    }
+                                    return null;
+                                  },
+                                  obscureText: true,
+                                  decoration: InputDecoration(
+                                    contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                                    hintText: 'Password',
+                                    hintStyle: const TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: Color(0xff475467),
+                                    ),
+                                    prefixIcon: Icon(
+                                      Icons.password,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                                onPressed: (){
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('Cancel')
+                            ),
+                            CustomMaterialButton(
+                              onPressed: () {
+                                if (formKey.currentState!.validate()) {
+                                  bleService.changingNodeToBootMode();
+                                  Navigator.pop(context);
+                                  userShouldWaitUntilRestart();
+                                }
+                              },
+                              child: Text('Ok', style: TextStyle(color: Colors.white),),
+                            ),
+                          ],
+                        );
+                      });
+                    },
+                  );
+
                 },
               )
             ],

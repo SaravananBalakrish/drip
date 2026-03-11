@@ -4,9 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/standalone.dart' as tz;
-import '../../StateManagement/customer_provider.dart';
-import '../../models/admin_dealer/language_list.dart';
-import '../../models/customer/notification_list_model.dart';
 import '../../repository/repository.dart';
 import '../../services/communication_service.dart';
 import '../../utils/constants.dart';
@@ -24,7 +21,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
   int? userId;
   bool? isSubUser;
 
-  final List<LanguageList> languageList = <LanguageList>[];
   List<Map<String, dynamic>> subUsers = [];
 
   String farmName = '';
@@ -118,27 +114,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> getLanguage() async
-  {
-    setLoading(true);
-    try {
-      var response = await repository.fetchLanguageByActive({"active": "1"});
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-        if (jsonData["code"] == 200) {
-          final cntList = jsonData["data"] as List;
-          for (int i=0; i < cntList.length; i++) {
-            languageList.add(LanguageList.fromJson(cntList[i]));
-          }
-        }
-      }
-    } catch (error) {
-      debugPrint('Error fetching language list: $error');
-    } finally {
-      setLoading(false);
-    }
-  }
-
 
   Future<void> getSubUserList() async {
     if (customerId == null) return;
@@ -197,8 +172,6 @@ class GeneralSettingViewModel extends ChangeNotifier {
         AppConstants.ecoGemModelList.contains(modelId) ? simNumber : null,
         "modifyUser": userId,
       };
-
-      print(body);
 
       final payLoadFinal = jsonEncode({"6800": {"6801": selectedTimeZone}});
       final commService = Provider.of<CommunicationService>(context, listen: false);

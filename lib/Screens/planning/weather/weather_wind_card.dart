@@ -5,42 +5,47 @@ import 'dart:math' as math;
 import 'package:flutter_svg/svg.dart';
 
 class WindCard extends StatelessWidget {
-  final String windSpeed;
-  final String gusts;
-  final String directionText;
-  final double directionAngle;
+    final double directionAngle;
 
   const WindCard({
     super.key,
-    required this.windSpeed,
-    required this.gusts,
-    required this.directionText,
-    required this.directionAngle,
+      required this.directionAngle,
   });
 
   @override
   Widget build(BuildContext context) {
     return _baseCard(
-      title: "Wind",
-      child: Row(
+      title: "Wind Direction",
+      child: Column(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _KeyValueRow("Wind Speed", windSpeed),
-                // const SizedBox(height: 8),
-                // _KeyValueRow("Gusts", gusts),
-                const SizedBox(height: 8),
-                _KeyValueRow("Wind Direction ", directionText),
-              ],
-            ),
-          ),
+
+          _KeyValueRow("$directionAngle°", '${getDirection(directionAngle)}') ,
           const SizedBox(width: 12),
           _WindCompass(angle: directionAngle),
         ],
       ),
     );
+  }
+}
+String getDirection(double directionAngle) {
+  directionAngle = directionAngle % 360;
+
+  if (directionAngle >= 337.5 || directionAngle < 22.5) {
+    return "North";
+  } else if (directionAngle >= 22.5 && directionAngle < 67.5) {
+    return "North-East";
+  } else if (directionAngle >= 67.5 && directionAngle < 112.5) {
+    return "East";
+  } else if (directionAngle >= 112.5 && directionAngle < 157.5) {
+    return "South-East";
+  } else if (directionAngle >= 157.5 && directionAngle < 202.5) {
+    return "South";
+  } else if (directionAngle >= 202.5 && directionAngle < 247.5) {
+    return "South-West";
+  } else if (directionAngle >= 247.5 && directionAngle < 292.5) {
+    return "West";
+  } else {
+    return "North-West";
   }
 }
 
@@ -55,8 +60,7 @@ class _KeyValueRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(keyText, style: const TextStyle(fontSize: 13)),
-        Text(value,
+         Text('${keyText} - ${value}',
             style: const TextStyle(
                 fontWeight: FontWeight.bold, fontSize: 13)),
       ],
@@ -120,7 +124,7 @@ Widget _baseCard({required String title, required Widget child}) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w600)),
+        Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
         const SizedBox(height: 12),
         child,
       ],

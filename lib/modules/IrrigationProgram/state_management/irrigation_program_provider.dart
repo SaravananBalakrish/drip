@@ -58,8 +58,10 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
   List<ProgramMoistureSensor>? _moistureSensor;
   List<ProgramMoistureSensor>? get moistureSensor => _moistureSensor;
   List<DeviceObjectModel>? _agitators;
+  List<DeviceObjectModel>? _aerators;
   List<DeviceObjectModel>? _mainValves;
   List<DeviceObjectModel>? get agitators => _agitators;
+  List<DeviceObjectModel>? get aerators => _aerators;
   List<DeviceObjectModel>? get mainValves => _mainValves;
 
   List<DeviceObjectModel>? _selectedObjects;
@@ -94,6 +96,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       _moistureSensor = null;
       _irrigationLine = null;
       _agitators = null;
+      _aerators = null;
       _mainValves = null;
       configObjects.clear();
       irrigationLineFromConfigMaker.clear();
@@ -131,6 +134,11 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
             .whereType<DeviceObjectModel>()
             .toList();
         }
+
+        _aerators = _sampleIrrigationLine!.map((e) => e.aerator != null ? List<DeviceObjectModel>.from(e.aerator!) : [])
+            .expand((list) => list)
+            .whereType<DeviceObjectModel>()
+            .toList();
 
         _mainValves = _sampleIrrigationLine!.map((e) => e.mainValve != null ? List<DeviceObjectModel>.from(e.mainValve!) : [])
             .expand((list) => list)
@@ -2504,7 +2512,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     try {
       final response = await repository.getUserProgramSelection(userData);
       final jsonData = json.decode(response.body);
-      // print("selected objects :: ${jsonData['data']['selection']['selected']}");
+      print("selected objects :: ${jsonData['data']['selection']['selected']}");
       _additionalData = null;
       _selectedObjects = [];
 
@@ -2513,8 +2521,8 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
             .map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>))
             .toList();
 
-        // print("configObjects: $configObjects");
-        // print("selectedObjects before filter: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
+        print("configObjects: $configObjects");
+        print("selectedObjects before filter: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
 
         if (configObjects.isNotEmpty) {
           _selectedObjects!.removeWhere((element) => !configObjects.any((element2) {
@@ -2524,7 +2532,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
               irrigationPumpSnoList.contains(element.sNo);
               // sampleIrrigationLine!.map((e) => e.irrigationPump
             }
-            // print("Comparing element.sNo: ${element.sNo} with configSNo: $configSNo");
+            print("Comparing element.sNo: ${element.sNo} with configSNo: $configSNo");
             return element.objectId == 5
                 ? sampleIrrigationLine!.map((e) => e.irrigationPump ?? []).expand((list) => list).toList().map((ele) => ele.sNo).toList().contains(element.sNo)
                 : configSNo == element.sNo;
@@ -2535,7 +2543,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       } else {
         _selectedObjects = [];
       }
-      // print("selected objects in the get function :: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
+      print("selected objects in the get function :: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
       _additionalData = AdditionalData.fromJson(jsonData['data']['selection']);
     } catch (e) {
       log('Error: $e');
@@ -2592,6 +2600,10 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
   ProgramDetails? get programDetails => _programDetails;
   String get delayBetweenZones => _programDetails!.delayBetweenZones;
   String get adjustPercentage => _programDetails!.adjustPercentage;
+  String get cyclicOnTime => _programDetails!.cyclicOnTime;
+  String get cyclicOffTime => _programDetails!.cyclicOffTime;
+  bool get enablePressure => _programDetails!.enablePressure;
+  String get pressureValue => _programDetails!.pressureValue;
 
   Future<void> doneData(int userId, int controllerId, int serialNumber) async {
     try {
@@ -2741,6 +2753,18 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         break;
       case "adjustPercentage":
         _programDetails!.adjustPercentage = newValue;
+        break;
+      case "cyclicOnTime":
+        _programDetails!.cyclicOnTime = newValue;
+        break;
+      case "cyclicOffTime":
+        _programDetails!.cyclicOffTime = newValue;
+        break;
+      case "enablePressure":
+        _programDetails!.enablePressure = newValue;
+        break;
+      case "pressureValue":
+        _programDetails!.pressureValue = newValue;
         break;
       default:
         log("Not found");
@@ -3119,7 +3143,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         "2502": "${
             {
               "S_No": '$serialNumber',/*S_No*/
-              "ProgramType": '${programType == "Irrigation Program" ? 1 : 2}',/*ProgramType*/
+              "ProgramType": '${programType == "Irrigation Program" ? 1 : programType.contains('Aerator') ? 4 : 2}',/*ProgramType*/
               "ProgramCategory": '${programType == "Irrigation Program"
                   ? selectedObjects!.any((element) => element.objectId == 5)
                   ? sampleIrrigationLine!.where((line) => selectedObjects!
@@ -3177,7 +3201,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   ? rtcOffTime
                   : _sampleScheduleModel!.defaultModel.allowStopMethod
                   ? generateRtcTimeStringByUser() : rtcOnTime),/*RtcOff_MaxTime*/
-              "CycleCount": selectedScheduleType == scheduleTypes[3] ? _sampleScheduleModel!.dayCountSchedule.schedule["noOfCycles"] : rtcNoOfCycles,/*CycleCount*/
+              "CycleCount": selectedScheduleType == scheduleTypes[3] ? (_sampleScheduleModel!.dayCountSchedule.schedule["noOfCycles"] == '' ? '0' : _sampleScheduleModel!.dayCountSchedule.schedule["noOfCycles"]): rtcNoOfCycles,/*CycleCount*/
               "IntervalBetweenCycles": selectedScheduleType == scheduleTypes[3] ? _sampleScheduleModel!.dayCountSchedule.schedule["interval"] : rtcInterval,/*IntervalBetweenCycles*/
               "CentralFertilizerSite": centralFertilizerSite.toList().isNotEmpty
                   ? sampleIrrigationLine!
@@ -3324,7 +3348,11 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   : totalAgitators
                   .where((agitator) => !(selectedAgitators ?? []).contains(agitator))
                   .toList().join(','),/*HeadUnitToPause*/
-              "Name": programName,/*Name*/
+              "Name": programName,
+              "CyclicOnTime": cyclicOnTime,
+              "CyclicOffTime": cyclicOffTime,
+              "EnablePressure": enablePressure ? '1' : '0',
+              "PressureValue": pressureValue,
             }.entries.map((e) => e.value).join(",")
         };"
       }

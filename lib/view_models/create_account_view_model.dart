@@ -106,7 +106,7 @@ class CreateAccountViewModel extends ChangeNotifier {
           'state': selectedStateID.toString(),
           'email': email ?? '',
           'mainUserId': customerId != 0 ? customerId : userId,
-          'isSubDealer': accountType.name == "dealer" ? "1" : "0",
+          'isSubdealer': accountType.name == "dealer" ? "1" : "0",
         };
 
         final response = customerId != 0

@@ -1,7 +1,5 @@
-
-import 'dart:convert';
-
 import '../../modules/PumpController/model/pump_controller_data_model.dart';
+import '../../utils/constants.dart';
 
 abstract class FertilizerItem {
   String get name;
@@ -120,18 +118,22 @@ class MasterControllerModel {
 
   });
 
-  factory MasterControllerModel.fromJson(Map<String, dynamic> json, bool isSubUser) {
+  factory MasterControllerModel.fromJson(Map<String, dynamic> json,
+      bool isSubUser) {
 
     final config = json['config'] ?? json;
 
     final configObjectsRaw = (config['configObject'] as List?) ?? [];
     final irrigationLinesRaw = (config['irrigationLine'] as List?) ?? [];
 
+    bool isAquaculture = [...AppConstants.aquacultureModelList].contains(
+        json['modelId'] ?? 0);
+
     if(irrigationLinesRaw.isNotEmpty && irrigationLinesRaw.length>1){
       var allLine = {
         "objectId": 0,
         "sNo": 0,
-        "name": "All irrigation line",
+        "name": isAquaculture ? "All Aquaculture line" : "All irrigation line",
         "connectionNo": null,
         "objectName": "All Line",
         "type": "",
@@ -142,6 +144,7 @@ class MasterControllerModel {
         "source": [],
         "sourcePump": [],
         "irrigationPump": [],
+        "aerator": [],
         "centralFiltration": 0,
         "localFiltration": 0,
         "centralFertilization": 0,
@@ -250,7 +253,7 @@ class MasterControllerModel {
       deviceId: json['deviceId'] ?? '',
       deviceName: json['deviceName'] ?? '',
       categoryId: json['categoryId'] ?? 0,
-      categoryName: json['categoryName'] ?? '',
+      categoryName: isSubUser ? json['groupName'] ?? '' : json['categoryName'] ?? '',
       modelId: json['modelId'] ?? 0,
       modelName: json['modelName'] ?? '',
       modelDescription: json['modelDescription'] ?? '',
@@ -413,6 +416,7 @@ class IrrigationLineModel {
   final String name;
   final List<WaterSourceModel> inletSources;
   final List<WaterSourceModel> outletSources;
+  final List<WaterSourceModel> aeratorSources;
 
   final double? centralFiltration;
   final double? centralFertilization;
@@ -443,6 +447,8 @@ class IrrigationLineModel {
     required this.name,
     required this.inletSources,
     required this.outletSources,
+    required this.aeratorSources,
+
     required this.centralFiltration,
     required this.centralFertilization,
     required this.localFiltration,
@@ -476,6 +482,15 @@ class IrrigationLineModel {
     final irrPumpSet = irrPumpList.map((e) => (e as num).toDouble()).toSet();
     final matchedOutLetSources = WaterSourceUtils.getWaterSourcesByOutletPump(
       sourcePumpSet: irrPumpSet,
+      allWaterSources: waterSources,
+    );
+
+    final aeratorList = json.containsKey('aerator') && json['aerator'] != null
+        ? (json['aerator'] as List<dynamic>).map((sNo) => sNo as double).toList()
+        : [];
+    final aeratorSet = aeratorList.map((e) => (e as num).toDouble()).toSet();
+    final matchedAeratorSources = WaterSourceUtils.getWaterSourcesByOutletPump(
+      sourcePumpSet: aeratorSet,
       allWaterSources: waterSources,
     );
 
@@ -604,6 +619,8 @@ class IrrigationLineModel {
 
       inletSources: matchedInletSources,
       outletSources: matchedOutLetSources,
+      aeratorSources: matchedAeratorSources,
+
       valveObjects: valves,
       mainValveObjects: mainValves,
       lightObjects: lights,
@@ -904,7 +921,7 @@ class FilterSiteModel {
         }
       }).toList();
     } else {
-      throw FormatException('filters is not a list');
+      throw const FormatException('filters is not a list');
     }
   }
 
@@ -1480,6 +1497,7 @@ class ValveModel {
   final String name;
   final List<WaterSourceModel> waterSources;
   int status;
+  int completePercent;
   bool isOn;
   List<MoistureSensorModel> moistureSensors = [];
 
@@ -1488,12 +1506,13 @@ class ValveModel {
     required this.name,
     required this.waterSources,
     this.status = 0,
+    this.completePercent = 0,
     this.isOn = false,
   });
 
   factory ValveModel.fromConfigObject(ConfigObject obj, List<WaterSourceModel> ws) {
 
-    List<double> assignedSNos = (obj.assignObject ?? [])
+    List<double> assignedSNos = (obj.assignObject)
         .map((e) => (e as num).toDouble())
         .toList();
 
@@ -1509,7 +1528,6 @@ class ValveModel {
         }
       }
     }
-
 
     return ValveModel(
       sNo: obj.sNo,

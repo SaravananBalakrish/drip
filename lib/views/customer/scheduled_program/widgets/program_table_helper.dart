@@ -16,7 +16,6 @@ import '../../../../utils/my_function.dart';
 import '../../widgets/my_material_button.dart';
 import '../../widgets/program_preview.dart';
 import 'ai_recommendation_button.dart';
-import 'clickable_submenu.dart';
 
 
 class ProgramTableHelper {
@@ -70,7 +69,7 @@ class ProgramTableHelper {
   }) {
 
     var filteredPrograms = currentLineSNo == 0 ? programs : programs.where((p) {
-      final irrigationLine = p.irrigationLine ?? [];
+      final irrigationLine = p.irrigationLine;
       return irrigationLine.contains(currentLineSNo) || irrigationLine.isEmpty;
     }).toList();
 

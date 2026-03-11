@@ -1,15 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 
 import '../../../StateManagement/mqtt_payload_provider.dart';
-import '../../../models/customer/sensor_hourly_data_model.dart';
 import '../../../models/customer/site_model.dart';
-import '../../../repository/repository.dart';
-import '../../../services/http_service.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/my_function.dart';
 import 'float_switch_popover.dart';
@@ -47,6 +41,11 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
         final statusParts = status?.split(',') ?? [];
         if (statusParts.isNotEmpty) {
           valve.status = int.tryParse(statusParts[1]) ?? valve.status;
+          if(statusParts.length > 2){
+            valve.completePercent = int.parse(statusParts[2]);
+          }else{
+            valve.completePercent = 0;
+          }
         }
 
         final bool hasMoisture = valve.moistureSensors.isNotEmpty;
@@ -81,8 +80,7 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
   }
 
   Widget _buildValveIcon(ValveModel valve, bool hasMoisture) {
-    final Color valveColor = _valveColor(valve.status);
-
+    final Color valveColor = _valveColor(valve.status, valve.completePercent);
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -94,8 +92,8 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
               width: 43,
               height: 43,
               child: Image.asset(
-                valve.status ==1 ? 'assets/gif/m_valve_green.gif' : 'assets/png/m_valve_grey.png',
-                color: valve.status ==1 ? null : valveColor,
+                valve.status == 1 ? 'assets/gif/m_valve_green.gif' : 'assets/png/m_valve_grey.png',
+                color: valve.status == 1 ? null : valveColor,
               ),
             ),
             SizedBox(
@@ -115,21 +113,20 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
     );
   }
 
-  Color _valveColor(int status) {
-    if (status == 0) return Colors.black54;
-    if (status == 1) return Colors.green;
+  Color _valveColor(int status, int cPer) {
+    if (status == 0 && cPer == 0) return Colors.black54;
+    if (status == 0 && cPer == 100) return Colors.blue;
+    if (status == 0 && cPer > 0 && cPer < 100) return Colors.yellow;
     if (status == 2) return Colors.orange;
     return Colors.red;
   }
 
   Widget _buildMoistureButton(ValveModel valve) {
-
     return Positioned(
       top: 2,
       left: 38,
       child: TextButton(
         onPressed: () async {
-
           showPopover(
             context: context,
             bodyBuilder: (context) {
@@ -144,7 +141,6 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
             barrierColor: Colors.black54,
             arrowDyOffset: -40,
           );
-
         },
         style: ButtonStyle(
           padding: WidgetStateProperty.all(EdgeInsets.zero),
@@ -156,7 +152,6 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
           radius: 15,
           backgroundColor: MyFunction().getMoistureColor(valve.moistureSensors
               .map((s) => {'name': s.name, 'value': s.value}).toList()),
-
           child: Image.asset('assets/png/moisture_sensor.png', width: 25, height: 25),
         ),
       ),
@@ -165,13 +160,10 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
 
 
   Widget _buildWaterSource(ValveModel valve) {
-
     final source = valve.waterSources[0];
     final bool hasLevel = source.level.isNotEmpty;
     final bool hasFloatSwitch = source.floatSwitches.isNotEmpty;
-
     final ValueNotifier<int> popoverUpdateNotifier = ValueNotifier<int>(0);
-
     return Stack(
       alignment: Alignment.center,
       children: [
@@ -179,7 +171,7 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(width: 45, height: 30, child: AppConstants.getAsset('source', 0, 'After Valve')),
+            SizedBox(width: 45, height: 30, child: AppConstants.getAsset('source', 0, 'After Valve', 0)),
             Text(
               source.name,
               textAlign: TextAlign.center,
@@ -193,7 +185,6 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
           _buildLevelIndicator(source, 1),
           _buildLevelIndicator(source, 2),
         ],
-
         if (hasFloatSwitch) FloatSwitchPopover(source: source,
             popoverUpdateNotifier: popoverUpdateNotifier, isMobile: true),
       ],
@@ -203,7 +194,6 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
   Widget _buildLevelIndicator(dynamic source, int index) {
     final double top = index == 1 ? 1.0 : 17.0;
     final double left = index == 2 ? 35.0 : 2.0;
-
     return Positioned(
       top: top,
       left: left,
@@ -212,15 +202,12 @@ class _ValveWidgetMobileState extends State<ValveWidgetMobile> {
         builder: (_, provider, __) {
           final sensorUpdate = provider.getSensorUpdatedValve(source.level[0].sNo.toString());
           final statusParts = sensorUpdate?.split(',') ?? [];
-
           if (statusParts.length > index) {
             source.level.first.value = statusParts[index];
           }
-
           final text = index == 1
               ? (MyFunction().getUnitByParameter(context, 'Level Sensor', source.level.first.value.toString()) ?? '')
               : '${source.level.first.value}%';
-
           return Container(
             height: 17,
             decoration: BoxDecoration(

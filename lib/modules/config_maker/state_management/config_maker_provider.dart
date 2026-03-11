@@ -538,6 +538,7 @@ class ConfigMakerProvider extends ChangeNotifier{
                       waterSource: [],
                       sourcePump: [],
                       irrigationPump: [],
+                      aerator: [],
                       valve: [],
                       mainValve: [],
                       light: [],
@@ -899,6 +900,9 @@ class ConfigMakerProvider extends ChangeNotifier{
         }else if(parameter == LineParameter.irrigationPump){
           irrigationLine.irrigationPump.clear();
           irrigationLine.irrigationPump.addAll(listOfSelectedSno);
+        }else if(parameter == LineParameter.aerator){
+          irrigationLine.aerator.clear();
+          irrigationLine.aerator.addAll(listOfSelectedSno);
         }else if(parameter == LineParameter.valve){
           irrigationLine.valve.clear();
           irrigationLine.valve.addAll(listOfSelectedSno);
@@ -1061,7 +1065,7 @@ class ConfigMakerProvider extends ChangeNotifier{
       if(pumpIsConnected){
         Map<String, dynamic> payload = {
           "S_No": pumpModelObject.commonDetails.sNo,
-          "PumpCategory": pumpModelObject.pumpType,
+          "PumpCategory": pumpModelObject.pumpType == 3 ? 1 : pumpModelObject.pumpType,
           "PressureIn" : serialNoOrEmpty(pumpModelObject.pressureIn),
           "PressureOut" : serialNoOrEmpty(pumpModelObject.pressureOut),
           "WaterMeter": serialNoOrEmpty(pumpModelObject.waterMeter),
@@ -1344,7 +1348,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         "CentralFilterSite": serialNoOrEmpty(lineModelObject.centralFiltration),
         "LocalFertSite": serialNoOrEmpty(lineModelObject.localFertilization),
         "LocalFilterSite": serialNoOrEmpty(lineModelObject.localFiltration),
-        "SourcePump": lineModelObject.sourcePump.join('_'),
+        "SourcePump": [...lineModelObject.sourcePump, ...lineModelObject.aerator].join('_'),
         "IrrigationPump": lineModelObject.irrigationPump.join('_'),
         "PressureIn": serialNoOrEmpty(lineModelObject.pressureIn),
         "PressureOut": serialNoOrEmpty(lineModelObject.pressureOut),

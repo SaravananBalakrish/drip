@@ -31,7 +31,7 @@ class GateWidget extends StatelessWidget {
               SizedBox(
                 width: 70,
                 height: 70,
-                child: AppConstants.getAsset('gate', objGate.status, ''),
+                child: AppConstants.getAsset('gate', objGate.status, '', 0),
               ),
               Text(
                 objGate.name,

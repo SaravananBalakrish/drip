@@ -3,13 +3,11 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:mqtt_client/mqtt_browser_client.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart' if (dart.library.html) 'package:mqtt_client/mqtt_browser_client.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:uuid/uuid.dart';
 import '../Constants/constants.dart';
 import '../StateManagement/mqtt_payload_provider.dart';
-import '../flavors.dart';
 import '../modules/PumpController/model/pump_controller_data_model.dart';
 import '../utils/constants.dart';
 import 'package:rxdart/rxdart.dart';
@@ -130,47 +128,6 @@ class MqttService {
     _client!.connectionMessage = connMess;
   }
 
-  /*void initializeMQTTClient({MqttPayloadProvider? state}) {
-    providerState = state;
-    String uniqueId = const Uuid().v4();
-
-    if (_client == null) {
-      if (kIsWeb) {
-        var isLK = F.appFlavor?.name.contains('smart comm') ?? false;
-        _client = MqttBrowserClient(Environment.mqttWebUrl, uniqueId);
-
-        if(isLK){
-          print('inside websocketProtocols');
-          _client!.websocketProtocols = ['mqtt'];
-        }else{
-          (_client as MqttBrowserClient).websocketProtocols = MqttClientConstants.protocolsSingleDefault;
-          _client!.port = AppConstants.mqttWebPort;
-        }
-
-      } else {
-        _client = MqttServerClient(Environment.mqttMobileUrl, uniqueId);
-        _client!.port = AppConstants.mqttMobilePort;
-      }
-
-      _client!.keepAlivePeriod = 30;
-      _client!.logging(on: false);
-      _client!.onDisconnected = onDisconnected;
-      _client!.onConnected = onConnected;
-      _client!.onSubscribed = onSubscribed;
-      _client!.websocketProtocols = MqttClientConstants.protocolsSingleDefault;
-
-      final connMess = MqttConnectMessage()
-          .withClientIdentifier(uniqueId)
-          .withWillTopic('will-topic')
-          .withWillMessage('My Will message')
-          .authenticateAs(AppConstants.mqttUserName, AppConstants.mqttPassword)
-          .startClean()
-          .withWillQos(MqttQos.atLeastOnce);
-
-      _client!.connectionMessage = connMess;
-    }
-  }*/
-
   Future<void> connect() async {
     if (_client == null ||
         isConnected ||
@@ -200,6 +157,55 @@ class MqttService {
   }
 
   Future<void> topicToSubscribe(String topic) async {
+    try {
+      int retries = 0;
+      // Wait until real MQTT connection is ready
+      while ((_client?.connectionStatus?.state !=
+          MqttConnectionState.connected) &&
+          retries < 10) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        retries++;
+      }
+
+      if (_client?.connectionStatus?.state !=
+          MqttConnectionState.connected) {
+        debugPrint('MQTT not connected. Cannot subscribe to topic: $topic');
+        return;
+      }
+
+      // Unsubscribe previous topic safely
+      if (currentTopic != null && currentTopic != topic) {
+        _client?.unsubscribe(currentTopic!);
+      }
+
+      await _subscription?.cancel();
+
+      _client?.subscribe(topic, MqttQos.atLeastOnce);
+      currentTopic = topic;
+
+      _subscription = _client?.updates?.listen(
+            (List<MqttReceivedMessage<MqttMessage?>>? c) {
+          if (c != null && c.isNotEmpty) {
+            final MqttPublishMessage recMess =
+            c[0].payload as MqttPublishMessage;
+
+            final String pt =
+            MqttPublishPayload.bytesToStringAsString(
+                recMess.payload.message);
+
+            onMqttPayloadReceived(pt);
+          }
+        },
+      );
+
+      debugPrint("Subscribed to $topic");
+
+    } catch (e, stacktrace) {
+      debugPrint('MQTT subscribe error: $e\n$stacktrace');
+    }
+  }
+
+  /*Future<void> topicToSubscribe(String topic) async {
     try {
       int retries = 0;
       while (!isConnected && retries < 10) {
@@ -232,7 +238,7 @@ class MqttService {
     } catch (e, stacktrace) {
       debugPrint('MQTT subscribe error: $e\n$stacktrace');
     }
-  }
+  }*/
 
   void topicToUnSubscribe(String topic) {
     if (_client == null) return;
@@ -288,11 +294,6 @@ class MqttService {
       MqttAckTracker.ackReceived(payloadCode);
     }
   }
-
-  /*Future<void> topicToPublishAndItsMessage(String message, String topic) async {
-    final builder = MqttClientPayloadBuilder()..addString(message);
-    _client!.publishMessage(topic, MqttQos.exactlyOnce, builder.payload!);
-  }*/
 
   Future<void> topicToPublishAndItsMessage(String message, String topic) async {
     if (!isConnected) {

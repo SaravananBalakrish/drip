@@ -100,16 +100,18 @@ class _CalibrationState extends State<Calibration> {
               if(waterMeter.isNotEmpty)
                 cumulativeWidget(),
               batteryCalibration(),
-              for(int ec = 0;ec < ecSensorList.length;ec++)
-                ecSensorWidget(
-                    sensorCount: ec,
-                    sensorName: ecSensorList[ec]['name']
-                ),
-              for(int ph = 0;ph < ecSensorList.length;ph++)
-                phSensorWidget(
-                    sensorCount: ph,
-                    sensorName: phSensorList[ph]['name']
-                ),
+              if(bleService.nodeDataFromHw["MID"] != "58")
+                for(int ec = 0;ec < (["57", "58"].contains(bleService.nodeDataFromHw['MID']) ? 1 : ecSensorList.length);ec++)
+                  ecSensorWidget(
+                      sensorCount: ec,
+                      sensorName: ecSensorList[ec]['name']
+                  ),
+              if(bleService.nodeDataFromHw["MID"] != "57")
+                for(int ph = 0;ph < (["57", "58"].contains(bleService.nodeDataFromHw['MID']) ? 1 : phSensorList.length);ph++)
+                  phSensorWidget(
+                      sensorCount: ph,
+                      sensorName: phSensorList[ph]['name']
+                  ),
               const SizedBox(height: 50,)
             ],
           ),
@@ -265,7 +267,7 @@ class _CalibrationState extends State<Calibration> {
           width: 200,
           padding: const EdgeInsets.symmetric(vertical: 5,horizontal: 8),
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(topLeft: Radius.circular(5) ,topRight: Radius.circular(27.5), ),
+              borderRadius: const BorderRadius.only(topLeft: Radius.circular(5) ,topRight: Radius.circular(27.5), ),
               color: Theme.of(context).primaryColorLight
           ),
           child: const Center(
@@ -407,35 +409,52 @@ class _CalibrationState extends State<Calibration> {
               spacing: 20,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Column(
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          child: TextFormField(
-                            controller: sensorCount == 0 ? bleService.ec1Controller : bleService.ec2Controller,
-                            keyboardType: TextInputType.number,
-                            decoration: inputDecoration.copyWith(
-                              prefixIcon: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SvgPicture.asset(
-                                  'assets/Images/Svg/objectId_${AppConstants.ecObjectId}.svg',
-                                  height: 20,
-                                  color: Colors.black,
-                                ),
-                              ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Calibration Factor 1',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.grey[700],
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 6),
+                          TextFormField(
+                            controller: sensorCount == 0 ? bleService.ec1FactorController : bleService.ec2FactorController,
+                            decoration: InputDecoration(
+                              hintText: 'Enter value',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              contentPadding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                    SizedBox(width: 12),
                     Container(
+                      height: 50,
+                      width: 50,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        shape: BoxShape.circle, // or BoxShape.rectangle
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
                       ),
                       child: IconButton(
+                        icon: Icon(Icons.refresh, color: Colors.white),
                         onPressed: (){
                           bleService.onRefresh();
                           setState(() {
@@ -457,45 +476,88 @@ class _CalibrationState extends State<Calibration> {
                             }
 
                           }
-                          loadingDialog('Get @0 Command Send Successfully..');
-
+                          loadingDialog('Get @${sensorCount == 0 ? bleService.ec1FactorController.text : bleService.ec2FactorController.text} Command Send Successfully..');
                         },
-                        icon: const Icon(Icons.refresh, color: Colors.white),
                       ),
                     ),
-                    const SizedBox(
-                      width: 100,
-                        child: Text('Get @0', style: TextStyle(fontSize: 14),)
-                    )
-                  ],
-                ),
-                Text('Last Updated Value : ${sensorCount == 0 ? ec1 : ec2}'),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    SizedBox(
-                      width: 150,
-                      child: TextFormField(
-                        controller: sensorCount == 0 ? bleService.ec1_Controller : bleService.ec2_Controller,
-                        keyboardType: TextInputType.number,
-                        decoration: inputDecoration.copyWith(
-                          prefixIcon: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SvgPicture.asset(
-                              'assets/Images/Svg/objectId_${AppConstants.ecObjectId}.svg',
-                              height: 20,
-                              color: Colors.black,
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Sensor Value',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.grey[700],
                             ),
                           ),
-                        ),
+                          SizedBox(height: 6),
+                          TextFormField(
+                            controller: sensorCount == 0 ? bleService.ec1Controller : bleService.ec2Controller,
+                            decoration: InputDecoration(
+                              hintText: 'Enter value',
+                              suffix: Text('(${sensorCount == 0 ? bleService.nodeDataFromHw['EC1_1'] : bleService.nodeDataFromHw['EC2_1']})'),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              contentPadding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Calibration Factor 2',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                          SizedBox(height: 6),
+                          TextFormField(
+                            controller: sensorCount == 0 ? bleService.ec1_FactorController : bleService.ec2_FactorController,
+                            decoration: InputDecoration(
+                              hintText: 'Enter value',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              contentPadding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 12),
                     Container(
+                      height: 50,
+                      width: 50,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        shape: BoxShape.circle, // or BoxShape.rectangle
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
                       ),
                       child: IconButton(
+                        icon: Icon(Icons.refresh, color: Colors.white),
                         onPressed: (){
                           bleService.onRefresh();
                           setState(() {
@@ -518,18 +580,146 @@ class _CalibrationState extends State<Calibration> {
                             }
 
                           }
-                          loadingDialog('Get @ 1.413 Command Send Successfully..');
+                          loadingDialog('Get @ ${sensorCount == 0 ? bleService.ec1_FactorController.text : bleService.ec2_FactorController.text} Command Send Successfully..');
                         },
-                        icon: const Icon(Icons.refresh, color: Colors.white),
                       ),
                     ),
-                    const SizedBox(
-                        width: 100,
-                        child: Text('Get @ 1.413', style: TextStyle(fontSize: 14),)
-                    )
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Sensor Value',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                          SizedBox(height: 6),
+                          TextFormField(
+                            controller: sensorCount == 0 ? bleService.ec1_Controller : bleService.ec2_Controller,
+                            decoration: InputDecoration(
+                              suffix: Text('(${sensorCount == 0 ? bleService.nodeDataFromHw['EC1_2'] : bleService.nodeDataFromHw['EC2_2']})'),
+                              hintText: 'Enter value',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              contentPadding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-                Text('Last Updated Value : ${sensorCount == 0 ? ec_1 : ec_2}'),
+                if(["57", "58"].contains(bleService.nodeDataFromHw['MID']))
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Calibration Factor 3',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            SizedBox(height: 6),
+                            TextFormField(
+                              controller: sensorCount == 0 ? bleService.ec1__FactorController : bleService.ec2__FactorController,
+                              decoration: InputDecoration(
+                                hintText: 'Enter value',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                contentPadding:
+                                EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Container(
+                        height: 50,
+                        width: 50,
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 4,
+                              offset: Offset(2, 2),
+                            ),
+                          ],
+                        ),
+                        child: IconButton(
+                          icon: Icon(Icons.refresh, color: Colors.white),
+                          onPressed: (){
+                            bleService.onRefresh();
+                            setState(() {
+                              if(sensorCount == 0){
+                                bleService.calibrationEc1 = 'ec__${sensorCount+1}';
+                                bleService.calibrationEc2 = '';
+
+                              }else{
+                                bleService.calibrationEc2 = 'ec__${sensorCount+1}';
+                                bleService.calibrationEc1 = '';
+                              }
+                            });
+                            if(sensorCount == 0){
+                              if (kDebugMode) {
+                                print("blePvd.calibrationEc1 : ${bleService.calibrationEc1}");
+                              }
+                            }else{
+                              if (kDebugMode) {
+                                print("blePvd.calibrationEc2 : ${bleService.calibrationEc2}");
+                              }
+
+                            }
+                            loadingDialog('Get @ ${sensorCount == 0 ? bleService.ec1__FactorController.text : bleService.ec2__FactorController.text} Command Send Successfully..');
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Sensor Value',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Colors.grey[700],
+                              ),
+                            ),
+                            SizedBox(height: 6),
+                            TextFormField(
+                              controller: sensorCount == 0 ? bleService.ec1__Controller : bleService.ec2__Controller,
+                              decoration: InputDecoration(
+                                suffix: Text('(${sensorCount == 0 ? bleService.nodeDataFromHw['EC1_3'] : bleService.nodeDataFromHw['EC2_3']})'),
+                                hintText: 'Enter value',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                contentPadding:
+                                EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: SizedBox(
@@ -538,6 +728,10 @@ class _CalibrationState extends State<Calibration> {
                       onPressed: (){
                         var one = sensorCount == 0 ? bleService.ec1Controller.text : bleService.ec2Controller.text;
                         var two = sensorCount == 0 ? bleService.ec1_Controller.text : bleService.ec2_Controller.text;
+                        var three = sensorCount == 0 ? bleService.ec1__Controller.text : bleService.ec2__Controller.text;
+                        var factor1 = sensorCount == 0 ? bleService.ec1FactorController.text : bleService.ec2FactorController.text;
+                        var factor2 = sensorCount == 0 ? bleService.ec1_FactorController.text : bleService.ec2_FactorController.text;
+                        var factor3 = sensorCount == 0 ? bleService.ec1__FactorController.text : bleService.ec2__FactorController.text;
                         setState(() {
                           if(sensorCount == 0){
                             ec1 = one;
@@ -547,7 +741,7 @@ class _CalibrationState extends State<Calibration> {
                             ec_2 = two;
                           }
                         });
-                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ec${sensorCount+1}Submit']}$one:$two:';
+                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ec${sensorCount+1}Submit']}${checkEmptyValue(one)}:${checkEmptyValue(two)}:${checkEmptyValue(three)}:${checkEmptyValue(factor1)}:${checkEmptyValue(factor2)}:${checkEmptyValue(factor3)}:';
                         var sumOfAscii = 0;
                         for(var i in payload.split('')){
                           var bytes = i.codeUnitAt(0);
@@ -586,13 +780,16 @@ class _CalibrationState extends State<Calibration> {
                     ),
                   ),
                 )
-
               ],
             ),
           ),
         )
       ],
     );
+  }
+
+  String checkEmptyValue(String value){
+    return value.isEmpty ? '0': value;
   }
 
   Widget phSensorWidget({
@@ -634,32 +831,52 @@ class _CalibrationState extends State<Calibration> {
               spacing: 20,
               children: [
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Column(
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          child: TextFormField(
-                            controller: sensorCount == 0 ? bleService.ph1Controller : bleService.ph2Controller,
-                            keyboardType: TextInputType.number,
-                            decoration: inputDecoration.copyWith(
-                              prefixIcon: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SvgPicture.asset(
-                                  'assets/Images/Svg/objectId_${AppConstants.phObjectId}.svg',
-                                  height: 40,
-                                  color: Colors.black,
-                                ),
-                              ),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Calibration Factor 1',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.grey[700],
                             ),
                           ),
-                        ),
-                      ],
+                          SizedBox(height: 6),
+                          TextFormField(
+                            controller: sensorCount == 0 ? bleService.ph1FactorController : bleService.ph2FactorController,
+                            decoration: InputDecoration(
+                              hintText: 'Enter value',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              contentPadding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    SizedBox(
-                      width: 150,
-                      child: ElevatedButton.icon(
+                    SizedBox(width: 12),
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        icon: Icon(Icons.refresh, color: Colors.white),
                         onPressed: (){
                           bleService.onRefresh();
                           setState(() {
@@ -681,45 +898,88 @@ class _CalibrationState extends State<Calibration> {
                               print("blePvd.calibrationPh2 : ${bleService.calibrationPh2}");
                             }
                           }
-                          loadingDialog('Get 4 Command Send Successfully..');
+                          loadingDialog('Get ${sensorCount == 0 ? bleService.ph1FactorController.text : bleService.ph2FactorController.text} Command Send Successfully..');
                         },
-                        icon: const Icon(Icons.refresh, color: Colors.white,),
-                        label: const Text("Get 4", style: TextStyle(color: Colors.white),),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ),
-                Text('Last Updated Value : ${sensorCount == 0 ? ph1 : ph2}'),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    SizedBox(
-                      width: 150,
-                      child: TextFormField(
-                        controller: sensorCount == 0 ? bleService.ph1_Controller : bleService.ph2_Controller,
-                        keyboardType: TextInputType.number,
-                        decoration: inputDecoration.copyWith(
-                          prefixIcon: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: SvgPicture.asset(
-                              'assets/Images/Svg/objectId_${AppConstants.phObjectId}.svg',
-                              height: 40,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
                       ),
                     ),
-                    SizedBox(
-                      width: 150,
-                      child: ElevatedButton.icon(
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Sensor Value',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                          SizedBox(height: 6),
+                          TextFormField(
+                            controller: sensorCount == 0 ? bleService.ph1Controller : bleService.ph2Controller,
+                            decoration: InputDecoration(
+                              hintText: 'Enter value',
+                              suffix: Text('(${sensorCount == 0 ? bleService.nodeDataFromHw['PH1_1'] : bleService.nodeDataFromHw['PH2_1']})'),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              contentPadding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Calibration Factor 2',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                          SizedBox(height: 6),
+                          TextFormField(
+                            controller: sensorCount == 0 ? bleService.ph1_FactorController : bleService.ph2_FactorController,
+                            decoration: InputDecoration(
+                              hintText: 'Enter value',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              contentPadding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: 12),
+                    Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                        color: Colors.blue,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black12,
+                            blurRadius: 4,
+                            offset: Offset(2, 2),
+                          ),
+                        ],
+                      ),
+                      child: IconButton(
+                        icon: Icon(Icons.refresh, color: Colors.white),
                         onPressed: (){
                           bleService.onRefresh();
                           setState(() {
@@ -742,30 +1002,52 @@ class _CalibrationState extends State<Calibration> {
                             }
 
                           }
-                          loadingDialog('Get 7.01 Command Send Successfully..');
+                          loadingDialog('Get @ ${sensorCount == 0 ? bleService.ph1_FactorController.text : bleService.ph2_FactorController.text} Command Send Successfully..');
                         },
-                        icon: const Icon(Icons.refresh, color: Colors.white,),
-                        label: const Text("Get 7.01", style: TextStyle(color: Colors.white),),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).primaryColor,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                        ),
                       ),
-                    )
+                    ),
+                    SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Sensor Value',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                          SizedBox(height: 6),
+                          TextFormField(
+                            controller: sensorCount == 0 ? bleService.ph1_Controller : bleService.ph2_Controller,
+                            decoration: InputDecoration(
+                              suffix: Text('(${sensorCount == 0 ? bleService.nodeDataFromHw['PH1_2'] : bleService.nodeDataFromHw['PH2_2']})'),
+                              hintText: 'Enter value',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              contentPadding:
+                              EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-                Text('Last Updated Value : ${sensorCount == 0 ? ph_1 : ph_2}'),
                 Align(
                   alignment: Alignment.bottomRight,
                   child: SizedBox(
-                    width: 150,
+                    width: 100,
                     child: ElevatedButton.icon(
                       onPressed: (){
                         var one = sensorCount == 0 ? bleService.ph1Controller.text : bleService.ph2Controller.text;
                         var two = sensorCount == 0 ? bleService.ph1_Controller.text : bleService.ph2_Controller.text;
+                        var three = sensorCount == 0 ? bleService.ph1_Controller.text : bleService.ph2_Controller.text;
+                        var factor1 = sensorCount == 0 ? bleService.ph1FactorController.text : bleService.ph2FactorController.text;
+                        var factor2 = sensorCount == 0 ? bleService.ph1_FactorController.text : bleService.ph2_FactorController.text;
                         setState(() {
                           if(sensorCount == 0){
                             ph1 = one;
@@ -775,7 +1057,7 @@ class _CalibrationState extends State<Calibration> {
                             ph_2 = two;
                           }
                         });
-                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ph${sensorCount+1}Submit']}$one:$two:';
+                        var payload = '${bleService.nodeDataFromServer['calibrationSetting']['ph${sensorCount+1}Submit']}${checkEmptyValue(one)}:${checkEmptyValue(two)}:${checkEmptyValue(factor1)}:${checkEmptyValue(factor2)}:';
                         var sumOfAscii = 0;
                         for(var i in payload.split('')){
                           var bytes = i.codeUnitAt(0);
@@ -802,7 +1084,7 @@ class _CalibrationState extends State<Calibration> {
                         loadingDialog('Ph Calibration Setting Send Successfully..');
                       },
                       icon: const Icon(Icons.send, color: Colors.white,),
-                      label: const Text("Submit", style: TextStyle(color: Colors.white),),
+                      label: const Text("Send", style: TextStyle(color: Colors.white),),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).primaryColorLight,
                         padding: const EdgeInsets.symmetric(vertical: 14),

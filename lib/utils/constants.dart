@@ -64,10 +64,30 @@ class AppConstants {
   static const String pumpNotON = "dp_irr_pump_y.png";
   static const String pumpNotOFF = "dp_irr_pump_r.png";
 
+  static const String frtPumpOFF = "dp_pump.png";
+  static const String frtPumpON = "dp_pump_green.gif";
+  static const String frtPumpNotON = "dp_pump_orange.png";
+  static const String frtPumpNotOFF = "dp_pump_red.png";
+
+  static const String frtValveOFF = "valve_grey_wol.png";
+  static const String frtValveON = "valve_green_wol.gif";
+  static const String frtValveNotON = "valve_orange_wol.png";
+  static const String frtValveNotOFF = "valve_red_wol.png";
+
+  static const String frtBoosterOFF = "booster_pump.png";
+  static const String frtBoosterON = "booster_pump_g.gif";
+  static const String frtBoosterNotON = "booster_pump_o.png";
+  static const String frtBoosterNotOFF = "booster_pump_r.png";
+
   static const String mblPumpOFF = "m_pump_first_g.png";
   static const String mblPumpON = "m_pump_first.gif";
   static const String mblPumpNotON = "m_pump_first_y.png";
   static const String mblPumpNotOFF = "m_pump_first_r.png";
+
+  static const String aeratorPumpOFF = "aerators_grey.png";
+  static const String aeratorPumpON = "aerators_g.png";
+  static const String aeratorPumpNotON = "aerators_o.png";
+  static const String aeratorPumpNotOFF = "aerators_r.png";
 
 
   static const String filterOFF = "dp_filter.png";
@@ -105,19 +125,25 @@ class AppConstants {
   static const String mainValveNotOFF = "main_valve_red.png";
 
   static const String valveOFF = "valve_gray.png";
-  static const String valveON = "valve_green.png";
+  static const String valveRunning = "valve_green.png";
+  static const String valveCompleted= "valve_blue.png";
   static const String valveNotON = "valve_orange.png";
   static const String valveNotOFF = "valve_red.png";
+  static const String valvePending = "valve_yellow.png";
 
   static const String valveLjOFF = "valve_gray_lj.png";
-  static const String valveLjON = "valve_green_lj.png";
+  static const String valveLjRunning = "valve_green_lj.png";
+  static const String valveLjCompleted= "valve_blue_lj.png";
   static const String valveLjNotON = "valve_orange_lj.png";
   static const String valveLjNotOFF = "valve_red_lj.png";
+  static const String valveLjPending = "valve_yellow_lj.png";
 
   static const String valveCwsOFF = "valve_gray_cws.png";
-  static const String valveCwsON = "valve_green_cws.png";
+  static const String valveCwsRunning = "valve_green_cws.png";
+  static const String valveCwsCompleted = "valve_blue_cws.png";
   static const String valveCwsNotON = "valve_orange_cws.png";
   static const String valveCwsNotOFF = "valve_red_cws.png";
+  static const String valveCwsPending = "valve_yellow_cws.png";
 
   static const String lightOFF = "light_gray.png";
   static const String lightON = "light_yellow.png";
@@ -215,7 +241,7 @@ class AppConstants {
   static String getAddressError(UserRole role) =>
       getErrorMessage(role, addressErrors);
 
-  static Widget getAsset(String keyOne, int keyTwo, String keyThree) {
+  static Widget getAsset(String keyOne, int keyTwo, String keyThree, int cpr) {
     String imagePathFinal;
     switch (keyOne) {
       case 'source':
@@ -228,6 +254,9 @@ class AppConstants {
         break;
       case 'mobile pump':
         imagePathFinal = _getMobilePumpImagePath(keyTwo, keyThree);
+        break;
+      case 'aerator':
+        imagePathFinal = _getAeratorPumpImagePath(keyTwo, keyThree);
         break;
       case 'filter':
         imagePathFinal = _getFilterImagePath(keyTwo);
@@ -246,13 +275,13 @@ class AppConstants {
       case 'main_valve':
         imagePathFinal = _getMainValveImagePath(keyTwo);
       case 'valve':
-        imagePathFinal = _getValveImagePath(keyTwo);
+        imagePathFinal = _getValveImagePath(keyTwo, cpr);
         break;
       case 'valve_lj':
-        imagePathFinal = _getValveLjImagePath(keyTwo);
+        imagePathFinal = _getValveLjImagePath(keyTwo, cpr);
         break;
       case 'valve_cws':
-        imagePathFinal = _getValveCWSImagePath(keyTwo);
+        imagePathFinal = _getValveCWSImagePath(keyTwo, cpr);
         break;
       case 'light':
         imagePathFinal = _getLightImagePath(keyTwo);
@@ -280,6 +309,30 @@ class AppConstants {
       '${(keyOne == 'mobile pump' || keyOne == 'mobile source'
           || keyOne == 'mobile filter'|| keyOne == 'mobile booster') ?
       pngPathMobile : pngPath}$imagePathFinal',
+      width: double.infinity,
+      height: double.infinity,
+      fit: BoxFit.fill,
+    );
+  }
+
+  static Widget getAssetForFrtLive(String item, int status) {
+    String imagePathFinal;
+    switch (item) {
+      case 'pump':
+        imagePathFinal = _getFLPPumpImagePath(status);
+      case 'valve':
+        imagePathFinal = _getFLPValveImagePath(status);
+        break;
+      case 'booster':
+        imagePathFinal = _getFLPBoosterImagePath(status);
+        break;
+
+      default:
+        imagePathFinal = '';
+    }
+
+    return Image.asset(
+      '$pngPath$imagePathFinal',
       width: double.infinity,
       height: double.infinity,
       fit: BoxFit.fill,
@@ -331,6 +384,51 @@ class AppConstants {
     }
   }
 
+  static String _getFLPPumpImagePath(int status) {
+    switch (status) {
+      case 0:
+        return frtPumpOFF;
+      case 1:
+        return frtPumpON;
+      case 2:
+        return frtPumpNotON;
+      case 3:
+        return frtPumpNotOFF;
+      default:
+        return '';
+    }
+  }
+
+  static String _getFLPValveImagePath(int status) {
+    switch (status) {
+      case 0:
+        return frtValveOFF;
+      case 1:
+        return frtValveON;
+      case 2:
+        return frtValveNotON;
+      case 3:
+        return frtValveNotOFF;
+      default:
+        return '';
+    }
+  }
+
+  static String _getFLPBoosterImagePath(int status) {
+    switch (status) {
+      case 0:
+        return frtBoosterOFF;
+      case 1:
+        return frtBoosterON;
+      case 2:
+        return frtBoosterNotON;
+      case 3:
+        return frtBoosterNotOFF;
+      default:
+        return '';
+    }
+  }
+
   static String _getMobilePumpImagePath(int status, String position) {
     switch (status) {
       case 0:
@@ -341,6 +439,21 @@ class AppConstants {
         return mblPumpNotON;
       case 3:
         return mblPumpNotOFF;
+      default:
+        return '';
+    }
+  }
+
+  static String _getAeratorPumpImagePath(int status, String position) {
+    switch (status) {
+      case 0:
+        return aeratorPumpOFF;
+      case 1:
+        return aeratorPumpON;
+      case 2:
+        return aeratorPumpNotON;
+      case 3:
+        return aeratorPumpNotOFF;
       default:
         return '';
     }
@@ -480,12 +593,17 @@ class AppConstants {
     }
   }
 
-  static String _getValveImagePath(int status) {
+  static String _getValveImagePath(int status, cPer) {
     switch (status) {
       case 0:
+        if (cPer == 100) {
+          return valveCompleted;
+        }else if (cPer > 0 && cPer < 100) {
+          return valvePending;
+        }
         return valveOFF;
       case 1:
-        return valveON;
+        return valveRunning;
       case 2:
         return valveNotON;
       case 3:
@@ -497,12 +615,17 @@ class AppConstants {
 
 
 
-  static String _getValveLjImagePath(int status) {
+  static String _getValveLjImagePath(int status, int cPer) {
     switch (status) {
       case 0:
+        if (cPer == 100) {
+          return valveLjCompleted;
+        }else if (cPer > 0 && cPer < 100) {
+          return valveLjPending;
+        }
         return valveLjOFF;
       case 1:
-        return valveLjON;
+        return valveLjRunning;
       case 2:
         return valveLjNotON;
       case 3:
@@ -512,12 +635,17 @@ class AppConstants {
     }
   }
 
-  static String _getValveCWSImagePath(int status) {
+  static String _getValveCWSImagePath(int status, int cPer) {
     switch (status) {
-      case 0:
+      case 0 :
+        if (cPer == 100) {
+          return valveCwsCompleted;
+        }else if (cPer > 0 && cPer < 100) {
+          return valveCwsPending;
+        }
         return valveCwsOFF;
       case 1:
-        return valveCwsON;
+        return valveCwsRunning;
       case 2:
         return valveCwsNotON;
       case 3:
@@ -740,5 +868,7 @@ class AppConstants {
   static List<int> extendLoraList = [46];
   static List<int> extendGsmList = [47];
   static List<int> extendList = [...extendLoraList, ...extendGsmList];
+
+  static List<int> aquacultureModelList = [72];
 
 }

@@ -65,7 +65,7 @@ class IrrigationLineNarrow extends StatelessWidget {
         controllerId: controllerId, modelId: modelId, isNarrow: true),
 
       ...valveList(valves: valves, customerId: customerId,
-        controllerId: controllerId, modelId: modelId, isMobile: true),
+        controllerId: controllerId, modelId: modelId, isNarrow: true, prsOutIsAval: false),
     ];
 
     return LayoutBuilder(
@@ -94,12 +94,12 @@ class IrrigationLineNarrow extends StatelessWidget {
         final gridItemHeight =
             gridItemWidth / (itemWidth / rowHeight);
 
+
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (baseSensors.isNotEmpty) ...baseSensors,
             SizedBox(
-              height: rows * gridItemHeight,
               child: Stack(
                 children: [
                   Positioned(
@@ -115,7 +115,7 @@ class IrrigationLineNarrow extends StatelessWidget {
                     ),
                   ),
 
-                  for (int r = 1; r < rows; r++)
+                  for (int r = 1; r <= rows; r++)
                     Positioned(
                       top: r * gridItemHeight + 3,
                       left: 5,

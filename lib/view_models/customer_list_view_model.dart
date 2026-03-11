@@ -1,22 +1,17 @@
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
+import 'package:oro_drip_irrigation/view_models/safe_change_notifier.dart';
 
 import '../models/admin_dealer/customer_list_model.dart';
 import '../repository/repository.dart';
 
-class CustomerListViewModel extends ChangeNotifier {
+class CustomerListViewModel extends SafeChangeNotifier {
   final Repository repository;
   final int userId;
 
   List<CustomerListModel> myCustomerList = [];
   List<CustomerListModel> filteredCustomerList = [];
-
-  List<CustomerListModel> get subDealerList => filteredCustomerList
-      .where((c) => c.isSubdealer == "1").toList();
-
-  List<CustomerListModel> get customerList => filteredCustomerList
-      .where((c) => c.isSubdealer != "1").toList();
 
   bool isLoadingCustomer = false;
   bool accountCreated = false;
@@ -27,35 +22,45 @@ class CustomerListViewModel extends ChangeNotifier {
 
   CustomerListViewModel(this.repository, this.userId);
 
+  List<CustomerListModel> get subDealerList =>
+      filteredCustomerList.where((c) => c.isSubdealer == "1").toList();
+
+  List<CustomerListModel> get customerList =>
+      filteredCustomerList.where((c) => c.isSubdealer != "1").toList();
+
   Future<void> getMyCustomers(int userType) async {
     setCustomerLoading(true);
 
-    final body = { "userId": userId, "userType": userType };
+    final body = {"userId": userId, "userType": userType};
 
     try {
       final response = await repository.fetchMyCustomerList(body);
+
+      if (isDisposed) return;
+
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         if (data["code"] == 200) {
           final list = data["data"];
           if (list is List) {
-            myCustomerList = list.map((e) => CustomerListModel.fromJson(e)).toList();
+            myCustomerList =
+                list.map((e) => CustomerListModel.fromJson(e)).toList();
             refreshFilter();
           }
-        } else {
-          debugPrint("API Error: ${data['message']}");
         }
       }
     } catch (e, st) {
       debugPrint('Customer fetch error: $e\n$st');
     } finally {
-      setCustomerLoading(false);
+      if (!isDisposed) {
+        setCustomerLoading(false);
+      }
     }
   }
 
   Future<void> updateCustomerList(Map<String, dynamic> json) async {
-
     if (json['status'] != 'success') return;
+    if (isDisposed) return;
 
     final newCustomer = CustomerListModel(
       id: json['userId'],
@@ -72,7 +77,7 @@ class CustomerListViewModel extends ChangeNotifier {
       refreshFilter();
       accountCreated = true;
       responseMsg = json['message'];
-      notifyListeners();
+      safeNotify();
     }
   }
 
@@ -83,14 +88,13 @@ class CustomerListViewModel extends ChangeNotifier {
       filteredCustomerList = List.from(myCustomerList);
     } else {
       final q = query.toLowerCase();
-
       filteredCustomerList = myCustomerList.where((customer) {
         return customer.name.toLowerCase().contains(q) ||
             customer.mobileNumber.toLowerCase().contains(q);
       }).toList();
     }
 
-    notifyListeners();
+    safeNotify();
   }
 
   void searchCustomer() {
@@ -102,19 +106,29 @@ class CustomerListViewModel extends ChangeNotifier {
     searching = false;
     txtFldSearch.clear();
     refreshFilter();
-    notifyListeners();
+    safeNotify();
   }
 
   void refreshFilter() {
-    filteredCustomerList = searching ? myCustomerList.where((customer) {
+    if (searching) {
       final q = txtFldSearch.text.toLowerCase();
-      return customer.name.toLowerCase().contains(q) || customer.mobileNumber.toLowerCase().contains(q);
-    }).toList() : List.from(myCustomerList);
+      filteredCustomerList = myCustomerList.where((customer) {
+        return customer.name.toLowerCase().contains(q) ||
+            customer.mobileNumber.toLowerCase().contains(q);
+      }).toList();
+    } else {
+      filteredCustomerList = List.from(myCustomerList);
+    }
   }
 
   void setCustomerLoading(bool loadingState) {
     isLoadingCustomer = loadingState;
-    notifyListeners();
+    safeNotify();
   }
 
+  @override
+  void dispose() {
+    txtFldSearch.dispose();
+    super.dispose();
+  }
 }

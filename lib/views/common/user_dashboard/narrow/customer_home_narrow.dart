@@ -17,8 +17,10 @@ import '../../../../view_models/customer/current_program_view_model.dart';
 import '../../../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../../../customer/widgets/my_material_button.dart';
 import '../../../customer/widgets/sensor_widget_mobile.dart';
+import '../widgets/aquaculture_line.dart';
 import '../widgets/irrigation_line_narrow.dart';
 import '../widgets/pump_station_mobile.dart';
+import '../widgets/valve_status_legend.dart';
 
 class CustomerHomeNarrow extends StatelessWidget {
   const CustomerHomeNarrow({super.key});
@@ -32,8 +34,11 @@ class CustomerHomeNarrow extends StatelessWidget {
     final cM = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex];
 
     bool isNova = [...AppConstants.ecoGemModelList].contains(cM.modelId);
+    bool isAquaculture = [...AppConstants.aquacultureModelList].contains(
+        cM.modelId);
 
-    final linesToDisplay = (viewModel.myCurrentIrrLine == "All irrigation line" || viewModel.myCurrentIrrLine.isEmpty)
+    final linesToDisplay = (viewModel.myCurrentIrrLine == "All irrigation line" ||
+        viewModel.myCurrentIrrLine == "All Aquaculture line" || viewModel.myCurrentIrrLine.isEmpty)
         ? cM.irrigationLine.where((line) => line.name != viewModel.myCurrentIrrLine).toList()
         : cM.irrigationLine.where((line) => line.name == viewModel.myCurrentIrrLine).toList();
 
@@ -52,6 +57,7 @@ class CustomerHomeNarrow extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 130),
           child: Column(
             children: [
+
               Consumer<CustomerScreenControllerViewModel>(
                 builder: (context, viewModel, _) {
                   return viewModel.onRefresh ? Padding(
@@ -66,6 +72,8 @@ class CustomerHomeNarrow extends StatelessWidget {
                 },
               ),
 
+              buildValveStatusLegend(isAquaculture),
+
               if(isNova)...[
                 const Padding(
                   padding: EdgeInsets.only(left: 10, right: 10, top: 5),
@@ -78,6 +86,52 @@ class CustomerHomeNarrow extends StatelessWidget {
               ],
 
               ...linesToDisplay.map((line) {
+
+                if(isAquaculture) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: MediaQuery.sizeOf(context).width,
+                        color: Colors.grey.shade200,
+                        height: 45,
+                        child: Row(
+                          children: [
+                            const SizedBox(width: 16),
+                            Text(
+                              line.name,
+                              textAlign: TextAlign.left,
+                              style: const TextStyle(
+                                  color: Colors.black54,
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            if (hasLinePP) ...[
+                              const Spacer(),
+                              SizedBox(
+                                height: 35,
+                                child: MyMaterialButton(
+                                  buttonId: 'line_${line.sNo}_4900',
+                                  label: line.linePauseFlag == 0 ? 'Pause the line' : 'Resume the line',
+                                  payloadKey: "4900",
+                                  payloadValue: "${line.sNo},${line.linePauseFlag == 0 ? 1 : 0}",
+                                  color: line.linePauseFlag == 0 ? Colors.orangeAccent : Colors.green,
+                                  textColor: Colors.white,
+                                  serverMsg: line.linePauseFlag == 0
+                                      ? 'Paused the ${line.name}'
+                                      : 'Resumed the ${line.name}',
+                                  blink: line.linePauseFlag != 0,
+                                ),
+                              ),
+                              const SizedBox(width: 5)
+                            ]
+                          ],
+                        ),
+                      ),
+                      AquacultureLine(irrLine: line, customerId: customerId,
+                          controllerId: cM.controllerId, modelId: cM.modelId, deviceId: cM.deviceId),],
+                  );
+                }
 
                 final inletWaterSources = {
                   for (var source in line.inletSources) source.sNo: source
@@ -118,7 +172,6 @@ class CustomerHomeNarrow extends StatelessWidget {
                         bottom: 72,
                         child: Container(width: 4, color: Colors.grey.shade300),
                       ),
-
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

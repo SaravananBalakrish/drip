@@ -1,12 +1,16 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../Widgets/pump_widget.dart';
 import '../../../../models/customer/site_model.dart';
+import '../../../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../../../customer/widgets/agitator_widget.dart';
 import '../../../customer/widgets/booster_widget.dart';
 import '../../../customer/widgets/channel_widget.dart';
 import '../../../customer/widgets/filter_builder.dart';
 import '../../../customer/widgets/source_column_widget.dart';
+import 'fertilizer_live_panel.dart';
 
 class PumpStationMobile extends StatelessWidget {
   final int customerId, controllerId, modelId;
@@ -39,7 +43,6 @@ class PumpStationMobile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-
     final wsAndFilterItems = [
       if (inletWaterSources.isNotEmpty)
         ..._buildWaterSource(context, inletWaterSources, true, true),
@@ -52,15 +55,10 @@ class PumpStationMobile extends StatelessWidget {
 
       if (lFilterSite.isNotEmpty)
         ...buildFilter(context, lFilterSite, (cFertilizerSite.isNotEmpty || lFertilizerSite.isNotEmpty), true, isNova),
-
     ];
 
     final fertilizerItemsCentral = cFertilizerSite.isNotEmpty
         ? _buildFertilizer(context, cFertilizerSite, isNova).cast<Widget>()
-        : <Widget>[];
-
-    final fertilizerItemsLocal = lFertilizerSite.isNotEmpty
-        ? _buildFertilizer(context, lFertilizerSite, isNova).cast<Widget>()
         : <Widget>[];
 
     const double itemWidth = 70;
@@ -102,11 +100,28 @@ class PumpStationMobile extends StatelessWidget {
                   child: IntrinsicWidth(
                     child: Align(
                       alignment: Alignment.topRight,
-                      child: Wrap(
-                        alignment: WrapAlignment.end,
-                        spacing: 0,
-                        runSpacing: 0,
-                        children: fertilizerItemsCentral,
+                      child: InkWell(
+                        onTap: () {
+                          final customerVM = context.read<CustomerScreenControllerViewModel>();
+                          showRightSheet(
+                            context,
+                            ChangeNotifierProvider.value(
+                              value: customerVM,
+                              child: FertilizerLivePanel(
+                                deviceId: deviceId,
+                                controllerId: controllerId,
+                                customerId: customerId,
+                                isWide: false,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Wrap(
+                          alignment: WrapAlignment.end,
+                          spacing: 0,
+                          runSpacing: 0,
+                          children: fertilizerItemsCentral,
+                        ),
                       ),
                     ),
                   ),
@@ -116,166 +131,39 @@ class PumpStationMobile extends StatelessWidget {
         );
       },
     );
+  }
 
-
-    final screenWidth = MediaQuery.of(context).size.width;
-    //const double itemWidth = 70;
-    //const double itemHeight = 100; // height of each item
-    final int totalItems = wsAndFilterItems.length;
-
-// How many items can fit in one row horizontally
-    final int itemsPerRow = screenWidth ~/ itemWidth;
-
-// Number of rows needed to display all items
-    final int rowCount = (totalItems / itemsPerRow).ceil();
-
-    return SizedBox(
-      width: double.infinity,
-      height: rowCount * itemHeight, // grid height grows based on rows
-      child: GridView.builder(
-        scrollDirection: Axis.horizontal,
-        physics: const AlwaysScrollableScrollPhysics(),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: rowCount,   // number of rows (vertical)
-          mainAxisExtent: itemWidth,   // width of each item
-          mainAxisSpacing: 0,
-          crossAxisSpacing: 0,
-        ),
-        itemCount: wsAndFilterItems.length,
-        itemBuilder: (context, index) {
-          return wsAndFilterItems[index]; // just use the list order
-        },
-      ),
+  void showRightSheet(BuildContext context, Widget child) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "LiveData",
+      barrierColor: Colors.black45,
+      transitionDuration: const Duration(milliseconds: 300),
+      pageBuilder: (_, __, ___) {
+        return Align(
+          alignment: Alignment.centerRight,
+          child: Material(
+            color: Colors.white,
+            elevation: 10,
+            child: SizedBox(
+              width: 600,
+              height: double.infinity,
+              child: child,
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (_, animation, __, child) {
+        return SlideTransition(
+          position: Tween(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        );
+      },
     );
-
-
-    return SizedBox(
-      width: double.infinity,
-      height: 100,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        reverse: false,
-        physics: const AlwaysScrollableScrollPhysics(),
-        child: Align(
-          alignment: Alignment.topLeft,
-          child: Wrap(
-            alignment: WrapAlignment.start,
-            spacing: 0,
-            runSpacing: 0,
-            children: wsAndFilterItems.reversed.toList(),
-          ),
-        ),
-      ),
-    );
-
-    if (cFertilizerSite.isEmpty && lFertilizerSite.isNotEmpty) {
-      return SizedBox(
-        width: double.infinity,
-        height: 100,
-        child: SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          reverse: true,
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: IntrinsicWidth(
-            child: Align(
-              alignment: Alignment.topRight,
-              child: Wrap(
-                alignment: WrapAlignment.end,
-                spacing: 0,
-                runSpacing: 0,
-                children: [
-                  ...wsAndFilterItems,
-                ],
-              ),
-            ),
-          ),
-        ),
-      );
-    } else {
-      return Column(
-        children: [
-
-          IntrinsicWidth(
-            child: Align(
-              alignment: Alignment.topRight,
-              child: Wrap(
-                alignment: WrapAlignment.end,
-                spacing: 0,
-                runSpacing: 0,
-                children: wsAndFilterItems,
-              ),
-            ),
-          ),
-
-          /*SizedBox(
-            width: double.infinity,
-            height: 100,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              reverse: true,
-              physics: const AlwaysScrollableScrollPhysics(),
-              child: IntrinsicWidth(
-                child: Align(
-                  alignment: Alignment.topRight,
-                  child: Wrap(
-                    alignment: WrapAlignment.end,
-                    spacing: 0,
-                    runSpacing: 0,
-                    children: wsAndFilterItems,
-                  ),
-                ),
-              ),
-            ),
-          ),*/
-
-
-          if (cFertilizerSite.isNotEmpty)
-            SizedBox(
-              width: double.infinity,
-              height: 125,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                reverse: true,
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: IntrinsicWidth(
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: Wrap(
-                      alignment: WrapAlignment.end,
-                      spacing: 0,
-                      runSpacing: 0,
-                      children: fertilizerItemsCentral,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-
-          if (lFertilizerSite.isNotEmpty)
-            SizedBox(
-              width: double.infinity,
-              height: 125,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                reverse: true,
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: IntrinsicWidth(
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: Wrap(
-                      alignment: WrapAlignment.end,
-                      spacing: 0,
-                      runSpacing: 0,
-                      children: fertilizerItemsLocal,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      );
-    }
   }
 
   List<Widget> _buildWaterSource(BuildContext context, List<WaterSourceModel> waterSources,
@@ -362,5 +250,4 @@ class PumpStationMobile extends StatelessWidget {
       );
     }).toList();
   }
-
 }

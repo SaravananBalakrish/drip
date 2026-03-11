@@ -36,7 +36,6 @@ class StockView extends StatelessWidget {
       ),
       itemBuilder: (context, index) {
         final stock = viewModel.productStockList[index];
-        final folder = F.appFlavor!.name.contains('oro') ? 'Oro' : 'SmartComm';
 
         return Card(
           color: Colors.white,

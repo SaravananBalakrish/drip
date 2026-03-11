@@ -493,6 +493,10 @@ class _PreviewScreenState extends State<PreviewScreen> {
         "priority": mainProvider.priority,
         "delayBetweenZones": mainProvider.programDetails!.delayBetweenZones,
         "adjustPercentage": mainProvider.programDetails!.adjustPercentage,
+        "cyclicOnTime": mainProvider.programDetails!.cyclicOnTime,
+        "cyclicOffTime": mainProvider.programDetails!.cyclicOffTime,
+        "isPressureEnabled": mainProvider.programDetails!.enablePressure ? '1' : '0',
+        "pressure": mainProvider.programDetails!.pressureValue,
         "incompleteRestart": mainProvider.isCompletionEnabled ? "1" : "0",
         "controllerReadStatus": '0',
         "programType": mainProvider.selectedProgramType,
@@ -809,6 +813,17 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   Widget buildNoSchedule() {
     final conditionForEcoGem = ([3].contains(widget.modelId));
+    print("SEQUENCE JSON: ${jsonEncode(irrigationProvider.irrigationLine!.sequence)}");
+    // print("SEQUENCE toList: ${jsonEncode(irrigationProvider.irrigationLine!.sequence.where((e) => e.objectId == 14).toList())}");
+
+    final sequence = irrigationProvider.irrigationLine!.sequence;
+
+    final mainValves = sequence
+        .expand((e) => (e['mainValve'] ?? []) as List)
+        .toList();
+
+    print("MainValve JSON: ${jsonEncode(mainValves)}");
+
     return buildCategory(
         categoryTitle: "General details",
         title1: "Irrigation pump",
@@ -822,7 +837,10 @@ class _PreviewScreenState extends State<PreviewScreen> {
         showRow: conditionForEcoGem ? false : true,
         show4thWidget: true,
         title3: "Main valve",
-        itemList3: irrigationProvider.selectedObjects!.where((e) => e.objectId == 14).toList(),
+        itemList3: irrigationProvider.irrigationLine!.sequence
+            .expand((e) => (e['mainValve'] ?? []) as List)
+            .where((mv) => mv['objectId'] == 14)
+            .toList(),
         title4: "Schedule type",
         itemList4: irrigationProvider.sampleScheduleModel!.selected,
         showWidget2: conditionForEcoGem ? false : irrigationProvider.sampleScheduleModel!.selected == irrigationProvider.scheduleTypes[3],
@@ -1005,6 +1023,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
     required showRow, required show4thWidget, required String title3,
     required String title4, required itemList3, required itemList4, bool show2ndWidget = true, String? title5,
     String? title6, itemList5, itemList6, String? title7, itemList7, bool showRow2 = false, bool showWidget2 = false}) {
+    print("title3$title3");
+    print("itemList3$itemList3");
+    print("itemList3${itemList3}");
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1098,8 +1119,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
         )
     );
   }
-
-  Widget buildIndividualRow(item) {
+// old code do not show main valve
+  Widget buildIndividualRowold(item) {
     ScrollController scrollController = ScrollController();
     if(item is! String && item.isNotEmpty) {
       if(item is List<DeviceObjectModel>) {
@@ -1160,6 +1181,69 @@ class _PreviewScreenState extends State<PreviewScreen> {
       return Text(item.toString() != "[]" ? item.toString() : "Not available", style: TextStyle(color: item.toString() != "[]" ? Colors.black :item.toString().contains("Not selected")  ? Colors.red: Colors.grey));
     }
   }
+}
+
+Widget _buildHorizontalList(
+    ScrollController controller, List<String> names) {
+  return SizedBox(
+    height: 20,
+    child: Scrollbar(
+      controller: controller,
+      child: ListView.builder(
+        controller: controller,
+        scrollDirection: Axis.horizontal,
+        itemCount: names.length,
+        itemBuilder: (_, index) => Row(
+          children: [
+            const SizedBox(width: 10),
+            Text(names[index]),
+            if (names.length > 1)
+              const SizedBox(
+                height: 15,
+                child: VerticalDivider(),
+              ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget buildIndividualRow(item) {
+  ScrollController scrollController = ScrollController();
+
+  if (item == null || item.toString() == "[]") {
+    return const Text("Not available", style: TextStyle(color: Colors.grey));
+  }
+
+  // ✅ DeviceObjectModel list
+  if (item is List<DeviceObjectModel>) {
+    return _buildHorizontalList(
+      scrollController,
+      item.map((e) => e.name ?? "").toList(),
+    );
+  }
+
+  // ✅ List<Map> (ex: mainValve from sequence)
+  if (item is List && item.isNotEmpty && item.first is Map) {
+    final names = item
+        .where((e) => e['name'] != null)
+        .map<String>((e) => e['name'].toString())
+        .toList();
+
+    return names.isNotEmpty
+        ? _buildHorizontalList(scrollController, names)
+        : const Text("Not Selected", style: TextStyle(color: Colors.red));
+  }
+
+  // ✅ String
+  if (item is String) {
+    return Text(item,
+        style: TextStyle(
+            color: item.contains("Not") ? Colors.red : Colors.black));
+  }
+
+  return const Text("Not available", style: TextStyle(color: Colors.grey));
 }
 
 Widget buildItemsCard({required BuildContext context, required String title, required Widget child, margin, padding}){

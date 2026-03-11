@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../models/admin_dealer/language_list.dart';
 import '../repository/repository.dart';
 
 class UserSettingViewModel extends ChangeNotifier {
@@ -9,7 +8,6 @@ class UserSettingViewModel extends ChangeNotifier {
   bool isLoading = false;
   String errorMsg = '';
 
-  final List<LanguageList> languageList = <LanguageList>[];
   String mySelection = 'English';
 
   String userName, mobileNo, emailId;
@@ -52,27 +50,6 @@ class UserSettingViewModel extends ChangeNotifier {
   void onIsObscureChangedToCpw() {
     isObscureCpw = !isObscureCpw;
     notifyListeners();
-  }
-
-  Future<void> getLanguage() async
-  {
-    setLoading(true);
-    try {
-      var response = await repository.fetchLanguageByActive({"active": "1"});
-      if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-        if (jsonData["code"] == 200) {
-          final cntList = jsonData["data"] as List;
-          for (int i=0; i < cntList.length; i++) {
-            languageList.add(LanguageList.fromJson(cntList[i]));
-          }
-        }
-      }
-    } catch (error) {
-      errorMsg = 'Error fetching category list: $error';
-    } finally {
-      setLoading(false);
-    }
   }
 
   Future<Map<String, dynamic>?> updateUserProfile(

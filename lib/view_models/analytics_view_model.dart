@@ -1,13 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:oro_drip_irrigation/view_models/safe_change_notifier.dart';
 import '../models/sales_data_model.dart';
 import '../repository/repository.dart';
 import '../utils/enums.dart';
 
-class AnalyticsViewModel extends ChangeNotifier {
+class AnalyticsViewModel extends SafeChangeNotifier {
   final Repository repository;
-  SalesDataModel mySalesData = SalesDataModel(graph: {}, total: []);
-  int totalSales = 0, userId;
+  SalesDataModel mySalesData = SalesDataModel(graph: {});
+  int totalSales = 0;
+  final int userId;
+
   bool isLoadingSalesData = false;
   MySegment segmentView = MySegment.all;
 
@@ -27,34 +30,37 @@ class AnalyticsViewModel extends ChangeNotifier {
     };
 
     try {
-      final response = await repository.fetchAllMySalesReports(body);
+      final response =
+      await repository.fetchAllMySalesReports(body);
+
+      if (isDisposed) return;
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
         if (data["code"] == 200 && data.containsKey("data")) {
           mySalesData = SalesDataModel.fromJson(data);
-          totalSales = mySalesData.total?.fold(0, (sum, e) => sum! + e.totalProduct) ?? 0;
-        } else {
-          debugPrint("API Error: ${data['message'] ?? 'Unknown error'}");
+          totalSales = mySalesData.total
+              ?.fold(0, (sum, e) => sum! + e.totalProduct) ??
+              0;
         }
-      } else {
-        debugPrint("HTTP Error: ${response.statusCode}");
       }
     } catch (e, st) {
       debugPrint('Error in getMySalesData: $e\n$st');
     } finally {
-      setLoadingSales(false);
+      if (!isDisposed) {
+        setLoadingSales(false);
+      }
     }
   }
 
   void updateSegmentView(MySegment newSegment) {
     segmentView = newSegment;
-    notifyListeners();
+    safeNotify();
   }
 
   void setLoadingSales(bool loadingState) {
     isLoadingSalesData = loadingState;
-    notifyListeners();
+    safeNotify();
   }
 }

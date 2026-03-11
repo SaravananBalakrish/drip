@@ -1,38 +1,44 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:oro_drip_irrigation/view_models/safe_change_notifier.dart';
 import '../models/entry_form/product_category_model.dart';
 import '../repository/repository.dart';
 
-class ProductCategoryViewModel extends ChangeNotifier {
+class ProductCategoryViewModel extends SafeChangeNotifier {
   final Repository repository;
-  List<ProductCategoryModel> categoryList = <ProductCategoryModel>[];
+
+  List<ProductCategoryModel> categoryList = [];
   bool isLoadingCategory = false;
 
   ProductCategoryViewModel(this.repository);
 
   Future<void> getMyProductCategory() async {
-    setCategoryLoading(true);
+    setLoading(true);
+
     try {
-      var response = await repository.fetchCategory();
+      final response = await repository.fetchCategory();
+
+      if (isDisposed) return;
+
       if (response.statusCode == 200) {
-        final jsonData = jsonDecode(response.body);
-        if (jsonData["code"] == 200) {
-          final cntList = jsonData["data"] as List;
-          categoryList.clear();
-          for (int i=0; i < cntList.length; i++) {
-            categoryList.add(ProductCategoryModel.fromJson(cntList[i]));
-          }
-          setCategoryLoading(false);
+        final data = jsonDecode(response.body);
+        if (data["code"] == 200) {
+          categoryList = (data["data"] as List)
+              .map((e) => ProductCategoryModel.fromJson(e))
+              .toList();
         }
       }
-    } catch (error) {
-      debugPrint('Error fetching category list: $error');
-      setCategoryLoading(false);
+    } catch (e) {
+      debugPrint("Category error: $e");
+    } finally {
+      if (!isDisposed) {
+        setLoading(false);
+      }
     }
   }
 
-  void setCategoryLoading(bool loadingState) {
-    isLoadingCategory = loadingState;
-    notifyListeners();
+  void setLoading(bool value) {
+    isLoadingCategory = value;
+    safeNotify();
   }
 }

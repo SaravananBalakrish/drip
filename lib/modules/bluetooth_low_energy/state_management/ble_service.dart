@@ -105,13 +105,25 @@ class BleProvider extends ChangeNotifier {
   TextEditingController wifiSsid = TextEditingController();
   TextEditingController wifiPassword = TextEditingController();
   TextEditingController ec1Controller = TextEditingController();
+  TextEditingController ec1FactorController = TextEditingController();
   TextEditingController ec1_Controller = TextEditingController();
+  TextEditingController ec1_FactorController = TextEditingController();
+  TextEditingController ec1__Controller = TextEditingController();
+  TextEditingController ec1__FactorController = TextEditingController();
   TextEditingController ec2Controller = TextEditingController();
+  TextEditingController ec2FactorController = TextEditingController();
   TextEditingController ec2_Controller = TextEditingController();
+  TextEditingController ec2_FactorController = TextEditingController();
+  TextEditingController ec2__Controller = TextEditingController();
+  TextEditingController ec2__FactorController = TextEditingController();
   TextEditingController ph1Controller = TextEditingController();
+  TextEditingController ph1FactorController = TextEditingController();
   TextEditingController ph1_Controller = TextEditingController();
+  TextEditingController ph1_FactorController = TextEditingController();
   TextEditingController ph2Controller = TextEditingController();
+  TextEditingController ph2FactorController = TextEditingController();
   TextEditingController ph2_Controller = TextEditingController();
+  TextEditingController ph2_FactorController = TextEditingController();
   TextEditingController cumulativeController = TextEditingController();
   TextEditingController batteryController = TextEditingController();
   String calibrationEc1 = 'ec1';
@@ -496,6 +508,27 @@ class BleProvider extends ChangeNotifier {
                 if (calibrationEc1 == 'ec_1') {
                   ec1_Controller.text = nodeDataFromHw['AD7'];
                 }
+                if (calibrationEc1 == 'ec__1') {
+                  ec1__Controller.text = nodeDataFromHw['AD7'];
+                }
+              }
+              if (nodeDataFromHw.containsKey('EC1_CAL')) {
+                ec1FactorController.text = nodeDataFromHw['EC1_CAL'].split(',')[0];
+                ec1_FactorController.text = nodeDataFromHw['EC1_CAL'].split(',')[1];
+                ec1__FactorController.text = nodeDataFromHw['EC1_CAL'].split(',')[2];
+              }
+              if (nodeDataFromHw.containsKey('EC2_CAL')) {
+                ec2FactorController.text = nodeDataFromHw['EC2_CAL'].split(',')[0];
+                ec2_FactorController.text = nodeDataFromHw['EC2_CAL'].split(',')[1];
+                ec2__FactorController.text = nodeDataFromHw['EC2_CAL'].split(',')[2];
+              }
+              if (nodeDataFromHw.containsKey('PH1_CAL')) {
+                ph1FactorController.text = nodeDataFromHw['PH1_CAL'].split(',')[0];
+                ph1_FactorController.text = nodeDataFromHw['PH1_CAL'].split(',')[1];
+              }
+              if (nodeDataFromHw.containsKey('PH2_CAL')) {
+                ph2FactorController.text = nodeDataFromHw['PH2_CAL'].split(',')[0];
+                ph2_FactorController.text = nodeDataFromHw['PH2_CAL'].split(',')[1];
               }
               if (nodeDataFromHw.containsKey('AD8')) {
                 if (calibrationEc2 == 'ec2') {
@@ -503,6 +536,9 @@ class BleProvider extends ChangeNotifier {
                 }
                 if (calibrationEc2 == 'ec_2') {
                   ec2_Controller.text = nodeDataFromHw['AD8'];
+                }
+                if (calibrationEc2 == 'ec__2') {
+                  ec2__Controller.text = nodeDataFromHw['AD8'];
                 }
               }
               if (nodeDataFromHw.containsKey('AD5')) {

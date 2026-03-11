@@ -28,15 +28,13 @@ class FilterSiteView extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(top: 1.9),
               child: SizedBox(
-                height: kIsWeb? 91:76,
+                height: kIsWeb ? 91:76,
                 width: filterSite.filters.length * 70,
                 child: ListView.builder(
                   itemCount: filterSite.filters.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (BuildContext context, int flIndex) {
-
                     final isLast = flIndex == filterSite.filters.length - 1;
-
                     return FilterWidget(filter: filterSite.filters[flIndex],
                       siteSno: filterSite.sNo.toString(), isMobile: isMobile,
                       isLast: isLast, sensorAvailable: filterSite.pressureIn != null);
@@ -44,7 +42,7 @@ class FilterSiteView extends StatelessWidget {
                 ),
               ),
             ),
-            filterSite.pressureOut != null?
+            filterSite.pressureOut != null ?
             PressureSensorWidget(
               sensor: filterSite.pressureOut!, isMobile: isMobile,
             ):
@@ -124,7 +122,7 @@ class FilterWidget extends StatelessWidget {
               Stack(
                 children: [
                   SizedBox(width:70, height: 70, child: AppConstants.getAsset(isMobile ?
-                  'mobile filter':'filter', filter.status,'${filter.filterMode}')),
+                  'mobile filter':'filter', filter.status,'${filter.filterMode}', 0)),
                   filter.onDelayLeft != '00:00:00' && siteStatus != 0 ?
                   Positioned(
                     top: 52,
