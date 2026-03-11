@@ -79,9 +79,7 @@ FutureOr<void> main() async {
   tz.initializeTimeZones();
   // F.appFlavor = Flavor.oroProduction;
   await NetworkUtils.initialize();
-
   // await dotenv.load(fileName: ".env.apikey");
-
 
   // Request runtime permissions before providers start
   if (!kIsWeb && Platform.isAndroid) {
