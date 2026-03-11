@@ -179,12 +179,6 @@ class SettingsScreenFactory {
           controllerId: ctx.controllerId,
           imeiNo: ctx.imeiNo,
         );
-        // return MapScreenall(
-        //   userId: ctx.userId,
-        //   customerId: ctx.customerId,
-        //   controllerId: ctx.controllerId,
-        //   imeiNo: ctx.imeiNo,
-        // );
 
       case 'Geography Area':
         return MapScreenAllArea(

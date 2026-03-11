@@ -348,32 +348,56 @@ class IrrigationLogModel {
                   }
                   if(parameter.payloadKey == 'PumpCtAverage') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtAverage'][howManyValve]);
+                      if(howManyValve < date['irrigation']['PumpCtAverage'].length){
+                        myList.add(date['irrigation']['PumpCtAverage'][howManyValve]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PumpCtMaximum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtMaximum'][howManyValve]);
+                      if(howManyValve < date['irrigation']['PumpCtMaximum'].length){
+                        myList.add(date['irrigation']['PumpCtMaximum'][howManyValve]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PumpCtMinimum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtMinimum'][howManyValve]);
+                      if(howManyValve < date['irrigation']['PumpCtMinimum'].length){
+                        myList.add(date['irrigation']['PumpCtMinimum'][howManyValve]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureAverage') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureAverage'][howManyValve]);
+                      if(howManyValve < date['irrigation']['PressureAverage'].length){
+                        myList.add(date['irrigation']['PressureAverage'][howManyValve]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureMaximum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureMaximum'][howManyValve]);
+                      if(howManyValve < date['irrigation']['PressureMaximum'].length){
+                        myList.add(date['irrigation']['PressureMaximum'][howManyValve]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureMinimum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureMinimum'][howManyValve]);
+                      if(howManyValve < date['irrigation']['PressureMinimum'].length){
+                        myList.add(date['irrigation']['PressureMinimum'][howManyValve]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'ProgramStartStopReason') {
@@ -793,32 +817,56 @@ class IrrigationLogModel {
                   }
                   if(parameter.payloadKey == 'PumpCtAverage') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtAverage'][howManyLine]);
+                      if(howManyLine < date['irrigation']['PumpCtAverage'].length){
+                        myList.add(date['irrigation']['PumpCtAverage'][howManyLine]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PumpCtMaximum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtMaximum'][howManyLine]);
+                      if(howManyLine < date['irrigation']['PumpCtMaximum'].length){
+                        myList.add(date['irrigation']['PumpCtMaximum'][howManyLine]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PumpCtMinimum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtMinimum'][howManyLine]);
+                      if(howManyLine < date['irrigation']['PumpCtMinimum'].length){
+                        myList.add(date['irrigation']['PumpCtMinimum'][howManyLine]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureAverage') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureAverage'][howManyLine]);
+                      if(howManyLine < date['irrigation']['PressureAverage'].length){
+                        myList.add(date['irrigation']['PressureAverage'][howManyLine]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureMaximum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureMaximum'][howManyLine]);
+                      if(howManyLine < date['irrigation']['PressureMaximum'].length){
+                        myList.add(date['irrigation']['PressureMaximum'][howManyLine]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureMinimum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureMinimum'][howManyLine]);
+                      if(howManyLine < date['irrigation']['PressureMinimum'].length){
+                        myList.add(date['irrigation']['PressureMinimum'][howManyLine]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'ProgramStartStopReason') {
@@ -1241,32 +1289,56 @@ class IrrigationLogModel {
                   }
                   if(parameter.payloadKey == 'PumpCtAverage') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtAverage'][howManyProgram]);
+                      if(howManyProgram < date['irrigation']['PumpCtAverage'].length){
+                        myList.add(date['irrigation']['PumpCtAverage'][howManyProgram]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PumpCtMaximum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtMaximum'][howManyProgram]);
+                      if(howManyProgram < date['irrigation']['PumpCtMaximum'].length){
+                        myList.add(date['irrigation']['PumpCtMaximum'][howManyProgram]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PumpCtMinimum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtMinimum'][howManyProgram]);
+                      if(howManyProgram < date['irrigation']['PumpCtMinimum'].length){
+                        myList.add(date['irrigation']['PumpCtMinimum'][howManyProgram]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureAverage') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureAverage'][howManyProgram]);
+                      if(howManyProgram < date['irrigation']['PressureAverage'].length){
+                        myList.add(date['irrigation']['PressureAverage'][howManyProgram]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureMaximum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureMaximum'][howManyProgram]);
+                      if(howManyProgram < date['irrigation']['PressureMaximum'].length){
+                        myList.add(date['irrigation']['PressureMaximum'][howManyProgram]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureMinimum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureMinimum'][howManyProgram]);
+                      if(howManyProgram < date['irrigation']['PressureMinimum'].length){
+                        myList.add(date['irrigation']['PressureMinimum'][howManyProgram]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'ProgramStartStopReason') {
@@ -1687,32 +1759,56 @@ class IrrigationLogModel {
                   }
                   if(parameter.payloadKey == 'PumpCtAverage') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtAverage'][howManyDate]);
+                      if(howManyDate < date['irrigation']['PumpCtAverage'].length){
+                        myList.add(date['irrigation']['PumpCtAverage'][howManyDate]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PumpCtMaximum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtMaximum'][howManyDate]);
+                      if(howManyDate < date['irrigation']['PumpCtMaximum'].length){
+                        myList.add(date['irrigation']['PumpCtMaximum'][howManyDate]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PumpCtMinimum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtMinimum'][howManyDate]);
+                      if(howManyDate < date['irrigation']['PumpCtMinimum'].length){
+                        myList.add(date['irrigation']['PumpCtMinimum'][howManyDate]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureAverage') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureAverage'][howManyDate]);
+                      if(howManyDate < date['irrigation']['PressureAverage'].length){
+                        myList.add(date['irrigation']['PressureAverage'][howManyDate]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureMaximum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureMaximum'][howManyDate]);
+                      if(howManyDate < date['irrigation']['PressureMaximum'].length){
+                        myList.add(date['irrigation']['PressureMaximum'][howManyDate]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureMinimum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureMinimum'][howManyDate]);
+                      if(howManyDate < date['irrigation']['PressureMinimum'].length){
+                        myList.add(date['irrigation']['PressureMinimum'][howManyDate]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'ProgramStartStopReason') {
@@ -2137,32 +2233,56 @@ class IrrigationLogModel {
                   }
                   if(parameter.payloadKey == 'PumpCtAverage') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtAverage'][howManyStatus]);
+                      if(howManyStatus < date['irrigation']['PumpCtAverage'].length){
+                        myList.add(date['irrigation']['PumpCtAverage'][howManyStatus]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PumpCtMaximum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtMaximum'][howManyStatus]);
+                      if(howManyStatus < date['irrigation']['PumpCtMaximum'].length){
+                        myList.add(date['irrigation']['PumpCtMaximum'][howManyStatus]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PumpCtMinimum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PumpCtMinimum'][howManyStatus]);
+                      if(howManyStatus < date['irrigation']['PumpCtMinimum'].length){
+                        myList.add(date['irrigation']['PumpCtMinimum'][howManyStatus]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureAverage') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureAverage'][howManyStatus]);
+                      if(howManyStatus < date['irrigation']['PressureAverage'].length){
+                        myList.add(date['irrigation']['PressureAverage'][howManyStatus]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureMaximum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureMaximum'][howManyStatus]);
+                      if(howManyStatus < date['irrigation']['PressureMaximum'].length){
+                        myList.add(date['irrigation']['PressureMaximum'][howManyStatus]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'PressureMinimum') {
                     if(parameter.show == true){
-                      myList.add(date['irrigation']['PressureMinimum'][howManyStatus]);
+                      if(howManyStatus < date['irrigation']['PressureMinimum'].length){
+                        myList.add(date['irrigation']['PressureMinimum'][howManyStatus]);
+                      }else{
+                        myList.add('-');
+                      }
                     }
                   }
                   if(parameter.payloadKey == 'ProgramStartStopReason') {

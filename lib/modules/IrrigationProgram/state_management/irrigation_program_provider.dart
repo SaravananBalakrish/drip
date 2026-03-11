@@ -3201,7 +3201,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   ? rtcOffTime
                   : _sampleScheduleModel!.defaultModel.allowStopMethod
                   ? generateRtcTimeStringByUser() : rtcOnTime),/*RtcOff_MaxTime*/
-              "CycleCount": selectedScheduleType == scheduleTypes[3] ? _sampleScheduleModel!.dayCountSchedule.schedule["noOfCycles"] : rtcNoOfCycles,/*CycleCount*/
+              "CycleCount": selectedScheduleType == scheduleTypes[3] ? (_sampleScheduleModel!.dayCountSchedule.schedule["noOfCycles"] == '' ? '0' : _sampleScheduleModel!.dayCountSchedule.schedule["noOfCycles"]): rtcNoOfCycles,/*CycleCount*/
               "IntervalBetweenCycles": selectedScheduleType == scheduleTypes[3] ? _sampleScheduleModel!.dayCountSchedule.schedule["interval"] : rtcInterval,/*IntervalBetweenCycles*/
               "CentralFertilizerSite": centralFertilizerSite.toList().isNotEmpty
                   ? sampleIrrigationLine!

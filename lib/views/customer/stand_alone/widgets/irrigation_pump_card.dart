@@ -31,3 +31,31 @@ class IrrigationPumpCard extends StatelessWidget {
     );
   }
 }
+
+class AeratorCard extends StatelessWidget {
+  final List<PumpModel> pumps;
+  final void Function(PumpModel, bool) onChanged;
+
+  const AeratorCard({
+    super.key,
+    required this.pumps,
+    required this.onChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (pumps.isEmpty) return const SizedBox();
+
+    return CustomCardTable(
+      title: "Aerator",
+      rows: pumps.map((pump) {
+        return CustomSwitchRow(
+          iconPath: 'assets/png/aerators_grey.png',
+          label: pump.name,
+          value: pump.selected,
+          onChanged: (val) => onChanged(pump, val),
+        );
+      }).toList(),
+    );
+  }
+}
