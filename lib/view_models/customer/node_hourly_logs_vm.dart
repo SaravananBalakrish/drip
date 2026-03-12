@@ -6,34 +6,48 @@ import '../../models/customer/site_model.dart';
 import '../../repository/repository.dart';
 
 class NodeHourlyLogsVm extends ChangeNotifier {
-
   final Repository repository;
-  bool isLoading = false;
-  String errorMessage = "";
-  int customerId, controllerId;
+
+  final int customerId;
+  final int controllerId;
   final List<NodeListModel> nodeList;
 
   Map<String, List<ChartDataLog>> nodeDataMap = {};
   DateTime selectedDate = DateTime.now();
 
-  NodeHourlyLogsVm(this.repository, this.customerId, this.controllerId, this.nodeList);
+  bool _isDisposed = false;
 
+  NodeHourlyLogsVm(
+      this.repository,
+      this.customerId,
+      this.controllerId,
+      this.nodeList,
+      );
 
-  Future<void> getNodeLogs(date) async {
-    print(nodeList.toList());
-    date = DateFormat('yyyy-MM-dd').format(selectedDate);
+  // Safe notify
+  void safeNotify() {
+    if (!_isDisposed && hasListeners) {
+      notifyListeners();
+    }
+  }
+
+  Future<void> getNodeLogs() async {
+    final formattedDate = DateFormat('yyyy-MM-dd').format(selectedDate);
 
     Map<String, Object> body = {
       "userId": customerId,
       "controllerId": controllerId,
-      "fromDate": date,
-      "toDate": date
+      "fromDate": formattedDate,
+      "toDate": formattedDate
     };
 
     var response = await repository.fetchNodeHourlyData(body);
 
+    if (_isDisposed) return;
+
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
+
       if (data["code"] == 200) {
         final jsonData = data["data"] as List;
 
@@ -49,21 +63,23 @@ class NodeHourlyLogsVm extends ChangeNotifier {
 
               for (var nodeStr in nodeStrings) {
                 List<String> parts = nodeStr.split(',');
+
                 if (parts.length == 3) {
                   String nodeId = parts[0];
-                  double solarVoltage = double.tryParse(parts[1]) ?? 0.0;
-                  double batteryVoltage = double.tryParse(parts[2]) ?? 0.0;
+                  double solarVoltage =
+                      double.tryParse(parts[1]) ?? 0.0;
+                  double batteryVoltage =
+                      double.tryParse(parts[2]) ?? 0.0;
 
                   var matchedNode = nodeList.firstWhere(
-                        (node) => node.serialNumber == int.parse(nodeId),
+                        (node) =>
+                    node.serialNumber == int.parse(nodeId),
                   );
 
                   String deviceName = matchedNode.deviceName;
                   String deviceId = matchedNode.deviceId;
 
-                  if (!nodeDataMap.containsKey(deviceId)) {
-                    nodeDataMap[deviceId] = [];
-                  }
+                  nodeDataMap.putIfAbsent(deviceId, () => []);
 
                   nodeDataMap[deviceId]!.add(
                     ChartDataLog(
@@ -78,28 +94,31 @@ class NodeHourlyLogsVm extends ChangeNotifier {
             }
           }
 
-          notifyListeners();
-
+          safeNotify();
         } catch (e) {
-          print('Error parsing node logs: $e');
+          debugPrint('Error parsing node logs: $e');
         }
       }
-    } else {
-      print('Error fetching data: ${response.body}');
     }
   }
 
-  void selectDate(BuildContext context) async {
+  Future<void> selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: selectedDate,
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
     );
+
     if (picked != null && picked != selectedDate) {
       selectedDate = picked;
-      getNodeLogs(selectedDate);
+      await getNodeLogs();
     }
   }
 
+  @override
+  void dispose() {
+    _isDisposed = true;
+    super.dispose();
+  }
 }
