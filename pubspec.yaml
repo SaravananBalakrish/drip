@@ -126,10 +126,8 @@ flutter:
     - assets/splash/oro_production.png
     - assets/splash/smart_comm.png
     - assets/splash/transparent.png
-#    - .env.apikey
 
-dependency_overrides:
-  web: 0.5.0
+#    - .env.apikey
 
 #flutter_launcher_icons:
 #  android: true
