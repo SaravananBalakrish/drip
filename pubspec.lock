@@ -1714,7 +1714,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.18"
+<<<<<<< Updated upstream
 >>>>>>> 37b52f229f48767e225f8330a0039a9a07668390
+=======
+>>>>>>> 3906432d497b7ca6f934aabdb120ce5bc7c3c74a
+>>>>>>> Stashed changes
   vector_graphics_codec:
     dependency: transitive
     description:
@@ -1817,7 +1821,11 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.20.0"
+<<<<<<< Updated upstream
 >>>>>>> 37b52f229f48767e225f8330a0039a9a07668390
+=======
+>>>>>>> 3906432d497b7ca6f934aabdb120ce5bc7c3c74a
+>>>>>>> Stashed changes
   widget_to_marker:
     dependency: "direct main"
     description:
