@@ -126,8 +126,8 @@ flutter:
     - assets/splash/oro_production.png
     - assets/splash/smart_comm.png
     - assets/splash/transparent.png
-#    - .env.apikey
 
+#    - .env.apikey
 
 #flutter_launcher_icons:
 #  android: true

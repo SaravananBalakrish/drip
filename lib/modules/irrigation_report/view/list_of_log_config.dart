@@ -150,24 +150,6 @@ class _ListOfLogConfigState extends State<ListOfLogConfig> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: EdgeInsets.all(8),
-                  width: double.infinity,
-                  child: ListTile(
-                    title: Text('List Of Irrigation Log',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
-                    trailing: MaterialButton(
-                      onPressed: (){
-                        setState(() {
-                          errorMessage = '';
-                          logName = '';
-                        });
-                        sideSheet(constraints: constraint, mode: 1);
-                      },
-                      color: Colors.green,
-                      child: Text('Add',style: TextStyle(color: Colors.white),),
-                    ),
-                  ),
-                ),
                 SizedBox(height: 20,),
                 Text('Pre Configured Log',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
                 if(constraint.maxWidth > 300)
@@ -180,8 +162,8 @@ class _ListOfLogConfigState extends State<ListOfLogConfig> {
                           if(serverData['staticLogConfig'].isNotEmpty)
                             for(var i = 0;i < serverData['staticLogConfig'].length;i++)
                               Container(
-                                margin: EdgeInsets.only(bottom: 20),
-                                padding: EdgeInsets.all(8),
+                                margin: const EdgeInsets.only(bottom: 20),
+                                padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                     color:  Colors.white,
                                     boxShadow: customBoxShadow,
@@ -227,13 +209,27 @@ class _ListOfLogConfigState extends State<ListOfLogConfig> {
                               boxShadow: customBoxShadow,
                               borderRadius: BorderRadius.circular(10)
                           ),
-                          child: Column(
-                            children: [
-                            ],
-                          ),
+                          child: Container(),
                         ),
                 const SizedBox(height: 20,),
-                const Text('Customized Log',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold)),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  width: double.infinity,
+                  child: ListTile(
+                    title: const Text('Customized Log',style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+                    trailing: MaterialButton(
+                      onPressed: (){
+                        setState(() {
+                          errorMessage = '';
+                          logName = '';
+                        });
+                        sideSheet(constraints: constraint, mode: 1);
+                      },
+                      color: Colors.green,
+                      child: const Text('Add',style: TextStyle(color: Colors.white),),
+                    ),
+                  ),
+                ),
                 if(constraint.maxWidth > 300)
                   customizeGridView(
                       maxWith: 300,
