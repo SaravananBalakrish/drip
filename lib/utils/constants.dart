@@ -858,7 +858,7 @@ class AppConstants {
   static List<int> ecoGemModelList = [56, 57, 58, 59, 60, 61, 62, 63];
   static List<int> ecoGemPlusModelList = [60, 61, 62, 63];
   static List<int> ecoGemAndPlusModelList = [...ecoGemModelList, ...ecoGemPlusModelList];
-  static List<int> gemModelList = [1, 2, 4, 72];
+  static List<int> gemModelList = [1, 2, 4, 72, 73, 74, 75];
   static List<int> weatherModelList = [13, 14];
   static List<int> pumpModelList = [5, 6, 7, ...pumpPlusModelList];
   static List<int> pumpPlusModelList = [8, 9, 10];
