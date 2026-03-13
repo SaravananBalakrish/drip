@@ -324,7 +324,7 @@ class AppConstants {
 
     return Image.asset(
       '${(keyOne == 'mobile pump' || keyOne == 'mobile source'
-          || keyOne == 'mobile filter'|| keyOne == 'mobile booster') ?
+          || keyOne == 'mobile filter'|| keyOne == 'mobile booster'|| keyOne == 'fan_mbl') ?
       pngPathMobile : pngPath}$imagePathFinal',
       width: double.infinity,
       height: double.infinity,

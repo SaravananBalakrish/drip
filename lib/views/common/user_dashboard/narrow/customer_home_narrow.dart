@@ -249,6 +249,7 @@ class CustomerHomeNarrow extends StatelessWidget {
                                   valves: line.valveObjects,
                                   mainValves: line.mainValveObjects,
                                   lights:line.lightObjects,
+                                  fans:line.fanObjects,
                                   gates:line.gateObjects,
                                   pressureIn: line.pressureIn,
                                   pressureOut: line.pressureOut,
