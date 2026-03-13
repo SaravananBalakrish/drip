@@ -10,6 +10,7 @@ import '../../../../view_models/customer/customer_screen_controller_view_model.d
 import '../../../customer/widgets/agitator_widget.dart';
 import '../../../customer/widgets/booster_widget.dart';
 import '../../../customer/widgets/channel_widget.dart';
+import '../../../customer/widgets/fan_widget.dart';
 import '../../../customer/widgets/filter_builder.dart';
 import '../../../customer/widgets/gate_widget.dart';
 import '../../../customer/widgets/light_widget.dart';
@@ -23,10 +24,8 @@ class IrrigationLineWide extends StatelessWidget {
   final String deviceId;
   final List<WaterSourceModel> inletWaterSources;
   final List<WaterSourceModel> outletWaterSources;
-
   final List<FilterSiteModel> cFilterSite;
   final List<FertilizerSiteModel> cFertilizerSite;
-
   final List<FilterSiteModel> lFilterSite;
   final List<FertilizerSiteModel> lFertilizerSite;
 
@@ -34,6 +33,7 @@ class IrrigationLineWide extends StatelessWidget {
   final List<ValveModel> mainValves;
   final List<LightModel> lights;
   final List<GateModel> gates;
+  final List<FanModel> fans;
   final List<SensorModel> prsSwitch;
   final List<SensorModel> pressureIn;
   final List<SensorModel> pressureOut;
@@ -56,6 +56,7 @@ class IrrigationLineWide extends StatelessWidget {
     required this.valves,
     required this.mainValves,
     required this.lights,
+    required this.fans,
     required this.gates,
     required this.prsSwitch,
     required this.pressureIn,
@@ -102,6 +103,10 @@ class IrrigationLineWide extends StatelessWidget {
       return GateWidget(objGate: entry.value);
     }).toList();
 
+    final fanWidgets = fans.asMap().entries.map((entry) {
+      return FanWidget(objFan: entry.value, isWide: true);
+    }).toList();
+
     final lightWidgets = lights.asMap().entries.map((entry) {
       return LightWidget(objLight: entry.value, isWide: true);
     }).toList();
@@ -126,6 +131,7 @@ class IrrigationLineWide extends StatelessWidget {
         ..._buildFertilizer(context, lFertilizerSite, isNava),
 
       ...lightWidgets,
+      ...fanWidgets,
       ..._buildSensorItems(prsSwitch, 'Pressure Switch', 'assets/png/pressure_switch_wj.png'),
       ..._buildSensorItems(pressureIn, 'Pressure Sensor', 'assets/png/pressure_sensor_wj.png'),
       ..._buildSensorItems(waterMeter, 'Water Meter', 'assets/png/water_meter_wj.png'),
@@ -178,7 +184,6 @@ class IrrigationLineWide extends StatelessWidget {
             else{
               return item;
             }
-
           }).toList(),
         ),
       ),

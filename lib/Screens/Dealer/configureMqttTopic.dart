@@ -247,6 +247,12 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
     if (selecteddealer == 'ORO') {
       if (selectedPlatform == 'AWS') {
         print('return ORO AWS');
+         if(F.appFlavor == Flavor.agritel)
+          {
+            print("agritel");
+               return ['AgritelAppToFirmware/', '0'];
+           }
+
         if (selectedVersion == 'Version 1.0')
           return ['AppToFirmware/', '1'];
         else
@@ -644,9 +650,9 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
-                    value == 'AWS'
-                        ? F.appFlavor = Flavor.oroProduction
-                        : F.appFlavor = Flavor.smartComm;
+                    // value == 'AWS'
+                    //     ? F.appFlavor = Flavor.oroProduction
+                    //     : F.appFlavor = Flavor.smartComm;
 
                     print('flaVOR ${F.appFlavor}');
                     print('${AppConstants.mqttUrl}');

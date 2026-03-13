@@ -56,7 +56,6 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     debugPrint('Flavor is: ${F.appFlavor}');
-    bool isDarkMode = false;
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
       DeviceOrientation.portraitDown,
@@ -75,7 +74,7 @@ class _MyAppState extends State<MyApp> {
           SmartCommTheme.lightTheme,
           darkTheme: isOro ? OroTheme.darkTheme : isATel ? ATelTheme.darkTheme :
           SmartCommTheme.darkTheme,
-          themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+          themeMode: ThemeMode.light,
           home: navigateToInitialScreen(snapshot.data ?? Routes.login),
           onGenerateRoute: Routes.generateRoute,
         );

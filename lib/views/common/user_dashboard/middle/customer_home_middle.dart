@@ -220,6 +220,7 @@ class CustomerHomeMiddle extends StatelessWidget {
       valves: irrLine.valveObjects,
       mainValves: irrLine.mainValveObjects,
       lights:irrLine.lightObjects,
+      fans:irrLine.fanObjects,
       gates:irrLine.gateObjects,
       prsSwitch: irrLine.prsSwitch,
       pressureIn: irrLine.pressureIn,

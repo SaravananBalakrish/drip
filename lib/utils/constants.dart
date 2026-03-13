@@ -89,7 +89,6 @@ class AppConstants {
   static const String aeratorPumpNotON = "aerators_o.png";
   static const String aeratorPumpNotOFF = "aerators_r.png";
 
-
   static const String filterOFF = "dp_filter.png";
   static const String filterON = "dp_filter_g.png";
   static const String filterNotON = "dp_filter_y.png";
@@ -152,6 +151,18 @@ class AppConstants {
   static const String mblLightON = "m_light_yellow.png";
   static const String mblLightNotOFF = "m_light_orange.png";
   static const String mblLightNotON = "m_light_red.png";
+
+  static const String fanOFF = "fan_grey.png";
+  static const String fanON = "fan_green.png";
+  static const String fanNotOFF = "fan_orange.png";
+  static const String fanNotON = "fan_red.png";
+
+  static const String mblFanOFF = "m_fan_grey.png";
+  static const String mblFanON = "m_fan_yellow.png";
+  static const String mblFanNotOFF = "m_fan_orange.png";
+  static const String mblFanNotON = "m_fan_red.png";
+
+
 
   static const String gateOFF = "gate_close.png";
   static const String gateON = "gate_open.png";
@@ -289,6 +300,12 @@ class AppConstants {
       case 'light_mbl':
         imagePathFinal = _getLightImagePathMobile(keyTwo);
         break;
+      case 'fan':
+        imagePathFinal = _getFanImagePath(keyTwo);
+        break;
+      case 'fan_mbl':
+        imagePathFinal = _getFanImagePathMobile(keyTwo);
+        break;
       case 'gate':
         imagePathFinal = _getGateImagePath(keyTwo);
         break;
@@ -307,7 +324,7 @@ class AppConstants {
 
     return Image.asset(
       '${(keyOne == 'mobile pump' || keyOne == 'mobile source'
-          || keyOne == 'mobile filter'|| keyOne == 'mobile booster') ?
+          || keyOne == 'mobile filter'|| keyOne == 'mobile booster'|| keyOne == 'fan_mbl') ?
       pngPathMobile : pngPath}$imagePathFinal',
       width: double.infinity,
       height: double.infinity,
@@ -665,6 +682,36 @@ class AppConstants {
         return lightOFF;
       case 3:
         return lightOFF;
+      default:
+        return '';
+    }
+  }
+
+  static String _getFanImagePath(int status) {
+    switch (status) {
+      case 0:
+        return fanOFF;
+      case 1:
+        return fanON;
+      case 2:
+        return fanNotOFF;
+      case 3:
+        return fanNotON;
+      default:
+        return '';
+    }
+  }
+
+  static String _getFanImagePathMobile(int status) {
+    switch (status) {
+      case 0:
+        return mblFanOFF;
+      case 1:
+        return mblFanON;
+      case 2:
+        return mblFanNotOFF;
+      case 3:
+        return mblFanNotON;
       default:
         return '';
     }

@@ -205,8 +205,7 @@ class CustomerHomeWide extends StatelessWidget {
                         deviceId: cM.deviceId,
                         customerId: customerId,
                         currentLineSNo: cM.irrigationLine[viewModel.lIndex].sNo,
-                        groupId: viewModel.mySiteList.data[viewModel.sIndex]
-                            .groupId,
+                        groupId: viewModel.mySiteList.data[viewModel.sIndex].groupId,
                         categoryId: cM.categoryId,
                         modelId: cM.modelId,
                         deviceName: cM.deviceName,
@@ -267,6 +266,7 @@ class CustomerHomeWide extends StatelessWidget {
       valves: irrLine.valveObjects,
       mainValves: irrLine.mainValveObjects,
       lights: irrLine.lightObjects,
+      fans: irrLine.fanObjects,
       gates: irrLine.gateObjects,
       prsSwitch: irrLine.prsSwitch,
       pressureIn: irrLine.pressureIn,
