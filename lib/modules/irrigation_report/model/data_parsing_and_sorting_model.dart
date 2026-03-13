@@ -240,13 +240,10 @@ class IrrigationLogModel {
     }else if(sNo is List){
       name = (sNo).map((serialNo) => getName(serialNo)).join(', ');
     }
-    print('names data : $names');
-    print('name : $name    sNo : $sNo   type : ${sNo.runtimeType}');
     return name.isEmpty ? sNo : name;
   }
 
   Map<String,dynamic> editValveWise(dynamic dataSource,List<dynamic> noOfValve){
-    print("noOfValve => ${noOfValve}");
     var generalColumn = [...getColumn(generalParameterList)];
     var generalColumnData = [];
     var fixedColumnData = [];
@@ -1836,7 +1833,6 @@ class IrrigationLogModel {
                       waterList.add(date['irrigation']['IrrigationMethod'][howManyDate] == 1 ? 'Time' : 'Quantity (L)');
                     }
                   }
-                  // print('IrrigationMethod---');
                   if(parameter.payloadKey == 'IrrigationDuration_Quantity') {
                     graphData[indexOfDataToAdd]['totalTime'] = calculateTotalTime([graphData[indexOfDataToAdd]['totalTime'],date['irrigation']['IrrigationDurationCompleted'][howManyDate]]);
                     graphData[indexOfDataToAdd]['data'].add(
@@ -1889,7 +1885,6 @@ class IrrigationLogModel {
                       var listOfFilterDuration = (filterDuration == null || filterDuration.isEmpty) ? [] : filterDuration.split('_');
                       var listOfNameAndDuration = [];
                       for(var name = 0;name < listOfFilterName.length;name++){
-                        // print("listOfFilterName : ${listOfFilterName[name]} == ${listOfFilterDuration}");
                         if(name < listOfFilterDuration.length){
                           listOfNameAndDuration.add('${listOfFilterName[name]} - ${listOfFilterDuration[name]}');
                         }else{
@@ -2605,28 +2600,6 @@ class IrrigationLogModel {
     List<dynamic> list = [];
     try{
       for(var parameter in channelParameterList){
-        // if(parameter.payloadKey == '${central ? 'Central' : 'Local'}FertChannelName') {
-        //   if(parameter.show == true){
-        //     print("date['irrigation']['${central ? 'Central' : 'Local'}FertChannelName'] => ${date['irrigation']['${central ? 'Central' : 'Local'}FertChannelName']}");
-        //     // var data = date['irrigation']['${central ? 'Central' : 'Local'}FertChannelName'][howMany];
-        //     var data = null;
-        //     if(data == null || data == ''){
-        //       list.add(null);
-        //     }else{
-        //       if(data.contains('_')){
-        //         var splitData = data.split('_');
-        //         if(splitData.length <= channelNo){
-        //           list.add(null);
-        //         }else{
-        //           // print("${splitData.length} ==== $channelNo");
-        //           list.add(splitData[channelNo]);
-        //         }
-        //       }else{
-        //         list.add(null);
-        //       }
-        //     }
-        //   }
-        // }
         if(parameter.payloadKey == '${central ? 'Central' : 'Local'}FertMethod') {
           if(parameter.show == true){
             var data = date['irrigation']['${central ? 'Central' : 'Local'}FertMethod'][howMany];
@@ -2682,15 +2655,6 @@ class GraphData{
 }
 
 GraphData getGraphData({required method,required planned,required actualDuration,required actualLiters,required flowRate,required String name,preValue,postValue}){
-  // print({
-  //   'method' : method,
-  //   'planned' : planned,
-  //   'actualDuration' : actualDuration,
-  //   'flowRate' : flowRate,
-  //   'name' : name,
-  //   'preValue' : preValue,
-  //   'postValue' : postValue,
-  // });
   var preValueInSec = DataConvert().parseTimeString(preValue ?? '00:00:00');
   var postValueInSec = DataConvert().parseTimeString(postValue ?? '00:00:00');
   var plannedSeconds = method == 1 ? DataConvert().parseTimeString(planned) : 0;
@@ -2715,19 +2679,15 @@ GraphData getGraphData({required method,required planned,required actualDuration
   dynamic plannedFrom = 0;
   dynamic plannedTo = 0;
   if(actualInLiters > preInLiters){
-    // print('$name : first if');
     preTo = preInLiters;
     actualFrom = preTo;
-    // print('preTo = ${preTo.runtimeType} | actualFrom = ${actualFrom.runtimeType} | preInLiters = ${preInLiters.runtimeType} | plannedInLiters = ${plannedInLiters.runtimeType} | postInLiters = ${postInLiters.runtimeType} | actualInLiters = ${actualInLiters.runtimeType} |  ');
     if((plannedInLiters - postInLiters) > actualInLiters){
-      // print('$name : second if');
       actualTo = actualInLiters;
       postFrom = actualTo;
       postTo = postFrom;
       plannedFrom = postTo;
       plannedTo = plannedInLiters;
     }else{
-      // print('$name : second else');
       actualTo = plannedInLiters - postInLiters;
       postFrom = actualTo;
       postTo = plannedInLiters - (plannedInLiters - actualInLiters);
@@ -2735,7 +2695,6 @@ GraphData getGraphData({required method,required planned,required actualDuration
       plannedTo = plannedInLiters;
     }
   }else{
-    // print('$name : first else');
     preTo = actualInLiters;
     actualFrom = preTo;
     actualTo = actualFrom;
@@ -2744,17 +2703,6 @@ GraphData getGraphData({required method,required planned,required actualDuration
     plannedFrom = postTo;
     plannedTo = plannedInLiters;
   }
-  // print({
-  //   'preFrom': preFrom,
-  //   'preTo': preTo,
-  //   'actualFrom': actualFrom,
-  //   'actualTo': actualTo,
-  //   'postFrom': postFrom,
-  //   'postTo': postTo,
-  //   'plannedFrom': plannedFrom,
-  //   'plannedTo': plannedTo,
-  //   'seqName': name
-  // });
   return GraphData(
       preFrom: preFrom,
       preTo: preTo,
