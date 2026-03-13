@@ -3,6 +3,7 @@ import 'package:oro_drip_irrigation/views/common/user_dashboard/widgets/sensor_w
 import 'package:oro_drip_irrigation/views/common/user_dashboard/widgets/valve_widget.dart';
 
 import '../../../../models/customer/site_model.dart';
+import '../../../customer/widgets/fan_widget.dart';
 import '../../../customer/widgets/gate_widget.dart';
 import '../../../customer/widgets/light_widget.dart';
 import '../../../customer/widgets/main_valve_widget.dart';
@@ -99,13 +100,17 @@ List<Widget> mainValveList({
   );
 }
 
-List<Widget> lightList({
-  required List<LightModel> list,
-  required bool isWide,
-}) {
+List<Widget> lightList({required List<LightModel> list, required bool isWide}) {
   return mapWidgets(
     list: list,
     builder: (light, _) => LightWidget(objLight: light, isWide: isWide),
+  );
+}
+
+List<Widget> fanList({required List<FanModel> list, required bool isWide}) {
+  return mapWidgets(
+    list: list,
+    builder: (fan, _) => FanWidget(objFan: fan, isWide: isWide),
   );
 }
 
