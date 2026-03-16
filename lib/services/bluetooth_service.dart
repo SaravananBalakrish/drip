@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -26,13 +27,13 @@ class CustomDevice {
   bool get isDisConnected => status == BlueConnectionSate.disconnected;
 }
 
-class BluService {
-  static BluService? _instance;
-  BluService._internal();
+class BluetoothService {
+  static BluetoothService? _instance;
+  BluetoothService._internal();
   VoidCallback? onDeviceFound;
 
-  factory BluService() {
-    _instance ??= BluService._internal();
+  factory BluetoothService() {
+    _instance ??= BluetoothService._internal();
     return _instance!;
   }
 
@@ -60,7 +61,7 @@ class BluService {
         await _bluetooth.requestEnable();
       }
     } catch (e) {
-      print('Error enabling Bluetooth: $e');
+      debugPrint('Error enabling Bluetooth: $e');
     }
   }
 
@@ -82,7 +83,7 @@ class BluService {
 
       final statuses = await permissions.request();
       if (statuses.values.any((status) => status.isDenied || status.isPermanentlyDenied)) {
-        print('❌ Permissions not granted');
+        debugPrint('Permissions not granted');
         return false;
       }
     }
@@ -101,7 +102,7 @@ class BluService {
   Future<void> checkLocationServices() async {
     bool isLocationEnabled = await Geolocator.isLocationServiceEnabled();
     if (!isLocationEnabled) {
-      print("Location services are OFF. Prompting user...");
+      debugPrint("Location services are OFF. Prompting user...");
       await Geolocator.openLocationSettings();
     }
   }
@@ -186,7 +187,7 @@ class BluService {
         providerState?.updateConnectedDeviceStatus(null);
       });
     } catch (e) {
-      print("Connection failed: $e");
+      debugPrint("Connection failed: $e");
       providerState?.updateDeviceStatus(device.device.address, BlueConnectionSate.disconnected.index);
       providerState?.updateConnectedDeviceStatus(null);
     }
@@ -203,11 +204,10 @@ class BluService {
     await FlutterBluetoothSerial.instance.cancelDiscovery();
     _devices.clear();
     providerState?.updatePairedDevices([]);
-    print("Bluetooth state cleared");
   }
 
   void _parseBuffer() {
-    print('_buffer----> $_buffer');
+    debugPrint('_buffer----> $_buffer');
 
     if (_buffer.isEmpty) return;
 
@@ -221,7 +221,7 @@ class BluService {
       providerState?.setTraceLoading(false);
 
       int sizeInBytes = getTraceLogSize();
-      print('TraceLog size in bytes: $sizeInBytes');
+      debugPrint('TraceLog size in bytes: $sizeInBytes');
       providerState?.setTraceLoadingsize(sizeInBytes);
 
       traceChunk = ''; // Clear buffer for next round
@@ -234,7 +234,6 @@ class BluService {
       traceChunk += _buffer.substring(startIndex);
       int sizeInBytes = getCurrentChunkSize();
        providerState?.setTraceLoadingsize(sizeInBytes);
-      // Start collecting from *StartLog
     }
 
     // Continue logging: append new data to traceChunk
@@ -251,9 +250,6 @@ class BluService {
       final totalSize = int.tryParse(sizeStr ?? '0') ?? 0;
       providerState?.setTotalTraceSize(totalSize);
     }
-
-    // Stop logging when LogFileSentSuccess appears
-
 
     // While logging, show loading
     if (isLogging) {
@@ -279,7 +275,7 @@ class BluService {
 
 
   void _processData(String jsonString) {
-    print("_processData call $jsonString");
+    debugPrint("_processData call $jsonString");
     try {
       final data = json.decode(jsonString);
       final jsonStr = json.encode(data);
@@ -316,25 +312,25 @@ class BluService {
           break;
       }
     } catch (e) {
-      print("Error parsing: $e");
+      debugPrint("Error parsing: $e");
     }
   }
 
   Future<void> write(String payload) async {
     if (_connection != null && _connection!.isConnected) {
       final finalPayload = '*$payload#';
-      print("Sending: $finalPayload");
-      _connection!.output.add(Uint8List.fromList(utf8.encode(finalPayload + "\r\n")));
+      debugPrint("Sending: $finalPayload");
+      _connection!.output.add(Uint8List.fromList(utf8.encode("$finalPayload\r\n")));
     }
   }
 
   Future<void> writeFW(List<int> data) async {
     if (_connection != null && _connection!.isConnected) {
-      print("🔄 Sending ${data.length} bytes over Bluetooth...");
-      _connection!.output.add(Uint8List.fromList(data)); // ✅ send raw bytes
-      await _connection!.output.allSent; // ✅ ensure it's flushed
+      debugPrint("Sending ${data.length} bytes over Bluetooth...");
+      _connection!.output.add(Uint8List.fromList(data)); // send raw bytes
+      await _connection!.output.allSent; // ensure it's flushed
     } else {
-      print("❌ Not connected");
+      debugPrint("Not connected");
     }
   }
 
@@ -342,7 +338,7 @@ class BluService {
     try {
       await _connection?.close();
     } catch (e) {
-      print("Disconnect failed: $e");
+      debugPrint("Disconnect failed: $e");
     } finally {
       _connection = null;
       _connectedAddress = null;

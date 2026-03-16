@@ -19,7 +19,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   final Repository repository;
   final BuildContext context;
   final MqttService mqttService = MqttService();
-  final BluService blueService = BluService();
+  final BluetoothService blueService = BluetoothService();
 
   late MqttPayloadProvider mqttProvider;
   StreamSubscription<MqttConnectionState>? mqttSubscription;

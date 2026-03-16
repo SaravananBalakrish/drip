@@ -161,7 +161,7 @@ class _FirmwareBLEPageState extends State<FirmwareBLEPage> {
   Future<void> _sendViaBle() async {
     if (selectedFile == null) return;
     await readBootFileStringWithSize();
-    final BluService blueService = BluService();
+    final BluetoothService blueService = BluetoothService();
     final info = getFileInfo(selectedFile!);
     String payLoadFinal = jsonEncode({
       "6900": {"6901": "${info?['code']},$fileChecksumSize,$fileSize"},
@@ -171,7 +171,7 @@ class _FirmwareBLEPageState extends State<FirmwareBLEPage> {
   }
 
   Future<void> sendFirmwareFromFile() async {
-    final BluService blueService = BluService();
+    final BluetoothService blueService = BluetoothService();
     const chunkSize = 1024;
 
     setState(() {

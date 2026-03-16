@@ -129,7 +129,6 @@ class CustomerHomeMiddle extends StatelessWidget {
                                         const SizedBox(width: 10)
                                       ]
                                     ]
-
                                   ],
                                 ),
                               ),
