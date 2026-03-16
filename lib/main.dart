@@ -152,7 +152,7 @@ FutureOr<void> main() async {
               CustomerProvider customer, CommunicationService? previous) {
             return CommunicationService(
               mqttService: MqttService(),
-              blueService: BluService(),
+              blueService: BluetoothService(),
               customerProvider: customer,
             );
           },
