@@ -341,7 +341,8 @@ class CustomerFabMenu extends StatelessWidget {
                                               context,
                                               MaterialPageRoute(
                                                 builder: (context) => BLEMobileScreen(deviceID: currentMaster.deviceId,
-                                                    communicationType: 'Bluetooth',userId: customerId,controllerId: currentMaster.controllerId),
+                                                    communicationType: 'Bluetooth',userId: customerId, controllerId:
+                                                    currentMaster.controllerId),
                                               ));
                                         },
                                         icon: const Icon(CupertinoIcons.exclamationmark_octagon),

@@ -11,7 +11,7 @@ import 'mqtt_service.dart';
 
 class CommunicationService {
   final MqttService mqttService;
-  final BluService blueService;
+  final BluetoothService blueService;
   final CustomerProvider customerProvider;
 
   CommunicationService({
