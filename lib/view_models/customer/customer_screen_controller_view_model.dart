@@ -9,7 +9,8 @@ import '../../models/customer/site_model.dart';
 import '../../StateManagement/customer_provider.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../repository/repository.dart';
-import '../../services/bluetooth_service.dart';
+import '../../services/bluetooth/bluetooth_ble_service.dart';
+import '../../services/bluetooth/bluetooth_classic_service.dart';
 import '../../services/communication_service.dart';
 import '../../services/mqtt_service.dart';
 import '../../utils/constants.dart';
@@ -19,7 +20,8 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
   final Repository repository;
   final BuildContext context;
   final MqttService mqttService = MqttService();
-  final BluetoothService blueService = BluetoothService();
+  final BluetoothClassicService bluetoothClassicService = BluetoothClassicService();
+  final BluetoothBleService bluetoothBleService = BluetoothBleService();
 
   late MqttPayloadProvider mqttProvider;
   StreamSubscription<MqttConnectionState>? mqttSubscription;
@@ -105,7 +107,8 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     mqttService.connect();
 
     if (!kIsWeb) {
-      blueService.initializeBluService(state: mqttProvider);
+      bluetoothClassicService.initializeClassicService(state: mqttProvider);
+      bluetoothBleService.initializeBleService(state: mqttProvider);
     }
 
     mqttSubscription?.cancel();

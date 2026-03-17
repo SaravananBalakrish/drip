@@ -1,15 +1,14 @@
 import 'dart:async';
 import 'dart:io';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/state_management/pump_controller_provider.dart';
 import 'package:oro_drip_irrigation/modules/bluetooth_low_energy/state_management/ble_service.dart';
 import 'package:oro_drip_irrigation/providers/button_loading_provider.dart';
 import 'package:oro_drip_irrigation/providers/user_provider.dart';
 import 'package:oro_drip_irrigation/repository/repository.dart';
-import 'package:oro_drip_irrigation/services/bluetooth_service.dart';
+import 'package:oro_drip_irrigation/services/bluetooth/bluetooth_ble_service.dart';
+import 'package:oro_drip_irrigation/services/bluetooth/bluetooth_classic_service.dart';
 import 'package:oro_drip_irrigation/services/communication_service.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
@@ -25,8 +24,6 @@ import 'StateManagement/search_provider.dart';
 import 'app/app.dart';
 import 'StateManagement/customer_provider.dart';
 import 'firebase_options.dart';
-import 'flavors.dart';
-import 'modules/PumpController/state_management/pump_controller_provider.dart';
 import 'modules/IrrigationProgram/state_management/irrigation_program_provider.dart';
 import 'modules/Preferences/state_management/preference_provider.dart';
 import 'modules/SystemDefinitions/state_management/system_definition_provider.dart';
@@ -34,7 +31,6 @@ import 'modules/config_maker/state_management/config_maker_provider.dart';
 import 'StateManagement/mqtt_payload_provider.dart';
 import 'StateManagement/overall_use.dart';
 import 'modules/constant/state_management/constant_provider.dart';
-import 'package:new_version_plus/new_version_plus.dart';
 
 
 // Initialize local notifications plugin
@@ -152,7 +148,8 @@ FutureOr<void> main() async {
               CustomerProvider customer, CommunicationService? previous) {
             return CommunicationService(
               mqttService: MqttService(),
-              blueService: BluetoothService(),
+              blueService: BluetoothClassicService(),
+              bleService: BluetoothBleService(),
               customerProvider: customer,
             );
           },
