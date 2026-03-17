@@ -6,11 +6,11 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
-import '../../services/bluetooth_service.dart';
+import '../../services/bluetooth/bluetooth_classic_service.dart';
 import '../../services/sftp_service.dart';
 import '../../utils/snack_bar.dart';
 
-import 'dart:typed_data' show Uint8List;
+
 class FirmwareBLEPage extends StatefulWidget {
   const FirmwareBLEPage({super.key});
 
@@ -161,7 +161,7 @@ class _FirmwareBLEPageState extends State<FirmwareBLEPage> {
   Future<void> _sendViaBle() async {
     if (selectedFile == null) return;
     await readBootFileStringWithSize();
-    final BluetoothService blueService = BluetoothService();
+    final BluetoothClassicService blueService = BluetoothClassicService();
     final info = getFileInfo(selectedFile!);
     String payLoadFinal = jsonEncode({
       "6900": {"6901": "${info?['code']},$fileChecksumSize,$fileSize"},
@@ -171,7 +171,7 @@ class _FirmwareBLEPageState extends State<FirmwareBLEPage> {
   }
 
   Future<void> sendFirmwareFromFile() async {
-    final BluetoothService blueService = BluetoothService();
+    final BluetoothClassicService blueService = BluetoothClassicService();
     const chunkSize = 1024;
 
     setState(() {
