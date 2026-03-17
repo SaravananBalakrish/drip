@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import '../../../view_models/customer/customer_screen_controller_view_model.dart';
 
-class BluetoothScanTile extends StatefulWidget {
+class BleScanTile extends StatefulWidget {
   final CustomerScreenControllerViewModel vm;
 
-  const BluetoothScanTile({super.key, required this.vm});
+  const BleScanTile({super.key, required this.vm});
 
   @override
-  State<BluetoothScanTile> createState() => _BluetoothScanTileState();
+  State<BleScanTile> createState() => _BleScanTileState();
 }
 
-class _BluetoothScanTileState extends State<BluetoothScanTile>
+class _BleScanTileState extends State<BleScanTile>
     with SingleTickerProviderStateMixin {
+
   late AnimationController _controller;
   late Animation<double> _rotationAnimation;
   bool isScanning = false;
@@ -29,8 +30,7 @@ class _BluetoothScanTileState extends State<BluetoothScanTile>
       CurvedAnimation(parent: _controller, curve: Curves.linear),
     );
 
-    // Stop scan when device is found
-    widget.vm.bluetoothClassicService.onDeviceFound = stopScan;
+    widget.vm.bluetoothBleService.onDeviceFound = stopScan;
   }
 
   Future<void> startScan() async {
@@ -39,12 +39,18 @@ class _BluetoothScanTileState extends State<BluetoothScanTile>
     setState(() => isScanning = true);
     _controller.repeat();
 
-    // Use try/finally to ensure scan stops even if an error occurs
     try {
       final deviceId = widget.vm
-          .mySiteList.data[widget.vm.sIndex].master[widget.vm.mIndex].deviceId;
+          .mySiteList.data[widget.vm.sIndex]
+          .master[widget.vm.mIndex]
+          .deviceId;
 
-      await widget.vm.bluetoothClassicService.scanDevices(deviceId);
+      await widget.vm.bluetoothBleService.startScan(deviceNameFilter: deviceId);
+
+
+     /* final provider = context.read<MqttPayloadProvider>();
+      provider.updateBlePairedDevices(widget.vm.bluetoothBleService.devices);*/
+
     } finally {
       stopScan();
     }
@@ -58,14 +64,8 @@ class _BluetoothScanTileState extends State<BluetoothScanTile>
   }
 
   @override
-  void dispose() {
-    widget.vm.bluetoothClassicService.onDeviceFound = null;
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,
@@ -85,5 +85,6 @@ class _BluetoothScanTileState extends State<BluetoothScanTile>
         ),
       ),
     );
+
   }
 }

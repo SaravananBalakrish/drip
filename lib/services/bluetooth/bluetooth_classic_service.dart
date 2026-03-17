@@ -1,45 +1,31 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
-import 'package:device_info_plus/device_info_plus.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as classic;
 import 'package:permission_handler/permission_handler.dart';
-import '../StateManagement/mqtt_payload_provider.dart';
-import 'package:oro_drip_irrigation/plugins/flutter_bluetooth_serial/lib/flutter_bluetooth_serial.dart';
-import '../utils/enums.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:geolocator/geolocator.dart';
+
+import '../../StateManagement/mqtt_payload_provider.dart';
+import '../../utils/enums.dart';
+import 'model/classic_bluetooth_device_model.dart';
 
 
-
-class CustomDevice {
-  final BluetoothDevice device;
-
-  BlueConnectionSate status;
-
-  CustomDevice({
-    required this.device,
-    this.status = BlueConnectionSate.disconnected,
-  });
-
-  bool get isConnected => status == BlueConnectionSate.connected;
-  bool get isConnecting => status == BlueConnectionSate.connecting;
-  bool get isDisConnected => status == BlueConnectionSate.disconnected;
-}
-
-class BluetoothService {
-  static BluetoothService? _instance;
-  BluetoothService._internal();
+class BluetoothClassicService {
+  static BluetoothClassicService? _instance;
+  BluetoothClassicService._internal();
   VoidCallback? onDeviceFound;
 
-  factory BluetoothService() {
-    _instance ??= BluetoothService._internal();
+  factory BluetoothClassicService() {
+    _instance ??= BluetoothClassicService._internal();
     return _instance!;
   }
 
-  final FlutterBluetoothSerial _bluetooth = FlutterBluetoothSerial.instance;
-  final List<BluetoothDevice> _devices = [];
-  BluetoothConnection? _connection;
+  final classic.FlutterBluetoothSerial _bluetooth = classic.FlutterBluetoothSerial.instance;
+  final List<classic.BluetoothDevice> _devices = [];
+  classic.BluetoothConnection? _connection;
   String? _connectedAddress;
   MqttPayloadProvider? providerState;
   String _buffer = '';
@@ -48,9 +34,9 @@ class BluetoothService {
   String traceChunk = '';
 
   bool get isConnected => _connection != null && _connection!.isConnected;
-  StreamSubscription<BluetoothDiscoveryResult>? _scanSubscription;
+  StreamSubscription<classic.BluetoothDiscoveryResult>? _scanSubscription;
 
-  Future<void> initializeBluService({MqttPayloadProvider? state}) async {
+  Future<void> initializeClassicService({MqttPayloadProvider? state}) async {
     providerState = state;
   }
 
@@ -111,17 +97,17 @@ class BluetoothService {
     return utf8.encode(traceChunk).length;
   }
 
-  Future<void> getDevices(String deviceId) async {
+  Future<void> scanDevices(String deviceId) async {
 
     await requestPermissions();
     await checkLocationServices();
 
     _devices.clear();
-    await FlutterBluetoothSerial.instance.cancelDiscovery();
+    await classic.FlutterBluetoothSerial.instance.cancelDiscovery();
     await requestPermissions();
     await checkLocationServices();
 
-    _scanSubscription = FlutterBluetoothSerial.instance.startDiscovery().listen((result) {
+    _scanSubscription = classic.FlutterBluetoothSerial.instance.startDiscovery().listen((result) {
       final device = result.device;
 
       if ((device.name?.contains(deviceId) ?? false)) {
@@ -129,25 +115,25 @@ class BluetoothService {
         if (!exists) {
           _devices.add(device);
 
-          final existing = providerState?.pairedDevices.firstWhere(
+          final existing = providerState?.pairedDevicesClassic.firstWhere(
                 (e) => e.device.address == device.address,
-            orElse: () => CustomDevice(device: device),
+            orElse: () => ClassicBluetoothDeviceModel(device: device),
           );
 
-          final updatedDevice = CustomDevice(
+          final updatedDevice = ClassicBluetoothDeviceModel(
             device: device,
-            status: existing?.status ?? BlueConnectionSate.disconnected,
+            connectionState: existing?.connectionState ?? BlueConnectionState.disconnected,
           );
 
           final updatedList = [
-            ...(providerState?.pairedDevices
+            ...(providerState?.pairedDevicesClassic
                 .where((d) => d.device.address != device.address)
                 .toList() ??
-                <CustomDevice>[]),
+                <ClassicBluetoothDeviceModel>[]),
             updatedDevice,
           ];
 
-          providerState?.updatePairedDevices(updatedList);
+          providerState?.updateClassicPairedDevices(updatedList);
         }
         onDeviceFound?.call();
       }
@@ -155,27 +141,27 @@ class BluetoothService {
 
     await Future.delayed(const Duration(seconds: 10));
     await _scanSubscription?.cancel();
-    await FlutterBluetoothSerial.instance.cancelDiscovery();
+    await classic.FlutterBluetoothSerial.instance.cancelDiscovery();
   }
 
-  Future<void> connectToDevice(CustomDevice device) async {
+  Future<void> connectToDevice(ClassicBluetoothDeviceModel device) async {
     try {
       await requestPermissions();
       await initPermissions();
       await checkLocationServices();
 
-      providerState?.updateDeviceStatus(device.device.address, BlueConnectionSate.connecting.index);
+      providerState?.updateClassicDeviceStatus(device.device.address, BlueConnectionState.connecting.index);
 
       if (isConnected) {
         await disconnect();
       }
 
       _connectedAddress = device.device.address;
-      final connection = await BluetoothConnection.toAddress(device.device.address);
+      final connection = await classic.BluetoothConnection.toAddress(device.device.address);
       _connection = connection;
 
-      providerState?.updateDeviceStatus(device.device.address, BlueConnectionSate.connected.index);
-      providerState?.updateConnectedDeviceStatus(device);
+      providerState?.updateClassicDeviceStatus(device.device.address, BlueConnectionState.connected.index);
+      providerState?.updateClassicConnectedDeviceStatus(device);
 
       connection.input?.listen((Uint8List data) {
         _buffer += utf8.decode(data);
@@ -183,27 +169,27 @@ class BluetoothService {
       }).onDone(() {
         _connectedAddress = null;
         _connection = null;
-        providerState?.updateDeviceStatus(device.device.address, BlueConnectionSate.disconnected.index);
-        providerState?.updateConnectedDeviceStatus(null);
+        providerState?.updateClassicDeviceStatus(device.device.address, BlueConnectionState.disconnected.index);
+        providerState?.updateClassicConnectedDeviceStatus(null);
       });
     } catch (e) {
       debugPrint("Connection failed: $e");
-      providerState?.updateDeviceStatus(device.device.address, BlueConnectionSate.disconnected.index);
-      providerState?.updateConnectedDeviceStatus(null);
+      providerState?.updateClassicDeviceStatus(device.device.address, BlueConnectionState.disconnected.index);
+      providerState?.updateClassicConnectedDeviceStatus(null);
     }
   }
 
   Future<void> stopDiscovery() async {
     await _scanSubscription?.cancel();
-    await FlutterBluetoothSerial.instance.cancelDiscovery();
+    await classic.FlutterBluetoothSerial.instance.cancelDiscovery();
   }
 
   Future<void> resetBluetoothState() async {
     // stop scan
     await _scanSubscription?.cancel();
-    await FlutterBluetoothSerial.instance.cancelDiscovery();
+    await classic.FlutterBluetoothSerial.instance.cancelDiscovery();
     _devices.clear();
-    providerState?.updatePairedDevices([]);
+    providerState?.updateClassicPairedDevices([]);
   }
 
   void _parseBuffer() {
@@ -233,14 +219,14 @@ class BluetoothService {
       final startIndex = _buffer.indexOf('*StartLog');
       traceChunk += _buffer.substring(startIndex);
       int sizeInBytes = getCurrentChunkSize();
-       providerState?.setTraceLoadingsize(sizeInBytes);
+      providerState?.setTraceLoadingsize(sizeInBytes);
     }
 
     // Continue logging: append new data to traceChunk
     if (isLogging && !_buffer.contains('*StartLog')) {
       traceChunk += _buffer;
       int sizeInBytes = getCurrentChunkSize();
-       providerState?.setTraceLoadingsize(sizeInBytes);
+      providerState?.setTraceLoadingsize(sizeInBytes);
     }
 
     // Extract and set LogFileSize if available
@@ -342,12 +328,11 @@ class BluetoothService {
     } finally {
       _connection = null;
       _connectedAddress = null;
-      providerState?.updateConnectedDeviceStatus(null);
+      providerState?.updateClassicConnectedDeviceStatus(null);
     }
   }
 
-
-  BluetoothDevice? get connectedDevice {
+  classic.BluetoothDevice? get connectedDevice {
     return _devices.firstWhere((d) => d.address == _connectedAddress);
   }
 }
