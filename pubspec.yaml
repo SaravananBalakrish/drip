@@ -65,8 +65,9 @@ dependencies:
   timeago: ^3.7.1
   syncfusion_flutter_xlsio: ^27.2.5
   scoped_model: ^2.0.0
-  flutter_bluetooth_serial:
-    path: lib/plugins/flutter_bluetooth_serial
+  flutter_bluetooth_serial: ^0.4.0
+#  flutter_bluetooth_serial:
+#    path: lib/plugins/flutter_bluetooth_serial
   crypto: ^3.0.6
   image_picker: ^1.1.2
   animated_text_kit: ^4.2.3
