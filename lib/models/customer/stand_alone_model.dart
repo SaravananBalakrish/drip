@@ -59,7 +59,7 @@ class SequenceModel {
   bool modified;
   String location;
   List<ValveSA> valve;
-  List<dynamic> mainValve;
+  List<MainValveSA> mainValve;
 
   SequenceModel({
     required this.sNo,
@@ -83,6 +83,7 @@ class SequenceModel {
     location: json["location"],
     valve: (json['valve'] as List).map((v) => ValveSA.fromJson(v))
         .toList(),
-    mainValve: List<dynamic>.from(json["mainValve"]),
+    mainValve: (json['mainValve'] as List).map((v) => MainValveSA.fromJson(v))
+        .toList(),
   );
 }
