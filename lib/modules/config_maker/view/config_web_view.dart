@@ -59,6 +59,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
   bool isDataSaved = false;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   HardwareAcknowledgementState payloadState = HardwareAcknowledgementState.notSent;
+  bool isNewConfig = false;
 
   @override
   void initState() {
@@ -498,6 +499,9 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                                         onPressed: () {
                                           if (formKey.currentState!.validate()) {
                                             configPvd.clearData();
+                                            setState(() {
+                                              isNewConfig = true;
+                                            });
                                             Navigator.of(context).pop();
                                           }
                                         },
@@ -875,7 +879,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
       "userId" : configPvd.masterData['customerId'],
       "controllerId" : configPvd.masterData['controllerId'],
       'groupId' : configPvd.masterData['groupId'],
-      "isNewConfig" : '0',
+      "isNewConfig" : isNewConfig ? '1' : '0',
       "productLimit" : listOfSampleObjectModel,
       "connectionCount" : listOfObjectModelConnection,
       "configObject" : listOfGeneratedObject,
