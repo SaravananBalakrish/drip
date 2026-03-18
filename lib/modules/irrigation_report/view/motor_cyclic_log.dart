@@ -44,7 +44,6 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
   }
 
   void getData()async{
-    print('data request to the server.............');
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('dd/MM/yyyy').format(now);
     print('_selectedDate : $_selectedDate');
@@ -67,11 +66,6 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
 
     try{
       String? startMonth = selectedDateRange?.start.month.toString();
-      print('startMonth : $startMonth');
-
-      String? startday = selectedDateRange?.start.day.toString();
-      String? endMonth = selectedDateRange?.end.month.toString();
-      String? endday = selectedDateRange?.end.day.toString();
       var body = {
         "userId": widget.userData['customerId'],
         "controllerId": widget.userData['controllerId'],
@@ -97,7 +91,6 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
 
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-    print('args : ${args}');
     setState(() {
       if (args.value is PickerDateRange) {
         _selectedDate  = '${DateFormat('dd/MM/yyyy').format(args.value.startDate)} -'
@@ -173,7 +166,8 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
               children: [
                 const SizedBox(height: 1,),
                 for(var programData in data["data"]["motorCyclic"])
-                  programBox(programData: programData)
+                  programBox(programData: programData),
+                const SizedBox(height: 100,),
               ],
             ),
           ),

@@ -57,7 +57,8 @@ abstract class BaseCustomerScreenState<T extends StatefulWidget> extends State<T
     }
   }
 
-  bool isGemOrNovaModel(int modelId) => [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(modelId);
+  bool isGemOrNovaModel(int modelId) => [...AppConstants.gemModelList,
+    ...AppConstants.ecoGemModelList].contains(modelId);
 }
 
 mixin ProgramRefreshMixin<T extends StatefulWidget> on State<T> {

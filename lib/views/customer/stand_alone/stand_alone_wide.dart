@@ -371,13 +371,28 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
           }).toList(),
         ) : vm.standAloneData != null ? Column(
           children: vm.standAloneData!.sequence.map((sequence) {
-            final rows = sequence.valve.map((valve) {
+
+            final valveRows = sequence.valve.map((valve) {
               return DataRow(cells: [
                 DataCell(Image.asset('assets/png/m_valve_grey.png', width: 40, height: 40)),
                 DataCell(Text(valve.name)),
                 const DataCell(SizedBox()),
               ]);
             }).toList();
+
+            final mainValveRows = sequence.mainValve.map((mValve) {
+              return DataRow(cells: [
+                DataCell(Image.asset('assets/png/m_main_valve_gray.png', width: 40, height: 40)),
+                DataCell(Text(mValve.name)),
+                const DataCell(SizedBox()),
+              ]);
+            }).toList();
+
+            // Merge both
+            final allRows = [
+              ...mainValveRows,
+              ...valveRows,
+            ];
 
             return ValveCardTable(
               title: sequence.name,
@@ -391,8 +406,9 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
                   sequence.selected = value;
                 });
               },
-              rows: rows,
+              rows: allRows,
             );
+
           }).toList(),
         ) : const SizedBox(),
       ],

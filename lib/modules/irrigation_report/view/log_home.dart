@@ -372,6 +372,7 @@ class _LogHomeState extends State<LogHome> {
                           }
                         });
                       }
+                      print("program : ${program}");
                     }
                   }catch(e,stackTrace){
                     log('Error on ProgramS_No : ${e.toString()}');
@@ -1765,7 +1766,6 @@ double timeToSeconds(dynamic timeString) {
   int seconds1 = int.parse(output[2]);
   var total = hours * 3600 + minutes * 60 + seconds;
   var total1 = hours1 * 3600 + minutes1 * 60 + seconds1;
-  print('result : ${(total/total1).toStringAsFixed(2)}');
   return total1/total;
 }
 

@@ -9,6 +9,7 @@ class IrrigationLineNarrow extends StatelessWidget {
   final List<ValveModel> valves;
   final List<ValveModel> mainValves;
   final List<LightModel> lights;
+  final List<FanModel> fans;
   final List<GateModel> gates;
   final List<SensorModel> pressureIn;
   final List<SensorModel> pressureOut;
@@ -22,6 +23,7 @@ class IrrigationLineNarrow extends StatelessWidget {
     required this.valves,
     required this.mainValves,
     required this.lights,
+    required this.fans,
     required this.gates,
     required this.pressureIn,
     required this.pressureOut,
@@ -60,6 +62,7 @@ class IrrigationLineNarrow extends StatelessWidget {
 
     final allItems = [
       ...lightList(list: lights, isWide: false),
+      ...fanList(list: fans, isWide: false),
 
       ...mainValveList(list: mainValves, customerId: customerId,
         controllerId: controllerId, modelId: modelId, isNarrow: true),
