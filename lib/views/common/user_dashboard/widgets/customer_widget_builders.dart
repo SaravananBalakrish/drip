@@ -80,7 +80,7 @@ List<Widget> valveList({
 }
 
 List<Widget> mainValveList({
-  required List<ValveModel> list,
+  required List<MainValveModel> list,
   required int customerId,
   required int controllerId,
   required int modelId,
