@@ -54,7 +54,7 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
 
   @override
   Widget build(BuildContext context) {
-    final valves = widget.masterData.configObjects.where((e) => e.objectId == 13).map((ele) => ele.name).toList();
+    final valves = widget.masterData.configObjects.where((e) => e.objectId == (AppConstants.pumpWithLightModelList.contains(widget.masterData.modelId) ? 19: 13)).map((ele) => ele.name).toList();
 
     return Scaffold(
       body: Consumer<PreferenceProvider>(
