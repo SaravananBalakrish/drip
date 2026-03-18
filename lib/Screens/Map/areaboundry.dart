@@ -106,7 +106,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
 
 
       Map<String, dynamic> body = {
-        "userId": widget.userId,
+        "userId": widget.customerId,
         "controllerId" : widget.controllerId,
         "valveGeographyArea" : jsondata,
         "modifyUser" : widget.userId
@@ -115,6 +115,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
 
       final Repository repository = Repository(HttpService());
       final response = await repository.updategeographyArea(body);
+      print('response:${response.body}');
       if (response.statusCode != 200) {
         print('Failed to send valve : ${response.body}');
       }
