@@ -193,7 +193,7 @@ class CurrentProgram extends StatelessWidget {
   Widget buildActionButton(BuildContext context, List<String> values) {
 
     final programName = scheduledPrograms.getProgramName(values[0]);
-    //final programRnReason = getContentByCode(int.parse(values[15]));
+    final programRnReason = getContentByCode(int.parse(values[15]));
     final sequenceName = scheduledPrograms.getSequenceName(values[0], values[1]);
 
 
@@ -242,6 +242,29 @@ class CurrentProgram extends StatelessWidget {
         },
         child: const Text('Stop'),
       );
+    }else if (programRnReason.contains('Program started manually')) {
+      return MaterialButton(
+        color: Colors.redAccent,
+        textColor: Colors.white,
+        onPressed: () async {
+
+          String payLoadFinal = jsonEncode({
+            "3900": {"3901": '0,${values[0]},${values[1]},0,0,0,0,0,0,0,0'}
+          });
+
+          final result = await context.read<CommunicationService>().sendCommand(
+              serverMsg: '$programName Stopped manually',
+              payload: payLoadFinal);
+
+          if (result['http'] == true) debugPrint("Payload sent to Server");
+          if (result['mqtt'] == true) debugPrint("Payload sent to MQTT Box");
+          if (result['bluetooth'] == true) debugPrint("Payload sent via Bluetooth");
+
+          GlobalSnackBar.show(context, 'Comment sent successfully', 200);
+
+        },
+        child: const Text('Stop'),
+      );
     }else{
       return MaterialButton(
         color: Colors.orangeAccent,
@@ -266,7 +289,6 @@ class CurrentProgram extends StatelessWidget {
       );
     }
   }
-
 
   Widget buildScheduleRow(BuildContext context, List<String> values) {
 
