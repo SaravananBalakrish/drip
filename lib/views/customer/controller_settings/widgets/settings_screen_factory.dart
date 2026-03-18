@@ -127,7 +127,7 @@ class SettingsScreenFactory {
 
       case 'Virtual Water Meter':
         return VirtualMeterScreen(
-          userId: ctx.userId,
+          userId: ctx.customerId,
           controllerId: ctx.controllerId,
           menuId: 67,
           deviceId: ctx.imeiNo,
@@ -135,7 +135,7 @@ class SettingsScreenFactory {
 
       case 'Frost Protection':
         return FrostMobUI(
-          userId: ctx.userId,
+          userId: ctx.customerId,
           controllerId: ctx.controllerId,
           deviceID: ctx.imeiNo,
           menuId: 71,
