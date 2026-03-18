@@ -1,4 +1,4 @@
-import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart' as classic;
+import 'package:flutter_bluetooth_serial_plus/flutter_bluetooth_serial_plus.dart' as classic;
 import '../../../utils/enums.dart';
 
 class ClassicBluetoothDeviceModel {
