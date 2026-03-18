@@ -30,7 +30,7 @@ class IrrigationLineWide extends StatelessWidget {
   final List<FertilizerSiteModel> lFertilizerSite;
 
   final List<ValveModel> valves;
-  final List<ValveModel> mainValves;
+  final List<MainValveModel> mainValves;
   final List<LightModel> lights;
   final List<GateModel> gates;
   final List<FanModel> fans;

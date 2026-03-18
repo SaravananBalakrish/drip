@@ -6,7 +6,7 @@ import '../../../models/customer/site_model.dart';
 import '../../../utils/constants.dart';
 
 class BuildMainValve extends StatelessWidget {
-  final ValveModel valve;
+  final MainValveModel valve;
   final int customerId, controllerId, modelId;
   final bool isNarrow;
 
@@ -54,7 +54,7 @@ class BuildMainValve extends StatelessWidget {
                     child: isNarrow ? Image.asset('assets/png/m_main_valve_gray.png',
                       color: valve.status == 0 ? Colors.black54 : valve.status == 1 ? Colors.green
                           : valve.status == 1 ? Colors.orange : Colors.red,
-                    ) : AppConstants.getAsset('main_valve', valve.status, '', valve.completePercent),
+                    ) : AppConstants.getAsset('main_valve', valve.status, '', 0),
                   ),
                   Text(
                     valve.name,
