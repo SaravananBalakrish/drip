@@ -220,13 +220,13 @@ class BluetoothBleService {
                   await _notifyChar?.setNotifyValue(true);
 
                   _notifyChar?.value.listen((value) {
-                    debugPrint("📩 RAW: $value");
+                    debugPrint("RAW: $value");
 
                     try {
                       final response = String.fromCharCodes(value);
-                      debugPrint("📩 DEVICE RESPONSE: $response");
+                      debugPrint("DEVICE RESPONSE: $response");
                     } catch (e) {
-                      debugPrint("❌ Decode error: $e");
+                      debugPrint("Decode error: $e");
                     }
                   });
                 }
