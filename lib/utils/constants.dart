@@ -898,7 +898,8 @@ class AppConstants {
   static List<int> smartPlusEcPhModel = [33];
   static List<int> ecModel = [64];
   static List<int> phModel = [65];
-  static List<int> pumpWithValveModelList = [48, 49, 52, 53, 54, 55];
+  static List<int> pumpWithValveModelList = [48, 49, 52, 53, 54, 55, ...pumpWithLightModelList];
+  static List<int> pumpWithLightModelList = [76];
   static List<int> shine2V = [48, 49];
   static List<int> shine4V = [52, 53];
   static List<int> elite10V = [54, 55];

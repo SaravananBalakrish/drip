@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/app.dart';
 import 'package:oro_drip_irrigation/modules/Preferences/view/preference_main_screen.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/view/pump_dashboard_screen.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/widget/custom_outline_button.dart';
@@ -83,7 +84,8 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
             const BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), activeIcon: Icon(Icons.dashboard), label: 'Dashboard'),
             if(isPumpWithValveModel)...[
               const BottomNavigationBarItem(icon: Icon(Icons.touch_app_outlined), activeIcon: Icon(Icons.touch_app_rounded), label: 'Standalone'),
-              const BottomNavigationBarItem(icon: Icon(Icons.schedule_outlined), activeIcon: Icon(Icons.schedule_rounded), label: 'Program'),
+              if(!AppConstants.pumpWithLightModelList.contains(widget.masterData.modelId))
+                const BottomNavigationBarItem(icon: Icon(Icons.schedule_outlined), activeIcon: Icon(Icons.schedule_rounded), label: 'Program'),
             ],
             const BottomNavigationBarItem(icon: Icon(Icons.assessment_outlined), activeIcon: Icon(Icons.assessment), label: 'Logs'),
             const BottomNavigationBarItem(icon: Icon(Icons.settings_outlined), activeIcon: Icon(Icons.settings), label: 'Settings'),
@@ -119,7 +121,7 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
                     child: Row(
                       spacing: 15,
                       children: [
-                        for(int index = 0; index < (isPumpWithValveModel ? 5 : 3); index++)
+                        for(int index = 0; index < (AppConstants.pumpWithLightModelList.contains(widget.masterData.modelId) ? 4 : isPumpWithValveModel ? 5 : 3); index++)
                           CustomOutlineButton(
                               onPressed: () async{
                                 setState(() {
@@ -131,7 +133,8 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
                                 "Pump log",
                                 if(isPumpWithValveModel)...[
                                   "Standalone",
-                                  'Program',
+                                  if(!AppConstants.pumpWithLightModelList.contains(widget.masterData.modelId))
+                                    'Program',
                                 ],
                                 "Power graph",
                                 "Voltage log",
@@ -220,12 +223,13 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
             masterData: widget.masterData,
             selectedIndex: _selectedIndex,
           ),
-          StandAloneSettings(
-            userId: widget.userId,
-            customerId: widget.customerId,
-            masterData: widget.masterData,
-            selectedIndex: _selectedIndex,
-          ),
+          if(!AppConstants.pumpWithLightModelList.contains(widget.masterData.modelId))
+            StandAloneSettings(
+              userId: widget.userId,
+              customerId: widget.customerId,
+              masterData: widget.masterData,
+              selectedIndex: _selectedIndex,
+            ),
         ],
         PumpLogsHome(
             userId: widget.customerId,
@@ -327,7 +331,9 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
           selectedWidget =  PowerGraphScreen(userId: widget.customerId, controllerId: widget.masterData.controllerId, masterData: widget.masterData);
         }
       case 2:
-        if(isPumpWithValveModel) {
+        if(AppConstants.pumpWithLightModelList.contains(widget.masterData.modelId)){
+          selectedWidget =  PowerGraphScreen(userId: widget.customerId, controllerId: widget.masterData.controllerId, masterData: widget.masterData);
+        }else if(isPumpWithValveModel) {
           selectedWidget = StandAloneSettings(
             userId: widget.userId,
             customerId: widget.customerId,
@@ -338,7 +344,9 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
           selectedWidget =  PumpVoltageLogScreen(userId: widget.customerId, controllerId: widget.masterData.controllerId, masterData: widget.masterData);
         }
       case 3:
-        if(isPumpWithValveModel) {
+        if(AppConstants.pumpWithLightModelList.contains(widget.masterData.modelId)){
+          selectedWidget = PumpVoltageLogScreen(userId: widget.customerId, controllerId: widget.masterData.controllerId, masterData: widget.masterData);
+        }else if(isPumpWithValveModel) {
           selectedWidget =  PowerGraphScreen(userId: widget.customerId, controllerId: widget.masterData.controllerId, masterData: widget.masterData);
         } else {
           selectedWidget = PumpVoltageLogScreen(userId: widget.customerId, controllerId: widget.masterData.controllerId, masterData: widget.masterData);

@@ -36,6 +36,8 @@ class StandAloneSettings extends StatefulWidget {
 class _StandAloneSettingsState extends State<StandAloneSettings> {
   final PreferenceRepository repository = PreferenceRepository(HttpService());
   int _selectedSetting = 0;
+  late final bool isPumpWithLight;
+
 
   @override
   void initState() {
@@ -47,11 +49,13 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
       controllerId: widget.masterData.controllerId,
       selectedIndex: widget.selectedIndex,
     );
+    isPumpWithLight = AppConstants.pumpWithLightModelList.contains(widget.masterData.modelId);
   }
 
   @override
   Widget build(BuildContext context) {
     final valves = widget.masterData.configObjects.where((e) => e.objectId == 13).map((ele) => ele.name).toList();
+
     return Scaffold(
       body: Consumer<PreferenceProvider>(
         builder: (context, provider, child) {
@@ -182,7 +186,7 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
           ? SwitchListTile(
         contentPadding: EdgeInsets.zero,
         title: Text(widget.selectedIndex == 1
-            ? setting.serialNumber == 1 ? setting.title : titles[index]
+            ? setting.serialNumber == 1 ? setting.title : (isPumpWithLight ? 'Light ${index + 1}' : titles[index])
             : [1,2,3,4].contains(setting.serialNumber) ? setting.title : titles[index]),
         value: setting.value,
         onChanged: (value) => setState(() => setting.value = value),
