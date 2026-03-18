@@ -5,18 +5,21 @@ import '../repository/repository.dart';
 import '../utils/constants.dart';
 import '../utils/network_utils.dart';
 import '../utils/shared_preferences_helper.dart';
-import 'bluetooth_service.dart';
+import 'bluetooth/bluetooth_ble_service.dart';
+import 'bluetooth/bluetooth_classic_service.dart';
 import 'http_service.dart';
 import 'mqtt_service.dart';
 
 class CommunicationService {
   final MqttService mqttService;
-  final BluService blueService;
+  final BluetoothClassicService blueService;
+  final BluetoothBleService bleService;
   final CustomerProvider customerProvider;
 
   CommunicationService({
     required this.mqttService,
     required this.blueService,
+    required this.bleService,
     required this.customerProvider,
   });
 
@@ -53,6 +56,7 @@ class CommunicationService {
         }
       }
 
+
       if (blueService.isConnected == true) {
         try {
           blueService.write(payload);
@@ -62,11 +66,35 @@ class CommunicationService {
         }
       }
 
+      if (bleService.isConnected == true) {
+        try {
+          await bleService.write(payload);
+          result['bluetooth'] = true;
+        } catch (e) {
+          debugPrint('Failed to send via BLE: $e');
+        }
+      }
+
     } catch (e) {
       debugPrint('Unexpected error during sending command: $e');
     }
 
     return result;
+  }
+
+  Future<void> sendWifiCredentials(String ssid, String password) async {
+    final payload = '2,$ssid,$password';
+
+    final livePayload = jsonEncode({
+      "6000": {
+        "6001": payload
+      }
+    });
+
+    await sendCommand(
+      serverMsg: '',
+      payload: livePayload,
+    );
   }
 
 

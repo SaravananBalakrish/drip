@@ -158,7 +158,7 @@ class AppConstants {
   static const String fanNotON = "fan_red.png";
 
   static const String mblFanOFF = "m_fan_grey.png";
-  static const String mblFanON = "m_fan_yellow.png";
+  static const String mblFanON = "m_fan_green.gif";
   static const String mblFanNotOFF = "m_fan_orange.png";
   static const String mblFanNotON = "m_fan_red.png";
 

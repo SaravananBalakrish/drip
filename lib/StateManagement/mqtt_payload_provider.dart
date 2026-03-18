@@ -5,7 +5,8 @@ import '../Constants/data_convertion.dart';
 import '../models/Weather_model.dart';
 import '../Screens/Map/googlemap_model.dart';
 import '../models/customer/fertilizer_site_live_model.dart';
-import '../services/bluetooth_service.dart';
+import '../services/bluetooth/model/ble_bluetooth_device_model.dart';
+import '../services/bluetooth/model/classic_bluetooth_device_model.dart';
 import '../utils/enums.dart';
 
 
@@ -128,13 +129,6 @@ class MqttPayloadProvider with ChangeNotifier {
    final Map<String, FertilizerSiteLiveModel> _fertilizerSiteMap = {};
    final Map<String, FertilizerChannelLiveModel> _fertilizerChannelMap = {};
 
-   //for blue repository
-   CustomDevice? _connectedDevice;
-   CustomDevice? get connectedDevice => _connectedDevice;
-
-   List<CustomDevice> _pairedDevices = [];
-   List<CustomDevice> get pairedDevices => _pairedDevices;
-
 
    List<Map<String, dynamic>> _wifiList = [];
    List<Map<String, dynamic>> get wifiList => _wifiList;
@@ -157,27 +151,69 @@ class MqttPayloadProvider with ChangeNotifier {
    int traceLogSize = 0;
    int totalTraceLogSize = 0;
 
+   //for blue repository classic
+   ClassicBluetoothDeviceModel? _connectedDeviceClassic;
+   ClassicBluetoothDeviceModel? get connectedDeviceClassic => _connectedDeviceClassic;
 
-   void updateConnectedDeviceStatus(CustomDevice? device) {
-     _connectedDevice = device;
+   List<ClassicBluetoothDeviceModel> _pairedDevicesClassic = [];
+   List<ClassicBluetoothDeviceModel> get pairedDevicesClassic => _pairedDevicesClassic;
+
+
+   //for blue repository ble
+   BleBluetoothDeviceModel? _connectedDeviceBle;
+   BleBluetoothDeviceModel? get connectedDeviceBle => _connectedDeviceBle;
+
+   List<BleBluetoothDeviceModel> _pairedDevicesBle = [];
+   List<BleBluetoothDeviceModel> get pairedDevicesBle => _pairedDevicesBle;
+
+
+   void updateClassicConnectedDeviceStatus(ClassicBluetoothDeviceModel? device) {
+     _connectedDeviceClassic = device;
      notifyListeners();
    }
 
-   void updatePairedDevices(List<CustomDevice> devices) {
-     _pairedDevices = devices;
+   void updateClassicPairedDevices(List<ClassicBluetoothDeviceModel> devices) {
+     _pairedDevicesClassic = devices;
+     notifyListeners();
+   }
+
+   void updateBleConnectedDeviceStatus(BleBluetoothDeviceModel? device) {
+     _connectedDeviceBle = device;
+     notifyListeners();
+   }
+
+   void updateBlePairedDevices(List<BleBluetoothDeviceModel> devices) {
+     _pairedDevicesBle = devices;
      notifyListeners();
    }
 
 
-   void updateDeviceStatus(String address, int status) {
-     for (var device in _pairedDevices) {
+   void updateClassicDeviceStatus(String address, int status) {
+     for (var device in _pairedDevicesClassic) {
        if (device.device.address == address) {
-         if (status >= 0 && status < BlueConnectionSate.values.length) {
-           device.status = BlueConnectionSate.values[status];
+         if (status >= 0 && status < BlueConnectionState.values.length) {
+           device.connectionState= BlueConnectionState.values[status];
            notifyListeners();
          } else {
            debugPrint('Invalid status int: $status');
          }
+         break;
+       }
+     }
+   }
+
+   void updateBleDeviceStatus(String address, int status) {
+     for (var device in _pairedDevicesBle) {
+       if (device.device.remoteId.str == address) { // FIXED
+
+         if (status >= 0 && status < BlueConnectionState.values.length) {
+           device.connectionState = BlueConnectionState.values[status];
+
+           notifyListeners(); //correct place
+         } else {
+           debugPrint('Invalid status int: $status');
+         }
+
          break;
        }
      }

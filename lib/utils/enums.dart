@@ -140,6 +140,6 @@ enum PumpReasonCode {
   }
 }
 
-enum BlueConnectionSate { connected, connecting, disconnected }
+enum BlueConnectionState { connected, connecting, disconnected }
 
 enum MQTTConnectionState { connected, disconnected, connecting }
