@@ -17,6 +17,8 @@ class ConfigBasePage extends StatefulWidget {
   State<ConfigBasePage> createState() => _ConfigBasePageState();
 }
 
+
+
 class _ConfigBasePageState extends State<ConfigBasePage> {
   late ConfigMakerProvider configPvd;
   late Future<List<DeviceModel>> listOfDevices;

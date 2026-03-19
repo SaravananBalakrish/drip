@@ -1633,8 +1633,8 @@ class ConfigMakerProvider extends ChangeNotifier{
       var payload = {
         "sentSms":"ecoconfig,"
             "$pumpCount,"
-            "$valveCount,"
-            "$lightCount,"
+            "${AppConstants.pumpWithLightModelList.contains(device.modelId) ? lightCount : valveCount},"
+            "${AppConstants.pumpWithLightModelList.contains(device.modelId) ? 0 : lightCount},"
             "$pressureSensorCount,"
             "$pressureSwitchCount,"
             "$moistureCount,"

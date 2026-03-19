@@ -429,8 +429,9 @@ class IrrigationLineModel {
   FertilizerSiteModel? localFertilizerSite;
 
   final List<ValveModel> valveObjects;
-  final List<ValveModel> mainValveObjects;
+  final List<MainValveModel> mainValveObjects;
   final List<LightModel> lightObjects;
+  final List<FanModel> fanObjects;
   final List<GateModel> gateObjects;
   final List<SensorModel> prsSwitch;
   final List<SensorModel> pressureIn;
@@ -456,6 +457,7 @@ class IrrigationLineModel {
     required this.valveObjects,
     required this.mainValveObjects,
     required this.lightObjects,
+    required this.fanObjects,
     required this.gateObjects,
     required this.prsSwitch,
     required this.pressureIn,
@@ -500,6 +502,12 @@ class IrrigationLineModel {
         .map((obj) => GateModel.fromConfigObject(obj))
         .toList();
 
+    final fanSNoSet = ((json['fan'] as List?) ?? []).map((e) => e).toSet();
+    final fans = configObjects
+        .where((obj) => fanSNoSet.contains(obj.sNo))
+        .map((obj) => FanModel.fromConfigObject(obj))
+        .toList();
+
     final lightSNoSet = ((json['light'] as List?) ?? []).map((e) => e).toSet();
     final lights = configObjects
         .where((obj) => lightSNoSet.contains(obj.sNo))
@@ -537,7 +545,7 @@ class IrrigationLineModel {
     final mainValveSNoSet = ((json['mainValve'] as List?) ?? []).map((e) => e).toSet();
     final mainValves = configObjects
         .where((obj) => mainValveSNoSet.contains(obj.sNo))
-        .map((obj) => ValveModel.fromConfigObject(obj, waterSources))
+        .map((obj) => MainValveModel.fromConfigObject(obj, waterSources))
         .toList();
 
     final Map<double, List<MoistureSensorModel>> valveToMoistureSensors = {};
@@ -624,6 +632,7 @@ class IrrigationLineModel {
       valveObjects: valves,
       mainValveObjects: mainValves,
       lightObjects: lights,
+      fanObjects: fans,
       gateObjects: gates,
       prsSwitch: pressureSwitch,
       pressureIn: pressureIn,
@@ -1545,6 +1554,53 @@ class ValveModel {
   }
 }
 
+class MainValveModel {
+  final double sNo;
+  final String name;
+  int status;
+  bool selected;
+
+  MainValveModel({
+    required this.sNo,
+    required this.name,
+    this.status = 0,
+    this.selected = false,
+  });
+
+  factory MainValveModel.fromConfigObject(ConfigObject obj, List<WaterSourceModel> ws) {
+
+    List<double> assignedSNos = (obj.assignObject)
+        .map((e) => (e as num).toDouble())
+        .toList();
+
+    List<WaterSourceModel> sources = [];
+
+    if (assignedSNos.isNotEmpty) {
+      for (var val in assignedSNos) {
+        int integerPart = val.floor();
+        if (integerPart == 1) {
+          sources = ws.where((source) => assignedSNos.contains(source.sNo))
+              .toList();
+          break;
+        }
+      }
+    }
+
+    return MainValveModel(
+      sNo: obj.sNo,
+      name: obj.name,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sNo': sNo,
+      'name': name,
+      "status": status,
+    };
+  }
+}
+
 class LightModel {
   final double sNo;
   final String name;
@@ -1558,6 +1614,33 @@ class LightModel {
 
   factory LightModel.fromConfigObject(ConfigObject obj) {
     return LightModel(
+      sNo: obj.sNo,
+      name: obj.name,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sNo': sNo,
+      'name': name,
+      "status": status,
+    };
+  }
+}
+
+class FanModel {
+  final double sNo;
+  final String name;
+  int status;
+
+  FanModel({
+    required this.sNo,
+    required this.name,
+    this.status = 0,
+  });
+
+  factory FanModel.fromConfigObject(ConfigObject obj) {
+    return FanModel(
       sNo: obj.sNo,
       name: obj.name,
     );
@@ -1610,6 +1693,30 @@ class ValveSA {
 
   factory ValveSA.fromJson(Map<String, dynamic> json) {
     return ValveSA(
+      sNo: (json['sNo'] as num).toDouble(),
+      name: json['name'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sNo': sNo,
+      'name': name,
+    };
+  }
+}
+
+class MainValveSA {
+  final double sNo;
+  final String name;
+
+  MainValveSA({
+    required this.sNo,
+    required this.name,
+  });
+
+  factory MainValveSA.fromJson(Map<String, dynamic> json) {
+    return MainValveSA(
       sNo: (json['sNo'] as num).toDouble(),
       name: json['name'],
     );

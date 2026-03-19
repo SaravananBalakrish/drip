@@ -40,9 +40,10 @@ class MySalesChartState extends State<MySalesBarChart> {
     });
 
     return SfCartesianChart(
+      key: ValueKey(widget.graph.hashCode),
+      enableAxisAnimation: false,
       primaryYAxis: const NumericAxis(),
       primaryXAxis: const CategoryAxis(),
-      enableAxisAnimation: true,
       legend: const Legend(
         isVisible: true,
         toggleSeriesVisibility: false,
@@ -67,6 +68,7 @@ class MySalesChartState extends State<MySalesBarChart> {
       ),
       isTransposed: true,
       onLegendTapped: (LegendTapArgs args) {
+        if (!mounted) return;
         setState(() {
           selectedSeriesIndex = selectedSeriesIndex == args.seriesIndex ? null : args.seriesIndex;
         });

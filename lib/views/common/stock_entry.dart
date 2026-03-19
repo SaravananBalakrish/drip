@@ -565,9 +565,9 @@ class _StockEntryState extends State<StockEntry> {
                                                   child: const Text('Cancel'),
                                                 ),
                                                 TextButton(
-                                                onPressed: () => viewModel.addProductStock(viewedCustomer!.id),
-                                                child: const Text('Save'),
-                                              ),
+                                                  onPressed: () => viewModel.addProductStock(viewedCustomer!.id),
+                                                  child: const Text('Save'),
+                                                ),
                                               ],
                                             );
                                           },
@@ -716,34 +716,6 @@ class _StockEntryState extends State<StockEntry> {
     border: OutlineInputBorder(),
   );
 
-  // Widget _textField({
-  //   required TextEditingController controller,
-  //   required String label,
-  //   bool readOnly = false,
-  //   int? maxLength,
-  //   List<TextInputFormatter>? inputFormatters,
-  //   String? Function(String?)? validator,
-  //   VoidCallback? onTap,
-  // })
-  // {
-  //   return TextFormField(
-  //     controller: controller,
-  //     readOnly: readOnly,
-  //     maxLength: maxLength,
-  //     inputFormatters: inputFormatters,
-  //     maxLengthEnforcement: MaxLengthEnforcement.enforced,
-  //     validator: validator,
-  //
-  //     onTap: onTap,
-  //     decoration: InputDecoration(
-  //       labelText: label,
-  //       counterText: '',
-  //       border: const OutlineInputBorder(),
-  //       filled: true,
-  //       fillColor: Colors.white,
-  //     ),
-  //   );
-  // }
 
   Widget _textField({
     required TextEditingController controller,

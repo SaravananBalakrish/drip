@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
@@ -27,6 +28,7 @@ class PumpWithValves extends StatelessWidget {
     final provider = context.read<CustomerScreenControllerViewModel>();
     final valves = masterData.configObjects.where((e) => e.objectId == 13).toList();
     final moistureSensors = provider.mySiteList.data[provider.sIndex].master[provider.mIndex].configObjects.where((e) => e.objectId == 25).toList();
+    final bool isPumpWithLight = AppConstants.pumpWithLightModelList.contains(masterData.modelId);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -42,11 +44,11 @@ class PumpWithValves extends StatelessWidget {
                   color: Color(0xffFFA300),
                   borderRadius: BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(3))
               ),
-              child: const Center(
+              child: Center(
                 child: Text(
                   // '${Provider.of<PreferenceProvider>(context).individualPumpSetting![index].name}',
-                  "Valves",
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white,),
+                  isPumpWithLight ?  "Lights" : "Valves",
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white,),
                 ),
               ),
             ),
@@ -56,7 +58,7 @@ class PumpWithValves extends StatelessWidget {
                 const Icon(Icons.info_outline, color: Colors.grey, size: 15,),
                 const SizedBox(width: 5,),
                 Text(
-                  'VALVE ON MODE : ${valveData.valveOnMode == '1' ? "PROGRAM" : "STANDALONE"}',
+                  '${isPumpWithLight ? 'Light' : 'VALVE'} ON MODE : ${valveData.valveOnMode == '1' ? "PROGRAM" : "STANDALONE"}',
                   style: Theme.of(context).textTheme.labelSmall,
                 ),
               ],
@@ -91,7 +93,8 @@ class PumpWithValves extends StatelessWidget {
               // spacing: 10,
               children: [
                 // const SizedBox(height: 5,),
-                if (valveData.cyclicRestartLimit != '0') ...[
+                if (valveData.cyclicRestartLimit != '0' && !isPumpWithLight)
+                  ...[
                   ValveCycleWidget(
                     valveData: valveData,
                     deviceId: provider.mySiteList.data[provider.sIndex].master[provider.mIndex].deviceId,
@@ -102,8 +105,8 @@ class PumpWithValves extends StatelessWidget {
                   ),
                   // SizedBox(height: 10,),
                 ],
-                if(valves.length > 1)
-                IntrinsicWidth(
+                if(valves.length > 1 && !isPumpWithLight)
+                  IntrinsicWidth(
                   child: PopupMenuButton(
                     tooltip: "Select the valve to change",
                     itemBuilder: (BuildContext context) {
@@ -206,7 +209,19 @@ class PumpWithValves extends StatelessWidget {
                             builder: (valveContext) {
                               return InkWell(
                                 onTap: () => _showDetails(i, valveContext),
-                                child: Image.asset(
+                                child: isPumpWithLight ?
+                                    Image.asset(
+                                        'assets/Images/Png/'
+                                            '${valveItem.status == '1'
+                                            ? 'bulb_orange'
+                                            : valveItem.status == '0'
+                                            ? 'bulb_grey'
+                                            : valveItem.status == '2'
+                                            ? 'bulb_yellow' : 'bulb_red'}'
+                                            '.png',
+                                      height: 40,
+                                    )
+                                    :Image.asset(
                                   'assets/png/independent_valve_gray.png',
                                   height: 40,
                                   color: valveItem.status == '1'
@@ -221,7 +236,7 @@ class PumpWithValves extends StatelessWidget {
                               );
                             }
                         ),
-                        Text(valves[i].name, style: Theme.of(context).textTheme.titleSmall),
+                        Text(isPumpWithLight ? 'Light ${i+1}' : valves[i].name, style: Theme.of(context).textTheme.titleSmall),
                         if (valveItem.status == '1' && valveData.remainingTime != '00:00:00' && dataFetchingStatus == 1)
                           IntrinsicWidth(
                             child: Container(
