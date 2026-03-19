@@ -187,7 +187,7 @@ class BluetoothBleService {
 
       await d.device.connect(
         timeout: const Duration(seconds: 15),
-        autoConnect: false,
+        autoConnect: false, license: License.free,
       );
 
       // LISTEN TO REAL CONNECTION STATE
