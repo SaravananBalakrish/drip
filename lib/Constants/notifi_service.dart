@@ -16,7 +16,7 @@ class NotificationService {
 
     var initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    await notificationsPlugin.initialize(initializationSettings,
+    await notificationsPlugin.initialize(settings: initializationSettings,
         onDidReceiveNotificationResponse:
             (NotificationResponse notificationResponse) async {});
   }
@@ -32,6 +32,6 @@ class NotificationService {
       {int id = 0, String? title, String? body, String? payLoad}) async {
     await initNotification();
     return notificationsPlugin.show(
-        id, title, body, await notificationDetails());
+        title:  title, body: body, notificationDetails:  await notificationDetails(), id: id);
   }
 }
