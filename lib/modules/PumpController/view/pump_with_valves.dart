@@ -236,7 +236,7 @@ class PumpWithValves extends StatelessWidget {
                               );
                             }
                         ),
-                        Text(isPumpWithLight ? 'Light ${i+1}' : valves[i].name, style: Theme.of(context).textTheme.titleSmall),
+                        Text(valves[i].name, style: Theme.of(context).textTheme.titleSmall, maxLines: 2, textAlign: TextAlign.center,),
                         if (valveItem.status == '1' && valveData.remainingTime != '00:00:00' && dataFetchingStatus == 1)
                           IntrinsicWidth(
                             child: Container(
