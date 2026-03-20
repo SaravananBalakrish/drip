@@ -186,7 +186,7 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
           ? SwitchListTile(
         contentPadding: EdgeInsets.zero,
         title: Text(widget.selectedIndex == 1
-            ? setting.serialNumber == 1 ? setting.title : (isPumpWithLight ? 'Light ${index + 1}' : titles[index])
+            ? setting.serialNumber == 1 ? setting.title : titles[index]
             : [1,2,3,4].contains(setting.serialNumber) ? setting.title : titles[index]),
         value: setting.value,
         onChanged: (value) => setState(() => setting.value = value),
