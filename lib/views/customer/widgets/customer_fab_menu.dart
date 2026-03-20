@@ -688,7 +688,30 @@ class CustomerFabMenu extends StatelessWidget {
             ],
           ),
           actions: [
+
+
             TextButton(
+              onPressed: () async {
+                final ssid = ssidController.text.trim();
+                final password = passController.text.trim();
+
+                if (ssid.isEmpty || password.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("SSID and Password cannot be empty"),
+                    ),
+                  );
+                  return;
+                }
+
+                final communicationService = context.read<CommunicationService>();
+                await communicationService.sendWifiCredentials(ssid, password);
+
+                Navigator.pop(context);
+              },
+              child: const Text("Send"),
+            )
+            /*TextButton(
               onPressed: () async {
 
                 final ssid = ssidController.text.trim();
@@ -708,7 +731,7 @@ class CustomerFabMenu extends StatelessWidget {
                 Navigator.pop(context);
               },
               child: const Text("Send"),
-            )
+            )*/
           ],
         );
       },
