@@ -122,10 +122,10 @@ class NotificationServiceCall {
     const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
     await _flutterLocalNotificationsPlugin.show(
-      id: 0,
-      title:notification['notification']['title'] ?? 'Notification',
-      body:notification['notification']['body'] ?? 'You have a new notification',
-      notificationDetails: platformChannelSpecifics,
+      0,
+      notification['notification']['title'] ?? 'Notification',
+      notification['notification']['body'] ?? 'You have a new notification',
+       platformChannelSpecifics,
       payload: notification['data']?.toString(),
     );
   }
