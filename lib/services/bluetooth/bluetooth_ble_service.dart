@@ -162,15 +162,15 @@ class BluetoothBleService {
           d.device.remoteId.str, BlueConnectionState.connecting.index);
 
       // 🔹 CONNECT
-      await d.device.connect(
-<<<<<<< HEAD
-        timeout: const Duration(seconds: 25),
-        autoConnect: false,
-=======
-        timeout: const Duration(seconds: 15),
-        autoConnect: false, license: License.free,
->>>>>>> a991a6b49bf4854b75ab7ca3ad4b0cb0257e2a9c
-      );
+      try {
+        await d.device.connect(
+          timeout: const Duration(seconds: 25),
+          autoConnect: false,
+        );
+        debugPrint("✅ Device connected: ${d.device.name}");
+      } catch (e) {
+        debugPrint("❌ Connection failed: $e");
+      }
 
       _connectedDevice = d;
       _writeReady = false;
