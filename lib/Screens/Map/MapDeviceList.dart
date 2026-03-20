@@ -48,7 +48,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
      try{
        final Repository repository = Repository(HttpService());
        var getUserDetails = await repository.getgeography({
-         "userId": widget.userId,
+         "userId": widget.customerId,
          "controllerId" :  widget.controllerId
        });
        print('getUserDetails${getUserDetails.body}');
@@ -199,7 +199,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
      final Repository repository = Repository(HttpService());
 var data = mqttPayloadProvider.mapModelInstance.data?.toJson();
      Map<String, dynamic> body = {
-       "userId": widget.userId,
+       "userId": widget.customerId,
        "controllerId": widget.controllerId,
        "userGeography": data!['deviceList'],
        "createUser": widget.userId

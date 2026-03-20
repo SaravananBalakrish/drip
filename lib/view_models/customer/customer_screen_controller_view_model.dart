@@ -392,6 +392,7 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
 
     if ([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(master.modelId)) {
       updateMasterLine(sIdx, mIdx, lIdx);
+      mqttProvider.saveUnits(Unit.toJsonList(master.units));
       mqttProvider.updateReceivedPayload(
         master.live != null ? jsonEncode(master.live) : _defaultPayload(),
         true,

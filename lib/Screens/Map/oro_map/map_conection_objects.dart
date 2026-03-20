@@ -65,7 +65,7 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
       if (data == null) return;
 
       Map<String, dynamic> body = {
-        "userId": widget.userId,
+        "userId": widget.customerId,
         "controllerId": widget.controllerId,
         "userGeography": data['deviceList'],
         "createUser": widget.userId
