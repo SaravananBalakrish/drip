@@ -26,7 +26,7 @@ class PumpWithValves extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final provider = context.read<CustomerScreenControllerViewModel>();
-    final valves = masterData.configObjects.where((e) => e.objectId == 13).toList();
+    final valves = masterData.configObjects.where((e) => e.objectId == (AppConstants.pumpWithLightModelList.contains(masterData.modelId) ? 19 :  13)).toList();
     final moistureSensors = provider.mySiteList.data[provider.sIndex].master[provider.mIndex].configObjects.where((e) => e.objectId == 25).toList();
     final bool isPumpWithLight = AppConstants.pumpWithLightModelList.contains(masterData.modelId);
     return Column(
@@ -213,7 +213,7 @@ class PumpWithValves extends StatelessWidget {
                                     Image.asset(
                                         'assets/Images/Png/'
                                             '${valveItem.status == '1'
-                                            ? 'bulb_orange'
+                                            ? 'bulb_yellow'
                                             : valveItem.status == '0'
                                             ? 'bulb_grey'
                                             : valveItem.status == '2'

@@ -98,11 +98,11 @@ FutureOr<void> main() async {
     const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
     const initSettings = InitializationSettings(
         android: androidInit, iOS: initializationSettingsIOS);
-    await flutterLocalNotificationsPlugin.initialize( settings: initSettings);
+    await flutterLocalNotificationsPlugin.initialize(initSettings);
 
 
     await flutterLocalNotificationsPlugin.initialize(
-      settings: initSettings,
+      initSettings,
       onDidReceiveNotificationResponse: (details) {
         debugPrint("Notification tapped: ${details.payload}");
       },

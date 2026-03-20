@@ -66,14 +66,15 @@ class CommunicationService {
         }
       }
 
-      if (bleService.isConnected == true) {
+      /*if (bleService.isConnected) {
         try {
           await bleService.write(payload);
           result['bluetooth'] = true;
         } catch (e) {
           debugPrint('Failed to send via BLE: $e');
         }
-      }
+      }*/
+
 
     } catch (e) {
       debugPrint('Unexpected error during sending command: $e');
@@ -84,6 +85,15 @@ class CommunicationService {
 
   Future<void> sendWifiCredentials(String ssid, String password) async {
     final payload = '2,$ssid,$password';
+
+    if (bleService.isConnected) {
+      try {
+        await bleService.write(payload);
+        //result['bluetooth'] = true;
+      } catch (e) {
+        debugPrint('Failed to send via BLE: $e');
+      }
+    }
 
     final livePayload = jsonEncode({
       "6000": {
