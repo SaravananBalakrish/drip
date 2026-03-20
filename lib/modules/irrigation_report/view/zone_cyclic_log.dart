@@ -252,7 +252,7 @@ class _ZoneCyclicLogState extends State<ZoneCyclicLog> {
           ),
         ),
         Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: const BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5))
