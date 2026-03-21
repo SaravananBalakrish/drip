@@ -24,6 +24,7 @@ import 'StateManagement/search_provider.dart';
 import 'app/app.dart';
 import 'StateManagement/customer_provider.dart';
 import 'firebase_options.dart';
+import 'flavors.dart';
 import 'modules/IrrigationProgram/state_management/irrigation_program_provider.dart';
 import 'modules/Preferences/state_management/preference_provider.dart';
 import 'modules/SystemDefinitions/state_management/system_definition_provider.dart';
@@ -73,7 +74,7 @@ FutureOr<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   tz.initializeTimeZones();
-  F.appFlavor = Flavor.oroProduction;
+  F.appFlavor = Flavor.agritel;
   await NetworkUtils.initialize();
   // await dotenv.load(fileName: ".env.apikey");
 
