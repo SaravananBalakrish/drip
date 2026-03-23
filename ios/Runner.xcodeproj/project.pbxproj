@@ -16,6 +16,14 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		A8C0B9B30F332BB0A11C094A /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9820EE933D3A593949B55F7A /* Pods_Runner.framework */; };
+		CE3125152F6EC09D00B9FE68 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		CE3125162F6EC09D00B9FE68 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		CE31251A2F6EC09D00B9FE68 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
+		CE31251B2F6EC09D00B9FE68 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		CE31251C2F6EC09D00B9FE68 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CE9A188B2DE6C864004E01CA /* GoogleService-Info.plist */; };
+		CE31251D2F6EC09D00B9FE68 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
+		CE31251E2F6EC09D00B9FE68 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		CE9A188C2DE6C864004E01CA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CE9A188B2DE6C864004E01CA /* GoogleService-Info.plist */; };
 /* End PBXBuildFile section */
 
@@ -40,6 +48,16 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CE31251F2F6EC09D00B9FE68 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +69,7 @@
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		365D0BD30C61BA9D06B8B5E5 /* Pods-Runner.release-oro.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-oro.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-oro.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		3C50AC5A281C434AA19233BD /* Pods-RunnerTests.release-agritel.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-agritel.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-agritel.xcconfig"; sourceTree = "<group>"; };
 		40CBBA69007BA587D0222A57 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		4E7D7C9B739D5CFBDDCB88AB /* Pods-Runner.profile-oro.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-oro.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-oro.xcconfig"; sourceTree = "<group>"; };
 		53395639A6590E1F3B8C679C /* Pods-RunnerTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile.xcconfig"; sourceTree = "<group>"; };
@@ -60,6 +79,7 @@
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7A819F9A37A9FFF33D115D1E /* Pods-RunnerTests.debug-smartcomm.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-smartcomm.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-smartcomm.xcconfig"; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
+		7C4355E3D170E0E3063D80D4 /* Pods-Runner.debug-agritel.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-agritel.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-agritel.xcconfig"; sourceTree = "<group>"; };
 		8218420EB163154C02905FCF /* Pods-RunnerTests.release-smartcomm.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-smartcomm.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-smartcomm.xcconfig"; sourceTree = "<group>"; };
 		847A3FDC4F13B354257706A1 /* Pods-RunnerTests.profile-smartcomm.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-smartcomm.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-smartcomm.xcconfig"; sourceTree = "<group>"; };
 		8A40874EAC3A6FC0E64AD3FD /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
@@ -73,11 +93,15 @@
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		9820EE933D3A593949B55F7A /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFBDAE5DE7FED6ECF299ED47 /* Pods-RunnerTests.release-oro.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-oro.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-oro.xcconfig"; sourceTree = "<group>"; };
+		CE31252E2F6EC09D00B9FE68 /* Agritel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Agritel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		CE31252F2F6EC09D00B9FE68 /* Runner copy-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Runner copy-Info.plist"; path = "/Users/user/Documents/drip/ios/Runner copy-Info.plist"; sourceTree = "<absolute>"; };
 		CE9A188B2DE6C864004E01CA /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CEB3B8CDA29C1C97014B3B2F /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		CEC6DF8E2DE9753200E8A4DB /* Runner.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Runner.entitlements; sourceTree = "<group>"; };
+		DC2628376822F37AFAAF2E00 /* Pods-Runner.release-agritel.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-agritel.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-agritel.xcconfig"; sourceTree = "<group>"; };
 		E5A7316EE47ECA2088921FCA /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		E621999D4B4CD6413141CE26 /* Pods-RunnerTests.debug-oro.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-oro.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-oro.xcconfig"; sourceTree = "<group>"; };
+		E64D9F4CB57036C3CB788EEC /* Pods-RunnerTests.debug-agritel.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-agritel.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-agritel.xcconfig"; sourceTree = "<group>"; };
 		EF1DF3167500930B5B42155B /* Pods-Runner.debug-oro.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-oro.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-oro.xcconfig"; sourceTree = "<group>"; };
 		FDCEC3988135E164637FC8F8 /* Pods-Runner.profile-smartcomm.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-smartcomm.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-smartcomm.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -96,6 +120,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				2B7DD87C87A830ABCF2AEF8B /* Pods_Runner.framework in Frameworks */,
+				A8C0B9B30F332BB0A11C094A /* Pods_Runner.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE3125172F6EC09D00B9FE68 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -123,6 +155,10 @@
 				53395639A6590E1F3B8C679C /* Pods-RunnerTests.profile.xcconfig */,
 				562832BC081CCD92CC996624 /* Pods-RunnerTests.profile-oro.xcconfig */,
 				847A3FDC4F13B354257706A1 /* Pods-RunnerTests.profile-smartcomm.xcconfig */,
+				7C4355E3D170E0E3063D80D4 /* Pods-Runner.debug-agritel.xcconfig */,
+				DC2628376822F37AFAAF2E00 /* Pods-Runner.release-agritel.xcconfig */,
+				E64D9F4CB57036C3CB788EEC /* Pods-RunnerTests.debug-agritel.xcconfig */,
+				3C50AC5A281C434AA19233BD /* Pods-RunnerTests.release-agritel.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -164,6 +200,7 @@
 				331C8082294A63A400263BE5 /* RunnerTests */,
 				0798CBB1CA7826CD1E804F62 /* Pods */,
 				6ADE861E782394FEB4F894E4 /* Frameworks */,
+				CE31252F2F6EC09D00B9FE68 /* Runner copy-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -172,6 +209,7 @@
 			children = (
 				97C146EE1CF9000F007C117D /* oroDevelopment.app */,
 				331C8081294A63A400263BE5 /* RunnerTests.xctest */,
+				CE31252E2F6EC09D00B9FE68 /* Agritel.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -237,6 +275,26 @@
 			productReference = 97C146EE1CF9000F007C117D /* oroDevelopment.app */;
 			productType = "com.apple.product-type.application";
 		};
+		CE3125112F6EC09D00B9FE68 /* Agritel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CE3125222F6EC09D00B9FE68 /* Build configuration list for PBXNativeTarget "Agritel" */;
+			buildPhases = (
+				CE3125132F6EC09D00B9FE68 /* Run Script */,
+				CE3125142F6EC09D00B9FE68 /* Sources */,
+				CE3125172F6EC09D00B9FE68 /* Frameworks */,
+				CE3125192F6EC09D00B9FE68 /* Resources */,
+				CE31251F2F6EC09D00B9FE68 /* Embed Frameworks */,
+				CE3125202F6EC09D00B9FE68 /* Thin Binary */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Agritel;
+			productName = Runner;
+			productReference = CE31252E2F6EC09D00B9FE68 /* Agritel.app */;
+			productType = "com.apple.product-type.application";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -270,6 +328,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
+				CE3125112F6EC09D00B9FE68 /* Agritel */,
 				97C146ED1CF9000F007C117D /* Runner */,
 				331C8080294A63A400263BE5 /* RunnerTests */,
 			);
@@ -293,6 +352,18 @@
 				CE9A188C2DE6C864004E01CA /* GoogleService-Info.plist in Resources */,
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE3125192F6EC09D00B9FE68 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE31251A2F6EC09D00B9FE68 /* LaunchScreen.storyboard in Resources */,
+				CE31251B2F6EC09D00B9FE68 /* AppFrameworkInfo.plist in Resources */,
+				CE31251C2F6EC09D00B9FE68 /* GoogleService-Info.plist in Resources */,
+				CE31251D2F6EC09D00B9FE68 /* Assets.xcassets in Resources */,
+				CE31251E2F6EC09D00B9FE68 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -346,6 +417,37 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-resources.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		CE3125132F6EC09D00B9FE68 /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
+		};
+		CE3125202F6EC09D00B9FE68 /* Thin Binary */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}",
+			);
+			name = "Thin Binary";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
 		};
 		EC8DF1ECE4A2B516C796F325 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -408,6 +510,15 @@
 			files = (
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CE3125142F6EC09D00B9FE68 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CE3125152F6EC09D00B9FE68 /* AppDelegate.swift in Sources */,
+				CE3125162F6EC09D00B9FE68 /* GeneratedPluginRegistrant.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -508,15 +619,15 @@
 				DEVELOPMENT_TEAM = LD872ZR7L2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "ORO ";
+				INFOPLIST_KEY_CFBundleDisplayName = "Agritel ORO";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.02;
-				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.oroDevelopment;
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
 				PRODUCT_NAME = oroDevelopment;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -703,15 +814,15 @@
 				DEVELOPMENT_TEAM = LD872ZR7L2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "ORO ";
+				INFOPLIST_KEY_CFBundleDisplayName = "Agritel ORO";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.02;
-				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.oroDevelopment;
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
 				PRODUCT_NAME = oroDevelopment;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -734,15 +845,15 @@
 				DEVELOPMENT_TEAM = LD872ZR7L2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "ORO ";
+				INFOPLIST_KEY_CFBundleDisplayName = "Agritel ORO";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.02;
-				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.oroDevelopment;
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
 				PRODUCT_NAME = oroDevelopment;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -750,6 +861,550 @@
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
+		};
+		CE31250B2F6E9D6500B9FE68 /* Release-agritel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = ORO;
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = "Release-agritel";
+		};
+		CE31250C2F6E9D6500B9FE68 /* Release-agritel */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 01;
+				DEVELOPMENT_TEAM = LD872ZR7L2;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Agritel ORO";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
+				PRODUCT_NAME = oroDevelopment;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release-agritel";
+		};
+		CE31250D2F6E9D6500B9FE68 /* Release-agritel */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3C50AC5A281C434AA19233BD /* Pods-RunnerTests.release-agritel.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.oroDripIrrigation.RunnerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
+			};
+			name = "Release-agritel";
+		};
+		CE31250E2F6EC00600B9FE68 /* Debug-agritel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = ORO;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = "Debug-agritel";
+		};
+		CE31250F2F6EC00600B9FE68 /* Debug-agritel */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 01;
+				DEVELOPMENT_TEAM = LD872ZR7L2;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = Runner/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Agritel ORO";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
+				PRODUCT_NAME = oro;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Debug-agritel";
+		};
+		CE3125102F6EC00600B9FE68 /* Debug-agritel */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = E64D9F4CB57036C3CB788EEC /* Pods-RunnerTests.debug-agritel.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.oroDripIrrigation.RunnerTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Runner";
+			};
+			name = "Debug-agritel";
+		};
+		CE3125232F6EC09D00B9FE68 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 02;
+				DEVELOPMENT_TEAM = LD872ZR7L2;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "Runner copy-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AgritelORO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		CE3125242F6EC09D00B9FE68 /* Debug-oro */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 02;
+				DEVELOPMENT_TEAM = LD872ZR7L2;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "Runner copy-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AgritelORO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Debug-oro";
+		};
+		CE3125252F6EC09D00B9FE68 /* Debug-agritel */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 02;
+				DEVELOPMENT_TEAM = LD872ZR7L2;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "Runner copy-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AgritelORO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Debug-agritel";
+		};
+		CE3125262F6EC09D00B9FE68 /* Debug-smartcomm */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 02;
+				DEVELOPMENT_TEAM = LD872ZR7L2;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "Runner copy-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AgritelORO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Debug-smartcomm";
+		};
+		CE3125272F6EC09D00B9FE68 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 02;
+				DEVELOPMENT_TEAM = LD872ZR7L2;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "Runner copy-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AgritelORO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		CE3125282F6EC09D00B9FE68 /* Release-agritel */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 02;
+				DEVELOPMENT_TEAM = LD872ZR7L2;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "Runner copy-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AgritelORO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release-agritel";
+		};
+		CE3125292F6EC09D00B9FE68 /* Release-oro */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 02;
+				DEVELOPMENT_TEAM = LD872ZR7L2;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "Runner copy-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AgritelORO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release-oro";
+		};
+		CE31252A2F6EC09D00B9FE68 /* Release-smartcomm */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 02;
+				DEVELOPMENT_TEAM = LD872ZR7L2;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "Runner copy-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AgritelORO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Release-smartcomm";
+		};
+		CE31252B2F6EC09D00B9FE68 /* Profile */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 02;
+				DEVELOPMENT_TEAM = LD872ZR7L2;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "Runner copy-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AgritelORO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Profile;
+		};
+		CE31252C2F6EC09D00B9FE68 /* Profile-oro */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 02;
+				DEVELOPMENT_TEAM = LD872ZR7L2;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "Runner copy-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AgritelORO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Profile-oro";
+		};
+		CE31252D2F6EC09D00B9FE68 /* Profile-smartcomm */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Runner/Runner.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 02;
+				DEVELOPMENT_TEAM = LD872ZR7L2;
+				ENABLE_BITCODE = NO;
+				INFOPLIST_FILE = "Runner copy-Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = AgritelORO;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = "Profile-smartcomm";
 		};
 		CE5B2D852DD5B05500F0B8A8 /* Debug-smartcomm */ = {
 			isa = XCBuildConfiguration;
@@ -823,15 +1478,15 @@
 				DEVELOPMENT_TEAM = LD872ZR7L2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "ORO ";
+				INFOPLIST_KEY_CFBundleDisplayName = "Agritel ORO";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.02;
-				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.smartComm;
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
 				PRODUCT_NAME = smartComm;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -931,15 +1586,15 @@
 				DEVELOPMENT_TEAM = LD872ZR7L2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "ORO ";
+				INFOPLIST_KEY_CFBundleDisplayName = "Agritel ORO";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.02;
-				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.oroDripirrigation;
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
 				PRODUCT_NAME = oro;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -1036,15 +1691,15 @@
 				DEVELOPMENT_TEAM = LD872ZR7L2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "ORO ";
+				INFOPLIST_KEY_CFBundleDisplayName = "Agritel ORO";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.02;
-				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.smartComm;
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
 				PRODUCT_NAME = smartComm;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -1138,15 +1793,15 @@
 				DEVELOPMENT_TEAM = LD872ZR7L2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "ORO ";
+				INFOPLIST_KEY_CFBundleDisplayName = "Agritel ORO";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.02;
-				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.oroDripirrigation;
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
 				PRODUCT_NAME = oro;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -1238,15 +1893,15 @@
 				DEVELOPMENT_TEAM = LD872ZR7L2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "ORO ";
+				INFOPLIST_KEY_CFBundleDisplayName = "Agritel ORO";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.02;
-				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.oroDripirrigation;
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
 				PRODUCT_NAME = oro;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -1338,15 +1993,15 @@
 				DEVELOPMENT_TEAM = LD872ZR7L2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "ORO ";
+				INFOPLIST_KEY_CFBundleDisplayName = "Agritel ORO";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.3.02;
-				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.smartComm;
+				MARKETING_VERSION = 1.0.02;
+				PRODUCT_BUNDLE_IDENTIFIER = com.niagaraautomations.agritel;
 				PRODUCT_NAME = smartComm;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
@@ -1379,8 +2034,10 @@
 			buildConfigurations = (
 				331C8088294A63A400263BE5 /* Debug */,
 				CE5B2D8A2DD5B05800F0B8A8 /* Debug-oro */,
+				CE3125102F6EC00600B9FE68 /* Debug-agritel */,
 				CE5B2D872DD5B05500F0B8A8 /* Debug-smartcomm */,
 				331C8089294A63A400263BE5 /* Release */,
+				CE31250D2F6E9D6500B9FE68 /* Release-agritel */,
 				CE5B2D902DD5B09400F0B8A8 /* Release-oro */,
 				CE5B2D8D2DD5B08D00F0B8A8 /* Release-smartcomm */,
 				331C808A294A63A400263BE5 /* Profile */,
@@ -1395,8 +2052,10 @@
 			buildConfigurations = (
 				97C147031CF9000F007C117D /* Debug */,
 				CE5B2D882DD5B05800F0B8A8 /* Debug-oro */,
+				CE31250E2F6EC00600B9FE68 /* Debug-agritel */,
 				CE5B2D852DD5B05500F0B8A8 /* Debug-smartcomm */,
 				97C147041CF9000F007C117D /* Release */,
+				CE31250B2F6E9D6500B9FE68 /* Release-agritel */,
 				CE5B2D8E2DD5B09400F0B8A8 /* Release-oro */,
 				CE5B2D8B2DD5B08D00F0B8A8 /* Release-smartcomm */,
 				249021D3217E4FDB00AE95B9 /* Profile */,
@@ -1411,13 +2070,33 @@
 			buildConfigurations = (
 				97C147061CF9000F007C117D /* Debug */,
 				CE5B2D892DD5B05800F0B8A8 /* Debug-oro */,
+				CE31250F2F6EC00600B9FE68 /* Debug-agritel */,
 				CE5B2D862DD5B05500F0B8A8 /* Debug-smartcomm */,
 				97C147071CF9000F007C117D /* Release */,
+				CE31250C2F6E9D6500B9FE68 /* Release-agritel */,
 				CE5B2D8F2DD5B09400F0B8A8 /* Release-oro */,
 				CE5B2D8C2DD5B08D00F0B8A8 /* Release-smartcomm */,
 				249021D4217E4FDB00AE95B9 /* Profile */,
 				CE5B2D922DD5B0AF00F0B8A8 /* Profile-oro */,
 				CE5B2D952DD5B0B600F0B8A8 /* Profile-smartcomm */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CE3125222F6EC09D00B9FE68 /* Build configuration list for PBXNativeTarget "Agritel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CE3125232F6EC09D00B9FE68 /* Debug */,
+				CE3125242F6EC09D00B9FE68 /* Debug-oro */,
+				CE3125252F6EC09D00B9FE68 /* Debug-agritel */,
+				CE3125262F6EC09D00B9FE68 /* Debug-smartcomm */,
+				CE3125272F6EC09D00B9FE68 /* Release */,
+				CE3125282F6EC09D00B9FE68 /* Release-agritel */,
+				CE3125292F6EC09D00B9FE68 /* Release-oro */,
+				CE31252A2F6EC09D00B9FE68 /* Release-smartcomm */,
+				CE31252B2F6EC09D00B9FE68 /* Profile */,
+				CE31252C2F6EC09D00B9FE68 /* Profile-oro */,
+				CE31252D2F6EC09D00B9FE68 /* Profile-smartcomm */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
