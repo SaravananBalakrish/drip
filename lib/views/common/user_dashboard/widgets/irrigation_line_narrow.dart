@@ -7,7 +7,7 @@ class IrrigationLineNarrow extends StatelessWidget {
   final int customerId, controllerId, modelId;
   final String deviceId;
   final List<ValveModel> valves;
-  final List<ValveModel> mainValves;
+  final List<MainValveModel> mainValves;
   final List<LightModel> lights;
   final List<FanModel> fans;
   final List<GateModel> gates;

@@ -13,7 +13,7 @@ class FanWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Selector<MqttPayloadProvider, String?>(
-      selector: (_, provider) => provider.getLightOnOffStatus(objFan.sNo.toString()),
+      selector: (_, provider) => provider.getFanOnOffStatus(objFan.sNo.toString()),
       builder: (_, status, __) {
 
         final statusParts = status?.split(',') ?? [];

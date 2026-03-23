@@ -107,7 +107,7 @@ class _PumpLogScreenState extends State<PumpLogScreen> {
                   itemBuilder: (context, index) {
                     if(watchProvider.pumpLogData.isNotEmpty) {
                       final logData = watchProvider.pumpLogData[index];
-                      if(AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId)) {
+                      if(AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId) && !AppConstants.pumpWithLightModelList.contains(widget.masterData.modelId)) {
                         return ValveLog(events: logData.motor1, masterData: widget.masterData,);
                       }
                       return Timeline2(

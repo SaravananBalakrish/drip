@@ -1,6 +1,7 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:oro_drip_irrigation/Screens/Map/MapAreaModel.dart';
@@ -27,7 +28,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
   late GoogleMapController _mapController;
   bool _isDrawerOpen = false;
   double _drawerWidth = 280;
-
+  double _currentZoom = 15;
   final Set<Polygon> _polygons = {};
   final Set<Marker> _markers = {};
   Map<String, Valve> _valves = {};
@@ -106,7 +107,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
 
 
       Map<String, dynamic> body = {
-        "userId": widget.userId,
+        "userId": widget.customerId,
         "controllerId" : widget.controllerId,
         "valveGeographyArea" : jsondata,
         "modifyUser" : widget.userId
@@ -115,6 +116,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
 
       final Repository repository = Repository(HttpService());
       final response = await repository.updategeographyArea(body);
+      print('response:${response.body}');
       if (response.statusCode != 200) {
         print('Failed to send valve : ${response.body}');
       }
@@ -289,7 +291,8 @@ class _MapScreenAreaState extends State<MapScreenArea> {
       final firstPoint = selectedValve!.area.first;
       return CameraPosition(
         target: firstPoint,
-        zoom: 15,
+        zoom:_currentZoom
+        ,
       );
     }
 
@@ -298,15 +301,15 @@ class _MapScreenAreaState extends State<MapScreenArea> {
       if (valve.area.isNotEmpty) {
         return CameraPosition(
           target: valve.area.first,
-          zoom: 15,
+          zoom: _currentZoom,
         );
       }
     }
 
     // 3️⃣ Final fallback (Safe default)
-    return const CameraPosition(
+    return  CameraPosition(
       target: LatLng(11.1387361, 76.9764367),
-      zoom: 15,
+      zoom: _currentZoom,
     );
   }
 
@@ -334,11 +337,60 @@ class _MapScreenAreaState extends State<MapScreenArea> {
               style: TextStyle(color: Colors.blue),
             ),
           ),
+
+          IconButton(onPressed: _getCurrentLocation, icon: const Icon(Icons.my_location, color: Colors.blue)),
         ],
       ),
     );
   }
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
 
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enable Location Services')),
+      );
+      return;
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+
+    // 🚨 Important: Check valve selected
+    if (selectedValve == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Select a valve first')),
+      );
+      return;
+    }
+
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    LatLng currentLatLng = LatLng(position.latitude, position.longitude);
+
+    // ✅ Add point to polygon
+    setState(() {
+      selectedValve!.area.add(currentLatLng);
+      _updatePolygons();
+    });
+
+    _saveAreas();
+
+    // ✅ Move camera
+    _mapController.animateCamera(
+      CameraUpdate.newLatLngZoom(currentLatLng, _currentZoom),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -428,7 +480,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
                             _mapController.animateCamera(
                               CameraUpdate.newLatLngZoom(
                                 valve.area.first,
-                                15,
+                                _currentZoom,
                               ),
                             );
                           }
@@ -452,6 +504,9 @@ class _MapScreenAreaState extends State<MapScreenArea> {
                   child: GoogleMap(
                     initialCameraPosition:
                     _getInitialCameraPosition(),
+                    onCameraMove: (CameraPosition position) {
+                      _currentZoom = position.zoom;
+                    },
                     onMapCreated:
                         (GoogleMapController controller) {
                       _mapController = controller;

@@ -36,6 +36,8 @@ class StandAloneSettings extends StatefulWidget {
 class _StandAloneSettingsState extends State<StandAloneSettings> {
   final PreferenceRepository repository = PreferenceRepository(HttpService());
   int _selectedSetting = 0;
+  late final bool isPumpWithLight;
+
 
   @override
   void initState() {
@@ -47,11 +49,13 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
       controllerId: widget.masterData.controllerId,
       selectedIndex: widget.selectedIndex,
     );
+    isPumpWithLight = AppConstants.pumpWithLightModelList.contains(widget.masterData.modelId);
   }
 
   @override
   Widget build(BuildContext context) {
-    final valves = widget.masterData.configObjects.where((e) => e.objectId == 13).map((ele) => ele.name).toList();
+    final valves = widget.masterData.configObjects.where((e) => e.objectId == (AppConstants.pumpWithLightModelList.contains(widget.masterData.modelId) ? 19: 13)).map((ele) => ele.name).toList();
+
     return Scaffold(
       body: Consumer<PreferenceProvider>(
         builder: (context, provider, child) {

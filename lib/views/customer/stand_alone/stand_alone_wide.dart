@@ -5,6 +5,7 @@ import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/fertilize
 import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/filter_site_card.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/irrigation_line_card.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/irrigation_pump_card.dart';
+import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/main_valve_card.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/source_pump_card.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/valve_card_table.dart';
 import 'package:provider/provider.dart';
@@ -325,6 +326,16 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
         .whereType<FertilizerSiteModel>()
         .toList();
 
+    final mainValve = masterData.irrigationLine
+        .expand((line) => line.mainValveObjects)
+        .toList();
+
+    final allMainValve = mainValve.fold<Map<double, MainValveModel>>({}, (map, mValve) {
+      map[mValve.sNo] = mValve;
+      return map;
+    }).values.toList();
+
+
 
     return Column(
       children: [
@@ -351,8 +362,14 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
           sites: cFertilizerSite,
           onChanged: (item, val) => setState(() => item.selected = val),
         ),
+
         FertilizerSiteCard(
           sites: lFertilizerSite,
+          onChanged: (item, val) => setState(() => item.selected = val),
+        ),
+
+        MainValveCard(
+          mainValve: allMainValve,
           onChanged: (item, val) => setState(() => item.selected = val),
         ),
 
@@ -361,9 +378,6 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
             return IrrigationLineCard(
               line: line,
               showSwitch: vm.ddCurrentPosition != 0,
-              onToggleMainValve: (mainValve, value) {
-                setState(() => mainValve.isOn = value);
-              },
               onToggleValve: (valve, value) {
                 setState(() => valve.isOn = value);
               },
@@ -371,7 +385,8 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
           }).toList(),
         ) : vm.standAloneData != null ? Column(
           children: vm.standAloneData!.sequence.map((sequence) {
-            final rows = sequence.valve.map((valve) {
+
+            final valveRows = sequence.valve.map((valve) {
               return DataRow(cells: [
                 DataCell(Image.asset('assets/png/m_valve_grey.png', width: 40, height: 40)),
                 DataCell(Text(valve.name)),
@@ -391,8 +406,9 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
                   sequence.selected = value;
                 });
               },
-              rows: rows,
+              rows: valveRows,
             );
+
           }).toList(),
         ) : const SizedBox(),
       ],
