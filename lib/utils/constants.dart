@@ -158,7 +158,7 @@ class AppConstants {
   static const String fanNotON = "fan_red.png";
 
   static const String mblFanOFF = "m_fan_grey.png";
-  static const String mblFanON = "m_fan_yellow.png";
+  static const String mblFanON = "m_fan_green.gif";
   static const String mblFanNotOFF = "m_fan_orange.png";
   static const String mblFanNotON = "m_fan_red.png";
 
@@ -898,7 +898,8 @@ class AppConstants {
   static List<int> smartPlusEcPhModel = [33];
   static List<int> ecModel = [64];
   static List<int> phModel = [65];
-  static List<int> pumpWithValveModelList = [48, 49, 52, 53, 54, 55];
+  static List<int> pumpWithValveModelList = [48, 49, 52, 53, 54, 55, ...pumpWithLightModelList];
+  static List<int> pumpWithLightModelList = [76,77];
   static List<int> shine2V = [48, 49];
   static List<int> shine4V = [52, 53];
   static List<int> elite10V = [54, 55];

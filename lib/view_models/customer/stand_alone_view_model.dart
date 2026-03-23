@@ -509,6 +509,7 @@ class StandAloneViewModel extends ChangeNotifier {
     if(ddCurrentPosition==0 && !isNova) {
       List<String> allPumpSrlNo = [];
       List<String> allRelaySrlNo = [];
+
       String strSldValveSrlNo = '';
 
       allPumpSrlNo = [
@@ -530,11 +531,11 @@ class StandAloneViewModel extends ChangeNotifier {
 
       for (var line in masterData.irrigationLine) {
         for (int j = 0; j < line.mainValveObjects.length; j++) {
-          if (line.mainValveObjects[j].isOn) {
+          if (line.mainValveObjects[j].selected) {
             strSldValveSrlNo += '${line.mainValveObjects[j].sNo}_';
             standaloneSelection.add({
               'sNo': line.mainValveObjects[j].sNo,
-              'selected': line.mainValveObjects[j].isOn,
+              'selected': line.mainValveObjects[j].selected,
             });
           }
         }
@@ -600,6 +601,21 @@ class StandAloneViewModel extends ChangeNotifier {
       String strSldLocFilterId = '';
       String sldLocFilterRelayOnOffStatus = '';
       String sldCtrlFilterRelayOnOffStatus = '';
+
+      for (var line in masterData.irrigationLine) {
+        for (int j = 0; j < line.mainValveObjects.length; j++) {
+          if (line.mainValveObjects[j].selected) {
+            strSldMainValveId += '${line.mainValveObjects[j].sNo}_';
+            standaloneSelection.add({
+              'sNo': line.mainValveObjects[j].sNo,
+              'selected': line.mainValveObjects[j].selected,
+            });
+          }
+        }
+      }
+
+      strSldMainValveId = strSldMainValveId.isNotEmpty ? strSldMainValveId.substring(
+          0, strSldMainValveId.length - 1) : '';
 
 
       for (var lineOrSq in standAloneData!.sequence) {

@@ -6,14 +6,12 @@ import '../../../../models/customer/site_model.dart';
 class IrrigationLineCard extends StatelessWidget {
   final IrrigationLineModel line;
   final bool showSwitch;
-  final void Function(ValveModel mainValve, bool value) onToggleMainValve;
   final void Function(ValveModel valve, bool value) onToggleValve;
 
   const IrrigationLineCard({
     super.key,
     required this.line,
     required this.showSwitch,
-    required this.onToggleMainValve,
     required this.onToggleValve,
   });
 
@@ -26,19 +24,6 @@ class IrrigationLineCard extends StatelessWidget {
     }
 
     final rows = [
-      ...line.mainValveObjects.map((mainValve) => DataRow(cells: [
-        DataCell(Image.asset('assets/png/m_main_valve_gray.png', width: 40, height: 40)),
-        DataCell(Text(mainValve.name)),
-        DataCell(Transform.scale(
-          scale: 0.7,
-          child: Switch(
-            activeColor: Colors.teal,
-            hoverColor: Colors.pink.shade100,
-            value: mainValve.isOn,
-            onChanged: (val) => onToggleMainValve(mainValve, val),
-          ),
-        )),
-      ])),
       ...line.valveObjects.map((valve) => DataRow(cells: [
         DataCell(Image.asset('assets/png/m_valve_grey.png', width: 40, height: 40)),
         DataCell(Text(valve.name)),
