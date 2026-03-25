@@ -42,7 +42,7 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
       length = 2;
     }
     if (!AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? pumpList.isNotEmpty : true) {
-      length += 1;
+      length += 2;
     }
     return length;
   }
