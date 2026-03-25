@@ -1703,7 +1703,7 @@ class IrrigationLogModel {
     var fixedColumn = 'Date';
     generalColumn.remove('Date');
     generalColumn.remove('Valve');
-
+    print("noOfDate  => ${noOfDate}");
     for(var findDate in noOfDate){
       if(findDate['show'] == true){
         graphData.add({
@@ -1712,9 +1712,12 @@ class IrrigationLogModel {
           'data' : []
         });
         var indexOfDataToAdd = graphData.length - 1;
+        print("dataSource['log'] => ${dataSource['log']}");
         for(var date in dataSource['log']){
           if(date['irrigation'].isNotEmpty){
             for(var howManyDate = 0;howManyDate < date['irrigation']['Date'].length;howManyDate++){
+              print("findDate['name'] : ${findDate['name']}");
+              print("date['irrigation']['Date'][howManyDate] : ${date['irrigation']['Date'][howManyDate]}");
               if(date['irrigation']['Date'][howManyDate].contains(findDate['name'])){
                 fixedColumnData.add(findDate['name']);
                 var myList = [];
