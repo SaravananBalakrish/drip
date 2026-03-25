@@ -36,14 +36,8 @@ class LoginViewModel extends ChangeNotifier {
 
   Future<void> login() async {
 
-    if(!kIsWeb) {
-      FirebaseMessaging messaging = FirebaseMessaging.instance;
-      await messaging.getToken().then((String? token) async{
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('deviceToken', token ?? '' );
-      });
-    }
-    final token = await PreferenceHelper.getDeviceToken();
+
+    final token = '';
 
     isLoading = true;
     errorMessage = "";
@@ -63,12 +57,6 @@ class LoginViewModel extends ChangeNotifier {
         errorMessage = "Invalid Mobile number or Password!";
         notifyListeners();
         return;
-      } else if(!kIsWeb && (token == null || token.isEmpty)){
-        print("token in the else :: $token");
-        isLoading = false;
-        errorMessage = "Device token not generated";
-        notifyListeners();
-        return;
       }
 
       String cleanedCountryCode = countryCode.replaceAll("+", "");
@@ -77,7 +65,7 @@ class LoginViewModel extends ChangeNotifier {
         'mobileNumber': mobileNumber,
         'password': password,
         'deviceToken': token ?? '',
-        'isMobile' : kIsWeb? false : true,
+        'isMobile' : false,
       };
 
       final response = await repository.checkLoginAuth(body);
