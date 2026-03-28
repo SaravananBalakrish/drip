@@ -28,5 +28,4 @@ class ConfigMakerRepository{
   Future<http.Response> getProductStock(body) async {
     return await httpService.postRequest('/product/getDealerStockForReplace', body);
   }
-
 }

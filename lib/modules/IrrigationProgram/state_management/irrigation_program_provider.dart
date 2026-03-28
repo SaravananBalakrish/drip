@@ -1642,7 +1642,10 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       // String zoneSerialNo = sequenceSerialNo.contains('.') ? sequenceSerialNo.split('.')[1] : sequenceSerialNo;
       String zoneTime = '';
       String zoneQuantity = '';
+      print("sequenceData[selectedGroup]['quantityValue'] : ${sequenceData[selectedGroup]['quantityValue']}");
+      print("getNominalFlow() : ${getNominalFlow()}");
       zoneTime = DataConvert().convertLitersToTime(double.parse(sequenceData[selectedGroup]['quantityValue']), getNominalFlow());
+
       zoneQuantity = DataConvert().convertTimeToLiters(sequenceData[selectedGroup]['timeValue'], getNominalFlow());
       Map<String, dynamic> jsonPayload = {
         'Zone_No' : sq['sNo'],
