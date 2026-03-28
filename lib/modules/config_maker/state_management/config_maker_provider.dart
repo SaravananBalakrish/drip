@@ -277,7 +277,7 @@ class ConfigMakerProvider extends ChangeNotifier{
           print("productListResponse : ${productListResponse.body}");
         }
         Map<String, dynamic> productListJsonData = jsonDecode(productListResponse.body);
-        productStock = productListJsonData['data'];
+        productStock = productListJsonData['data'] ?? [];
       }
       await Future.delayed(const Duration(seconds: 0));
       var body = {
@@ -642,7 +642,7 @@ class ConfigMakerProvider extends ChangeNotifier{
       }
     }
 
-    if(newCount > oldCount){   // adding
+    if(newCount > oldCount){
       // ------------- validate ec, ph and pressure switch for category 6----------------------------
       if(selectedDevice.categoryId == 6){
         if(selectedConnectionObject.type == '3'){
@@ -663,8 +663,6 @@ class ConfigMakerProvider extends ChangeNotifier{
           }
         }
       }
-
-      print('selectedModelDefaultConnectionList :: $selectedModelDefaultConnectionList');
       int howManyObjectSupposedToConnect = newCount - oldCount;
       for(var notConfiguredObject = 0;notConfiguredObject < howManyObjectSupposedToConnect;notConfiguredObject++){
         inner : for(var object in listOfGeneratedObject){
