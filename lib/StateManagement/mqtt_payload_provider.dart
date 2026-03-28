@@ -167,6 +167,17 @@ class MqttPayloadProvider with ChangeNotifier {
    List<BleBluetoothDeviceModel> _pairedDevicesBle = [];
    List<BleBluetoothDeviceModel> get pairedDevicesBle => _pairedDevicesBle;
 
+   // Add these getters for connection status
+   bool get isBleConnected {
+     return _connectedDeviceBle != null &&
+         _connectedDeviceBle!.connectionState == BlueConnectionState.connected;
+   }
+
+   bool get isClassicConnected {
+     return _connectedDeviceClassic != null &&
+         _connectedDeviceClassic!.connectionState == BlueConnectionState.connected;
+   }
+
 
    void updateClassicConnectedDeviceStatus(ClassicBluetoothDeviceModel? device) {
      _connectedDeviceClassic = device;
@@ -203,18 +214,19 @@ class MqttPayloadProvider with ChangeNotifier {
      }
    }
 
-   void updateBleDeviceStatus(String address, int status) {
+   void updateBleDeviceStatus(String deviceId, int status) {
      for (var device in _pairedDevicesBle) {
-       if (device.device.remoteId.str == address) { // FIXED
-
+       if (device.device.remoteId.str == deviceId) {
          if (status >= 0 && status < BlueConnectionState.values.length) {
-           device.connectionState = BlueConnectionState.values[status];
-
-           notifyListeners(); //correct place
+           final newState = BlueConnectionState.values[status];
+           if (device.connectionState != newState) {
+             device.connectionState = newState;
+             debugPrint("🔵 BLE Device $deviceId state changed to: $newState");
+             notifyListeners(); // CRITICAL: This triggers UI update
+           }
          } else {
            debugPrint('Invalid status int: $status');
          }
-
          break;
        }
      }
