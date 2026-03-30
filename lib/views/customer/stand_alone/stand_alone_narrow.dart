@@ -4,6 +4,7 @@ import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/fertilize
 import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/filter_site_card.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/irrigation_line_card.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/irrigation_pump_card.dart';
+import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/main_valve_card.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/source_pump_card.dart';
 import 'package:oro_drip_irrigation/views/customer/stand_alone/widgets/valve_card_table.dart';
 import 'package:provider/provider.dart';
@@ -332,6 +333,15 @@ class _StandAloneNarrowState extends State<StandAloneNarrow> with SingleTickerPr
         .whereType<FertilizerSiteModel>()
         .toList();
 
+    final mainValve = masterData.irrigationLine
+        .expand((line) => line.mainValveObjects)
+        .toList();
+
+    final allMainValve = mainValve.fold<Map<double, MainValveModel>>({}, (map, mValve) {
+      map[mValve.sNo] = mValve;
+      return map;
+    }).values.toList();
+
     return Column(
       children: [
         if (!isNova && vm.ddCurrentPosition == 0)
@@ -352,8 +362,6 @@ class _StandAloneNarrowState extends State<StandAloneNarrow> with SingleTickerPr
           sites: lFilterSites,
           onChanged: (filter, val) => setState(() => filter.selected = val),
         ),
-
-
         FertilizerSiteCard(
           sites: cFertilizerSite,
           onChanged: (item, val) => setState(() => item.selected = val),
@@ -363,14 +371,16 @@ class _StandAloneNarrowState extends State<StandAloneNarrow> with SingleTickerPr
           onChanged: (item, val) => setState(() => item.selected = val),
         ),
 
+        MainValveCard(
+          mainValve: allMainValve,
+          onChanged: (item, val) => setState(() => item.selected = val),
+        ),
+
         (!isNova && ddPosition == 0) ? Column(
           children: masterData.irrigationLine.map((line) {
             return IrrigationLineCard(
               line: line,
               showSwitch: vm.ddCurrentPosition != 0,
-              onToggleMainValve: (mainValve, value) {
-                setState(() => mainValve.isOn = value);
-              },
               onToggleValve: (valve, value) {
                 setState(() => valve.isOn = value);
               },

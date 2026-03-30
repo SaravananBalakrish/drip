@@ -1,6 +1,6 @@
 plugins {
     id "com.android.application"
-    id 'com.google.gms.google-services'
+    id "com.google.gms.google-services"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
@@ -11,39 +11,48 @@ if (localPropertiesFile.exists()) {
     localProperties.load(localPropertiesFile.newDataInputStream())
 }
 
-def keyProperties = new Properties()
-//def keyPropertiesFile = rootProject.file('key.properties')
-def keyPropertiesFile = rootProject.file('android/key.properties')
-if (keyPropertiesFile.exists()) {
-    println "key.properties found at: ${keyPropertiesFile.absolutePath}"
-    keyProperties.load(keyPropertiesFile.newDataInputStream())
-    println "keyProperties content: ${keyProperties}"
+/* ================= SAFE KEYSTORE CONFIG ================= */
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+
+if (keystorePropertiesFile.exists()) {
+    println "key.properties found at: ${keystorePropertiesFile.absolutePath}"
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 } else {
-    println "key.properties not found at: ${keyPropertiesFile.absolutePath}"
+    println "key.properties not found (Release build will fail if attempted)"
 }
 
-def flutterVersionCode = localProperties.getProperty('flutter.versionCode') ?: "6"
-def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: "1.0"
+/* ======================================================== */
 
 android {
+
+    namespace = "com.niagaraautomations.oroDripirrigation"
+    compileSdk = 36
+    ndkVersion = flutter.ndkVersion
+
     flavorDimensions += "flavor-type"
 
     productFlavors {
+
         oroDevelopment {
             dimension "flavor-type"
             applicationId "com.niagaraautomations.oroDevelopment"
             resValue "string", "app_name", "ORO-Dev"
         }
+
         oroProduction {
             dimension "flavor-type"
             applicationId "com.niagaraautomations.oroDripirrigation"
             resValue "string", "app_name", "ORO"
         }
+
         smartComm {
             dimension "flavor-type"
             applicationId "com.niagaraautomations.smartComm"
             resValue "string", "app_name", "SMART COMM"
         }
+
         agritel {
             dimension "flavor-type"
             applicationId "com.niagaraautomations.agritel"
@@ -51,66 +60,75 @@ android {
         }
     }
 
-    namespace = "com.niagaraautomations.oroDripirrigation"
-    compileSdk = 36
-    ndkVersion = flutter.ndkVersion
+    defaultConfig {
+        applicationId "com.niagaraautomations.oroDripirrigation"
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode 1686
+        versionName "1.2.56"
+        multiDexEnabled true
+    }
+
+    /* ================= SIGNING ================= */
 
     signingConfigs {
         release {
-            if (keyProperties.containsKey('storeFile')) {
-                storeFile file(keyProperties['storeFile'])
-                storePassword keyProperties['storePassword']
-                keyAlias keyProperties['keyAlias']
-                keyPassword keyProperties['keyPassword']
-            } else {
-                // Fallback for local builds (optional)
-                storeFile file("release-key.jks")
-                storePassword "Oro@321"
-                keyAlias "upload"
-                keyPassword "Oro@321"
+            if (keystorePropertiesFile.exists()) {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
             }
         }
     }
 
+    buildTypes {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled false
+            shrinkResources false
+        }
+
+        debug {
+            signingConfig signingConfigs.debug
+        }
+    }
+
+    /* ================= JAVA/KOTLIN ================= */
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
         coreLibraryDesugaringEnabled true
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    defaultConfig {
-        applicationId = "com.niagaraautomations.oroDripirrigation"
-        //minSdk = flutter.minSdkVersion
-//        minSdkVersion flutter.minSdkVersion
-        minSdkVersion = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
-        versionCode = 1686
-        versionName = "1.2.56"
-    }
-
-    buildTypes {
-        release {
-            signingConfig signingConfigs.release
-        }
+        jvmTarget = '17'
     }
 }
+
+/* ================= FLUTTER ================= */
 
 flutter {
     source = "../.."
 }
 
+/* ================= DEPENDENCIES ================= */
+
 dependencies {
+
+    implementation platform('com.google.firebase:firebase-bom:34.3.0')
     implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-messaging'
+    implementation 'com.google.firebase:firebase-appcheck-playintegrity'
+    implementation 'com.google.firebase:firebase-appcheck-debug'
+
     implementation 'com.google.android.material:material:1.13.0'
     implementation 'com.google.android.play:app-update:2.1.0'
-    implementation platform('com.google.firebase:firebase-bom:34.3.0')
-    implementation 'com.google.firebase:firebase-appcheck-playintegrity:19.0.1'
-    implementation 'com.google.firebase:firebase-appcheck-debug:19.0.1'
+
     implementation 'androidx.multidex:multidex:2.0.1'
-    implementation 'com.google.firebase:firebase-messaging:25.0.1'
+
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 }

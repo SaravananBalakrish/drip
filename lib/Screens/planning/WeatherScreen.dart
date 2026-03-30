@@ -1219,9 +1219,7 @@ print("value$value");
     });
     manager.topicToPublishAndItsMessage(
         payLoadFinal, '${Environment.mqttPublishTopic}/${widget.deviceID}');
-
-
-  }
+   }
   // TODO: implement widget
   Future<void> fetchDataSunRiseSet() async {
     try {

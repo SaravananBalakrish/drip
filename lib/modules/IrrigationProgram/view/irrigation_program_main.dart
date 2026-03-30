@@ -170,9 +170,9 @@ class _IrrigationProgramState extends State<IrrigationProgram> with SingleTicker
     }
 
     if (mainProvider.isPumpStationMode) {
-      mainProvider.calculateTotalFlowRate();
-      if (mainProvider.pumpStationValveFlowRate < mainProvider.totalValveFlowRate) {
-        _showFlowRateWarning();
+      final result = mainProvider.calculateTotalFlowRate();
+      if (result['sequenceData'].isNotEmpty) {
+        _showFlowRateWarning(result);
         return false;
       }
     }
@@ -211,7 +211,7 @@ class _IrrigationProgramState extends State<IrrigationProgram> with SingleTicker
     );
   }
 
-  void _showFlowRateWarning() {
+  void _showFlowRateWarning(Map<String, dynamic> validationData) {
     final mainProvider = Provider.of<IrrigationProgramMainProvider>(context, listen: false);
     showDialog(
       context: context,
@@ -226,7 +226,7 @@ class _IrrigationProgramState extends State<IrrigationProgram> with SingleTicker
           mainAxisSize: MainAxisSize.min,
           children: [
             const Text(
-              "Pump station range is not sufficient for total zone's valve flow rate!",
+              "Pump station range is not sufficient for zone's valve flow rate!",
               style: TextStyle(fontWeight: FontWeight.w300, fontStyle: FontStyle.italic),
             ),
             const SizedBox(height: 10),
@@ -236,23 +236,24 @@ class _IrrigationProgramState extends State<IrrigationProgram> with SingleTicker
                 const Text('Pump station range', style: TextStyle(color: Colors.black)),
                 const SizedBox(width: 20),
                 Text(
-                  '${mainProvider.pumpStationValveFlowRate} L/hr',
+                  '${validationData['pumpFlowRate']} L/hr',
                   style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
             const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Total zone valve flow rate', style: TextStyle(color: Colors.black)),
-                const SizedBox(width: 20),
-                Text(
-                  '${mainProvider.totalValveFlowRate} L/hr',
-                  style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
+            for(var seq in validationData['sequenceData'])
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('${seq['name']}', style: const TextStyle(color: Colors.black)),
+                  const SizedBox(width: 20),
+                  Text(
+                    '${seq['flowrate']} L/hr',
+                    style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
           ],
         ),
         actions: [

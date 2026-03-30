@@ -7,6 +7,7 @@ import '../../modules/Logs/repository/log_repos.dart';
 import '../../modules/Logs/view/pump_list.dart';
 import '../../modules/irrigation_report/view/list_of_log_config.dart';
 import '../../modules/irrigation_report/view/standalone_log.dart';
+import '../../modules/irrigation_report/view/zone_cyclic_log.dart';
 import '../../services/http_service.dart';
 
 
@@ -41,7 +42,7 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
       length = 2;
     }
     if (!AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? pumpList.isNotEmpty : true) {
-      length += 1;
+      length += 2;
     }
     return length;
   }
@@ -81,7 +82,8 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
                       tabs: [
                         if(AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId))
                           ...[
-                            const Tab(text: "Motor Cyclic Log",)
+                            const Tab(text: "Motor Cyclic Log",),
+                            const Tab(text: "Zone Cyclic Log",)
                           ]
                         else
                           ...[
@@ -98,7 +100,10 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
                           controller: tabController,
                           children: [
                             if(AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId))
-                              MotorCyclicLog(userData: widget.userData)
+                              ...[
+                                MotorCyclicLog(userData: widget.userData),
+                                ZoneCyclicLog(userData: widget.userData),
+                              ]
                             else
                               ...[
                                 ListOfLogConfig(userData: widget.userData,),

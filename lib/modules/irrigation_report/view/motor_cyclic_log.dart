@@ -44,7 +44,6 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
   }
 
   void getData()async{
-    print('data request to the server.............');
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('dd/MM/yyyy').format(now);
     print('_selectedDate : $_selectedDate');
@@ -67,11 +66,6 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
 
     try{
       String? startMonth = selectedDateRange?.start.month.toString();
-      print('startMonth : $startMonth');
-
-      String? startday = selectedDateRange?.start.day.toString();
-      String? endMonth = selectedDateRange?.end.month.toString();
-      String? endday = selectedDateRange?.end.day.toString();
       var body = {
         "userId": widget.userData['customerId'],
         "controllerId": widget.userData['controllerId'],
@@ -97,7 +91,6 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
 
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-    print('args : ${args}');
     setState(() {
       if (args.value is PickerDateRange) {
         _selectedDate  = '${DateFormat('dd/MM/yyyy').format(args.value.startDate)} -'
@@ -173,7 +166,8 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
               children: [
                 const SizedBox(height: 1,),
                 for(var programData in data["data"]["motorCyclic"])
-                  programBox(programData: programData)
+                  programBox(programData: programData),
+                const SizedBox(height: 100,),
               ],
             ),
           ),
@@ -208,6 +202,12 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
           getTitleValue(title: 'Program', value: programData["program"], titleColor: Colors.white, valueColor: Colors.white),
           getTitleValue(title: 'Cyclic duration', value: getCyclicDuration(programData: programData), titleColor: Colors.white, valueColor: Colors.white),
           getTitleValue(title: 'Cyclic flow', value: getCyclicFlow(programData: programData), titleColor: Colors.white, valueColor: Colors.white),
+          if(programData["zoneList"].isNotEmpty)
+          ...[
+            getTitleValue(title: 'Start time', value: programData["zoneList"][0]['OnTime'], 
+                titleColor: Colors.white, valueColor: Colors.white),
+            getTitleValue(title: 'End time', value: programData["zoneList"][programData["zoneList"].length - 1]['OnTime'], titleColor: Colors.white, valueColor: Colors.white),
+          ],
           Column(
             spacing: 10,
             children: [
@@ -229,7 +229,7 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
     return dataConvert.formatTime(totalSeconds);
   }
 
-  String getCyclicFlow({required Map<String, dynamic> programData,}){
+  String getCyclicFlow({required Map<String, dynamic> programData}){
     double totalFlow = 0;
     for(var zoneData in programData['zoneList']){
       totalFlow += double.parse(zoneData["flow"]);
@@ -254,7 +254,7 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
           ),
         ),
         Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5))

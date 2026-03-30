@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../../view_models/customer/customer_screen_controller_view_model.dart';
 
 class BluetoothScanTile extends StatefulWidget {
@@ -20,46 +19,47 @@ class _BluetoothScanTileState extends State<BluetoothScanTile>
   @override
   void initState() {
     super.initState();
+
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 1),
     );
+
     _rotationAnimation = Tween(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.linear,
-      ),
+      CurvedAnimation(parent: _controller, curve: Curves.linear),
     );
 
-    widget.vm.blueService.onDeviceFound = stopScan;
+    // Stop scan when device is found
+    widget.vm.bluetoothClassicService.onDeviceFound = stopScan;
   }
 
   Future<void> startScan() async {
     if (isScanning) return;
-    setState(() {
-      isScanning = true;
-    });
+
+    setState(() => isScanning = true);
     _controller.repeat();
-    await widget.vm.blueService.getDevices(widget.vm.mySiteList.data[widget.vm.sIndex].master[widget.vm.mIndex].deviceId);
-    setState(() {
-      isScanning = false;
-    });
-    _controller.stop();
+
+    // Use try/finally to ensure scan stops even if an error occurs
+    try {
+      final deviceId = widget.vm
+          .mySiteList.data[widget.vm.sIndex].master[widget.vm.mIndex].deviceId;
+
+      await widget.vm.bluetoothClassicService.scanDevices(deviceId);
+    } finally {
+      stopScan();
+    }
   }
 
   void stopScan() {
     if (!mounted) return;
 
-    setState(() {
-      isScanning = false;
-    });
-
+    setState(() => isScanning = false);
     _controller.stop();
   }
 
   @override
   void dispose() {
-    widget.vm.blueService.onDeviceFound = null;
+    widget.vm.bluetoothClassicService.onDeviceFound = null;
     _controller.dispose();
     super.dispose();
   }

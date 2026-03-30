@@ -5,7 +5,8 @@ import '../Constants/data_convertion.dart';
 import '../models/Weather_model.dart';
 import '../Screens/Map/googlemap_model.dart';
 import '../models/customer/fertilizer_site_live_model.dart';
-import '../services/bluetooth_service.dart';
+import '../services/bluetooth/model/ble_bluetooth_device_model.dart';
+import '../services/bluetooth/model/classic_bluetooth_device_model.dart';
 import '../utils/enums.dart';
 
 
@@ -120,6 +121,7 @@ class MqttPayloadProvider with ChangeNotifier {
    final Map<String, String> _channelOtherDetailMap = {};
    final Map<String, String> _valveOnOffStatusMap = {};
    final Map<String, String> _lightOnOffStatusMap = {};
+   final Map<String, String> _fanOnOffStatusMap = {};
    final Map<String, String> _gateOnOffStatusMap = {};
    final Map<String, String> _sensorValueMap = {};
    final Map<String, String> _boosterPumpOnOffStatusMap = {};
@@ -127,13 +129,6 @@ class MqttPayloadProvider with ChangeNotifier {
 
    final Map<String, FertilizerSiteLiveModel> _fertilizerSiteMap = {};
    final Map<String, FertilizerChannelLiveModel> _fertilizerChannelMap = {};
-
-   //for blue repository
-   CustomDevice? _connectedDevice;
-   CustomDevice? get connectedDevice => _connectedDevice;
-
-   List<CustomDevice> _pairedDevices = [];
-   List<CustomDevice> get pairedDevices => _pairedDevices;
 
 
    List<Map<String, dynamic>> _wifiList = [];
@@ -157,24 +152,78 @@ class MqttPayloadProvider with ChangeNotifier {
    int traceLogSize = 0;
    int totalTraceLogSize = 0;
 
+   //for blue repository classic
+   ClassicBluetoothDeviceModel? _connectedDeviceClassic;
+   ClassicBluetoothDeviceModel? get connectedDeviceClassic => _connectedDeviceClassic;
 
-   void updateConnectedDeviceStatus(CustomDevice? device) {
-     _connectedDevice = device;
+   List<ClassicBluetoothDeviceModel> _pairedDevicesClassic = [];
+   List<ClassicBluetoothDeviceModel> get pairedDevicesClassic => _pairedDevicesClassic;
+
+
+   //for blue repository ble
+   BleBluetoothDeviceModel? _connectedDeviceBle;
+   BleBluetoothDeviceModel? get connectedDeviceBle => _connectedDeviceBle;
+
+   List<BleBluetoothDeviceModel> _pairedDevicesBle = [];
+   List<BleBluetoothDeviceModel> get pairedDevicesBle => _pairedDevicesBle;
+
+   // Add these getters for connection status
+   bool get isBleConnected {
+     return _connectedDeviceBle != null &&
+         _connectedDeviceBle!.connectionState == BlueConnectionState.connected;
+   }
+
+   bool get isClassicConnected {
+     return _connectedDeviceClassic != null &&
+         _connectedDeviceClassic!.connectionState == BlueConnectionState.connected;
+   }
+
+
+   void updateClassicConnectedDeviceStatus(ClassicBluetoothDeviceModel? device) {
+     _connectedDeviceClassic = device;
      notifyListeners();
    }
 
-   void updatePairedDevices(List<CustomDevice> devices) {
-     _pairedDevices = devices;
+   void updateClassicPairedDevices(List<ClassicBluetoothDeviceModel> devices) {
+     _pairedDevicesClassic = devices;
+     notifyListeners();
+   }
+
+   void updateBleConnectedDeviceStatus(BleBluetoothDeviceModel? device) {
+     _connectedDeviceBle = device;
+     notifyListeners();
+   }
+
+   void updateBlePairedDevices(List<BleBluetoothDeviceModel> devices) {
+     _pairedDevicesBle = devices;
      notifyListeners();
    }
 
 
-   void updateDeviceStatus(String address, int status) {
-     for (var device in _pairedDevices) {
+   void updateClassicDeviceStatus(String address, int status) {
+     for (var device in _pairedDevicesClassic) {
        if (device.device.address == address) {
-         if (status >= 0 && status < BlueConnectionSate.values.length) {
-           device.status = BlueConnectionSate.values[status];
+         if (status >= 0 && status < BlueConnectionState.values.length) {
+           device.connectionState= BlueConnectionState.values[status];
            notifyListeners();
+         } else {
+           debugPrint('Invalid status int: $status');
+         }
+         break;
+       }
+     }
+   }
+
+   void updateBleDeviceStatus(String deviceId, int status) {
+     for (var device in _pairedDevicesBle) {
+       if (device.device.remoteId.str == deviceId) {
+         if (status >= 0 && status < BlueConnectionState.values.length) {
+           final newState = BlueConnectionState.values[status];
+           if (device.connectionState != newState) {
+             device.connectionState = newState;
+             debugPrint("🔵 BLE Device $deviceId state changed to: $newState");
+             notifyListeners(); // CRITICAL: This triggers UI update
+           }
          } else {
            debugPrint('Invalid status int: $status');
          }
@@ -694,6 +743,7 @@ class MqttPayloadProvider with ChangeNotifier {
 
           updateValveStatus(data['cM']['2402'].split(";"));
           updateLightStatus(data['cM']['2402'].split(";"));
+          updateFanStatus(data['cM']['2402'].split(";"));
           updateSensorValue(data['cM']['2403'].split(";"));
           updateBoosterPumpStatus(data['cM']['2402'].split(";"));
           updateAgitatorStatus(data['cM']['2402'].split(";"));
@@ -952,6 +1002,16 @@ class MqttPayloadProvider with ChangeNotifier {
      }
    }
 
+   void updateFanStatus(List<String> fanOnOffPayload) {
+     for (final entry in fanOnOffPayload) {
+       if (!entry.startsWith('15.')) continue;
+       final parts = entry.split(',');
+       if (parts.isEmpty || parts[0].isEmpty) continue;
+       final sNo = parts[0];
+       _fanOnOffStatusMap[sNo] = entry;
+     }
+   }
+
    void updateSensorValue(List<String> sensorValuePayload) {
      for (final entry in sensorValuePayload) {
        final parts = entry.split(',');
@@ -1044,6 +1104,7 @@ class MqttPayloadProvider with ChangeNotifier {
    String? getChannelOtherData(String sNo) => _channelOtherDetailMap[sNo];
    String? getValveOnOffStatus(String sNo) => _valveOnOffStatusMap[sNo];
    String? getLightOnOffStatus(String sNo) => _lightOnOffStatusMap[sNo];
+   String? getFanOnOffStatus(String sNo) => _fanOnOffStatusMap[sNo];
    String? getGateOnOffStatus(String sNo) => _gateOnOffStatusMap[sNo];
    String? getSensorUpdatedValve(String sNo) => _sensorValueMap[sNo];
    String? getBoosterPumpOnOffStatus(String sNo) => _boosterPumpOnOffStatusMap[sNo];

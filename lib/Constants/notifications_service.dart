@@ -125,7 +125,7 @@ class NotificationServiceCall {
       0,
       notification['notification']['title'] ?? 'Notification',
       notification['notification']['body'] ?? 'You have a new notification',
-      platformChannelSpecifics,
+       platformChannelSpecifics,
       payload: notification['data']?.toString(),
     );
   }

@@ -110,6 +110,7 @@ class MotorDataHourly {
     }
 
     String getCumulativeFlow(Map<String, dynamic> json, String key) {
+      print("json => $json");
       final value = json[key];
       int firstIndex = getFirstNonZeroIndex(value);
 

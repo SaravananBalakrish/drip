@@ -12,6 +12,7 @@ import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../modules/IrrigationProgram/view/program_library.dart';
 import '../../../modules/ScheduleView/view/schedule_view_screen.dart';
 import '../../../modules/bluetooth_low_energy/view/node_connection_page.dart';
+import '../../../services/bluetooth/bluetooth_ble_service.dart';
 import '../../../services/communication_service.dart';
 import '../../../utils/constants.dart';
 import '../../../view_models/customer/customer_screen_controller_view_model.dart';
@@ -19,6 +20,7 @@ import '../input_output_connection_details.dart';
 import '../node_list/node_list.dart';
 import '../send_and_received/sent_and_received.dart';
 import '../stand_alone/stand_alone_narrow.dart';
+import 'ble_scan_tile.dart';
 import 'bluetooth_scan_tile.dart';
 
 class CustomerFabMenu extends StatelessWidget {
@@ -44,7 +46,6 @@ class CustomerFabMenu extends StatelessWidget {
     final isGemNova = [...AppConstants.ecoGemModelList].contains(currentMaster.modelId);
 
     if (!isGem && !isGemNova) return const SizedBox.shrink();
-
 
     final commMode = Provider.of<CustomerProvider>(context).controllerCommMode;
 
@@ -91,11 +92,12 @@ class CustomerFabMenu extends StatelessWidget {
 
         FloatingActionButton(
           heroTag: null,
-          backgroundColor: (commMode == 2 && !vm.blueService.isConnected) ? Colors.redAccent : null,
-          onPressed: () => _showBottomSheet(context,currentMaster, vm, vm.mySiteList.data[vm.sIndex].customerId, loggedInUser.id),
+          backgroundColor: (commMode == 2 && !(vm.bluetoothClassicService.isConnected &&
+              vm.bluetoothBleService.isConnected)) ? Colors.redAccent : null,
+          onPressed: () => _showBottomSheet(context,currentMaster, vm,
+              vm.mySiteList.data[vm.sIndex].customerId, loggedInUser.id),
           tooltip: 'Connectivity',
-          child: commMode == 1
-              ? Column(
+          child: commMode == 1 ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
@@ -112,10 +114,9 @@ class CustomerFabMenu extends StatelessWidget {
                     fontSize: 11.0, color: Colors.black54),
               ),
             ],
-          )
-              : Icon(
-            (commMode == 2 && vm.blueService.isConnected)
-                ? Icons.bluetooth
+          ) :
+          Icon((commMode == 2 && (vm.bluetoothClassicService.isConnected
+              || vm.bluetoothBleService.isConnected)) ? Icons.bluetooth
                 : Icons.bluetooth_disabled,
             color: Colors.black,
           ),
@@ -246,7 +247,9 @@ class CustomerFabMenu extends StatelessWidget {
       builder: (_) {
         return StatefulBuilder(
           builder: (context, setModalState) {
+
             final commMode = Provider.of<CustomerProvider>(context).controllerCommMode;
+
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Wrap(
@@ -262,7 +265,7 @@ class CustomerFabMenu extends StatelessWidget {
                     trailing: commMode == 1 ?
                     Icon(Icons.check, color: Theme.of(context).primaryColorLight) : null,
                     onTap: () async {
-                      await vm.blueService.resetBluetoothState();
+                      await vm.bluetoothClassicService.resetBluetoothState();
                       vm.updateCommunicationMode(1, customerId);
                     },
                   ),
@@ -312,64 +315,134 @@ class CustomerFabMenu extends StatelessWidget {
                       ),
                     ]
                     else...[
-                      BluetoothScanTile(vm: vm),
-                      const SizedBox(height: 10),
-                      Consumer<MqttPayloadProvider>(
-                        builder: (context, provider, _) {
-                          final devices = provider.pairedDevices;
-                          if (devices.isNotEmpty) {
-                            vm.blueService.stopDiscovery();
-                            return Column(
-                              children: devices.map((d) {
-                                return ListTile(
-                                  title: Text(d.device.name ?? ''),
-                                  subtitle: Text(d.device.address),
-                                  trailing: d.isConnected ? Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      const Icon(Icons.check_circle, color: Colors.green),
-                                      const SizedBox(width: 8),
-                                      IconButton(
-                                        onPressed: () {
-                                          requestAndShowWifiList(context, false);
-                                        },
-                                        icon: const Icon(CupertinoIcons.text_badge_checkmark),
-                                      ),
-                                      IconButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => BLEMobileScreen(deviceID: currentMaster.deviceId,
-                                                    communicationType: 'Bluetooth',userId: customerId,controllerId: currentMaster.controllerId),
-                                              ));
-                                        },
-                                        icon: const Icon(CupertinoIcons.exclamationmark_octagon),
-                                      ),
-                                    ],
-                                  ):
-                                  d.isConnecting ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(strokeWidth: 2),
-                                  ):
-                                  TextButton(
-                                    onPressed: d.isDisConnected ? () => vm.blueService.connectToDevice(d) : null,
-                                    child: const Text('Connect'),
-                                  ),
-                                );
-                              }).toList(),
-                            );
-                          } else {
-                            return const Center(
-                              child: Text(
-                                'Stay close to the controller and tap refresh to try scanning again.',
-                                style: TextStyle(fontSize: 12, color: Colors.black38),
-                              ),
-                            );
-                          }
-                        },
-                      ),
+
+                      if(currentMaster.modelId == 75)...[
+                        BleScanTile (vm: vm),
+                        const SizedBox(height: 10),
+                        Consumer<MqttPayloadProvider>(
+                          builder: (context, provider, _) {
+
+                            final devices = provider.pairedDevicesBle;
+
+                            if (devices.isNotEmpty) {
+
+                              vm.bluetoothBleService.stopScan();
+
+                              return Column(
+                                children: devices.map((d) {
+                                  return ListTile(
+                                    title: Text(d.device.advName ?? ''),
+                                    subtitle: Text(d.device.remoteId.str),
+                                    trailing: d.isConnected ? Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.check_circle, color: Colors.green),
+                                        const SizedBox(width: 8),
+                                        IconButton(
+                                          onPressed: () {
+                                            showWifiDialog(context, vm.bluetoothBleService);
+                                          },
+                                          icon: const Icon(CupertinoIcons.dot_radiowaves_left_right),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => BLEMobileScreen(deviceID: currentMaster.deviceId,
+                                                      communicationType: 'Bluetooth',userId: customerId, controllerId:
+                                                      currentMaster.controllerId),
+                                                ));
+                                          },
+                                          icon: const Icon(CupertinoIcons.exclamationmark_octagon),
+                                        ),
+                                      ],
+                                    ) :
+                                    d.isConnecting ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                    ) : TextButton(
+                                      onPressed: () => vm.bluetoothBleService.connectToDevice(d),
+                                      child: const Text("Connect"),
+                                    ),
+                                  );
+                                }).toList(),
+                              );
+                            } else {
+                              return const Center(
+                                child: Text(
+                                  'Stay close to the controller and tap refresh to try scanning again.',
+                                  style: TextStyle(fontSize: 12, color: Colors.black38),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      ]else...[
+                        BluetoothScanTile(vm: vm),
+                        const SizedBox(height: 10),
+                        Consumer<MqttPayloadProvider>(
+                          builder: (context, provider, _) {
+
+                            final devices = provider.pairedDevicesClassic;
+
+                            if (devices.isNotEmpty) {
+                              vm.bluetoothClassicService.stopDiscovery();
+
+                              return Column(
+                                children: devices.map((d) {
+                                  return ListTile(
+                                    title: Text(d.device.name ?? ''),
+                                    subtitle: Text(d.device.address),
+                                    trailing: d.isConnected ? Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(Icons.check_circle, color: Colors.green),
+                                        const SizedBox(width: 8),
+                                        IconButton(
+                                          onPressed: () {
+                                            requestAndShowWifiList(context, false);
+                                          },
+                                          icon: const Icon(CupertinoIcons.text_badge_checkmark),
+                                        ),
+                                        IconButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => BLEMobileScreen(deviceID: currentMaster.deviceId,
+                                                      communicationType: 'Bluetooth',userId: customerId, controllerId:
+                                                      currentMaster.controllerId),
+                                                ));
+                                          },
+                                          icon: const Icon(CupertinoIcons.exclamationmark_octagon),
+                                        ),
+                                      ],
+                                    ):
+                                    d.isConnecting ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(strokeWidth: 2),
+                                    ):
+                                    TextButton(
+                                      onPressed: d.isDisconnected ? () => vm.bluetoothClassicService.connectToDevice(d) : null,
+                                      child: const Text('Connect'),
+                                    ),
+                                  );
+                                }).toList(),
+                              );
+                            } else {
+                              return const Center(
+                                child: Text(
+                                  'Stay close to the controller and tap refresh to try scanning again.',
+                                  style: TextStyle(fontSize: 12, color: Colors.black38),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+                      ],
                     ]
                   ],
                 ],
@@ -596,7 +669,58 @@ class CustomerFabMenu extends StatelessWidget {
     );
   }
 
+
+  void showWifiDialog(BuildContext context, BluetoothBleService bleService) {
+    final ssidController = TextEditingController();
+    final passController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: const Text("Configure WiFi"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: ssidController,
+                decoration: const InputDecoration(labelText: "SSID"),
+              ),
+              TextField(
+                controller: passController,
+                decoration: const InputDecoration(labelText: "Password"),
+              ),
+            ],
+          ),
+          actions: [
+
+
+            TextButton(
+              onPressed: () async {
+                final ssid = ssidController.text.trim();
+                final password = passController.text.trim();
+
+                if (ssid.isEmpty || password.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("SSID and Password cannot be empty"),
+                    ),
+                  );
+                  return;
+                }
+
+                final communicationService = context.read<CommunicationService>();
+                final payload = '2,$ssid,$password';
+                final livePayload = jsonEncode({"6000": {"6001": payload}});
+                await communicationService.sendCommand(serverMsg: '', payload: livePayload);
+
+                Navigator.pop(context);
+              },
+              child: const Text("Send"),
+            )
+          ],
+        );
+      },
+    );
+  }
 }
-
-
-

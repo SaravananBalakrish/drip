@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,7 @@ class _MapScreenState extends State<MapScreen> {
   final TextEditingController _searchController = TextEditingController();
   Set<Marker> _markers = {};
   LatLng? _objectPosition;
+  double _currentZoom = 15;
 
   late MqttPayloadProvider mqttPayloadProvider;
   ConnectedObject? _selectedObject;
@@ -113,7 +115,9 @@ class _MapScreenState extends State<MapScreen> {
 
     mqttPayloadProvider.notifyListeners();
 
-    _mapController?.animateCamera(CameraUpdate.newLatLngZoom(position, 15));
+     _mapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(position, _currentZoom),
+    );
   }
 
   /// Search location and update marker
@@ -315,7 +319,8 @@ class _MapScreenState extends State<MapScreen> {
                           TextStyle(color: Colors.blue),
                         ),
                       ),
-                    ],
+                   IconButton(onPressed: _getCurrentLocation, icon: const Icon(Icons.my_location, color: Colors.blue)),
+               ],
                   ),
                 ),
                  // Google Map
@@ -323,6 +328,9 @@ class _MapScreenState extends State<MapScreen> {
                   child: GoogleMap(
                     mapType: MapType.hybrid,
                     onMapCreated: _onMapCreated,
+                    onCameraMove: (CameraPosition position) {
+                      _currentZoom = position.zoom;
+                    },
                     initialCameraPosition: CameraPosition(
                       target: _getInitialCameraPosition(),
                       zoom: 15,
@@ -339,7 +347,7 @@ class _MapScreenState extends State<MapScreen> {
                     compassEnabled: true,
                   ),
                 ),
-              ],
+               ],
             ),
           ),
         ],
@@ -385,6 +393,37 @@ class _MapScreenState extends State<MapScreen> {
         ],
       ),
     );
+  }
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Check GPS
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enable Location Services')),
+      );
+      return;
+    }
+
+    // Check Permission
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return;
+    }
+
+    // Get Position
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    // ✅ Add marker
+    _updateMarker(position.latitude, position.longitude);
   }
 
 }

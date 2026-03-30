@@ -1642,7 +1642,10 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       // String zoneSerialNo = sequenceSerialNo.contains('.') ? sequenceSerialNo.split('.')[1] : sequenceSerialNo;
       String zoneTime = '';
       String zoneQuantity = '';
+      print("sequenceData[selectedGroup]['quantityValue'] : ${sequenceData[selectedGroup]['quantityValue']}");
+      print("getNominalFlow() : ${getNominalFlow()}");
       zoneTime = DataConvert().convertLitersToTime(double.parse(sequenceData[selectedGroup]['quantityValue']), getNominalFlow());
+
       zoneQuantity = DataConvert().convertTimeToLiters(sequenceData[selectedGroup]['timeValue'], getNominalFlow());
       Map<String, dynamic> jsonPayload = {
         'Zone_No' : sq['sNo'],
@@ -2442,38 +2445,18 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void calculateTotalFlowRate() {
-    valveFlowRate = [];
-    totalValveFlowRate = 0;
-    pumpStationValveFlowRate = 0;
-    pumpStationFlowRate = [];
-
-    for (var index = 0; index < irrigationLine!.sequence.length; index++) {
-      for (var val in irrigationLine!.sequence[index]['valve']) {
-        if(constantSetting['valve'] != null) {
-          for(var valveInConstant in constantSetting['valve']){
-            if(val['sNo'] == valveInConstant['sNo']){
-              var valveFlowRateInConstant = valveInConstant['setting'][0]['value'].toString();
-              if(valveFlowRateInConstant.isNotEmpty){
-                valveFlowRate.add(valveFlowRateInConstant);
-              }
-            }
-          }
-        }
-      }
-    }
-
+  Map<String, dynamic> calculateTotalFlowRate() {
+    int pumpStationValveFlowRate = 0;
+    List pumpStationFlowRate = [];
     double selectedHeadUnits = selectedObjects!.isNotEmpty ? selectedObjects?.firstWhere((e) => e.objectId == 2).sNo ?? 0.0 : 0.0;
-    print("selectedHeadUnits :: $selectedHeadUnits");
     List<double> availableIrrigationPumps = [];
-    // pumpStationFlowRate
+    List<Map<String, dynamic>> sequenceData = [];
     if(constantSetting['pump'] != null) {
       for (var line = 0; line < irrigationLineFromConfigMaker.length; line++) {
         if(irrigationLineFromConfigMaker[line]['sNo'] == selectedHeadUnits) {
           availableIrrigationPumps = List.from(irrigationLineFromConfigMaker[line]['irrigationPump']);
         }
       }
-      
       for (int index = 0; index < constantSetting['pump'].length; index++) {
         if(availableIrrigationPumps.contains(constantSetting['pump'][index]['sNo'])) {
           if(constantSetting['pump'][index]['setting'][0]['value']){
@@ -2482,24 +2465,39 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         }
       }
     }
-
-    print("pumpStationFlowRate :: $pumpStationFlowRate");
-
-    if(valveFlowRate.isNotEmpty) {
-      totalValveFlowRate = valveFlowRate.map((flowRate) => int.parse(flowRate)).reduce((a, b) => a + b);
-    }
-
     if (pumpStationFlowRate.isNotEmpty) {
-      print("pumpStationFlowRate in the calculateTotalFlowRate :: $pumpStationFlowRate");
       pumpStationValveFlowRate = pumpStationFlowRate.map((flowRate) => int.parse(flowRate)).reduce((a, b) => a + b);
     }
 
-    print('Total valve flow rate: $totalValveFlowRate');
-    print('Total pump station valve flow rate: $pumpStationValveFlowRate');
-
-    Future.delayed(Duration.zero, () {
-      notifyListeners();
-    });
+    for (var index = 0; index < irrigationLine!.sequence.length; index++) {
+      var sequenceValveFlowRate = [];
+      int cumulativeSequenceFlowRate = 0;
+      for (var val in irrigationLine!.sequence[index]['valve']) {
+        if(constantSetting['valve'] != null) {
+          for(var valveInConstant in constantSetting['valve']){
+            if(val['sNo'] == valveInConstant['sNo']){
+              var valveFlowRateInConstant = valveInConstant['setting'][0]['value'].toString();
+              if(valveFlowRateInConstant.isNotEmpty){
+                sequenceValveFlowRate.add(valveFlowRateInConstant);
+              }
+            }
+          }
+        }
+      }
+      if(sequenceValveFlowRate.isNotEmpty) {
+        cumulativeSequenceFlowRate = sequenceValveFlowRate.map((flowRate) => int.parse(flowRate)).reduce((a, b) => a + b);
+        if(cumulativeSequenceFlowRate > pumpStationValveFlowRate){
+          sequenceData.add({
+            'name': irrigationLine!.sequence[index]['name'],
+            'flowrate': cumulativeSequenceFlowRate
+          });
+        }
+      }
+    }
+    return {
+      "pumpFlowRate": pumpStationValveFlowRate,
+      "sequenceData": sequenceData,
+    };
   }
 
   Future<void> getUserProgramSelection(int userId, int controllerId, int serialNumber) async {
@@ -3201,7 +3199,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   ? rtcOffTime
                   : _sampleScheduleModel!.defaultModel.allowStopMethod
                   ? generateRtcTimeStringByUser() : rtcOnTime),/*RtcOff_MaxTime*/
-              "CycleCount": selectedScheduleType == scheduleTypes[3] ? _sampleScheduleModel!.dayCountSchedule.schedule["noOfCycles"] : rtcNoOfCycles,/*CycleCount*/
+              "CycleCount": selectedScheduleType == scheduleTypes[3] ? (_sampleScheduleModel!.dayCountSchedule.schedule["noOfCycles"] == '' ? '0' : _sampleScheduleModel!.dayCountSchedule.schedule["noOfCycles"]): rtcNoOfCycles,/*CycleCount*/
               "IntervalBetweenCycles": selectedScheduleType == scheduleTypes[3] ? _sampleScheduleModel!.dayCountSchedule.schedule["interval"] : rtcInterval,/*IntervalBetweenCycles*/
               "CentralFertilizerSite": centralFertilizerSite.toList().isNotEmpty
                   ? sampleIrrigationLine!
