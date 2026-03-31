@@ -47,7 +47,6 @@ class CustomerFabMenu extends StatelessWidget {
 
     if (!isGem && !isGemNova) return const SizedBox.shrink();
 
-
     final commMode = Provider.of<CustomerProvider>(context).controllerCommMode;
 
     return Column(
@@ -93,8 +92,10 @@ class CustomerFabMenu extends StatelessWidget {
 
         FloatingActionButton(
           heroTag: null,
-          backgroundColor: (commMode == 2 && !vm.bluetoothClassicService.isConnected) ? Colors.redAccent : null,
-          onPressed: () => _showBottomSheet(context,currentMaster, vm, vm.mySiteList.data[vm.sIndex].customerId, loggedInUser.id),
+          backgroundColor: (commMode == 2 && !(vm.bluetoothClassicService.isConnected &&
+              vm.bluetoothBleService.isConnected)) ? Colors.redAccent : null,
+          onPressed: () => _showBottomSheet(context,currentMaster, vm,
+              vm.mySiteList.data[vm.sIndex].customerId, loggedInUser.id),
           tooltip: 'Connectivity',
           child: commMode == 1 ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -113,7 +114,9 @@ class CustomerFabMenu extends StatelessWidget {
                     fontSize: 11.0, color: Colors.black54),
               ),
             ],
-          ) : Icon((commMode == 2 && vm.bluetoothClassicService.isConnected) ? Icons.bluetooth
+          ) :
+          Icon((commMode == 2 && (vm.bluetoothClassicService.isConnected
+              || vm.bluetoothBleService.isConnected)) ? Icons.bluetooth
                 : Icons.bluetooth_disabled,
             color: Colors.black,
           ),
@@ -244,7 +247,9 @@ class CustomerFabMenu extends StatelessWidget {
       builder: (_) {
         return StatefulBuilder(
           builder: (context, setModalState) {
+
             final commMode = Provider.of<CustomerProvider>(context).controllerCommMode;
+
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Wrap(
@@ -320,7 +325,9 @@ class CustomerFabMenu extends StatelessWidget {
                             final devices = provider.pairedDevicesBle;
 
                             if (devices.isNotEmpty) {
+
                               vm.bluetoothBleService.stopScan();
+
                               return Column(
                                 children: devices.map((d) {
                                   return ListTile(
@@ -335,7 +342,7 @@ class CustomerFabMenu extends StatelessWidget {
                                           onPressed: () {
                                             showWifiDialog(context, vm.bluetoothBleService);
                                           },
-                                          icon: const Icon(CupertinoIcons.text_badge_checkmark),
+                                          icon: const Icon(CupertinoIcons.dot_radiowaves_left_right),
                                         ),
                                         IconButton(
                                           onPressed: () {
@@ -667,8 +674,6 @@ class CustomerFabMenu extends StatelessWidget {
     final ssidController = TextEditingController();
     final passController = TextEditingController();
 
-    final communicationService = context.read<CommunicationService>();
-
     showDialog(
       context: context,
       builder: (_) {
@@ -705,33 +710,14 @@ class CustomerFabMenu extends StatelessWidget {
                 }
 
                 final communicationService = context.read<CommunicationService>();
-                await communicationService.sendWifiCredentials(ssid, password);
+                final payload = '2,$ssid,$password';
+                final livePayload = jsonEncode({"6000": {"6001": payload}});
+                await communicationService.sendCommand(serverMsg: '', payload: livePayload);
 
                 Navigator.pop(context);
               },
               child: const Text("Send"),
             )
-            /*TextButton(
-              onPressed: () async {
-
-                final ssid = ssidController.text.trim();
-                final password = passController.text.trim();
-
-                if (ssid.isEmpty || password.isEmpty) {
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("SSID and Password cannot be empty"),
-                    ),
-                  );
-
-                  return;
-                }
-                await communicationService.sendWifiCredentials(ssid, password);
-                Navigator.pop(context);
-              },
-              child: const Text("Send"),
-            )*/
           ],
         );
       },

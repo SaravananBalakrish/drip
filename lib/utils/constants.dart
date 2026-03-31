@@ -85,7 +85,7 @@ class AppConstants {
   static const String mblPumpNotOFF = "m_pump_first_r.png";
 
   static const String aeratorPumpOFF = "aerators_grey.png";
-  static const String aeratorPumpON = "aerators_g.png";
+  static const String aeratorPumpON = "aerators_g.gif";
   static const String aeratorPumpNotON = "aerators_o.png";
   static const String aeratorPumpNotOFF = "aerators_r.png";
 
