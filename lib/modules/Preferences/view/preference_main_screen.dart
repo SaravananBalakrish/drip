@@ -198,7 +198,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   @override
   void initState() {
     // TODO: implement initState
-    passwordController.text = 'Oro@321';
     preferenceProvider = Provider.of<PreferenceProvider>(context, listen: false);
     mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
     preferenceProvider.getUserPreference(userId: widget.customerId, controllerId: widget.masterData['controllerId']).then((_) {
