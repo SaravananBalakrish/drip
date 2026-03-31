@@ -1120,6 +1120,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         }
       }
       if (device.masterId != null && device.serialNumber != null) {
+        print("S_No => ${device.serialNumber}  |  DeviceId => ${device.deviceId}");
         devicePayload.add({
           "S_No": device.serialNumber,
           "DeviceTypeNumber": validateDeviceTypeNumber(device),
@@ -1383,7 +1384,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     HardwareType hardwareType = AppConstants.gemModelList.contains(masterData['modelId']) ? HardwareType.master : HardwareType.pump;
     List<Map<String, dynamic>> listOfPumpPayload = [];
     List<int> modelIdForPump1000 = [5, 6, 7];
-    List<int> modelIdForPump2000 = [8, 9, 10, ...AppConstants.ecoGemModelList];
+    List<int> modelIdForPump2000 = [8, 9, 10, ...AppConstants.ecoGemModelList, ...AppConstants.wlcModelList];
     List<DeviceModel> listOfPump1000 = listOfDeviceModel.where((device) => modelIdForPump1000.contains(device.modelId) && device.masterId != null).toList();
     List<DeviceModel> listOfPump2000 = listOfDeviceModel.where((device) => modelIdForPump2000.contains(device.modelId) && device.masterId != null).toList();
     // int pumpCodeUnderGem = 5900;
