@@ -1795,15 +1795,35 @@ class LiveMessage {
   });
 
   factory LiveMessage.fromJson(Map<String, dynamic> json) {
-    return LiveMessage(
-      cC: json['cC'],
-      cM: json['cM'] is Map<String, dynamic>
-          ? Map<String, dynamic>.from(json['cM'])
-          : (json['cM'] is List ? json['mC'] == 'LD01' ? PumpControllerData.fromJson(json, "cM", 2) : <String, dynamic>{} : <String, dynamic>{}),
-      cD: json['cD'],
-      cT: json['cT'],
-      mC: json['mC'],
-    );
+    try {
+      print("Parsing JSON: $json");
+
+      return LiveMessage(
+        cC: json['cC']?.toString() ?? '',
+        cM: json['cM'] is Map<String, dynamic>
+            ? Map<String, dynamic>.from(json['cM'])
+            : (json['cM'] is List
+            ? (json['mC'] == 'LD01'
+            ? PumpControllerData.fromJson(json, "cM", 2)
+            : <String, dynamic>{})
+            : <String, dynamic>{}),
+        cD: json['cD']?.toString() ?? '',
+        cT: json['cT']?.toString() ?? '',
+        mC: json['mC']?.toString() ?? '',
+      );
+    } catch (e) {
+      print("❌ Error in LiveMessage.fromJson: $e");
+      print("JSON: $json");
+
+      // Return a safe empty message
+      return LiveMessage(
+        cC: '',
+        cM: <String, dynamic>{},
+        cD: '',
+        cT: DateTime.now().toIso8601String(),
+        mC: 'ERROR',
+      );
+    }
   }
 
   Map<String, dynamic> toJson() {

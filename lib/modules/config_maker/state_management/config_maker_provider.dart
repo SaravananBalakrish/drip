@@ -277,7 +277,7 @@ class ConfigMakerProvider extends ChangeNotifier{
           print("productListResponse : ${productListResponse.body}");
         }
         Map<String, dynamic> productListJsonData = jsonDecode(productListResponse.body);
-        productStock = productListJsonData['data'];
+        productStock = productListJsonData['data'] ?? [];
       }
       await Future.delayed(const Duration(seconds: 0));
       var body = {
@@ -642,7 +642,7 @@ class ConfigMakerProvider extends ChangeNotifier{
       }
     }
 
-    if(newCount > oldCount){   // adding
+    if(newCount > oldCount){
       // ------------- validate ec, ph and pressure switch for category 6----------------------------
       if(selectedDevice.categoryId == 6){
         if(selectedConnectionObject.type == '3'){
@@ -663,8 +663,6 @@ class ConfigMakerProvider extends ChangeNotifier{
           }
         }
       }
-
-      print('selectedModelDefaultConnectionList :: $selectedModelDefaultConnectionList');
       int howManyObjectSupposedToConnect = newCount - oldCount;
       for(var notConfiguredObject = 0;notConfiguredObject < howManyObjectSupposedToConnect;notConfiguredObject++){
         inner : for(var object in listOfGeneratedObject){
@@ -1122,6 +1120,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         }
       }
       if (device.masterId != null && device.serialNumber != null) {
+        print("S_No => ${device.serialNumber}  |  DeviceId => ${device.deviceId}");
         devicePayload.add({
           "S_No": device.serialNumber,
           "DeviceTypeNumber": validateDeviceTypeNumber(device),
@@ -1385,7 +1384,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     HardwareType hardwareType = AppConstants.gemModelList.contains(masterData['modelId']) ? HardwareType.master : HardwareType.pump;
     List<Map<String, dynamic>> listOfPumpPayload = [];
     List<int> modelIdForPump1000 = [5, 6, 7];
-    List<int> modelIdForPump2000 = [8, 9, 10, ...AppConstants.ecoGemModelList];
+    List<int> modelIdForPump2000 = [8, 9, 10, ...AppConstants.ecoGemModelList, ...AppConstants.wlcModelList];
     List<DeviceModel> listOfPump1000 = listOfDeviceModel.where((device) => modelIdForPump1000.contains(device.modelId) && device.masterId != null).toList();
     List<DeviceModel> listOfPump2000 = listOfDeviceModel.where((device) => modelIdForPump2000.contains(device.modelId) && device.masterId != null).toList();
     // int pumpCodeUnderGem = 5900;
