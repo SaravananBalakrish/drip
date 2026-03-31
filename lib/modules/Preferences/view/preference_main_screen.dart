@@ -794,8 +794,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       );
     } catch(error, stackTrace) {
       // throw Exception('This is a test exception');
-      // print("error ==> $error");
-      // print("stackTrace ==> $stackTrace");
+      print("error ==> $error");
+      print("stackTrace ==> $stackTrace");
       return const Center(child: Text("Unexpected error"));
     }
   }
@@ -967,6 +967,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   }
 
   dynamic _getSubTitle(int categoryIndex, int settingIndex, List settingList, int pumpIndex) {
+    print("settingIndex : $settingIndex");
     return ((isNova || isToGem) &&
         [208, 209, 210].contains(settingList[categoryIndex].type))
         ? "Last setting: ${(_getValue(

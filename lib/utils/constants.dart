@@ -85,7 +85,7 @@ class AppConstants {
   static const String mblPumpNotOFF = "m_pump_first_r.png";
 
   static const String aeratorPumpOFF = "aerators_grey.png";
-  static const String aeratorPumpON = "aerators_g.png";
+  static const String aeratorPumpON = "aerators_g.gif";
   static const String aeratorPumpNotON = "aerators_o.png";
   static const String aeratorPumpNotOFF = "aerators_r.png";
 
@@ -908,15 +908,15 @@ class AppConstants {
   static List<int> ecoGemAndPlusModelList = [...ecoGemModelList, ...ecoGemPlusModelList];
   static List<int> gemModelList = [1, 2, 4, 72, 73, 74, 75];
   static List<int> weatherModelList = [13, 14];
-  static List<int> pumpModelList = [5, 6, 7, ...pumpPlusModelList];
-  static List<int> pumpPlusModelList = [8, 9, 10];
-  static List<int> pumpList = [...pumpWithValveModelList,...pumpModelList,...shine2V,...shine4V,...elite10V,...pumpPlusModelList,];
+  static List<int> pumpModelList = [5, 6, 7, ...pumpPlusModelList, ...wlcModelList];
+  static List<int> pumpPlusModelList = [8, 9, 10, ...wlcModelList];
+  static List<int> wlcModelList = [76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86];
+  static List<int> pumpList = [...pumpWithValveModelList, ...pumpModelList, ...shine2V, ...shine4V, ...elite10V, ...pumpPlusModelList];
   static List<int> senseModelList = [41, 42, 43, 44, 45];
   static List<int> ecoNodeList = [36];
   static List<int> extendLoraList = [46];
   static List<int> extendGsmList = [47];
   static List<int> extendList = [...extendLoraList, ...extendGsmList];
-
   static List<int> aquacultureModelList = [72];
 
 }

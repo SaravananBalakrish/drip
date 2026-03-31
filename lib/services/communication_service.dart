@@ -10,6 +10,7 @@ import 'bluetooth/bluetooth_classic_service.dart';
 import 'http_service.dart';
 import 'mqtt_service.dart';
 
+
 class CommunicationService {
   final MqttService mqttService;
   final BluetoothClassicService blueService;
@@ -36,7 +37,55 @@ class CommunicationService {
         throw Exception('Payload is empty');
       }
 
-      if (mqttService.isConnected) {
+      // Check if any Bluetooth connection is active
+      final bool isBluetoothConnected = blueService.isConnected || bleService.isConnected;
+
+      if (!isBluetoothConnected) {
+
+        if (mqttService.isConnected) {
+          try {
+            final topic = '${AppConstants.publishTopic}/${customerProvider.deviceId}';
+            debugPrint('Publishing to topic: $topic with payload: $payload');
+            await mqttService.topicToPublishAndItsMessage(payload, topic);
+            result['mqtt'] = true;
+          } catch (e) {
+            debugPrint('Failed to send via MQTT: $e');
+          }
+        }
+
+        if (NetworkUtils.isOnline && serverMsg.isNotEmpty) {
+          try {
+            await sendCommandToServer(serverMsg, payload);
+            result['http'] = true;
+          } catch (e) {
+            debugPrint('Failed to send via HTTP: $e');
+          }
+        }
+      } else {
+        debugPrint('🔵 Bluetooth is connected - Skipping web/MQTT communication');
+      }
+
+      if (blueService.isConnected) {
+        try {
+          blueService.write(payload);
+          result['bluetooth'] = true;
+          debugPrint('📱 Sent via Classic Bluetooth');
+        } catch (e) {
+          debugPrint('Failed to send via Classic Bluetooth: $e');
+        }
+      }
+
+      if (bleService.isConnected) {
+        try {
+          await bleService.write(payload);
+          result['bluetooth'] = true;
+          debugPrint('📱 Sent via BLE');
+        } catch (e) {
+          debugPrint('Failed to send via BLE: $e');
+        }
+      }
+
+      /*if (mqttService.isConnected) {
         try {
           final topic = '${AppConstants.publishTopic}/${customerProvider.deviceId}';
           debugPrint('Publishing to topic: $topic with payload: $payload');
@@ -57,7 +106,7 @@ class CommunicationService {
       }
 
 
-      if (blueService.isConnected == true) {
+      if (blueService.isConnected) {
         try {
           blueService.write(payload);
           result['bluetooth'] = true;
@@ -66,7 +115,7 @@ class CommunicationService {
         }
       }
 
-      /*if (bleService.isConnected) {
+      if (bleService.isConnected) {
         try {
           await bleService.write(payload);
           result['bluetooth'] = true;
@@ -81,30 +130,6 @@ class CommunicationService {
     }
 
     return result;
-  }
-
-  Future<void> sendWifiCredentials(String ssid, String password) async {
-    final payload = '2,$ssid,$password';
-
-    if (bleService.isConnected) {
-      try {
-        await bleService.write(payload);
-        //result['bluetooth'] = true;
-      } catch (e) {
-        debugPrint('Failed to send via BLE: $e');
-      }
-    }
-
-    final livePayload = jsonEncode({
-      "6000": {
-        "6001": payload
-      }
-    });
-
-    await sendCommand(
-      serverMsg: '',
-      payload: livePayload,
-    );
   }
 
 
