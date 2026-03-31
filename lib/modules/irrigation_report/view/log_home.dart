@@ -37,7 +37,7 @@ class _LogHomeState extends State<LogHome> {
   int noOfRowsPerPage = 20;
   int totalPages = 0;
   int selectedPages = 1;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   dynamic dataSource = [];
   int _selectedIndex = 0;
   List<List<dynamic>> _irrigationOptionWise = [['Date',true],['Program',false],['Line',false],['Valve',false],['Status',false]];
@@ -243,7 +243,6 @@ class _LogHomeState extends State<LogHome> {
     );
   }
 
-
   void getData()async{
     loadingDialog();
     DateTime now = DateTime.now();
@@ -444,11 +443,6 @@ class _LogHomeState extends State<LogHome> {
                   print('Stack Trace: $stackTrace');
                 }
               }
-
-              bool checkItIsNotIrrigationLog = data['irrigation']['HeadUnit'].any((e) => !e.contains('2.'));
-              if(!checkItIsNotIrrigationLog){
-              }
-
             }
           }
           setState(() {
@@ -1626,7 +1620,6 @@ class _LogHomeState extends State<LogHome> {
     }
     return slicingList;
   }
-
 
   Widget datePickerBuilder(
       BuildContext context, dynamic Function(DateRange?) onDateRangeChanged,

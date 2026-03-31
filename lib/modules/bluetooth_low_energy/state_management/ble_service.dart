@@ -392,12 +392,6 @@ class BleProvider extends ChangeNotifier {
   }
 
   void updateCharacteristic(){
-    // for(BluetoothService repository in _services){
-    //   print("repository : ${repository.uuid}");
-    //   for (var c = 0; c <  repository.characteristics.length;c++){
-    //     print('characteristic ${c+1} => (${repository.characteristics[c].uuid})\n ${repository.characteristics[c].properties}\n\n');
-    //   }
-    // }
     myService = _services[1];
     for (BluetoothCharacteristic c in myService!.characteristics) {
       // if(c.uuid.str.toUpperCase() == swWritingId){
