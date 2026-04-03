@@ -41,6 +41,12 @@ class _MapScreenValveState extends State<MapScreenValve> {
     _init();
   }
 
+  @override
+  void dispose() {
+    mapController?.dispose();
+    super.dispose();
+  }
+
   Future<void> _init() async {
     await _loadIcons();
     await _fetchData();
@@ -123,11 +129,13 @@ class _MapScreenValveState extends State<MapScreenValve> {
       }
       final initialCenter = _getInitialCenter(deviceList);
 
-       setState(() {
+       if (!mounted) return;
+
+      setState(() {
         markers = newMarkers;
         if (initialCenter != null) {
           center = initialCenter;
-         }
+        }
       });
 
     } catch (e) {
@@ -319,7 +327,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
     // print("build center:$center");
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Geography"),
+      appBar: AppBar(title: const Text("Geography EEE"),
           actions: [
           IconButton(
           icon: Icon(Icons.map_outlined),

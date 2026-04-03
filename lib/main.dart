@@ -35,6 +35,8 @@ import 'modules/constant/state_management/constant_provider.dart';
 
 
 // Initialize local notifications plugin
+
+// Initialize local notifications plugin
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -52,21 +54,7 @@ Future<void> requestAppPermissions() async {
   final notifStatus = await Permission.notification.request();
   debugPrint("Notification permission: $notifStatus");
 
-  if (Platform.isAndroid) {
-    final statuses = await [
-      Permission.bluetoothScan,
-      Permission.bluetoothConnect,
-      Permission.locationWhenInUse, // better than generic .location
-    ].request();
 
-    debugPrint("BLE + Location permissions: $statuses");
-
-    // Handle permanently denied
-    if (notifStatus.isPermanentlyDenied ||
-        statuses.values.any((s) => s.isPermanentlyDenied)) {
-      await openAppSettings();
-    }
-  }
 }
 
 

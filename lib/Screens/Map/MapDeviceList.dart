@@ -7,7 +7,7 @@ import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
-import 'SetSelectValveLocation.dart';
+import 'oro_map/SetSelectValveLocation.dart';
 import 'googlemap_model.dart';
 
 class DeviceListScreen extends StatefulWidget {
@@ -198,6 +198,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
 
      final Repository repository = Repository(HttpService());
 var data = mqttPayloadProvider.mapModelInstance.data?.toJson();
+           print("send data -> $data ");
      Map<String, dynamic> body = {
        "userId": widget.customerId,
        "controllerId": widget.controllerId,

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -35,14 +36,43 @@ class LoginViewModel extends ChangeNotifier {
   }
 
   Future<void> login() async {
+    print("kIsWeb check");
+    if (!kIsWeb && Platform.isIOS) {
+      String? apnsToken;
+      int retryCount = 0;
 
-    if(!kIsWeb) {
-      FirebaseMessaging messaging = FirebaseMessaging.instance;
-      await messaging.getToken().then((String? token) async{
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('deviceToken', token ?? '' );
-      });
+      // Exception handle panna try-catch loop kulla venum
+      while (apnsToken == null && retryCount < 3) {
+        try {
+          debugPrint("Checking APNs token... Attempt: ${retryCount + 1}");
+          apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+        } catch (e) {
+          debugPrint("APNs not ready yet, exception caught. Waiting...");
+          // Exception vandha token innum ready aagala nu artham
+        }
+
+        if (apnsToken == null) {
+          await Future.delayed(const Duration(seconds: 2));
+          retryCount++;
+        }
+      }
     }
+
+    // Ippo safe-ah getToken call pannalam
+    if (!kIsWeb) {
+      try {
+        String? token = await FirebaseMessaging.instance.getToken();
+        if (token != null) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString('deviceToken', token);
+          debugPrint("🔥 FCM Token saved: $token");
+        }
+      } catch (e) {
+        debugPrint("Error fetching FCM token: $e");
+      }
+    }
+
+    print("kIsWeb outer");
     final token = await PreferenceHelper.getDeviceToken();
 
     isLoading = true;
@@ -63,13 +93,14 @@ class LoginViewModel extends ChangeNotifier {
         errorMessage = "Invalid Mobile number or Password!";
         notifyListeners();
         return;
-      } else if(!kIsWeb && (token == null || token.isEmpty)){
-        print("token in the else :: $token");
-        isLoading = false;
-        errorMessage = "Device token not generated";
-        notifyListeners();
-        return;
       }
+      // else if(!kIsWeb && (token == null || token.isEmpty)){
+      //   print("token in the else :: $token");
+      //   isLoading = false;
+      //   errorMessage = "Device token not generated";
+      //   notifyListeners();
+      //   return;
+      // }
 
       String cleanedCountryCode = countryCode.replaceAll("+", "");
       Map<String, Object> body = {

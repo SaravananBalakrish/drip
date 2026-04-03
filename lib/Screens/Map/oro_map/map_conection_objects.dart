@@ -6,7 +6,7 @@ import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
 import '../../../utils/snack_bar.dart';
-import '../SetSelectValveLocation.dart';
+import 'SetSelectValveLocation.dart';
 import '../set_device_location.dart';
 
 
@@ -28,6 +28,12 @@ class MapConnectionObject extends StatefulWidget {
 
 class _MapConnectionObjectState extends State<MapConnectionObject> {
   bool _isSaving = false;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
 
   @override
   void initState() {
@@ -63,13 +69,13 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
 
       final data = provider.mapModelInstance.data?.toJson();
       if (data == null) return;
-
-      Map<String, dynamic> body = {
+       Map<String, dynamic> body = {
         "userId": widget.customerId,
         "controllerId": widget.controllerId,
         "userGeography": data['deviceList'],
         "createUser": widget.userId
       };
+
 
       final response = await repository.creategeography(body);
       final jsonRes = jsonDecode(response.body);
