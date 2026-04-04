@@ -204,6 +204,22 @@ class _LineConfigurationState extends State<LineConfiguration> {
                             ),
                             Stack(
                               children: [
+                                if(selectedIrrigationLine.aerator.isNotEmpty)
+                                  Wrap(
+                                    spacing: 10,
+                                    children: List.generate(selectedIrrigationLine.aerator.length, (index){
+                                      return Column(
+                                        children: [
+                                          Image.asset(
+                                              width: 100,
+                                              height: 100,
+                                              'assets/png/aerators_o.png'
+                                          ),
+                                          Text('${getObjectName(selectedIrrigationLine.aerator[index], widget.configPvd).name}')
+                                        ],
+                                      );
+                                    }),
+                                  ),
                                 diagramWidget(selectedIrrigationLine),
                                 Positioned(
                                   right: 10,
