@@ -1230,7 +1230,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     List<int> weatherControllerId = weatherControllersList.map((e) => e.controllerId).toList();
     for (var i = 0; i < objectListToSend.length; i++) {
       var object = objectListToSend[i];
-      if(object.connectionNo != 0 && object.connectionNo != null && !weatherControllerId.contains(object.controllerId)){
+      if(object.connectionNo != 0 && object.connectionNo != null && !weatherControllerId.contains(object.controllerId) && object.controllerId != null){
         var controller = listOfDeviceModel.firstWhere((e) => e.controllerId == object.controllerId);
         List<String> objectSerialNoForEcoGemSplitList = object.sNo.toString().split('.');
         if(objectSerialNoForEcoGemSplitList[1].length == 2){

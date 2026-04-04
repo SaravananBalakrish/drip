@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 
 class Constants {
@@ -51,6 +53,40 @@ class Constants {
     // print('dataFormation : ${jsonEncode(dataFormation)}');
     // print('-------------------------------------------');
     return dataFormation;
+  }
+
+  static String sendFourDigit(String val) {
+    return val.padLeft(4, '0');
+  }
+
+  static String sendPayloadWithCrc(String payload) {
+    // ✅ Convert Map → JSON String
+    String payloadStr = payload;
+
+    int sumOfAscii = 0;
+
+    // ✅ Calculate checksum
+    for (int byte in payloadStr.codeUnits) {
+      sumOfAscii += byte;
+    }
+
+    int crc = sumOfAscii % 256;
+
+    // ✅ Append CRC
+    String finalPayload =
+        '$payloadStr|${sendFourDigit(crc.toString())}';
+
+    // ✅ Convert to bytes (if needed for BLE)
+    List<int> listOfBytes = finalPayload.codeUnits;
+
+    if (kDebugMode) {
+      print('listOfBytes : $listOfBytes');
+      print('sumOfAscii : $sumOfAscii');
+      print('crc : $crc');
+      print('payload : $finalPayload');
+    }
+
+    return finalPayload;
   }
 
   static List<Map<String, dynamic>> dataConversionForScheduleView(Map<String, dynamic> payload) {
@@ -165,6 +201,7 @@ class Constants {
     if (input.isEmpty) return input;
     return input[0].toUpperCase() + input.substring(1).toLowerCase();
   }
+
   static String showHourAndMinuteOnly(String time, int modelId){
     List<String> list = time.split(':');
     return list.length > 1 ? '${list[0]}:${list[1]}${AppConstants.ecoGemModelList.contains(modelId) ? '' :':${list[2]}'}' : time;

@@ -8,6 +8,7 @@ import 'package:oro_drip_irrigation/services/http_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
+import '../../../Constants/constants.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../Widgets/custom_animated_switcher.dart';
 import '../../IrrigationProgram/view/schedule_screen.dart';
@@ -194,6 +195,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   late bool isPumpOnly;
   late bool isValveSetting;
   late bool isNova;
+  late bool isWlc;
 
   @override
   void initState() {
@@ -224,6 +226,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     isPumpWithValveModel = AppConstants.pumpWithValveModelList.contains(widget.masterData['modelId']);
     isPumpOnly = AppConstants.pumpModelList.contains(widget.masterData['modelId']);
     isNova = AppConstants.ecoGemAndPlusModelList.contains(widget.masterData['modelId']);
+    isWlc = AppConstants.wlcModelList.contains(widget.masterData['modelId']);
     isValveSetting = [1, 2].contains(widget.selectedIndex);
     super.initState();
   }
@@ -326,14 +329,18 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                                           ),
                                                           TextButton(
                                                               onPressed: () async {
-                                                                if (isNova || isToGem) {
+                                                                if (isNova || isToGem || isWlc) {
                                                                   final pump = preferenceProvider.commonPumpSettings![preferenceProvider.selectedTabIndex];
                                                                   final payload = jsonEncode({"sentSms": "viewconfig,4"});
                                                                   final payload2 = jsonEncode({"0": payload});
                                                                   final viewConfig = {
                                                                     "5900": {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${4}"}
                                                                   };
-                                                                  mqttService.topicToPublishAndItsMessage(isToGem ? jsonEncode(viewConfig) : payload, "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
+                                                                  mqttService.topicToPublishAndItsMessage(
+                                                                      isToGem ? jsonEncode(viewConfig)
+                                                                          : isWlc ? Constants.sendPayloadWithCrc(payload)
+                                                                          : payload,
+                                                                      "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
                                                                 }
                                                                 await Future.delayed(Duration.zero, () {
                                                                   preferenceProvider.updateValidationCode();
@@ -662,7 +669,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                     final viewConfig = {"5900": {
                       "5901": "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload2+$categoryId",
                       }};
-                    mqttService.topicToPublishAndItsMessage(jsonEncode(viewConfig), "${Environment.mqttPublishTopic}/${widget.masterData['deviceId']}");
+                    mqttService.topicToPublishAndItsMessage(isWlc ? Constants.sendPayloadWithCrc(payload) : jsonEncode(viewConfig),
+                        "${Environment.mqttPublishTopic}/${widget.masterData['deviceId']}");
                   }
                 },
                 tabs: [
@@ -966,34 +974,79 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     );
   }
 
-  dynamic _getSubTitle(int categoryIndex, int settingIndex, List settingList, int pumpIndex) {
-    print("settingIndex : $settingIndex");
-    return ((isNova || isToGem) &&
-        [208, 209, 210].contains(settingList[categoryIndex].type))
-        ? "Last setting: ${(_getValue(
-        type: settingList[categoryIndex].type,
-        categoryIndex: categoryIndex,
-        pumpIndex: pumpIndex,
-        settingIndex: settingIndex
-    )).isNotEmpty
-        ? (_getValue(
-        type: settingList[categoryIndex].type,
-        categoryIndex: categoryIndex,
-        pumpIndex: pumpIndex,
-        settingIndex: settingIndex
-    ).split(',')[
-    categoryIndex == 0
-    ? ([0, 1, 2].contains(settingIndex)
-        ? [0, 1, 2][settingIndex]
-        : 0
-    ) : categoryIndex == 1
-    ? ([0, 1, 2].contains(settingIndex)
-        ? [0, 1, 2][settingIndex]
-        : 0
-    ) : ([0,1,2,3,4,5,6,7].contains(settingIndex)
-        ? [0,1,2,3,4,5,6,7][settingIndex]
-        : 0
-    )]) : "Loading..."}" : null;
+  // dynamic _getSubTitle(int categoryIndex, int settingIndex, List settingList, int pumpIndex) {
+  //   print("categoryIndex : $categoryIndex");
+  //   print("settingIndex : $settingIndex");
+  //   return ((isNova || isToGem) &&
+  //       [208, 209, 210].contains(settingList[categoryIndex].type))
+  //       ? "Last setting: ${(_getValue(
+  //       type: settingList[categoryIndex].type,
+  //       categoryIndex: categoryIndex,
+  //       pumpIndex: pumpIndex,
+  //       settingIndex: settingIndex
+  //   )).isNotEmpty
+  //       ? (_getValue(
+  //       type: settingList[categoryIndex].type,
+  //       categoryIndex: categoryIndex,
+  //       pumpIndex: pumpIndex,
+  //       settingIndex: settingIndex
+  //   ).split(',')[
+  //   categoryIndex == 0
+  //   ? ([0, 1, 2].contains(settingIndex)
+  //       ? [0, 1, 2][settingIndex]
+  //       : 0
+  //   ) : categoryIndex == 1
+  //   ? ([0, 1, 2].contains(settingIndex)
+  //       ? [0, 1, 2][settingIndex]
+  //       : 0
+  //   ) : ([0,1,2,3,4,5,6,7].contains(settingIndex)
+  //       ? [0,1,2,3,4,5,6,7][settingIndex]
+  //       : 0
+  //   )]) : "Loading..."}" : null;
+  // }
+
+
+  dynamic _getSubTitle(
+      int categoryIndex,
+      int settingIndex,
+      List settingList,
+      int pumpIndex,
+      ) {
+    // Debug logs
+
+    // Condition check
+    if (!(isNova || isToGem) ||
+        ![208, 209, 210].contains(settingList[categoryIndex].type)) {
+      return null;
+    }
+
+    // Get value once
+    final value = _getValue(
+      type: settingList[categoryIndex].type,
+      categoryIndex: categoryIndex,
+      pumpIndex: pumpIndex,
+      settingIndex: settingIndex,
+    );
+
+    // Handle empty value
+    if (value.isEmpty) {
+      return "Last setting: Loading...";
+    }
+
+    // Split values
+    final parts = value.split(',');
+
+    // Safe index calculation
+    int index = 0;
+
+    if (categoryIndex == 0 || categoryIndex == 1) {
+      index = (settingIndex < 3) ? settingIndex : 0;
+    } else {
+      index = (settingIndex < parts.length) ? settingIndex : 0;
+    }
+
+    // Final return
+    return "Last setting: ${parts[index]}";
   }
 
   dynamic _getInitialValue(int categoryIndex, int settingIndex, List settingList, int pumpIndex) {
@@ -1362,6 +1415,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                 isToGem: isToGem,
                 mqttService: mqttService,
                 shouldSendFailedPayloads: shouldSendFailedPayloads,
+                isWlc: isWlc,
               );
             },
           );
