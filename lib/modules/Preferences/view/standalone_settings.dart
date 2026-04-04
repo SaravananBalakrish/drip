@@ -286,6 +286,7 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
         isToGem: false,
         mqttService: MqttService(),
         shouldSendFailedPayloads: false,
+        isWlc: AppConstants.wlcModelList.contains(widget.masterData.modelId),
       ),
     );
 

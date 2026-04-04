@@ -7,6 +7,7 @@ import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 
+import '../../../Constants/constants.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../model/preference_data_model.dart';
 import '../state_management/preference_provider.dart';
@@ -125,8 +126,9 @@ class _ViewConfigState extends State<ViewConfig> {
         "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
       );
     } else {
+      final payload = jsonEncode({"sentSms": "viewconfig"});
       mqttService.topicToPublishAndItsMessage(
-        jsonEncode({"sentSms": "viewconfig"}),
+        AppConstants.wlcModelList.contains(widget.modelId) ? Constants.sendPayloadWithCrc(payload) :  payload,
         "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
       );
     }
