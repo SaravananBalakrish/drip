@@ -128,59 +128,59 @@ class _FertilizerSetScreenState extends State<FertilizerSetScreen> {
                                 for(var recipe in listOfFertilizerSet)
                                   if(recipe.sNo == listOfFertilizerSite[selectedFertilizerSite].sNo)
                                     Container(
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        color: Colors.white,
-                                        boxShadow: AppProperties.customBoxShadowLiteTheme
-                                    ),
-                                    child: Column(
-                                      spacing: 15,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        recipeListTile(recipe),
-                                        getEcPh(recipe),
-                                        Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            children: [
-                                              Container(
-                                                height: 30,
-                                                color: themeData.primaryColorLight.withOpacity(0.1),
-                                                child: Row(
-                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                  children: [
-                                                    tableColumnCell(width: 50 , title: 'Active'),
-                                                    tableColumnCell(width: 50, title: 'Channel'),
-                                                    tableColumnCell(width: 120, title: 'Method'),
-                                                    tableColumnCell(width: 80, title: 'Value'),
-                                                  ],
-                                                ),
-                                              ),
-                                              ...recipe.channel.map((channel) {
-                                                return  Container(
-                                                  height: 40,
-                                                  color: recipe.channel.indexOf(channel).isOdd ? themeData.primaryColorLight.withOpacity(0.05) : null,
+                                      decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(8),
+                                          color: Colors.white,
+                                          boxShadow: AppProperties.customBoxShadowLiteTheme
+                                      ),
+                                      child: Column(
+                                        spacing: 15,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          recipeListTile(recipe),
+                                          getEcPh(recipe),
+                                          Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Column(
+                                              children: [
+                                                Container(
+                                                  height: 30,
+                                                  color: themeData.primaryColorLight.withOpacity(0.1),
                                                   child: Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
-                                                      tableRowCell(
-                                                          width: 50,
-                                                          widget:  Checkbox(
-                                                            value: channel.active == 1 ? true : false,
-                                                            onChanged: (value){
-                                                              setState(() {
-                                                                channel.active = value! ? 1 : 0;
-                                                              });
-                                                            },
-                                                          )
-                                                      ),
-                                                      tableRowCell(
-                                                          width: 50,
-                                                          widget: Text('Ch ${recipe.channel.indexOf(channel) + 1}', style: TextStyle(color: Colors.black54),)
-                                                      ),
-                                                      tableRowCell(
-                                                          width: 120,
-                                                          widget : CustomDropDownButton(
+                                                      tableColumnCell(width: 50 , title: 'Active'),
+                                                      tableColumnCell(width: 50, title: 'Channel'),
+                                                      tableColumnCell(width: 120, title: 'Method'),
+                                                      tableColumnCell(width: 80, title: 'Value'),
+                                                    ],
+                                                  ),
+                                                ),
+                                                ...recipe.channel.map((channel) {
+                                                  return  Container(
+                                                    height: 40,
+                                                    color: recipe.channel.indexOf(channel).isOdd ? themeData.primaryColorLight.withOpacity(0.05) : null,
+                                                    child: Row(
+                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                      children: [
+                                                        tableRowCell(
+                                                            width: 50,
+                                                            widget:  Checkbox(
+                                                              value: channel.active == 1 ? true : false,
+                                                              onChanged: (value){
+                                                                setState(() {
+                                                                  channel.active = value! ? 1 : 0;
+                                                                });
+                                                              },
+                                                            )
+                                                        ),
+                                                        tableRowCell(
+                                                            width: 50,
+                                                            widget: Text('Ch ${recipe.channel.indexOf(channel) + 1}', style: TextStyle(color: Colors.black54),)
+                                                        ),
+                                                        tableRowCell(
+                                                            width: 120,
+                                                            widget : CustomDropDownButton(
                                                               value: channel.method,
                                                               list: ['Time', 'Pro.time', 'Quantity', 'Pro.quantity', 'Pro.qty per 1000L'],
                                                               onChanged: (value) {
@@ -188,8 +188,8 @@ class _FertilizerSetScreenState extends State<FertilizerSetScreen> {
                                                                   channel.method = value!;
                                                                 });
                                                               },
-                                                            // style: TextStyle(color: channel.method.contains('ime') ? Colors.pink : Colors.orange, fontSize: 11, fontWeight: FontWeight.bold),
-                                                          )
+                                                              // style: TextStyle(color: channel.method.contains('ime') ? Colors.pink : Colors.orange, fontSize: 11, fontWeight: FontWeight.bold),
+                                                            )
                                                           // widget: DropdownButton(
                                                           //   isExpanded: true,
                                                           //   value: channel.method,
@@ -207,46 +207,46 @@ class _FertilizerSetScreenState extends State<FertilizerSetScreen> {
                                                           //     });
                                                           //   },
                                                           // )
-                                                      ),
-                                                      tableRowCell(
-                                                          width: 80,
-                                                          widget: channel.method.contains('ime')
-                                                              ? InkWell(
-                                                            onTap: (){
-                                                              _showTimePicker(overAllPvd: overAllPvd, time: channel.timeValue, onPressed: (){
-                                                                setState(() {
-                                                                  channel.timeValue = '${overAllPvd.hrs < 10 ? '0' :''}${overAllPvd.hrs}:${overAllPvd.min < 10 ? '0' :''}${overAllPvd.min}:${overAllPvd.sec < 10 ? '0' :''}${overAllPvd.sec}';
-                                                                });
-                                                                Navigator.pop(context);
-                                                              }) ;
+                                                        ),
+                                                        tableRowCell(
+                                                            width: 80,
+                                                            widget: channel.method.contains('ime')
+                                                                ? InkWell(
+                                                              onTap: (){
+                                                                _showTimePicker(overAllPvd: overAllPvd, time: channel.timeValue, onPressed: (){
+                                                                  setState(() {
+                                                                    channel.timeValue = '${overAllPvd.hrs < 10 ? '0' :''}${overAllPvd.hrs}:${overAllPvd.min < 10 ? '0' :''}${overAllPvd.min}:${overAllPvd.sec < 10 ? '0' :''}${overAllPvd.sec}';
+                                                                  });
+                                                                  Navigator.pop(context);
+                                                                }) ;
                                                               },
-                                                            child: Center(
-                                                              child: Text(Constants.showHourAndMinuteOnly(channel.timeValue, widget.userData['modelId'])),
-                                                            ),
-                                                          )
-                                                              : getTextField(
-                                                              key: '${recipe.channel.indexOf(channel) + 1} - ${channel.sNo}',
-                                                              initialValue: channel.quantityValue,
-                                                              regex: AppProperties.regexForDecimal,
-                                                              onChanged: (value){
-                                                                setState(() {
-                                                                  channel.quantityValue = value;
-                                                                });
-                                                              }
-                                                          )
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              }),
+                                                              child: Center(
+                                                                child: Text(Constants.showHourAndMinuteOnly(channel.timeValue, widget.userData['modelId'])),
+                                                              ),
+                                                            )
+                                                                : getTextField(
+                                                                key: '${recipe.channel.indexOf(channel) + 1} - ${channel.sNo}',
+                                                                initialValue: channel.quantityValue,
+                                                                regex: AppProperties.regexForDecimal,
+                                                                onChanged: (value){
+                                                                  setState(() {
+                                                                    channel.quantityValue = value;
+                                                                  });
+                                                                }
+                                                            )
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                }),
 
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ),
 
-                                      ],
-                                    ),
-                                  )
+                                        ],
+                                      ),
+                                    )
                               ],
                             ),
                           ],
@@ -346,7 +346,7 @@ class _FertilizerSetScreenState extends State<FertilizerSetScreen> {
   Widget tableColumnCell({
     required double width,
     required String title
-}){
+  }){
     return SizedBox(
       width: width,
       child: Center(child: Text(title)),
@@ -358,8 +358,8 @@ class _FertilizerSetScreenState extends State<FertilizerSetScreen> {
     required Widget widget
   }){
     return SizedBox(
-      width: width,
-      child: Center(child: widget)
+        width: width,
+        child: Center(child: widget)
     );
   }
 
@@ -415,12 +415,12 @@ class _FertilizerSetScreenState extends State<FertilizerSetScreen> {
         keyboardType: TextInputType.number,
         cursorHeight: 20,
         decoration: const InputDecoration(
-            contentPadding: EdgeInsets.only(bottom: 10),
-            constraints: BoxConstraints(maxHeight: 30),
-            counterText: '',
-            border: OutlineInputBorder(
-                borderSide: BorderSide.none
-            ),
+          contentPadding: EdgeInsets.only(bottom: 10),
+          constraints: BoxConstraints(maxHeight: 30),
+          counterText: '',
+          border: OutlineInputBorder(
+              borderSide: BorderSide.none
+          ),
         ),
       ),
     );
@@ -435,7 +435,7 @@ class _FertilizerSetScreenState extends State<FertilizerSetScreen> {
           children: [
             Text('Ec', style: themeData.textTheme.labelLarge,),
             getTextField(
-              regex: AppProperties.regexForDecimal,
+                regex: AppProperties.regexForDecimal,
                 key: '${listOfFertilizerSet.indexOf(recipe)} - ec',
                 initialValue: recipe.ecValue,
                 onChanged: (value){
@@ -450,7 +450,7 @@ class _FertilizerSetScreenState extends State<FertilizerSetScreen> {
           children: [
             Text('Ph', style: themeData.textTheme.labelLarge,),
             getTextField(
-              regex: AppProperties.regexForDecimal,
+                regex: AppProperties.regexForDecimal,
                 key: '${listOfFertilizerSet.indexOf(recipe)} - ph',
                 initialValue: recipe.phValue,
                 onChanged: (value){
