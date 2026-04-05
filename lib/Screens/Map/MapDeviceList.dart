@@ -1,13 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/Screens/Map/set_device_location.dart';
  import 'package:provider/provider.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
-import 'SetSelectValveLocation.dart';
+import 'oro_map/SetSelectValveLocation.dart';
 import 'googlemap_model.dart';
 
 class DeviceListScreen extends StatefulWidget {
@@ -109,9 +108,9 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
                         Spacer(),
                         TextButton.icon(
                          onPressed: () {
-                           Navigator.of(context).push(MaterialPageRoute(
-                             builder: (context) => MapScreendevice(),
-                           ));
+                           // Navigator.of(context).push(MaterialPageRoute(
+                           //   builder: (context) => MapScreendevice(),
+                           // ));
                          },
                           style: TextButton.styleFrom(
                             foregroundColor: Colors.white,
@@ -198,6 +197,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
 
      final Repository repository = Repository(HttpService());
 var data = mqttPayloadProvider.mapModelInstance.data?.toJson();
+           print("send data -> $data ");
      Map<String, dynamic> body = {
        "userId": widget.customerId,
        "controllerId": widget.controllerId,

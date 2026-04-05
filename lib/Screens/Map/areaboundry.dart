@@ -104,8 +104,6 @@ class _MapScreenAreaState extends State<MapScreenArea> {
 
       List<Map<String, dynamic>> jsondata = convertValvesToJson();
       print('\n json: $jsondata');
-
-
       Map<String, dynamic> body = {
         "userId": widget.customerId,
         "controllerId" : widget.controllerId,
