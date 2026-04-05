@@ -6,8 +6,8 @@ import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
 import '../../../utils/snack_bar.dart';
-import '../SetSelectValveLocation.dart';
 import '../set_device_location.dart';
+import 'SetSelectValveLocation.dart';
 
 
 class MapConnectionObject extends StatefulWidget {
@@ -30,6 +30,12 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
   bool _isSaving = false;
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+
+  @override
   void initState() {
     super.initState();
     // Fetch data after the first frame
@@ -46,6 +52,7 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
       });
 
       if (response.statusCode == 200) {
+        print(response.body);
         final jsonData = jsonDecode(response.body);
         provider.updateMapData(jsonData);
       }
@@ -63,13 +70,13 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
 
       final data = provider.mapModelInstance.data?.toJson();
       if (data == null) return;
-
-      Map<String, dynamic> body = {
+       Map<String, dynamic> body = {
         "userId": widget.customerId,
         "controllerId": widget.controllerId,
         "userGeography": data['deviceList'],
         "createUser": widget.userId
       };
+
 
       final response = await repository.creategeography(body);
       final jsonRes = jsonDecode(response.body);
@@ -92,10 +99,12 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_location_alt),
-            onPressed: () => Navigator.push(
+            onPressed: () {
+              Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const MapScreendevice())
-            ),
+            );
+            },
           )
         ],
       ),
