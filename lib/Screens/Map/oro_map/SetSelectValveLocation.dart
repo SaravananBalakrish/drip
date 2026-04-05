@@ -4,9 +4,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
-import '../../StateManagement/mqtt_payload_provider.dart';
-import 'googlemap_model.dart';
-import 'oro_map/getlatlong.dart';
+import '../../../StateManagement/mqtt_payload_provider.dart';
+import '../googlemap_model.dart';
+import 'getlatlong.dart';
+
+
 
 class MapScreen extends StatefulWidget {
   const MapScreen({Key? key, required this.index}) : super(key: key);
@@ -115,7 +117,7 @@ class _MapScreenState extends State<MapScreen> {
 
     mqttPayloadProvider.notifyListeners();
 
-     _mapController?.animateCamera(
+    _mapController?.animateCamera(
       CameraUpdate.newLatLngZoom(position, _currentZoom),
     );
   }
@@ -319,11 +321,11 @@ class _MapScreenState extends State<MapScreen> {
                           TextStyle(color: Colors.blue),
                         ),
                       ),
-                   IconButton(onPressed: _getCurrentLocation, icon: const Icon(Icons.my_location, color: Colors.blue)),
-               ],
+                      IconButton(onPressed: _getCurrentLocation, icon: const Icon(Icons.my_location, color: Colors.blue)),
+                    ],
                   ),
                 ),
-                 // Google Map
+                // Google Map
                 Expanded(
                   child: GoogleMap(
                     mapType: MapType.hybrid,
@@ -333,7 +335,7 @@ class _MapScreenState extends State<MapScreen> {
                     },
                     initialCameraPosition: CameraPosition(
                       target: _getInitialCameraPosition(),
-                      zoom: 15,
+                      zoom: _currentZoom,
                     ),
                     markers: _markers,
                     onTap: (LatLng latLng) {
@@ -347,7 +349,7 @@ class _MapScreenState extends State<MapScreen> {
                     compassEnabled: true,
                   ),
                 ),
-               ],
+              ],
             ),
           ),
         ],
@@ -383,7 +385,7 @@ class _MapScreenState extends State<MapScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-           Text(
+          Text(
             "Lat: ${_selectedObject!.lat ?? "-"}  "
                 "Long: ${_selectedObject!.long ?? "-"}",
           ),
@@ -427,4 +429,3 @@ class _MapScreenState extends State<MapScreen> {
   }
 
 }
-

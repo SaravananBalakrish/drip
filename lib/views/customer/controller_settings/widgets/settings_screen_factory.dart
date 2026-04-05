@@ -178,6 +178,7 @@ class SettingsScreenFactory {
           customerId: ctx.customerId,
           controllerId: ctx.controllerId,
           imeiNo: ctx.imeiNo,
+          modelId: ctx.modelId,
         );
 
       case 'Geography Area':
