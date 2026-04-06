@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Screens/Map/SetSelectValveLocation.dart';
  import '../../../Screens/Dealer/sevicecustomer.dart';
 import '../../../Screens/Logs/irrigation_and_pump_log.dart';
+import '../../../Screens/Map/oro_map/map_valve.dart';
 import '../../../Screens/planning/weather/view/weather_screen_new.dart';
 import '../../../layouts/layout_selector.dart';
 import '../../../modules/PumpController/view/pump_controller_home.dart';
@@ -20,6 +22,7 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
 
   final isGem = [...AppConstants.gemModelList].contains(cMaster.modelId);
   final isNova = [...AppConstants.ecoGemModelList].contains(cMaster.modelId);
+  final isAquaculture = [...AppConstants.aquacultureModelList].contains(cMaster.modelId);
 
   switch (index) {
     case 0:
@@ -103,7 +106,9 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
 
     case 7:
 
-      return WeatherScreenNew(customerId:  cSite.customerId,
+      return isAquaculture ? MapScreenValve(customerId:  cSite.customerId,
+          controllerId: cMaster.controllerId, userId: cSite.customerId, imeiNo: cMaster.deviceId):
+      WeatherScreenNew(customerId:  cSite.customerId,
         controllerId: cMaster.controllerId, deviceID: cMaster.deviceId, isNarrow: false);
 
 
