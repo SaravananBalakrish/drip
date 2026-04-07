@@ -493,7 +493,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
           icon: Icon(Icons.map_outlined),
       onPressed: () {
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => MapConnectionObject(userId: widget.userId, customerId: widget.customerId, controllerId: widget.controllerId, imeiNo: widget.imeiNo,),
+          builder: (context) => MapConnectionObject(userId: widget.userId, customerId: widget.customerId, controllerId: widget.controllerId, imeiNo: widget.imeiNo,modelId: widget.modelId,),
         ));
       },
       tooltip: 'Edit',

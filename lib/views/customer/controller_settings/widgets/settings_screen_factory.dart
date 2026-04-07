@@ -4,7 +4,8 @@ import 'package:oro_drip_irrigation/views/customer/controller_settings/wide/noti
 import '../../../../Screens/Dealer/controllerlogfile.dart';
 import '../../../../Screens/Dealer/dealer_definition.dart';
 import '../../../../Screens/Map/allAreaBoundry.dart';
-import '../../../../Screens/Map/oro_map/map_valve.dart';
+import '../../../../Screens/Map/oro_map/map_oro.dart';
+import '../../../../Screens/Map/oro_map/map_areator.dart';
 import '../../../../Screens/planning/PumpCondition.dart';
 import '../../../../Screens/planning/frost_productionScreen.dart';
 import '../../../../Screens/planning/names_form.dart';
@@ -173,13 +174,14 @@ class SettingsScreenFactory {
         }
 
       case 'Geography':
-        return MapScreenValve(
+        return ctx.modelId == 72 ? MapScreenValve(
           userId: ctx.userId,
           customerId: ctx.customerId,
           controllerId: ctx.controllerId,
           imeiNo: ctx.imeiNo,
           modelId: ctx.modelId,
-        );
+        ) : MapScreenOro(userId: ctx.userId, customerId: ctx.customerId, controllerId: ctx.controllerId, imeiNo: ctx.imeiNo, modelId: ctx.modelId,)
+;
 
       case 'Geography Area':
         return MapScreenAllArea(
