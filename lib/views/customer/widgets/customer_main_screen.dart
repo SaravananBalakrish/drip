@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/Screens/Map/SetSelectValveLocation.dart';
  import '../../../Screens/Dealer/sevicecustomer.dart';
 import '../../../Screens/Logs/irrigation_and_pump_log.dart';
 import '../../../Screens/Map/oro_map/map_valve.dart';
