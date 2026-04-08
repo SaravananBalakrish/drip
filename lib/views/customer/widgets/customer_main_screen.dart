@@ -111,7 +111,6 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
       WeatherScreenNew(customerId:  cSite.customerId,
           controllerId: cMaster.controllerId, deviceID: cMaster.deviceId, isNarrow: false);
 
-
     default:
       return const Scaffold(
         body: Center(
