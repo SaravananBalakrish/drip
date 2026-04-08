@@ -8,6 +8,7 @@ import 'package:oro_drip_irrigation/utils/helpers/mc_permission_helper.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/relay_status_avatar.dart';
 import 'package:provider/provider.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
+import '../../../providers/user_provider.dart';
 import '../../../repository/repository.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/snack_bar.dart';
@@ -63,7 +64,8 @@ class NodeList extends StatelessWidget {
           }
         });
 
-        final hasSetSerial = masterData.getPermissionStatus("Set Serial");
+        final loggedInUser = context.watch<UserProvider>().loggedInUser;
+        final isAdminOrDealer = loggedInUser.role.name == 'admin' || loggedInUser.role.name == 'dealer';
 
         return Container(
           padding: isWide ? const EdgeInsets.all(10) : EdgeInsets.zero,
@@ -114,7 +116,7 @@ class NodeList extends StatelessWidget {
                 child: ListView.builder(
                   itemCount: vm.nodeList.length,
                   itemBuilder: (context, index) {
-                    return _buildNodeTile(context, index, vm.nodeList[index], vm, hasSetSerial);
+                    return _buildNodeTile(context, index, vm.nodeList[index], vm, isAdminOrDealer);
                   },
                 ),
               ),
@@ -253,8 +255,8 @@ class NodeList extends StatelessWidget {
 
   Widget buildStatusHeaderRow(BuildContext context, NodeListViewModel vm, bool isNova) {
 
-    final hasSetSerial = masterData.getPermissionStatus("Set Serial");
-    final hasTestComm = masterData.getPermissionStatus("Test Communication");
+    final loggedInUser = context.watch<UserProvider>().loggedInUser;
+    final isAdminOrDealer = loggedInUser.role.name == 'admin' || loggedInUser.role.name == 'dealer';
 
     return SizedBox(
       height: 50,
@@ -309,56 +311,58 @@ class NodeList extends StatelessWidget {
               SizedBox(height: 5),
             ],
           ),
-          const Spacer(),
-          SizedBox(
-            width: 40,
-            child: IconButton(
-              tooltip: isNova ? 'Set serial' : 'Set serial for all Nodes',
-              icon: Icon(
-                Icons.format_list_numbered,
-                color: Theme.of(context).primaryColorDark,
-              ),
-              onPressed: hasSetSerial ? () => showDialog(
-                context: context,
-                builder: (_) => AlertDialog(
-                  title: const Text('Confirmation'),
-                  content: const Text('Are you sure! you want to proceed to reset all node ids?'),
-                  actions: [
-                    MaterialButton(
-                      color: Colors.redAccent,
-                      textColor: Colors.white,
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Cancel'),
-                    ),
-                    MaterialButton(
-                      color: Theme.of(context).primaryColor,
-                      textColor: Colors.white,
-                      onPressed: () {
-                        vm.setSerialToAllNodes(masterData.deviceId, customerId, masterData.controllerId, userId);
-                        GlobalSnackBar.show(context, 'Sent your comment successfully', 200);
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Yes'),
-                    ),
-                  ],
+          if(isAdminOrDealer)...[
+            const Spacer(),
+            SizedBox(
+              width: 40,
+              child: IconButton(
+                tooltip: isNova ? 'Set serial' : 'Set serial for all Nodes',
+                icon: Icon(
+                  Icons.format_list_numbered,
+                  color: Theme.of(context).primaryColorDark,
                 ),
-              ) : null,
-            ),
-          ),
-          SizedBox(
-            width: 40,
-            child: IconButton(
-              tooltip: 'Test Communication',
-              icon: Icon(
-                Icons.network_check,
-                color: Theme.of(context).primaryColorDark,
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (_) => AlertDialog(
+                    title: const Text('Confirmation'),
+                    content: const Text('Are you sure! you want to proceed to reset all node ids?'),
+                    actions: [
+                      MaterialButton(
+                        color: Colors.redAccent,
+                        textColor: Colors.white,
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: const Text('Cancel'),
+                      ),
+                      MaterialButton(
+                        color: Theme.of(context).primaryColor,
+                        textColor: Colors.white,
+                        onPressed: () {
+                          vm.setSerialToAllNodes(masterData.deviceId, customerId, masterData.controllerId, userId);
+                          GlobalSnackBar.show(context, 'Sent your comment successfully', 200);
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Yes'),
+                      ),
+                    ],
+                  ),
+                )
               ),
-              onPressed: hasTestComm ? () {
-                vm.testCommunication(masterData.deviceId, customerId, masterData.controllerId, userId);
-                GlobalSnackBar.show(context, 'Sent your comment successfully', 200);
-              } : null,
             ),
-          ),
+            SizedBox(
+              width: 40,
+              child: IconButton(
+                tooltip: 'Test Communication',
+                icon: Icon(
+                  Icons.network_check,
+                  color: isAdminOrDealer ? Theme.of(context).primaryColorDark : Colors.grey,
+                ),
+                onPressed: isAdminOrDealer ? () {
+                  vm.testCommunication(masterData.deviceId, customerId, masterData.controllerId, userId);
+                  GlobalSnackBar.show(context, 'Sent your comment successfully', 200);
+                } : null,
+              ),
+            ),
+          ],
           const SizedBox(width: 8),
         ],
       ),
@@ -439,7 +443,7 @@ class NodeList extends StatelessWidget {
   }
 
   Widget _buildNodeTile(BuildContext context, int index, NodeListModel node,
-      NodeListViewModel vm, bool hasSetSerial) {
+      NodeListViewModel vm, bool isAdminOrDealer) {
     return ExpansionTile(
       tilePadding: const EdgeInsets.symmetric(horizontal: 0),
       childrenPadding: const EdgeInsets.symmetric(horizontal: 0),
@@ -564,19 +568,19 @@ class NodeList extends StatelessWidget {
                     const SizedBox(width: 5),
                     const Icon(Icons.battery_3_bar_rounded),
                     Text('${node.batVolt} - V'),
-                    IconButton(
-                      tooltip: 'Serial set',
-                      onPressed: hasSetSerial
-                          ? () {
-                        vm.actionSerialSet(index, masterData.deviceId,
-                            customerId, masterData.controllerId, userId);
-                        GlobalSnackBar.show(
-                            context, 'Your comment sent successfully', 200);
-                      }
-                          : null,
-                      icon: Icon(Icons.fact_check_outlined,
-                          color: Theme.of(context).primaryColor),
-                    ),
+                    if(isAdminOrDealer)...[
+                      IconButton(
+                        tooltip: 'Serial set',
+                        onPressed: () {
+                          vm.actionSerialSet(index, masterData.deviceId,
+                              customerId, masterData.controllerId, userId);
+                          GlobalSnackBar.show(
+                              context, 'Your comment sent successfully', 200);
+                        },
+                        icon: Icon(Icons.fact_check_outlined,
+                            color: Theme.of(context).primaryColor),
+                      ),
+                    ]else...[const SizedBox(width: 5)],
                   ],
                 ),
               ),
@@ -639,7 +643,6 @@ class NodeList extends StatelessWidget {
       ],
     );
   }
-
 
   Widget statusIndicator(int status, {double radius = 7}) {
     Color color;
