@@ -249,6 +249,7 @@ class _ProductInventoryContentState extends State<_ProductInventoryContent> {
               product.categoryId,
               product.categoryName,
               product.modelName,
+              product.modelDescription,
               product.modelId,
               product.deviceId,
               product.warrantyMonths,

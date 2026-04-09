@@ -2,10 +2,9 @@ import'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:oro_drip_irrigation/Constants/notifications_service.dart';
-import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/irrigation_program_main.dart';
-import 'package:oro_drip_irrigation/modules/constant/view/constant_base_page.dart';
-import 'package:oro_drip_irrigation/modules/irrigation_report/view/list_of_log_config.dart';
 import 'package:oro_drip_irrigation/utils/Theme/agritel_theme.dart';
+import '../Screens/Map/oro_map/map_oro.dart';
+import '../Screens/Map/oro_map/map_areator.dart';
 import '../Screens/login_screenOTP/login_screenotp.dart';
 import '../flavors.dart';
 import '../utils/Theme/smart_comm_theme.dart';
@@ -76,7 +75,10 @@ class _MyAppState extends State<MyApp> {
           SmartCommTheme.darkTheme,
           themeMode: ThemeMode.light,
           home: navigateToInitialScreen(snapshot.data ?? Routes.login),
+          // home: GoogleEarthEditorScreen(),
           onGenerateRoute: Routes.generateRoute,
+          // home: MapScreenOro(userId: 10, customerId: 10, controllerId: 39, imeiNo: '',modelId: 2,),
+          // home: const ConfigBasePage(masterData: {"userId":2,"customerId":554,"controllerId":2323,"productId":2314,"deviceId":"3C610512EAD4","deviceName":"1010 BSS","categoryId":2,"categoryName":"ORO PUMP","modelId":78,"modelDescription":"1010 BSS","modelName":"WLCW1010BSS","groupId":547,"groupName":"WLC PUMP","connectingObjectId":["5","40"],"productStock":[]}, fromDashboard: true),
         );
       },
     );

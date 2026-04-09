@@ -1,13 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/Screens/Map/oro_map/set_oro_device_location.dart';
 import 'package:provider/provider.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
 import '../../../utils/snack_bar.dart';
-import 'SetSelectValveLocation.dart';
-import '../set_device_location.dart';
+import '../set_device_areator_location.dart';
+import 'SetSelectAreatorLocation.dart';
+import 'SetSelectValveOroLocation.dart';
+import 'map_oro.dart';
 
 
 class MapConnectionObject extends StatefulWidget {
@@ -17,9 +20,10 @@ class MapConnectionObject extends StatefulWidget {
     required this.customerId,
     required this.controllerId,
     required this.imeiNo,
+    required this.modelId,
   }) : super(key: key);
 
-  final int userId, customerId, controllerId;
+  final int userId, customerId, controllerId,modelId;
   final String imeiNo;
 
   @override
@@ -52,6 +56,7 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
       });
 
       if (response.statusCode == 200) {
+        print(response.body);
         final jsonData = jsonDecode(response.body);
         provider.updateMapData(jsonData);
       }
@@ -98,10 +103,14 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
         actions: [
           IconButton(
             icon: const Icon(Icons.edit_location_alt),
-            onPressed: () => Navigator.push(
+            onPressed: () {
+              Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const MapScreendevice())
-            ),
+                MaterialPageRoute(builder: (context) {
+                  return  widget.modelId == 72 ?  MapScreendevice() : SetSelectOroDeviceLocation();
+                })
+            );
+            },
           )
         ],
       ),
@@ -148,7 +157,9 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
                     trailing: const Icon(Icons.chevron_right),
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => MapScreen(index: index)),
+                      MaterialPageRoute(builder: (context) {
+                         return widget.modelId == 72 ?  MapScreen(index: index) : SetSelectOroLocation(index: index);
+                      }),
                     ),
                   ),
                 );

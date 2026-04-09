@@ -35,8 +35,6 @@ import 'modules/constant/state_management/constant_provider.dart';
 
 
 // Initialize local notifications plugin
-
-// Initialize local notifications plugin
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 

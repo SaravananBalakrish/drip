@@ -1120,6 +1120,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         }
       }
       if (device.masterId != null && device.serialNumber != null) {
+        print("S_No => ${device.serialNumber}  |  DeviceId => ${device.deviceId}");
         devicePayload.add({
           "S_No": device.serialNumber,
           "DeviceTypeNumber": validateDeviceTypeNumber(device),
@@ -1229,7 +1230,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     List<int> weatherControllerId = weatherControllersList.map((e) => e.controllerId).toList();
     for (var i = 0; i < objectListToSend.length; i++) {
       var object = objectListToSend[i];
-      if(object.connectionNo != 0 && object.connectionNo != null && !weatherControllerId.contains(object.controllerId)){
+      if(object.connectionNo != 0 && object.connectionNo != null && !weatherControllerId.contains(object.controllerId) && object.controllerId != null){
         var controller = listOfDeviceModel.firstWhere((e) => e.controllerId == object.controllerId);
         List<String> objectSerialNoForEcoGemSplitList = object.sNo.toString().split('.');
         if(objectSerialNoForEcoGemSplitList[1].length == 2){
@@ -1383,7 +1384,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     HardwareType hardwareType = AppConstants.gemModelList.contains(masterData['modelId']) ? HardwareType.master : HardwareType.pump;
     List<Map<String, dynamic>> listOfPumpPayload = [];
     List<int> modelIdForPump1000 = [5, 6, 7];
-    List<int> modelIdForPump2000 = [8, 9, 10, ...AppConstants.ecoGemModelList];
+    List<int> modelIdForPump2000 = [8, 9, 10, ...AppConstants.ecoGemModelList, ...AppConstants.wlcModelList];
     List<DeviceModel> listOfPump1000 = listOfDeviceModel.where((device) => modelIdForPump1000.contains(device.modelId) && device.masterId != null).toList();
     List<DeviceModel> listOfPump2000 = listOfDeviceModel.where((device) => modelIdForPump2000.contains(device.modelId) && device.masterId != null).toList();
     // int pumpCodeUnderGem = 5900;

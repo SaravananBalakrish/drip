@@ -19,9 +19,10 @@ class MapScreenValve extends StatefulWidget {
     required this.customerId,
     required this.controllerId,
     required this.imeiNo,
+    required this.modelId,
   }) : super(key: key);
 
-  final int userId, customerId, controllerId;
+  final int userId, customerId, controllerId,modelId;
   final String imeiNo;
 
   @override
@@ -34,9 +35,17 @@ class _MapScreenValveState extends State<MapScreenValve> {
 
   Set<Marker> markers = {};
   Map<String, BitmapDescriptor> markerIcons = {};
+  Set<Polygon> polygons = {};
+
+  String _sentTime = "";
+  Map<String, LatLng> _gifObjects = {};
+  Map<String, Offset> _gifOffsets = {};
+  late BitmapDescriptor _redAeratorIcon;
+
 
   @override
   void initState() {
+    print("modelID == ${widget.modelId}");
     super.initState();
     _init();
   }
@@ -61,6 +70,11 @@ class _MapScreenValveState extends State<MapScreenValve> {
       );
     }
 
+    _redAeratorIcon = await BitmapDescriptor.asset(
+      const ImageConfiguration(size: Size(40, 40)),
+      "assets/png/aerators_r.png",
+    );
+
     markerIcons = {
       "gray": await load('assets/png/markergray.png'),
       "green": await load('assets/png/markergreen.png'),
@@ -79,77 +93,147 @@ class _MapScreenValveState extends State<MapScreenValve> {
   Future<void> _fetchData() async {
     try {
       final repo = Repository(HttpService());
-
       final response = await repo.getgeography({
         "userId": widget.customerId,
         "controllerId": widget.controllerId,
       });
-       // print('getgeography userId${widget.userId},ctrl id ${widget.controllerId}');
+
       if (response.statusCode != 200) return;
 
       final data = jsonDecode(response.body);
-      // print("_fetchData data:$data");
-
       final deviceList = data["data"]["deviceList"] ?? [];
-
+      _sentTime = data["data"]?["liveMessage"]?["cM"]?["SentTime"] ?? "";
       Set<Marker> newMarkers = {};
+      Set<Polygon> newPolygons = {};
 
       for (var device in deviceList) {
-         final geo = device["geography"];
-        if (geo != null &&
-            geo["lat"] != null &&
-            geo["long"] != null) {
-          newMarkers.add(_createMarker(
-            id: "device-${device["deviceId"]}",
-            lat: geo["lat"],
-            lng: geo["long"],
-            title: device["deviceName"],
-            type: device["categoryName"],
-            status: geo["status"],
-            percentage: 0,
-          ));
+        // --- Process Device Geography ---
+        final geo = device["geography"];
+        if (geo != null) {
+          if (geo["lat"] != null && geo["long"] != null) {
+
+             final marker = _createMarker(
+              id: "device-${device["deviceId"]}",
+              lat: geo["lat"],
+              lng: geo["long"],
+              title: device["deviceName"],
+              type: device["categoryName"],
+              status: device["status"],
+              percentage: 0,
+            );
+
+            if (marker != null) {
+              newMarkers.add(marker);
+            }
+          }
+
+          // Polygons and Labels for Device
+          if (geo["area"] != null && (geo["area"] as List).isNotEmpty) {
+            final polyPoints = (geo["area"] as List).map((p) =>
+                LatLng((p["lat"] as num).toDouble(), (p["long"] as num).toDouble())
+            ).toList();
+
+            newPolygons.add(_createPolygon(
+              id: "poly-device-${device["deviceId"]}",
+              points: geo["area"],
+              color: Colors.blue,
+            ));
+
+            // Permanent Label
+            final labelIcon = await _getLabelIcon(device["deviceName"] ?? "");
+            newMarkers.add(Marker(
+              markerId: MarkerId("label-device-${device["deviceId"]}"),
+              position: _calculateCentroid(polyPoints),
+              icon: labelIcon,
+              anchor: const Offset(0.5, 0.5),
+            ));
+          }
         }
 
+        // --- Process Connected Objects ---
         for (var obj in device["connectedObject"] ?? []) {
           if (obj["lat"] != null && obj["long"] != null) {
-
-            var resultstaus = getStatusPercentage(obj["sNo"],data["data"]["liveMessage"]);
-
-            newMarkers.add(_createMarker(
+            var resultstaus = getStatusPercentage(obj["sNo"], data["data"]["liveMessage"]);
+            final marker = _createMarker(
               id: "obj-${obj["sNo"]}",
               lat: obj["lat"],
               lng: obj["long"],
               title: obj["name"] ?? obj["objectName"],
               type: obj["objectName"],
-              status: resultstaus["status"] ?? 0,
+              status: resultstaus["status"],
               percentage: resultstaus["percentage"] ?? 0,
-            ));
+            );
+
+            if (marker != null) {
+              newMarkers.add(marker);
+            }
           }
+
+
         }
       }
+
       final initialCenter = _getInitialCenter(deviceList);
 
-       if (!mounted) return;
-
+      if (!mounted) return;
       setState(() {
         markers = newMarkers;
-        if (initialCenter != null) {
-          center = initialCenter;
-        }
+        polygons = newPolygons;
+        if (initialCenter != null) center = initialCenter;
       });
-
     } catch (e) {
       debugPrint("Error: $e");
     }
   }
 
+  Future<void> _updateGifPositions() async {
+    if (mapController == null) return;
+
+    Map<String, Offset> temp = {};
+
+    for (var entry in _gifObjects.entries) {
+      final screen =
+      await mapController.getScreenCoordinate(entry.value);
+
+      temp[entry.key] = Offset(
+        screen.x.toDouble(),
+        screen.y.toDouble(),
+      );
+    }
+
+    setState(() {
+      _gifOffsets = temp;
+    });
+  }
+
+  // ---------------- CREATE POLYGON ----------------
+  Polygon _createPolygon({
+    required String id,
+    required List<dynamic> points,
+    required Color color,
+  }) {
+    List<LatLng> latLngPoints = points.map((p) {
+      return LatLng((p["lat"] as num).toDouble(), (p["long"] as num).toDouble());
+    }).toList();
+
+    return Polygon(
+      polygonId: PolygonId(id),
+      points: latLngPoints,
+      strokeWidth: 2,
+      strokeColor: color.withOpacity(1),
+      fillColor: color.withOpacity(0.8),
+      geodesic: true,
+    );
+  }
+
   Map<String, int> getStatusPercentage(
       double serialNumber, Map<String, dynamic>? liveMessage)
   {
+
      try {
       // 1. Safe extraction of the nested map and string
       if (liveMessage == null || liveMessage["cM"] == null) {
-        return {"status": 0, "percentage": 0};
+         return {"status": 0, "percentage": 0};
       }
 
       // Cast cM safely
@@ -166,9 +250,9 @@ class _MapScreenValveState extends State<MapScreenValve> {
       final List<String> values = data.split(";");
 
       for (var value in values) {
-        final List<String> parts = value.split(",");
 
-        if (parts.length >= 3) {
+        final List<String> parts = value.split(",");
+         if (parts.length >= 3) {
           // 2. Convert string ID to double to ensure 13.010 == 13.01
           double? partId = double.tryParse(parts[0]);
 
@@ -233,7 +317,9 @@ class _MapScreenValveState extends State<MapScreenValve> {
   }
 
   // ---------------- CREATE MARKER ----------------
-  Marker _createMarker({
+
+
+  Marker? _createMarker({
     required String id,
     required double lat,
     required double lng,
@@ -242,19 +328,87 @@ class _MapScreenValveState extends State<MapScreenValve> {
     int? status,
     int? percentage,
   }) {
+    final position = LatLng(lat, lng);
+
+    // ✅ STATUS 1 → use GIF overlay
+    if (status == 1) {
+      _gifObjects[id] = position;
+      return null;
+    }
+
+    // ✅ STATUS 0 → normal marker
     return Marker(
       markerId: MarkerId(id),
-      position: LatLng(lat, lng),
-      icon: _getIcon(type, status, percentage),
+      position: position,
+      icon: _redAeratorIcon,
       infoWindow: InfoWindow(
         title: title,
-        snippet: "Irrigation: ${percentage ?? 0}%",
       ),
     );
   }
 
+  Widget _buildCustomInfoWindow() {
+    return Material(
+      elevation: 4,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        width: 160,
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+             Image.asset(
+              "assets/gif/aerators_g.gif",
+              height: 50,
+              fit: BoxFit.contain,
+            ),
+             const SizedBox(height: 5),
+           ],
+        ),
+      ),
+    );
+  }
+  // Helper to find the center of the polygon
+  LatLng _calculateCentroid(List<LatLng> points) {
+    double lat = 0, lng = 0;
+    for (var p in points) {
+      lat += p.latitude;
+      lng += p.longitude;
+    }
+    return LatLng(lat / points.length, lng / points.length);
+  }
 
+// Helper to create a Text-only Marker Icon
+  Future<BitmapDescriptor> _getLabelIcon(String label) async {
+    final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
+    final Canvas canvas = Canvas(pictureRecorder);
+    const double fontSize = 12.0; // Adjust size as needed
 
+    final TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
+    painter.text = TextSpan(
+      text: label,
+      style: const TextStyle(
+        fontSize: fontSize,
+        color: Colors.white,
+        fontWeight: FontWeight.bold,
+        backgroundColor: Colors.black45, // Background makes text readable on map
+      ),
+    );
+
+    painter.layout();
+    painter.paint(canvas, const Offset(0, 0));
+
+    final img = await pictureRecorder.endRecording().toImage(
+      painter.width.toInt(),
+      painter.height.toInt(),
+    );
+    final data = await img.toByteData(format: ui.ImageByteFormat.png);
+    return BitmapDescriptor.fromBytes(data!.buffer.asUint8List());
+  }
   BitmapDescriptor _getIcon(String type, int? status, int? percentage) {
 
     int st = status ?? 0;
@@ -319,21 +473,27 @@ class _MapScreenValveState extends State<MapScreenValve> {
     });
   }
 
-
-
   // ---------------- UI ----------------
+
+
   @override
   Widget build(BuildContext context) {
     // print("build center:$center");
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Geography EEE"),
+      appBar: AppBar(title: const Text("Geography"),
           actions: [
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () async {
+                await _init(); // 🔥 reuse same method
+              },
+            ),
           IconButton(
           icon: Icon(Icons.map_outlined),
       onPressed: () {
         Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => MapConnectionObject(userId: widget.userId, customerId: widget.customerId, controllerId: widget.controllerId, imeiNo: widget.imeiNo,),
+          builder: (context) => MapConnectionObject(userId: widget.userId, customerId: widget.customerId, controllerId: widget.controllerId, imeiNo: widget.imeiNo,modelId: widget.modelId,),
         ));
       },
       tooltip: 'Edit',
@@ -341,15 +501,54 @@ class _MapScreenValveState extends State<MapScreenValve> {
     ],
       ),
 
-      body: GoogleMap(
-        mapType: MapType.hybrid,
-        initialCameraPosition: CameraPosition(
-          target: center,
-          zoom: 8,
-        ),
-        markers: markers,
-        onMapCreated: _onMapCreated,
-       ),
+      body: Stack(
+        children: [
+          GoogleMap(
+            mapType: MapType.hybrid,
+            initialCameraPosition: CameraPosition(
+              target: center,
+              zoom: 8,
+            ),
+            markers: markers,
+            polygons: polygons,
+            onMapCreated: (controller) {
+              mapController = controller;
+              _onMapCreated(controller);
+              _updateGifPositions();
+            },
+            onCameraMove: (_) => _updateGifPositions(),
+          ),
+          Positioned(
+            top: 0,
+            left: 20,
+            right: 20,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+               child: Text(
+                "Live sync: $_sentTime",
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+
+          // ✅ GIF overlay markers
+          ..._gifOffsets.entries.map((entry) {
+            return Positioned(
+              left: entry.value.dx - 25,
+              top: entry.value.dy - 50,
+              child: Image.asset(
+                "assets/gif/aerators_g.gif",
+                height: 50,
+              ),
+            );
+          }).toList(),
+        ],
+      ),
     );
   }
 }
