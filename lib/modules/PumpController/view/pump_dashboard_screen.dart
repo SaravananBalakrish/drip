@@ -10,6 +10,7 @@ import 'package:oro_drip_irrigation/repository/repository.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
+import 'package:oro_drip_irrigation/utils/snack_bar.dart';
 
 import '../../../models/customer/site_model.dart';
 import '../../../Screens/dashboard/wave_view.dart';
@@ -442,6 +443,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
       pumpItem.reasonCode = 100;
       pumpItem.status = 0;
     }
+    final actualReasonCode = pumpData.pumps[index].reasonCode;
 
     _formattedTime = pumpItem.onDelayTimer;
     final voltageTripCondition = [3, 4, 5].contains(pumpItem.reasonCode);
@@ -461,6 +463,9 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
         && [0, 3].contains(pumpItem.status)
         && [30, 11].contains(pumpItem.reasonCode);
 
+    const excludedReasons = [0, 30, 31, 32, 40, 100];
+    final showResetButton = !excludedReasons.contains(pumpItem.reasonCode);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -471,20 +476,62 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
             children: [
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 10),
-                padding: const EdgeInsets.symmetric(horizontal: 10),
+                padding: const EdgeInsets.symmetric(horizontal: 5),
                 height: 25,
-                width: 80,
+                width: 140,
                 decoration: BoxDecoration(
                   // gradient: AppProperties.linearGradientLeading,
                     color: Theme.of(context).primaryColorLight,
                     borderRadius: const BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(3))
                 ),
-                child: Center(
-                  child: Text(
-                    pumps[index].name,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white,),
-                  ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        pumps[index].name,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 10),
+                      ),
+                    ),
+                    if(showResetButton)
+                      const VerticalDivider(color: Colors.white54, indent: 5, endIndent: 5,),
+                    if(showResetButton)
+                      InkWell(
+                        onTap: pumpData.dataFetchingStatus == 1 ? () async {
+                           String payLoadFinal = jsonEncode({"sentSms":"RESET"});
+                          var data = {
+                            "userId": widget.customerId,
+                            "controllerId": widget.masterData.controllerId,
+                            "data": payLoadFinal,
+                            "messageStatus": "${pumps[index].name} Reset Manually",
+                            "createUser": widget.userId,
+                            "hardware": payLoadFinal,
+                          };
+                          await mqttService.topicToPublishAndItsMessage(payLoadFinal, "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}");
+
+                          await repository.sendManualOperationToServer(data);
+                          GlobalSnackBar.show(context, 'Reset command sent successfully', 200);
+                          await Future.delayed(const Duration(seconds: 2));
+                          liveRequest();
+                        } : null,
+                        borderRadius: BorderRadius.circular(4),
+                        splashColor: Colors.white.withAlpha(80),
+                        highlightColor: Colors.white.withAlpha(40),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                          child: Text(
+                            "RESET",
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              color: pumpData.dataFetchingStatus == 1 ? Colors.white : Colors.white.withOpacity(0.5),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
               if(![30, 31, 100].contains(pumpItem.reasonCode))
