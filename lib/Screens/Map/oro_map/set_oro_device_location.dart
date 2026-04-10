@@ -7,7 +7,7 @@ import '../MapAreaModel.dart' hide Area;
 import '../googlemap_model.dart';
 import 'getlatlong.dart';
 
- 
+
 
 class SetSelectOroDeviceLocation extends StatefulWidget {
   const SetSelectOroDeviceLocation({Key? key}) : super(key: key);

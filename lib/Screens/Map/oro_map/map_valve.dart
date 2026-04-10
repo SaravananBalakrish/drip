@@ -45,6 +45,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
 
   @override
   void initState() {
+    print("modelID == ${widget.modelId}");
     super.initState();
     _init();
   }
@@ -111,7 +112,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
         if (geo != null) {
           if (geo["lat"] != null && geo["long"] != null) {
 
-             final marker = _createMarker(
+            final marker = _createMarker(
               id: "device-${device["deviceId"]}",
               lat: geo["lat"],
               lng: geo["long"],
@@ -229,10 +230,10 @@ class _MapScreenValveState extends State<MapScreenValve> {
       double serialNumber, Map<String, dynamic>? liveMessage)
   {
 
-     try {
+    try {
       // 1. Safe extraction of the nested map and string
       if (liveMessage == null || liveMessage["cM"] == null) {
-         return {"status": 0, "percentage": 0};
+        return {"status": 0, "percentage": 0};
       }
 
       // Cast cM safely
@@ -251,12 +252,12 @@ class _MapScreenValveState extends State<MapScreenValve> {
       for (var value in values) {
 
         final List<String> parts = value.split(",");
-         if (parts.length >= 3) {
+        if (parts.length >= 3) {
           // 2. Convert string ID to double to ensure 13.010 == 13.01
           double? partId = double.tryParse(parts[0]);
 
           if (partId != null && partId == serialNumber) {
-             return {
+            return {
               "status": int.tryParse(parts[1]) ?? 0,
               "percentage": int.tryParse(parts[2]) ?? 0,
             };
@@ -360,13 +361,13 @@ class _MapScreenValveState extends State<MapScreenValve> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-             Image.asset(
+            Image.asset(
               "assets/gif/aerators_g.gif",
               height: 50,
               fit: BoxFit.contain,
             ),
-             const SizedBox(height: 5),
-           ],
+            const SizedBox(height: 5),
+          ],
         ),
       ),
     );
@@ -481,23 +482,23 @@ class _MapScreenValveState extends State<MapScreenValve> {
 
     return Scaffold(
       appBar: AppBar(title: const Text("Geography"),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              onPressed: () async {
-                await _init(); // 🔥 reuse same method
-              },
-            ),
+        actions: [
           IconButton(
-          icon: Icon(Icons.map_outlined),
-      onPressed: () {
-        Navigator.of(context).push(MaterialPageRoute(
-          builder: (context) => MapConnectionObject(userId: widget.userId, customerId: widget.customerId, controllerId: widget.controllerId, imeiNo: widget.imeiNo,modelId: widget.modelId,),
-        ));
-      },
-      tooltip: 'Edit',
-    ),
-    ],
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              await _init(); // 🔥 reuse same method
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.map_outlined),
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => MapConnectionObject(userId: widget.userId, customerId: widget.customerId, controllerId: widget.controllerId, imeiNo: widget.imeiNo,modelId: widget.modelId),
+              ));
+            },
+            tooltip: 'Edit',
+          ),
+        ],
       ),
 
       body: Stack(
@@ -523,7 +524,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
             right: 20,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-               child: Text(
+              child: Text(
                 "Live sync: $_sentTime",
                 textAlign: TextAlign.center,
                 style: const TextStyle(
