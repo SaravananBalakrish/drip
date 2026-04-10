@@ -6,7 +6,7 @@ import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
-import 'oro_map/SetSelectAreatorLocation.dart';
+import 'oro_map/SetSelectValveLocation.dart';
 import 'googlemap_model.dart';
 
 class DeviceListScreen extends StatefulWidget {
