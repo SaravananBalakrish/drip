@@ -45,7 +45,7 @@ class _BleScanTileState extends State<BleScanTile>
           .master[widget.vm.mIndex]
           .deviceId;
 
-      await widget.vm.bluetoothBleService.startScan(deviceId: deviceId);
+      await widget.vm.bluetoothBleService.startScan(deviceNameFilter: deviceId);
 
      /* final provider = context.read<MqttPayloadProvider>();
       provider.updateBlePairedDevices(widget.vm.bluetoothBleService.devices);*/
