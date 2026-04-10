@@ -165,6 +165,7 @@ class BluetoothBleService {
       await d.device.connect(
         timeout: const Duration(seconds: 25),
         autoConnect: false,
+        license: License.free,
       );
 
       _connectedDevice = d;
