@@ -8,7 +8,7 @@ import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
 import '../../../utils/snack_bar.dart';
 import '../set_device_areator_location.dart';
-import 'SetSelectValveLocation.dart';
+import 'SetSelectAreatorLocation.dart';
 import 'SetSelectValveOroLocation.dart';
 import 'map_oro.dart';
 
@@ -74,7 +74,7 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
 
       final data = provider.mapModelInstance.data?.toJson();
       if (data == null) return;
-      Map<String, dynamic> body = {
+       Map<String, dynamic> body = {
         "userId": widget.customerId,
         "controllerId": widget.controllerId,
         "userGeography": data['deviceList'],
@@ -105,11 +105,11 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
             icon: const Icon(Icons.edit_location_alt),
             onPressed: () {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return  widget.modelId == 72 ?  MapScreendevice() : SetSelectOroDeviceLocation();
-                  })
-              );
+                context,
+                MaterialPageRoute(builder: (context) {
+                  return  widget.modelId == 72 ?  MapScreendevice() : SetSelectOroDeviceLocation();
+                })
+            );
             },
           )
         ],
@@ -158,7 +158,7 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) {
-                        return widget.modelId == 72 ?  MapScreen(index: index) : SetSelectOroLocation(index: index);
+                         return widget.modelId == 72 ?  MapScreen(index: index) : SetSelectOroLocation(index: index);
                       }),
                     ),
                   ),
