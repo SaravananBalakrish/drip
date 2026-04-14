@@ -3,30 +3,40 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import '../../../StateManagement/mqtt_payload_provider.dart';
+import '../googlemap_model.dart';
+import 'getlatlong.dart';
 
-import '../../StateManagement/mqtt_payload_provider.dart';
-import 'googlemap_model.dart';
-import 'oro_map/getlatlong.dart';
-
-class MapScreen extends StatefulWidget {
-  const MapScreen({Key? key, required this.index}) : super(key: key);
+class SetSelectOroLocation extends StatefulWidget {
+  const SetSelectOroLocation({Key? key, required this.index}) : super(key: key);
   final int index;
-
   @override
-  _MapScreenState createState() => _MapScreenState();
+  _SetSelectOroLocationState createState() => _SetSelectOroLocationState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _SetSelectOroLocationState extends State<SetSelectOroLocation> {
   GoogleMapController? _mapController;
   final TextEditingController _searchController = TextEditingController();
   Set<Marker> _markers = {};
   LatLng? _objectPosition;
-  double _currentZoom = 15;
+  double _currentZoom = 17;
 
   late MqttPayloadProvider mqttPayloadProvider;
   ConnectedObject? _selectedObject;
   bool _isDrawerOpen = false;
   double _drawerWidth = 280;
+
+  List<LatLng> _points = [];
+  Set<Marker> _vertices = {};
+  Set<Polyline> _lines = {};
+  Set<Polygon> _polygons = {};
+
+  bool _isClosed = false;
+  List<List<LatLng>> _undoStack = [];
+  List<List<LatLng>> _redoStack = [];
+  List<LatLng> _finalPolygonPoints = [];
+  List<LatLng> _redoPoints = [];
+
 
   @override
   void initState() {
@@ -115,7 +125,7 @@ class _MapScreenState extends State<MapScreen> {
 
     mqttPayloadProvider.notifyListeners();
 
-     _mapController?.animateCamera(
+    _mapController?.animateCamera(
       CameraUpdate.newLatLngZoom(position, _currentZoom),
     );
   }
@@ -250,7 +260,8 @@ class _MapScreenState extends State<MapScreen> {
                     itemCount: objects.length,
                     itemBuilder: (context, index) {
                       final obj = objects[index];
-
+                      final hasArea = obj.area != null && obj.area!.isNotEmpty;
+                      final first = hasArea ? obj.area!.first : null;
                       return ListTile(
                         selected: obj == _selectedObject,
                         selectedTileColor:
@@ -259,24 +270,41 @@ class _MapScreenState extends State<MapScreen> {
                             obj.objectName ??
                             "Object"),
                         subtitle: Text(
-                            "Lat: ${obj.lat}, Long: ${obj.long}\nStatus: ${obj.status ?? "Unknown"}"),
+                          "Lat: ${first?.latitude ?? '-'}, "
+                              "Long: ${first?.longitude ?? '-'}\n"
+                              "Status: ${obj.status ?? ''}",
+                        ),
                         onTap: () {
                           setState(() {
                             _selectedObject = obj;
+
+                            // ✅ RESET OLD POLYGON (IMPORTANT)
+                            _points.clear();
+                            _vertices.clear();
+                            _lines.clear();
+                            _polygons.clear();
+                            _isClosed = false;
+
+                            // ✅ LOAD EXISTING AREA (optional)
+                            if (obj.area != null && obj.area!.isNotEmpty) {
+                              _points = obj.area!
+                                  .map((e) => LatLng(e.latitude!, e.longitude!))
+                                  .toList();
+
+                              _isClosed = true;
+                            }
                           });
 
-                          if (obj.lat != null &&
-                              obj.long != null) {
+                          _drawPolygon();
+
+                          if (obj.lat != null && obj.long != null) {
                             _mapController?.animateCamera(
                               CameraUpdate.newLatLngZoom(
-                                LatLng(
-                                    obj.lat!, obj.long!),
-                                15,
+                                LatLng(obj.lat!, obj.long!),
+                                _currentZoom,
                               ),
                             );
                           }
-
-                          _loadAllMarkers();
                         },
                       );
                     },
@@ -319,11 +347,36 @@ class _MapScreenState extends State<MapScreen> {
                           TextStyle(color: Colors.blue),
                         ),
                       ),
-                   IconButton(onPressed: _getCurrentLocation, icon: const Icon(Icons.my_location, color: Colors.blue)),
-               ],
+                      IconButton(onPressed: _getCurrentLocation, icon: const Icon(Icons.my_location, color: Colors.blue)),
+                    ],
                   ),
-                ),
-                 // Google Map
+                  ),
+                  Container(
+                    height: 40,
+                    color: Colors.white,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.undo),
+                          onPressed: _points.isEmpty ? null : _undo,
+                        ),
+
+                        IconButton(
+                          icon: Icon(Icons.redo),
+                          onPressed: _redoPoints.isEmpty ? null : _redo,
+                        ),
+                        IconButton(
+                            icon: Icon(Icons.delete, color: Colors.red),
+                            onPressed: _deletePolygon),
+                        IconButton(
+                            icon: Icon(Icons.check, color: Colors.green),
+                            onPressed: _closePolygon),
+                      ],
+                    ),
+                  ),
+
+                // Google Map
                 Expanded(
                   child: GoogleMap(
                     mapType: MapType.hybrid,
@@ -333,26 +386,45 @@ class _MapScreenState extends State<MapScreen> {
                     },
                     initialCameraPosition: CameraPosition(
                       target: _getInitialCameraPosition(),
-                      zoom: 15,
+                      zoom: _currentZoom,
                     ),
-                    markers: _markers,
-                    onTap: (LatLng latLng) {
-                      _updateMarker(
-                          latLng.latitude,
-                          latLng.longitude);
+                    markers: {
+                      ..._markers,
+                      ..._vertices,           // edit points
+                      ..._buildPolygonLabels(), // ✅ polygon names
+                    },// vertices visible
+                    polylines: _lines,
+                    polygons: {
+                      ..._buildAllPolygons(),
+                      ..._polygons,
                     },
+                        onTap: (LatLng latLng) {
+                        _addPoint(latLng); // ✅ polygon point add
+                     },
                     myLocationButtonEnabled: true,
                     myLocationEnabled: true,
 
                     compassEnabled: true,
                   ),
                 ),
-               ],
+              ],
             ),
           ),
         ],
       ),
     );
+  }
+  void _closePolygon() {
+    if (_points.length < 2) return;
+
+    setState(() {
+      _isClosed = true;
+
+      // ✅ SAVE FINAL SHAPE (freeze)
+      _finalPolygonPoints = List.from(_points);
+    });
+
+    _drawPolygon();
   }
   Widget _buildSelectedObjectBar() {
     if (_selectedObject == null) {
@@ -383,7 +455,7 @@ class _MapScreenState extends State<MapScreen> {
               fontWeight: FontWeight.bold,
             ),
           ),
-           Text(
+          Text(
             "Lat: ${_selectedObject!.lat ?? "-"}  "
                 "Long: ${_selectedObject!.long ?? "-"}",
           ),
@@ -423,8 +495,224 @@ class _MapScreenState extends State<MapScreen> {
     );
 
     // ✅ Add marker
-    _updateMarker(position.latitude, position.longitude);
+    // _updateMarker(position.latitude, position.longitude);
+    _addPoint(LatLng(position.latitude, position.longitude));
+  }
+
+  void _addPoint(LatLng point) {
+    if (_selectedObject == null) return;
+
+    if (_isClosed) return;
+    _saveState(); // ✅ ADD THIS
+    setState(() {
+      _points.add(point);
+
+      _selectedObject!.area ??= [];
+      _selectedObject!.area!.add(
+        Area(latitude: point.latitude, longitude: point.longitude),
+      );
+    });
+
+    _drawPolygon();
+  }
+  void _drawPolygon() {
+    _vertices.clear();
+    _lines.clear();
+    _polygons.clear();
+
+    if (_selectedObject == null) return;
+
+    // 🔹 MARKERS (editable)
+    for (int i = 0; i < _points.length; i++) {
+      bool isFirst = i == 0;
+
+      _vertices.add(
+        Marker(
+          markerId: MarkerId("point_$i"),
+          position: _points[i],
+          draggable: true,
+
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            isFirst
+                ? BitmapDescriptor.hueRed
+                : BitmapDescriptor.hueAzure,
+          ),
+
+          onTap: () {
+            if (isFirst && !_isClosed) {
+              _closePolygon();
+            }
+          },
+
+          onDragEnd: (newPos) {
+            _saveState();
+
+            setState(() {
+              // ✅ Update point
+              _points[i] = newPos;
+
+              // ✅ Sync to object (IMPORTANT)
+              _syncPointsToObject();
+
+              // ✅ If polygon already closed → update final shape also
+              if (_isClosed) {
+                _finalPolygonPoints = List.from(_points);
+              }
+            });
+
+            _drawPolygon();
+          },
+        ),
+      );
+    }
+
+    // 🔹 LINE (always from editing points)
+    List<LatLng> path = List.from(_points);
+
+    if (_isClosed && _points.isNotEmpty) {
+      path.add(_points.first);
+    }
+
+    _lines.add(
+      Polyline(
+        polylineId: const PolylineId("line"),
+        points: path,
+        color: Colors.yellow,
+        width: 3,
+      ),
+    );
+
+    // 🔹 POLYGON (ONLY FROM FINAL SHAPE)
+    if (_isClosed && _finalPolygonPoints.isNotEmpty) {
+      _polygons.add(
+        Polygon(
+          polygonId: const PolygonId("editing"),
+          points: _finalPolygonPoints, // ✅ NOT _points
+          fillColor: Colors.blue.withOpacity(0.4),
+          strokeWidth: 2,
+          strokeColor: Colors.blue,
+        ),
+      );
+    }
+
+    setState(() {});
+   }
+  Set<Marker> _buildPolygonLabels() {
+    Set<Marker> labels = {};
+
+    final objects = mqttPayloadProvider
+        .mapModelInstance.data?.deviceList?[widget.index].connectedObject ?? [];
+
+    for (var obj in objects) {
+      final area = obj.area;
+
+      if (area != null && area.isNotEmpty) {
+        final firstPoint = area.first;
+
+        labels.add(
+          Marker(
+            markerId: MarkerId("label_${obj.name}"),
+            position: LatLng(firstPoint.latitude!, firstPoint.longitude!),
+            infoWindow: InfoWindow(
+              title: obj.name ?? obj.objectName ?? "Area",
+            ),
+            icon: BitmapDescriptor.defaultMarkerWithHue(
+              obj == _selectedObject
+                  ? BitmapDescriptor.hueAzure
+                  : BitmapDescriptor.hueYellow,
+            ),
+          ),
+        );
+      }
+    }
+
+    return labels;
+  }
+   void _saveState() {
+    _undoStack.add(List.from(_points));
+    _redoStack.clear();
+  }
+  void _undo() {
+    if (_points.isEmpty) return;
+
+    setState(() {
+      _redoPoints.add(_points.last);
+      _points.removeLast();
+    });
+
+    _syncPointsToObject(); // ✅ IMPORTANT
+    _drawPolygon();
+  }
+  void _redo() {
+    if (_redoPoints.isEmpty) return;
+
+    setState(() {
+      _points.add(_redoPoints.removeLast());
+    });
+
+    _syncPointsToObject(); // ✅ IMPORTANT
+    _drawPolygon();
+  }
+   Set<Polygon> _buildAllPolygons() {
+    Set<Polygon> polygons = {};
+
+    final objects = mqttPayloadProvider
+        .mapModelInstance.data?.deviceList?[widget.index].connectedObject ?? [];
+
+    for (var obj in objects) {
+      final area = obj.area;
+
+      if (area != null && area.isNotEmpty) {
+        final points = area
+            .map((e) => LatLng(e.latitude!, e.longitude!))
+            .toList();
+
+        final isSelected = obj == _selectedObject;
+
+        polygons.add(
+          Polygon(
+            polygonId: PolygonId(obj.name ?? obj.objectName ?? "obj"),
+
+            points: points,
+
+            fillColor: isSelected
+                ? Colors.blue.withOpacity(0.4)   // ✅ Selected
+                : Colors.yellow.withOpacity(0.3), // ✅ Others
+
+            strokeColor:
+            isSelected ? Colors.blue : Colors.grey,
+
+            strokeWidth: isSelected ? 3 : 1,
+          ),
+        );
+      }
+    }
+
+    return polygons;
+  }
+  void _deletePolygon() {
+    if (_selectedObject == null) return;
+
+    setState(() {
+      _points.clear();
+      _finalPolygonPoints.clear(); // ✅ IMPORTANT
+      _vertices.clear();
+      _lines.clear();
+      _polygons.clear();
+      _isClosed = false;
+
+      _selectedObject!.area = [];
+    });
+  }
+  void _syncPointsToObject() {
+    if (_selectedObject == null) return;
+
+    _selectedObject!.area = _points
+        .map((p) => Area(
+      latitude: p.latitude,
+      longitude: p.longitude,
+    ))
+        .toList();
   }
 
 }
-

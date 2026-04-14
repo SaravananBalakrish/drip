@@ -121,6 +121,7 @@ class ConnectedObject {
   double? long;
   int? status;
   int? percentage;
+  List<Area>? area;
 
   ConnectedObject({
     this.objectId,
@@ -132,6 +133,7 @@ class ConnectedObject {
     this.long,
     this.status,
     this.percentage,
+    this.area,
   });
 
   factory ConnectedObject.fromJson(Map<String, dynamic> json,
@@ -146,7 +148,11 @@ class ConnectedObject {
         long: json["long"]?.toDouble(),
         status: getValueOfStatus('${json["sNo"]}', liveMessage),
         percentage: getValuepercentage('${json["sNo"]}', liveMessage),
-      );
+        area: json["area"] == null
+            ? []
+            : List<Area>.from(
+            json["area"].map((x) => Area.fromJson(x))),
+       );
 
   Map<String, dynamic> toJson() => {
     "objectId": objectId,
@@ -158,6 +164,7 @@ class ConnectedObject {
     "long": long,
     "status": status,
     "percentage": percentage,
+    "area": area,
   };
 }
 
@@ -165,8 +172,9 @@ class Geography {
   double? lat;
   double? long;
   int? status;
+  List<Area>? area;
 
-  Geography({this.lat, this.long, this.status});
+  Geography({this.lat, this.long, this.status,this.area});
 
   factory Geography.fromJson(Map<String, dynamic> json, String serialNumber,
       Map<String, dynamic>? liveMessage) =>
@@ -174,12 +182,39 @@ class Geography {
         lat: json["lat"]?.toDouble(),
         long: json["long"]?.toDouble(),
         status: getValueOfStatus(serialNumber, liveMessage),
+        area: json["area"] == null
+            ? []
+            : List<Area>.from(
+            json["area"].map((x) => Area.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
     "lat": lat,
     "long": long,
     "status": status,
+    "area": area == null
+        ? []
+        : List<dynamic>.from(area!.map((x) => x.toJson())),
+  };
+}
+
+class Area {
+  double? latitude;
+  double? longitude;
+
+  Area({
+    this.latitude,
+    this.longitude,
+  });
+
+  factory Area.fromJson(Map<String, dynamic> json) => Area(
+    latitude: json["lat"]?.toDouble(),
+    longitude: json["long"]?.toDouble(),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "lat": latitude,
+    "long": longitude,
   };
 }
 
