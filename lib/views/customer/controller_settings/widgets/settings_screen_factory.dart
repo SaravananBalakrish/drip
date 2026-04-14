@@ -38,7 +38,7 @@ class SettingsScreenFactory {
       case 'General':
         if(isNarrow){
           return GeneralSettingsNarrow(controllerId: ctx.controllerId, customerId: ctx.customerId,
-          isSubUser: ctx.isSubUser, userId: ctx.userId);
+              isSubUser: ctx.isSubUser, userId: ctx.userId);
         }else{
           return GeneralSettingWide(
             customerId: ctx.customerId,
@@ -181,7 +181,7 @@ class SettingsScreenFactory {
           imeiNo: ctx.imeiNo,
           modelId: ctx.modelId,
         ) : MapScreenOro(userId: ctx.userId, customerId: ctx.customerId, controllerId: ctx.controllerId, imeiNo: ctx.imeiNo, modelId: ctx.modelId,)
-;
+        ;
 
       case 'Geography Area':
         return MapScreenAllArea(
