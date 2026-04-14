@@ -503,9 +503,6 @@ class _PreviewScreenState extends State<PreviewScreen> {
         "hardware": AppConstants.ecoGemAndPlusModelList.contains(widget.modelId) ? ecoGemWFPayloadList : dataToMqtt
       };
       userData.addAll(dataToSend);
-      // print("ecoGemWFPayloadList :: $ecoGemWFPayloadList");
-      // print("dataToMqtt :: ${dataToMqtt['2500']['2501']}");
-      // print("dataToMqtt :: ${dataToMqtt['2500']['2502']}");
       try {
         if(AppConstants.ecoGemAndPlusModelList.contains(widget.modelId)) {
           final result = await showDialog<String>(
@@ -534,7 +531,6 @@ class _PreviewScreenState extends State<PreviewScreen> {
                 setState(() {
                   userData['controllerReadStatus'] = "1";
                 });
-                // showSnackBar(message: "${mqttPayloadProvider.messageFromHw['Name']} from controller", context: context);
               },
               payload: dataToMqtt,
               payloadCode: "2500",
@@ -543,7 +539,6 @@ class _PreviewScreenState extends State<PreviewScreen> {
         }
       } catch(error) {
         ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: 'Failed to update because of $error'));
-        // print("Error: $error");
       }
 
       Future.delayed(const Duration(milliseconds: 300), () async {

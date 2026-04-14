@@ -131,6 +131,7 @@ class InventoryViewModel extends SafeChangeNotifier {
       int catId,
       String catName,
       String mdlName,
+      String mdlDis,
       int mdlId,
       String imeiNo,
       int warranty,
@@ -152,7 +153,8 @@ class InventoryViewModel extends SafeChangeNotifier {
             value: product,
             label: product.modelName,
           )).toList();
-           displayEditProductDialog(context, catId, catName, mdlName, mdlId, imeiNo, warranty, productId, userId);
+           displayEditProductDialog(context, catId, catName, mdlName, mdlDis,
+               mdlId, imeiNo, warranty, productId, userId);
         } else {
           debugPrint("API Error: ${jsonData['message']}");
         }
@@ -168,7 +170,8 @@ class InventoryViewModel extends SafeChangeNotifier {
     }
   }
 
-  Future<void> displayEditProductDialog(BuildContext context, int catId, String catName, String mdlName, int mdlId, String imeiNo, int warranty, int productId, int userId) async
+  Future<void> displayEditProductDialog(BuildContext context, int catId, String catName,
+      String mdlName, String mdlDis, int mdlId, String imeiNo, int warranty, int productId, int userId) async
   {
     int indexOfInitialSelection = activeModelList.indexWhere((model) => model.modelId == mdlId);
     final formKey = GlobalKey<FormState>();
@@ -210,6 +213,7 @@ class InventoryViewModel extends SafeChangeNotifier {
                           onSelected: (ProductModel? mdl) {
                             mdlId = mdl!.modelId;
                             mdlName = mdl.modelName;
+                            mdlDis= mdl.modelDescription;
                           },
                         ),
                         const SizedBox(height: 15,),
@@ -283,7 +287,7 @@ class InventoryViewModel extends SafeChangeNotifier {
                       final body = {
                         "productId": productId,
                         "modelId": mdlId,
-                        "modelName": mdlName,
+                        "modelName": mdlDis,
                         "deviceId": ctrlIMI.text.trim(),
                         "warrantyMonths": ctrlWrM.text,
                         'modifyUser': userId
