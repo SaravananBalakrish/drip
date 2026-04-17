@@ -78,7 +78,7 @@ class _MyAppState extends State<MyApp> {
           themeMode: ThemeMode.light,
           home: navigateToInitialScreen(snapshot.data ?? Routes.login),
           onGenerateRoute: Routes.generateRoute,
-          // home: const ConfigBasePage(masterData: {"userId":2,"customerId":554,"controllerId":2323,"productId":2314,"deviceId":"3C610512EAD4","deviceName":"1010 BSS","categoryId":2,"categoryName":"ORO PUMP","modelId":78,"modelDescription":"1010 BSS","modelName":"WLCW1010BSS","groupId":547,"groupName":"WLC PUMP","connectingObjectId":["5","40"],"productStock":[]}, fromDashboard: true),
+          // home: const ConfigBasePage(masterData: {"userId":2,"customerId":16,"controllerId":2433,"productId":2429,"deviceId":"WEATHERTEST1","deviceName":"Weather (GSM)","categoryId":4,"categoryName":"ORO WEATHER","modelId":14,"modelDescription":"Weather (GSM)","modelName":"NAw1000GOOO","groupId":14,"groupName":"GREEN FIELDS","connectingObjectId":["25","29","30","31","32","33","34","35","36","37","38","39","-"],"productStock":[]}, fromDashboard: true),
         );
       },
     );

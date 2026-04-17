@@ -9,6 +9,7 @@ import 'package:oro_drip_irrigation/modules/constant/state_management/constant_p
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
+import '../../../Constants/constants.dart';
 import '../../../Widgets/status_box.dart';
 import '../../../flavors.dart';
 import '../../Preferences/view/preference_main_screen.dart';
@@ -622,6 +623,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
       listOfPayload.clear();
       listOfPayload.addAll(configPvd.getOroPumpPayload());
       listOfPayload.addAll(configPvd.getPumpWithValvePayload());
+      listOfPayload.addAll(configPvd.getWeatherMasterPayload());
     });
 
     if([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(configPvd.masterData['modelId'])){
@@ -652,7 +654,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
           'acknowledgementState' : HardwareAcknowledgementState.notSent,
           'selected' : true,
           'checkingCode' : '100',
-          'hardwareType' : HardwareType.master
+          'hardwareType' : HardwareType.gem
         });
       });
     }
@@ -711,7 +713,6 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                         },
                       ),
 
-
                     if(payloadSendState == PayloadSendState.idle) // only show send button when payloadState on idle
                       CustomMaterialButton(
                         onPressed: ()async{
@@ -731,15 +732,18 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                                 payload['acknowledgementState'] = HardwareAcknowledgementState.failed;
                               }
                               await Future.delayed(const Duration(seconds: 1));
-                              print("${payload['hardwareType']}\n sec ${sec + 1}   -- ${payload['deviceId']} \n ${mqttService.acknowledgementPayload }");
+                              debugPrint("${payload['hardwareType']}\n sec ${sec + 1}   -- ${payload['deviceId']} \n ${mqttService.acknowledgementPayload }");
                               if(mqttService.isConnected && mqttAttempt == true){
-                                mqttService.topicToPublishAndItsMessage(payload['payload'], '${Environment.mqttPublishTopic}/${configPvd.masterData['deviceId']}');
+                                mqttService.topicToPublishAndItsMessage(
+                                  AppConstants.wlcModelList.contains(configPvd.masterData['modelId'])
+                                      ? Constants.sendPayloadWithCrc(payload['payload'])
+                                      : payload['payload'],
+                                    '${Environment.mqttPublishTopic}/${configPvd.masterData['deviceId']}');
                                 mqttAttempt = false;
-
                               }
                               stateSetter((){
                                 setState(() {
-                                  if(payload['hardwareType'] as HardwareType == HardwareType.master){  // listening acknowledgement from gem
+                                  if(payload['hardwareType'] as HardwareType == HardwareType.gem){  // listening acknowledgement from gem
                                     if(mqttService.acknowledgementPayload != null){
                                       if(validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cC'], payload['deviceIdToSend']) && validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cM', '4201', 'PayloadCode'], payload['checkingCode'])){
                                         if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '200'){
@@ -748,7 +752,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                                           payload['acknowledgementState'] = HardwareAcknowledgementState.programRunning;
                                         }else if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '1'){
                                           payload['acknowledgementState'] = HardwareAcknowledgementState.hardwareUnknownError;
-                                          print('successfully!! update status for ${payload['title']}  and its code : ${mqttService.acknowledgementPayload!['cM']['4201']['Code']} -- ${payload['acknowledgementState']}');
+                                          debugPrint('successfully!! update status for ${payload['title']}  and its code : ${mqttService.acknowledgementPayload!['cM']['4201']['Code']} -- ${payload['acknowledgementState']}');
                                         }else{
                                           payload['acknowledgementState'] = HardwareAcknowledgementState.errorOnPayload;
                                         }
@@ -772,7 +776,6 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                               }
                             }
                           }
-
                           if(payloadSendState == PayloadSendState.start){  // only stop if all payload completed
                             stateSetter((){
                               setState(() {
@@ -961,7 +964,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
 
   bool validateTab(ConfigMakerTabs tab){
     bool display = false;
-    if(AppConstants.pumpWithValveModelList.contains(configPvd.masterData['modelId'])){
+    if(AppConstants.pumpWithValveModelList.contains(configPvd.masterData['modelId']) || AppConstants.weatherGsmModelList.contains(configPvd.masterData['modelId'])){
       if([ConfigMakerTabs.deviceList.name, ConfigMakerTabs.productLimit.name].contains(tab.name)){
         display = true;
       }
@@ -1017,4 +1020,4 @@ bool validatePayloadFromHardware(Map<String, dynamic>? payload, List<String> key
 
 enum HardwareAcknowledgementState{notSent, sending, failed, success, errorOnPayload, hardwareUnknownError, programRunning}
 enum PayloadSendState{idle, start, stop}
-enum HardwareType{master, pump, economic, pumpWithValve}
+enum HardwareType{gem, pump, economic, pumpWithValve, weather}
