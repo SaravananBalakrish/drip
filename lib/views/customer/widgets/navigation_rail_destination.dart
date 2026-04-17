@@ -44,10 +44,17 @@ class NavigationDestinationsBuilder {
         selectedIcon: Icon(Icons.support_agent_sharp, color: Colors.white),
         label: Text(''),
       ),
-      if ([...AppConstants.gemModelList].contains(master.modelId))
+      if ([...AppConstants.gemModelList].contains(master.modelId)
+          && ![...AppConstants.aquacultureModelList].contains(master.modelId))
         const NavigationRailDestination(
           icon: Tooltip(message: 'Weather', child: Icon(Icons.sunny_snowing)),
           selectedIcon: Icon(Icons.wb_sunny_rounded, color: Colors.white),
+          label: Text(''),
+        ),
+      if ([...AppConstants.aquacultureModelList].contains(master.modelId))
+        const NavigationRailDestination(
+          icon: Tooltip(message: 'Geography', child: Icon(Icons.map_outlined)),
+          selectedIcon: Icon(Icons.map_outlined, color: Colors.white),
           label: Text(''),
         ),
     ];

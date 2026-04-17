@@ -1,32 +1,32 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
+import '../../../StateManagement/mqtt_payload_provider.dart';
+import '../../../modules/config_maker/view/device_list.dart' hide DeviceList;
+import '../MapAreaModel.dart' hide Area;
+import '../googlemap_model.dart';
+import 'getlatlong.dart';
 
-import '../../StateManagement/mqtt_payload_provider.dart';
-import 'googlemap_model.dart';
-import 'oro_map/getlatlong.dart';
+ 
 
-class MapScreendevice extends StatefulWidget {
-  const MapScreendevice({Key? key}) : super(key: key);
+class SetSelectOroDeviceLocation extends StatefulWidget {
+  const SetSelectOroDeviceLocation({Key? key}) : super(key: key);
 
   @override
-  _MapScreendeviceState createState() => _MapScreendeviceState();
+  _SetSelectOroDeviceLocationState createState() => _SetSelectOroDeviceLocationState();
 }
 
 
+class _SetSelectOroDeviceLocationState extends State<SetSelectOroDeviceLocation> {
 
-class _MapScreendeviceState extends State<MapScreendevice> {
   GoogleMapController? _mapController;
   final TextEditingController _searchController = TextEditingController();
   Set<Marker> _markers = {};
   LatLng? _selectedPosition;
   DeviceList? _selectedDevice;
   int _selectedDeviceIndex = 0;
+  double _currentZoom = 15;
+
 
   late MqttPayloadProvider mqttPayloadProvider;
 
@@ -101,7 +101,7 @@ class _MapScreendeviceState extends State<MapScreendevice> {
                   _selectedPosition = position;
                   _selectedDeviceIndex = devices.indexOf(device);
                 });
-                _mapController?.animateCamera(CameraUpdate.newLatLngZoom(position, 15));
+                _mapController?.animateCamera(CameraUpdate.newLatLngZoom(position, _currentZoom));
               },
             ),
           ),
@@ -131,7 +131,7 @@ class _MapScreendeviceState extends State<MapScreendevice> {
 
     mqttPayloadProvider.notifyListeners();
     _addAllDeviceMarkers();
-    _mapController?.animateCamera(CameraUpdate.newLatLngZoom(position, 15));
+    _mapController?.animateCamera(CameraUpdate.newLatLngZoom(position, _currentZoom));
   }
 
   void _searchLocation() async {
@@ -179,7 +179,7 @@ class _MapScreendeviceState extends State<MapScreendevice> {
               icon: Icon(Icons.arrow_back),
               onPressed: () {
                 setState(() {
-               Navigator.pop(context);
+                  Navigator.pop(context);
                 });
               },
             ),
@@ -285,8 +285,11 @@ class _MapScreendeviceState extends State<MapScreendevice> {
                   child: GoogleMap(
                     mapType: MapType.hybrid,
                     onMapCreated: _onMapCreated,
+                    onCameraMove: (CameraPosition position) {
+                      _currentZoom = position.zoom;
+                    },
                     initialCameraPosition:
-                    CameraPosition(target: _getInitialCameraPosition(), zoom: 12),
+                    CameraPosition(target: _getInitialCameraPosition(), zoom: _currentZoom),
                     markers: _markers,
                     onTap: (LatLng latLng) => _updateMarker(latLng.latitude, latLng.longitude),
                   ),
@@ -299,4 +302,3 @@ class _MapScreendeviceState extends State<MapScreendevice> {
     );
   }
 }
-
