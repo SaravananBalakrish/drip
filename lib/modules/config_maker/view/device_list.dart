@@ -542,7 +542,7 @@ class _DeviceListState extends State<DeviceList> {
                                 title: const Text('Choose Node for Configuration Under Master',),
                                 content: SingleChildScrollView(
                                   child: SizedBox(
-                                    width: MediaQuery.of(context).size.width >= 400 ? 400 : MediaQuery.of(context).size.width,
+                                    width: MediaQuery.of(context).size.width >= 500 ? 500 : MediaQuery.of(context).size.width,
                                     child: DataTable(
                                       headingRowColor: WidgetStatePropertyAll(themeData.colorScheme.onBackground),
                                       dataRowColor: WidgetStatePropertyAll(themeData.colorScheme.onBackground),
@@ -630,7 +630,7 @@ class _DeviceListState extends State<DeviceList> {
                                                   )
                                               ),
                                               DataCell(
-                                                  SelectableText(device.deviceId, style: TextStyle(color: themeData.primaryColor))
+                                                  SelectableText(device.deviceId, style: TextStyle(fontWeight: FontWeight.normal, color: Theme.of(context).primaryColor, fontSize: 10))
                                               ),
                                             ]
                                         );

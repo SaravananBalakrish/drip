@@ -1712,12 +1712,9 @@ class IrrigationLogModel {
           'data' : []
         });
         var indexOfDataToAdd = graphData.length - 1;
-        print("dataSource['log'] => ${dataSource['log']}");
         for(var date in dataSource['log']){
           if(date['irrigation'].isNotEmpty){
             for(var howManyDate = 0;howManyDate < date['irrigation']['Date'].length;howManyDate++){
-              print("findDate['name'] : ${findDate['name']}");
-              print("date['irrigation']['Date'][howManyDate] : ${date['irrigation']['Date'][howManyDate]}");
               if(date['irrigation']['Date'][howManyDate].contains(findDate['name'])){
                 fixedColumnData.add(findDate['name']);
                 var myList = [];
@@ -2668,6 +2665,7 @@ GraphData getGraphData({required method,required planned,required actualDuration
   var plannedInLiters = method == 1 ? (plannedSeconds * flowRateForPerSec) : planned;
   var actualInLiters =  method == 1 ? (actualSeconds * flowRateForPerSec) : actualLiters;
   if(plannedInLiters is String){
+    print("plannedInLiters => ${plannedInLiters}");
     plannedInLiters = int.parse(plannedInLiters);
   }
   if(actualInLiters is String){

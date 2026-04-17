@@ -1005,7 +1005,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   //   )]) : "Loading..."}" : null;
   // }
 
-
   dynamic _getSubTitle(
       int categoryIndex,
       int settingIndex,
@@ -1902,36 +1901,36 @@ Widget buildCustomListTileWidget({
   Widget customWidget;
   switch(widgetType) {
     case 1:case 4:
-    customWidget = SizedBox(
-      width: 80,
-      child: TextFormField(
-        key: Key(title),
-        enabled: enabled,
-        initialValue: value is String ? value : "",
-        textAlign: TextAlign.center,
-        keyboardType: TextInputType.number,
-        inputFormatters: inputFormatters,
-        decoration: const InputDecoration(
-          hintText: "000",
-          isDense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 5),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            borderSide: BorderSide.none,
+      customWidget = SizedBox(
+        width: 80,
+        child: TextFormField(
+          key: Key(title),
+          enabled: enabled,
+          initialValue: value is String ? value : "",
+          textAlign: TextAlign.center,
+          keyboardType: TextInputType.number,
+          inputFormatters: inputFormatters,
+          decoration: const InputDecoration(
+            hintText: "000",
+            isDense: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 5),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              borderSide: BorderSide.none,
+            ),
+            fillColor: cardColor,
+            filled: true,
+            // errorText: errorText
           ),
-          fillColor: cardColor,
-          filled: true,
-          // errorText: errorText
+          onTapOutside: (_) {
+            FocusScope.of(context).unfocus();
+          },
+          onChanged: (newValue) {
+            onValueChange?.call(newValue);
+          },
         ),
-        onTapOutside: (_) {
-          FocusScope.of(context).unfocus();
-        },
-        onChanged: (newValue) {
-          onValueChange?.call(newValue);
-        },
-      ),
-    );
-    break;
+      );
+      break;
     case 2:
       customWidget = Switch(
         value: enabled ? (value != "" ? value : false) ?? false : false,
