@@ -760,7 +760,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                                       }
                                     }
                                   }
-                                  else if([HardwareType.pump, HardwareType.pumpWithValve].contains(payload['hardwareType'] as HardwareType)){
+                                  else if([HardwareType.pump, HardwareType.pumpWithValve, HardwareType.weather].contains(payload['hardwareType'] as HardwareType)){
                                     if(mqttService.acknowledgementPayload != null){
                                       if(validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cC'], payload['deviceId']) && validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cM'], payload['checkingCode'])){
                                         payload['acknowledgementState'] = HardwareAcknowledgementState.success;
@@ -992,6 +992,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
 }
 
 bool validatePayloadFromHardware(Map<String, dynamic>? payload, List<String> keys, String checkingValue){
+  print("keys : $keys   checkingValue : $checkingValue");
   bool condition = false;
   dynamic checkingNestedData = payload;
   if(payload!.containsKey('cC')){
