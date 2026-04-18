@@ -10,6 +10,7 @@ class PumpControllerData {
   dynamic power;
   String numberOfPumps;
   int dataFetchingStatus;
+  String manualMode;
 
   PumpControllerData({
     required this.pumps,
@@ -23,6 +24,7 @@ class PumpControllerData {
     required this.powerFactor,
     required this.power,
     required this.dataFetchingStatus,
+    this.manualMode = '0',
   });
 
   factory PumpControllerData.fromJson(Map<String, dynamic> json, String key, int dataFetchingStatus) {
@@ -58,6 +60,7 @@ class PumpControllerData {
       batteryStrength: lastElement['B'] ?? "",
       numberOfPumps: lastElement['NP'] ?? "0",
       dataFetchingStatus: dataFetchingStatus,
+      manualMode: lastElement['MM'] ?? '0'
     );
   }
 }
