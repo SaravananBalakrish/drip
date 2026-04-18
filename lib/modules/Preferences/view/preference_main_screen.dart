@@ -88,6 +88,8 @@ final timerSettingsIcons = [
   MdiIcons.timerStop,
   MdiIcons.timerRefresh,
   MdiIcons.timerSand,
+  MdiIcons.timerSand,
+  MdiIcons.timerSand,
 ];
 
 final currentSettingIcons = [
@@ -202,7 +204,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     // TODO: implement initState
     preferenceProvider = Provider.of<PreferenceProvider>(context, listen: false);
     mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
-    preferenceProvider.getUserPreference(userId: widget.customerId, controllerId: widget.masterData['controllerId']).then((_) {
+    preferenceProvider.getUserPreference(userId: widget.customerId, controllerId: widget.masterData['controllerId'], modelId: widget.masterData['modelId']).then((_) {
       commonPumpTabController = TabController(
           length: preferenceProvider.commonPumpSettings?.length ?? 0,
           vsync: this
