@@ -464,7 +464,9 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
         && [30, 11].contains(pumpItem.reasonCode);
 
     const excludedReasons = [0, 30, 31, 32, 40, 100];
-    final showResetButton = !excludedReasons.contains(pumpItem.reasonCode);
+    final allowedResetModelIds = [48, 49, 52, 53, 54, 55];
+    final showResetButton = !excludedReasons.contains(pumpItem.reasonCode) &&
+        allowedResetModelIds.contains(widget.masterData.modelId);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
