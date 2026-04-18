@@ -192,8 +192,19 @@ class MqttService {
             final String pt =
             MqttPublishPayload.bytesToStringAsString(
                 recMess.payload.message);
-
-            onMqttPayloadReceived(pt);
+            if(pt.isNotEmpty && pt[0] =='*' && pt[pt.length-1] == '#'){
+              String sliced = pt.substring(1, pt.length - 1);
+              debugPrint("sliced : $sliced");
+              final result = Constants.validatePayloadWithCrc(sliced);
+              debugPrint("result => $result");
+              if(result != null){
+                onMqttPayloadReceived(result);
+              }else{
+                debugPrint('Crc not match....');
+              }
+            }else{
+              onMqttPayloadReceived(pt);
+            }
           }
         },
       );
@@ -255,6 +266,7 @@ class MqttService {
   void onMqttPayloadReceived(String payload) {
     try {
       final payloadMessage = jsonDecode(payload);
+      debugPrint("payloadMessage => $payloadMessage");
       acknowledgementPayload = payloadMessage;
 
       switch (payloadMessage['mC']) {

@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
  import 'package:oro_drip_irrigation/utils/helpers/mc_permission_helper.dart';
 import 'package:oro_drip_irrigation/views/customer/scheduled_program/scheduled_program_narrow.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/connection_banner.dart';
@@ -85,10 +86,20 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
       const SettingsMenuNarrow(),
     ] :
     [
-      vm.isChanged ? PumpControllerHome(
-        userId: loggedInUser.id,
-        customerId: vm.mySiteList.data[vm.sIndex].customerId,
-        masterData: cM,
+      vm.isChanged ? Scaffold(
+        floatingActionButton: AppConstants.wlcModelList.contains(cM.modelId) ?
+        CustomerFabMenu(
+          currentMaster: cM,
+          loggedInUser: loggedInUser,
+          vm: vm,
+          callbackFunction: callbackFunction,
+          myPermissionFlags: [],
+        ) : null,
+        body: PumpControllerHome(
+          userId: loggedInUser.id,
+          customerId: vm.mySiteList.data[vm.sIndex].customerId,
+          masterData: cM,
+        ),
       ) : const Scaffold(
         body: Center(
           child: Column(

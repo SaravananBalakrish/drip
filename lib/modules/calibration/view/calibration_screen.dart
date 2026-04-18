@@ -131,7 +131,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                           children: [
                             ListTile(
                               contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
-                              title: Text('    ${object.objectName}', style: Theme.of(context).textTheme.labelLarge, overflow: TextOverflow.ellipsis,),
+                              title: Text('    ${object.name}', style: Theme.of(context).textTheme.labelLarge, overflow: TextOverflow.ellipsis,),
                               trailing: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(5),
@@ -194,7 +194,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                                                       CustomMaterialButton(title: 'Cancel',outlined: true,),
                                                     if(payloadState == HardwareAcknowledgementState.notSent)
                                                       CustomMaterialButton(
-                                                        onPressed: ()async{
+                                                        onPressed: () async{
                                                           int delayDuration = 20;
                                                           for(var delay = 0; delay < delayDuration; delay++){
                                                             if(delay == 0){
@@ -247,7 +247,6 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                                                         },
                                                         title: 'Send',
                                                       ),
-
                                                   ],
                                                 );
                                               }

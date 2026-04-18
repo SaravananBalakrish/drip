@@ -999,7 +999,6 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
             ),
             // SizedBox(height: 5,),
             const Divider(color: Color(0xffE5DADA),),
-            // SizedBox(height: 5,),
             SizedBox(
               height: 75,
               child: Column(
@@ -1191,9 +1190,9 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                 ),
                 TextButton(
                   onPressed: () async{
-
                     if(toMove == "active" || toMove == "inactive") {
-                      Map<String, dynamic> dataToMqtt = program.hardwareData;
+                      print("program.hardwareData : ${program.hardwareData}");
+                      var dataToMqtt = program.hardwareData;
                       Map<String, dynamic> deleteProgramToHardware = {
                         "3800": {
                           "3801": "${program.serialNumber};"
@@ -1201,26 +1200,48 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                       };
                       try {
                         Navigator.of(dialogContext).pop();
-                        await validatePayloadSent(
-                            dialogContext: context,
+                        if(AppConstants.ecoGemAndPlusModelList.contains(widget.modelId) && toMove == "active") {
+                          final result = await showDialog<String>(
                             context: context,
-                            acknowledgedFunction: () {
-                              setState(() {
-                                controllerReadStatus = "1";
-                              });
-                              deleteProgram(program, toMove);
-                              // showSnackBar(message: "${mqttPayloadProvider.messageFromHw['Name']} from controller", context: context);
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return EcoGemProgressDialog(
+                                payloads: List<String>.from(dataToMqtt),
+                                deviceId: widget.deviceId,
+                                mqttService: MqttService(),
+                              );
                             },
-                            payload: toMove == "active" ? dataToMqtt : deleteProgramToHardware,
-                            payloadCode: toMove == "active" ? "2500" : "3800",
-                            deviceId: widget.deviceId
-                        ).whenComplete(() async {
-                          if(MqttService().acknowledgementPayload!['cM']['4201']['Code'] != "200") {
+                          );
+
+                          if (result != null) {
                             setState(() {
-                              controllerReadStatus = "0";
+                              controllerReadStatus = result;
                             });
+                            deleteProgram(program, toMove);
                           }
-                        });
+                        }else{
+                          await validatePayloadSent(
+                              dialogContext: context,
+                              context: context,
+                              acknowledgedFunction: () {
+                                setState(() {
+                                  controllerReadStatus = "1";
+                                });
+                                deleteProgram(program, toMove);
+                                // showSnackBar(message: "${mqttPayloadProvider.messageFromHw['Name']} from controller", context: context);
+                              },
+                              payload: toMove == "active" ? dataToMqtt : deleteProgramToHardware,
+                              payloadCode: toMove == "active" ? "2500" : "3800",
+                              deviceId: widget.deviceId
+                          ).whenComplete(() async {
+                            if(MqttService().acknowledgementPayload!['cM']['4201']['Code'] != "200") {
+                              setState(() {
+                                controllerReadStatus = "0";
+                              });
+                            }
+                          });
+                        }
+
                         // await saveProgramDetails(program, dataToMqtt);
                         await Future.delayed(const Duration(seconds: 1), () async{
                           await irrigationProgramMainProvider.programLibraryData( widget.customerId,  widget.controllerId,);
@@ -1530,7 +1551,7 @@ Future<void> validatePayloadSent({
   MqttPayloadProvider? mqttPayloadProvider,
   required void Function() acknowledgedFunction,
   void Function()? failedFunction,
-  required Map<String, dynamic> payload,
+  required payload,
   required String payloadCode,
   required String deviceId,
 }) async {
