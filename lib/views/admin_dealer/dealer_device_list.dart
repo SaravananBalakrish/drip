@@ -16,7 +16,6 @@ class DealerDeviceList extends StatelessWidget {
     required this.userRole,
     required this.productStockList,
     required this.fromAdminPage,
-    //required this.onDeviceListAdded,
 
   });
 
@@ -24,7 +23,6 @@ class DealerDeviceList extends StatelessWidget {
   final String userRole, customerName;
   final List<StockModel> productStockList;
   final bool fromAdminPage;
-  //final Function(Map<String, dynamic>) onDeviceListAdded;
 
   @override
   Widget build(BuildContext context) {
@@ -54,18 +52,21 @@ class DealerDeviceList extends StatelessWidget {
                 PopupMenuButton(
                   tooltip: 'Add new product to $customerName',
                   color: Colors.white,
-                  child: MaterialButton(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(3),
-                      side: const BorderSide(color: Colors.white54, width: 0.5),
+                  child : Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(5),
                     ),
-                    onPressed: null,
-                    textColor: Colors.white,
                     child: const Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Text('Add New Product'),
-                        SizedBox(width: 3),
-                        Icon(Icons.arrow_drop_down, color: Colors.white),
+                        Text(
+                          'Add New Product',
+                          style: TextStyle(color: Colors.black),
+                        ),
+                        SizedBox(width: 5),
+                        Icon(Icons.arrow_drop_down, color: Colors.black54),
                       ],
                     ),
                   ),
@@ -73,53 +74,7 @@ class DealerDeviceList extends StatelessWidget {
                     viewModel.selectedProducts = List<bool>.filled(productStockList.length, false);
                   },
                   itemBuilder: (context) {
-                    return List.generate(productStockList.length + 1, (index) {
-                      if (productStockList.isEmpty) {
-                        return const PopupMenuItem(
-                          child: Text('No stock available to add in the site'),
-                        );
-                      } else if (productStockList.length == index) {
-                        return PopupMenuItem(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              MaterialButton(
-                                color: Colors.red,
-                                textColor: Colors.white,
-                                child: const Text('CANCEL'),
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              const SizedBox(width: 5),
-                              MaterialButton(
-                                color: Colors.green,
-                                textColor: Colors.white,
-                                child: const Text('ADD'),
-                                onPressed: () => viewModel.addProductToDealer(context, productStockList, /*onDeviceListAdded*/fromAdminPage),
-                              ),
-                            ],
-                          ),
-                        );
-                      }
-
-                      return PopupMenuItem(
-                        child: StatefulBuilder(
-                          builder: (context, setState) {
-                            return CheckboxListTile(
-                              title: Text(productStockList[index].categoryName),
-                              subtitle: Text(productStockList[index].imeiNo),
-                              value: viewModel.selectedProducts[index],
-                              onChanged: (bool? value) {
-                                setState(() {
-                                  viewModel.toggleProductSelection(index);
-                                });
-                              },
-                            );
-                          },
-                        ),
-                      );
-                    });
+                    return _buildProductListPopup(context, viewModel);
                   },
                 ),
                 const SizedBox(width: 20),
@@ -237,5 +192,96 @@ class DealerDeviceList extends StatelessWidget {
         },
       ),
     );
+  }
+
+  List<PopupMenuEntry> _buildProductListPopup(BuildContext context, DealerDeviceListViewModel viewModel) {
+    if (productStockList.isEmpty) {
+      return [const PopupMenuItem(child: Text('No stock available'))];
+    }
+
+    String searchText = "";
+    List<StockModel> filteredList = List.from(productStockList);
+
+    return [
+      PopupMenuItem(
+        enabled: false,
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            return SizedBox(
+              width: 200,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if(productStockList.length > 15)...[
+                    TextField(
+                      decoration: const InputDecoration(
+                        prefixIcon: Icon(Icons.search),
+                        hintText: "Search...",
+                        isDense: true,
+                        border: OutlineInputBorder(),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          searchText = value.toLowerCase();
+                          filteredList = productStockList.where((item) {
+                            return item.categoryName.toLowerCase().contains(searchText) ||
+                                item.imeiNo.toLowerCase().contains(searchText);
+                          }).toList();
+                        });
+                      },
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+
+                  SizedBox(
+                    height: 350,
+                    child: ListView.builder(
+                      itemCount: filteredList.length,
+                      itemBuilder: (context, index) {
+                        final item = filteredList[index];
+                        final originalIndex = productStockList.indexOf(item);
+
+                        return CheckboxListTile(
+                          title: Text(item.categoryName),
+                          subtitle: Text(item.imeiNo),
+                          value: viewModel.selectedProducts[originalIndex],
+                          onChanged: (value) {
+                            setState(() {
+                              viewModel.toggleProductSelection(originalIndex);
+                            });
+                          },
+                        );
+                      },
+                    ),
+                  ),
+
+                  const SizedBox(height: 5),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      MaterialButton(
+                        color: Colors.red,
+                        textColor: Colors.white,
+                        child: const Text('CANCEL'),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                      MaterialButton(
+                        color: Colors.green,
+                        textColor: Colors.white,
+                        child: const Text('ADD'),
+                        onPressed: () {
+                          viewModel.addProductToDealer(context, productStockList, fromAdminPage);
+                        },
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    ];
   }
 }

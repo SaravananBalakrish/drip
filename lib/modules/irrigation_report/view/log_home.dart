@@ -308,6 +308,7 @@ class _LogHomeState extends State<LogHome> {
                   //Todo date
                   try{
                     if(data['irrigation']['Date'] != null){
+                      print(data['irrigation']['Date'] );
                       for(var howManyDate in data['irrigation']['Date']){
                         setState(() {
                           if (!date.any((element) => element['name'] == howManyDate)) {
