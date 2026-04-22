@@ -766,6 +766,9 @@ class MqttPayloadProvider with ChangeNotifier {
         else if(data.containsKey('5100') && data['5100'] != null && data['5100'].isNotEmpty){
           weatherModelinstance = WeatherModel.fromJson(data);
         }
+        else if(data.containsKey('7900') && data['7900'] != null && data['7900'].isNotEmpty){
+          weatherModelinstance = WeatherModel.fromJson(data);
+        }
         else if(data['mC'] != null && data["mC"].contains("VIEW")) {
           cCList = {...cCList, data['cC']}.toList();
           viewSetting = data;
