@@ -212,7 +212,7 @@ class _WeatherGsmState extends State<WeatherGsm> {
     final json = widget.jsondata;
 
     /// 🔹 Get raw
-    final raw = json['weatherLive']?['cM']?['5101']?.toString() ?? '';
+    final raw = json['weatherLive']?['cM']?['7901']?.toString() ?? '';
 
     /// 🔹 Parse
     final parsed = parseLive5101(raw);
