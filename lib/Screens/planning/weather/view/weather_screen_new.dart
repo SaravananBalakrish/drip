@@ -282,7 +282,8 @@ class _LineTabViewState extends State<_LineTabView> {
       String tempText,
       String windText,
       String humidityText,
-      ) {
+      )
+  {
     return Row(
       children: [
         Padding(
@@ -297,7 +298,7 @@ class _LineTabViewState extends State<_LineTabView> {
                       icon:  const Icon(Icons.refresh),
                       onPressed: () {
                         Request();
-                        widget.vm.fetchWeatherData(widget.customerId, widget.userId);
+                        widget.vm.fetchWeatherData(widget.customerId, widget.userId,);
                       },
                     ),
                     Text("Get Live Data")
@@ -319,7 +320,7 @@ class _LineTabViewState extends State<_LineTabView> {
               Expanded(
     child: RefreshIndicator(
     onRefresh: () async {
-    widget.vm.fetchWeatherData(widget.customerId, widget.userId);
+    widget.vm.fetchWeatherData(widget.customerId, widget.userId,);
     // Wait a little to show the indicator
     await Future.delayed(const Duration(milliseconds: 500));
     },
@@ -385,7 +386,8 @@ class _LineTabViewState extends State<_LineTabView> {
       String tempText,
       String windText,
       String humidityText,
-      ) {
+      )
+  {
     return   ListView(
         padding: const EdgeInsets.all(8),
         children: [
