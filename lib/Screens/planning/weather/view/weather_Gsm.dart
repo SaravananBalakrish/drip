@@ -15,10 +15,6 @@ import '../widgets/sensor_chipGsm.dart';
 import '../widgets/sun_time_card.dart';
 import '../widgets/time_of_day_icon_new.dart';
 
-
-
-
-
 /// ================= MODELS =================
 
 class LiveSensorValue {
