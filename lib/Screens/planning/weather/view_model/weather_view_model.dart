@@ -23,12 +23,9 @@ class WeatherViewModel extends ChangeNotifier {
 
   WeatherViewModel(this.repository);
 
-  // =========================
-  // FETCH
-  // =========================
-
   Future<void> fetchWeatherData(int userId, int controllerId) async {
-    isLoadingWeather = true;
+    print("Call fetchWeatherData call ");
+     isLoadingWeather = true;
     notifyListeners();
 
     try {
@@ -41,22 +38,20 @@ class WeatherViewModel extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        // print('data:$data');
+        print('data:$data');
 
         if (data["code"] == 200) {
+
+
           weatherModel = WeatherModelNew.fromJson(data["data"]);
 
-          /// ✅ parse live once (FROM MODEL)
-          liveCache = weatherModel!.parseLive5101();
+           liveCache = weatherModel!.parseLive5101();
 
-          /// ✅ build config lookup
-          _buildConfigIndex();
+           _buildConfigIndex();
 
-          /// ✅ build irrigation tree (FROM MODEL EXTENSION)
-          irrigationTree = weatherModel!.buildIrrigationLineTree();
+           irrigationTree = weatherModel!.buildIrrigationLineTree();
 
-          /// ✅ select first device
-          if (weatherModel!.deviceList.isNotEmpty) {
+           if (weatherModel!.deviceList.isNotEmpty) {
             selectedSerialNumber =
                 weatherModel!.deviceList.first.serialNumber;
           }
@@ -70,9 +65,30 @@ class WeatherViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // =========================
-  // INDEX BUILD
-  // =========================
+
+  Future<void> fetchWeatherDataGsm(int userId, int controllerId,Map<String,dynamic> data) async {
+    print("call fetchWeatherDataGsm");
+      isLoadingWeather = true;
+    notifyListeners();
+
+    try {
+          print('data:$data');
+          weatherModel = WeatherModelNew.fromJson(data["data"]);
+           liveCache = weatherModel!.parseLive5101();
+           _buildConfigIndex();
+           irrigationTree = weatherModel!.buildIrrigationLineTree();
+           if (weatherModel!.deviceList.isNotEmpty) {
+            selectedSerialNumber =
+                weatherModel!.deviceList.first.serialNumber;
+        }
+
+    } catch (e, st) {
+      debugPrint("Weather error: $e\n$st");
+    }
+    isLoadingWeather = false;
+    notifyListeners();
+  }
+
 
   void _buildConfigIndex() {
     if (weatherModel == null) return;
@@ -83,9 +99,6 @@ class WeatherViewModel extends ChangeNotifier {
     };
   }
 
-  // =========================
-  // FLAGS
-  // =========================
 
   bool get hasAnyWeatherStation {
     if (weatherModel == null) return false;
@@ -95,9 +108,6 @@ class WeatherViewModel extends ChangeNotifier {
     );
   }
 
-  // =========================
-  // SELECTED DEVICE
-  // =========================
 
   WeatherDeviceList? get selectedDevice {
     if (weatherModel == null || selectedSerialNumber == null) return null;
@@ -113,9 +123,6 @@ class WeatherViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // =========================
-  // SENSOR LOOKUP
-  // =========================
 
   LiveSensorValue? getSensorLiveByName({
     required String objectName,
@@ -162,7 +169,8 @@ class WeatherViewModel extends ChangeNotifier {
     required String objectName,
     required int controllerId,
     double? objectSno,
-  }) {
+  })
+  {
      final config = configIndex["${controllerId}_$objectName"];
     if (config == null) return null;
 
