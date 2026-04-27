@@ -72,8 +72,7 @@ class GeneralSettingViewModel extends ChangeNotifier {
         "userId": customerId!,
         "controllerId": controllerId!
       };
-
-      var response = await repository.fetchMasterControllerDetails(body);
+       var response = await repository.fetchMasterControllerDetails(body);
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -82,23 +81,23 @@ class GeneralSettingViewModel extends ChangeNotifier {
           final firstItem =
           (data["data"] as List).isNotEmpty ? data["data"][0] : {};
 
-          farmName = firstItem['groupName'];
-          controllerCategory = firstItem['deviceName'];
-          modelName = firstItem['modelName'];
-          deviceId = firstItem['deviceId'];
-          categoryName = firstItem['categoryName'];
-          modelId = firstItem['modelId'];
-          groupId = firstItem['groupId'];
+          farmName = firstItem['groupName'] ?? "";
+          controllerCategory = firstItem['deviceName'] ?? "";
+          modelName = firstItem['modelName'] ?? "";
+          deviceId = firstItem['deviceId'] ?? "";
+          categoryName = firstItem['categoryName'] ?? "";
+          modelId = firstItem['modelId'] ?? 0;
+          groupId = firstItem['groupId'] ?? 0;
 
-          countryCode = firstItem['countryCode'];
+          countryCode = firstItem['countryCode']  ?? "";
           simNumber = firstItem['simNumber'] ?? "";
 
           controllerVersion = firstItem['hwVersion'] ?? "";
-          newVersion = firstItem['availableHwVersion'];
+          newVersion = firstItem['availableHwVersion'] ?? "";
 
           controllerLocation = firstItem['controllerLocation'] ?? "";
 
-          updateCurrentDateTime(firstItem['timeZone']);
+          updateCurrentDateTime(firstItem['timeZone'] ?? "");
 
           if (controllerVersion != newVersion) {
             timerFunction();
@@ -108,7 +107,7 @@ class GeneralSettingViewModel extends ChangeNotifier {
         }
       }
     } catch (e) {
-      debugPrint("Error getControllerInfo: $e");
+      debugPrint("Error getControllerInfo: ${e}");
     } finally {
       setLoading(false);
     }
@@ -129,7 +128,8 @@ class GeneralSettingViewModel extends ChangeNotifier {
         final data = jsonDecode(response.body);
 
         if (data["code"] == 200) {
-          subUsers = List<Map<String, dynamic>>.from(data["data"]);
+          print("data shared user --> $data");
+           subUsers = List<Map<String, dynamic>>.from(data["data"]);
         }
       }
     } catch (e) {
