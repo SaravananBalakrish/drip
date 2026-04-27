@@ -119,7 +119,8 @@ class MasterControllerModel {
   });
 
   factory MasterControllerModel.fromJson(Map<String, dynamic> json,
-      bool isSubUser) {
+      bool isSubUser)
+  {
 
     final config = json['config'] ?? json;
 
@@ -289,6 +290,44 @@ class MasterControllerModel {
       phSensors: phSensors,
 
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'controllerId': controllerId,
+      'deviceId': deviceId,
+      'deviceName': deviceName,
+      'categoryId': categoryId,
+      'categoryName': categoryName,
+      'modelId': modelId,
+      'modelName': modelName,
+      'modelDescription': modelDescription,
+      'interfaceTypeId': interfaceTypeId,
+      'interface': interface,
+      'relayOutput': relayOutput,
+      'latchOutput': latchOutput,
+      'analogInput': analogInput,
+      'digitalInput': digitalInput,
+      'communicationMode': communicationMode,
+
+      // ✅ Nested objects
+      'configObject': configObjects.map((e) => e.toJson()).toList(),
+      'nodeList': nodeList.map((e) => e.toJson()).toList(),
+      'irrigationLine': irrigationLine.map((e) => e.toJson()).toList(),
+      'program': programList.map((e) => e.toJson()).toList(),
+
+      // nullable
+      'liveMessage': live?.toJson(),
+
+      'units': units.map((e) => e.toJson()).toList(),
+      'userPermission': userPermission.map((e) => e.toJson()).toList(),
+      'ioConnection': ioConnection.map((e) => e.toJson()).toList(),
+
+      'isSubUser': isSubUser,
+
+      'ecSensor': ecSensors.map((e) => e.toJson()).toList(),
+      'phSensor': phSensors.map((e) => e.toJson()).toList(),
+    };
   }
 
 }
@@ -471,7 +510,8 @@ class IrrigationLineModel {
   });
 
   factory IrrigationLineModel.fromJson(Map<String, dynamic> json, List<ConfigObject> configObjects,
-      var moistureSensorRaw, List<WaterSourceModel> waterSources) {
+      var moistureSensorRaw, List<WaterSourceModel> waterSources)
+  {
 
     final sourcePumpList = (json['sourcePump'] as List?) ?? [];
     final sourcePumpSet = sourcePumpList.map((e) => (e as num).toDouble()).toSet();
@@ -645,6 +685,46 @@ class IrrigationLineModel {
 
       hasWeatherStation: hasWeatherStation,
     );
+
+   }
+  Map<String, dynamic> toJson() {
+    return {
+      'sNo': sNo,
+      'name': name,
+
+      // Pumps
+      'sourcePump': inletSources.map((e) => e.sNo).toList(),
+      'irrigationPump': outletSources.map((e) => e.sNo).toList(),
+      'aerator': aeratorSources.map((e) => e.sNo).toList(),
+
+      // Filtration & Fertilization
+      'centralFiltration': centralFiltration,
+      'centralFertilization': centralFertilization,
+      'localFiltration': localFiltration,
+      'localFertilization': localFertilization,
+
+      // Devices
+      'valve': valveObjects.map((e) => e.sNo).toList(),
+      'mainValve': mainValveObjects.map((e) => e.sNo).toList(),
+      'light': lightObjects.map((e) => e.sNo).toList(),
+      'fan': fanObjects.map((e) => e.sNo).toList(),
+      'gate': gateObjects.map((e) => e.sNo).toList(),
+
+      // Sensors
+      'pressureSwitch': prsSwitch.map((e) => e.sNo).toList(),
+      'pressureIn': pressureIn.map((e) => e.sNo).toList(),
+      'pressureOut': pressureOut.map((e) => e.sNo).toList(),
+      'waterMeter': waterMeter.map((e) => e.sNo).toList(),
+      'co2': co2Sensor.map((e) => e.sNo).toList(),
+      'humidity': humiditySensor.map((e) => e.sNo).toList(),
+      'soilTemperature': soilTemperature.map((e) => e.sNo).toList(),
+
+      // Weather
+      'weatherStation': hasWeatherStation ? [1] : [],
+
+      // Optional
+      'linePauseFlag': linePauseFlag,
+    };
   }
 
   void linkReferences(FilterSiteModel? cFilterSite, FertilizerSiteModel? cFertilizerSite,
@@ -683,7 +763,16 @@ class RelayStatus {
       objType: json['objectType'],
     );
   }
-
+  Map<String, dynamic> toJson() {
+    return {
+      'sNo': sNo,
+      'name': name,
+      'objectName': swName,
+      'connectionNo': rlyNo,
+      'objectType': objType,
+      'status': status,
+    };
+  }
 }
 
 class Unit {
@@ -1276,6 +1365,18 @@ class EcSensorModel {
       device: linkedNode,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sNo': sNo,
+      'name': name,
+      'controllerId': controllerId,
+      'ecControllerId': ecControllerId,
+
+      // optional nested object
+      'device': device?.toJson(),
+    };
+  }
 }
 
 class PhSensorModel {
@@ -1311,6 +1412,14 @@ class PhSensorModel {
       phControllerId: phCtrlId,
       device: linkedNode,
     );
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'sNo': sNo,
+      'name': name,
+      'controllerId': controllerId,
+      'phControllerId': phControllerId,
+    };
   }
 }
 
@@ -1798,19 +1907,47 @@ class LiveMessage {
     try {
       print("Parsing JSON: $json");
 
-      return LiveMessage(
-        cC: json['cC']?.toString() ?? '',
-        cM: json['cM'] is Map<String, dynamic>
-            ? Map<String, dynamic>.from(json['cM'])
-            : (json['cM'] is List
-            ? (json['mC'] == 'LD01'
-            ? PumpControllerData.fromJson(json, "cM", 2)
-            : <String, dynamic>{})
-            : <String, dynamic>{}),
-        cD: json['cD']?.toString() ?? '',
-        cT: json['cT']?.toString() ?? '',
-        mC: json['mC']?.toString() ?? '',
-      );
+         final mC = json['mC']?.toString() ?? '';
+        final rawCM = json['cM'];
+
+        dynamic parsedCM;
+
+        if (mC == 'LD01') {
+           parsedCM = PumpControllerData.fromJson(json, "cM", 2);
+
+        } else if (mC == '5100') {
+           parsedCM = rawCM is Map<String, dynamic>
+              ? Map<String, dynamic>.from(rawCM)
+              : {};
+
+        } else {
+           parsedCM = rawCM is Map<String, dynamic>
+              ? Map<String, dynamic>.from(rawCM)
+              : {};
+        }
+
+        return LiveMessage(
+          cC: json['cC']?.toString() ?? '',
+          cM: parsedCM,
+          cD: json['cD']?.toString() ?? '',
+          cT: json['cT']?.toString() ?? '',
+          mC: mC,
+        );
+
+
+      // return LiveMessage(
+      //   cC: json['cC']?.toString() ?? '',
+      //   cM: json['cM'] is Map<String, dynamic>
+      //       ? Map<String, dynamic>.from(json['cM'])
+      //       : (json['cM'] is List
+      //       ? (json['mC'] == 'LD01'
+      //       ? PumpControllerData.fromJson(json, "cM", 2)
+      //       : <String, dynamic>{})
+      //       : <String, dynamic>{}),
+      //   cD: json['cD']?.toString() ?? '',
+      //   cT: json['cT']?.toString() ?? '',
+      //   mC: json['mC']?.toString() ?? '',
+      // );
     } catch (e) {
       print("❌ Error in LiveMessage.fromJson: $e");
       print("JSON: $json");
@@ -1827,9 +1964,28 @@ class LiveMessage {
   }
 
   Map<String, dynamic> toJson() {
+    dynamic parsedCM;
+
+    if (mC == 'LD01' && cM is PumpControllerData) {
+      // ✅ Pump → convert model to JSON list
+      parsedCM = cM;
+
+    } else if (mC == '5100' && cM is Map<String, dynamic>) {
+      print('✅ Weather → already map');
+      // ✅ Weather → already map
+      parsedCM = Map<String, dynamic>.from(cM);
+
+    } else if (cM is Map<String, dynamic>) {
+      // fallback
+      parsedCM = Map<String, dynamic>.from(cM);
+
+    } else {
+      parsedCM = {};
+    }
+
     return {
       'cC': cC,
-      'cM': cM,
+      'cM': parsedCM,
       'cD': cD,
       'cT': cT,
       'mC': mC,
