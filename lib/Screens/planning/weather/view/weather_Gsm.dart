@@ -204,46 +204,139 @@ class _WeatherGsmState extends State<WeatherGsm> {
 
   @override
   Widget build(BuildContext context) {
-    /// 🔹 SAMPLE JSON (your data)
-    final json = widget.jsondata;
+    try {
+      /// 🔹 SAMPLE JSON (your data)
+      final json = widget.jsondata;
 
-    /// 🔹 Get raw
-    final raw = json['weatherLive']?['cM']?['7901']?.toString() ?? '';
+      /// 🔹 Get raw
+      final raw = json['weatherLive']?['cM']?['7901']?.toString() ?? '';
 
-    /// 🔹 Parse
-    final parsed = parseLive5101(raw);
+      /// 🔹 Parse
+      final parsed = parseLive5101(raw);
 
-    /// 🔹 Convert map
-    final liveMap = mapBySNo(parsed);
+      /// 🔹 Convert map
+      final liveMap = mapBySNo(parsed);
 
-    /// 🔹 Config parse
-    final configList = (json['configObject'] as List)
-        .map((e) => ConfigObject.fromJson(e))
-        .toList();
+      /// 🔹 Config parse
+      final configList = (json['configObject'] as List)
+          .map((e) => ConfigObject.fromJson(e))
+          .toList();
 
-    /// 🔹 Merge
-    final sensorList = buildSensorList(
-      configs: configList,
-      liveMap: liveMap,
-    );
+      /// 🔹 Merge
+      final sensorList = buildSensorList(
+        configs: configList,
+        liveMap: liveMap,
+      );
 
-    String getByName(String name) {
-      try {
-        final sensor = sensorList.firstWhere(
-              (e) => e.name.toLowerCase().contains(name.toLowerCase()),
-        );
-        return sensor.value.toString();
-      } catch (e) {
-        return '-';
+      String getByName(String name) {
+        try {
+          final sensor = sensorList.firstWhere(
+                (e) => e.name.toLowerCase().contains(name.toLowerCase()),
+          );
+          return sensor.value.toString();
+        } catch (e) {
+          return '-';
+        }
       }
+      final hummitysensor = getByName("Humidity Sensor");
+      final tempsensor = getByName("Temperature Sensor");
+      final windsensor = getByName("Wind Speed Sensor");
+
+      return kIsWeb ? _buildWideLayout(sensorList,
+          "${json['weatherLive']?['cT']}-${json['weatherLive']?['cD']}",
+          tempsensor, windsensor, hummitysensor,
+          "${json['weatherLive']?['cT']}") : _buildNarrowLayout(sensorList,
+          "${json['weatherLive']?['cT']}-${json['weatherLive']?['cD']}",
+          tempsensor, windsensor, hummitysensor,
+          "${json['weatherLive']?['cT']}");
     }
-       final hummitysensor = getByName("Humidity Sensor");
-    final tempsensor = getByName("Temperature Sensor");
-    final windsensor = getByName("Wind Speed Sensor");
+    catch (e, stack) {
+      debugPrint("ERROR: $e");
+      debugPrint("STACK: $stack");
 
-     return kIsWeb ? _buildWideLayout( sensorList, "${json['weatherLive']?['cT']}-${json['weatherLive']?['cD']}", tempsensor, windsensor, hummitysensor,"${json['weatherLive']?['cT']}") :  _buildNarrowLayout( sensorList, "${json['weatherLive']?['cT']}-${json['weatherLive']?['cD']}", tempsensor, windsensor, hummitysensor,"${json['weatherLive']?['cT']}");
-
+      return Scaffold(
+        body: Center(
+          child: Text(
+            "Something went wrong\n$e\n$stack",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.red,
+            ),
+          ),
+        ),
+      );
+    }
    }
+  Widget build1(BuildContext context) {
+    try {
+      final json = widget.jsondata;
+
+      final raw = json['weatherLive']?['cM']?['7901']?.toString() ?? '';
+
+      final parsed = parseLive5101(raw);
+
+      final liveMap = mapBySNo(parsed);
+
+      final configList = (json['configObject'] as List)
+          .map((e) => ConfigObject.fromJson(e))
+          .toList();
+
+      final sensorList = buildSensorList(
+        configs: configList,
+        liveMap: liveMap,
+      );
+
+      String getByName(String name) {
+        try {
+          final sensor = sensorList.firstWhere(
+                (e) => e.name.toLowerCase().contains(name.toLowerCase()),
+          );
+          return sensor.value.toString();
+        } catch (e) {
+          return '-';
+        }
+      }
+
+      final hummitysensor = getByName("Humidity Sensor");
+      final tempsensor = getByName("Temperature Sensor");
+      final windsensor = getByName("Wind Speed Sensor");
+
+      return kIsWeb
+          ? _buildWideLayout(
+        sensorList,
+        "${json['weatherLive']?['cT']}-${json['weatherLive']?['cD']}",
+        tempsensor,
+        windsensor,
+        hummitysensor,
+        "${json['weatherLive']?['cT']}",
+      )
+          : _buildNarrowLayout(
+        sensorList,
+        "${json['weatherLive']?['cT']}-${json['weatherLive']?['cD']}",
+        tempsensor,
+        windsensor,
+        hummitysensor,
+        "${json['weatherLive']?['cT']}",
+      );
+    } catch (e, stack) {
+      debugPrint("ERROR: $e");
+      debugPrint("STACK: $stack");
+
+      return Scaffold(
+        body: Center(
+          child: Text(
+            "Something went wrong\n$e",
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.red,
+            ),
+          ),
+        ),
+      );
+    }
+  }
   Request() {
     String payLoadFinal = jsonEncode({
       "5000":
