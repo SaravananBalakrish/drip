@@ -11,11 +11,13 @@ import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:oro_drip_irrigation/utils/snack_bar.dart';
+import 'package:provider/provider.dart';
 
 import '../../../models/customer/site_model.dart';
 import '../../../Screens/dashboard/wave_view.dart';
 import '../../../Widgets/sized_image.dart';
 import '../../../flavors.dart';
+import '../../../services/communication_service.dart';
 import '../../../services/http_service.dart';
 import '../model/pump_controller_data_model.dart';
 import '../widget/custom_bouncing_button.dart';
@@ -79,6 +81,12 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
   }
 
   Future<void> liveRequest() async{
+    final result = await context.read<CommunicationService>().sendCommand(
+      payload: jsonEncode({"sentSms": "#live"}),
+      serverMsg: '',
+    );
+
+    debugPrint("Send result: $result");
     mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "#live"}), "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}");
   }
 

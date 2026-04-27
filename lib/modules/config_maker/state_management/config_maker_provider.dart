@@ -47,7 +47,6 @@ class ConfigMakerProvider extends ChangeNotifier{
     6 : AppConstants.ecObjectId,
     7 : AppConstants.phObjectId,
   };
-
   SelectionMode selectedSelectionMode = SelectionMode.auto;
   int selectedConnectionNo = 0;
   String selectedType = '';
@@ -194,8 +193,6 @@ class ConfigMakerProvider extends ChangeNotifier{
             3 : currentPump.topTankFloat,
             4 : currentPump.bottomTankFloat,
           };
-          String objectName = '${controlBy[mode]}';
-          double currentSno = sNoSelection[mode]!;
           List<double> validateFloat = [];
           List<double> topTankFloatSnoForAllSource = [];
           List<double> bottomTankFloatSnoForAllSource = [];
@@ -209,28 +206,13 @@ class ConfigMakerProvider extends ChangeNotifier{
           };
           for(var src in source){
             if(src.outletPump.contains(currentPump.commonDetails.sNo)){
-              // print('take outlet pump');
-              // print("src : ${src.toJson()}");
               topSumpFloatSnoForAllSource.add(src.topFloatForOutletPump);
               bottomSumpFloatSnoForAllSource.add(src.bottomFloatForOutletPump);
             }else if(src.inletPump.contains(currentPump.commonDetails.sNo)){
-              // print('take inlet pump');
-              // print("src : ${src.toJson()}");
               topTankFloatSnoForAllSource.add(src.topFloatForInletPump);
               bottomTankFloatSnoForAllSource.add(src.bottomFloatForInletPump);
             }
           }
-          // for(var pump in widget.configPvd.pump){
-          //   if(pump.commonDetails.sNo != currentPump.commonDetails.sNo && ){
-          //     Map<int, double> sNoSelectionForPumpFloat = {
-          //       1 : pump.topSumpFloat,
-          //       2 : pump.bottomSumpFloat,
-          //       3 : pump.topTankFloat,
-          //       4 : pump.bottomTankFloat,
-          //     };
-          //     validateFloat.add(sNoSelectionForPumpFloat[mode]!);
-          //   }
-          // }
           List<double> filteredSno =  listOfGeneratedObject.where((object) => (object.objectId == objectId && !validateFloat.contains(object.sNo) && validateFloatAvailableInSource[mode]!.contains(object.sNo))).map((object) => object.sNo!).toList();
           if(filteredSno.isNotEmpty){
             double firstValue = filteredSno[0];
@@ -263,7 +245,6 @@ class ConfigMakerProvider extends ChangeNotifier{
   }
 
   Future<List<DeviceModel>> fetchData(masterDataFromSiteConfigure, bool fromDashboard)async {
-
     try{
       print("masterDataFromSiteConfigure : $masterDataFromSiteConfigure");
       reInitialize();
@@ -431,7 +412,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     return listOfDeviceModel;
   }
 
-  Future<int> replaceDevice({required dynamic newDevice,required dynamic oldDevice, required int masterOrNode})async {
+  Future<int> replaceDevice({required dynamic newDevice, required dynamic oldDevice, required int masterOrNode})async {
     try{
       var body = {
         "userId" : masterData['userId'],
@@ -1653,7 +1634,6 @@ class ConfigMakerProvider extends ChangeNotifier{
     }
     return listOfPumpPayload;
   }
-
 
   List<Map<String, dynamic>> getWeatherMasterPayload(){
     List<DeviceModel> listOfWeatherMaster = listOfDeviceModel.where((device) => AppConstants.weatherGsmModelList.contains(device.modelId) && device.masterId != null).toList();

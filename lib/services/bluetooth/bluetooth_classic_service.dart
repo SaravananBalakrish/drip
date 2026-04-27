@@ -8,8 +8,11 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:geolocator/geolocator.dart';
 
+import '../../Constants/constants.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
+import '../../modules/PumpController/model/pump_controller_data_model.dart';
 import '../../utils/enums.dart';
+import '../mqtt_service.dart';
 import 'model/classic_bluetooth_device_model.dart';
 
 
@@ -241,6 +244,44 @@ class BluetoothClassicService {
     if (isLogging) {
       providerState?.setTraceLoading(true);
     }
+    debugPrint("_buffer => $_buffer");
+    // Handle JSON packets between * and #
+    while (_buffer.contains('*') && _buffer.contains('#')) {
+      final start = _buffer.indexOf('*');
+      final end = _buffer.indexOf('#', start);
+
+      if (start != -1 && end != -1 && end > start) {
+        final rawPacket = _buffer.substring(start + 1, end);
+
+        debugPrint("BT Raw Packet: $rawPacket");
+
+        final result = Constants.validatePayloadWithCrc(rawPacket);
+
+        if (result != null) {
+          debugPrint("BT Valid Packet: $result");
+
+          try {
+            final decoded = jsonDecode(result);
+
+            // ✅ THIS IS THE ONLY LINE YOU NEED
+            MqttService().preferenceAck = decoded;
+
+            // ✅ Continue normal processing
+            MqttService().onMqttPayloadReceived(result);
+
+          } catch (e) {
+            debugPrint("JSON decode error: $e");
+          }
+        } else {
+          debugPrint('Bluetooth CRC mismatch');
+        }
+
+        // Remove processed packet
+        _buffer = _buffer.substring(end + 1);
+      } else {
+        break;
+      }
+    }
 
     // Handle JSON packets between *Start and #End
     while (_buffer.contains('*Start') && _buffer.contains('#End')) {
@@ -269,6 +310,16 @@ class BluetoothClassicService {
       providerState?.updateReceivedPayload(jsonStr, false);
 
       switch (data['mC'].toString()) {
+        case 'LD01':
+          final pumpData = PumpControllerData.fromJson(data, "cM", 1);
+
+          // 🔥 SAME stream as MQTT
+          MqttService().pumpDashboardPayload = pumpData;
+
+          providerState?.updateLastSyncDateFromPumpControllerPayload(jsonStr);
+
+          debugPrint("Pump Dashboard Updated from Bluetooth");
+          break;
         case '7300':
           final rawList = data["cM"]?["7301"]?["ListOfWifi"];
           final wifiStatus = data["cM"]?["7301"]?["Status"];
