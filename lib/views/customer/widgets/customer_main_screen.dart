@@ -42,9 +42,9 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text('Please wait...'),
-              SizedBox(height: 10),
+                SizedBox(height: 10),
               CircularProgressIndicator(),
-            ],
+             ],
           ),
         ),
       );
