@@ -229,7 +229,7 @@ class _PumpConditionScreenState extends State<PumpConditionScreen> {
     final pumps = model.data?.pumpCondition ?? [];
 
     for (var pump in pumps) {
-      buffer.write(pump.sNo?.toStringAsFixed(3) ?? '');
+      buffer.write(pump.sNo?.toString() ?? '');
       final selected = pump.selectedPumps ?? [];
 
       if (selected.isNotEmpty) {
