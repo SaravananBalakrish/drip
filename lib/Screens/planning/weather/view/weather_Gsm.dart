@@ -103,75 +103,6 @@ class _WeatherGsmState extends State<WeatherGsm> {
       );
     }
    }
-  Widget build1(BuildContext context) {
-    try {
-      final json = widget.jsondata;
-
-      final raw = json['weatherLive']?['cM']?['7901']?.toString() ?? '';
-
-      final parsed = parseLive5101(raw);
-
-      final liveMap = mapBySNo(parsed);
-
-      final configList = (json['configObject'] as List)
-          .map((e) => ConfigObject.fromJson(e))
-          .toList();
-
-      final sensorList = buildSensorList(
-        configs: configList,
-        liveMap: liveMap,
-      );
-
-      String getByName(String name) {
-        try {
-          final sensor = sensorList.firstWhere(
-                (e) => e.name.toLowerCase().contains(name.toLowerCase()),
-          );
-          return sensor.value.toString();
-        } catch (e) {
-          return '-';
-        }
-      }
-
-      final hummitysensor = getByName("Humidity Sensor");
-      final tempsensor = getByName("Temperature Sensor");
-      final windsensor = getByName("Wind Speed Sensor");
-
-      return kIsWeb
-          ? _buildWideLayout(
-        sensorList,
-        "${json['weatherLive']?['cT']}-${json['weatherLive']?['cD']}",
-        tempsensor,
-        windsensor,
-        hummitysensor,
-        "${json['weatherLive']?['cT']}",
-      )
-          : _buildNarrowLayout(
-        sensorList,
-        "${json['weatherLive']?['cT']}-${json['weatherLive']?['cD']}",
-        tempsensor,
-        windsensor,
-        hummitysensor,
-        "${json['weatherLive']?['cT']}",
-      );
-    } catch (e, stack) {
-      debugPrint("ERROR: $e");
-      debugPrint("STACK: $stack");
-
-      return Scaffold(
-        body: Center(
-          child: Text(
-            "Something went wrong\n$e",
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.red,
-            ),
-          ),
-        ),
-      );
-    }
-  }
   Request() {
     String payLoadFinal = jsonEncode({
       "5000":
@@ -179,6 +110,9 @@ class _WeatherGsmState extends State<WeatherGsm> {
     });
     manager.topicToPublishAndItsMessage(
         payLoadFinal, '${Environment.mqttPublishTopic}/${widget.deviceID}');
+    setState(() {
+
+    });
   }
 
 
@@ -199,7 +133,17 @@ Widget _buildWideLayout(
           width: 320,
           child: Column(
             children: [
-
+              Row(
+                children: [
+                  IconButton(
+                    icon:  const Icon(Icons.refresh),
+                    onPressed: () {
+                      Request();
+                     },
+                  ),
+                  Text("Get Live Data")
+                ],
+              ),
               _weatherSummaryCard(
                 formattedDT,
                 tempText,
@@ -224,32 +168,51 @@ Widget _buildWideLayout(
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(12),
-                  child: Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
-                    children: device.map<Widget>((s) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => SensorHourlyReportPage(
-                                deviceSrNo: '${1}',
-                                sensorSrNo: s.sNo.toString(),
-                                sensorName: s.name,
-                                userId: '${widget.customerId}',
-                                controllerId: '${widget.deviceID}',
-                                unit: unit(s.name),
-                              ),
+
+                  child: Builder(
+                    builder: (context) {
+                      final orderedSensors = [
+                        ...device.where((s) =>
+                        !s.name.contains('Co2') &&
+                            !s.name.contains('Rain Fall') &&
+                            !s.name.contains('Wind Direction')
+                        ),
+                        ...device.where((s) =>
+                        s.name.contains('Co2') ||
+                            s.name.contains('Rain Fall') ||
+                            s.name.contains('Wind Direction')
+                        ),
+                      ];
+
+                      print("orderedSensors:${orderedSensors}");
+                      return Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        children: orderedSensors.map<Widget>((s) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => SensorHourlyReportPage(
+                                    deviceSrNo: '${1}',
+                                    sensorSrNo: s.sNo.toString(),
+                                    sensorName: s.name,
+                                    userId: '${widget.customerId}',
+                                    controllerId: '${widget.controllerId}',
+                                    unit: unit(s.name),
+                                  ),
+                                ),
+                              );
+                            },
+                            child: SensorChipGsm(
+                              device: s,
+                              isNarrow: false,
                             ),
                           );
-                        },
-                        child: SensorChipGsm(
-                          device: s,
-                          isNarrow: false,
-                        ),
+                        }).toList(),
                       );
-                    }).toList(),
+                    },
                   ),
                 ),
               ),
@@ -298,7 +261,7 @@ Widget _buildWideLayout(
                       MaterialPageRoute(
                         builder: (_) => SensorHourlyReportPage(
                           deviceSrNo: '${1}',
-                          sensorSrNo: s.sNo.toString(), sensorName: s.name, userId: '${widget.customerId}', controllerId: "${widget.deviceID}" ,unit:unit(s.name),
+                          sensorSrNo: s.sNo.toString(), sensorName: s.name, userId: '${widget.customerId}', controllerId: "${widget.controllerId}" ,unit:unit(s.name),
                         ),
                       ),
                     );

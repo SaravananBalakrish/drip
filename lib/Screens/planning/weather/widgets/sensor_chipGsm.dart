@@ -17,6 +17,7 @@ class SensorChipGsm extends StatelessWidget {
     if (device == null) return const SizedBox.shrink();
     return Container(
       width: isNarrow ? double.infinity : 230,
+      height: 210,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
