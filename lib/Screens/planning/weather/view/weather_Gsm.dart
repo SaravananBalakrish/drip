@@ -184,8 +184,7 @@ Widget _buildWideLayout(
                         ),
                       ];
 
-                      print("orderedSensors:${orderedSensors}");
-                      return Wrap(
+                       return Wrap(
                         spacing: 12,
                         runSpacing: 12,
                         children: orderedSensors.map<Widget>((s) {
