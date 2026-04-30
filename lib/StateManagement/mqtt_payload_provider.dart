@@ -632,6 +632,7 @@ class MqttPayloadProvider with ChangeNotifier {
 
    void updateLastSyncDateFromPumpControllerPayload(String payload) async{
 
+
      if (_receivedPayload != payload) {
        _receivedPayload = payload;
 
@@ -664,7 +665,7 @@ class MqttPayloadProvider with ChangeNotifier {
 
       try {
         Map<String, dynamic> data = _receivedPayload.isNotEmpty? jsonDecode(_receivedPayload) : {};
-         debugPrint('_receivedPayload------>:$_receivedPayload');
+         // debugPrint('_receivedPayload------>:$_receivedPayload');
 
         if(data['mC']=='2400'){
 
@@ -766,6 +767,7 @@ class MqttPayloadProvider with ChangeNotifier {
         else if(data.containsKey('5100') && data['5100'] != null && data['5100'].isNotEmpty){
           weatherModelinstance = WeatherModel.fromJson(data);
         }
+
         else if(data['mC'] != null && data["mC"].contains("VIEW")) {
           cCList = {...cCList, data['cC']}.toList();
           viewSetting = data;
@@ -867,9 +869,14 @@ class MqttPayloadProvider with ChangeNotifier {
 
         }
 
+
         if (data["mC"] == "PRGVIEW") {
           _programPreview = data["cM"];
           notifyListeners();
+        }
+
+        if (data['mC'] == "7900") {
+          liveDateAndTime = '${data['cD'] ?? "--"} ${data['cT'] ?? "--"}';
         }
 
         if (data["mC"] == "SEQVIEW") {
