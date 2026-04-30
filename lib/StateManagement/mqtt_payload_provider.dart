@@ -867,6 +867,10 @@ class MqttPayloadProvider with ChangeNotifier {
 
         }
 
+        if (data['mC'] == "7900") {
+          liveDateAndTime = '${data['cD'] ?? "--"} ${data['cT'] ?? "--"}';
+        }
+
         if (data["mC"] == "PRGVIEW") {
           _programPreview = data["cM"];
           notifyListeners();
