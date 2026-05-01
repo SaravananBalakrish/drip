@@ -122,6 +122,8 @@ class MasterControllerModel {
       bool isSubUser)
   {
 
+    print(json);
+
     final config = json['config'] ?? json;
 
     final configObjectsRaw = (config['configObject'] as List?) ?? [];
