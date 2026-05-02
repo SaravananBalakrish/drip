@@ -125,7 +125,7 @@ class _WeatherGsmState extends State<WeatherGsm> {
       cD = json['weatherLive']?['cD']?.toString() ?? '';
     }
 
-     return kIsWeb ? _buildWideLayout( sensorList, "$cT-$cD", tempsensor, windsensor, hummitysensor,"${json['weatherLive']?['cT']}") :  _buildNarrowLayout( sensorList,"$cT-$cD", tempsensor, windsensor, hummitysensor,"${json['weatherLive']?['cT']}");
+     return kIsWeb ? _buildWideLayout( sensorList, "$cT-$cD", tempsensor, windsensor, hummitysensor,"$cT") :  _buildNarrowLayout( sensorList,"$cT-$cD", tempsensor, windsensor, hummitysensor,"$cT");
 
    }
 
