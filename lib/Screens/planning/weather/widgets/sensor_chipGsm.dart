@@ -3,11 +3,11 @@ import 'package:oro_drip_irrigation/Screens/planning/weather/view/weather_Gsm.da
 import 'package:oro_drip_irrigation/Screens/planning/weather/widgets/sensor_tile_new.dart';
 
 class SensorChipGsm extends StatelessWidget {
-    final SensorDisplayModel device;
+  final SensorDisplayModel device;
   final bool isNarrow;
 
   const SensorChipGsm({super.key,
-     required this.device,
+    required this.device,
     required this.isNarrow,
   });
 
@@ -17,6 +17,7 @@ class SensorChipGsm extends StatelessWidget {
     if (device == null) return const SizedBox.shrink();
     return Container(
       width: isNarrow ? double.infinity : 230,
+      height: 210,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -43,9 +44,11 @@ class SensorChipGsm extends StatelessWidget {
     if (type.contains('humidity')) return '%';
     if (type.contains('co2')) return 'ppm';
     if (type.contains('direction')) return '°';
-    if (type.contains('Wind')) return 'km/h';
+    if (type.contains('wind')) return 'km/h';
     if (type.contains('rain')) return 'mm';
     if (type.contains('lux')) return 'Lu';
+    if (type.contains('ldr')) return 'Ω';
+    if (type.contains('leaf')) return '%';
     return '';
   }
 }
