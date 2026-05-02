@@ -426,30 +426,6 @@ class BluetoothBleService {
       // Many BLE devices don't need MTU change and it can cause issues
       debugPrint("⚠️ Skipping MTU request to avoid bonding issues");
 
-      // Optional: Try MTU only if absolutely necessary, but with error handling
-      // Uncomment this only if you really need MTU
-      /*
-    try {
-      if (_connectedDevice != null && await _connectedDevice!.device.isConnected) {
-        final mtuSizes = [247, 185, 128, 64];
-        for (var mtu in mtuSizes) {
-          try {
-            await _connectedDevice!.device.requestMtu(mtu).timeout(
-              const Duration(seconds: 2),
-              onTimeout: () => throw TimeoutException("MTU timeout"),
-            );
-            debugPrint("✅ BLE MTU set to $mtu");
-            break;
-          } catch (e) {
-            debugPrint("⚠️ BLE MTU $mtu request failed: $e");
-            continue;
-          }
-        }
-      }
-    } catch (e) {
-      debugPrint("⚠️ MTU configuration failed but continuing: $e");
-    }
-    */
 
       // Step 11: Update final status to CONNECTED
       d.connectionState = BlueConnectionState.connected;
@@ -565,7 +541,7 @@ class BluetoothBleService {
     debugPrint("💓 Starting BLE keep-alive (every $KEEP_ALIVE_INTERVAL seconds)");
 
     _keepAliveTimer = Timer.periodic(
-      Duration(seconds: KEEP_ALIVE_INTERVAL),
+      const Duration(seconds: KEEP_ALIVE_INTERVAL),
           (timer) async {
         if (_connectedDevice != null &&
             _connectedDevice!.connectionState == BlueConnectionState.connected &&
