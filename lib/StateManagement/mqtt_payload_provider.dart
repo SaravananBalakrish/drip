@@ -298,7 +298,7 @@ class MqttPayloadProvider with ChangeNotifier {
     isTraceLoading = loading;
     notifyListeners();
   }
-  void setTraceLoadingsize(int size) {
+  void setTraceLoadingSize(int size) {
     traceLogSize = size;
     notifyListeners();
   }
