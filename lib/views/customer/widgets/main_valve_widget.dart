@@ -31,6 +31,12 @@ class BuildMainValve extends StatelessWidget {
         final statusParts = status?.split(',') ?? [];
         if (statusParts.isNotEmpty) {
           valve.status = int.parse(statusParts[1]);
+
+          if(statusParts.length > 2){
+            valve.completePercent = int.parse(statusParts[2]);
+          }else{
+            valve.completePercent = 0;
+          }
         }
 
         const width = 70.0;
@@ -52,9 +58,10 @@ class BuildMainValve extends StatelessWidget {
                     width: iconSize,
                     height: iconSize,
                     child: isNarrow ? Image.asset('assets/png/m_main_valve_gray.png',
-                      color: valve.status == 0 ? Colors.black54 : valve.status == 1 ? Colors.green
+                      color: valve.completePercent==100? Colors.blue.shade500 :
+                      valve.status == 0 ? Colors.black54 : valve.status == 1 ? Colors.green
                           : valve.status == 1 ? Colors.orange : Colors.red,
-                    ) : AppConstants.getAsset('main_valve', valve.status, '', 0),
+                    ) : AppConstants.getAsset('main_valve', valve.status, '', valve.completePercent),
                   ),
                   Text(
                     valve.name,

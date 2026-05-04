@@ -119,6 +119,8 @@ class AppConstants {
   static const String agitatorNotOFF = "dp_agitator_right_r.png";
 
   static const String mainValveOFF = "main_valve_gray.png";
+  static const String mainValveCompleted = "main_valve_blue.png";
+  static const String mainValvePending = "main_valve_yellow.png";
   static const String mainValveON = "main_valve_green.png";
   static const String mainValveNotON = "main_valve_orange.png";
   static const String mainValveNotOFF = "main_valve_red.png";
@@ -284,7 +286,7 @@ class AppConstants {
         imagePathFinal = _getAgitatorImagePath(keyTwo);
         break;
       case 'main_valve':
-        imagePathFinal = _getMainValveImagePath(keyTwo);
+        imagePathFinal = _getMainValveImagePath(keyTwo, cpr);
       case 'valve':
         imagePathFinal = _getValveImagePath(keyTwo, cpr);
         break;
@@ -595,9 +597,14 @@ class AppConstants {
     }
   }
 
-  static String _getMainValveImagePath(int status) {
+  static String _getMainValveImagePath(int status, int cPer) {
     switch (status) {
       case 0:
+        if (cPer == 100) {
+          return mainValveCompleted;
+        }else if (cPer > 0 && cPer < 100) {
+          return mainValvePending;
+        }
         return mainValveOFF;
       case 1:
         return mainValveON;
