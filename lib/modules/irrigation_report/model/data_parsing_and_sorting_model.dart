@@ -1712,12 +1712,9 @@ class IrrigationLogModel {
           'data' : []
         });
         var indexOfDataToAdd = graphData.length - 1;
-        print("dataSource['log'] => ${dataSource['log']}");
         for(var date in dataSource['log']){
           if(date['irrigation'].isNotEmpty){
             for(var howManyDate = 0;howManyDate < date['irrigation']['Date'].length;howManyDate++){
-              print("findDate['name'] : ${findDate['name']}");
-              print("date['irrigation']['Date'][howManyDate] : ${date['irrigation']['Date'][howManyDate]}");
               if(date['irrigation']['Date'][howManyDate].contains(findDate['name'])){
                 fixedColumnData.add(findDate['name']);
                 var myList = [];
@@ -2657,17 +2654,22 @@ class GraphData{
   GraphData({required this.actualFrom,required this.actualTo,required this.plannedFrom,required this.plannedTo,required this.seqName,required this.preFrom,required this.preTo,required this.postFrom,required this.postTo,});
 }
 
-GraphData getGraphData({required method,required planned,required actualDuration,required actualLiters,required flowRate,required String name,preValue,postValue}){
+GraphData getGraphData({required method, required planned, required actualDuration,
+  required actualLiters,required flowRate, required String name, preValue, postValue}){
+
+  int finalMethod = method is String ? int.tryParse(method) ?? 0 : method;
+
   var preValueInSec = DataConvert().parseTimeString(preValue ?? '00:00:00');
   var postValueInSec = DataConvert().parseTimeString(postValue ?? '00:00:00');
-  var plannedSeconds = method == 1 ? DataConvert().parseTimeString(planned) : 0;
-  var actualSeconds = method == 1 ? DataConvert().parseTimeString(actualDuration) : 0;
+  var plannedSeconds = finalMethod == 1 ? DataConvert().parseTimeString(planned) : 0;
+  var actualSeconds = finalMethod == 1 ? DataConvert().parseTimeString(actualDuration) : 0;
   var flowRateForPerSec = flowRate/3600;
   var preInLiters = preValueInSec * flowRateForPerSec;
   var postInLiters = postValueInSec * flowRateForPerSec;
-  var plannedInLiters = method == 1 ? (plannedSeconds * flowRateForPerSec) : planned;
-  var actualInLiters =  method == 1 ? (actualSeconds * flowRateForPerSec) : actualLiters;
+  var plannedInLiters = finalMethod == 1 ? (plannedSeconds * flowRateForPerSec) : planned;
+  var actualInLiters =  finalMethod == 1 ? (actualSeconds * flowRateForPerSec) : actualLiters;
   if(plannedInLiters is String){
+    print("plannedInLiters => ${plannedInLiters}");
     plannedInLiters = int.parse(plannedInLiters);
   }
   if(actualInLiters is String){

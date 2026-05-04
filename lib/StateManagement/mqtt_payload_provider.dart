@@ -11,7 +11,7 @@ import '../utils/enums.dart';
 
 
 class MqttPayloadProvider with ChangeNotifier {
-   final MQTTConnectionState _appConnectionState = MQTTConnectionState.disconnected;
+  final MQTTConnectionState _appConnectionState = MQTTConnectionState.disconnected;
 
   dynamic spa = '';
   String dashBoardPayload = '', schedulePayload = '';
@@ -77,18 +77,18 @@ class MqttPayloadProvider with ChangeNotifier {
   String uard4Log = '';
   String ctrllogtimecheck = '';
   List<dynamic> units = [];
-   Map<String, dynamic> mqttUpdateSettings = {};
-   Set<String> scheduleMessagesSet = {};
-   Set<String> uardMessagesSet = {};
-   Set<String> uard0MessagesSet = {};
-   Set<String> uard4MessagesSet = {};
-   String Loara1verssion = '';
-   String Loara2verssion = '';
-   bool ftpLog = false;
+  Map<String, dynamic> mqttUpdateSettings = {};
+  Set<String> scheduleMessagesSet = {};
+  Set<String> uardMessagesSet = {};
+  Set<String> uard0MessagesSet = {};
+  Set<String> uard4MessagesSet = {};
+  String Loara1verssion = '';
+  String Loara2verssion = '';
+  bool ftpLog = false;
 
   //kamaraj
-   String _receivedPayload = '';
-   String get receivedPayload => _receivedPayload;
+  String _receivedPayload = '';
+  String get receivedPayload => _receivedPayload;
 
   int powerSupply = 0;
   int wifiStrength = 0;
@@ -108,165 +108,168 @@ class MqttPayloadProvider with ChangeNotifier {
   List<String> lineLiveMessage = [];
   List<String> alarmDL = [];
 
-   String? _programPreview;
-   String? _sequencePreview;
-   List<String> _novaVoltage =[];
+  String? _programPreview;
+  String? _sequencePreview;
+  List<String> _novaVoltage =[];
 
 
-   final Map<String, String> _pumpOnOffStatusMap = {};
-   final Map<String, String> _pumpOtherDetailMap = {};
-   final Map<String, String> _filterOnOffStatusMap = {};
-   final Map<String, String> _filterOtherDetailMap = {};
-   final Map<String, String> _channelOnOffStatusMap = {};
-   final Map<String, String> _channelOtherDetailMap = {};
-   final Map<String, String> _valveOnOffStatusMap = {};
-   final Map<String, String> _lightOnOffStatusMap = {};
-   final Map<String, String> _fanOnOffStatusMap = {};
-   final Map<String, String> _gateOnOffStatusMap = {};
-   final Map<String, String> _sensorValueMap = {};
-   final Map<String, String> _boosterPumpOnOffStatusMap = {};
-   final Map<String, String> _agitatorOnOffStatusMap = {};
+  final Map<String, String> _pumpOnOffStatusMap = {};
+  final Map<String, String> _pumpOtherDetailMap = {};
+  final Map<String, String> _filterOnOffStatusMap = {};
+  final Map<String, String> _filterOtherDetailMap = {};
+  final Map<String, String> _channelOnOffStatusMap = {};
+  final Map<String, String> _channelOtherDetailMap = {};
+  final Map<String, String> _valveOnOffStatusMap = {};
+  final Map<String, String> _lightOnOffStatusMap = {};
+  final Map<String, String> _fanOnOffStatusMap = {};
+  final Map<String, String> _gateOnOffStatusMap = {};
+  final Map<String, String> _sensorValueMap = {};
+  final Map<String, String> _boosterPumpOnOffStatusMap = {};
+  final Map<String, String> _agitatorOnOffStatusMap = {};
 
-   final Map<String, FertilizerSiteLiveModel> _fertilizerSiteMap = {};
-   final Map<String, FertilizerChannelLiveModel> _fertilizerChannelMap = {};
-
-
-   List<Map<String, dynamic>> _wifiList = [];
-   List<Map<String, dynamic>> get wifiList => _wifiList;
-
-   String? _wifiMessage;
-   String? get wifiMessage => _wifiMessage;
-
-   String? _wifiStatus;
-   String? get wifiStatus => _wifiStatus;
-
-   bool wifiStateChanging = false;
-
-   String? _interfaceType;
-   String? get interfaceType => _interfaceType;
-
-   String? _ipAddress;
-   String? get ipAddress => _ipAddress;
-   List<String> traceLog = [];
-   bool isTraceLoading = false;
-   int traceLogSize = 0;
-   int totalTraceLogSize = 0;
-
-   //for blue repository classic
-   ClassicBluetoothDeviceModel? _connectedDeviceClassic;
-   ClassicBluetoothDeviceModel? get connectedDeviceClassic => _connectedDeviceClassic;
-
-   List<ClassicBluetoothDeviceModel> _pairedDevicesClassic = [];
-   List<ClassicBluetoothDeviceModel> get pairedDevicesClassic => _pairedDevicesClassic;
+  final Map<String, FertilizerSiteLiveModel> _fertilizerSiteMap = {};
+  final Map<String, FertilizerChannelLiveModel> _fertilizerChannelMap = {};
 
 
-   //for blue repository ble
-   BleBluetoothDeviceModel? _connectedDeviceBle;
-   BleBluetoothDeviceModel? get connectedDeviceBle => _connectedDeviceBle;
+  List<Map<String, dynamic>> _wifiList = [];
+  List<Map<String, dynamic>> get wifiList => _wifiList;
 
-   List<BleBluetoothDeviceModel> _pairedDevicesBle = [];
-   List<BleBluetoothDeviceModel> get pairedDevicesBle => _pairedDevicesBle;
-
-   // Add these getters for connection status
-   bool get isBleConnected {
-     return _connectedDeviceBle != null &&
-         _connectedDeviceBle!.connectionState == BlueConnectionState.connected;
-   }
-
-   bool get isClassicConnected {
-     return _connectedDeviceClassic != null &&
-         _connectedDeviceClassic!.connectionState == BlueConnectionState.connected;
-   }
+  Map<String, dynamic> gsmWeatherLive = {};
 
 
-   void updateClassicConnectedDeviceStatus(ClassicBluetoothDeviceModel? device) {
-     _connectedDeviceClassic = device;
-     notifyListeners();
-   }
+  String? _wifiMessage;
+  String? get wifiMessage => _wifiMessage;
 
-   void updateClassicPairedDevices(List<ClassicBluetoothDeviceModel> devices) {
-     _pairedDevicesClassic = devices;
-     notifyListeners();
-   }
+  String? _wifiStatus;
+  String? get wifiStatus => _wifiStatus;
 
-   void updateBleConnectedDeviceStatus(BleBluetoothDeviceModel? device) {
-     _connectedDeviceBle = device;
-     notifyListeners();
-   }
+  bool wifiStateChanging = false;
 
-   void updateBlePairedDevices(List<BleBluetoothDeviceModel> devices) {
-     _pairedDevicesBle = devices;
-     notifyListeners();
-   }
+  String? _interfaceType;
+  String? get interfaceType => _interfaceType;
 
+  String? _ipAddress;
+  String? get ipAddress => _ipAddress;
+  List<String> traceLog = [];
+  bool isTraceLoading = false;
+  int traceLogSize = 0;
+  int totalTraceLogSize = 0;
 
-   void updateClassicDeviceStatus(String address, int status) {
-     for (var device in _pairedDevicesClassic) {
-       if (device.device.address == address) {
-         if (status >= 0 && status < BlueConnectionState.values.length) {
-           device.connectionState= BlueConnectionState.values[status];
-           notifyListeners();
-         } else {
-           debugPrint('Invalid status int: $status');
-         }
-         break;
-       }
-     }
-   }
+  //for blue repository classic
+  ClassicBluetoothDeviceModel? _connectedDeviceClassic;
+  ClassicBluetoothDeviceModel? get connectedDeviceClassic => _connectedDeviceClassic;
 
-   void updateBleDeviceStatus(String deviceId, int status) {
-     for (var device in _pairedDevicesBle) {
-       if (device.device.remoteId.str == deviceId) {
-         if (status >= 0 && status < BlueConnectionState.values.length) {
-           final newState = BlueConnectionState.values[status];
-           if (device.connectionState != newState) {
-             device.connectionState = newState;
-             debugPrint("🔵 BLE Device $deviceId state changed to: $newState");
-             notifyListeners(); // CRITICAL: This triggers UI update
-           }
-         } else {
-           debugPrint('Invalid status int: $status');
-         }
-         break;
-       }
-     }
-   }
+  List<ClassicBluetoothDeviceModel> _pairedDevicesClassic = [];
+  List<ClassicBluetoothDeviceModel> get pairedDevicesClassic => _pairedDevicesClassic;
 
 
-   void updateWifiList(List<Map<String, dynamic>> list) {
-     _wifiList = list;
-     notifyListeners();
-   }
+  //for blue repository ble
+  BleBluetoothDeviceModel? _connectedDeviceBle;
+  BleBluetoothDeviceModel? get connectedDeviceBle => _connectedDeviceBle;
 
-   void updateInterfaceType(String interfaceType) {
-     _interfaceType = interfaceType;
-     notifyListeners();
-   }
+  List<BleBluetoothDeviceModel> _pairedDevicesBle = [];
+  List<BleBluetoothDeviceModel> get pairedDevicesBle => _pairedDevicesBle;
 
-   void updateIpAddress(String ip) {
-     _ipAddress = ip;
-     notifyListeners();
-   }
+  // Add these getters for connection status
+  bool get isBleConnected {
+    return _connectedDeviceBle != null &&
+        _connectedDeviceBle!.connectionState == BlueConnectionState.connected;
+  }
 
-   void updateWifiStatus(String status, bool loading) {
-     _wifiStatus = status;
-     wifiStateChanging = loading;
-     notifyListeners();
-   }
+  bool get isClassicConnected {
+    return _connectedDeviceClassic != null &&
+        _connectedDeviceClassic!.connectionState == BlueConnectionState.connected;
+  }
 
 
-   void updateWifiMessage(String? message) {
-     _wifiMessage = message;
-     notifyListeners();
-   }
+  void updateClassicConnectedDeviceStatus(ClassicBluetoothDeviceModel? device) {
+    _connectedDeviceClassic = device;
+    notifyListeners();
+  }
 
-   void clearWifiMessage() {
-     _wifiMessage = null;
-     notifyListeners();
-   }
+  void updateClassicPairedDevices(List<ClassicBluetoothDeviceModel> devices) {
+    _pairedDevicesClassic = devices;
+    notifyListeners();
+  }
+
+  void updateBleConnectedDeviceStatus(BleBluetoothDeviceModel? device) {
+    _connectedDeviceBle = device;
+    notifyListeners();
+  }
+
+  void updateBlePairedDevices(List<BleBluetoothDeviceModel> devices) {
+    _pairedDevicesBle = devices;
+    notifyListeners();
+  }
+
+
+  void updateClassicDeviceStatus(String address, int status) {
+    for (var device in _pairedDevicesClassic) {
+      if (device.device.address == address) {
+        if (status >= 0 && status < BlueConnectionState.values.length) {
+          device.connectionState= BlueConnectionState.values[status];
+          notifyListeners();
+        } else {
+          debugPrint('Invalid status int: $status');
+        }
+        break;
+      }
+    }
+  }
+
+  void updateBleDeviceStatus(String deviceId, int status) {
+    for (var device in _pairedDevicesBle) {
+      if (device.device.remoteId.str == deviceId) {
+        if (status >= 0 && status < BlueConnectionState.values.length) {
+          final newState = BlueConnectionState.values[status];
+          if (device.connectionState != newState) {
+            device.connectionState = newState;
+            debugPrint("🔵 BLE Device $deviceId state changed to: $newState");
+            notifyListeners(); // CRITICAL: This triggers UI update
+          }
+        } else {
+          debugPrint('Invalid status int: $status');
+        }
+        break;
+      }
+    }
+  }
+
+
+  void updateWifiList(List<Map<String, dynamic>> list) {
+    _wifiList = list;
+    notifyListeners();
+  }
+
+  void updateInterfaceType(String interfaceType) {
+    _interfaceType = interfaceType;
+    notifyListeners();
+  }
+
+  void updateIpAddress(String ip) {
+    _ipAddress = ip;
+    notifyListeners();
+  }
+
+  void updateWifiStatus(String status, bool loading) {
+    _wifiStatus = status;
+    wifiStateChanging = loading;
+    notifyListeners();
+  }
+
+
+  void updateWifiMessage(String? message) {
+    _wifiMessage = message;
+    notifyListeners();
+  }
+
+  void clearWifiMessage() {
+    _wifiMessage = null;
+    notifyListeners();
+  }
 
   void updateMapData(data){
-     mapModelInstance = MapConfigModel.fromJson(data);
+    mapModelInstance = MapConfigModel.fromJson(data);
     notifyListeners();
   }
 
@@ -294,18 +297,18 @@ class MqttPayloadProvider with ChangeNotifier {
     publishTopic = topic;
     notifyListeners();
   }
-   void setTraceLoading(bool loading) {
-     isTraceLoading = loading;
-     notifyListeners();
-   }
-   void setTraceLoadingsize(int size) {
-     traceLogSize = size;
-      notifyListeners();
-   }
-   void setTotalTraceSize(int size) {
-     totalTraceLogSize = size;
-     notifyListeners();
-   }
+  void setTraceLoading(bool loading) {
+    isTraceLoading = loading;
+    notifyListeners();
+  }
+  void setTraceLoadingSize(int size) {
+    traceLogSize = size;
+    notifyListeners();
+  }
+  void setTotalTraceSize(int size) {
+    totalTraceLogSize = size;
+    notifyListeners();
+  }
 
 
   void editLineData(dynamic data){
@@ -575,13 +578,13 @@ class MqttPayloadProvider with ChangeNotifier {
     listOfSite = [];
     listOfSharedUser = {};
     currentSchedule = [];
-      nextSchedule = [];
+    nextSchedule = [];
     selectedLine = 0;
     selectedSite = 0;
     selectedMaster = 0;
-     irrigationPump = [];
+    irrigationPump = [];
     sourcePump = [];
-     sensorInLines = [];
+    sensorInLines = [];
     lineData = [];
     loading = false;
     active = 1;
@@ -630,33 +633,33 @@ class MqttPayloadProvider with ChangeNotifier {
 
   }
 
-   void updateLastSyncDateFromPumpControllerPayload(String payload) async{
+  void updateLastSyncDateFromPumpControllerPayload(String payload) async{
 
-     if (_receivedPayload != payload) {
-       _receivedPayload = payload;
+    if (_receivedPayload != payload) {
+      _receivedPayload = payload;
 
-       try {
-         Map<String, dynamic> data = _receivedPayload.isNotEmpty ? jsonDecode(
-             _receivedPayload) : {};
+      try {
+        Map<String, dynamic> data = _receivedPayload.isNotEmpty ? jsonDecode(
+            _receivedPayload) : {};
 
-         liveDateAndTime = '${data['cD']} ${data['cT']}';
-         activeDeviceId = data['cC'];
+        liveDateAndTime = '${data['cD']} ${data['cT']}';
+        activeDeviceId = data['cC'];
 
-         notifyListeners();
-       }
-       catch (e, stackTrace) {
-         debugPrint('Error parsing JSON: $e');
-         debugPrint('Stacktrace while parsing json : $stackTrace');
-       }
+        notifyListeners();
+      }
+      catch (e, stackTrace) {
+        debugPrint('Error parsing JSON: $e');
+        debugPrint('Stacktrace while parsing json : $stackTrace');
+      }
 
-     }
-   }
+    }
+  }
 
 
   void updateReceivedPayload(String newPayload, bool dataFromHttp) async{
     if (_receivedPayload != newPayload) {
-       _receivedPayload = newPayload;
-       if(!dataFromHttp) {
+      _receivedPayload = newPayload;
+      if(!dataFromHttp) {
         dataFetchingStatus = 1;
       } else {
         dataFetchingStatus = 3;
@@ -664,7 +667,7 @@ class MqttPayloadProvider with ChangeNotifier {
 
       try {
         Map<String, dynamic> data = _receivedPayload.isNotEmpty? jsonDecode(_receivedPayload) : {};
-         debugPrint('_receivedPayload------>:$_receivedPayload');
+        debugPrint('_receivedPayload------>:$_receivedPayload');
 
         if(data['mC']=='2400'){
 
@@ -766,10 +769,15 @@ class MqttPayloadProvider with ChangeNotifier {
         else if(data.containsKey('5100') && data['5100'] != null && data['5100'].isNotEmpty){
           weatherModelinstance = WeatherModel.fromJson(data);
         }
+        else if(data.containsKey('7900') && data['7900'] != null && data['7900'].isNotEmpty){
+          weatherModelinstance = WeatherModel.fromJson(data);
+          gsmWeatherLive = data;
+        }
         else if(data['mC'] != null && data["mC"].contains("VIEW")) {
           cCList = {...cCList, data['cC']}.toList();
           viewSetting = data;
           if (!viewSettingsList.contains(jsonEncode(data['cM']))) {
+            print("""data["cM"]  : ${data["cM"]}""");
             viewSettingsList.add(jsonEncode(data["cM"]));
           }
         }
@@ -848,22 +856,27 @@ class MqttPayloadProvider with ChangeNotifier {
 
         if(data['mC']=='7400'){
 
-         String loraVersion = data['cM']['7401'];
-         final parts = loraVersion.split(',');
-         if(parts[0] == '1')
-           {
-             final rawFrequency = int.parse(parts[2]);
-             final frequency = (rawFrequency / 10).toStringAsFixed(1);
+          String loraVersion = data['cM']['7401'];
+          final parts = loraVersion.split(',');
+          if(parts[0] == '1')
+          {
+            final rawFrequency = int.parse(parts[2]);
+            final frequency = (rawFrequency / 10).toStringAsFixed(1);
 
-             Loara1verssion = "${parts[1]},$frequency,${parts[3]}";
-           }
-         else
-           {
-             final rawFrequency = int.parse(parts[2]);
-             final frequency = (rawFrequency / 10).toStringAsFixed(1);
-             Loara2verssion = "${parts[1]},$frequency,${parts[3]}";
-           }
+            Loara1verssion = "${parts[1]},$frequency,${parts[3]}";
+          }
+          else
+          {
+            final rawFrequency = int.parse(parts[2]);
+            final frequency = (rawFrequency / 10).toStringAsFixed(1);
+            Loara2verssion = "${parts[1]},$frequency,${parts[3]}";
+          }
 
+        }
+
+        if (data['mC'] == "7900") {
+          liveDateAndTime = '${data['cD'] ?? "--"} ${data['cT'] ?? "--"}';
+          gsmWeatherLive = data;
         }
 
         if (data["mC"] == "PRGVIEW") {
@@ -899,11 +912,11 @@ class MqttPayloadProvider with ChangeNotifier {
     updateLocalFiltrationSite();
   }
 
-   void updatetracelog(status){
+  void updatetracelog(status){
 
-     traceLog = status;
-     notifyListeners();
-   }
+    traceLog = status;
+    notifyListeners();
+  }
 
 
   void updateNodeLiveMessage(List<String> message) {
@@ -919,203 +932,203 @@ class MqttPayloadProvider with ChangeNotifier {
   }
 
 
-   void updateAllPumpPayloads(List<String> pumpStatusPayload, List<String> pumpOtherPayload) {
-     for (final entry in pumpStatusPayload) {
-       if (!entry.startsWith('5.')) continue;
-       final parts = entry.split(',');
-       if (parts.isEmpty || parts[0].trim().isEmpty) continue;
-       final sNo = parts[0].trim();
-       _pumpOnOffStatusMap[sNo] = entry;
-     }
+  void updateAllPumpPayloads(List<String> pumpStatusPayload, List<String> pumpOtherPayload) {
+    for (final entry in pumpStatusPayload) {
+      if (!entry.startsWith('5.')) continue;
+      final parts = entry.split(',');
+      if (parts.isEmpty || parts[0].trim().isEmpty) continue;
+      final sNo = parts[0].trim();
+      _pumpOnOffStatusMap[sNo] = entry;
+    }
 
-     for (final entry in pumpOtherPayload) {
-       final parts = entry.split(',');
-       if (parts.isEmpty || parts[0].trim().isEmpty) continue;
-       final sNo = parts[0].trim();
-       _pumpOtherDetailMap[sNo] = entry;
-     }
-   }
+    for (final entry in pumpOtherPayload) {
+      final parts = entry.split(',');
+      if (parts.isEmpty || parts[0].trim().isEmpty) continue;
+      final sNo = parts[0].trim();
+      _pumpOtherDetailMap[sNo] = entry;
+    }
+  }
 
-   void updateFilterSitePayloads(List<String> filterStatusPayload, List<String> filterOtherPayload) {
-     for (final entry in filterStatusPayload) {
-       if (!entry.startsWith('11.')) continue;
-       final parts = entry.split(',');
-       if (parts.isEmpty || parts[0].trim().isEmpty) continue;
-       final sNo = parts[0].trim();
-       _filterOnOffStatusMap[sNo] = entry;
-     }
+  void updateFilterSitePayloads(List<String> filterStatusPayload, List<String> filterOtherPayload) {
+    for (final entry in filterStatusPayload) {
+      if (!entry.startsWith('11.')) continue;
+      final parts = entry.split(',');
+      if (parts.isEmpty || parts[0].trim().isEmpty) continue;
+      final sNo = parts[0].trim();
+      _filterOnOffStatusMap[sNo] = entry;
+    }
 
-     for (final entry in filterOtherPayload) {
-       final parts = entry.split(',');
-       if (parts.isEmpty || parts[0].trim().isEmpty) continue;
-       final sNo = parts[0].trim();
-       _filterOtherDetailMap[sNo] = entry;
-     }
-   }
+    for (final entry in filterOtherPayload) {
+      final parts = entry.split(',');
+      if (parts.isEmpty || parts[0].trim().isEmpty) continue;
+      final sNo = parts[0].trim();
+      _filterOtherDetailMap[sNo] = entry;
+    }
+  }
 
-   void updateFertilizerSitePayloads(List<String> channelStatusPayload, List<String> channelOtherPayload) {
-     for (final entry in channelStatusPayload) {
-       if (!entry.startsWith('10.')) continue;
-       final parts = entry.split(',');
-       if (parts.isEmpty || parts[0].isEmpty) continue;
-       final sNo = parts[0];
-       _channelOnOffStatusMap[sNo] = entry;
-     }
+  void updateFertilizerSitePayloads(List<String> channelStatusPayload, List<String> channelOtherPayload) {
+    for (final entry in channelStatusPayload) {
+      if (!entry.startsWith('10.')) continue;
+      final parts = entry.split(',');
+      if (parts.isEmpty || parts[0].isEmpty) continue;
+      final sNo = parts[0];
+      _channelOnOffStatusMap[sNo] = entry;
+    }
 
-     for (final entry in channelOtherPayload) {
-       final parts = entry.split(',');
-       if (parts.isEmpty || parts[0].isEmpty) continue;
-       final sNo = parts[0];
-       _channelOtherDetailMap[sNo] = entry;
-     }
-   }
+    for (final entry in channelOtherPayload) {
+      final parts = entry.split(',');
+      if (parts.isEmpty || parts[0].isEmpty) continue;
+      final sNo = parts[0];
+      _channelOtherDetailMap[sNo] = entry;
+    }
+  }
 
-   void updateValveStatus(List<String> valveOnOffPayload) {
-     for (final entry in valveOnOffPayload) {
-       if (!(entry.startsWith('13.') || entry.startsWith('14.'))) continue;
+  void updateValveStatus(List<String> valveOnOffPayload) {
+    for (final entry in valveOnOffPayload) {
+      if (!(entry.startsWith('13.') || entry.startsWith('14.'))) continue;
 
-       final parts = entry.split(',');
-       if (parts.isEmpty || parts[0].isEmpty) continue;
+      final parts = entry.split(',');
+      if (parts.isEmpty || parts[0].isEmpty) continue;
 
-       final sNo = parts[0];
-       _valveOnOffStatusMap[sNo] = entry;
-     }
-   }
+      final sNo = parts[0];
+      _valveOnOffStatusMap[sNo] = entry;
+    }
+  }
 
-   void updateGateStatus(List<String> gateOnOffPayload) {
-     for (final entry in gateOnOffPayload) {
-       if (!entry.startsWith('43.')) continue;
-       final parts = entry.split(',');
-       if (parts.isEmpty || parts[0].isEmpty) continue;
-       final sNo = parts[0];
-       _gateOnOffStatusMap[sNo] = entry;
-     }
-   }
+  void updateGateStatus(List<String> gateOnOffPayload) {
+    for (final entry in gateOnOffPayload) {
+      if (!entry.startsWith('43.')) continue;
+      final parts = entry.split(',');
+      if (parts.isEmpty || parts[0].isEmpty) continue;
+      final sNo = parts[0];
+      _gateOnOffStatusMap[sNo] = entry;
+    }
+  }
 
-   void updateLightStatus(List<String> lightOnOffPayload) {
-     for (final entry in lightOnOffPayload) {
-       if (!entry.startsWith('19.')) continue;
-       final parts = entry.split(',');
-       if (parts.isEmpty || parts[0].isEmpty) continue;
-       final sNo = parts[0];
-       _lightOnOffStatusMap[sNo] = entry;
-     }
-   }
+  void updateLightStatus(List<String> lightOnOffPayload) {
+    for (final entry in lightOnOffPayload) {
+      if (!entry.startsWith('19.')) continue;
+      final parts = entry.split(',');
+      if (parts.isEmpty || parts[0].isEmpty) continue;
+      final sNo = parts[0];
+      _lightOnOffStatusMap[sNo] = entry;
+    }
+  }
 
-   void updateFanStatus(List<String> fanOnOffPayload) {
-     for (final entry in fanOnOffPayload) {
-       if (!entry.startsWith('15.')) continue;
-       final parts = entry.split(',');
-       if (parts.isEmpty || parts[0].isEmpty) continue;
-       final sNo = parts[0];
-       _fanOnOffStatusMap[sNo] = entry;
-     }
-   }
+  void updateFanStatus(List<String> fanOnOffPayload) {
+    for (final entry in fanOnOffPayload) {
+      if (!entry.startsWith('15.')) continue;
+      final parts = entry.split(',');
+      if (parts.isEmpty || parts[0].isEmpty) continue;
+      final sNo = parts[0];
+      _fanOnOffStatusMap[sNo] = entry;
+    }
+  }
 
-   void updateSensorValue(List<String> sensorValuePayload) {
-     for (final entry in sensorValuePayload) {
-       final parts = entry.split(',');
-       if (parts.isEmpty || parts[0].isEmpty) continue;
-       final sNo = parts[0];
-       _sensorValueMap[sNo] = entry;
-     }
-   }
+  void updateSensorValue(List<String> sensorValuePayload) {
+    for (final entry in sensorValuePayload) {
+      final parts = entry.split(',');
+      if (parts.isEmpty || parts[0].isEmpty) continue;
+      final sNo = parts[0];
+      _sensorValueMap[sNo] = entry;
+    }
+  }
 
-   void updateBoosterPumpStatus(List<String> valveOnOffPayload) {
-     for (final entry in valveOnOffPayload) {
-       if (!entry.startsWith('7.')) continue;
-       final parts = entry.split(',');
-       if (parts.isEmpty || parts[0].isEmpty) continue;
-       final sNo = parts[0];
-       _boosterPumpOnOffStatusMap[sNo] = entry;
-     }
-   }
+  void updateBoosterPumpStatus(List<String> valveOnOffPayload) {
+    for (final entry in valveOnOffPayload) {
+      if (!entry.startsWith('7.')) continue;
+      final parts = entry.split(',');
+      if (parts.isEmpty || parts[0].isEmpty) continue;
+      final sNo = parts[0];
+      _boosterPumpOnOffStatusMap[sNo] = entry;
+    }
+  }
 
-   void updateAgitatorStatus(List<String> status) {
-     for (final entry in status) {
-       if (!entry.startsWith('9.')) continue;
-       final parts = entry.split(',');
-       if (parts.isEmpty || parts[0].isEmpty) continue;
-       final sNo = parts[0];
-       _agitatorOnOffStatusMap[sNo] = entry;
-     }
-   }
+  void updateAgitatorStatus(List<String> status) {
+    for (final entry in status) {
+      if (!entry.startsWith('9.')) continue;
+      final parts = entry.split(',');
+      if (parts.isEmpty || parts[0].isEmpty) continue;
+      final sNo = parts[0];
+      _agitatorOnOffStatusMap[sNo] = entry;
+    }
+  }
 
-   void updateFertilizer7700Payloads(
-       List<String> fertilizerSitePayload,
-       List<String> fertilizerChannelPayload,
-       ) {
-     _fertilizerSiteMap.clear();
-     _fertilizerChannelMap.clear();
+  void updateFertilizer7700Payloads(
+      List<String> fertilizerSitePayload,
+      List<String> fertilizerChannelPayload,
+      ) {
+    _fertilizerSiteMap.clear();
+    _fertilizerChannelMap.clear();
 
-     for (final entry in fertilizerSitePayload) {
-       if (entry.trim().isEmpty) continue;
+    for (final entry in fertilizerSitePayload) {
+      if (entry.trim().isEmpty) continue;
 
-       final model = FertilizerSiteLiveModel.fromCsv(entry);
-       _fertilizerSiteMap[model.sNo] = model;
-     }
+      final model = FertilizerSiteLiveModel.fromCsv(entry);
+      _fertilizerSiteMap[model.sNo] = model;
+    }
 
-     for (final entry in fertilizerChannelPayload) {
-       if (entry.trim().isEmpty) continue;
+    for (final entry in fertilizerChannelPayload) {
+      if (entry.trim().isEmpty) continue;
 
-       final model = FertilizerChannelLiveModel.fromCsv(entry);
-       _fertilizerChannelMap[model.sNo] = model;
-     }
+      final model = FertilizerChannelLiveModel.fromCsv(entry);
+      _fertilizerChannelMap[model.sNo] = model;
+    }
 
-     notifyListeners();
-   }
+    notifyListeners();
+  }
 
-   void updateCurrentProgram(List<String> program) {
-     currentSchedule = program;
-   }
+  void updateCurrentProgram(List<String> program) {
+    currentSchedule = program;
+  }
 
-   void updateNextProgram(List<String> program) {
-     nextSchedule = program;
-   }
+  void updateNextProgram(List<String> program) {
+    nextSchedule = program;
+  }
 
-   void updateAlarm(List<String> alm) {
-     alarmDL = alm;
-   }
+  void updateAlarm(List<String> alm) {
+    alarmDL = alm;
+  }
 
-   void updateScheduledProgram(List<String> program) {
-     scheduledProgramPayload = program;
-   }
+  void updateScheduledProgram(List<String> program) {
+    scheduledProgramPayload = program;
+  }
 
-   void updateCondition(List<String> con) {
-     conditionPayload = con;
-   }
+  void updateCondition(List<String> con) {
+    conditionPayload = con;
+  }
 
-   void saveUnits(List<dynamic> units) {
-     unitList = units;
-   }
+  void saveUnits(List<dynamic> units) {
+    unitList = units;
+  }
 
-   void clearPreview() {
-     _programPreview = null;
-     _sequencePreview = null;
-     notifyListeners();
-   }
+  void clearPreview() {
+    _programPreview = null;
+    _sequencePreview = null;
+    notifyListeners();
+  }
 
 
-   String? getPumpOnOffStatus(String sNo) => _pumpOnOffStatusMap[sNo];
-   String? getPumpOtherData(String sNo) => _pumpOtherDetailMap[sNo];
-   String? getFilterOnOffStatus(String sNo) => _filterOnOffStatusMap[sNo];
-   String? getFilterOtherData(String sNo) => _filterOtherDetailMap[sNo];
-   String? getChannelOnOffStatus(String sNo) => _channelOnOffStatusMap[sNo];
-   String? getChannelOtherData(String sNo) => _channelOtherDetailMap[sNo];
-   String? getValveOnOffStatus(String sNo) => _valveOnOffStatusMap[sNo];
-   String? getLightOnOffStatus(String sNo) => _lightOnOffStatusMap[sNo];
-   String? getFanOnOffStatus(String sNo) => _fanOnOffStatusMap[sNo];
-   String? getGateOnOffStatus(String sNo) => _gateOnOffStatusMap[sNo];
-   String? getSensorUpdatedValve(String sNo) => _sensorValueMap[sNo];
-   String? getBoosterPumpOnOffStatus(String sNo) => _boosterPumpOnOffStatusMap[sNo];
-   String? getAgitatorOnOffStatus(String sNo) => _agitatorOnOffStatusMap[sNo];
+  String? getPumpOnOffStatus(String sNo) => _pumpOnOffStatusMap[sNo];
+  String? getPumpOtherData(String sNo) => _pumpOtherDetailMap[sNo];
+  String? getFilterOnOffStatus(String sNo) => _filterOnOffStatusMap[sNo];
+  String? getFilterOtherData(String sNo) => _filterOtherDetailMap[sNo];
+  String? getChannelOnOffStatus(String sNo) => _channelOnOffStatusMap[sNo];
+  String? getChannelOtherData(String sNo) => _channelOtherDetailMap[sNo];
+  String? getValveOnOffStatus(String sNo) => _valveOnOffStatusMap[sNo];
+  String? getLightOnOffStatus(String sNo) => _lightOnOffStatusMap[sNo];
+  String? getFanOnOffStatus(String sNo) => _fanOnOffStatusMap[sNo];
+  String? getGateOnOffStatus(String sNo) => _gateOnOffStatusMap[sNo];
+  String? getSensorUpdatedValve(String sNo) => _sensorValueMap[sNo];
+  String? getBoosterPumpOnOffStatus(String sNo) => _boosterPumpOnOffStatusMap[sNo];
+  String? getAgitatorOnOffStatus(String sNo) => _agitatorOnOffStatusMap[sNo];
 
-   Map<String, FertilizerSiteLiveModel> get fertilizerSiteMap => _fertilizerSiteMap;
-   Map<String, FertilizerChannelLiveModel> get fertilizerChannelMap => _fertilizerChannelMap;
+  Map<String, FertilizerSiteLiveModel> get fertilizerSiteMap => _fertilizerSiteMap;
+  Map<String, FertilizerChannelLiveModel> get fertilizerChannelMap => _fertilizerChannelMap;
 
-   String? getProgramPreview() => _programPreview;
-   String? getSequencePreview() => _sequencePreview;
-   List<String> getNovaVoltage() => _novaVoltage;
+  String? getProgramPreview() => _programPreview;
+  String? getSequencePreview() => _sequencePreview;
+  List<String> getNovaVoltage() => _novaVoltage;
 
 
   String get receivedDashboardPayload => dashBoardPayload;

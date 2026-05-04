@@ -45,25 +45,21 @@ SensorHourReport? parseSensorHourData({
 
   // 1️⃣ Split devices
   final deviceBlocks = raw.split(';');
-  print("deviceBlocks:$deviceBlocks");
 
   for (final deviceBlock in deviceBlocks) {
     if (!deviceBlock.contains(':')) continue;
 
     final deviceParts = deviceBlock.split(':');
-    print("deviceParts:$deviceParts");
-    final currentDeviceSrNo = deviceParts[0].trim();
+     final currentDeviceSrNo = deviceParts[0].trim();
 
 
     // 2️⃣ Match device
     if (currentDeviceSrNo != deviceSrNo) continue;
 
     final sensorsRaw = deviceParts[1];
-    print("sensorsRaw:$sensorsRaw");
-    // 3️⃣ Split sensors
+     // 3️⃣ Split sensors
     final sensorBlocks = sensorsRaw.split('_');
-    print("sensorBlocks:$sensorBlocks");
-    for (final sensorBlock in sensorBlocks) {
+     for (final sensorBlock in sensorBlocks) {
       final parts = sensorBlock.split(',');
 
       if (parts.length < 6) continue;

@@ -1079,55 +1079,55 @@ class _LogHomeState extends State<LogHome> {
                                   ),
                                   actions: [
                                     TextButton(
-                                    onPressed: () async {
-                                  Navigator.pop(context); // Close the name dialog
+                                        onPressed: () async {
+                                          Navigator.pop(context); // Close the name dialog
 
-                                  // Optionally show a progress dialog
-                                  showDialog(
-                                    context: context,
-                                    barrierDismissible: false,
-                                    builder: (context) {
-                                      return const AlertDialog(
-                                        title: Text('Saving Excel...'),
-                                        content: SizedBox(
-                                          height: 50,
-                                          child: Center(child: CircularProgressIndicator()),
-                                        ),
-                                      );
-                                    },
-                                  );
+                                          // Optionally show a progress dialog
+                                          showDialog(
+                                            context: context,
+                                            barrierDismissible: false,
+                                            builder: (context) {
+                                              return const AlertDialog(
+                                                title: Text('Saving Excel...'),
+                                                content: SizedBox(
+                                                  height: 50,
+                                                  child: Center(child: CircularProgressIndicator()),
+                                                ),
+                                              );
+                                            },
+                                          );
 
-                                  // Run the function and await result
-                                  bool result = await generateExcel(dataToShow, fileName);
+                                          // Run the function and await result
+                                          bool result = await generateExcel(dataToShow, fileName);
 
-                                  // Close progress dialog
-                                  if (context.mounted) Navigator.pop(context);
+                                          // Close progress dialog
+                                          if (context.mounted) Navigator.pop(context);
 
-                                  // Show result dialog
-                                  if (context.mounted) {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return AlertDialog(
-                                          title: Text(result
-                                              ? '$fileName saved successfully'
-                                              : 'Failed to save $fileName'),
-                                          content: Text(result
-                                              ? '/storage/emulated/0/Download/$fileName.xlsx'
-                                              : ''),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.pop(context),
-                                              child: const Text('Ok'),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  }
-                                },
+                                          // Show result dialog
+                                          if (context.mounted) {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) {
+                                                return AlertDialog(
+                                                  title: Text(result
+                                                      ? '$fileName saved successfully'
+                                                      : 'Failed to save $fileName'),
+                                                  content: Text(result
+                                                      ? '/storage/emulated/0/Download/$fileName.xlsx'
+                                                      : ''),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () => Navigator.pop(context),
+                                                      child: const Text('Ok'),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          }
+                                        },
 
-                                child: const Text('Click to download')
+                                        child: const Text('Click to download')
                                     )
                                   ],
                                 );
@@ -1823,4 +1823,3 @@ Widget loadingButtuon(){
     ),
   );
 }
-

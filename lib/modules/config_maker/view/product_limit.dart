@@ -43,7 +43,7 @@ class _ProductLimitState extends State<ProductLimit> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ...colorLegendBox(screenWidth,screenHeight),
-                  if(!AppConstants.pumpWithValveModelList.contains(widget.configPvd.masterData['modelId']))
+                  if(!AppConstants.pumpWithValveModelList.contains(widget.configPvd.masterData['modelId']) && !AppConstants.weatherGsmModelList.contains(widget.configPvd.masterData['modelId']))
                     commonObject(),
                   outputObject(),
                 if(getInputCount(3, widget.listOfDevices) != 0)
