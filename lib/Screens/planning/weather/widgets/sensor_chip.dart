@@ -66,3 +66,4 @@ class SensorChip extends StatelessWidget {
     return '';
   }
 }
+

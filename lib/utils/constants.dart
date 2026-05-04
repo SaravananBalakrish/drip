@@ -119,6 +119,8 @@ class AppConstants {
   static const String agitatorNotOFF = "dp_agitator_right_r.png";
 
   static const String mainValveOFF = "main_valve_gray.png";
+  static const String mainValveCompleted = "main_valve_blue.png";
+  static const String mainValvePending = "main_valve_yellow.png";
   static const String mainValveON = "main_valve_green.png";
   static const String mainValveNotON = "main_valve_orange.png";
   static const String mainValveNotOFF = "main_valve_red.png";
@@ -284,7 +286,7 @@ class AppConstants {
         imagePathFinal = _getAgitatorImagePath(keyTwo);
         break;
       case 'main_valve':
-        imagePathFinal = _getMainValveImagePath(keyTwo);
+        imagePathFinal = _getMainValveImagePath(keyTwo, cpr);
       case 'valve':
         imagePathFinal = _getValveImagePath(keyTwo, cpr);
         break;
@@ -595,9 +597,14 @@ class AppConstants {
     }
   }
 
-  static String _getMainValveImagePath(int status) {
+  static String _getMainValveImagePath(int status, int cPer) {
     switch (status) {
       case 0:
+        if (cPer == 100) {
+          return mainValveCompleted;
+        }else if (cPer > 0 && cPer < 100) {
+          return mainValvePending;
+        }
         return mainValveOFF;
       case 1:
         return mainValveON;
@@ -873,6 +880,13 @@ class AppConstants {
   static int waterMeterObjectId = 22;
   static int pressureSensorObjectId = 24;
   static int pressureSwitchObjectId = 23;
+  static int windDirectionObjectId = 31;
+  static int windSpeedObjectId = 32;
+  static int ldrObjectId = 35;
+  static int luxObjectId = 34;
+  static int atmosphericPressureObjectId = 39;
+  static int leafWetnessObjectId = 37;
+  static int rainFallObjectId = 38;
   static int fertilizerSiteObjectId = 3;
   static int channelObjectId = 10;
   static int boosterObjectId = 7;
@@ -908,6 +922,7 @@ class AppConstants {
   static List<int> ecoGemAndPlusModelList = [...ecoGemModelList, ...ecoGemPlusModelList];
   static List<int> gemModelList = [1, 2, 4, 72, 73, 74, 75];
   static List<int> weatherModelList = [13, 14];
+  static List<int> weatherGsmModelList = [14];
   static List<int> pumpModelList = [5, 6, 7, ...pumpPlusModelList, ...wlcModelList];
   static List<int> pumpPlusModelList = [8, 9, 10, ...wlcModelList];
   static List<int> wlcModelList = [76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86];

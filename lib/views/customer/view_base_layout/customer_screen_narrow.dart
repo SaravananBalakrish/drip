@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
- import 'package:oro_drip_irrigation/utils/helpers/mc_permission_helper.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
+import 'package:oro_drip_irrigation/utils/helpers/mc_permission_helper.dart';
 import 'package:oro_drip_irrigation/views/customer/scheduled_program/scheduled_program_narrow.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/connection_banner.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/customer_drawer.dart';
@@ -8,7 +9,8 @@ import 'package:oro_drip_irrigation/views/customer/widgets/customer_fab_menu.dar
 import 'package:provider/provider.dart';
 
 import '../../../Screens/Logs/irrigation_and_pump_log.dart';
- import '../../../Screens/planning/weather/view/weather_screen_new.dart';
+import '../../../Screens/planning/weather/view/weather_Gsm.dart';
+import '../../../Screens/planning/weather/view/weather_screen_new.dart';
 import '../../../StateManagement/customer_provider.dart';
 import '../../../Widgets/network_connection_banner.dart';
 import '../../../layouts/layout_selector.dart';
@@ -21,6 +23,7 @@ import '../../../view_models/customer/customer_screen_controller_view_model.dart
 import '../controller_settings/settings_menu_narrow.dart';
 import '../widgets/customer_app_bar.dart';
 import '../widgets/customer_bottom_nav.dart';
+import '../widgets/customer_main_screen.dart';
 import '../widgets/site_loading_or_empty.dart';
 import 'base_customer_layout.dart';
 
@@ -35,6 +38,7 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
 
   @override
   Widget build(BuildContext context) {
+    print("call CustomerScreenNarrow");
 
     final userProvider = context.read<UserProvider>();
     final loggedInUser = userProvider.loggedInUser;
@@ -49,6 +53,8 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
     final cM = vm.mySiteList.data[vm.sIndex].master[vm.mIndex];
 
     bool isGemOrNova = isGemOrNovaModel(cM.modelId);
+    final isGsmWeather = [...AppConstants.weatherModelList].contains(cM.modelId);
+
 
     bool hasWeatherStation = cM.irrigationLine.any((line) => line.hasWeatherStation);
 
@@ -85,10 +91,20 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
       const SettingsMenuNarrow(),
     ] :
     [
-      vm.isChanged ? PumpControllerHome(
-        userId: loggedInUser.id,
-        customerId: vm.mySiteList.data[vm.sIndex].customerId,
-        masterData: cM,
+      vm.isChanged ? Scaffold(
+        floatingActionButton: AppConstants.wlcModelList.contains(cM.modelId) ?
+        CustomerFabMenu(
+          currentMaster: cM,
+          loggedInUser: loggedInUser,
+          vm: vm,
+          callbackFunction: callbackFunction,
+          myPermissionFlags: [],
+        ) : null,
+        body: isGsmWeather ? WeatherGsm(customerId: loggedInUser.id, controllerId: cM.controllerId, deviceID: cM.deviceId,jsondata: dashboardToWeatherFormat(cM))  : PumpControllerHome(
+          userId: loggedInUser.id,
+          customerId: vm.mySiteList.data[vm.sIndex].customerId,
+          masterData: cM,
+        ),
       ) : const Scaffold(
         body: Center(
           child: Column(
@@ -127,7 +143,7 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
       ) : null,
       bottomNavigationBar: isGemOrNova ?
       CustomerBottomNav(index: navModel.index, onTap: navModel.setIndex,
-        hasWeatherStation: hasWeatherStation) : null,
+          hasWeatherStation: hasWeatherStation) : null,
       banners: [
         if(isGemOrNova)
           const NetworkConnectionBanner(),

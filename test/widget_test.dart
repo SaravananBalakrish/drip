@@ -2,8 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import '../lib/app/app.dart';
+import 'package:oro_drip_irrigation/app/app.dart';
 
 
 void main() {

@@ -1558,12 +1558,14 @@ class MainValveModel {
   final double sNo;
   final String name;
   int status;
+  int completePercent;
   bool selected;
 
   MainValveModel({
     required this.sNo,
     required this.name,
     this.status = 0,
+    this.completePercent = 0,
     this.selected = false,
   });
 
