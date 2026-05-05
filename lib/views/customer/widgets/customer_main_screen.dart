@@ -32,7 +32,7 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
    switch (index) {
     case 0:
       return (isGem || isNova) ?
-      const DashboardLayoutSelector(userRole: UserRole.customer) : isGsmWeather ? WeatherGsm(customerId: userId, controllerId: cMaster.controllerId, deviceID: cMaster.deviceId,jsondata: dashboardToWeatherFormat(cMaster)) :
+      const DashboardLayoutSelector(userRole: UserRole.customer) : isGsmWeather ? WeatherGsm(customerId: cSite.customerId, controllerId: cMaster.controllerId, deviceID: cMaster.deviceId,jsondata: dashboardToWeatherFormat(cMaster)) :
       vm.isChanged ? PumpControllerHome(
         userId: userId,
         customerId: cSite.customerId,
