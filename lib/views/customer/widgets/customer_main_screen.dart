@@ -27,6 +27,8 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
   final isGsmWeather = [...AppConstants.weatherModelList].contains(cMaster.modelId);
 
 
+
+
    switch (index) {
     case 0:
       return (isGem || isNova) ?
@@ -131,6 +133,8 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
 
      final configList =
      dashboard.configObjects.map((e) => e.toJson()).toList();
+
+     // mqttProvider.liveDateAndTime
 
     deviceList.add({
       "controllerId": dashboard.controllerId,

@@ -6,16 +6,19 @@ import 'package:flutter_svg/svg.dart';
 
 class WindCard extends StatelessWidget {
     final double directionAngle;
+    final IconData icon;
 
   const WindCard({
     super.key,
       required this.directionAngle,
+      required this.icon,
   });
 
   @override
   Widget build(BuildContext context) {
     return _baseCard(
       title: "Wind Direction",
+      icon: icon,
       child: Column(
         children: [
 
@@ -114,7 +117,7 @@ class _WindCompass extends StatelessWidget {
   }
 }
 
-Widget _baseCard({required String title, required Widget child}) {
+Widget _baseCard({required String title,required IconData icon, required Widget child}) {
   return Container(
     padding: const EdgeInsets.all(16),
     decoration: BoxDecoration(
@@ -124,7 +127,19 @@ Widget _baseCard({required String title, required Widget child}) {
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+
+        Row(
+          children: [
+            Icon(icon, size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: 12),
         child,
       ],

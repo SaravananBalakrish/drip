@@ -32,15 +32,15 @@ class SensorTileNew extends StatelessWidget {
   Widget build(BuildContext context) {
 if(title.contains('Co2'))
   {
-     return CO2Card(co2Value: value.toInt(), maxValue: 2000,title: title,message:'');
+     return CO2Card(icon: icon, co2Value: value.toInt(), maxValue: 2000,title: title,message:'',min: '$minValue',max: '$maxValue',other: '$otherValue');
   }
 if(title.contains('Rain Fall'))
 {
-  return RainfallCard(rainfallValue: '$value', forecastText: '', description: '');
+  return RainfallCard(icon: icon,rainfallValue: '$value', forecastText: '', description: '',min: '$minValue',max: '$maxValue',other: '$otherValue');
 }
 if(title.contains('Wind Direction'))
 {
-  return WindCard(directionAngle: value);
+  return WindCard(icon: icon,directionAngle: value);
 }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -77,7 +77,7 @@ if(title.contains('Wind Direction'))
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 20),
         Text("↓ Min: $minValue     ↑ Max: $maxValue"),
         if (otherValue.isNotEmpty)
           Text("x̄ Average: $otherValue"),
