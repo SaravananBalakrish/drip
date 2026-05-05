@@ -975,7 +975,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
         ),
         const SizedBox(height: 15,),
         // Replace your InkWell with this:
-        if(AppConstants.ecoGemFlowControlValveModel.contains(widget.masterData.modelId))
+        if(AppConstants.wlcModelList.contains(widget.masterData.modelId))
           buildManualModeCard(
             manualModeStatus: pumpData.manualMode, // Your live payload value
             isLoading: false,
