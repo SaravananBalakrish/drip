@@ -521,6 +521,7 @@ class ConfigMakerProvider extends ChangeNotifier{
                       irrigationPump: [],
                       aerator: [],
                       valve: [],
+                      flowControlValve: [],
                       mainValve: [],
                       light: [],
                       gate: [],
@@ -885,6 +886,9 @@ class ConfigMakerProvider extends ChangeNotifier{
         }else if(parameter == LineParameter.valve){
           irrigationLine.valve.clear();
           irrigationLine.valve.addAll(listOfSelectedSno);
+        }else if(parameter == LineParameter.flowControlValve){
+          irrigationLine.flowControlValve.clear();
+          irrigationLine.flowControlValve.addAll(listOfSelectedSno);
         }else if(parameter == LineParameter.mainValve){
           irrigationLine.mainValve.clear();
           irrigationLine.mainValve.addAll(listOfSelectedSno);
@@ -935,6 +939,8 @@ class ConfigMakerProvider extends ChangeNotifier{
           irrigationLine.co2.addAll(listOfSelectedSno);
         }else if(parameter == LineParameter.waterMeter){
           irrigationLine.waterMeter = selectedSno;
+        }else if(parameter == LineParameter.analogWaterMeter){
+          irrigationLine.analogWaterMeter = selectedSno;
         }else if(parameter == LineParameter.pressureIn){
           irrigationLine.pressureIn = selectedSno;
         }else if(parameter == LineParameter.pressureOut){
@@ -1194,6 +1200,7 @@ class ConfigMakerProvider extends ChangeNotifier{
       List<DeviceObjectModel> channelList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.channelObjectId).toList();
       List<DeviceObjectModel> moistureList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.moistureObjectId).toList();
       List<DeviceObjectModel> soilTemperatureList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.soilTemperatureObjectId).toList();
+      List<DeviceObjectModel> flowControlValveList = listOfGeneratedObject.where((object) => object.objectId == AppConstants.flowControlValveObjectId).toList();
       objectListToSend = [
         ...valveList,
         ...filterList,
@@ -1201,7 +1208,9 @@ class ConfigMakerProvider extends ChangeNotifier{
         ...channelList,
         ...agitatorList,
         ...moistureList,
-        ...soilTemperatureList
+        ...soilTemperatureList,
+        if(AppConstants.ecoGemFlowControlValveModel.contains(masterData['modelId']))
+          ...flowControlValveList
       ];
     }
     else{

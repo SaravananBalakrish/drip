@@ -48,7 +48,6 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
           ),
         ),
       );
-
     case 1:
       return CustomerProduct(customerId: cSite.customerId);
 

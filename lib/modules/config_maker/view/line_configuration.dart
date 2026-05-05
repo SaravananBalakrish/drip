@@ -141,6 +141,8 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                       ),
                                     if(availability(AppConstants.valveObjectId))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.valve, parameterType: LineParameter.valve, objectId: AppConstants.valveObjectId, objectName: 'Valve', validateAllLine: true),
+                                    if(availability(AppConstants.flowControlValveObjectId))
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.flowControlValve, parameterType: LineParameter.flowControlValve, objectId: AppConstants.flowControlValveObjectId, objectName: 'Flow Control Valve', validateAllLine: true),
                                     if(availability(AppConstants.mainValveObjectId))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.mainValve, parameterType: LineParameter.mainValve, objectId: AppConstants.mainValveObjectId, objectName: 'Main Valve', validateAllLine: true),
                                     if(availability(AppConstants.lightObjectId))
@@ -173,6 +175,8 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: selectedIrrigationLine.temperature, parameterType: LineParameter.temperature, objectId: AppConstants.temperatureObjectId, objectName: 'Temperature', validateAllLine: true),
                                     if(availability(AppConstants.waterMeterObjectId))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.waterMeter], parameterType: LineParameter.waterMeter, objectId: AppConstants.waterMeterObjectId, objectName: 'Water Meter', validateAllLine: true, singleSelection: true),
+                                    if(availability(AppConstants.analogWaterMeterObjectId))
+                                      getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.analogWaterMeter], parameterType: LineParameter.analogWaterMeter, objectId: AppConstants.analogWaterMeterObjectId, objectName: 'Analog Water Meter', validateAllLine: true, singleSelection: true),
                                     if(availability(AppConstants.powerSupplyObjectId))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.powerSupply], parameterType: LineParameter.powerSupply, objectId: AppConstants.powerSupplyObjectId, objectName: 'Power Supply', validateAllLine: true, singleSelection: true),
                                     if(availability(AppConstants.pressureSwitchObjectId))
@@ -428,7 +432,11 @@ class _LineConfigurationState extends State<LineConfiguration> {
       ...getObjectInLine(selectedIrrigationLine.mainValve, AppConstants.mainValveObjectId),
       if(selectedIrrigationLine.waterMeter != 0.0)
         ...getObjectInLine([selectedIrrigationLine.waterMeter], AppConstants.waterMeterObjectId),
+      if(selectedIrrigationLine.analogWaterMeter != 0.0)
+        ...getObjectInLine([selectedIrrigationLine.analogWaterMeter], AppConstants.analogWaterMeterObjectId),
       ...getObjectInLine(selectedIrrigationLine.valve, AppConstants.valveObjectId),
+      ...getObjectInLine(selectedIrrigationLine.mainValve, AppConstants.mainValveObjectId),
+      ...getObjectInLine(selectedIrrigationLine.flowControlValve, AppConstants.flowControlValveObjectId),
       ...getObjectInLine(selectedIrrigationLine.light, AppConstants.lightObjectId),
       ...getObjectInLine(selectedIrrigationLine.gate, AppConstants.gateObjectId),
       ...getObjectInLine(selectedIrrigationLine.fan, AppConstants.fanObjectId),
@@ -551,12 +559,6 @@ class _LineConfigurationState extends State<LineConfiguration> {
     bool singleSelection = false,
     List<DeviceObjectModel>? listOfObject
   }){
-    if(parameterType == LineParameter.source){
-      print('WWWWWW');
-      for(var obj in listOfObject!){
-        print('empty src : ${obj.name}');
-      }
-    }
 
     if(listOfObject != null){
       print("${parameterType.name}  ===== ${listOfObject.map((object) => object.toJson()).toList()}");
@@ -629,6 +631,8 @@ class _LineConfigurationState extends State<LineConfiguration> {
             ? line.irrigationPump
             : parameter == LineParameter.valve
             ? line.valve
+            : parameter == LineParameter.flowControlValve
+            ? line.flowControlValve
             : parameter == LineParameter.mainValve
             ? line.mainValve
             : parameter == LineParameter.fan
@@ -653,6 +657,8 @@ class _LineConfigurationState extends State<LineConfiguration> {
             ? line.humidity
             : parameter == LineParameter.waterMeter
             ? [line.waterMeter]
+            : parameter == LineParameter.analogWaterMeter
+            ? [line.analogWaterMeter]
             : parameter == LineParameter.powerSupply
             ? [line.powerSupply]
             : parameter == LineParameter.pressureSwitch

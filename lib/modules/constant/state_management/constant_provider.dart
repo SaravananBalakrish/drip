@@ -160,9 +160,9 @@ class ConstantProvider extends ChangeNotifier{
             listOfFilterObject.add(object);
           }else if(object['objectId'] == AppConstants.mainValveObjectId){
             listOfMainValveObject.add(object);
-          }else if(object['objectId'] == AppConstants.valveObjectId){
+          }else if(object['objectId'] == AppConstants.valveObjectId || object['objectId'] == AppConstants.flowControlValveObjectId){
             listOfValveObject.add(object);
-          }else if(object['objectId'] == AppConstants.waterMeterObjectId){
+          }else if(object['objectId'] == AppConstants.waterMeterObjectId || object['objectId'] == AppConstants.analogWaterMeterObjectId){
             listOfWaterMeterObject.add(object);
           }else if(object['objectId'] == AppConstants.channelObjectId){
             listOfChannelObject.add(object);
