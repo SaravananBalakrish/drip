@@ -2,10 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class CO2Card extends StatelessWidget {
+  final IconData icon;
   final int co2Value;
   final int maxValue;
   final String title;
   final String message;
+  final String min;
+  final String max;
+  final String other;
 
   const CO2Card({
     super.key,
@@ -13,6 +17,10 @@ class CO2Card extends StatelessWidget {
     this.maxValue = 2000,
     this.title = "CO2 Sensor",
     required this.message,
+    required this.min,
+    required this.max,
+    required this.other,
+    required this.icon,
   });
 
   @override
@@ -20,10 +28,19 @@ class CO2Card extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w600),
+        Row(
+          children: [
+            Icon(icon, size: 20),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                title,
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
+            ),
+          ],
         ),
+
         const SizedBox(height: 12),
         Text(
           "CO2 Level: $co2Value ppm",
@@ -39,6 +56,10 @@ class CO2Card extends StatelessWidget {
           message,
           style: const TextStyle(fontSize: 13),
         ),
+        const SizedBox(height: 20),
+        Text("↓ Min: $min     ↑ Max: $max"),
+        if (other.isNotEmpty)
+          Text("x̄ Average: $other"),
       ],
     );
   }

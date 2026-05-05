@@ -134,6 +134,9 @@ class MqttPayloadProvider with ChangeNotifier {
   List<Map<String, dynamic>> _wifiList = [];
   List<Map<String, dynamic>> get wifiList => _wifiList;
 
+  Map<String, dynamic> gsmWeatherLive = {};
+
+
   String? _wifiMessage;
   String? get wifiMessage => _wifiMessage;
 
@@ -298,7 +301,7 @@ class MqttPayloadProvider with ChangeNotifier {
     isTraceLoading = loading;
     notifyListeners();
   }
-  void setTraceLoadingsize(int size) {
+  void setTraceLoadingSize(int size) {
     traceLogSize = size;
     notifyListeners();
   }
@@ -768,6 +771,7 @@ class MqttPayloadProvider with ChangeNotifier {
         }
         else if(data.containsKey('7900') && data['7900'] != null && data['7900'].isNotEmpty){
           weatherModelinstance = WeatherModel.fromJson(data);
+          gsmWeatherLive = data;
         }
         else if(data['mC'] != null && data["mC"].contains("VIEW")) {
           cCList = {...cCList, data['cC']}.toList();
@@ -868,6 +872,11 @@ class MqttPayloadProvider with ChangeNotifier {
             Loara2verssion = "${parts[1]},$frequency,${parts[3]}";
           }
 
+        }
+
+        if (data['mC'] == "7900") {
+          liveDateAndTime = '${data['cD'] ?? "--"} ${data['cT'] ?? "--"}';
+          gsmWeatherLive = data;
         }
 
         if (data["mC"] == "PRGVIEW") {

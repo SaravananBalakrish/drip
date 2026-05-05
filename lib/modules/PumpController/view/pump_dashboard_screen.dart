@@ -975,37 +975,38 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
         ),
         const SizedBox(height: 15,),
         // Replace your InkWell with this:
-        buildManualModeCard(
-          manualModeStatus: pumpData.manualMode, // Your live payload value
-          isLoading: false,
-          onToggle: (bool isEnabled) async {
-            String payLoadFinal = jsonEncode({"sentSms":"MANUAL${isEnabled ? 'ON' : 'OFF'}"});
-            var data = {
-              "userId": widget.customerId,
-              "controllerId": widget.masterData.controllerId,
-              "data": payLoadFinal,
-              "messageStatus": "${pumps[index].name} Manual Mode ${isEnabled ? 'ON' : 'OFF'}",
-              "createUser": widget.userId,
-              "hardware": payLoadFinal,
-            };
+        if(AppConstants.ecoGemFlowControlValveModel.contains(widget.masterData.modelId))
+          buildManualModeCard(
+            manualModeStatus: pumpData.manualMode, // Your live payload value
+            isLoading: false,
+            onToggle: (bool isEnabled) async {
+              String payLoadFinal = jsonEncode({"sentSms":"MANUAL${isEnabled ? 'ON' : 'OFF'}"});
+              var data = {
+                "userId": widget.customerId,
+                "controllerId": widget.masterData.controllerId,
+                "data": payLoadFinal,
+                "messageStatus": "${pumps[index].name} Manual Mode ${isEnabled ? 'ON' : 'OFF'}",
+                "createUser": widget.userId,
+                "hardware": payLoadFinal,
+              };
 
-            await mqttService.topicToPublishAndItsMessage(
-                payLoadFinal,
-                "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}"
-            );
+              await mqttService.topicToPublishAndItsMessage(
+                  payLoadFinal,
+                  "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}"
+              );
 
-            await repository.sendManualOperationToServer(data);
+              await repository.sendManualOperationToServer(data);
 
-            GlobalSnackBar.show(
-                context,
-                'Manual mode ${isEnabled ? "ON" : "OFF"} successfully',
-                200
-            );
+              GlobalSnackBar.show(
+                  context,
+                  'Manual mode ${isEnabled ? "ON" : "OFF"} successfully',
+                  200
+              );
 
-            await Future.delayed(const Duration(seconds: 2));
-            liveRequest(); // Refresh to get updated status
-          }, pumpName: '',
-        ),
+              await Future.delayed(const Duration(seconds: 2));
+              liveRequest(); // Refresh to get updated status
+            }, pumpName: '',
+          ),
       ],
     );
   }

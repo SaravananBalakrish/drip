@@ -250,6 +250,55 @@ class _CustomerDeviceListState extends State<CustomerDeviceList> with TickerProv
     ];
   }
 
+  /*List<PopupMenuEntry> _buildProductListPopup(BuildContext context) {
+
+    if (widget.productStockList.isEmpty) {
+      return [const PopupMenuItem(child: Text('No stock available'))];
+    }
+
+    return List.generate(widget.productStockList.length + 1, (index) {
+      if (index == widget.productStockList.length) {
+        return PopupMenuItem(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              MaterialButton(
+                color: Colors.red,
+                textColor: Colors.white,
+                child: const Text('CANCEL'),
+                onPressed: () => Navigator.pop(context),
+              ),
+              MaterialButton(
+                color: Colors.green,
+                textColor: Colors.white,
+                child: const Text('ADD'),
+                onPressed: () => viewModel.addProductToCustomer(context, widget.productStockList),
+              ),
+            ],
+          ),
+        );
+      }
+
+      return PopupMenuItem(
+        child: StatefulBuilder(
+          builder: (context, setState) {
+            return CheckboxListTile(
+              title: Text(widget.productStockList[index].categoryName),
+              subtitle: Text(widget.productStockList[index].imeiNo),
+              value: viewModel.selectedProducts[index],
+              onChanged: (value) {
+                setState(() {
+                  viewModel.toggleProductSelection(index);
+                });
+              },
+            );
+          },
+        ),
+      );
+    });
+  }*/
+
+
 
   List<PopupMenuEntry> _buildMasterSitePopup(BuildContext context) {
     if (viewModel.myMasterControllerList.isEmpty) {
