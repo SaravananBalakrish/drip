@@ -200,7 +200,7 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias, // Ensures table header matches card corners
       child: DataTable2(
-         columnSpacing: 12,
+        columnSpacing: 12,
         horizontalMargin: 12,
         minWidth: 600,
         headingRowHeight: 50,
@@ -238,11 +238,11 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
           } else {
             rowColor = Colors.red.shade50;
           }
-           return DataRow( color: MaterialStateProperty.resolveWith<Color?>(
-                              (Set<MaterialState> states) {
-                            return rowColor;
-                          },
-                        ), cells: [
+          return DataRow( color: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              return rowColor;
+            },
+          ), cells: [
             DataCell(Text(
                 r.hour, style: const TextStyle(fontWeight: FontWeight.w500))),
             DataCell(Text('${r.value} ${r.value != "NA" ? widget.unit : ''}')),
@@ -265,7 +265,7 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
         color:  Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-            color: code == '255' ? Colors.green.shade50 : code == 'NA' ?  Colors.grey.shade50 : Colors.red.shade50,),
+          color: code == '255' ? Colors.green.shade50 : code == 'NA' ?  Colors.grey.shade50 : Colors.red.shade50,),
       ),
       child: Text(
         code == '255' ? 'Normal' : code == 'NA' ?  '$code' : 'ERR-$code',
