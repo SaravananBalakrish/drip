@@ -1010,6 +1010,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
       ],
     );
   }
+
   Widget buildManualModeCard({
     required String manualModeStatus,
     required Function(bool) onToggle,
@@ -1017,7 +1018,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
     bool isLoading = false,
   }) {
     bool isOn = manualModeStatus == '1';
-
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
@@ -1161,7 +1161,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
       ),
     );
   }
-
 
   Widget _buildLight(PumpValveModel pumpItem, PumpControllerData pumpData) {
     return Column(
