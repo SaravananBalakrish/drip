@@ -148,7 +148,7 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
         print('master ::: pump with valve model');
       }
     }
-    else if(AppConstants.ecoGemModelList.contains(widget.configPvd.masterData['modelId'])){
+    else if(AppConstants.ecoGemModelList.contains(widget.configPvd.masterData['modelId']) && !AppConstants.ecoGemFlowControlValveModel.contains(widget.configPvd.masterData['modelId'])){
       if (kDebugMode) {
         print('master ::: eco gem');
       }

@@ -871,6 +871,7 @@ class AppConstants {
   static int floatObjectId = 40;
   static int irrigationLineObjectId = 2;
   static int waterMeterObjectId = 22;
+  static int analogWaterMeterObjectId = 46;
   static int pressureSensorObjectId = 24;
   static int pressureSwitchObjectId = 23;
   static int windDirectionObjectId = 31;
@@ -901,6 +902,7 @@ class AppConstants {
   static int powerSupplyObjectId = 42;
   static int lightObjectId = 19;
   static int gateObjectId = 43;
+  static int flowControlValveObjectId = 45;
 
   static List<int> smartPlusEcPhModel = [33];
   static List<int> ecModel = [64];
@@ -910,7 +912,8 @@ class AppConstants {
   static List<int> shine2V = [48, 49];
   static List<int> shine4V = [52, 53];
   static List<int> elite10V = [54, 55];
-  static List<int> ecoGemModelList = [56, 57, 58, 59, 60, 61, 62, 63];
+  static List<int> ecoGemFlowControlValveModel = [89, 90];
+  static List<int> ecoGemModelList = [56, 57, 58, 59, 60, 61, 62, 63, ...ecoGemFlowControlValveModel];
   static List<int> ecoGemPlusModelList = [60, 61, 62, 63];
   static List<int> ecoGemAndPlusModelList = [...ecoGemModelList, ...ecoGemPlusModelList];
   static List<int> gemModelList = [1, 2, 4, 72, 73, 74, 75];
@@ -926,5 +929,4 @@ class AppConstants {
   static List<int> extendGsmList = [47];
   static List<int> extendList = [...extendLoraList, ...extendGsmList];
   static List<int> aquacultureModelList = [72];
-
 }

@@ -12,6 +12,7 @@ class IrrigationLineModel{
   double centralFertilization;
   double localFertilization;
   List<double> valve;
+  List<double> flowControlValve;
   List<double> mainValve;
   List<double> light;
   List<double> gate;
@@ -25,6 +26,7 @@ class IrrigationLineModel{
   double powerSupply;
   double pressureSwitch;
   double waterMeter;
+  double analogWaterMeter;
   double pressureIn;
   double pressureOut;
   List<double> moisture;
@@ -45,6 +47,7 @@ class IrrigationLineModel{
     this.centralFertilization = 0.00,
     this.localFertilization = 0.00,
     required this.valve,
+    required this.flowControlValve,
     required this.mainValve,
     required this.light,
     required this.gate,
@@ -58,6 +61,7 @@ class IrrigationLineModel{
     this.powerSupply = 0.00,
     this.pressureSwitch = 0.00,
     this.waterMeter = 0.00,
+    this.analogWaterMeter = 0.00,
     this.pressureIn = 0.00,
     this.pressureOut = 0.00,
     required this.moisture,
@@ -96,9 +100,11 @@ class IrrigationLineModel{
         heater: (data['heater'] as List<dynamic>).map((sNo) => sNo as double).toList(),
         screen: (data['screen'] as List<dynamic>).map((sNo) => sNo as double).toList(),
         vent: (data['vent'] as List<dynamic>).map((sNo) => sNo as double).toList(),
+        flowControlValve: data['flowControlValve'] != null ? (data['flowControlValve'] as List<dynamic>).map((sNo) => sNo as double).toList() : [],
         powerSupply: intOrDoubleValidate(data['powerSupply']),
         pressureSwitch: intOrDoubleValidate(data['pressureSwitch']),
         waterMeter: intOrDoubleValidate(data['waterMeter']),
+        analogWaterMeter: data['analogWaterMeter'] != null ? intOrDoubleValidate(data['analogWaterMeter']) : 0.0,
         pressureIn: intOrDoubleValidate(data['pressureIn']),
         pressureOut: intOrDoubleValidate(data['pressureOut']),
         moisture: (data['moisture'] as List<dynamic>).map((sNo) => sNo as double).toList(),
@@ -135,6 +141,7 @@ class IrrigationLineModel{
       'powerSupply' : powerSupply,
       'pressureSwitch' : pressureSwitch,
       'waterMeter' : waterMeter,
+      'analogWaterMeter' : analogWaterMeter,
       'pressureIn' : pressureIn,
       'pressureOut' : pressureOut,
       'moisture' : moisture,
@@ -186,5 +193,5 @@ double intOrDoubleValidate(value){
   }
 }
 
-enum LineParameter{source, sourcePump, irrigationPump, aerator, centralFiltration, localFiltration, centralFertilization, localFertilization, valve, mainValve, light, gate, fan, fogger,mist, pesticides, heater, screen, vent, powerSupply, pressureSwitch, waterMeter, pressureIn, pressureOut, moisture, temperature, soilTemperature, humidity, co2}
+enum LineParameter{source, sourcePump, irrigationPump, aerator, centralFiltration, localFiltration, centralFertilization, localFertilization, valve, flowControlValve, mainValve, light, gate, fan, fogger,mist, pesticides, heater, screen, vent, powerSupply, pressureSwitch, waterMeter, analogWaterMeter, pressureIn, pressureOut, moisture, temperature, soilTemperature, humidity, co2}
 
