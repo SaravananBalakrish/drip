@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../../Screens/Dealer/controllerverssionupdate.dart';
 import '../../../Screens/planning/FactoryReset.dart';
+import '../../../cropAdvisory/view/getUserInformationScreen.dart';
 import '../../../flavors.dart';
 import '../../../models/customer/site_model.dart';
 import '../../../modules/PumpController/view/node_settings.dart';
@@ -79,10 +80,13 @@ List<Widget> appBarActions(
           if (vm.lineLiveMessage.isNotEmpty && master.irrigationLine.length > 1)
             _buildPauseResumeButton(context, vm),
           const SizedBox(width: 10),
-          const IconButton(
+           IconButton(
             color: Colors.transparent,
-            onPressed: null,
-            icon: CircleAvatar(
+             onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const Getuserinformationscreen()),
+            ),
+            icon: const CircleAvatar(
               radius: 17,
               backgroundColor: Colors.black12,
               child: Icon(Icons.mic, color: Colors.black26),
