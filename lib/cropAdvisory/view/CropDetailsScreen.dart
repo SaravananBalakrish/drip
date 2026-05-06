@@ -49,7 +49,7 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                       onPressed: () => Navigator.pop(context),
                       icon: const Icon(Icons.arrow_back),
                     ),
-                    const Expanded(
+                    const Flexible(
                       child: Center(
                         child: Text(
                           'Crop Details',
