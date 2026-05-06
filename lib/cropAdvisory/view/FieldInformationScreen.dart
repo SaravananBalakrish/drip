@@ -34,89 +34,101 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.arrow_back),
-                  ),
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        'Field Information',
-                        style: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.arrow_back),
+                    ),
+
+                    const Expanded(
+                      child: Center(
+                        child: Text(
+                          'Field Information',
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 40),
-                ],
-              ),
-              const SizedBox(height: 10),
-              const Center(
-                child: Text(
-                  'Tell us what you’re growing and how it’s cultivated.',
-                  style: TextStyle(fontSize: 16),
-                ),
-              ),
-              const SizedBox(height: 20),
-              const ProgressWidget(current: 3),
-              const SizedBox(height: 20),
 
-              SectionCard(
-                title: 'Mulching used',
-                icon: Icons.eco,
-                child: const AppTextField(
-                  hint: 'Yes',
-                  suffix: Icon(Icons.keyboard_arrow_down),
-                ),
-              ),
-
-              SectionCard(
-                title: 'Soil type',
-                icon: Icons.landscape,
-                child: Wrap(
-                  spacing: 12,
-                  runSpacing: 12,
-                  children: [
-                    soilItem('Loam'),
-                    soilItem('Sandy Soil'),
-                    soilItem('Clay Soil'),
-                    soilItem('Manual'),
-                    soilItem('Others'),
+                    const SizedBox(width: 40),
                   ],
                 ),
-              ),
 
-              SectionCard(
-                title: 'Previous crop grown',
-                icon: Icons.energy_savings_leaf,
-                child: const AppTextField(
-                  hint: 'Search Or Select The Crop(Eg.Rice,etc..)',
-                  suffix: Icon(Icons.keyboard_arrow_down),
+                const SizedBox(height: 10),
+
+                const Center(
+                  child: Text(
+                    'Tell us what you’re growing and how it’s cultivated.',
+                    style: TextStyle(fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
-              ),
 
-              const Spacer(),
+                const SizedBox(height: 20),
 
-              CropContinueButton(
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Completed Successfully'),
-                    ),
-                  );
-                },
-              ),
-            ],
+                const ProgressWidget(current: 3),
+
+                const SizedBox(height: 20),
+
+                SectionCard(
+                  title: 'Mulching used',
+                  icon: Icons.eco,
+                  child: const AppTextField(
+                    hint: 'Yes',
+                    suffix: Icon(Icons.keyboard_arrow_down),
+                  ),
+                ),
+
+                SectionCard(
+                  title: 'Soil type',
+                  icon: Icons.landscape,
+                  child: Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      soilItem('Loam'),
+                      soilItem('Sandy Soil'),
+                      soilItem('Clay Soil'),
+                      soilItem('Manual'),
+                      soilItem('Others'),
+                    ],
+                  ),
+                ),
+
+                SectionCard(
+                  title: 'Previous crop grown',
+                  icon: Icons.energy_savings_leaf,
+                  child: const AppTextField(
+                    hint: 'Search Or Select The Crop(Eg.Rice,etc..)',
+                    suffix: Icon(Icons.keyboard_arrow_down),
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+                CropContinueButton(
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Completed Successfully'),
+                      ),
+                    );
+                  },
+                ),
+
+                const SizedBox(height: 20),
+              ],
+            ),
           ),
         ),
       ),
