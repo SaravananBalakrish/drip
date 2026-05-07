@@ -1,19 +1,33 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/AppTextField.dart';
 import '../widgets/ContinueButton.dart';
 import '../widgets/ProgressWidget.dart';
 import '../widgets/SectionCard.dart';
+
 class FieldInformationScreen extends StatefulWidget {
-  const FieldInformationScreen({super.key});
+  final double? latitude;
+  final double? longitude;
+  final String address;
+  final String area;
+  final String farmId;
+
+  const FieldInformationScreen({
+    super.key,
+    required this.latitude,
+    required this.longitude,
+    required this.address,
+    required this.area,
+    required this.farmId,
+  });
 
   @override
   State<FieldInformationScreen> createState() => _FieldInformationScreenState();
 }
 
 class _FieldInformationScreenState extends State<FieldInformationScreen> {
-  Widget soilItem(String title) {
+  // Improved soilItem with uniform image sizing and proper fitting
+  Widget soilItem(String title, [String? imagePath]) {
     return Container(
       width: 100,
       height: 120,
@@ -22,11 +36,47 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: Colors.grey.shade300),
       ),
-      child: Center(
-        child: Text(
-          title,
-          style: const TextStyle(fontSize: 16),
-        ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          // Fixed-size image area with ClipRRect for rounded corners
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.grey.shade100, // subtle background while loading
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: imagePath != null
+                  ? Image.asset(
+                imagePath,
+                fit: BoxFit.cover, // fills the box without distortion
+                width: double.infinity,
+                height: double.infinity,
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.broken_image,
+                  size: 40,
+                  color: Colors.grey,
+                ),
+              )
+                  : const Icon(
+                Icons.help_outline, // clear icon for "Others"
+                size: 40,
+                color: Colors.grey,
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+            textAlign: TextAlign.center,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ],
       ),
     );
   }
@@ -47,7 +97,6 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                       onPressed: () => Navigator.pop(context),
                       icon: const Icon(Icons.arrow_back),
                     ),
-
                     const Expanded(
                       child: Center(
                         child: Text(
@@ -59,13 +108,10 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(width: 40),
                   ],
                 ),
-
                 const SizedBox(height: 10),
-
                 const Center(
                   child: Text(
                     'Tell us what you’re growing and how it’s cultivated.',
@@ -73,17 +119,14 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                     textAlign: TextAlign.center,
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 const ProgressWidget(current: 3),
-
                 const SizedBox(height: 20),
 
-                SectionCard(
+                const SectionCard(
                   title: 'Mulching used',
                   icon: Icons.eco,
-                  child: const AppTextField(
+                  child: AppTextField(
                     hint: 'Yes',
                     suffix: Icon(Icons.keyboard_arrow_down),
                   ),
@@ -93,22 +136,22 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                   title: 'Soil type',
                   icon: Icons.landscape,
                   child: Wrap(
-                    spacing: 12,
-                    runSpacing: 12,
+                    spacing: 19,
+                    runSpacing: 20,
                     children: [
-                      soilItem('Loam'),
-                      soilItem('Sandy Soil'),
-                      soilItem('Clay Soil'),
-                      soilItem('Manual'),
-                      soilItem('Others'),
+                      soilItem('Clay Soil', 'assets/Images/CropAdvisory/clay_soil.png'),
+                      soilItem('Loam Soil', 'assets/Images/CropAdvisory/loam_soil.png'),
+                      soilItem('Sandy Soil', 'assets/Images/CropAdvisory/sandy_soil.png'),
+                      soilItem('Volcanic soil', 'assets/Images/CropAdvisory/Volcanic_soil.png'),
+                      soilItem('Others'), // now shows a help icon
                     ],
                   ),
                 ),
 
-                SectionCard(
+                const SectionCard(
                   title: 'Previous crop grown',
                   icon: Icons.energy_savings_leaf,
-                  child: const AppTextField(
+                  child: AppTextField(
                     hint: 'Search Or Select The Crop(Eg.Rice,etc..)',
                     suffix: Icon(Icons.keyboard_arrow_down),
                   ),
@@ -119,8 +162,14 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                 CropContinueButton(
                   onTap: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Completed Successfully'),
+                      SnackBar(
+                        content: Text(
+                          'Completed Successfully\n'
+                              'Location: ${widget.latitude}, ${widget.longitude}\n'
+                              'Address: ${widget.address}\n'
+                              'Area: ${widget.area}\n'
+                              'Farm ID: ${widget.farmId}',
+                        ),
                       ),
                     );
                   },

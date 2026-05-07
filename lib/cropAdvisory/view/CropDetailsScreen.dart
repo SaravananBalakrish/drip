@@ -1,6 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/cropAdvisory/view/FieldInformationScreen.dart';
+import 'package:oro_drip_irrigation/cropAdvisory/view/field_information_screen.dart';
 
 import '../widgets/AppTextField.dart';
 import '../widgets/ContinueButton.dart';
@@ -8,13 +7,33 @@ import '../widgets/ProgressWidget.dart';
 import '../widgets/SectionCard.dart';
 
 class CropDetailsScreen extends StatefulWidget {
-  const CropDetailsScreen({super.key});
+  final double? latitude;
+  final double? longitude;
+  final String address;
+  final String area;
+  final String farmId;
+
+  const CropDetailsScreen({
+    super.key,
+    required this.latitude,
+    required this.longitude,
+    required this.address,
+    required this.area,
+    required this.farmId,
+  });
 
   @override
   State<CropDetailsScreen> createState() => _CropDetailsScreenState();
 }
 
 class _CropDetailsScreenState extends State<CropDetailsScreen> {
+  // You can use these to display or just hold the received data
+  double? get latitude => widget.latitude;
+  double? get longitude => widget.longitude;
+  String get address => widget.address;
+  String get area => widget.area;
+  String get farmId => widget.farmId;
+
   Widget buildMethodButton(String title) {
     return Expanded(
       child: Container(
@@ -73,6 +92,22 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                 const SizedBox(height: 20),
                 const ProgressWidget(current: 2),
                 const SizedBox(height: 20),
+
+                // Optionally show the location/area info
+                // You can display them as read-only fields or just keep hidden
+                // Here's an example of displaying them:
+                // if (address.isNotEmpty) ...[
+                //   Text('Location: $address'),
+                //   SizedBox(height: 10),
+                // ],
+                // if (area.isNotEmpty) ...[
+                //   Text('Area: $area'),
+                //   SizedBox(height: 10),
+                // ],
+                // if (farmId.isNotEmpty) ...[
+                //   Text('Farm ID: $farmId'),
+                //   SizedBox(height: 20),
+                // ],
 
                 SectionCard(
                   title: 'Crop Name',
@@ -184,10 +219,18 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
 
                 CropContinueButton(
                   onTap: () {
+                    // Pass all collected data (including from this screen if needed) to the next
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const FieldInformationScreen(),
+                        builder: (_) => FieldInformationScreen(
+                          latitude: latitude,
+                          longitude: longitude,
+                          address: address,
+                          area: area,
+                          farmId: farmId,
+                          // Add future data captured here if you plan to collect it
+                        ),
                       ),
                     );
                   },
