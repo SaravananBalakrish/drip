@@ -500,16 +500,16 @@ class ConfigMakerProvider extends ChangeNotifier{
               );
             }else if(deviceObjectModel.objectId == AppConstants.ecObjectId){
               ec.add(
-                EcModel(
+                  EcModel(
                     sNo: deviceObjectModel.sNo!,
                     name: deviceObjectModel.name!,
-                )
+                  )
               );
             }else if(deviceObjectModel.objectId == AppConstants.phObjectId){
               ph.add(
                   PhModel(
-                      sNo: deviceObjectModel.sNo!,
-                      name: deviceObjectModel.name!,
+                    sNo: deviceObjectModel.sNo!,
+                    name: deviceObjectModel.name!,
                   )
               );
             }else if(deviceObjectModel.objectId == AppConstants.irrigationLineObjectId){

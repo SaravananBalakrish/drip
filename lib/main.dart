@@ -40,7 +40,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 // Background message handler for Firebase
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print("Handling a background message: ${message.messageId}");
+  debugPrint("Handling a background message: ${message.messageId}");
 }
 
 // Permissions request
@@ -120,9 +120,8 @@ FutureOr<void> main() async {
         iOS: initializationSettingsIOS,
       );
 
-      await flutterLocalNotificationsPlugin.initialize(initSettings);
       await flutterLocalNotificationsPlugin.initialize(
-        initSettings,
+        settings: initSettings,
         onDidReceiveNotificationResponse: (details) {
           debugPrint("Notification tapped: ${details.payload}");
         },
