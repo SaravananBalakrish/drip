@@ -975,7 +975,8 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
         ),
         const SizedBox(height: 15,),
         // Replace your InkWell with this:
-        AppConstants.wlcModelList.contains(widget.masterData.modelId)  ?   buildManualModeCard(
+        AppConstants.wlcModelList.contains(widget.masterData.modelId)
+            ?   buildManualModeCard(
           manualModeStatus: pumpData.manualMode, // Your live payload value
           isLoading: false,
           onToggle: (bool isEnabled) async {
