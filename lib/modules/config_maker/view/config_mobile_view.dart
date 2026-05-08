@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/config_maker/view/product_limit.dart';
 import 'package:oro_drip_irrigation/modules/config_maker/view/site_configure.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
 import '../../../Constants/dialog_boxes.dart';
 import '../../config_maker/model/device_object_model.dart';
@@ -125,7 +126,7 @@ ConfigMakerTabs updateConfigMakerTabs({
     bool valveAvailable = valveObject.count != '0';
     bool dosingAvailable = dosingObject.count != '0';
     bool channelAvailable = channelObject.count != '0';
-    if(!pumpAvailable){
+    if(!pumpAvailable && !AppConstants.ecoGemFlowControlValveModel.contains(configPvd.masterData['modelId'])){
       update = false;
       simpleDialogBox(context: context, title: 'Alert', message: 'At least one ${!pumpAvailable ? pumpObject.objectName : ''} must be provided in the product limit.');
       List<int> notice = [];
