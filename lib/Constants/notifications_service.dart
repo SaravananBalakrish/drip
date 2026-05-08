@@ -121,7 +121,13 @@ class NotificationServiceCall {
     );
     const NotificationDetails platformChannelSpecifics =
     NotificationDetails(android: androidPlatformChannelSpecifics);
-    await _flutterLocalNotificationsPlugin.show(id: 0, title: notification['notification']['title'] ?? 'Notification', body: notification['notification']['body'] ?? 'You have a new notification', notificationDetails: platformChannelSpecifics, payload: notification['data']?.toString());
+    await _flutterLocalNotificationsPlugin.show(
+      0,
+      notification['notification']['title'] ?? 'Notification',
+      notification['notification']['body'] ?? 'You have a new notification',
+       platformChannelSpecifics,
+      payload: notification['data']?.toString(),
+    );
   }
   void _navigateToScreen(Map<String, dynamic> notification) {
     // Implement navigation logic based on notification data

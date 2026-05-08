@@ -16,13 +16,12 @@ class NotificationService {
 
     var initializationSettings = InitializationSettings(
         android: initializationSettingsAndroid, iOS: initializationSettingsIOS);
-    await notificationsPlugin.initialize(
-        settings: initializationSettings,
+    await notificationsPlugin.initialize(initializationSettings,
         onDidReceiveNotificationResponse:
             (NotificationResponse notificationResponse) async {});
   }
 
-  NotificationDetails notificationDetails() {
+  notificationDetails() {
     return const NotificationDetails(
         android: AndroidNotificationDetails('channelId', 'channelName',
             importance: Importance.max),
@@ -32,12 +31,6 @@ class NotificationService {
   Future showNotification(
       {int id = 0, String? title, String? body, String? payLoad}) async {
     await initNotification();
-    return notificationsPlugin.show(
-      id: id,
-      title: title,
-      body: body,
-      notificationDetails: await notificationDetails(),
-      payload: payLoad,
-    );
+    return notificationsPlugin.show(id,title, body,  await notificationDetails(),);
   }
 }
