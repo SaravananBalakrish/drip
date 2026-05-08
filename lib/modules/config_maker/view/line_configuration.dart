@@ -44,7 +44,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
     IrrigationLineModel? selectedIrrigationLine = widget.configPvd.line.cast<IrrigationLineModel?>().firstWhere((line)=> line!.commonDetails.sNo == widget.configPvd.selectedLineSno, orElse: ()=> null);
     print('selectedIrrigationLine ::: ${selectedIrrigationLine!.commonDetails.name}');
     return Padding(
-        padding: const EdgeInsets.all(8),
+      padding: const EdgeInsets.all(8),
       child: LayoutBuilder(builder: (context, constraint){
         return Scaffold(
           body: SafeArea(
@@ -52,8 +52,8 @@ class _LineConfigurationState extends State<LineConfiguration> {
               width: constraint.maxWidth,
               height: constraint.maxHeight,
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Theme.of(context).primaryColor == Colors.black ? Colors.white10 : Colors.white
+                  borderRadius: BorderRadius.circular(8),
+                  color: Theme.of(context).primaryColor == Colors.black ? Colors.white10 : Colors.white
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -84,8 +84,8 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                     IconButton(
                                         onPressed: (){
                                           showModalBottomSheet(
-                                            shape: Border.all(),
-                                            isScrollControlled: true,
+                                              shape: Border.all(),
+                                              isScrollControlled: true,
                                               context: context,
                                               builder: (context){
                                                 return SizedBox(
@@ -271,9 +271,9 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                       decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(10),
                                           color: Colors.white,
-                                        boxShadow: const [
-                                          BoxShadow(color: Colors.grey, blurRadius: 5)
-                                        ]
+                                          boxShadow: const [
+                                            BoxShadow(color: Colors.grey, blurRadius: 5)
+                                          ]
                                       ),
                                       child: Row(
                                         spacing: 20,
@@ -325,7 +325,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
               ),
             ),
           ),
-         );
+        );
       }),
     );
   }
@@ -485,7 +485,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
         Column(
           children: [
             Image.asset(
-                'assets/Images/Png/objectId_$objectId.png',
+              'assets/Images/Png/objectId_$objectId.png',
               width: 30,
               height: 30,
             ),
@@ -581,12 +581,12 @@ class _LineConfigurationState extends State<LineConfiguration> {
             title: 'Select $objectName',
             singleSelection: singleSelection,
             listOfObject: listOfObject ??
-            getUnselectedLineParameterObject(
-                currentParameterList: currentParameterValue,
-                objectId: objectId,
-                parameter: parameterType,
-              validateAllLine: validateAllLine,
-            ),
+                getUnselectedLineParameterObject(
+                  currentParameterList: currentParameterValue,
+                  objectId: objectId,
+                  parameter: parameterType,
+                  validateAllLine: validateAllLine,
+                ),
             onPressed: (){
               setState(() {
                 widget.configPvd.updateSelectionInLine(line.commonDetails.sNo!, parameterType);
@@ -603,7 +603,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
         ),
         child: Row(
           spacing: 10,
-           mainAxisSize: MainAxisSize.min,
+          mainAxisSize: MainAxisSize.min,
           children: [
             SizedImage(imagePath: '${AppConstants.svgObjectPath}objectId_$objectId.svg', color: themeMode ? Colors.black : Colors.white,),
             Text(objectName, style: AppProperties.listTileBlackBoldStyle,),
@@ -698,11 +698,11 @@ class _LineConfigurationState extends State<LineConfiguration> {
     List<SourceModel> suitableSource = widget.configPvd.source
         .where(
             (source){
-              print("source.sourceType :: ${source.sourceType}");
-              bool sourcePumpAvailability = selectedIrrigationLine.sourcePump.any((pump) => (source.outletPump.contains(pump) || source.inletPump.contains(pump)));
-              bool irrigationPumpAvailability = selectedIrrigationLine.irrigationPump.any((pump) => (source.outletPump.contains(pump) || source.inletPump.contains(pump)));
-              return ((sourcePumpAvailability || irrigationPumpAvailability));
-            }
+          print("source.sourceType :: ${source.sourceType}");
+          bool sourcePumpAvailability = selectedIrrigationLine.sourcePump.any((pump) => (source.outletPump.contains(pump) || source.inletPump.contains(pump)));
+          bool irrigationPumpAvailability = selectedIrrigationLine.irrigationPump.any((pump) => (source.outletPump.contains(pump) || source.inletPump.contains(pump)));
+          return ((sourcePumpAvailability || irrigationPumpAvailability));
+        }
     )
         .map((source) => source.copy())
         .toList();
@@ -759,21 +759,21 @@ class _LineConfigurationState extends State<LineConfiguration> {
   }
 
   Widget oneSourceAndOneTank({required SourceModel boreOthers, required SourceModel sumpTankWell, required IrrigationLineModel selectedIrrigationLine, required List<FiltrationModel> filterSite, required List<FertilizationModel> fertilizerSite}){;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ...oneSourceList(boreOthers),
-        ...oneTankList(sumpTankWell),
-        ...filtrationAndFertilization(maxLength: 1, filterSite: filterSite, fertilizerSite: fertilizerSite)
-      ],
-    );
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      ...oneSourceList(boreOthers),
+      ...oneTankList(sumpTankWell),
+      ...filtrationAndFertilization(maxLength: 1, filterSite: filterSite, fertilizerSite: fertilizerSite)
+    ],
+  );
   }
 
   Widget multipleSourceAndMultipleTank({
     required List<SourceModel> multipleSource,
     required List<SourceModel> multipleTank,
     required IrrigationLineModel selectedIrrigationLine
-}){
+  }){
     print("${selectedIrrigationLine.commonDetails.name} == multipleSourceAndMultipleTank");
     List<FiltrationModel> filterSite = [];
     for(var site in widget.configPvd.filtration){
@@ -834,69 +834,69 @@ class _LineConfigurationState extends State<LineConfiguration> {
               children: [
                 for(var srcOrTank = 0;srcOrTank < maxLength;srcOrTank++)
                   SizedBox(
-                  width: 8 * widget.configPvd.ratio,
-                  height: 160 * widget.configPvd.ratio,
-                  child: Stack(
-                    children: [
-                      if(srcOrTank == 0)
-                        Positioned(
-                            left: 0,
-                            bottom: 0,
-                            child: Container(
-                              width: 8,
-                              height: 80  * widget.configPvd.ratio,
-                              decoration: const BoxDecoration(
-                                  gradient: RadialGradient(
-                                      radius: 2,
-                                      colors: [
-                                        Color(0xffC0E3EE),
-                                        Color(0xff67B1C1),
-                                      ]
-                                  )
-                              ),
-                            )
-                        ),
-                      if(maxLength - 1 == srcOrTank)
-                        Positioned(
-                            left: 0,
-                            top: 0,
-                            child: Container(
-                              width: 8,
-                              height: 68,
-                              decoration: const BoxDecoration(
-                                  gradient: RadialGradient(
-                                      radius: 3,
-                                      colors: [
-                                        Color(0xffC0E3EE),
-                                        Color(0xff67B1C1),
-                                      ]
-                                  )
-                              ),
-                            )
-                        ),
-                      if(maxLength > 2 && ![0, maxLength - 1].contains(srcOrTank))
-                        Positioned(
-                            left: 0,
-                            top: 0,
-                            child: Container(
-                              width: 8,
-                              height: 160,
-                              decoration: const BoxDecoration(
-                                  gradient: RadialGradient(
-                                      radius: 3,
-                                      colors: [
-                                        Color(0xffC0E3EE),
-                                        Color(0xff67B1C1),
-                                      ]
-                                  )
-                              ),
-                            )
-                        ),
-                    ],
-                  ),
-                )
-            ],
-          ),
+                    width: 8 * widget.configPvd.ratio,
+                    height: 160 * widget.configPvd.ratio,
+                    child: Stack(
+                      children: [
+                        if(srcOrTank == 0)
+                          Positioned(
+                              left: 0,
+                              bottom: 0,
+                              child: Container(
+                                width: 8,
+                                height: 80  * widget.configPvd.ratio,
+                                decoration: const BoxDecoration(
+                                    gradient: RadialGradient(
+                                        radius: 2,
+                                        colors: [
+                                          Color(0xffC0E3EE),
+                                          Color(0xff67B1C1),
+                                        ]
+                                    )
+                                ),
+                              )
+                          ),
+                        if(maxLength - 1 == srcOrTank)
+                          Positioned(
+                              left: 0,
+                              top: 0,
+                              child: Container(
+                                width: 8,
+                                height: 68,
+                                decoration: const BoxDecoration(
+                                    gradient: RadialGradient(
+                                        radius: 3,
+                                        colors: [
+                                          Color(0xffC0E3EE),
+                                          Color(0xff67B1C1),
+                                        ]
+                                    )
+                                ),
+                              )
+                          ),
+                        if(maxLength > 2 && ![0, maxLength - 1].contains(srcOrTank))
+                          Positioned(
+                              left: 0,
+                              top: 0,
+                              child: Container(
+                                width: 8,
+                                height: 160,
+                                decoration: const BoxDecoration(
+                                    gradient: RadialGradient(
+                                        radius: 3,
+                                        colors: [
+                                          Color(0xffC0E3EE),
+                                          Color(0xff67B1C1),
+                                        ]
+                                    )
+                                ),
+                              )
+                          ),
+                      ],
+                    ),
+                  )
+              ],
+            ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -918,7 +918,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
     required List<FertilizationModel> fertilizerSite,
     required List<FiltrationModel> filterSite,
     required int maxLength
-}){
+  }){
     double connectionPipeHeight = maxLength * 160;
     double connectingHeight = filterSite.isEmpty ? 198 : 400;
     return [
@@ -1050,30 +1050,30 @@ class _LineConfigurationState extends State<LineConfiguration> {
       ),
       if(fertilizerSite.length > 1 || filterSite.length > 1)
         Column(
-        children: [
-          if(fertilizerSite.length > 1)
-            Container(
-              margin: const EdgeInsets.only(left: 30),
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(width: 1),
-                borderRadius: BorderRadius.circular(10)
+          children: [
+            if(fertilizerSite.length > 1)
+              Container(
+                margin: const EdgeInsets.only(left: 30),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    border: Border.all(width: 1),
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                child: FertilizationDashboardFormation(fertilizationFormation: fertilizerSite[1].channel.length == 1 ? FertilizationFormation.singleChannel : FertilizationFormation.multipleChannel, fertilizationSite: fertilizerSite[1]),
               ),
-              child: FertilizationDashboardFormation(fertilizationFormation: fertilizerSite[1].channel.length == 1 ? FertilizationFormation.singleChannel : FertilizationFormation.multipleChannel, fertilizationSite: fertilizerSite[1]),
-            ),
-          const SizedBox(height: 20,),
-          if(filterSite.length > 1)
-            Container(
-              margin: const EdgeInsets.only(left: 30),
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                border: Border.all(width: 1),
-                borderRadius: BorderRadius.circular(10)
+            const SizedBox(height: 20,),
+            if(filterSite.length > 1)
+              Container(
+                margin: const EdgeInsets.only(left: 30),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    border: Border.all(width: 1),
+                    borderRadius: BorderRadius.circular(10)
+                ),
+                child: FiltrationDashboardFormation(filtrationFormation: filterSite[1].filters.length == 1 ? FiltrationFormation.singleFilter : FiltrationFormation.multipleFilter, filtrationSite: filterSite[1]) ,
               ),
-              child: FiltrationDashboardFormation(filtrationFormation: filterSite[1].filters.length == 1 ? FiltrationFormation.singleFilter : FiltrationFormation.multipleFilter, filtrationSite: filterSite[1]) ,
-            ),
-        ],
-      ),
+          ],
+        ),
     ];
   }
 
@@ -1082,7 +1082,7 @@ class _LineConfigurationState extends State<LineConfiguration> {
     print("oneSourceList maxOutletPumpForTank : $maxOutletPumpForTank");
     pumpExtendedWidth += (120 * 2);
     return [
-        getSource(source,widget.configPvd , inlet: false, dashboard: true),
+      getSource(source,widget.configPvd , inlet: false, dashboard: true),
       if(source.outletPump.length == 1)
         Row(
           children: [
@@ -1144,5 +1144,5 @@ class _LineConfigurationState extends State<LineConfiguration> {
       ],
     );
   }
-  
+
 }

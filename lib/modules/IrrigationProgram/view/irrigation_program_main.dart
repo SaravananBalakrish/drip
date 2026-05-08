@@ -6,8 +6,8 @@ import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/schedule_scre
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/selection_screen.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/sequence_screen.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/water_and_fertilizer_screen.dart';
-import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
+import '../../../utils/constants.dart';
 import '../state_management/irrigation_program_provider.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../widgets/custom_alert_dialog.dart';
