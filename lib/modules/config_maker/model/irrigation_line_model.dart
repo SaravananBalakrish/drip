@@ -194,4 +194,3 @@ double intOrDoubleValidate(value){
 }
 
 enum LineParameter{source, sourcePump, irrigationPump, aerator, centralFiltration, localFiltration, centralFertilization, localFertilization, valve, flowControlValve, mainValve, light, gate, fan, fogger,mist, pesticides, heater, screen, vent, powerSupply, pressureSwitch, waterMeter, analogWaterMeter, pressureIn, pressureOut, moisture, temperature, soilTemperature, humidity, co2}
-

@@ -91,7 +91,7 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
       ],
     );
   }
-  
+
   Widget objectTile(DeviceObjectModel object){
     bool themeMode = Theme.of(context).brightness == Brightness.light;
     Color typeColor = widget.leadingColor ?? getObjectTypeCodeToColor(int.parse(object.type));
@@ -99,13 +99,13 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
       contentPadding: const EdgeInsets.symmetric(vertical: 5, horizontal: 5),
       title: Text(object.objectName, style: Theme.of(context).textTheme.labelLarge, overflow: TextOverflow.ellipsis,),
       subtitle: Text('Configured : ${getConfiguredObjectByObjectId(object.objectId)}', style: Theme.of(context).textTheme.labelSmall,),
-        leading: CircleAvatar(
-          radius: 30,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          child: SizedImage(
-            imagePath: '${AppConstants.svgObjectPath}objectId_${object.objectId}.svg',
-          ),
+      leading: CircleAvatar(
+        radius: 30,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        child: SizedImage(
+          imagePath: '${AppConstants.svgObjectPath}objectId_${object.objectId}.svg',
         ),
+      ),
       trailing: SizedBox(
         width: 80,
         child: ToggleTextFormFieldForProductLimit(
@@ -121,13 +121,13 @@ class _ProductLimitGridListTileState extends State<ProductLimitGridListTile> wit
     }else{
       return Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5),
-            border: Border(left: BorderSide(width: 3, color: typeColor)),
-            color: Theme.of(context).cardColor,
-            boxShadow: const [
-              BoxShadow(color: Colors.grey, blurRadius: 5)
-            ],
-            // boxShadow: AppProperties.customBoxShadowLiteTheme
+          borderRadius: BorderRadius.circular(5),
+          border: Border(left: BorderSide(width: 3, color: typeColor)),
+          color: Theme.of(context).cardColor,
+          boxShadow: const [
+            BoxShadow(color: Colors.grey, blurRadius: 5)
+          ],
+          // boxShadow: AppProperties.customBoxShadowLiteTheme
         ),
         width: 300,
         child: myWidget,

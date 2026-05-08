@@ -69,9 +69,9 @@ class ConstantProvider extends ChangeNotifier{
   }
 
   List<ConstantSettingModel> generateDefaultSetting({
-        required Map<String, dynamic> defaultData,
-        required String keyName
-      }){
+    required Map<String, dynamic> defaultData,
+    required String keyName
+  }){
     return (defaultData[keyName] as List<dynamic>).map((setting) {
       return ConstantSettingModel.fromJson(setting, null);
     }).toList();
@@ -220,12 +220,12 @@ class ConstantProvider extends ChangeNotifier{
             defaultSetting: defaultData['normalCriticalAlarm'],
             globalAlarm: defaultData['globalAlarm'],
             oldSetting: lineData.firstOrNull,
-          userData: userData
+            userData: userData
         );
       }).toList();
       if (kDebugMode) {
         print('normalCriticalAlarm updated..');
-    }
+      }
 
 
 
@@ -503,16 +503,16 @@ class ConstantProvider extends ChangeNotifier{
     List<dynamic> payloadList = [];
     for(var line in normalCriticalAlarm){
       for(var alarmIndex = 0;alarmIndex < line.normal.length;alarmIndex++){
-          payloadList.add(
-            [
-              line.normal[alarmIndex].sNo,
-              ...line.normal[alarmIndex].setting.where((setting){
-                return (setting.ecoGemPayload);
-              }).map((setting){
-                return payloadValidate(setting.value.value);
-              }),
-            ].join(','),
-          );
+        payloadList.add(
+          [
+            line.normal[alarmIndex].sNo,
+            ...line.normal[alarmIndex].setting.where((setting){
+              return (setting.ecoGemPayload);
+            }).map((setting){
+              return payloadValidate(setting.value.value);
+            }),
+          ].join(','),
+        );
       }
     }
     return payloadList.join(';');
