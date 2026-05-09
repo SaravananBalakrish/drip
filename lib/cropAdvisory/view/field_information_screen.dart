@@ -123,6 +123,16 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                 const ProgressWidget(current: 3),
                 const SizedBox(height: 20),
 
+                if (widget.address.isNotEmpty)
+                  SectionCard(
+                    title: 'Selected Location',
+                    icon: Icons.location_on,
+                    child: Text(
+                      widget.address,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+
                 const SectionCard(
                   title: 'Mulching used',
                   icon: Icons.eco,

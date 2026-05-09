@@ -93,35 +93,38 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                 const ProgressWidget(current: 2),
                 const SizedBox(height: 20),
 
-                // Optionally show the location/area info
-                // You can display them as read-only fields or just keep hidden
-                // Here's an example of displaying them:
-                // if (address.isNotEmpty) ...[
-                //   Text('Location: $address'),
-                //   SizedBox(height: 10),
-                // ],
-                // if (area.isNotEmpty) ...[
-                //   Text('Area: $area'),
-                //   SizedBox(height: 10),
-                // ],
-                // if (farmId.isNotEmpty) ...[
-                //   Text('Farm ID: $farmId'),
-                //   SizedBox(height: 20),
-                // ],
+                if (address.isNotEmpty)
+                  SectionCard(
+                    title: 'Selected Location',
+                    icon: Icons.location_on,
+                    child: Text(
+                      address,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
+                if (area.isNotEmpty)
+                  SectionCard(
+                    title: 'Selected Area',
+                    icon: Icons.square_foot,
+                    child: Text(
+                      area,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ),
 
-                SectionCard(
+               const SectionCard(
                   title: 'Crop Name',
                   icon: Icons.energy_savings_leaf,
-                  child: const AppTextField(
+                  child:  AppTextField(
                     hint: 'Search Or Select The Crop(Eg.Rice,etc..)',
                     suffix: Icon(Icons.keyboard_arrow_down),
                   ),
                 ),
 
-                SectionCard(
+               const SectionCard(
                   title: 'Variety or Hybrid (Seed Type)',
                   icon: Icons.spa,
-                  child: const AppTextField(
+                  child:  AppTextField(
                     hint: 'Search Or Select Variety Or Hybrid',
                     suffix: Icon(Icons.keyboard_arrow_down),
                   ),
@@ -148,36 +151,36 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                           buildMethodButton('Transplanting'),
                         ],
                       ),
-                      const SizedBox(height: 18),
-                      Row(
+                       const SizedBox(height: 18),
+                      const Row(
                         children: [
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                 Text(
                                   'Planting Date',
                                   style: TextStyle(fontSize: 16),
                                 ),
-                                const SizedBox(height: 8),
-                                const AppTextField(
+                                 SizedBox(height: 8),
+                                 AppTextField(
                                   hint: 'Select Date',
                                   suffix: Icon(Icons.calendar_month),
                                 ),
                               ],
                             ),
                           ),
-                          const SizedBox(width: 12),
+                           SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const Text(
+                                 Text(
                                   'Expected Harvest Date',
                                   style: TextStyle(fontSize: 16),
                                 ),
-                                const SizedBox(height: 8),
-                                const AppTextField(
+                                 SizedBox(height: 8),
+                                 AppTextField(
                                   hint: 'Auto-Calculate',
                                   suffix: Icon(Icons.calendar_month),
                                 ),
@@ -190,28 +193,28 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                   ),
                 ),
 
-                SectionCard(
+                const SectionCard(
                   title: 'Crop Duration',
                   icon: Icons.agriculture,
-                  child: const AppTextField(
+                  child:  AppTextField(
                     hint: 'Select The growth period',
                     suffix: Icon(Icons.keyboard_arrow_down),
                   ),
                 ),
 
-                SectionCard(
+               const SectionCard(
                   title: 'Plant Arrangement',
                   icon: Icons.grid_view,
-                  child: const AppTextField(
+                  child:  AppTextField(
                     hint: 'Select The Plant Arrangement',
                     suffix: Icon(Icons.keyboard_arrow_down),
                   ),
                 ),
 
-                SectionCard(
+                const SectionCard(
                   title: 'Crop type',
                   icon: Icons.park,
-                  child: const AppTextField(
+                  child:  AppTextField(
                     hint: 'Select The Type Of Cultivation Environment',
                     suffix: Icon(Icons.keyboard_arrow_down),
                   ),
