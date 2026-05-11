@@ -11,6 +11,7 @@ import '../StateManagement/mqtt_payload_provider.dart';
 import '../modules/PumpController/model/pump_controller_data_model.dart';
 import '../utils/constants.dart';
 import 'package:rxdart/rxdart.dart';
+
 import '../utils/my_helper_class.dart';
 
 class MqttService {
@@ -215,6 +216,40 @@ class MqttService {
     }
   }
 
+  /*Future<void> topicToSubscribe(String topic) async {
+    try {
+      int retries = 0;
+      while (!isConnected && retries < 10) {
+        await Future.delayed(const Duration(milliseconds: 500));
+        retries++;
+      }
+
+      if (!isConnected) {
+        debugPrint('MQTT not connected. Cannot subscribe to topic: $topic');
+        return;
+      }
+
+      if (currentTopic != null && currentTopic != topic) {
+        _client?.unsubscribe(currentTopic!);
+      }
+
+      await _subscription?.cancel();
+      await Future.delayed(const Duration(milliseconds: 200));
+
+      _client?.subscribe(topic, MqttQos.atLeastOnce);
+      currentTopic = topic;
+
+      _subscription = _client?.updates?.listen((List<MqttReceivedMessage<MqttMessage?>>? c) {
+        if (c != null && c.isNotEmpty) {
+          final MqttPublishMessage recMess = c[0].payload as MqttPublishMessage;
+          final String pt = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
+          onMqttPayloadReceived(pt);
+        }
+      });
+    } catch (e, stacktrace) {
+      debugPrint('MQTT subscribe error: $e\n$stacktrace');
+    }
+  }*/
 
   void topicToUnSubscribe(String topic) {
     if (_client == null) return;
@@ -229,7 +264,6 @@ class MqttService {
   }
 
   void onMqttPayloadReceived(String payload) {
-
     try {
       final payloadMessage = jsonDecode(payload);
       debugPrint("payloadMessage => $payloadMessage");
@@ -241,12 +275,14 @@ class MqttService {
           break;
 
         case 'LD01':
-          pumpDashboardPayload = PumpControllerData.fromJson(payloadMessage, "cM", 1);
+          pumpDashboardPayload =
+              PumpControllerData.fromJson(payloadMessage, "cM", 1);
           providerState?.updateLastSyncDateFromPumpControllerPayload(payload);
           break;
 
         case '3600':
-          schedulePayload = Constants.dataConversionForScheduleView(payloadMessage['cM']['3601']);
+          schedulePayload =
+              Constants.dataConversionForScheduleView(payloadMessage['cM']['3601']);
           break;
 
         case '4200':

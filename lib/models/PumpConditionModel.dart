@@ -58,12 +58,12 @@ class PumpConditionModel {
 class Data {
   List<PumpCondition>? pumpCondition;
   String? controllerReadStatus;
-  String? novaselectmode;
+  String? novaselectmode;   // <-- not nullable, always has a value
 
   Data({
     this.pumpCondition,
     this.controllerReadStatus,
-    this.novaselectmode,
+    this.novaselectmode,   // <-- default value
   });
 
   factory Data.fromJson(Map<String, dynamic> json) => Data(

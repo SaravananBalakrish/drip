@@ -11,7 +11,6 @@ import 'package:provider/provider.dart';
 import '../../../Constants/constants.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../Widgets/custom_animated_switcher.dart';
-import '../../../services/communication_service.dart';
 import '../../IrrigationProgram/view/schedule_screen.dart';
 import '../../IrrigationProgram/widgets/custom_native_time_picker.dart';
 import '../model/preference_data_model.dart';
@@ -333,36 +332,17 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                                           TextButton(
                                                               onPressed: () async {
                                                                 if (isNova || isToGem || isWlc) {
-                                                                  print("thisssss");
                                                                   final pump = preferenceProvider.commonPumpSettings![preferenceProvider.selectedTabIndex];
                                                                   final payload = jsonEncode({"sentSms": "viewconfig,4"});
                                                                   final payload2 = jsonEncode({"0": payload});
                                                                   final viewConfig = {
                                                                     "5900": {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${4}"}
                                                                   };
-                                                                  final result = await context.read<CommunicationService>().sendCommand(
-                                                                      payload: isToGem ? jsonEncode(viewConfig)
+                                                                  mqttService.topicToPublishAndItsMessage(
+                                                                      isToGem ? jsonEncode(viewConfig)
                                                                           : isWlc ? Constants.sendPayloadWithCrc(payload)
                                                                           : payload,
-                                                                      serverMsg: '');
-                                                                  print("result : $result");
-                                                                  ScaffoldMessenger.of(context).showSnackBar(
-                                                                    const SnackBar(content: Text("update settings sent Ble")),
-                                                                  );
-                                                                  if (result['http'] == true) {
-                                                                    debugPrint("Payload sent to Server");
-                                                                  }
-                                                                  if (result['mqtt'] == true) {
-                                                                    debugPrint("Payload sent to MQTT Box");
-                                                                  }
-                                                                  if (result['bluetooth'] == true) {
-                                                                    debugPrint("Payload sent via Bluetooth");
-                                                                  }
-                                                                  // mqttService.topicToPublishAndItsMessage(
-                                                                  //     isToGem ? jsonEncode(viewConfig)
-                                                                  //         : isWlc ? Constants.sendPayloadWithCrc(payload)
-                                                                  //         : payload,
-                                                                  //     "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
+                                                                      "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
                                                                 }
                                                                 await Future.delayed(Duration.zero, () {
                                                                   preferenceProvider.updateValidationCode();
@@ -677,7 +657,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                 unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey.shade400),
                 dividerColor: Colors.transparent,
                 isScrollable: true,
-                onTap: (value) async{
+                onTap: (value) {
                   preferenceProvider.updateTabIndex(commonPumpTabController.index);
                   if(selectedSetting == 2 && isToGem) {
                     mqttPayloadProvider.viewSettingsList.clear();
@@ -691,11 +671,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                     final viewConfig = {"5900": {
                       "5901": "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload2+$categoryId",
                       }};
-                    final result = await context.read<CommunicationService>().sendCommand(
-                      payload: isWlc ? Constants.sendPayloadWithCrc(payload) : jsonEncode(viewConfig),
-                      serverMsg: '',
-                    );
-                    debugPrint("Send result: $result");
+                    mqttService.topicToPublishAndItsMessage(isWlc ? Constants.sendPayloadWithCrc(payload) : jsonEncode(viewConfig),
+                        "${Environment.mqttPublishTopic}/${widget.masterData['deviceId']}");
                   }
                 },
                 tabs: [
@@ -1440,12 +1417,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                 mqttService: mqttService,
                 shouldSendFailedPayloads: shouldSendFailedPayloads,
                 isWlc: isWlc,
-                onDone: () {
-                  Navigator.of(context).pop(true);
-                  setState(() {
-                    viewConfig = !viewConfig;
-                  });
-                },
               );
             },
           );

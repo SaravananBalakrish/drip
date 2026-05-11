@@ -17,6 +17,8 @@ class ConfigBasePage extends StatefulWidget {
   State<ConfigBasePage> createState() => _ConfigBasePageState();
 }
 
+
+
 class _ConfigBasePageState extends State<ConfigBasePage> {
   late ConfigMakerProvider configPvd;
   late Future<List<DeviceModel>> listOfDevices;
@@ -25,7 +27,7 @@ class _ConfigBasePageState extends State<ConfigBasePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    debugPrint("widget.masterData :: ${jsonEncode(widget.masterData)}");
+    print("widget.masterData :: ${jsonEncode(widget.masterData)}");
     configPvd = Provider.of<ConfigMakerProvider>(context, listen: false);
     // Lk farm
     // listOfDevices = configPvd.fetchData({"userId":3,"customerId":4,"controllerId":1,"deviceId":"E8FB1C3501D1","deviceName":"xMm","categoryId":1,"categoryName":"xMm","modelId":1,"modelName":"xMm1000_R","groupId":1,"groupName":"LK Demo","connectingObjectId":["1","2","3","4","1","2","3","4"]});
@@ -46,6 +48,7 @@ class _ConfigBasePageState extends State<ConfigBasePage> {
   Widget build(BuildContext context) {
     configPvd = Provider.of<ConfigMakerProvider>(context, listen: true);
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return FutureBuilder<List<DeviceModel>>(
       future: listOfDevices,
       builder: (context, snapshot) {
@@ -71,6 +74,7 @@ class _ConfigBasePageState extends State<ConfigBasePage> {
   }
 }
 
+
 String getTabName(ConfigMakerTabs configMakerTabs) {
   switch (configMakerTabs) {
     case ConfigMakerTabs.deviceList:
@@ -81,5 +85,7 @@ String getTabName(ConfigMakerTabs configMakerTabs) {
       return 'Connection';
     case ConfigMakerTabs.siteConfigure:
       return 'Site Configure';
-    }
+    default:
+      throw ArgumentError('Invalid ConfigMakerTabs value: $configMakerTabs');
+  }
 }

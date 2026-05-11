@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
- import '../../../Screens/Dealer/sevicecustomer.dart';
+import '../../../Screens/Dealer/sevicecustomer.dart';
 import '../../../Screens/Logs/irrigation_and_pump_log.dart';
 import '../../../Screens/Map/oro_map/map_areator.dart';
 import '../../../Screens/planning/weather/view/weather_Gsm.dart';
@@ -27,9 +27,7 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
   final isGsmWeather = [...AppConstants.weatherModelList].contains(cMaster.modelId);
 
 
-
-
-   switch (index) {
+  switch (index) {
     case 0:
       return (isGem || isNova) ?
       const DashboardLayoutSelector(userRole: UserRole.customer) : isGsmWeather ? WeatherGsm(customerId: cSite.customerId, controllerId: cMaster.controllerId, deviceID: cMaster.deviceId,jsondata: dashboardToWeatherFormat(cMaster)) :
@@ -44,12 +42,13 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text('Please wait...'),
-                SizedBox(height: 10),
+              SizedBox(height: 10),
               CircularProgressIndicator(),
-             ],
+            ],
           ),
         ),
       );
+
     case 1:
       return CustomerProduct(customerId: cSite.customerId);
 
@@ -127,26 +126,24 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
   }
 }
 
-  Map<String, dynamic> dashboardToWeatherFormat(
-      MasterControllerModel dashboard) {
-     final deviceList = <Map<String, dynamic>>[];
+Map<String, dynamic> dashboardToWeatherFormat(
+    MasterControllerModel dashboard) {
+  final deviceList = <Map<String, dynamic>>[];
 
-     final configList =
-     dashboard.configObjects.map((e) => e.toJson()).toList();
+  final configList =
+  dashboard.configObjects.map((e) => e.toJson()).toList();
 
-     // mqttProvider.liveDateAndTime
+  deviceList.add({
+    "controllerId": dashboard.controllerId,
+    "deviceId": dashboard.deviceId,
+    "deviceName": dashboard.deviceName,
+    "serialNumber": 1,
+  });
 
-    deviceList.add({
-      "controllerId": dashboard.controllerId,
-      "deviceId": dashboard.deviceId,
-      "deviceName": dashboard.deviceName,
-      "serialNumber": 1,
-    });
-
-    return {
-         "weatherLive": dashboard.live?.toJson(),
-         "deviceList": deviceList,
-        "configObject": configList,
-     };
-  }
+  return {
+    "weatherLive": dashboard.live?.toJson(),
+    "deviceList": deviceList,
+    "configObject": configList,
+  };
+}
 

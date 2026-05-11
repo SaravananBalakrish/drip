@@ -10,6 +10,7 @@ import 'bluetooth/bluetooth_classic_service.dart';
 import 'http_service.dart';
 import 'mqtt_service.dart';
 
+
 class CommunicationService {
   final MqttService mqttService;
   final BluetoothClassicService blueService;
@@ -30,6 +31,7 @@ class CommunicationService {
       'mqtt': false,
       'bluetooth': false,
     };
+
     try {
       if (payload.isEmpty) {
         throw Exception('Payload is empty');
@@ -64,7 +66,6 @@ class CommunicationService {
       }
 
       if (blueService.isConnected) {
-        debugPrint("bluetooth connected...");
         try {
           blueService.write(payload);
           result['bluetooth'] = true;
@@ -72,12 +73,9 @@ class CommunicationService {
         } catch (e) {
           debugPrint('Failed to send via Classic Bluetooth: $e');
         }
-      } else{
-        debugPrint("bluetooth not connected...");
       }
 
       if (bleService.isConnected) {
-        debugPrint("bluetooth connected...");
         try {
           await bleService.write(payload);
           result['bluetooth'] = true;
@@ -125,9 +123,12 @@ class CommunicationService {
           debugPrint('Failed to send via BLE: $e');
         }
       }*/
+
+
     } catch (e) {
       debugPrint('Unexpected error during sending command: $e');
     }
+
     return result;
   }
 

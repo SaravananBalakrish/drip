@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:oro_drip_irrigation/cropAdvisory/view/dashboard_screen.dart';
+import '../service/cropadvisory_model.dart';
 
 import '../widgets/AppTextField.dart';
 import '../widgets/ContinueButton.dart';
@@ -7,77 +7,88 @@ import '../widgets/ProgressWidget.dart';
 import '../widgets/SectionCard.dart';
 
 class FieldInformationScreen extends StatefulWidget {
-  final double? latitude;
-  final double? longitude;
-  final String address;
-  final String area;
-  final String farmId;
-
-  const FieldInformationScreen({
-    super.key,
-    required this.latitude,
-    required this.longitude,
-    required this.address,
-    required this.area,
-    required this.farmId,
-  });
+  const FieldInformationScreen({super.key});
 
   @override
   State<FieldInformationScreen> createState() => _FieldInformationScreenState();
 }
 
 class _FieldInformationScreenState extends State<FieldInformationScreen> {
+  final TextEditingController _mulchingController = TextEditingController(text: 'Yes');
+  final TextEditingController _previousCropController = TextEditingController();
+  String? _selectedSoilType;
+  final CropAdvisoryModel _model = CropAdvisoryModel.instance;
+
+  @override
+  void dispose() {
+    _mulchingController.dispose();
+    _previousCropController.dispose();
+    super.dispose();
+  }
+
   // Improved soilItem with uniform image sizing and proper fitting
   Widget soilItem(String title, [String? imagePath]) {
-    return Container(
-      width: 100,
-      height: 120,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Fixed-size image area with ClipRRect for rounded corners
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              color: Colors.grey.shade100, // subtle background while loading
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: imagePath != null
-                  ? Image.asset(
-                imagePath,
-                fit: BoxFit.cover, // fills the box without distortion
-                width: double.infinity,
-                height: double.infinity,
-                errorBuilder: (context, error, stackTrace) => const Icon(
-                  Icons.broken_image,
+    bool isSelected = _selectedSoilType == title;
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedSoilType = title;
+        });
+      },
+      child: Container(
+        width: 100,
+        height: 120,
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xff0E8797).withOpacity(0.1) : Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: isSelected ? const Color(0xff0E8797) : Colors.grey.shade300, width: isSelected ? 2 : 1),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Fixed-size image area with ClipRRect for rounded corners
+            Container(
+              width: 60,
+              height: 60,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: Colors.grey.shade100, // subtle background while loading
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: imagePath != null
+                    ? Image.asset(
+                  imagePath,
+                  fit: BoxFit.cover, // fills the box without distortion
+                  width: double.infinity,
+                  height: double.infinity,
+                  errorBuilder: (context, error, stackTrace) => const Icon(
+                    Icons.broken_image,
+                    size: 40,
+                    color: Colors.grey,
+                  ),
+                )
+                    : const Icon(
+                  Icons.help_outline, // clear icon for "Others"
                   size: 40,
                   color: Colors.grey,
                 ),
-              )
-                  : const Icon(
-                Icons.help_outline, // clear icon for "Others"
-                size: 40,
-                color: Colors.grey,
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-            textAlign: TextAlign.center,
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+            const SizedBox(height: 8),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                color: isSelected ? const Color(0xff0E8797) : Colors.black,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -124,22 +135,23 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                 const ProgressWidget(current: 3),
                 const SizedBox(height: 20),
 
-                if (widget.address.isNotEmpty)
+                if (_model.address?.isNotEmpty ?? false)
                   SectionCard(
                     title: 'Selected Location',
                     icon: Icons.location_on,
                     child: Text(
-                      widget.address,
+                      _model.address!,
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
 
-                const SectionCard(
+                SectionCard(
                   title: 'Mulching used',
                   icon: Icons.eco,
                   child: AppTextField(
+                    controller: _mulchingController,
                     hint: 'Yes',
-                    suffix: Icon(Icons.keyboard_arrow_down),
+                    suffix: const Icon(Icons.keyboard_arrow_down),
                   ),
                 ),
 
@@ -159,12 +171,13 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                   ),
                 ),
 
-                const SectionCard(
+                SectionCard(
                   title: 'Previous crop grown',
                   icon: Icons.energy_savings_leaf,
                   child: AppTextField(
+                    controller: _previousCropController,
                     hint: 'Search Or Select The Crop(Eg.Rice,etc..)',
-                    suffix: Icon(Icons.keyboard_arrow_down),
+                    suffix: const Icon(Icons.keyboard_arrow_down),
                   ),
                 ),
 
@@ -172,10 +185,23 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
 
                 CropContinueButton(
                   onTap: () {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (_) => const DashboardScreen()),
-                      (route) => false,
+                    // Final update to the model singleton
+                    _model.mulchingUsed = _mulchingController.text;
+                    _model.soilType = _selectedSoilType;
+                    _model.previousCrop = _previousCropController.text;
+
+                    // Printing all data for verification
+                    debugPrint('Sending Data: ${_model.toJson()}');
+
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'All data collected successfully!\n'
+                          'Crop: ${_model.cropName}\n'
+                          'Location: ${_model.address}\n'
+                          'Soil: ${_model.soilType}',
+                        ),
+                      ),
                     );
                   },
                 ),

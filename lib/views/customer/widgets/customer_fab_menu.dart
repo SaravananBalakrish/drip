@@ -1,8 +1,10 @@
 import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/password_field.dart';
 import 'package:provider/provider.dart';
+
 import '../../../models/customer/site_model.dart';
 import '../../../Screens/Dealer/ble_mobile_screen.dart';
 import '../../../StateManagement/customer_provider.dart';
@@ -42,9 +44,8 @@ class CustomerFabMenu extends StatelessWidget {
 
     final isGem = [...AppConstants.gemModelList].contains(currentMaster.modelId);
     final isGemNova = [...AppConstants.ecoGemModelList].contains(currentMaster.modelId);
-    final isWlc = [...AppConstants.wlcModelList].contains(currentMaster.modelId);
 
-    if (!isGem && !isGemNova && !isWlc) return const SizedBox.shrink();
+    if (!isGem && !isGemNova) return const SizedBox.shrink();
 
     final commMode = Provider.of<CustomerProvider>(context).controllerCommMode;
 
@@ -52,44 +53,42 @@ class CustomerFabMenu extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        if(!isWlc)
-          ...[
-            FloatingActionButton(
-              heroTag: null,
-              onPressed: null,
-              child: PopupMenuButton<String>(
-                offset: const Offset(0, -180),
-                color: Colors.white,
-                onSelected: (value) => _handleMenuSelection(value, context),
-                icon: const Icon(Icons.menu, color: Colors.black),
-                surfaceTintColor: Theme.of(context).primaryColorLight,
-                itemBuilder: (context) => [
-                  _buildPopupItem(
-                      context, 'Node Status', Icons.format_list_numbered, 'Node Status'),
-                  if(isGem)...[
-                    _buildPopupItem(context, 'I/O Connection', Icons.settings_input_component_outlined, 'I/O Connection details'),
-                  ],
+        FloatingActionButton(
+          heroTag: null,
+          onPressed: null,
+          child: PopupMenuButton<String>(
+            offset: const Offset(0, -180),
+            color: Colors.white,
+            onSelected: (value) => _handleMenuSelection(value, context),
+            icon: const Icon(Icons.menu, color: Colors.black),
+            surfaceTintColor: Theme.of(context).primaryColorLight,
+            itemBuilder: (context) => [
+              _buildPopupItem(
+                  context, 'Node Status', Icons.format_list_numbered, 'Node Status'),
+              if(isGem)...[
+                _buildPopupItem(context, 'I/O Connection', Icons.settings_input_component_outlined, 'I/O Connection details'),
+              ],
 
-                  if(myPermissionFlags[0])...[
-                    _buildPopupItem(context, 'Program', Icons.list_alt, 'Program'),
-                  ],
+              if(myPermissionFlags[0])...[
+                _buildPopupItem(context, 'Program', Icons.list_alt, 'Program'),
+              ],
 
-                  if(isGem)...[
-                    if(myPermissionFlags[2])...[
-                      _buildPopupItem(context, 'ScheduleView', Icons.view_list_outlined, 'Scheduled program details'),
-                    ],
-                  ],
-
-                  if(myPermissionFlags[1])...[
-                    _buildPopupItem(context, 'Manual', Icons.touch_app_outlined, 'Manual'),
-                  ],
-
-                  _buildPopupItem(context, 'Sent & Received', Icons.question_answer_outlined, 'Sent & Received'),
+              if(isGem)...[
+                if(myPermissionFlags[2])...[
+                  _buildPopupItem(context, 'ScheduleView', Icons.view_list_outlined, 'Scheduled program details'),
                 ],
-              ),
-            ),
-            const SizedBox(height: 10),
-          ],
+              ],
+
+              if(myPermissionFlags[1])...[
+                _buildPopupItem(context, 'Manual', Icons.touch_app_outlined, 'Manual'),
+              ],
+
+              _buildPopupItem(context, 'Sent & Received', Icons.question_answer_outlined, 'Sent & Received'),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 10),
 
         FloatingActionButton(
           heroTag: null,
@@ -122,8 +121,6 @@ class CustomerFabMenu extends StatelessWidget {
             color: Colors.black,
           ),
         ),
-        if(isWlc)
-          const SizedBox(height: 60)
       ],
     );
   }
@@ -224,7 +221,8 @@ class CustomerFabMenu extends StatelessWidget {
     }
   }
 
-  PopupMenuItem<String> _buildPopupItem(BuildContext context, String value, IconData icon, String text) {
+  PopupMenuItem<String> _buildPopupItem(
+      BuildContext context, String value, IconData icon, String text) {
     return PopupMenuItem<String>(
       value: value,
       child: Row(
@@ -670,6 +668,7 @@ class CustomerFabMenu extends StatelessWidget {
       ),
     );
   }
+
 
   void showWifiDialog(BuildContext context, BluetoothBleService bleService) {
     final ssidController = TextEditingController();
