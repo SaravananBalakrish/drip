@@ -31,8 +31,8 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
     super.initState();
     // Use initial coordinates if provided, otherwise default
     _pickedLocation = LatLng(
-      widget.initialLatitude ?? 37.7749,
-      widget.initialLongitude ?? -122.4194,
+      widget.initialLatitude ?? 11.1271,
+      widget.initialLongitude ?? 78.6569,
     );
     _getCurrentLocation();
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/cropAdvisory/view/dashboard_screen.dart';
 
 import '../widgets/AppTextField.dart';
 import '../widgets/ContinueButton.dart';
@@ -171,16 +172,10 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
 
                 CropContinueButton(
                   onTap: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'Completed Successfully\n'
-                              'Location: ${widget.latitude}, ${widget.longitude}\n'
-                              'Address: ${widget.address}\n'
-                              'Area: ${widget.area}\n'
-                              'Farm ID: ${widget.farmId}',
-                        ),
-                      ),
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => const DashboardScreen()),
+                      (route) => false,
                     );
                   },
                 ),

@@ -182,7 +182,10 @@ FutureOr<void> main() async {
       ),
     );
   }, (error, stack) {
-    print('Zone Error: $error');
-    print('Stack: $stack');
+    if(kDebugMode){
+      print('Zone Error: $error');
+      print('Stack: $stack');
+    }
+
   });
 }
