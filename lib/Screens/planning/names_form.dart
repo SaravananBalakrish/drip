@@ -225,8 +225,8 @@ class _NamesState extends State<Names> {
                         setState(() {
                           // bool nameExists = (configModel.configObject ?? []).any(
                           //         (element) => element.name == val && element != data);
-                          print(data.location);
-                          bool nameExists = (configModel.configObject ?? []).any(
+
+                           bool nameExists = (configModel.configObject ?? []).any(
                                   (element) =>
                               element != data &&
                                   element.name?.trim().toLowerCase() == val.trim().toLowerCase() &&
@@ -243,6 +243,7 @@ class _NamesState extends State<Names> {
                               const SnackBar(content: Text('Name length Maximum reached')),
                             );
                           } else if (val.isNotEmpty) {
+                            print("val->$val");
                             data.name = val;
                           }
                         });

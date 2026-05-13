@@ -15,7 +15,6 @@ class CropAdvisoryModel extends ChangeNotifier {
   String? address;
   String? area;
   String? farmId;
-
   // Crop Details
   String? cropName;
   String? variety;
@@ -25,7 +24,6 @@ class CropAdvisoryModel extends ChangeNotifier {
   String? cropDuration;
   String? plantArrangement;
   String? cropType;
-
   // Field Information
   String? mulchingUsed;
   String? soilType;
