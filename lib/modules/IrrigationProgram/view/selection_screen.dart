@@ -81,6 +81,7 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
   Widget build(BuildContext context) {
     irrigationProgramProvider = Provider.of<IrrigationProgramMainProvider>(context);
     final isEcoGem = AppConstants.ecoGemAndPlusModelList.contains(widget.modelId);
+    final isEcoGemFlowControlValve = AppConstants.ecoGemFlowControlValveModel.contains(widget.modelId);
 
     return irrigationProgramProvider.sampleIrrigationLine != null ? LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -132,10 +133,10 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 buildSectionTitle(title: "General", context: context),
-                if(!allSelectedValvesExist)
+                if(!allSelectedValvesExist || isEcoGemFlowControlValve)
                   buildSection(
                     title: "Main Valves",
-                    dataList: irrigationLine!.map((e) => e.mainValve ?? []).expand((list) => list).toList(),
+                    dataList: irrigationLine.map((e) => e.mainValve ?? []).expand((list) => list).toList(),
                     lightColor: yellowLight,
                     darkColor: yellowDark,
                     image: Image.asset(
@@ -188,7 +189,7 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
                       darkColor: redDark,
                     )
                 ),
-                if(!isEcoGem)
+                if(!isEcoGem || isEcoGemFlowControlValve)
                   buildSection(
                     title: "Head Units",
                     dataList: !irrigationProgramProvider.isPumpStationMode

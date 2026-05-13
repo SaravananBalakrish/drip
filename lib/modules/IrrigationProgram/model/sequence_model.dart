@@ -584,6 +584,11 @@ class ProgramDetails {
   String cyclicOffTime;
   bool enablePressure;
   String pressureValue;
+  String controlMode;
+  String setFlow;
+  String setPressure;
+  String toleranceFlow;
+  String tolerancePressure;
 
   ProgramDetails(
       {
@@ -601,6 +606,11 @@ class ProgramDetails {
         required this.cyclicOffTime,
         required this.enablePressure,
         required this.pressureValue,
+        required this.controlMode,
+        required this.setFlow,
+        required this.setPressure,
+        required this.toleranceFlow,
+        required this.tolerancePressure,
       });
 
   factory ProgramDetails.fromJson(Map<String, dynamic> json) {
@@ -618,6 +628,11 @@ class ProgramDetails {
         cyclicOffTime: json["data"]["cyclicOffTime"] ?? "00:00:00",
         enablePressure: json["data"]["isPressureEnabled"] == '1' ? true : false,
         pressureValue: json["data"]["pressure"] ?? "0",
+        controlMode: json["data"]["controlMode"] ?? "flow",
+        setFlow: json["data"]["setFlow"] ?? "0",
+        setPressure: json["data"]["setPressure"] ?? "0",
+        toleranceFlow: json["data"]["toleranceFlow"] ?? "0",
+        tolerancePressure: json["data"]["tolerancePressure"] ?? "0",
         controllerReadStatus: json['data']['controllerReadStatus'] ?? "0"
     );
   }

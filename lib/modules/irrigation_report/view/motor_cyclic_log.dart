@@ -88,8 +88,6 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
     }
   }
 
-
-
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
       if (args.value is PickerDateRange) {
@@ -107,7 +105,6 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
       print("range: ${_range},rangecount:${_rangeCount},Select date:${_selectedDate}");
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -177,6 +174,7 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
       ),
     );
   }
+
   Widget getTitleValue({required String title, required String value, Color? titleColor, Color? valueColor, double? fontSize}){
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -204,9 +202,9 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
           getTitleValue(title: 'Cyclic flow', value: getCyclicFlow(programData: programData), titleColor: Colors.white, valueColor: Colors.white),
           if(programData["zoneList"].isNotEmpty)
           ...[
-            getTitleValue(title: 'Start time', value: programData["zoneList"][0]['OnTime'], 
+            getTitleValue(title: 'Start time', value: programData["zoneList"][0]['onTime'],
                 titleColor: Colors.white, valueColor: Colors.white),
-            getTitleValue(title: 'End time', value: programData["zoneList"][programData["zoneList"].length - 1]['OnTime'], titleColor: Colors.white, valueColor: Colors.white),
+            getTitleValue(title: 'End time', value: programData["zoneList"][programData["zoneList"].length - 1]['onTime'], titleColor: Colors.white, valueColor: Colors.white),
           ],
           Column(
             spacing: 10,
@@ -264,9 +262,9 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
             children: [
               Row(
                 children: [
-                  Expanded(child: getTitleValue(title: 'On Time', value: zoneData["OnTime"], fontSize : 12, titleColor: Colors.black54)),
+                  Expanded(child: getTitleValue(title: 'On Time', value: zoneData["onTime"], fontSize : 12, titleColor: Colors.black54)),
                   getDivider(),
-                  Expanded(child: getTitleValue(title: 'Off Time', value: zoneData["OffTime"], fontSize : 12, titleColor: Colors.black54))
+                  Expanded(child: getTitleValue(title: 'Off Time', value: zoneData["offTime"], fontSize : 12, titleColor: Colors.black54))
                 ],
               ),
               Row(
@@ -279,7 +277,6 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
             ],
           ),
         ),
-
       ],
     );
   }

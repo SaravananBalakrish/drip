@@ -434,7 +434,6 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
                   SlidingSendButton(
                     onSend: (){
-                      // print(irrigationProvider.dataToMqtt(widget.serialNumber == 0 ? irrigationProvider.serialNumberCreation : widget.serialNumber, widget.programType));
                       irrigationProvider.programLibraryData(widget.customerId, widget.controllerId);
                       sendFunction();
                     },
@@ -497,6 +496,11 @@ class _PreviewScreenState extends State<PreviewScreen> {
         "cyclicOffTime": mainProvider.programDetails!.cyclicOffTime,
         "isPressureEnabled": mainProvider.programDetails!.enablePressure ? '1' : '0',
         "pressure": mainProvider.programDetails!.pressureValue,
+        "controlMode": mainProvider.programDetails!.controlMode,
+        "setFlow": mainProvider.programDetails!.setFlow,
+        "setPressure": mainProvider.programDetails!.setPressure,
+        "toleranceFlow": mainProvider.programDetails!.toleranceFlow,
+        "tolerancePressure": mainProvider.programDetails!.tolerancePressure,
         "incompleteRestart": mainProvider.isCompletionEnabled ? "1" : "0",
         "controllerReadStatus": '0',
         "programType": mainProvider.selectedProgramType,
