@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import '../service/cropadvisory_model.dart';
+import 'package:intl/intl.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String? temperature;
@@ -19,6 +21,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  final CropAdvisoryModel _model = CropAdvisoryModel.instance;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,12 +57,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const Icon(Icons.location_on_outlined, size: 18, color: Colors.grey),
               const SizedBox(width: 6),
               Text(
-                'Mettupalayam, Coimbatore',
+                _model.address ?? 'Mettupalayam, Coimbatore',
                 style: GoogleFonts.poppins(
                   fontSize: 13,
                   color: Colors.black87,
                   fontWeight: FontWeight.w400,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
@@ -154,14 +160,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 const Icon(Icons.calendar_today_outlined, size: 14, color: Colors.black54),
                 const SizedBox(width: 6),
-                Text(
-                  '27.10.2026',
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black87,
-                  ),
-                ),
+            Text(
+              DateFormat('dd.MM.yyyy').format(DateTime.now()),
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
+            ),
                 const Icon(Icons.keyboard_arrow_down, size: 16, color: Colors.black54),
               ],
             ),
@@ -174,7 +180,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  '14:30:25',
+                  DateFormat('HH:mm:ss').format(DateTime.now()),
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -189,7 +195,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  String _getSoilImage(String? soilType) {
+    switch (soilType) {
+      case 'Clay Soil':
+        return 'assets/Images/CropAdvisory/clay_soil.png';
+      case 'Loam Soil':
+        return 'assets/Images/CropAdvisory/loam_soil.png';
+      case 'Sandy Soil':
+        return 'assets/Images/CropAdvisory/sandy_soil.png';
+      case 'Volcanic soil':
+        return 'assets/Images/CropAdvisory/Volcanic_soil.png';
+      default:
+        return ''; // Or a default image
+    }
+  }
+
   Widget _buildCropHealthCard() {
+    String soilImg = _getSoilImage(_model.soilType);
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -213,7 +235,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Crop Health(Tomato)',
+                      'Crop Health(${_model.cropName ?? 'Tomato'})',
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -245,11 +267,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       flex: 3,
                       child: Column(
                         children: [
-                          _buildInfoRow(Icons.water_drop, 'Variety', 'Hybrid'),
+                          _buildInfoRow(Icons.water_drop, 'Variety', _model.variety ?? 'Hybrid'),
                           const SizedBox(height: 12),
-                          _buildInfoRow(Icons.water_drop, 'Crop Type', 'Open Field'),
+                          _buildInfoRow(Icons.water_drop, 'Crop Type', _model.cropType ?? 'Open Field'),
                           const SizedBox(height: 12),
-                          _buildInfoRow(Icons.water_drop, 'Soil Type', 'Loam'),
+                          _buildInfoRow(Icons.water_drop, 'Soil Type', _model.soilType ?? 'Loam'),
                         ],
                       ),
                     ),
@@ -264,10 +286,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
-                          // child: Image.asset(
-                          //   'assets/Images/CropAdvisory/loam_soil.png', // Placeholder for tomato plant image
-                          //   fit: BoxFit.cover,
-                          // ),
+                          child: soilImg.isNotEmpty
+                              ? Image.asset(
+                                  soilImg,
+                                  fit: BoxFit.cover,
+                                )
+                              : const Icon(Icons.image_not_supported, color: Colors.grey),
                         ),
                       ),
                     ),

@@ -5,6 +5,7 @@ import '../widgets/AppTextField.dart';
 import '../widgets/ContinueButton.dart';
 import '../widgets/ProgressWidget.dart';
 import '../widgets/SectionCard.dart';
+import 'dashboard_screen.dart';
 
 class FieldInformationScreen extends StatefulWidget {
   const FieldInformationScreen({super.key});
@@ -193,15 +194,13 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                     // Printing all data for verification
                     debugPrint('Sending Data: ${_model.toJson()}');
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'All data collected successfully!\n'
-                          'Crop: ${_model.cropName}\n'
-                          'Location: ${_model.address}\n'
-                          'Soil: ${_model.soilType}',
-                        ),
+                    // Navigate to Dashboard and clear the stack to restrict access back to setup
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DashboardScreen(),
                       ),
+                      (route) => false,
                     );
                   },
                 ),
