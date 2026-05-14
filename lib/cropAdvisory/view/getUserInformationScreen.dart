@@ -32,20 +32,6 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
 
 
   @override
-  void initState() {
-    super.initState();
-    // Pre-fill from model
-    _latitude = double.tryParse(_model.latitude ?? '');
-    _longitude = double.tryParse(_model.longitude ?? '');
-    _selectedAddress = _model.address ?? '';
-    _locationController.text = _selectedAddress.isNotEmpty
-        ? _selectedAddress
-        : (_latitude != null ? '$_latitude, $_longitude' : '');
-    _areaController.text = _model.area ?? '';
-    _farmIdController.text = _model.farmId ?? '';
-  }
-
-  @override
   void dispose() {
     _locationController.dispose();
     _areaController.dispose();
@@ -65,12 +51,12 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
       ),
     );
 
-    if (result == true) {
+    if (result != null && result is Map) {
       setState(() {
-        _latitude = double.tryParse(_model.latitude ?? '');
-        _longitude = double.tryParse(_model.longitude ?? '');
-        _selectedAddress = _model.address ?? '';
-        _locationController.text = _selectedAddress;
+        _latitude = result['latitude'];
+        _longitude = result['longitude'];
+        _locationController.text = '${_model.latitude}, ${_model.latitude}';
+        _selectedAddress = _locationController.text;
       });
     }
   }
@@ -115,6 +101,7 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
 
   @override
   Widget build(BuildContext context) {
+    _locationController.text = '${_model.latitude},${_model.longitude}';
     return Scaffold(
       appBar: AppBar(title: const Text("Crop Advisory")),
       body: SafeArea(
@@ -188,20 +175,21 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
                 // ---------- Continue Button ----------
                 CropContinueButton(
                   onTap: () {
-                    if (_latitude == null || _longitude == null) {
+                    if (_model.longitude == null || _model.longitude == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Please select a location')),
                       );
                       return;
                     }
                     // Update singleton instance
-                    _model.latitude = _latitude.toString();
-                    _model.longitude = _longitude.toString();
-                    _model.address = _selectedAddress;
-                    _model.area = _areaController.text;
-                    _model.farmId = _farmIdController.text;
-
-                    // Navigate to next screen
+                    final model = CropAdvisoryModel.instance;
+                    final locationParts = _locationController.text.split(',');
+                    model.latitude = locationParts[0].trim();
+                    model.longitude = locationParts[1].trim();
+                    model.address = _selectedAddress;
+                    model.area = _areaController.text;
+                    model.farmId = _farmIdController.text;
+                    // Navigate without params
                     Navigator.push(
                       context,
                       MaterialPageRoute(
