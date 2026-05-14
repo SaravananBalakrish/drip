@@ -5,13 +5,10 @@ import 'package:oro_drip_irrigation/modules/Preferences/view/preference_main_scr
 import 'package:oro_drip_irrigation/modules/PumpController/view/pump_dashboard_screen.dart';
 import 'package:oro_drip_irrigation/modules/PumpController/widget/custom_outline_button.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
-import 'package:oro_drip_irrigation/views/customer/widgets/customer_fab_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../models/customer/site_model.dart';
-import '../../../providers/user_provider.dart';
-import '../../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../../../views/customer/controller_settings/settings_menu_narrow.dart';
 import '../../../views/customer/controller_settings/wide/controller_settings_wide.dart';
 import '../../Logs/view/power_graph_screen.dart';
@@ -210,11 +207,6 @@ class _PumpControllerHomeState extends State<PumpControllerHome> {
   }
 
   Widget _buildSmallScreen() {
-    final userProvider = context.read<UserProvider>();
-    final loggedInUser = userProvider.loggedInUser;
-
-    final vm = context.watch<CustomerScreenControllerViewModel>();
-
     return PageView(
       physics: const NeverScrollableScrollPhysics(),
       controller: _pageController,

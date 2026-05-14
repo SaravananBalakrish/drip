@@ -67,6 +67,7 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
     overAllPvd = Provider.of<OverAllUse>(context,listen: false);
     String programName = doneProvider.programName == ''? "Program ${doneProvider.programCount}" : doneProvider.programName;
     final isEcoGem = [3].contains(widget.modelId);
+    final isEcoGemFlowControlValve = [89, 90].contains(widget.modelId);
 
     return LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -85,11 +86,16 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
                               padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width > 1200 ? 8 : 0),
                               context: context,
                               title: isEcoGem ? ['Program Name', 'Valve Off Delay', 'Scale factor'][index].toUpperCase()
+                                  : isEcoGemFlowControlValve ? ['Program Name', 'Valve Off Delay', 'Scale factor', 'Control Mode', 'Flow', 'Pressure', 'Flow Tolerance', 'Pressure Tolerance'][index].toUpperCase()
                                   : ['Program Name', 'Priority', 'Valve Off Delay', 'Scale factor', 'Cyclic OnTime', 'Cyclic OffTime', 'Enable Pressure', 'Pressure Value'][index].toUpperCase(),
                               subTitle: isEcoGem ? [tempProgramName != '' ? tempProgramName : widget.serialNumber == 0
                                   ? "Program ${doneProvider.programCount}"
                                   : doneProvider.programDetails!.programName.isNotEmpty ? programName : doneProvider.programDetails!.defaultProgramName,
                                 'Set valve off delay', 'Adjust duration or flow'][index]
+                                  : isEcoGemFlowControlValve ? [tempProgramName != '' ? tempProgramName : widget.serialNumber == 0
+                                  ? "Program ${doneProvider.programCount}"
+                                  : doneProvider.programDetails!.programName.isNotEmpty ? programName : doneProvider.programDetails!.defaultProgramName,
+                                'Set valve off delay', 'Adjust duration or flow', 'Set control mode', 'Set flow', 'Set pressure', 'Set flow tolerance', 'Set pressure tolerance'][index]
                                   : [tempProgramName != '' ? tempProgramName : widget.serialNumber == 0
                                   ? "Program ${doneProvider.programCount}"
                                   : doneProvider.programDetails!.programName.isNotEmpty ? programName : doneProvider.programDetails!.defaultProgramName,
@@ -190,6 +196,198 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
                                     ],
                                   ),
                                 )
+                              ][index] :
+                              isEcoGemFlowControlValve ? [
+                                InkWell(
+                                  child: Icon(Icons.drive_file_rename_outline_rounded, color: Theme.of(context).primaryColor,),
+                                  onTap: () {
+                                    _textEditingController.text = widget.serialNumber == 0
+                                        ? "Program ${doneProvider.programCount}"
+                                        : doneProvider.programDetails!.programName.isNotEmpty ? programName : doneProvider.programDetails!.defaultProgramName;
+                                    _textEditingController.selection = TextSelection(
+                                      baseOffset: 0,
+                                      extentOffset: _textEditingController.text.length,
+                                    );
+                                    showDialog(
+                                      context: context,
+                                      builder: (ctx) => AlertDialog(
+                                        title: const Text("Edit program name"),
+                                        content: Form(
+                                          key: _formKey,
+                                          child: TextFormField(
+                                            autofocus: true,
+                                            controller: _textEditingController,
+                                            // onChanged: (newValue) => tempProgramName = newValue,
+                                            inputFormatters: [
+                                              LengthLimitingTextInputFormatter(20),
+                                              FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9\s.]'))
+                                            ],
+                                            validator: (value) {
+                                              if (value == null || value.isEmpty) {
+                                                return "Name cannot be empty";
+                                              } else if (doneProvider.programLibrary!.program.any((element) => element.programName == value)) {
+                                                return "Name already exists";
+                                              } else {
+                                                setState(() {
+                                                  tempProgramName = value;
+                                                });
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        ),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () => Navigator.of(ctx).pop(),
+                                            child: const Text("CANCEL", style: TextStyle(color: Colors.red),),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              if (_formKey.currentState!.validate()) {
+                                                doneProvider.updateProgramName(tempProgramName, 'programName');
+                                                Navigator.of(ctx).pop();
+                                              }
+                                            },
+                                            child: const Text("OKAY", style: TextStyle(color: Colors.green),),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                                CustomNativeTimePicker(
+                                  initialValue: doneProvider.delayBetweenZones != "" ? doneProvider.delayBetweenZones : "00:00:00",
+                                  is24HourMode: false,
+                                  style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                  onChanged: (newTime){
+                                    doneProvider.updateProgramName(newTime, 'delayBetweenZones');
+                                  }, modelId: widget.modelId,
+                                ),
+                                IntrinsicWidth(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        child: TextFormField(
+                                          initialValue: doneProvider.adjustPercentage != "" ? doneProvider.adjustPercentage : "100",
+                                          decoration: const InputDecoration(
+                                            hintText: '0%',
+                                          ),
+                                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.deny(RegExp('[^0-9]')),
+                                            LengthLimitingTextInputFormatter(5),
+                                          ],
+                                          onChanged: (newValue){
+                                            doneProvider.updateProgramName(newValue, 'adjustPercentage');
+                                          },
+                                        ),
+                                      ),
+                                      Text("%", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
+                                    ],
+                                  ),
+                                ),
+                                buildPopUpMenuButton(
+                                    context: context,
+                                    dataList: ['flow', 'pressure'],
+                                    onSelected: (newValue) => doneProvider.updateProgramName(newValue, 'controlMode'),
+                                    selected: doneProvider.controlMode,
+                                    child: Text(doneProvider.controlMode, style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
+                                ),
+                                IntrinsicWidth(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        child: TextFormField(
+                                          initialValue: doneProvider.setFlow,
+                                          decoration: const InputDecoration(
+                                            // hintText: '0%',
+                                          ),
+                                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: AppProperties.regexForDecimal,
+                                          onChanged: (newValue){
+                                            doneProvider.updateProgramName(newValue, 'setFlow');
+                                          },
+                                        ),
+                                      ),
+                                      Text("L", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
+                                    ],
+                                  ),
+                                ),
+                                IntrinsicWidth(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        child: TextFormField(
+                                          initialValue: doneProvider.setPressure,
+                                          decoration: const InputDecoration(
+                                            // hintText: '0%',
+                                          ),
+                                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: AppProperties.regexForDecimal,
+                                          onChanged: (newValue){
+                                            doneProvider.updateProgramName(newValue, 'setPressure');
+                                          },
+                                        ),
+                                      ),
+                                      Text("bar", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
+                                    ],
+                                  ),
+                                ),
+                                IntrinsicWidth(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        child: TextFormField(
+                                          initialValue: doneProvider.toleranceFlow,
+                                          decoration: const InputDecoration(
+                                            // hintText: '0%',
+                                          ),
+                                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: AppProperties.regexForDecimal,
+                                          onChanged: (newValue){
+                                            doneProvider.updateProgramName(newValue, 'flowTolerance');
+                                          },
+                                        ),
+                                      ),
+                                      Text("%", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
+                                    ],
+                                  ),
+                                ),
+                                IntrinsicWidth(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        child: TextFormField(
+                                          initialValue: doneProvider.tolerancePressure,
+                                          decoration: const InputDecoration(
+                                            // hintText: '0%',
+                                          ),
+                                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: AppProperties.regexForDecimal,
+                                          onChanged: (newValue){
+                                            doneProvider.updateProgramName(newValue, 'pressureTolerance');
+                                          },
+                                        ),
+                                      ),
+                                      Text("%", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
+                                    ],
+                                  ),
+                                ),
                               ][index]
                                   : [
                                 InkWell(

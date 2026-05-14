@@ -55,6 +55,7 @@ class _ConstantBasePageState extends State<ConstantBasePage> with SingleTickerPr
     constPvd = Provider.of<ConstantProvider>(context, listen: false);
     overAllPvd = Provider.of<OverAllUse>(context, listen: false);
     constantResponse = getData(widget.userData);
+
   }
 
   Future<int> getData(userData)async{

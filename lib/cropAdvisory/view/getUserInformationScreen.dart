@@ -7,6 +7,7 @@ import 'package:oro_drip_irrigation/cropAdvisory/widgets/ProgressWidget.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/widgets/SectionCard.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/map_picker_screen.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/service/location_service.dart';
+import '../service/cropadvisory_model.dart';
 
 
 class Getuserinformationscreen extends StatefulWidget {
@@ -27,6 +28,8 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
   // --- Other fields ---
   final TextEditingController _areaController = TextEditingController();
   final TextEditingController _farmIdController = TextEditingController();
+  final CropAdvisoryModel _model = CropAdvisoryModel.instance;
+
 
   @override
   void dispose() {
@@ -52,7 +55,7 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
       setState(() {
         _latitude = result['latitude'];
         _longitude = result['longitude'];
-        _locationController.text = result['address'] ?? '$_latitude, $_longitude';
+        _locationController.text = '${_model.latitude}, ${_model.latitude}';
         _selectedAddress = _locationController.text;
       });
     }
@@ -98,6 +101,7 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
 
   @override
   Widget build(BuildContext context) {
+    _locationController.text = '${_model.latitude},${_model.longitude}';
     return Scaffold(
       appBar: AppBar(title: const Text("Crop Advisory")),
       body: SafeArea(
@@ -171,23 +175,25 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
                 // ---------- Continue Button ----------
                 CropContinueButton(
                   onTap: () {
-                    if (_latitude == null || _longitude == null) {
+                    if (_model.longitude == null || _model.longitude == null) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Please select a location')),
                       );
                       return;
                     }
-                    // Pass all collected data to the next screen
+                    // Update singleton instance
+                    final model = CropAdvisoryModel.instance;
+                    final locationParts = _locationController.text.split(',');
+                    model.latitude = locationParts[0].trim();
+                    model.longitude = locationParts[1].trim();
+                    model.address = _selectedAddress;
+                    model.area = _areaController.text;
+                    model.farmId = _farmIdController.text;
+                    // Navigate without params
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => CropDetailsScreen(
-                          latitude: _latitude,
-                          longitude: _longitude,
-                          address: _selectedAddress,
-                          area: _areaController.text,
-                          farmId: _farmIdController.text,
-                        ),
+                        builder: (_) => const CropDetailsScreen(),
                       ),
                     );
                   },

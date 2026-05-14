@@ -80,11 +80,11 @@ List<Widget> appBarActions(
           if (vm.lineLiveMessage.isNotEmpty && master.irrigationLine.length > 1)
             _buildPauseResumeButton(context, vm),
           const SizedBox(width: 10),
-           IconButton(
+          IconButton(
             color: Colors.transparent,
-             onPressed: () => Navigator.push(
+            onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Getuserinformationscreen()),
+               MaterialPageRoute(builder: (context) => const Getuserinformationscreen()),
             ),
             icon: const CircleAvatar(
               radius: 17,
@@ -506,7 +506,8 @@ Widget _buildNonGemActions(BuildContext context, dynamic master,
 }
 
 void showPasswordDialog(BuildContext context, correctPassword, userId,
-    controllerID, imeiNumber, type) {
+    controllerID, imeiNumber, type)
+{
   final TextEditingController passwordController = TextEditingController();
   showDialog(
     context: context,

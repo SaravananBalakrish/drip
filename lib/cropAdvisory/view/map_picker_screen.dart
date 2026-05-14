@@ -3,6 +3,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geo;
 import 'package:oro_drip_irrigation/cropAdvisory/service/location_service.dart';
+import 'package:oro_drip_irrigation/cropAdvisory/view/CropDetailsScreen.dart';
+import '../service/cropadvisory_model.dart';
+import 'getUserInformationScreen.dart';
 
 class MapPickerScreen extends StatefulWidget {
   final double? initialLatitude;
@@ -99,11 +102,22 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
   }
 
   void _confirmLocation() {
-    Navigator.pop(context, {
-      'latitude': _pickedLocation.latitude,
-      'longitude': _pickedLocation.longitude,
-      'address': _address,
-    });
+    // Store selected location in the CropAdvisoryModel provider singleton
+    CropAdvisoryModel.instance.updateLocation(
+      lat: _pickedLocation.latitude.toString(),
+      lng: _pickedLocation.longitude.toString(),
+      addr: _address,
+    );
+    print("lat long: ${_pickedLocation.latitude} ${_pickedLocation.longitude} ");
+
+    // Navigator.pop(context);
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const Getuserinformationscreen(),
+      ),
+    );
   }
 
   @override
