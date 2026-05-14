@@ -88,6 +88,8 @@ final timerSettingsIcons = [
   MdiIcons.timerStop,
   MdiIcons.timerRefresh,
   MdiIcons.timerSand,
+  MdiIcons.timerSand,
+  MdiIcons.timerSand,
 ];
 
 final currentSettingIcons = [
@@ -202,7 +204,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     // TODO: implement initState
     preferenceProvider = Provider.of<PreferenceProvider>(context, listen: false);
     mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
-    preferenceProvider.getUserPreference(userId: widget.customerId, controllerId: widget.masterData['controllerId']).then((_) {
+    preferenceProvider.getUserPreference(userId: widget.customerId, controllerId: widget.masterData['controllerId'], modelId: widget.masterData['modelId']).then((_) {
       commonPumpTabController = TabController(
           length: preferenceProvider.commonPumpSettings?.length ?? 0,
           vsync: this
@@ -1004,7 +1006,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   //       : 0
   //   )]) : "Loading..."}" : null;
   // }
-
 
   dynamic _getSubTitle(
       int categoryIndex,
@@ -1902,36 +1903,36 @@ Widget buildCustomListTileWidget({
   Widget customWidget;
   switch(widgetType) {
     case 1:case 4:
-    customWidget = SizedBox(
-      width: 80,
-      child: TextFormField(
-        key: Key(title),
-        enabled: enabled,
-        initialValue: value is String ? value : "",
-        textAlign: TextAlign.center,
-        keyboardType: TextInputType.number,
-        inputFormatters: inputFormatters,
-        decoration: const InputDecoration(
-          hintText: "000",
-          isDense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 5),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            borderSide: BorderSide.none,
+      customWidget = SizedBox(
+        width: 80,
+        child: TextFormField(
+          key: Key(title),
+          enabled: enabled,
+          initialValue: value is String ? value : "",
+          textAlign: TextAlign.center,
+          keyboardType: TextInputType.number,
+          inputFormatters: inputFormatters,
+          decoration: const InputDecoration(
+            hintText: "000",
+            isDense: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 5),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              borderSide: BorderSide.none,
+            ),
+            fillColor: cardColor,
+            filled: true,
+            // errorText: errorText
           ),
-          fillColor: cardColor,
-          filled: true,
-          // errorText: errorText
+          onTapOutside: (_) {
+            FocusScope.of(context).unfocus();
+          },
+          onChanged: (newValue) {
+            onValueChange?.call(newValue);
+          },
         ),
-        onTapOutside: (_) {
-          FocusScope.of(context).unfocus();
-        },
-        onChanged: (newValue) {
-          onValueChange?.call(newValue);
-        },
-      ),
-    );
-    break;
+      );
+      break;
     case 2:
       customWidget = Switch(
         value: enabled ? (value != "" ? value : false) ?? false : false,

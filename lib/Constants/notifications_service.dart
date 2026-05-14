@@ -71,7 +71,7 @@ class NotificationServiceCall {
   void configureFirebaseMessaging() {
     // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Foreground message received: ${message.messageId}');
+      debugPrint('Foreground message received: ${message.messageId}');
       if (message.notification != null) {
         _showNotification({
           'notification': {
@@ -85,7 +85,7 @@ class NotificationServiceCall {
 
     // Handle notifications when the app is opened from a notification
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Message opened app: ${message.messageId}');
+      debugPrint('Message opened app: ${message.messageId}');
       _navigateToScreen({
         'notification': {
           'title': message.notification?.title,
@@ -98,7 +98,7 @@ class NotificationServiceCall {
     // Handle initial message when the app is launched from a terminated state
     FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
       if (message != null) {
-        print('Initial message: ${message.messageId}');
+        debugPrint('Initial message: ${message.messageId}');
         _navigateToScreen({
           'notification': {
             'title': message.notification?.title,
@@ -131,7 +131,7 @@ class NotificationServiceCall {
   }
   void _navigateToScreen(Map<String, dynamic> notification) {
     // Implement navigation logic based on notification data
-    print('Navigate based on: $notification');
+    debugPrint('Navigate based on: $notification');
     // Example: Navigate to a specific screen if notification contains a route
     // if (notification['data']['route'] != null) {
     //   Navigator.pushNamed(context, notification['data']['route']);

@@ -2602,6 +2602,11 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
   String get cyclicOffTime => _programDetails!.cyclicOffTime;
   bool get enablePressure => _programDetails!.enablePressure;
   String get pressureValue => _programDetails!.pressureValue;
+  String get controlMode => _programDetails!.controlMode;
+  String get setFlow => _programDetails!.setFlow;
+  String get setPressure => _programDetails!.setPressure;
+  String get toleranceFlow => _programDetails!.toleranceFlow;
+  String get tolerancePressure => _programDetails!.tolerancePressure;
 
   Future<void> doneData(int userId, int controllerId, int serialNumber) async {
     try {
@@ -2763,6 +2768,21 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         break;
       case "pressureValue":
         _programDetails!.pressureValue = newValue;
+        break;
+      case "controlMode":
+        _programDetails!.controlMode = newValue;
+        break;
+      case "setFlow":
+        _programDetails!.setFlow = newValue;
+        break;
+      case "setPressure":
+        _programDetails!.setPressure = newValue;
+        break;
+      case "flowTolerance":
+        _programDetails!.toleranceFlow = newValue;
+        break;
+      case "pressureTolerance":
+        _programDetails!.tolerancePressure = newValue;
         break;
       default:
         log("Not found");
@@ -3425,6 +3445,13 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   : 3}',/*CentralFilterSiteOperationMode*/
               "CentralFilterSelection": centralFilterSite.isNotEmpty ? filterPayload.join(',') : '0,0',
               "AlarmOnOff": newAlarmList!.alarmList.where((ele) => ele.ecoGemPayload).map((e) => e.value == true ? 1 : 0).toList().join(','),/*AlarmOnOff*/
+              if(AppConstants.ecoGemFlowControlValveModel.contains(modelId))
+                ...{
+                  "MainValve": selectedObjects!.where((object) => [AppConstants.mainValveObjectId, AppConstants.flowControlValveObjectId].contains(object.objectId)).map((e) => e.sNo).toList().join('_'),
+                  "ControlMode": controlMode == 'flow' ? 1 : 2,
+                  "Set": controlMode == 'flow' ? setFlow : setPressure,
+                  "Tolerance": controlMode == 'flow' ? toleranceFlow: tolerancePressure,
+                },
               // "AlarmOnOff": '0,0,0,0,0,0',/*AlarmOnOff*/
               "Name": programName,
             }.entries.map((e) => e.value).join(","),

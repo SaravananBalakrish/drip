@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:oro_drip_irrigation/Screens/planning/weather/weather_report_model.dart';
-import 'package:oro_drip_irrigation/Screens/planning/weather/weather_report_sensor_model.dart';
+import 'package:oro_drip_irrigation/Screens/planning/weather/weather_report_sensor_model.dart' hide parseSensorHourData;
+import 'package:oro_drip_irrigation/Screens/planning/weather/weather_report_sensor_modelGsm.dart';
 
 import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
@@ -33,7 +34,7 @@ class SensorHourlyReportPage extends StatefulWidget {
 }
 
 class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
-  List<SensorHourReport> report = [];
+  List<SensorHourReportGsm> report = [];
   bool isLoading = false;
 
   String selectedDate =
@@ -91,7 +92,7 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
         "23:00": datum.the2300,
         "00:00": datum.the0000,
       };
-      final List<SensorHourReport> temp = [];
+      final List<SensorHourReportGsm> temp = [];
 
       hours.forEach((hour, raw) {
         final data = parseSensorHourData(

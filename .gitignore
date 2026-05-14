@@ -33,6 +33,19 @@ migrate_working_dir/
 .pub/
 /build/
 
+# Secrets
+.env*
+*.jks
+*.keystore
+keystore.txt
+*.pem
+*.key
+assets/ssh/
+
+# Flutter build
+build/
+android/build/
+
 # Symbolication related
 app.*.symbols
 
@@ -43,6 +56,12 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+android/build/
 /android/key.properties
 /android/app/release-key.jks
 notification.env
+*.p12
+key.properties
+android/key.properties
+android/
+ios/
