@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class WeatherInfoCard extends StatelessWidget {
-  const WeatherInfoCard({super.key});
+  final String humm;
+
+  final String rain;
+
+  final String wind;
+
+  const WeatherInfoCard({super.key,required this.humm,required this.rain,required this.wind,});
 
   @override
   Widget build(BuildContext context) {
@@ -11,14 +17,14 @@ class WeatherInfoCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Row(
+      child:  Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Column(
             children: [
               Text(
-                "77%",
-                style: TextStyle(
+                "${humm}%",
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -30,8 +36,8 @@ class WeatherInfoCard extends StatelessWidget {
           Column(
             children: [
               Text(
-                "NO",
-                style: TextStyle(
+                "${rain}",
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
@@ -43,8 +49,8 @@ class WeatherInfoCard extends StatelessWidget {
           Column(
             children: [
               Text(
-                "6 mph/s",
-                style: TextStyle(
+                "${wind} mph/s",
+                style: const TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),

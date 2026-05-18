@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class CropRainfallCard extends StatelessWidget {
-  const CropRainfallCard({super.key});
+  final String rainfall;
+
+  const CropRainfallCard({super.key,required this.rainfall});
 
   @override
   Widget build(BuildContext context) {
@@ -12,12 +14,12 @@ class CropRainfallCard extends StatelessWidget {
         color: const Color(0xff3B4A73),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Column(
+      child:  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "1.2 mm",
-            style: TextStyle(
+            "${rainfall} mm",
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 24,
             ),

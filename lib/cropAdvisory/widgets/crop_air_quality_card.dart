@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AirQualityCard extends StatelessWidget {
-  const AirQualityCard({super.key});
+  final String co2;
+
+  const AirQualityCard({super.key,required this.co2});
 
   @override
   Widget build(BuildContext context) {
@@ -12,23 +14,23 @@ class AirQualityCard extends StatelessWidget {
         color: const Color(0xffDCE6FF),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: const Column(
+      child:  Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "CO₂ Level: 542ppm",
-            style: TextStyle(fontSize: 18),
+            "CO₂ Level: ${co2}ppm",
+            style: const TextStyle(fontSize: 18),
           ),
 
           SizedBox(height: 20),
 
-          LinearProgressIndicator(
+          const LinearProgressIndicator(
             value: 0.3,
           ),
 
           Spacer(),
 
-          Text(
+          const Text(
             "\"Air quality is great!\nPerfect for outdoor activities.\"",
           ),
         ],

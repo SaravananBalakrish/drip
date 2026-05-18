@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 
 class WindDetailsCard extends StatelessWidget {
-  const WindDetailsCard({super.key});
+  final String direction;
+
+  final String speed;
+
+  final String gust;
+
+  const WindDetailsCard({super.key,required this.direction,required this.speed,required this.gust,});
 
   @override
   Widget build(BuildContext context) {
@@ -13,14 +19,14 @@ class WindDetailsCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Expanded(
+           Expanded(
             child: Column(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Wind Speed"),
-                    Text("12 kph"),
+                    Text("${speed} kph"),
                   ],
                 ),
 
@@ -30,7 +36,7 @@ class WindDetailsCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Gusts"),
-                    Text("0 kph"),
+                    Text("${gust} kph"),
                   ],
                 ),
 
@@ -40,7 +46,7 @@ class WindDetailsCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Wind Direction"),
-                    Text("260°NE"),
+                    Text("${direction}°NE"),
                   ],
                 ),
               ],

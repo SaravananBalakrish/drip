@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class WeatherHeader extends StatelessWidget {
-  const WeatherHeader({super.key});
+  final String temp;
+
+  const WeatherHeader({super.key, required this.temp,});
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +16,9 @@ class WeatherHeader extends StatelessWidget {
 
         const SizedBox(height: 10),
 
-        const Text(
-          "32°",
-          style: TextStyle(
+         Text(
+          "${temp}°",
+          style: const TextStyle(
             fontSize: 50,
             fontWeight: FontWeight.bold,
           ),
