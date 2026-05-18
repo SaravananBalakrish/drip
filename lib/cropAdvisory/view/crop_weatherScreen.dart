@@ -26,11 +26,11 @@ class _CropWeatherscreenState extends State<CropWeatherscreen> {
               children: [
                 const SizedBox(height: 20),
       
-                const WeatherHeader(),
+                const WeatherHeader(temp: '32',),
       
                 const SizedBox(height: 20),
       
-                const WeatherInfoCard(),
+                const WeatherInfoCard(humm: '23', rain: 'No', wind: '13',),
       
                 const SizedBox(height: 20),
       
@@ -95,17 +95,17 @@ class _CropWeatherscreenState extends State<CropWeatherscreen> {
       
                 const SizedBox(height: 20),
       
-                const Row(
+                 Row(
                   children: [
-                    Expanded(child: AirQualityCard()),
+                    Expanded(child: AirQualityCard(co2: '558',)),
                     SizedBox(width: 12),
-                    Expanded(child: CropRainfallCard()),
+                    Expanded(child: CropRainfallCard(rainfall: '1',)),
                   ],
                 ),
       
                 const SizedBox(height: 20),
       
-                const WindDetailsCard(),
+                const WindDetailsCard(direction: '260', speed: '13', gust: '4',),
               ],
             ),
           ),
