@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/field_information_screen.dart';
 import '../service/cropadvisory_model.dart';
@@ -6,6 +7,8 @@ import '../widgets/AppTextField.dart';
 import '../widgets/ContinueButton.dart';
 import '../widgets/ProgressWidget.dart';
 import '../widgets/SectionCard.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class CropDetailsScreen extends StatefulWidget {
   const CropDetailsScreen({super.key});
@@ -25,6 +28,9 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
 
   String _plantingMethod = 'Sowing';
   final CropAdvisoryModel _model = CropAdvisoryModel.instance;
+  File? cropImage;
+  final ImagePicker _picker = ImagePicker();
+  Uint8List? webImage;
 
   @override
   void initState() {
@@ -82,6 +88,19 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
         ),
       ),
     );
+  }
+
+  Future<void> openCamera() async {
+    final XFile? image = await _picker.pickImage(
+      source: ImageSource.camera,
+      imageQuality: 80,
+    );
+
+    if (image != null) {
+      setState(() {
+        cropImage = File(image.path);
+      });
+    }
   }
 
   @override
@@ -248,7 +267,57 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     suffix: const Icon(Icons.keyboard_arrow_down),
                   ),
                 ),
+                SectionCard(
+                  title: 'Crop Image',
+                  icon: Icons.photo,
+                  child: GestureDetector(
+                    onTap: openCamera,
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade300),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
 
+                      child: (cropImage == null && webImage == null)
+                          ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          Text(
+                            'Capture Crop Image',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                          Icon(Icons.camera_alt),
+                        ],
+                      )
+
+                          : ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                         child: ClipRRect(
+    borderRadius: BorderRadius.circular(10),
+    child: kIsWeb
+    ? (webImage != null
+    ? Image.memory(
+    webImage!,
+    height: 180,
+    width: double.infinity,
+    fit: BoxFit.cover,
+    )
+        : const SizedBox())
+        : (cropImage != null
+    ? Image.file(
+    cropImage!,
+    height: 180,
+    width: double.infinity,
+    fit: BoxFit.cover,
+    )
+        : const SizedBox()),
+    ),
+                      ),
+                    ),
+                  ),
+                ),
                 CropContinueButton(
                   onTap: () {
                     // Update singleton instance with data from this screen
