@@ -6,6 +6,7 @@ import '../widgets/ContinueButton.dart';
 import '../widgets/ProgressWidget.dart';
 import '../widgets/SectionCard.dart';
 import 'crop_weatherScreen.dart';
+import 'dashboard_screen.dart';
 
 class FieldInformationScreen extends StatefulWidget {
   const FieldInformationScreen({super.key});
@@ -186,7 +187,8 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
 
                 CropContinueButton(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => CropWeatherscreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => DashboardScreen()));
+
                     // Final update to the model singleton
                     _model.mulchingUsed = _mulchingController.text;
                     _model.soilType = _selectedSoilType;
