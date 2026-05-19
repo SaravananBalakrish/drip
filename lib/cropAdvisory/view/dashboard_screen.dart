@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:oro_drip_irrigation/cropAdvisory/view/crop_weatherScreen.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../service/cropadvisory_model.dart';
 import 'package:intl/intl.dart';
+import 'irrigation_fertigation_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String? temperature;
@@ -162,7 +162,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const Icon(Icons.calendar_today_outlined, size: 14, color: Colors.black54),
                 const SizedBox(width: 6),
             Text(
-              DateFormat('dd.MM.yyyy').format(DateTime.now()),
+              DateFormat('DD/MM/YYYY').format(DateTime.now()),
               style: GoogleFonts.poppins(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
@@ -181,7 +181,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  DateFormat('HH:mm:ss').format(DateTime.now()),
+                  DateFormat('HH:MM:SS').format(DateTime.now()),
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -329,7 +329,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(width: 15),
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const IrrigationFertigationScreen()),
+                      );
+                    },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF1B7F8A),
                       side: const BorderSide(color: Color(0xFF1B7F8A), width: 1.5),
@@ -584,19 +589,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
         currentIndex: 0,
-        selectedLabelStyle: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500),
-        unselectedLabelStyle: GoogleFonts.poppins(fontSize: 12),
-        elevation: 0,
         onTap: (index) {
-          if (index == 1) {
+          if (index == 2) {
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => CropWeatherscreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const IrrigationFertigationScreen()),
             );
           }
         },
+        selectedLabelStyle: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500),
+        unselectedLabelStyle: GoogleFonts.poppins(fontSize: 12),
+        elevation: 0,
         items: [
           BottomNavigationBarItem(
             icon: Padding(
