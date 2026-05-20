@@ -78,7 +78,6 @@ class _MyAppState extends State<MyApp> {
           themeMode: ThemeMode.light,
           home: navigateToInitialScreen(snapshot.data ?? Routes.login),
           onGenerateRoute: Routes.generateRoute,
-          // home: const ConfigBasePage(masterData: {"userId":2,"customerId":16,"controllerId":2433,"productId":2429,"deviceId":"WEATHERTEST1","deviceName":"Weather (GSM)","categoryId":4,"categoryName":"ORO WEATHER","modelId":14,"modelDescription":"Weather (GSM)","modelName":"NAw1000GOOO","groupId":14,"groupName":"GREEN FIELDS","connectingObjectId":["25","29","30","31","32","33","34","35","36","37","38","39","-"],"productStock":[]}, fromDashboard: true),
         );
       },
     );
