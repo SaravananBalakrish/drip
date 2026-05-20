@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/CropDetailsScreen.dart';
@@ -43,7 +44,7 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
   Future<void> _openMapPicker() async {
     final result = await Navigator.push(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (_) => MapPickerScreen(
           initialLatitude: _latitude,
           initialLongitude: _longitude,
@@ -192,7 +193,7 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
                     // Navigate without params
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
+                      CupertinoPageRoute(
                         builder: (_) => const CropDetailsScreen(),
                       ),
                     );

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/field_information_screen.dart';
 import '../service/cropadvisory_model.dart';
@@ -332,7 +333,7 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
 
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
+                      CupertinoPageRoute(
                         builder: (_) => const FieldInformationScreen(),
                       ),
                     );

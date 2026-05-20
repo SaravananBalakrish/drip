@@ -9,12 +9,14 @@ class DashboardScreen extends StatefulWidget {
   final String? temperature;
   final String? humidity;
   final String? windspeed;
+  final bool isInsideMain;
 
   const DashboardScreen({
     super.key,
     this.temperature,
     this.humidity,
     this.windspeed,
+    this.isInsideMain = false,
   });
 
   @override
@@ -124,7 +126,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -564,77 +565,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 )
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha:0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF1B7F8A),
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        currentIndex: 0,
-        onTap: (index) {
-          if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const IrrigationFertigationScreen()),
-            );
-          }
-        },
-        selectedLabelStyle: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500),
-        unselectedLabelStyle: GoogleFonts.poppins(fontSize: 12),
-        elevation: 0,
-        items: [
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset('assets/Images/CropAdvisory/home_icon_active.png', width: 24, height: 24),
-            ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset('assets/Images/CropAdvisory/weather.png', width: 24, height: 24, color: Colors.grey),
-            ),
-            label: 'Weather',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset('assets/Images/CropAdvisory/irrigation.png', width: 24, height: 24, color: Colors.grey),
-            ),
-            label: 'Irrigation',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset('assets/Images/CropAdvisory/disease.png', width: 24, height: 24, color: Colors.grey),
-            ),
-            label: 'Disease',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset('assets/Images/CropAdvisory/report.png', width: 24, height: 24, color: Colors.grey),
-            ),
-            label: 'Report',
           ),
         ],
       ),

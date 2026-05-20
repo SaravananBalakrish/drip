@@ -3,7 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../service/cropadvisory_model.dart';
 
 class IrrigationFertigationScreen extends StatefulWidget {
-  const IrrigationFertigationScreen({super.key});
+  final bool isInsideMain;
+  const IrrigationFertigationScreen({super.key, this.isInsideMain = false});
 
   @override
   State<IrrigationFertigationScreen> createState() => _IrrigationFertigationScreenState();
@@ -56,7 +57,6 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
           ),
         ),
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -153,7 +153,7 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 10,
             offset: const Offset(0, 2),
           ),
@@ -344,79 +344,6 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
                   child: const Icon(Icons.chevron_right, size: 16, color: Colors.grey),
                 ),
             ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF1B7F8A),
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        currentIndex: 2,
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.pop(context);
-          }
-        },
-        selectedLabelStyle: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.w600),
-        unselectedLabelStyle: GoogleFonts.poppins(fontSize: 11),
-        elevation: 0,
-        items: [
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset('assets/Images/CropAdvisory/home_icon_active.png', width: 22, height: 22, color: Colors.grey, 
-                errorBuilder: (c,e,s) => const Icon(Icons.home_outlined)),
-            ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset('assets/Images/CropAdvisory/weather.png', width: 22, height: 22, color: Colors.grey,
-                errorBuilder: (c,e,s) => const Icon(Icons.wb_cloudy_outlined)),
-            ),
-            label: 'Weather',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset('assets/Images/CropAdvisory/irrigation_active_icon.png', width: 22, height: 22,
-                errorBuilder: (c,e,s) => const Icon(Icons.water_drop)),
-            ),
-            label: 'Irrigation',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset('assets/Images/CropAdvisory/disease.png', width: 22, height: 22, color: Colors.grey,
-                errorBuilder: (c,e,s) => const Icon(Icons.bug_report_outlined)),
-            ),
-            label: 'Disease',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset('assets/Images/CropAdvisory/report.png', width: 22, height: 22, color: Colors.grey,
-                errorBuilder: (c,e,s) => const Icon(Icons.bar_chart_outlined)),
-            ),
-            label: 'Report',
           ),
         ],
       ),
