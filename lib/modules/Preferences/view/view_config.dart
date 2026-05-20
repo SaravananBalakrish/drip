@@ -8,6 +8,7 @@ import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 
 import '../../../StateManagement/mqtt_payload_provider.dart';
+import '../../../services/communication_service.dart';
 import '../model/preference_data_model.dart';
 import '../state_management/preference_provider.dart';
 
@@ -71,7 +72,7 @@ class _ViewConfigState extends State<ViewConfig> {
     return indexToName;
   }
 
-  void requestViewConfig(int index, {String? newSelectedPayload}) {
+  void requestViewConfig(int index, {String? newSelectedPayload}) async{
     final mqttProvider = context.read<MqttPayloadProvider>();
     final preferenceProvider = context.read<PreferenceProvider>();
 
@@ -125,10 +126,16 @@ class _ViewConfigState extends State<ViewConfig> {
         "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
       );
     } else {
-      mqttService.topicToPublishAndItsMessage(
-        jsonEncode({"sentSms": "viewconfig"}),
-        "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
+      print("this...");
+      final result = await context.read<CommunicationService>().sendCommand(
+        payload: jsonEncode({"sentSms": "viewconfig"}),
+        serverMsg: '',
       );
+      debugPrint("Send result: $result");
+      // mqttService.topicToPublishAndItsMessage(
+      //   jsonEncode({"sentSms": "viewconfig"}),
+      //   "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
+      // );
     }
   }
 
@@ -165,7 +172,6 @@ class _ViewConfigState extends State<ViewConfig> {
     final preferenceProvider = context.read<PreferenceProvider>();
     final mqttProvider = context.watch<MqttPayloadProvider>();
     final deviceId = preferenceProvider.commonPumpSettings![preferenceProvider.selectedTabIndex].deviceId;
-    print("mqttProvider.viewSetting : ${mqttProvider.viewSetting['cM']}");
 
     // Check for MQTT response and update state
     if (widget.isLora) {
@@ -175,7 +181,6 @@ class _ViewConfigState extends State<ViewConfig> {
         _hasTimedOut = false;
       }
     } else {
-      print("mqttProvider.viewSettingsList : ${mqttProvider.viewSettingsList}");
       if (mqttProvider.viewSettingsList.isNotEmpty && mqttProvider.cCList.contains(deviceId)) {
         // debugPrint('Received response (non-LORA) for $deviceId - cancelling timer');
         _timeoutTimer?.cancel();
@@ -229,6 +234,7 @@ class _ViewConfigState extends State<ViewConfig> {
         ],
       );
     }
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
@@ -780,14 +786,11 @@ class _ViewConfigState extends State<ViewConfig> {
           child: Column(
             children: [
               ...List.generate(setting.setting.length, (i) {
-                if(delayValues.length > i){
+                if(i < setting.setting.length && (i+1) < delayValues.length){
                   return _buildListTile(setting.setting[i].title, widget.isLora ? delayValues[i + 1] : delayValues[i]);
+                }else{
+                  return const SizedBox();
                 }
-                return Container();
-
-                return (i == 11 || i == 12)
-                    ? Container()
-                    : _buildListTile(setting.setting[i].title, widget.isLora ? delayValues[i + 1] : delayValues[i]);
               }),
             ],
           ),
@@ -905,10 +908,12 @@ class _ViewConfigState extends State<ViewConfig> {
                 ...List.generate(
                   setting.setting.length,
                       (i) {
-                    if(values.length > i){
+                    if(i < values.length){
                       return _buildListTile(setting.setting[i].title, values[i + offset]);
+                    }else{
+                      return const SizedBox();
                     }
-                    return Container();
+
                   },
                 ),
                 /*...List.generate(
