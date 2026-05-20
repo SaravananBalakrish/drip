@@ -499,7 +499,6 @@ class ConstantProvider extends ChangeNotifier{
   }
 
   String getNormalCriticalAlarmForEcoGem(){
-    print('eco gem payload start');
     List<dynamic> payloadList = [];
     for(var line in normalCriticalAlarm){
       for(var alarmIndex = 0;alarmIndex < line.normal.length;alarmIndex++){
@@ -517,6 +516,7 @@ class ConstantProvider extends ChangeNotifier{
     }
     return payloadList.join(';');
   }
+
 
   String getFilterSitePayload(){
     return filterSite.map((site){

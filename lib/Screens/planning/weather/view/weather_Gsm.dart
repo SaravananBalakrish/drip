@@ -5,7 +5,9 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../../services/mqtt_service.dart';
 import '../../../../utils/environment.dart';
 import '../weather_report_page.dart';
@@ -14,6 +16,8 @@ import '../widgets/sensor_chip.dart';
 import '../widgets/sensor_chipGsm.dart';
 import '../widgets/sun_time_card.dart';
 import '../widgets/time_of_day_icon_new.dart';
+
+
 
 class WeatherGsm extends StatefulWidget {
   const WeatherGsm({
@@ -35,74 +39,96 @@ class WeatherGsm extends StatefulWidget {
 class _WeatherGsmState extends State<WeatherGsm> {
   final MqttService manager = MqttService();
 
-
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Request();
+    }
 
   @override
   Widget build(BuildContext context) {
-    try {
-      /// 🔹 SAMPLE JSON (your data)
-      final json = widget.jsondata;
 
-      /// 🔹 Get raw
-      final raw = json['weatherLive']?['cM']?['7901']?.toString() ?? '';
 
-      /// 🔹 Parse
-      final parsed = parseLive5101(raw);
+    final mqttProvider = context.watch<MqttPayloadProvider>();
+    final mqttlivedata =  mqttProvider.gsmWeatherLive;
 
-      /// 🔹 Convert map
-      final liveMap = mapBySNo(parsed);
+    String mqttliveRaw = '';
 
-      /// 🔹 Config parse
-      final configList = (json['configObject'] as List)
-          .map((e) => ConfigObject.fromJson(e))
-          .toList();
+    if (mqttlivedata != null &&
+        mqttlivedata is Map &&
+        mqttlivedata.isNotEmpty &&
+        mqttlivedata['cM'] != null &&
+        mqttlivedata['cM']['7901'] != null) {
 
-      /// 🔹 Merge
-      final sensorList = buildSensorList(
-        configs: configList,
-        liveMap: liveMap,
-      );
+      mqttliveRaw = mqttlivedata['cM']['7901'].toString();
+    } else {
+      mqttliveRaw = '';
+    }
 
-      String getByName(String name) {
-        try {
-          final sensor = sensorList.firstWhere(
-                (e) => e.name.toLowerCase().contains(name.toLowerCase()),
-          );
-          return sensor.value.toString();
-        } catch (e) {
-          return '-';
-        }
+    print("mqttliveRaw:${mqttliveRaw.isNotEmpty} , $mqttliveRaw \n\n ");
+
+
+    /// 🔹 SAMPLE JSON (your data)
+    final json = widget.jsondata;
+
+    /// 🔹 Get raw
+    final raw = json['weatherLive']?['cM']?['7901']?.toString() ?? '';
+
+
+    /// 🔹 Parse
+    final parsed = parseLive5101(mqttliveRaw.isNotEmpty ? mqttliveRaw : raw);
+
+    /// 🔹 Convert map
+    final liveMap = mapBySNo(parsed);
+
+    /// 🔹 Config parse
+    final configList = (json['configObject'] as List)
+        .map((e) => ConfigObject.fromJson(e))
+        .toList();
+
+    /// 🔹 Merge
+    final sensorList = buildSensorList(
+      configs: configList,
+      liveMap: liveMap,
+    );
+
+    String getByName(String name) {
+      try {
+        final sensor = sensorList.firstWhere(
+              (e) => e.name.toLowerCase().contains(name.toLowerCase()),
+        );
+        return sensor.value.toString();
+      } catch (e) {
+        return '-';
       }
-      final hummitysensor = getByName("Humidity Sensor");
-      final tempsensor = getByName("Temperature Sensor");
-      final windsensor = getByName("Wind Speed Sensor");
-
-      return kIsWeb ? _buildWideLayout(sensorList,
-          "${json['weatherLive']?['cT']}-${json['weatherLive']?['cD']}",
-          tempsensor, windsensor, hummitysensor,
-          "${json['weatherLive']?['cT']}") : _buildNarrowLayout(sensorList,
-          "${json['weatherLive']?['cT']}-${json['weatherLive']?['cD']}",
-          tempsensor, windsensor, hummitysensor,
-          "${json['weatherLive']?['cT']}");
     }
-    catch (e, stack) {
-      debugPrint("ERROR: $e");
-      debugPrint("STACK: $stack");
+       final hummitysensor = getByName("Humidity Sensor");
+    final tempsensor = getByName("Temperature Sensor");
+    final windsensor = getByName("Wind Speed Sensor");
 
-      return Scaffold(
-        body: Center(
-          child: Text(
-            "Something went wrong\n$e\n$stack",
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.red,
-            ),
-          ),
-        ),
-      );
+
+    String cT = '';
+    String cD = '';
+
+    if (mqttlivedata != null &&
+        mqttlivedata is Map &&
+        mqttlivedata.isNotEmpty &&
+        mqttlivedata['cT'] != null &&
+        mqttlivedata['cD'] != null) {
+
+      cT = mqttlivedata['cT'].toString();
+      cD = mqttlivedata['cD'].toString();
+
+    } else {
+      cT = json['weatherLive']?['cT']?.toString() ?? '';
+      cD = json['weatherLive']?['cD']?.toString() ?? '';
     }
+
+     return kIsWeb ? _buildWideLayout( sensorList, "$cT-$cD", tempsensor, windsensor, hummitysensor,"$cT") :  _buildNarrowLayout( sensorList,"$cT-$cD", tempsensor, windsensor, hummitysensor,"$cT");
+
    }
+
   Request() {
     String payLoadFinal = jsonEncode({
       "5000":
@@ -139,7 +165,7 @@ Widget _buildWideLayout(
                     icon:  const Icon(Icons.refresh),
                     onPressed: () {
                       Request();
-                     },
+                    },
                   ),
                   Text("Get Live Data")
                 ],
@@ -168,50 +194,32 @@ Widget _buildWideLayout(
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(12),
-
-                  child: Builder(
-                    builder: (context) {
-                      final orderedSensors = [
-                        ...device.where((s) =>
-                        !s.name.contains('Co2') &&
-                            !s.name.contains('Rain Fall') &&
-                            !s.name.contains('Wind Direction')
-                        ),
-                        ...device.where((s) =>
-                        s.name.contains('Co2') ||
-                            s.name.contains('Rain Fall') ||
-                            s.name.contains('Wind Direction')
-                        ),
-                      ];
-
-                       return Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children: orderedSensors.map<Widget>((s) {
-                          return GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => SensorHourlyReportPage(
-                                    deviceSrNo: '${1}',
-                                    sensorSrNo: s.sNo.toString(),
-                                    sensorName: s.name,
-                                    userId: '${widget.customerId}',
-                                    controllerId: '${widget.controllerId}',
-                                    unit: unit(s.name),
-                                  ),
-                                ),
-                              );
-                            },
-                            child: SensorChipGsm(
-                              device: s,
-                              isNarrow: false,
+                  child: Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: device.map<Widget>((s) {
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => SensorHourlyReportPage(
+                                deviceSrNo: '${1}',
+                                sensorSrNo: s.sNo.toString(),
+                                sensorName: s.name,
+                                userId: '${widget.customerId}',
+                                controllerId: '${widget.deviceID}',
+                                unit: unit(s.name),
+                              ),
                             ),
                           );
-                        }).toList(),
+                        },
+                        child: SensorChipGsm(
+                          device: s,
+                          isNarrow: false,
+                        ),
                       );
-                    },
+                    }).toList(),
                   ),
                 ),
               ),
@@ -260,7 +268,7 @@ Widget _buildWideLayout(
                       MaterialPageRoute(
                         builder: (_) => SensorHourlyReportPage(
                           deviceSrNo: '${1}',
-                          sensorSrNo: s.sNo.toString(), sensorName: s.name, userId: '${widget.customerId}', controllerId: "${widget.controllerId}" ,unit:unit(s.name),
+                          sensorSrNo: s.sNo.toString(), sensorName: s.name, userId: '${widget.customerId}', controllerId: "${widget.deviceID}" ,unit:unit(s.name),
                         ),
                       ),
                     );
@@ -278,6 +286,7 @@ Widget _buildWideLayout(
 
     );
   }
+
   String unit(String type) {
     type = type.toLowerCase();
     if (type.contains('moisture')) return 'CB';
@@ -285,13 +294,13 @@ Widget _buildWideLayout(
     if (type.contains('humidity')) return '%';
     if (type.contains('co2')) return 'ppm';
     if (type.contains('direction')) return '°';
-    if (type.contains('wind')) return 'km/h';
+    if (type.contains('Wind')) return 'km/h';
     if (type.contains('rain')) return 'mm';
     if (type.contains('lux')) return 'Lu';
-    if (type.contains('ldr')) return 'Ω';
-    if (type.contains('leaf')) return '%';
     return '';
   }
+
+
 
 Widget _weatherSummaryCard(
     String formattedDT,
@@ -359,6 +368,11 @@ Widget sunCard() {
 }
 }
 
+
+
+
+/// ================= MODELS =================
+
 class LiveSensorValue {
   final double sNo;
   final double value;
@@ -395,6 +409,7 @@ class ConfigObject {
   }
 }
 
+
 class SensorDisplayModel {
   final String name;
   final double sNo;
@@ -426,6 +441,7 @@ class SensorDisplayModel {
     };
   }
 }
+/// ================= PARSER =================
 
 Map<int, List<LiveSensorValue>> parseLive5101(String raw) {
   final result = <int, List<LiveSensorValue>>{};
@@ -462,15 +478,17 @@ Map<int, List<LiveSensorValue>> parseLive5101(String raw) {
   return result;
 }
 
+
 Map<double, LiveSensorValue> mapBySNo(
-    Map<int, List<LiveSensorValue>> liveData)
-{
+    Map<int, List<LiveSensorValue>> liveData) {
   final map = <double, LiveSensorValue>{};
+
   for (final sensors in liveData.values) {
     for (final s in sensors) {
       map[s.sNo] = s;
     }
   }
+
   return map;
 }
 
@@ -493,8 +511,27 @@ List<SensorDisplayModel> buildSensorList({
   }).toList();
 }
 
+/// ================= HELPERS =================
+
+String getUnit(int objectId) {
+  switch (objectId) {
+    case 25:
+      return "%";
+    case 29:
+      return "°C";
+    case 32:
+      return "km/h";
+    case 36:
+      return "%";
+    default:
+      return "";
+  }
+}
+
 Color getStatusColor(int status) {
   if (status == 255) return Colors.green;
   return Colors.red;
 }
+
+/// ================= UI =================
 
