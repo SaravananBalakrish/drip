@@ -280,13 +280,12 @@ class ConfigMakerProvider extends ChangeNotifier{
       masterData = masterDataFromSiteConfigure;
 
       /* hardcoded for pushing master to deviceList*/
-      if(!AppConstants.gemModelList.contains(masterDataFromSiteConfigure['modelId'])){
+      if(![...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(masterDataFromSiteConfigure['modelId'])){
         // if([...AppConstants.pumpWithValveModelList, ...AppConstants.pumpModelList].contains(masterDataFromSiteConfigure['modelId'])){
         //   selectedTab = ConfigMakerTabs.productLimit;
         // }else{
         //   selectedTab = ConfigMakerTabs.deviceList;
         // }
-
         defaultData['deviceList'].add(
             {
               "controllerId": masterDataFromSiteConfigure['controllerId'],
@@ -407,7 +406,6 @@ class ConfigMakerProvider extends ChangeNotifier{
       print('Error on converting to device model :: $e');
       print('stackTrace on converting to device model :: $stackTrace');
     }
-
     notifyListeners();
     return listOfDeviceModel;
   }

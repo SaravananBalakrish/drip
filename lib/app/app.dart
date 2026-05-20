@@ -35,7 +35,6 @@ class _MyAppState extends State<MyApp> {
      if(!kIsWeb){
       NotificationServiceCall().initialize();
       NotificationServiceCall().configureFirebaseMessaging();
-
      }
   }
 
@@ -78,7 +77,8 @@ class _MyAppState extends State<MyApp> {
           themeMode: ThemeMode.light,
           home: navigateToInitialScreen(snapshot.data ?? Routes.login),
           onGenerateRoute: Routes.generateRoute,
-          // home: const ConfigBasePage(masterData: {"userId":2,"customerId":16,"controllerId":2433,"productId":2429,"deviceId":"WEATHERTEST1","deviceName":"Weather (GSM)","categoryId":4,"categoryName":"ORO WEATHER","modelId":14,"modelDescription":"Weather (GSM)","modelName":"NAw1000GOOO","groupId":14,"groupName":"GREEN FIELDS","connectingObjectId":["25","29","30","31","32","33","34","35","36","37","38","39","-"],"productStock":[]}, fromDashboard: true),
+          // home: const ConfigBasePage(masterData: {"userId":2,"customerId":470,"controllerId":1923,"productId":1882,"deviceId":"88A29E4742B2","deviceName":"Gem+ (RL)","categoryId":1,"categoryName":"ORO GEM","modelId":4,"modelDescription":"Gem+ (RL)","modelName":"NAm2000ROOL","groupId":436,"groupName":"KSR Educational","connectingObjectId":["1","2","3","4","-"],"productStock":[]}, fromDashboard: true),
+          // home: ConstantBasePage(userData: {"userId": 2, "customerId": 9, "controllerId": 2567, "deviceId": "88A29E516EC1", "modelId": 91, "deviceName": "Gem (R)", "categoryId": 11, "categoryName": "ORO GEM PRO"}),
         );
       },
     );

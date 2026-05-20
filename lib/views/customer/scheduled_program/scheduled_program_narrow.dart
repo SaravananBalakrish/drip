@@ -309,6 +309,7 @@ class _ScheduledProgramNarrowState extends State<ScheduledProgramNarrow> {
                                             modelId: widget.master.modelId,
                                             deviceName: widget.master.deviceName,
                                             categoryName: widget.master.categoryName,
+                                            nodeList: [],
                                           ),
                                         ),
                                       );

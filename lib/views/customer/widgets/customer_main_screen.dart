@@ -22,6 +22,7 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
 
   final isGem = [...AppConstants.gemModelList].contains(cMaster.modelId);
   final isNova = [...AppConstants.ecoGemModelList].contains(cMaster.modelId);
+  final isOms = [...AppConstants.omsGemList].contains(cMaster.modelId);
   final isAquaculture = [...AppConstants.aquacultureModelList].contains(
       cMaster.modelId);
   final isGsmWeather = [...AppConstants.weatherModelList].contains(cMaster.modelId);
@@ -29,8 +30,9 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
 
   switch (index) {
     case 0:
-      return (isGem || isNova) ?
-      const DashboardLayoutSelector(userRole: UserRole.customer) : isGsmWeather ? WeatherGsm(customerId: cSite.customerId, controllerId: cMaster.controllerId, deviceID: cMaster.deviceId,jsondata: dashboardToWeatherFormat(cMaster)) :
+      return (isGem || isNova || isOms) ?
+      const DashboardLayoutSelector(userRole: UserRole.customer) : isGsmWeather ?
+      WeatherGsm(customerId: cSite.customerId, controllerId: cMaster.controllerId, deviceID: cMaster.deviceId,jsondata: dashboardToWeatherFormat(cMaster)) :
       vm.isChanged ? PumpControllerHome(
         userId: userId,
         customerId: cSite.customerId,

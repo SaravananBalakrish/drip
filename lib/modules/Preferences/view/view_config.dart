@@ -165,6 +165,7 @@ class _ViewConfigState extends State<ViewConfig> {
     final preferenceProvider = context.read<PreferenceProvider>();
     final mqttProvider = context.watch<MqttPayloadProvider>();
     final deviceId = preferenceProvider.commonPumpSettings![preferenceProvider.selectedTabIndex].deviceId;
+    print("mqttProvider.viewSetting : ${mqttProvider.viewSetting['cM']}");
 
     // Check for MQTT response and update state
     if (widget.isLora) {
@@ -174,6 +175,7 @@ class _ViewConfigState extends State<ViewConfig> {
         _hasTimedOut = false;
       }
     } else {
+      print("mqttProvider.viewSettingsList : ${mqttProvider.viewSettingsList}");
       if (mqttProvider.viewSettingsList.isNotEmpty && mqttProvider.cCList.contains(deviceId)) {
         // debugPrint('Received response (non-LORA) for $deviceId - cancelling timer');
         _timeoutTimer?.cancel();
@@ -227,7 +229,6 @@ class _ViewConfigState extends State<ViewConfig> {
         ],
       );
     }
-
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
@@ -779,6 +780,11 @@ class _ViewConfigState extends State<ViewConfig> {
           child: Column(
             children: [
               ...List.generate(setting.setting.length, (i) {
+                if(delayValues.length > i){
+                  return _buildListTile(setting.setting[i].title, widget.isLora ? delayValues[i + 1] : delayValues[i]);
+                }
+                return Container();
+
                 return (i == 11 || i == 12)
                     ? Container()
                     : _buildListTile(setting.setting[i].title, widget.isLora ? delayValues[i + 1] : delayValues[i]);
@@ -899,8 +905,10 @@ class _ViewConfigState extends State<ViewConfig> {
                 ...List.generate(
                   setting.setting.length,
                       (i) {
-                    // return Text('${i}');
-                    return _buildListTile(setting.setting[i].title, values[i + offset]);
+                    if(values.length > i){
+                      return _buildListTile(setting.setting[i].title, values[i + offset]);
+                    }
+                    return Container();
                   },
                 ),
                 /*...List.generate(

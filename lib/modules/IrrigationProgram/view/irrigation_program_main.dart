@@ -7,6 +7,7 @@ import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/selection_scr
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/sequence_screen.dart';
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/water_and_fertilizer_screen.dart';
 import 'package:provider/provider.dart';
+import '../../../models/customer/site_model.dart';
 import '../../../utils/constants.dart';
 import '../state_management/irrigation_program_provider.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
@@ -30,6 +31,7 @@ class IrrigationProgram extends StatefulWidget {
   final int modelId;
   final String deviceName;
   final String categoryName;
+  final List<NodeListModel> nodeList;
 
   const IrrigationProgram({
     Key? irrigationProgramKey,
@@ -46,6 +48,7 @@ class IrrigationProgram extends StatefulWidget {
     required this.modelId,
     required this.deviceName,
     required this.categoryName,
+    required this.nodeList,
   }) : super(key: irrigationProgramKey);
 
   @override
@@ -545,7 +548,7 @@ class _IrrigationProgramState extends State<IrrigationProgram> with SingleTicker
           customerId: widget.customerId,
         )
             : isIrrigationProgram
-            ? SelectionScreen(modelId: widget.modelId)
+            ? SelectionScreen(modelId: widget.modelId, nodeList: widget.nodeList,)
             : WaterAndFertilizerScreen(
           userId: widget.userId,
           controllerId: widget.controllerId,
@@ -556,7 +559,7 @@ class _IrrigationProgramState extends State<IrrigationProgram> with SingleTicker
       case 3:
         return isIrrigationProgram
             ? conditionsLibraryIsNotEmpty
-            ? SelectionScreen(modelId: widget.modelId)
+            ? SelectionScreen(modelId: widget.modelId, nodeList: widget.nodeList,)
             : WaterAndFertilizerScreen(
           userId: widget.customerId,
           controllerId: widget.controllerId,

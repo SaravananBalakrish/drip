@@ -913,6 +913,8 @@ class AppConstants {
   static List<int> shine4V = [52, 53];
   static List<int> elite10V = [54, 55];
   static List<int> ecoGemFlowControlValveModel = [89, 90];
+  static List<int> omsGemList = [91];
+  static List<int> omsRtuList = [92];
   static List<int> ecoGemModelList = [56, 57, 58, 59, 60, 61, 62, 63, ...ecoGemFlowControlValveModel];
   static List<int> ecoGemPlusModelList = [60, 61, 62, 63];
   static List<int> ecoGemAndPlusModelList = [...ecoGemModelList, ...ecoGemPlusModelList];
