@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:oro_drip_irrigation/cropAdvisory/view/crop_weatherScreen.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../service/cropadvisory_model.dart';
 import 'package:intl/intl.dart';
+import 'irrigation_fertigation_screen.dart';
+import 'crop_weatherScreen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String? temperature;
   final String? humidity;
   final String? windspeed;
+  final bool isInsideMain;
 
   const DashboardScreen({
     super.key,
     this.temperature,
     this.humidity,
     this.windspeed,
+    this.isInsideMain = false,
   });
 
   @override
@@ -88,7 +91,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         index: _selectedIndex,
         children: [
           _buildHomeBody(),
-          const CropWeatherscreen(),
+           CropWeatherscreen(),
           const Center(child: Text('Irrigation')),
           const Center(child: Text('Disease')),
           const Center(child: Text('Report')),
@@ -187,6 +190,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     color: Colors.black87,
                   ),
                 ),
+            Text(
+              DateFormat('DD/MM/YYYY').format(DateTime.now()),
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: Colors.black87,
+              ),
+            ),
                 const Icon(Icons.keyboard_arrow_down, size: 16, color: Colors.black54),
               ],
             ),
@@ -199,7 +210,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  DateFormat('HH:mm:ss').format(DateTime.now()),
+                  DateFormat('HH:MM:SS').format(DateTime.now()),
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -351,6 +362,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       setState(() {
                         _selectedIndex = 2; // Irrigation tab index
                       });
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const IrrigationFertigationScreen()),
+                      );
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF1B7F8A),
@@ -685,7 +700,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
-}
+ }
 
 class _ChartData {
   _ChartData(this.x, this.y);

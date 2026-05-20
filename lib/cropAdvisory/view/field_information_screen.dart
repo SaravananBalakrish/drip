@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../service/cropadvisory_model.dart';
 
@@ -5,7 +6,7 @@ import '../widgets/AppTextField.dart';
 import '../widgets/ContinueButton.dart';
 import '../widgets/ProgressWidget.dart';
 import '../widgets/SectionCard.dart';
-import 'crop_weatherScreen.dart';
+import 'crop_advisory_main_screen.dart';
 import 'dashboard_screen.dart';
 
 class FieldInformationScreen extends StatefulWidget {
@@ -187,8 +188,6 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
 
                 CropContinueButton(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => DashboardScreen()));
-
                     // Final update to the model singleton
                     _model.mulchingUsed = _mulchingController.text;
                     _model.soilType = _selectedSoilType;
@@ -197,15 +196,13 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                     // Printing all data for verification
                     debugPrint('Sending Data: ${_model.toJson()}');
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          'All data collected successfully!\n'
-                          'Crop: ${_model.cropName}\n'
-                          'Location: ${_model.address}\n'
-                          'Soil: ${_model.soilType}',
-                        ),
+                    // Navigate to Dashboard and clear the stack to restrict access back to setup
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      CupertinoPageRoute(
+                        builder: (context) => const CropAdvisoryMainScreen(),
                       ),
+                      (route) => false,
                     );
                   },
                 ),
