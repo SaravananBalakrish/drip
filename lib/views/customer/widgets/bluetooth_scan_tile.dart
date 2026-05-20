@@ -43,7 +43,7 @@ class _BluetoothScanTileState extends State<BluetoothScanTile>
     try {
       final deviceId = widget.vm
           .mySiteList.data[widget.vm.sIndex].master[widget.vm.mIndex].deviceId;
-
+      print("deviceId : ${deviceId}");
       await widget.vm.bluetoothClassicService.scanDevices(deviceId);
     } finally {
       stopScan();
