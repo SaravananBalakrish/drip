@@ -65,3 +65,6 @@ key.properties
 android/key.properties
 android/
 ios/
+linux/
+macos/
+windows/
