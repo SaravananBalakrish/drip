@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../service/cropadvisory_model.dart';
 
@@ -5,6 +6,7 @@ import '../widgets/AppTextField.dart';
 import '../widgets/ContinueButton.dart';
 import '../widgets/ProgressWidget.dart';
 import '../widgets/SectionCard.dart';
+import 'crop_advisory_main_screen.dart';
 import 'dashboard_screen.dart';
 
 class FieldInformationScreen extends StatefulWidget {
@@ -197,8 +199,8 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                     // Navigate to Dashboard and clear the stack to restrict access back to setup
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(
-                        builder: (context) => const DashboardScreen(),
+                      CupertinoPageRoute(
+                        builder: (context) => const CropAdvisoryMainScreen(),
                       ),
                       (route) => false,
                     );
