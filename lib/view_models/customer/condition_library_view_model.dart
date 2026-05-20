@@ -160,13 +160,14 @@ class ConditionLibraryViewModel extends ChangeNotifier {
     safeNotify();
   }
 
-  void buildConnectingConditions(int count) {
-    connectingCondition = List.generate(count, (index) => "Condition ${index+1}");
+  void buildConnectingConditions() {
+    connectingCondition = clData.cnLibrary.condition.map((c) => c.name).toList();
     safeNotify();
   }
 
+
   List<String> getAvailableCondition(int index) {
-    buildConnectingConditions(clData.cnLibrary.condition.length);
+    buildConnectingConditions();
     if (index >= 0 && index < connectingCondition.length) {
       connectingCondition.removeAt(index);
     }
