@@ -264,6 +264,7 @@ class MqttService {
   }
 
   void onMqttPayloadReceived(String payload) {
+    debugPrint("onMqttPayloadReceived payload: $payload");
     try {
       final payloadMessage = jsonDecode(payload);
       debugPrint("payloadMessage => $payloadMessage");
