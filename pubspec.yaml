@@ -129,7 +129,6 @@ flutter:
     - assets/splash/smart_comm.png
     - assets/splash/transparent.png
     - assets/Images/CropAdvisory/
-
 #    - .env.apikey
 
 #flutter_launcher_icons:
