@@ -66,6 +66,7 @@ class _BluetoothScanTileState extends State<BluetoothScanTile>
 
   @override
   Widget build(BuildContext context) {
+    print("ble working");
     return ListTile(
       dense: true,
       visualDensity: VisualDensity.compact,

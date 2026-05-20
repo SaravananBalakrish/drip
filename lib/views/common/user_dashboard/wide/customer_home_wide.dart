@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/app.dart';
 import 'package:oro_drip_irrigation/utils/helpers/mc_permission_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
@@ -86,7 +87,9 @@ class CustomerHomeWide extends StatelessWidget {
             "Program On/Off Manually");
         final hasLinePP = cM.getPermissionStatus(
             "Irrigation Line Pause/Resume Manually");
-
+        if(AppConstants.omsGemList.contains(cM.modelId)){
+          return SizedBox();
+        }
         return Column(
           children: [
             buildValveStatusLegend(isAquaculture),
@@ -95,7 +98,6 @@ class CustomerHomeWide extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
                     ...irrigationLine.map((line) =>
                         Padding(
                           padding: const EdgeInsets.only(
