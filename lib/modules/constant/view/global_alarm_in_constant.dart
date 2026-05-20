@@ -216,6 +216,8 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
     var normalCriticalPayload = AppConstants.ecoGemModelList.contains(widget.userData['modelId']) ? widget.constPvd.getNormalCriticalAlarmForEcoGem() : widget.constPvd.getNormalCriticalAlarm();
     var filterPayload = widget.constPvd.getFilterSitePayload();
     bool isGem = AppConstants.gemModelList.contains(widget.constPvd.userData['modelId']);
+    bool isNova = AppConstants.ecoGemModelList.contains(widget.constPvd.userData['modelId']);
+    bool isOms = AppConstants.omsGemList.contains(widget.constPvd.userData['modelId']);
     var hardwarePayload = {
       "300" : {
         "301" : generalPayload,
@@ -223,14 +225,18 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
           "302" : mainValvePayload,
         "303" : valvePayload,
         "304" : waterMeterPayload,
-        "305" : channelPayload,
+        if(isGem || isNova)
+          "305" : channelPayload,
         if(isGem)
           "306" : fertilizerSitePayload,
         if(isGem)
           "307" : levelSensorPayload,
         "308" : normalCriticalPayload,
-        "309" : pumpPayload,
-        "310" : filterPayload,
+        if(isGem || isNova)
+          ...{
+            "309": pumpPayload,
+            "310": filterPayload,
+          }
       }
     };
     return hardwarePayload;

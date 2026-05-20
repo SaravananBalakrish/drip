@@ -60,7 +60,7 @@ class ControllerSettingsViewModel extends ChangeNotifier {
               .map((e) => e["parameter"]?.toString() ?? '')
               .toSet();
 
-          if(![...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(modelId)){
+          if(![...AppConstants.gemModelList, ...AppConstants.ecoGemModelList, ...AppConstants.omsGemList].contains(modelId)){
             final allowedTitles = {
               'General',
               'Preference',
@@ -71,7 +71,7 @@ class ControllerSettingsViewModel extends ChangeNotifier {
               return allowedTitles.contains(title);
             }).toList();
           }
-          else if([...AppConstants.ecoGemModelList].contains(modelId)) {
+          else if([...AppConstants.ecoGemModelList, ...AppConstants.omsGemList].contains(modelId)) {
             final allowedTitles = {
               'General',
               'Preference',
