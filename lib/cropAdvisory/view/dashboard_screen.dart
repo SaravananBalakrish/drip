@@ -123,7 +123,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             )
           : null,
-      bottomNavigationBar: _buildBottomNavigationBar(),
+      // bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
