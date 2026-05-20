@@ -11,11 +11,13 @@ import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:oro_drip_irrigation/utils/snack_bar.dart';
+import 'package:provider/provider.dart';
 
 import '../../../models/customer/site_model.dart';
 import '../../../Screens/dashboard/wave_view.dart';
 import '../../../Widgets/sized_image.dart';
 import '../../../flavors.dart';
+import '../../../services/communication_service.dart';
 import '../../../services/http_service.dart';
 import '../model/pump_controller_data_model.dart';
 import '../widget/custom_bouncing_button.dart';
@@ -82,6 +84,11 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
   }
 
   Future<void> liveRequest() async{
+    final result = await context.read<CommunicationService>().sendCommand(
+      payload: jsonEncode({"sentSms": "#live"}),
+      serverMsg: '',
+    );
+    debugPrint("Send result: $result");
     mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "#live"}), "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}");
   }
 
@@ -188,13 +195,13 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                     margin: const EdgeInsets.symmetric(horizontal: 10),
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     decoration: const BoxDecoration(
-                        color: Colors.white,
-                        // boxShadow: AppProperties.customBoxShadowLiteTheme
+                      color: Colors.white,
+                      // boxShadow: AppProperties.customBoxShadowLiteTheme
                     ),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                         SizedImageMedium(imagePath: 'assets/Images/Png/${F.name.contains('oro') ? 'Oro' : F.name.contains('agritel') ? 'Agritel' : 'SmartComm'}/category_${2}.png'),
+                        SizedImageMedium(imagePath: 'assets/Images/Png/${F.name.contains('oro') ? 'Oro' : F.name.contains('agritel') ? 'Agritel' : 'SmartComm'}/category_${2}.png'),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -418,8 +425,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
     return Icon(iconData, color: iconColor);
   }
 
-  String calculatePhToPh(double val1, double val2)
-  {
+  String calculatePhToPh(double val1, double val2) {
     double tpc, tp2c;
 
     tpc = val1 * val1;
@@ -434,7 +440,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
 
     return tp2c.toStringAsFixed(0);
   }
-
 
   Widget buildNewPumpDetails({required int index, required PumpControllerData pumpData}) {
     final pumps = widget.masterData.configObjects.where((e) => e.objectId == 5).toList();
@@ -504,7 +509,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                     if(showResetButton)
                       InkWell(
                         onTap: pumpData.dataFetchingStatus == 1 ? () async {
-                           String payLoadFinal = jsonEncode({"sentSms":"RESET"});
+                          String payLoadFinal = jsonEncode({"sentSms":"RESET"});
                           var data = {
                             "userId": widget.customerId,
                             "controllerId": widget.masterData.controllerId,
@@ -556,14 +561,14 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                           : pumpItem.reason.toUpperCase(),
                       style: TextStyle(
 
-                        overflow: TextOverflow.ellipsis,
-                        color: pumpItem.reasonCode == 0
-                            ? (pumpItem.status == 1
-                            ? Colors.green.shade700
-                            : Colors.red.shade700)
-                            : (pumpItem.reason.contains('on') ? Colors.green.shade700 : Colors.red.shade700),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12
+                          overflow: TextOverflow.ellipsis,
+                          color: pumpItem.reasonCode == 0
+                              ? (pumpItem.status == 1
+                              ? Colors.green.shade700
+                              : Colors.red.shade700)
+                              : (pumpItem.reason.contains('on') ? Colors.green.shade700 : Colors.red.shade700),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12
                         // fontSize: titleFontSize
                       ),
                       textAlign: TextAlign.right,
@@ -954,6 +959,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                                         icon: MdiIcons.formatFloatCenter,
                                         color: const Color(0xffb6f6e5)
                                     ),
+
                               ],
                             )
                           ],
@@ -967,7 +973,8 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
         ),
         const SizedBox(height: 15,),
         // Replace your InkWell with this:
-        buildManualModeCard(
+        AppConstants.wlcModelList.contains(widget.masterData.modelId)
+            ?   buildManualModeCard(
           manualModeStatus: pumpData.manualMode, // Your live payload value
           isLoading: false,
           onToggle: (bool isEnabled) async {
@@ -997,17 +1004,18 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
             await Future.delayed(const Duration(seconds: 2));
             liveRequest(); // Refresh to get updated status
           }, pumpName: '',
-        ),
+        ) : Container(),
       ],
     );
   }
+
   Widget buildManualModeCard({
     required String manualModeStatus,
     required Function(bool) onToggle,
     required String pumpName,
     bool isLoading = false,
   }) {
-    bool isOn = manualModeStatus == '1';
+    bool isOn = manualModeStatus == '0';
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -1153,7 +1161,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
     );
   }
 
-
   Widget _buildLight(PumpValveModel pumpItem, PumpControllerData pumpData) {
     return Column(
       children: [
@@ -1298,7 +1305,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                         )
                       ],
                     ),
-                   /* Column(
+                    /* Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         if(int.parse(pumpData.numberOfPumps) == 1)
@@ -1391,8 +1398,8 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
           child: Container(
             decoration: BoxDecoration(
               // gradient: gradient,
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: Colors.grey, width: 0.5)
+                borderRadius: BorderRadius.circular(5),
+                border: Border.all(color: Colors.grey, width: 0.5)
             ),
             padding: const EdgeInsets.symmetric(horizontal: 10),
             child: CountdownTimerWidget(
@@ -1579,7 +1586,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(footer1, style: const TextStyle(fontWeight: FontWeight.bold, ), overflow: TextOverflow.ellipsis,),
+                          Text(footer1, style: const TextStyle(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis,),
                           const SizedBox(height: 5,),
                           if(footer2 != '')
                             Text(footer2.split(':')[1], style: const TextStyle(fontWeight: FontWeight.bold, ),),
@@ -1607,7 +1614,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
           // Text(footer2)
             Container(
               decoration: BoxDecoration(
-                  // color: cardColor,
                   borderRadius: BorderRadius.circular(5)
               ),
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),

@@ -119,8 +119,6 @@ class AppConstants {
   static const String agitatorNotOFF = "dp_agitator_right_r.png";
 
   static const String mainValveOFF = "main_valve_gray.png";
-  static const String mainValveCompleted = "main_valve_blue.png";
-  static const String mainValvePending = "main_valve_yellow.png";
   static const String mainValveON = "main_valve_green.png";
   static const String mainValveNotON = "main_valve_orange.png";
   static const String mainValveNotOFF = "main_valve_red.png";
@@ -286,7 +284,7 @@ class AppConstants {
         imagePathFinal = _getAgitatorImagePath(keyTwo);
         break;
       case 'main_valve':
-        imagePathFinal = _getMainValveImagePath(keyTwo, cpr);
+        imagePathFinal = _getMainValveImagePath(keyTwo);
       case 'valve':
         imagePathFinal = _getValveImagePath(keyTwo, cpr);
         break;
@@ -597,14 +595,9 @@ class AppConstants {
     }
   }
 
-  static String _getMainValveImagePath(int status, int cPer) {
+  static String _getMainValveImagePath(int status) {
     switch (status) {
       case 0:
-        if (cPer == 100) {
-          return mainValveCompleted;
-        }else if (cPer > 0 && cPer < 100) {
-          return mainValvePending;
-        }
         return mainValveOFF;
       case 1:
         return mainValveON;
@@ -878,6 +871,7 @@ class AppConstants {
   static int floatObjectId = 40;
   static int irrigationLineObjectId = 2;
   static int waterMeterObjectId = 22;
+  static int analogWaterMeterObjectId = 46;
   static int pressureSensorObjectId = 24;
   static int pressureSwitchObjectId = 23;
   static int windDirectionObjectId = 31;
@@ -908,6 +902,7 @@ class AppConstants {
   static int powerSupplyObjectId = 42;
   static int lightObjectId = 19;
   static int gateObjectId = 43;
+  static int flowControlValveObjectId = 45;
 
   static List<int> smartPlusEcPhModel = [33];
   static List<int> ecModel = [64];
@@ -917,7 +912,10 @@ class AppConstants {
   static List<int> shine2V = [48, 49];
   static List<int> shine4V = [52, 53];
   static List<int> elite10V = [54, 55];
-  static List<int> ecoGemModelList = [56, 57, 58, 59, 60, 61, 62, 63];
+  static List<int> ecoGemFlowControlValveModel = [89, 90];
+  static List<int> omsGemList = [91];
+  static List<int> omsRtuList = [92];
+  static List<int> ecoGemModelList = [56, 57, 58, 59, 60, 61, 62, 63, ...ecoGemFlowControlValveModel];
   static List<int> ecoGemPlusModelList = [60, 61, 62, 63];
   static List<int> ecoGemAndPlusModelList = [...ecoGemModelList, ...ecoGemPlusModelList];
   static List<int> gemModelList = [1, 2, 4, 72, 73, 74, 75];
@@ -933,5 +931,4 @@ class AppConstants {
   static List<int> extendGsmList = [47];
   static List<int> extendList = [...extendLoraList, ...extendGsmList];
   static List<int> aquacultureModelList = [72];
-
 }

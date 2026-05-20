@@ -69,9 +69,9 @@ class ConstantProvider extends ChangeNotifier{
   }
 
   List<ConstantSettingModel> generateDefaultSetting({
-        required Map<String, dynamic> defaultData,
-        required String keyName
-      }){
+    required Map<String, dynamic> defaultData,
+    required String keyName
+  }){
     return (defaultData[keyName] as List<dynamic>).map((setting) {
       return ConstantSettingModel.fromJson(setting, null);
     }).toList();
@@ -160,9 +160,9 @@ class ConstantProvider extends ChangeNotifier{
             listOfFilterObject.add(object);
           }else if(object['objectId'] == AppConstants.mainValveObjectId){
             listOfMainValveObject.add(object);
-          }else if(object['objectId'] == AppConstants.valveObjectId){
+          }else if(object['objectId'] == AppConstants.valveObjectId || object['objectId'] == AppConstants.flowControlValveObjectId){
             listOfValveObject.add(object);
-          }else if(object['objectId'] == AppConstants.waterMeterObjectId){
+          }else if(object['objectId'] == AppConstants.waterMeterObjectId || object['objectId'] == AppConstants.analogWaterMeterObjectId){
             listOfWaterMeterObject.add(object);
           }else if(object['objectId'] == AppConstants.channelObjectId){
             listOfChannelObject.add(object);
@@ -220,12 +220,12 @@ class ConstantProvider extends ChangeNotifier{
             defaultSetting: defaultData['normalCriticalAlarm'],
             globalAlarm: defaultData['globalAlarm'],
             oldSetting: lineData.firstOrNull,
-          userData: userData
+            userData: userData
         );
       }).toList();
       if (kDebugMode) {
         print('normalCriticalAlarm updated..');
-    }
+      }
 
 
 
@@ -499,24 +499,24 @@ class ConstantProvider extends ChangeNotifier{
   }
 
   String getNormalCriticalAlarmForEcoGem(){
-    print('eco gem payload start');
     List<dynamic> payloadList = [];
     for(var line in normalCriticalAlarm){
       for(var alarmIndex = 0;alarmIndex < line.normal.length;alarmIndex++){
-          payloadList.add(
-            [
-              line.normal[alarmIndex].sNo,
-              ...line.normal[alarmIndex].setting.where((setting){
-                return (setting.ecoGemPayload);
-              }).map((setting){
-                return payloadValidate(setting.value.value);
-              }),
-            ].join(','),
-          );
+        payloadList.add(
+          [
+            line.normal[alarmIndex].sNo,
+            ...line.normal[alarmIndex].setting.where((setting){
+              return (setting.ecoGemPayload);
+            }).map((setting){
+              return payloadValidate(setting.value.value);
+            }),
+          ].join(','),
+        );
       }
     }
     return payloadList.join(';');
   }
+
 
   String getFilterSitePayload(){
     return filterSite.map((site){

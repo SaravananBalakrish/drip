@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
- import '../../../Screens/Dealer/sevicecustomer.dart';
+import '../../../Screens/Dealer/sevicecustomer.dart';
 import '../../../Screens/Logs/irrigation_and_pump_log.dart';
 import '../../../Screens/Map/oro_map/map_areator.dart';
 import '../../../Screens/planning/weather/view/weather_Gsm.dart';
@@ -22,17 +22,17 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
 
   final isGem = [...AppConstants.gemModelList].contains(cMaster.modelId);
   final isNova = [...AppConstants.ecoGemModelList].contains(cMaster.modelId);
+  final isOms = [...AppConstants.omsGemList].contains(cMaster.modelId);
   final isAquaculture = [...AppConstants.aquacultureModelList].contains(
       cMaster.modelId);
   final isGsmWeather = [...AppConstants.weatherModelList].contains(cMaster.modelId);
 
 
-
-
-   switch (index) {
+  switch (index) {
     case 0:
-      return (isGem || isNova) ?
-      const DashboardLayoutSelector(userRole: UserRole.customer) : isGsmWeather ? WeatherGsm(customerId: userId, controllerId: cMaster.controllerId, deviceID: cMaster.deviceId,jsondata: dashboardToWeatherFormat(cMaster)) :
+      return (isGem || isNova || isOms) ?
+      const DashboardLayoutSelector(userRole: UserRole.customer) : isGsmWeather ?
+      WeatherGsm(customerId: cSite.customerId, controllerId: cMaster.controllerId, deviceID: cMaster.deviceId,jsondata: dashboardToWeatherFormat(cMaster)) :
       vm.isChanged ? PumpControllerHome(
         userId: userId,
         customerId: cSite.customerId,
@@ -128,26 +128,24 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
   }
 }
 
-  Map<String, dynamic> dashboardToWeatherFormat(
-      MasterControllerModel dashboard) {
-     final deviceList = <Map<String, dynamic>>[];
+Map<String, dynamic> dashboardToWeatherFormat(
+    MasterControllerModel dashboard) {
+  final deviceList = <Map<String, dynamic>>[];
 
-     final configList =
-     dashboard.configObjects.map((e) => e.toJson()).toList();
+  final configList =
+  dashboard.configObjects.map((e) => e.toJson()).toList();
 
-     // mqttProvider.liveDateAndTime
+  deviceList.add({
+    "controllerId": dashboard.controllerId,
+    "deviceId": dashboard.deviceId,
+    "deviceName": dashboard.deviceName,
+    "serialNumber": 1,
+  });
 
-    deviceList.add({
-      "controllerId": dashboard.controllerId,
-      "deviceId": dashboard.deviceId,
-      "deviceName": dashboard.deviceName,
-      "serialNumber": 1,
-    });
-
-    return {
-         "weatherLive": dashboard.live?.toJson(),
-         "deviceList": deviceList,
-        "configObject": configList,
-     };
-  }
+  return {
+    "weatherLive": dashboard.live?.toJson(),
+    "deviceList": deviceList,
+    "configObject": configList,
+  };
+}
 
