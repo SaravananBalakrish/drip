@@ -266,7 +266,6 @@ class MqttService {
   void onMqttPayloadReceived(String payload) {
     try {
       final payloadMessage = jsonDecode(payload);
-      debugPrint("payloadMessage => $payloadMessage");
       acknowledgementPayload = payloadMessage;
 
       switch (payloadMessage['mC']) {
