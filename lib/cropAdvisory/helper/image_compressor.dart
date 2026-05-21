@@ -14,8 +14,7 @@ class ImageCompressHelper {
       await FlutterImageCompress.compressAndGetFile(
         file.absolute.path,
         targetPath,
-
-        quality: 70, // 0 - 100
+        quality: 100,
         minWidth: 200,
         minHeight: 200,
       );
