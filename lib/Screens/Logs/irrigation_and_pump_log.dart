@@ -36,6 +36,33 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
 
   int _calculateTabLength() {
     int length = 0;
+
+    if (AppConstants.ecoGemAndPlusModelList
+        .contains(widget.masterData.modelId)) {
+
+      // Motor + Zone
+      length = 2;
+
+    } else {
+
+      // Irrigation + Standalone
+      length = 2;
+    }
+
+    // Pump Log
+    if (!AppConstants.ecoGemAndPlusModelList
+        .contains(widget.masterData.modelId)
+        ? pumpList.isNotEmpty
+        : true) {
+
+      length += 1;
+    }
+
+    return length;
+  }
+
+  /*int _calculateTabLength() {
+    int length = 0;
     if (AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId)) {
       length = 1;
     } else {
@@ -45,7 +72,7 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
       length += 2;
     }
     return length;
-  }
+  }*/
 
   Future<void> getUserNodePumpList() async{
     final userData = {'userId' : widget.userData['customerId'], 'controllerId' :  widget.userData['controllerId']};
@@ -66,6 +93,10 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
   void dispose() {
     // TODO: implement dispose
     tabController.dispose();
+    tabController = TabController(
+      length: _calculateTabLength(),
+      vsync: this,
+    );
     super.dispose();
   }
 
