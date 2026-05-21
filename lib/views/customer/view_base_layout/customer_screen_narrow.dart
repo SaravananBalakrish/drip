@@ -38,7 +38,6 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
 
   @override
   Widget build(BuildContext context) {
-    print("call CustomerScreenNarrow");
 
     final userProvider = context.read<UserProvider>();
     final loggedInUser = userProvider.loggedInUser;
