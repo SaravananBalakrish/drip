@@ -95,7 +95,7 @@ class _CropWeatherscreenState extends State<CropWeatherscreen> {
       
                 const SizedBox(height: 20),
       
-                 Row(
+                 const Row(
                   children: [
                     Expanded(child: AirQualityCard(co2: '558',)),
                     SizedBox(width: 12),
