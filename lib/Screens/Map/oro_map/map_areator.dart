@@ -11,7 +11,7 @@ import '../../../services/http_service.dart';
 import '../MapDeviceList.dart';
 import 'map_conection_objects.dart';
 
-
+// Areator
 class MapScreenValve extends StatefulWidget {
   const MapScreenValve({
     Key? key,

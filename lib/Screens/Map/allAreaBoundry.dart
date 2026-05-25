@@ -6,7 +6,7 @@ import 'package:widget_to_marker/widget_to_marker.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import 'areaboundry.dart';
-
+//GEOGRAPHY AREA
 class MapScreenAllArea extends StatefulWidget {
   const MapScreenAllArea({
     Key? key,
