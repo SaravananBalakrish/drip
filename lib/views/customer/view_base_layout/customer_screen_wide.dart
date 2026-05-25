@@ -43,7 +43,7 @@ class _CustomerScreenWideState
     if (vm.mySiteList.data.isEmpty) return const SiteLoadingOrEmpty(isLoading: false);
 
     final cMaster = vm.mySiteList.data[vm.sIndex].master[vm.mIndex];
-    final isGemRNova = [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList]
+    final isGemRNova = [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList, ...AppConstants.omsGemList]
         .contains(cMaster.modelId);
 
     int totalPages = _getTotalPagesCount(vm);

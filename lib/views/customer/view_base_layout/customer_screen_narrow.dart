@@ -38,7 +38,6 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
 
   @override
   Widget build(BuildContext context) {
-    print("call CustomerScreenNarrow");
 
     final userProvider = context.read<UserProvider>();
     final loggedInUser = userProvider.loggedInUser;
@@ -54,7 +53,8 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
 
     bool isGemOrNova = isGemOrNovaModel(cM.modelId);
     final isGsmWeather = [...AppConstants.weatherModelList].contains(cM.modelId);
-
+    print("isGemOrNova : $isGemOrNova");
+    print("vm.isChanged : ${vm.isChanged}");
 
     bool hasWeatherStation = cM.irrigationLine.any((line) => line.hasWeatherStation);
 
@@ -100,7 +100,8 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
           callbackFunction: callbackFunction,
           myPermissionFlags: [],
         ) : null,
-        body: isGsmWeather ? WeatherGsm(customerId: loggedInUser.id, controllerId: cM.controllerId, deviceID: cM.deviceId,jsondata: dashboardToWeatherFormat(cM))  : PumpControllerHome(
+        body: isGsmWeather ? WeatherGsm(customerId: loggedInUser.id, controllerId: cM.controllerId, deviceID: cM.deviceId,jsondata: dashboardToWeatherFormat(cM))
+            : PumpControllerHome(
           userId: loggedInUser.id,
           customerId: vm.mySiteList.data[vm.sIndex].customerId,
           masterData: cM,

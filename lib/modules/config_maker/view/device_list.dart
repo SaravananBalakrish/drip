@@ -508,19 +508,23 @@ class _DeviceListState extends State<DeviceList> {
                   }
                 }
                 print('configPvd.masterData ::: ${configPvd.masterData}');
+                print('listOfDevices ::: ${listOfDevices}');
 
                 List<DeviceModel> possibleNodeToConfigUnderMaster = listOfDevices.where((node) {
                   List<int> nodeUnderPumpWithValveModel = [15, 17, 23, 25, 42];
                   List<int> nodeNotUnderGemModel = [48, 49];
                   print("node => ${node.modelId} == ${node.modelDescription} == ${node.modelName}");
                   if(AppConstants.pumpWithValveModelList.contains(configPvd.masterData['modelId']) && nodeUnderPumpWithValveModel.contains(node.modelId)){
-                    /* this condition filter node for pump with valve model */
+                    /* this condition filter node for pump with valve model * */
                     return true;
                   }else if(AppConstants.gemModelList.contains(configPvd.masterData['modelId']) && !nodeNotUnderGemModel.contains(node.modelId)){
                     /* this condition filter node for gem model */
                     return true;
                   }else if(AppConstants.ecoGemModelList.contains(configPvd.masterData['modelId'])){
                     /* this condition filter node for eco gem */
+                    return true;
+                  }else if(AppConstants.omsGemList.contains(configPvd.masterData['modelId'])){
+                    print('omssssss');
                     return true;
                   }else{
                     return false;
@@ -584,7 +588,6 @@ class _DeviceListState extends State<DeviceList> {
                                             List<int> nodeUnderPumpWithValveModel = [15, 17, 23, 25, 42];
                                             List<int> nodeUnderEcoGemModel = [36, 50, 42];
                                             List<int> nodeNotUnderGemModel = [48, 49];
-                                            print('modelId : ${node.modelId}');
                                             if(AppConstants.pumpWithValveModelList.contains(configPvd.masterData['modelId']) && nodeUnderPumpWithValveModel.contains(node.modelId)){
                                               /* this condition filter node for pump with valve model */
                                               return true;
@@ -592,6 +595,9 @@ class _DeviceListState extends State<DeviceList> {
                                               /* this condition filter node for pump with valve model */
                                               return true;
                                             }else if(AppConstants.gemModelList.contains(configPvd.masterData['modelId']) && !nodeNotUnderGemModel.contains(node.modelId)){
+                                              /* this condition filter node for pump with valve model */
+                                              return true;
+                                            }else if(AppConstants.omsGemList.contains(configPvd.masterData['modelId'])){
                                               /* this condition filter node for pump with valve model */
                                               return true;
                                             }else{

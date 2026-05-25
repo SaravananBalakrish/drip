@@ -8,6 +8,7 @@ import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 
 import '../../../StateManagement/mqtt_payload_provider.dart';
+import '../../../services/communication_service.dart';
 import '../model/preference_data_model.dart';
 import '../state_management/preference_provider.dart';
 
@@ -71,7 +72,7 @@ class _ViewConfigState extends State<ViewConfig> {
     return indexToName;
   }
 
-  void requestViewConfig(int index, {String? newSelectedPayload}) {
+  void requestViewConfig(int index, {String? newSelectedPayload}) async{
     final mqttProvider = context.read<MqttPayloadProvider>();
     final preferenceProvider = context.read<PreferenceProvider>();
 
@@ -125,10 +126,16 @@ class _ViewConfigState extends State<ViewConfig> {
         "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
       );
     } else {
-      mqttService.topicToPublishAndItsMessage(
-        jsonEncode({"sentSms": "viewconfig"}),
-        "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
+      print("this...");
+      final result = await context.read<CommunicationService>().sendCommand(
+        payload: jsonEncode({"sentSms": "viewconfig"}),
+        serverMsg: '',
       );
+      debugPrint("Send result: $result");
+      // mqttService.topicToPublishAndItsMessage(
+      //   jsonEncode({"sentSms": "viewconfig"}),
+      //   "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
+      // );
     }
   }
 
@@ -779,9 +786,11 @@ class _ViewConfigState extends State<ViewConfig> {
           child: Column(
             children: [
               ...List.generate(setting.setting.length, (i) {
-                return (i == 11 || i == 12)
-                    ? Container()
-                    : _buildListTile(setting.setting[i].title, widget.isLora ? delayValues[i + 1] : delayValues[i]);
+                if(i < setting.setting.length && (i+1) < delayValues.length){
+                  return _buildListTile(setting.setting[i].title, widget.isLora ? delayValues[i + 1] : delayValues[i]);
+                }else{
+                  return const SizedBox();
+                }
               }),
             ],
           ),
@@ -899,8 +908,12 @@ class _ViewConfigState extends State<ViewConfig> {
                 ...List.generate(
                   setting.setting.length,
                       (i) {
-                    // return Text('${i}');
-                    return _buildListTile(setting.setting[i].title, values[i + offset]);
+                    if(i < values.length){
+                      return _buildListTile(setting.setting[i].title, values[i + offset]);
+                    }else{
+                      return const SizedBox();
+                    }
+
                   },
                 ),
                 /*...List.generate(

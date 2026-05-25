@@ -626,21 +626,22 @@ class _ConfigWebViewState extends State<ConfigWebView> {
       listOfPayload.addAll(configPvd.getWeatherMasterPayload());
     });
 
-    if([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(configPvd.masterData['modelId'])){
+    if([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList, ...AppConstants.omsGemList].contains(configPvd.masterData['modelId'])){
       bool gem = AppConstants.gemModelList.contains(configPvd.masterData['modelId']);
+      bool omsGem = AppConstants.omsGemList.contains(configPvd.masterData['modelId']);
       final Map<String, dynamic> configMakerPayload = {
         '100' : {
           '101' : configPvd.getDeviceListPayload(),
           '102' : configPvd.getObjectPayload(),
-          if(gem)
+          if(gem && !omsGem)
             '103' : configPvd.getPumpPayload(),
-          if(gem)
+          if(gem && !omsGem)
             '104' : configPvd.getFilterPayload(),
-          if(gem)
+          if(gem && !omsGem)
             '105' : configPvd.getFertilizerPayload(),
-          if(gem)
+          if(gem && !omsGem)
             '106' : configPvd.getFertilizerInjectorPayload(),
-          if(gem)
+          if(gem && !omsGem)
             '107' : configPvd.getIrrigationLinePayload(),
         }
       };
@@ -722,7 +723,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                               continue payloadLoop;
                             }
                             bool mqttAttempt = true;
-                            int delayDuration = 30;
+                            int delayDuration = 60;
                             delayLoop : for(var sec = 0;sec < delayDuration;sec++){
                               if(sec == 0){
                                 payloadSendState = PayloadSendState.start;
@@ -731,7 +732,6 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                               if(sec == delayDuration - 1){
                                 payload['acknowledgementState'] = HardwareAcknowledgementState.failed;
                               }
-                              await Future.delayed(const Duration(seconds: 1));
                               debugPrint("${payload['hardwareType']}\n sec ${sec + 1}   -- ${payload['deviceId']} \n ${mqttService.acknowledgementPayload }");
                               if(mqttService.isConnected && mqttAttempt == true){
                                 mqttService.topicToPublishAndItsMessage(
@@ -745,6 +745,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                                 setState(() {
                                   if(payload['hardwareType'] as HardwareType == HardwareType.gem){  // listening acknowledgement from gem
                                     if(mqttService.acknowledgementPayload != null){
+                                      print("mqttService.acknowledgementPayload! : ${sec+1}");
                                       if(validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cC'], payload['deviceIdToSend']) && validatePayloadFromHardware(mqttService.acknowledgementPayload!, ['cM', '4201', 'PayloadCode'], payload['checkingCode'])){
                                         if(mqttService.acknowledgementPayload!['cM']['4201']['Code'] == '200'){
                                           payload['acknowledgementState'] = HardwareAcknowledgementState.success;
@@ -774,6 +775,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                               if((payload['acknowledgementState'] as HardwareAcknowledgementState) != HardwareAcknowledgementState.sending){
                                 break delayLoop;
                               }
+                              await Future.delayed(const Duration(milliseconds: 500));
                             }
                           }
                           if(payloadSendState == PayloadSendState.start){  // only stop if all payload completed
@@ -968,7 +970,13 @@ class _ConfigWebViewState extends State<ConfigWebView> {
       if([ConfigMakerTabs.deviceList.name, ConfigMakerTabs.productLimit.name].contains(tab.name)){
         display = true;
       }
-    }else{
+    }
+    // else if(AppConstants.omsGemList.contains(configPvd.masterData['modelId'])){
+    //   if([ConfigMakerTabs.deviceList.name, ConfigMakerTabs.productLimit.name, ConfigMakerTabs.connection.name].contains(tab.name)){
+    //     display = true;
+    //   }
+    // }
+    else{
       display = true;
     }
     return display;
