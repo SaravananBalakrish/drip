@@ -10,6 +10,7 @@ import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:provider/provider.dart';
 import '../../../Constants/constants.dart';
 import '../../../Widgets/HoursMinutesSeconds.dart';
+import '../../../models/customer/site_model.dart';
 import '../../../services/http_service.dart';
 import '../../../utils/constants.dart';
 import '../model/sequence_model.dart';
@@ -36,6 +37,7 @@ class ProgramLibraryScreenNew extends StatefulWidget {
   final String deviceName;
   final String categoryName;
   final void Function(String msg) callbackFunction;
+  final List<NodeListModel> nodeList;
 
   const ProgramLibraryScreenNew({
     super.key,
@@ -49,6 +51,7 @@ class ProgramLibraryScreenNew extends StatefulWidget {
     required this.deviceName,
     required this.categoryName,
     required this.callbackFunction,
+    required this.nodeList,
   });
 
   @override
@@ -631,6 +634,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
           modelId: widget.modelId,
           deviceName: widget.deviceName,
           categoryName: widget.categoryName,
+          nodeList: widget.nodeList,
         ),
       ),
     );
@@ -1435,6 +1439,7 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
           modelId: widget.modelId,
           deviceName: widget.deviceName,
           categoryName: widget.categoryName,
+          nodeList: widget.nodeList,
         ),
       ),
     );

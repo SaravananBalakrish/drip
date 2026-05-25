@@ -67,7 +67,7 @@ dependencies:
   scoped_model: ^2.0.0
   flutter_bluetooth_serial_plus: ^0.5.1
   crypto: ^3.0.6
-  image_picker: ^1.1.2
+  image_picker: ^1.2.2
   animated_text_kit: ^4.2.3
   flutter_native_splash: ^2.4.0
   drop_down_search_field: ^1.1.3
@@ -82,6 +82,8 @@ dependencies:
   new_version_plus: ^0.1.0
   skeletonizer: ^2.1.1
   reorderable_grid_view: ^2.2.8
+  usb_serial: ^0.5.2
+  flutter_image_compress: ^2.4.0
 #  audioplayers: ^6.5.0
 #  record: ^6.0.0
 
@@ -126,7 +128,7 @@ flutter:
     - assets/splash/oro_production.png
     - assets/splash/smart_comm.png
     - assets/splash/transparent.png
-
+    - assets/Images/CropAdvisory/
 #    - .env.apikey
 
 #flutter_launcher_icons:
