@@ -221,6 +221,7 @@ class SideActionMenu extends StatelessWidget {
                 deviceName: cM.deviceName,
                 categoryName: cM.categoryName,
                 callbackFunction: callbackFunction,
+                nodeList: cM.nodeList,
               ),
             ),
           );

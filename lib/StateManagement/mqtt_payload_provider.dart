@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../Constants/data_convertion.dart';
+import '../cropAdvisory/service/cropadvisory_model.dart';
 import '../models/Weather_model.dart';
 import '../Screens/Map/googlemap_model.dart';
 import '../models/customer/fertilizer_site_live_model.dart';
@@ -151,6 +152,9 @@ class MqttPayloadProvider with ChangeNotifier {
    bool isTraceLoading = false;
    int traceLogSize = 0;
    int totalTraceLogSize = 0;
+
+   CropAdvisoryModel cropAdvisoryModelInstance = CropAdvisoryModel();
+
 
    //for blue repository classic
    ClassicBluetoothDeviceModel? _connectedDeviceClassic;
@@ -770,6 +774,7 @@ class MqttPayloadProvider with ChangeNotifier {
           cCList = {...cCList, data['cC']}.toList();
           viewSetting = data;
           if (!viewSettingsList.contains(jsonEncode(data['cM']))) {
+            print("""data["cM"]  : ${data["cM"]}""");
             viewSettingsList.add(jsonEncode(data["cM"]));
           }
         }

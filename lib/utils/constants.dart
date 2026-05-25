@@ -871,8 +871,16 @@ class AppConstants {
   static int floatObjectId = 40;
   static int irrigationLineObjectId = 2;
   static int waterMeterObjectId = 22;
+  static int analogWaterMeterObjectId = 46;
   static int pressureSensorObjectId = 24;
   static int pressureSwitchObjectId = 23;
+  static int windDirectionObjectId = 31;
+  static int windSpeedObjectId = 32;
+  static int ldrObjectId = 35;
+  static int luxObjectId = 34;
+  static int atmosphericPressureObjectId = 39;
+  static int leafWetnessObjectId = 37;
+  static int rainFallObjectId = 38;
   static int fertilizerSiteObjectId = 3;
   static int channelObjectId = 10;
   static int boosterObjectId = 7;
@@ -894,6 +902,7 @@ class AppConstants {
   static int powerSupplyObjectId = 42;
   static int lightObjectId = 19;
   static int gateObjectId = 43;
+  static int flowControlValveObjectId = 45;
 
   static List<int> smartPlusEcPhModel = [33];
   static List<int> ecModel = [64];
@@ -903,11 +912,15 @@ class AppConstants {
   static List<int> shine2V = [48, 49];
   static List<int> shine4V = [52, 53];
   static List<int> elite10V = [54, 55];
-  static List<int> ecoGemModelList = [56, 57, 58, 59, 60, 61, 62, 63];
+  static List<int> ecoGemFlowControlValveModel = [89, 90];
+  static List<int> omsGemList = [91];
+  static List<int> omsRtuList = [92];
+  static List<int> ecoGemModelList = [56, 57, 58, 59, 60, 61, 62, 63, ...ecoGemFlowControlValveModel];
   static List<int> ecoGemPlusModelList = [60, 61, 62, 63];
   static List<int> ecoGemAndPlusModelList = [...ecoGemModelList, ...ecoGemPlusModelList];
   static List<int> gemModelList = [1, 2, 4, 72, 73, 74, 75];
   static List<int> weatherModelList = [13, 14];
+  static List<int> weatherGsmModelList = [14];
   static List<int> pumpModelList = [5, 6, 7, ...pumpPlusModelList, ...wlcModelList];
   static List<int> pumpPlusModelList = [8, 9, 10, ...wlcModelList];
   static List<int> wlcModelList = [76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86];
@@ -918,5 +931,4 @@ class AppConstants {
   static List<int> extendGsmList = [47];
   static List<int> extendList = [...extendLoraList, ...extendGsmList];
   static List<int> aquacultureModelList = [72];
-
 }

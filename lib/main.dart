@@ -80,74 +80,77 @@ FutureOr<void> main() async {
     const initializationSettingsIOS = DarwinInitializationSettings(
         requestAlertPermission: true,
         requestBadgePermission: true,
-        requestSoundPermission: true);
-    // Local notifications
-    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const initSettings = InitializationSettings(
-        android: androidInit, iOS: initializationSettingsIOS);
-    await flutterLocalNotificationsPlugin.initialize(initSettings);
+        requestSoundPermission: true,
+      );
 
+      // Local notifications
+      const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+      const initSettings = InitializationSettings(
+        android: androidInit,
+        iOS: initializationSettingsIOS,
+      );
 
-    await flutterLocalNotificationsPlugin.initialize(
-      initSettings,
-      onDidReceiveNotificationResponse: (details) {
-        debugPrint("Notification tapped: ${details.payload}");
-      },
-    );
+      await flutterLocalNotificationsPlugin.initialize(initSettings);
+      await flutterLocalNotificationsPlugin.initialize(
+        initSettings,
+        onDidReceiveNotificationResponse: (details) {
+          debugPrint("Notification tapped: ${details.payload}");
+        },
+      );
 
+      // Background messaging
+      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    // Background messaging
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+      // Foreground
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        if (message.notification != null) {
+          NotificationService().showNotification(
+            title: message.notification!.title,
+            body: message.notification!.body,
+          );
+        }
+      });
 
-    // Foreground
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        NotificationService().showNotification(
-          title: message.notification!.title,
-          body: message.notification!.body,
-        );
-      }
-    });
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+        debugPrint("Message clicked: ${message.messageId}");
+      });
+    }
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      debugPrint("Message clicked: ${message.messageId}");
-    });
-  }
-
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => CustomerProvider()),
-        ChangeNotifierProvider(create: (_) => ConfigMakerProvider()),
-        ChangeNotifierProvider(create: (_) => IrrigationProgramMainProvider()),
-        ChangeNotifierProvider(create: (_) => MqttPayloadProvider()),
-        ChangeNotifierProvider(create: (_) => OverAllUse()),
-        ChangeNotifierProvider(create: (_) => PreferenceProvider()),
-        ChangeNotifierProvider(create: (_) => SystemDefinitionProvider()),
-        ChangeNotifierProvider(create: (_) => ConstantProvider()),
-        ChangeNotifierProvider(create: (_) => PumpControllerProvider()),
-        ChangeNotifierProvider(create: (_) => BleProvider()),
-        ChangeNotifierProvider(create: (_) => SearchProvider()),
-        ChangeNotifierProvider(create: (_) => ButtonLoadingProvider()),
-        ProxyProvider2<MqttPayloadProvider, CustomerProvider, CommunicationService>(
-          update: (BuildContext context, MqttPayloadProvider mqttProvider,
-              CustomerProvider customer, CommunicationService? previous) {
-            return CommunicationService(
-              mqttService: MqttService(),
-              blueService: BluetoothClassicService(),
-              bleService: BluetoothBleService(),
-              customerProvider: customer,
-            );
-          },
-        ),
-        Provider<HttpService>(create: (_) => HttpService()),
-        Provider<ApiRepository>(create: (context) =>
+    // Run the app
+    runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => UserProvider()),
+          ChangeNotifierProvider(create: (_) => CustomerProvider()),
+          ChangeNotifierProvider(create: (_) => ConfigMakerProvider()),
+          ChangeNotifierProvider(create: (_) => IrrigationProgramMainProvider()),
+          ChangeNotifierProvider(create: (_) => MqttPayloadProvider()),
+          ChangeNotifierProvider(create: (_) => OverAllUse()),
+          ChangeNotifierProvider(create: (_) => PreferenceProvider()),
+          ChangeNotifierProvider(create: (_) => SystemDefinitionProvider()),
+          ChangeNotifierProvider(create: (_) => ConstantProvider()),
+          ChangeNotifierProvider(create: (_) => PumpControllerProvider()),
+          ChangeNotifierProvider(create: (_) => BleProvider()),
+          ChangeNotifierProvider(create: (_) => SearchProvider()),
+          ChangeNotifierProvider(create: (_) => ButtonLoadingProvider()),
+          ProxyProvider2<MqttPayloadProvider, CustomerProvider, CommunicationService>(
+            update: (BuildContext context, MqttPayloadProvider mqttProvider,
+                CustomerProvider customer, CommunicationService? previous) {
+              return CommunicationService(
+                mqttService: MqttService(),
+                blueService: BluetoothClassicService(),
+                bleService: BluetoothBleService(),
+                customerProvider: customer,
+              );
+            },
+          ),
+          Provider<HttpService>(create: (_) => HttpService()),
+          Provider<ApiRepository>(create: (context) =>
               RepositoryImpl(context.read<HttpService>()),
-        ),
-      ],
-      child: const MyApp(),
-    ),
-  );
+          ),
+        ],
+        child: const MyApp(),
+      ),
+    );
 
 }

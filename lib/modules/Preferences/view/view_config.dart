@@ -7,8 +7,8 @@ import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 
-import '../../../Constants/constants.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
+import '../../../services/communication_service.dart';
 import '../model/preference_data_model.dart';
 import '../state_management/preference_provider.dart';
 
@@ -72,7 +72,7 @@ class _ViewConfigState extends State<ViewConfig> {
     return indexToName;
   }
 
-  void requestViewConfig(int index, {String? newSelectedPayload}) {
+  void requestViewConfig(int index, {String? newSelectedPayload}) async{
     final mqttProvider = context.read<MqttPayloadProvider>();
     final preferenceProvider = context.read<PreferenceProvider>();
 
@@ -126,11 +126,16 @@ class _ViewConfigState extends State<ViewConfig> {
         "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
       );
     } else {
-      final payload = jsonEncode({"sentSms": "viewconfig"});
-      mqttService.topicToPublishAndItsMessage(
-        AppConstants.wlcModelList.contains(widget.modelId) ? Constants.sendPayloadWithCrc(payload) :  payload,
-        "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
+      print("this...");
+      final result = await context.read<CommunicationService>().sendCommand(
+        payload: jsonEncode({"sentSms": "viewconfig"}),
+        serverMsg: '',
       );
+      debugPrint("Send result: $result");
+      // mqttService.topicToPublishAndItsMessage(
+      //   jsonEncode({"sentSms": "viewconfig"}),
+      //   "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
+      // );
     }
   }
 
@@ -389,6 +394,7 @@ class _ViewConfigState extends State<ViewConfig> {
     } else {
       // print('Key in the else :: $key');
       // print('Key in the else condition :: ${selectedPayload.contains(key)}');
+      print("provider.viewSettingsList[1] : ${provider.viewSettingsList}");
       switch(key) {
         case 'pumpconfig':
           return provider.viewSettingsList.isNotEmpty && jsonDecode(provider.viewSettingsList[0])[0][key] != null && selectedPayload.contains(key) && provider.cCList.contains(deviceId);
@@ -581,6 +587,8 @@ class _ViewConfigState extends State<ViewConfig> {
   }
 
   Widget _buildSettingCard(SettingList setting, List<String> values, {List<String> titles = const []}) {
+    print("values => ${values}");
+    print([208, 209, 210].contains(setting.type));
     return SizedBox(
       width: MediaQuery.of(context).size.width <= 500 ? MediaQuery.of(context).size.width : 400,
       child: Column(
@@ -617,18 +625,25 @@ class _ViewConfigState extends State<ViewConfig> {
             surfaceTintColor: Colors.white,
             shadowColor: Theme.of(context).primaryColorLight.withAlpha(100),
             child: Column(
-              children: [
-                if(titles.isEmpty)
-                ...List.generate(
-                  [208, 209, 210].contains(setting.type) ? setting.setting.length : values.length,
-                      (i) => _buildListTile(setting.setting[i].title, values[i]),
-                )
-                else
-                  ...List.generate(
-                    titles.length,
-                        (i) => _buildListTile(titles[i], "$i"),
-                  )
-              ]
+                children: [
+                  if(titles.isEmpty)
+                    ...List.generate(
+                      [204, 208, 209, 210].contains(setting.type) ? setting.setting.length : values.length,
+                          (i) {
+                        print("${i} = ${setting.setting[i].title}    ${setting.setting.length}  ${setting.type}");
+                            if(i < values.length){
+                              return _buildListTile(setting.setting[i].title, values[i]);
+                            }else{
+                              return const SizedBox();
+                            }
+                          },
+                    )
+                  else
+                    ...List.generate(
+                      titles.length,
+                          (i) => _buildListTile(titles[i], "$i"),
+                    )
+                ]
             ),
           ),
         ],
@@ -771,9 +786,11 @@ class _ViewConfigState extends State<ViewConfig> {
           child: Column(
             children: [
               ...List.generate(setting.setting.length, (i) {
-                return (i == 11 || i == 12)
-                    ? Container()
-                    : _buildListTile(setting.setting[i].title, widget.isLora ? delayValues[i + 1] : delayValues[i]);
+                if(i < setting.setting.length && (i+1) < delayValues.length){
+                  return _buildListTile(setting.setting[i].title, widget.isLora ? delayValues[i + 1] : delayValues[i]);
+                }else{
+                  return const SizedBox();
+                }
               }),
             ],
           ),
@@ -891,9 +908,13 @@ class _ViewConfigState extends State<ViewConfig> {
                 ...List.generate(
                   setting.setting.length,
                       (i) {
-                    // return Text('${i}');
-                    return _buildListTile(setting.setting[i].title, values[i + offset]);
-                      },
+                    if(i < values.length){
+                      return _buildListTile(setting.setting[i].title, values[i + offset]);
+                    }else{
+                      return const SizedBox();
+                    }
+
+                  },
                 ),
                 /*...List.generate(
                   [208,209,210].contains(setting.type) ? setting.setting.length : values.length,

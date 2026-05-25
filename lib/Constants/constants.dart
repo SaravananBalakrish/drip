@@ -60,34 +60,82 @@ class Constants {
   }
 
   static String sendPayloadWithCrc(String payload) {
-    // ✅ Convert Map → JSON String
     String payloadStr = payload;
 
-    int sumOfAscii = 0;
+    List<int> bytes = payloadStr.codeUnits;
 
-    // ✅ Calculate checksum
-    for (int byte in payloadStr.codeUnits) {
-      sumOfAscii += byte;
+    int crc = 0xFFFF;
+
+    for (int byte in bytes) {
+      crc ^= byte;
+      for (int i = 0; i < 8; i++) {
+        if ((crc & 0x0001) != 0) {
+          crc = (crc >> 1) ^ 0xA001;
+        } else {
+          crc = crc >> 1;
+        }
+      }
     }
 
-    int crc = sumOfAscii % 256;
+    // Split into low and high bytes
+    int crcLow = crc & 0xFF;
+    int crcHigh = (crc >> 8) & 0xFF;
 
-    // ✅ Append CRC
-    String finalPayload =
-        '$payloadStr|${sendFourDigit(crc.toString())}';
+    // Format as 4-digit HEX
+    String crcHex =
+        crcHigh.toRadixString(16).padLeft(2, '0') +
+            crcLow.toRadixString(16).padLeft(2, '0');
 
-    // ✅ Convert to bytes (if needed for BLE)
-    List<int> listOfBytes = finalPayload.codeUnits;
+    String finalPayload = '$payloadStr|$crcHex';
 
     if (kDebugMode) {
-      print('listOfBytes : $listOfBytes');
-      print('sumOfAscii : $sumOfAscii');
-      print('crc : $crc');
-      print('payload : $finalPayload');
+      print('CRC16: $crcHex');
+      print('Payload: $finalPayload');
     }
 
     return finalPayload;
   }
+
+  static String? validatePayloadWithCrc(String incoming) {
+    // Split payload and CRC part
+    List<String> parts = incoming.split('|');
+    if (parts.length != 2) {
+      return null; // Invalid format
+    }
+
+    String payloadStr = parts[0];
+    String receivedCrcHex = parts[1];
+
+    // Compute CRC for payloadStr
+    List<int> bytes = payloadStr.codeUnits;
+    int crc = 0xFFFF;
+
+    for (int byte in bytes) {
+      crc ^= byte;
+      for (int i = 0; i < 8; i++) {
+        if ((crc & 0x0001) != 0) {
+          crc = (crc >> 1) ^ 0xA001;
+        } else {
+          crc = crc >> 1;
+        }
+      }
+    }
+
+    int crcLow = crc & 0xFF;
+    int crcHigh = (crc >> 8) & 0xFF;
+
+    String calculatedCrcHex =
+        crcHigh.toRadixString(16).padLeft(2, '0') +
+            crcLow.toRadixString(16).padLeft(2, '0');
+
+    // Compare case-insensitively
+    if (calculatedCrcHex.toLowerCase() == receivedCrcHex.toLowerCase()) {
+      return payloadStr; // Valid CRC, return payload
+    } else {
+      return null; // CRC mismatch
+    }
+  }
+
 
   static List<Map<String, dynamic>> dataConversionForScheduleView(Map<String, dynamic> payload) {
     List<Map<String, dynamic>> convertedListInside = [];

@@ -5,7 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:oro_drip_irrigation/Screens/planning/weather/weather_report_model.dart';
-import 'package:oro_drip_irrigation/Screens/planning/weather/weather_report_sensor_model.dart';
+import 'package:oro_drip_irrigation/Screens/planning/weather/weather_report_sensor_model.dart' hide parseSensorHourData;
+import 'package:oro_drip_irrigation/Screens/planning/weather/weather_report_sensor_modelGsm.dart';
 
 import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
@@ -33,7 +34,7 @@ class SensorHourlyReportPage extends StatefulWidget {
 }
 
 class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
-  List<SensorHourReport> report = [];
+  List<SensorHourReportGsm> report = [];
   bool isLoading = false;
 
   String selectedDate =
@@ -91,7 +92,7 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
         "23:00": datum.the2300,
         "00:00": datum.the0000,
       };
-      final List<SensorHourReport> temp = [];
+      final List<SensorHourReportGsm> temp = [];
 
       hours.forEach((hour, raw) {
         final data = parseSensorHourData(
@@ -199,7 +200,7 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       clipBehavior: Clip.antiAlias, // Ensures table header matches card corners
       child: DataTable2(
-         columnSpacing: 12,
+        columnSpacing: 12,
         horizontalMargin: 12,
         minWidth: 600,
         headingRowHeight: 50,
@@ -237,11 +238,11 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
           } else {
             rowColor = Colors.red.shade50;
           }
-           return DataRow( color: MaterialStateProperty.resolveWith<Color?>(
-                              (Set<MaterialState> states) {
-                            return rowColor;
-                          },
-                        ), cells: [
+          return DataRow( color: MaterialStateProperty.resolveWith<Color?>(
+                (Set<MaterialState> states) {
+              return rowColor;
+            },
+          ), cells: [
             DataCell(Text(
                 r.hour, style: const TextStyle(fontWeight: FontWeight.w500))),
             DataCell(Text('${r.value} ${r.value != "NA" ? widget.unit : ''}')),
@@ -264,7 +265,7 @@ class _SensorHourlyReportPageState extends State<SensorHourlyReportPage> {
         color:  Colors.white,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-            color: code == '255' ? Colors.green.shade50 : code == 'NA' ?  Colors.grey.shade50 : Colors.red.shade50,),
+          color: code == '255' ? Colors.green.shade50 : code == 'NA' ?  Colors.grey.shade50 : Colors.red.shade50,),
       ),
       child: Text(
         code == '255' ? 'Normal' : code == 'NA' ?  '$code' : 'ERR-$code',

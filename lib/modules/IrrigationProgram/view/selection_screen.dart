@@ -4,6 +4,7 @@ import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/schedule_scre
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/sequence_screen.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
+import '../../../models/customer/site_model.dart';
 import '../state_management/irrigation_program_provider.dart';
 import '../widgets/custom_animated_switcher.dart';
 import '../widgets/custom_lShape_divider.dart';
@@ -21,8 +22,13 @@ const yellowDark = Color(0xfffdce7f);
 final primaryColorLight = const Color(0xffE3FFF5).withOpacity(0.5);
 
 class SelectionScreen extends StatefulWidget{
+  final List<NodeListModel> nodeList;
   final int modelId;
-  const SelectionScreen({super.key, required this.modelId});
+  const SelectionScreen({
+    super.key,
+    required this.modelId,
+    required this.nodeList,
+  });
 
   @override
   State<SelectionScreen> createState() => _SelectionScreenState();

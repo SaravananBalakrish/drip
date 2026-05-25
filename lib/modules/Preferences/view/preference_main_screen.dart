@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import '../../../Constants/constants.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../Widgets/custom_animated_switcher.dart';
+import '../../../services/communication_service.dart';
 import '../../IrrigationProgram/view/schedule_screen.dart';
 import '../../IrrigationProgram/widgets/custom_native_time_picker.dart';
 import '../model/preference_data_model.dart';
@@ -87,6 +88,8 @@ final timerSettingsIcons = [
   MdiIcons.timerPlay,
   MdiIcons.timerStop,
   MdiIcons.timerRefresh,
+  MdiIcons.timerSand,
+  MdiIcons.timerSand,
   MdiIcons.timerSand,
 ];
 
@@ -202,7 +205,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     // TODO: implement initState
     preferenceProvider = Provider.of<PreferenceProvider>(context, listen: false);
     mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
-    preferenceProvider.getUserPreference(userId: widget.customerId, controllerId: widget.masterData['controllerId']).then((_) {
+    preferenceProvider.getUserPreference(userId: widget.customerId, controllerId: widget.masterData['controllerId'], modelId: widget.masterData['modelId']).then((_) {
       commonPumpTabController = TabController(
           length: preferenceProvider.commonPumpSettings?.length ?? 0,
           vsync: this
@@ -330,17 +333,36 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                                           TextButton(
                                                               onPressed: () async {
                                                                 if (isNova || isToGem || isWlc) {
+                                                                  print("thisssss");
                                                                   final pump = preferenceProvider.commonPumpSettings![preferenceProvider.selectedTabIndex];
                                                                   final payload = jsonEncode({"sentSms": "viewconfig,4"});
                                                                   final payload2 = jsonEncode({"0": payload});
                                                                   final viewConfig = {
                                                                     "5900": {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${4}"}
                                                                   };
-                                                                  mqttService.topicToPublishAndItsMessage(
-                                                                      isToGem ? jsonEncode(viewConfig)
+                                                                  final result = await context.read<CommunicationService>().sendCommand(
+                                                                      payload: isToGem ? jsonEncode(viewConfig)
                                                                           : isWlc ? Constants.sendPayloadWithCrc(payload)
                                                                           : payload,
-                                                                      "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
+                                                                      serverMsg: '');
+                                                                  print("result : $result");
+                                                                  ScaffoldMessenger.of(context).showSnackBar(
+                                                                    const SnackBar(content: Text("update settings sent Ble")),
+                                                                  );
+                                                                  if (result['http'] == true) {
+                                                                    debugPrint("Payload sent to Server");
+                                                                  }
+                                                                  if (result['mqtt'] == true) {
+                                                                    debugPrint("Payload sent to MQTT Box");
+                                                                  }
+                                                                  if (result['bluetooth'] == true) {
+                                                                    debugPrint("Payload sent via Bluetooth");
+                                                                  }
+                                                                  // mqttService.topicToPublishAndItsMessage(
+                                                                  //     isToGem ? jsonEncode(viewConfig)
+                                                                  //         : isWlc ? Constants.sendPayloadWithCrc(payload)
+                                                                  //         : payload,
+                                                                  //     "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
                                                                 }
                                                                 await Future.delayed(Duration.zero, () {
                                                                   preferenceProvider.updateValidationCode();
@@ -655,7 +677,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                 unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey.shade400),
                 dividerColor: Colors.transparent,
                 isScrollable: true,
-                onTap: (value) {
+                onTap: (value) async{
                   preferenceProvider.updateTabIndex(commonPumpTabController.index);
                   if(selectedSetting == 2 && isToGem) {
                     mqttPayloadProvider.viewSettingsList.clear();
@@ -669,8 +691,11 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                     final viewConfig = {"5900": {
                       "5901": "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload2+$categoryId",
                       }};
-                    mqttService.topicToPublishAndItsMessage(isWlc ? Constants.sendPayloadWithCrc(payload) : jsonEncode(viewConfig),
-                        "${Environment.mqttPublishTopic}/${widget.masterData['deviceId']}");
+                    final result = await context.read<CommunicationService>().sendCommand(
+                      payload: isWlc ? Constants.sendPayloadWithCrc(payload) : jsonEncode(viewConfig),
+                      serverMsg: '',
+                    );
+                    debugPrint("Send result: $result");
                   }
                 },
                 tabs: [
@@ -1004,7 +1029,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   //       : 0
   //   )]) : "Loading..."}" : null;
   // }
-
 
   dynamic _getSubTitle(
       int categoryIndex,
@@ -1416,6 +1440,12 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                 mqttService: mqttService,
                 shouldSendFailedPayloads: shouldSendFailedPayloads,
                 isWlc: isWlc,
+                onDone: () {
+                  Navigator.of(context).pop(true);
+                  setState(() {
+                    viewConfig = !viewConfig;
+                  });
+                },
               );
             },
           );
@@ -1902,36 +1932,36 @@ Widget buildCustomListTileWidget({
   Widget customWidget;
   switch(widgetType) {
     case 1:case 4:
-    customWidget = SizedBox(
-      width: 80,
-      child: TextFormField(
-        key: Key(title),
-        enabled: enabled,
-        initialValue: value is String ? value : "",
-        textAlign: TextAlign.center,
-        keyboardType: TextInputType.number,
-        inputFormatters: inputFormatters,
-        decoration: const InputDecoration(
-          hintText: "000",
-          isDense: true,
-          contentPadding: EdgeInsets.symmetric(vertical: 5),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(5)),
-            borderSide: BorderSide.none,
+      customWidget = SizedBox(
+        width: 80,
+        child: TextFormField(
+          key: Key(title),
+          enabled: enabled,
+          initialValue: value is String ? value : "",
+          textAlign: TextAlign.center,
+          keyboardType: TextInputType.number,
+          inputFormatters: inputFormatters,
+          decoration: const InputDecoration(
+            hintText: "000",
+            isDense: true,
+            contentPadding: EdgeInsets.symmetric(vertical: 5),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(5)),
+              borderSide: BorderSide.none,
+            ),
+            fillColor: cardColor,
+            filled: true,
+            // errorText: errorText
           ),
-          fillColor: cardColor,
-          filled: true,
-          // errorText: errorText
+          onTapOutside: (_) {
+            FocusScope.of(context).unfocus();
+          },
+          onChanged: (newValue) {
+            onValueChange?.call(newValue);
+          },
         ),
-        onTapOutside: (_) {
-          FocusScope.of(context).unfocus();
-        },
-        onChanged: (newValue) {
-          onValueChange?.call(newValue);
-        },
-      ),
-    );
-    break;
+      );
+      break;
     case 2:
       customWidget = Switch(
         value: enabled ? (value != "" ? value : false) ?? false : false,

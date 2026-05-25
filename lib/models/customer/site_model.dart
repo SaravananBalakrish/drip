@@ -1558,12 +1558,14 @@ class MainValveModel {
   final double sNo;
   final String name;
   int status;
+  int completePercent;
   bool selected;
 
   MainValveModel({
     required this.sNo,
     required this.name,
     this.status = 0,
+    this.completePercent = 0,
     this.selected = false,
   });
 
@@ -1796,8 +1798,6 @@ class LiveMessage {
 
   factory LiveMessage.fromJson(Map<String, dynamic> json) {
     try {
-      print("Parsing JSON: $json");
-
       return LiveMessage(
         cC: json['cC']?.toString() ?? '',
         cM: json['cM'] is Map<String, dynamic>

@@ -199,6 +199,7 @@ class CustomerView extends StatelessWidget {
         : const TextStyle(color: Colors.black54, fontSize: 12);
 
     return ListTile(
+      key: ValueKey(customer.id),
       tileColor: Colors.white,
       leading: const CircleAvatar(
         backgroundImage: AssetImage("assets/png/user_thumbnail.png"),
