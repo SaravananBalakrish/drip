@@ -363,7 +363,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
        text: TextSpan(
          text: text,
          style: const TextStyle(
-           fontSize: 11,
+           fontSize: 13,
            color: Colors.black,
            fontWeight: FontWeight.bold,
          ),
