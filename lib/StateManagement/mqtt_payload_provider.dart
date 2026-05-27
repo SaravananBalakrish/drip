@@ -774,8 +774,7 @@ class MqttPayloadProvider with ChangeNotifier {
           cCList = {...cCList, data['cC']}.toList();
           viewSetting = data;
           if (!viewSettingsList.contains(jsonEncode(data['cM']))) {
-            print("""data["cM"]  : ${data["cM"]}""");
-            viewSettingsList.add(jsonEncode(data["cM"]));
+             viewSettingsList.add(jsonEncode(data["cM"]));
           }
         }
 

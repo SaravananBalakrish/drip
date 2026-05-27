@@ -9,6 +9,7 @@ import '../../models/servicecustomermodel.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 
 
@@ -46,7 +47,7 @@ class _TicketHomePageState extends State<TicketHomePage> {
   Future<void> fetchData() async {
     // if you don’t use this, remove it
     // var overAllPvd = Provider.of<OverAllUse>(context, listen: false);
-    // print("userId ${widget.userId} controllerId ${widget.controllerId}");
+    // AppLog.log("userId ${widget.userId} controllerId ${widget.controllerId}");
 
     final prefs = await SharedPreferences.getInstance();
     try {
@@ -56,8 +57,8 @@ class _TicketHomePageState extends State<TicketHomePage> {
         "controllerId": widget.controllerId
       });
 
-      print("userId ${widget.userId} controllerId ${widget.controllerId}");
-      // print("getUserDetails.body ${getUserDetails.body}");
+      AppLog.log("userId ${widget.userId} controllerId ${widget.controllerId}");
+      // AppLog.log("getUserDetails.body ${getUserDetails.body}");
 
       if (getUserDetails.statusCode == 200) {
         var jsonData = jsonDecode(getUserDetails.body);
@@ -69,8 +70,8 @@ class _TicketHomePageState extends State<TicketHomePage> {
         // GlobalSnackBar.show(context, "Failed to fetch", getUserDetails.statusCode);
       }
     } catch (e, stackTrace) {
-      print(' Error overAll getData => ${e.toString()}');
-      print(' trace overAll getData  => $stackTrace');
+      AppLog.log(' Error overAll getData => ${e.toString()}');
+      AppLog.log(' trace overAll getData  => $stackTrace');
     }
   }
 
@@ -82,7 +83,7 @@ class _TicketHomePageState extends State<TicketHomePage> {
       int responsibleUser,
       String estimatedDate,
       ) async {
-    print('call update');
+    AppLog.log('call update');
     otherstextctrl.clear();
 
     Map<String, Object> body = {
@@ -101,7 +102,7 @@ class _TicketHomePageState extends State<TicketHomePage> {
     final Repository repository = Repository(HttpService());
     var response = await repository.createUserServiceRequest(body);
     var jsonData = jsonDecode(response.body);
-    print('jsonData:$jsonData');
+    AppLog.log('jsonData:$jsonData');
 
     if (!mounted) return; // ✅ check before using context
 
