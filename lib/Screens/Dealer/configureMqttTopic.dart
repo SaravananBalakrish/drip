@@ -9,6 +9,8 @@ import '../../services/communication_service.dart';
 import '../../services/http_service.dart';
 import '../../services/mqtt_service.dart';
 import '../../utils/constants.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+
 
 class ConfigureMqtt extends StatefulWidget {
   final deviceID, userId, controllerId,communicationType;
@@ -83,7 +85,7 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
   }
 
   Future<void> fetchData() async {
-    print('fetchData ');
+    AppLog.log('fetchData ');
     final url = Uri.parse('http://13.235.254.21:9000/getConfigs');
 
     try {
@@ -170,7 +172,7 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
     if(widget.communicationType == "MQTT") {
       List checkTopic =
       getMqttTopic(selectedPlatform!, selectedVersion!, selectedDealer!);
-      print('checkTopic---->$checkTopic,$macAddress');
+      AppLog.log('checkTopic---->$checkTopic,$macAddress');
       String topic = checkTopic[0];
       String oldnewcheck = checkTopic[1];
       if (oldnewcheck == '1') {
@@ -183,7 +185,7 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
           jsonEncode(payload),
           "$topic${_macController.text}",
         );
-        print('payload $payload  \n $topic${_macController.text}');
+        AppLog.log('payload $payload  \n $topic${_macController.text}');
       } else {
         final payload = {
           "6100": {"6101": formatted}
@@ -192,7 +194,7 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
           jsonEncode(payload),
           "$topic${_macController.text}",
         );
-        print('payload $payload  \n $topic${_macController.text}');
+        AppLog.log('payload $payload  \n $topic${_macController.text}');
       }
     }
     else
@@ -246,10 +248,10 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
       String selectedPlatform, String selectedVersion, String selecteddealer) {
     if (selecteddealer == 'ORO') {
       if (selectedPlatform == 'AWS') {
-        print('return ORO AWS');
+        AppLog.log('return ORO AWS');
          if(F.appFlavor == Flavor.agritel)
           {
-            print("agritel");
+            AppLog.log("agritel");
                return ['AgritelAppToFirmware/', '0'];
            }
 
@@ -260,17 +262,17 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
       }
     } else {
       if (selectedPlatform == 'AWS') {
-        print('return LK AWS');
+        AppLog.log('return LK AWS');
         if (selectedVersion == 'Version 1.0') return ['AppsToFirmware/', '1'];
       } else {
-        print('return LK azure');
+        AppLog.log('return LK azure');
         if (selectedVersion == 'Version 1.0')
           return ['AppsToFirmware/', '1'];
         else
           return ['AppToFirmware/', '0'];
       }
     }
-    print('return else');
+    AppLog.log('return else');
     return ['AppToFirmware/', '0'];
   }
 
@@ -387,7 +389,7 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("update settings sent")),
         );
-        print('payload $payload  \n $topic${_macController.text}');
+        AppLog.log('payload $payload  \n $topic${_macController.text}');
       } else {
         final payload = {
           "5700": {"5701": "28"}
@@ -399,7 +401,7 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("update settings sent")),
         );
-        print('payload $payload  \n $topic${_macController.text}');
+        AppLog.log('payload $payload  \n $topic${_macController.text}');
       }
     } else   {
       //bluetooth
@@ -465,7 +467,7 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("update settings sent")),
         );
-        print('payload $payload  \n $topic${_macController.text}');
+        AppLog.log('payload $payload  \n $topic${_macController.text}');
       } else {
         final payload = {
           "5700": {"5701": "3"}
@@ -477,7 +479,7 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("update settings sent")),
         );
-        print('payload $payload  \n $topic${_macController.text}');
+        AppLog.log('payload $payload  \n $topic${_macController.text}');
       }
     } else   {
       //bluetooth
@@ -542,7 +544,7 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Restart settings sent")),
         );
-        print('payload $payload  \n $topic${_macController.text}');
+        AppLog.log('payload $payload  \n $topic${_macController.text}');
       } else {
         final payload = {
           "5700": {"5701": "2"}
@@ -554,7 +556,7 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Restart settings sent")),
         );
-        print('payload $payload  \n $topic${_macController.text}');
+        AppLog.log('payload $payload  \n $topic${_macController.text}');
       }
     } else   {
       //bluetooth
@@ -654,8 +656,8 @@ class _ConfigureMqttState extends State<ConfigureMqtt> {
                     //     ? F.appFlavor = Flavor.oroProduction
                     //     : F.appFlavor = Flavor.smartComm;
 
-                    print('flaVOR ${F.appFlavor}');
-                    print('${AppConstants.mqttUrl}');
+                    AppLog.log('flaVOR ${F.appFlavor}');
+                    AppLog.log('${AppConstants.mqttUrl}');
                     selectedPlatform = value;
                   });
                 },
