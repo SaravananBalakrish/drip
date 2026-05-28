@@ -10,6 +10,7 @@ import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
 import '../../views/customer/widgets/alarm_list_items.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 class ServiceRequestsTable extends StatefulWidget {
   const ServiceRequestsTable({
@@ -43,7 +44,7 @@ class _ServiceRequestsTableState extends State<ServiceRequestsTable> {
       var getUserDetails = await repository.getUserServiceRequestForDealer({
         "userId": widget.userId,
       });
-      // print("getUserDetails :: ${getUserDetails.body}");
+      // AppLog.log("getUserDetails :: ${getUserDetails.body}");
       if (getUserDetails.statusCode == 200) {
         setState(() {
           var jsonData = jsonDecode(getUserDetails.body);
@@ -54,8 +55,8 @@ class _ServiceRequestsTableState extends State<ServiceRequestsTable> {
       }
     }
     catch (e, stackTrace) {
-      print(' Error overAll getData => ${e.toString()}');
-      print(' trace overAll getData  => ${stackTrace}');
+      AppLog.log(' Error overAll getData => ${e.toString()}');
+      AppLog.log(' trace overAll getData  => ${stackTrace}');
     }
 
 
@@ -67,8 +68,8 @@ class _ServiceRequestsTableState extends State<ServiceRequestsTable> {
       var getUserDetails = await repository.getUserCriticalAlarmForDealer({
         "userId": widget.userId,
       });
-      print("userId :: ${widget.userId}");
-      // print("getUserCriticalAlarmForDealer ==>  ${getUserDetails.body}");
+      AppLog.log("userId :: ${widget.userId}");
+      // AppLog.log("getUserCriticalAlarmForDealer ==>  ${getUserDetails.body}");
       // final jsonData = jsonDecode(getUserDetails.body);
       if (getUserDetails.statusCode == 200) {
         setState(() {
@@ -79,8 +80,8 @@ class _ServiceRequestsTableState extends State<ServiceRequestsTable> {
       }
     }
     catch (e, stackTrace) {
-      print(' Error overAll getData => ${e.toString()}');
-      print(' trace overAll getData  => ${stackTrace}');
+      AppLog.log(' Error overAll getData => ${e.toString()}');
+      AppLog.log(' trace overAll getData  => ${stackTrace}');
     }
   }
 
@@ -331,7 +332,7 @@ class _ServiceRequestsTableState extends State<ServiceRequestsTable> {
     // getUserServiceRequest => userId, controllerId
     // createUserServiceRequest => userId, controllerId, requestTypeId, requestDate, requestTime, responsibleUser, estimatedDate, siteLocation, createUser
     // updateUserServiceRequest => userId, controllerId, requestId, requestTypeId, responsibleUser, estimatedDate, status, closedDate, modifyUser
-    print("status--->$status");
+    AppLog.log("status--->$status");
     Map<String, dynamic> body = {
       "userId": userid,
       "controllerId": controllerId,
@@ -344,14 +345,14 @@ class _ServiceRequestsTableState extends State<ServiceRequestsTable> {
       status == 'Closed' ? dateFormat.format(DateTime.now()) : null,
       "modifyUser": userid
     };
-    print("body call--->${body}");
+    AppLog.log("body call--->${body}");
     final Repository repository = Repository(HttpService());
     var response = await repository.updateUserServiceRequest(body);
     final jsonData = json.decode(response.body);
-    print("response--->${response.body}");
+    AppLog.log("response--->${response.body}");
 
-    // print("jsonData--->$jsonData");
-    print("response.statusCode--->${response.statusCode}");
+    // AppLog.log("jsonData--->$jsonData");
+    AppLog.log("response.statusCode--->${response.statusCode}");
     if (response.statusCode == 200) {
       setState(() {
         GlobalSnackBar.show(context, jsonData['message'], response.statusCode);

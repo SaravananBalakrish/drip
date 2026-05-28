@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 /// Parse main response from JSON
 ValveResponseModel valveResponseModelFromJson(String str) =>
@@ -200,14 +201,14 @@ ValveResponseModel valveResponseModelFromJson(String str) =>
     for (final value in values) {
       if (value.startsWith(serialNumber)) {
         final parts = value.split(',');
-        print('getvalvestatus----$serialNumber--->${parts[1]}');
+        AppLog.log('getvalvestatus----$serialNumber--->${parts[1]}');
         return int.parse(parts[1]);
       }
     }
 
     return 0;
   } catch (e) {
-    print('Error parsing status for $serialNumber: $e');
+    AppLog.log('Error parsing status for $serialNumber: $e');
     return 0;
   }
 }
@@ -227,16 +228,16 @@ int getValuepercentage(String serialNumber, Map<String, dynamic>? liveMessage) {
     final values = data.split(';');
     for (final value in values) {
       if (value.startsWith(serialNumber)) {
-        print('value:value--->$value');
+        AppLog.log('value:value--->$value');
         final parts = value.split(',');
-        print('getpercentage----$serialNumber--->${parts[2]}');
+        AppLog.log('getpercentage----$serialNumber--->${parts[2]}');
         return int.parse(parts[2]);
       }
     }
 
     return 0;
   } catch (e) {
-    print('Error parsing status for $serialNumber: $e');
+    AppLog.log('Error parsing status for $serialNumber: $e');
     return 0;
   }
 }

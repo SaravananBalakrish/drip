@@ -1,11 +1,15 @@
+import 'dart:developer' as AppLogger;
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
+ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../googlemap_model.dart';
 import 'getlatlong.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+
 
 class SetSelectOroLocation extends StatefulWidget {
   const SetSelectOroLocation({Key? key, required this.index}) : super(key: key);
@@ -93,7 +97,14 @@ class _SetSelectOroLocationState extends State<SetSelectOroLocation> {
 
   /// Update only the selected marker's position
   void _updateMarker(double lat, double long) {
-    if (_selectedObject == null) return;
+    if (_selectedObject == null){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Select Object first"),
+        ),
+      );
+      return null;
+    }
 
     final position = LatLng(lat, long);
 
@@ -134,7 +145,6 @@ class _SetSelectOroLocationState extends State<SetSelectOroLocation> {
   void _searchLocation() async {
     final input = _searchController.text;
     final LatLng? result = await getLatLngFromInput(input);
-
     if (result != null) {
       _updateMarker(result.latitude, result.longitude);
     } else {
@@ -234,7 +244,7 @@ class _SetSelectOroLocationState extends State<SetSelectOroLocation> {
       ),
       body: Row(
         children: [
-          // ✅ Side Drawer Panel (Resizable)
+          //MARK:- Side Drawer Panel (Resizable)
           AnimatedContainer(
             duration: const Duration(milliseconds: 300),
             width: _isDrawerOpen ? _drawerWidth : 0,
@@ -277,6 +287,7 @@ class _SetSelectOroLocationState extends State<SetSelectOroLocation> {
                         onTap: () {
                           setState(() {
                             _selectedObject = obj;
+                            AppLog.log("_selectedObject:${_selectedObject!.name},${_selectedObject!.lat},${_selectedObject!.long},obj:${obj.name},${obj.lat},${obj.long}");
 
                             // ✅ RESET OLD POLYGON (IMPORTANT)
                             _points.clear();
@@ -439,7 +450,11 @@ class _SetSelectOroLocationState extends State<SetSelectOroLocation> {
       );
     }
 
-    return Container(
+    _searchController.text =
+    (_selectedObject?.area != null &&
+        _selectedObject!.area!.isNotEmpty)
+        ? "${_selectedObject!.area!.first.latitude},${_selectedObject!.area!.first.longitude}"
+        : "";    return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(5),
       color: Colors.teal.shade50,
@@ -456,8 +471,11 @@ class _SetSelectOroLocationState extends State<SetSelectOroLocation> {
             ),
           ),
           Text(
-            "Lat: ${_selectedObject!.lat ?? "-"}  "
-                "Long: ${_selectedObject!.long ?? "-"}",
+            (_selectedObject?.area != null &&
+                _selectedObject!.area!.isNotEmpty)
+                ? "Lat: ${_selectedObject!.area!.first.latitude}  "
+                "Long: ${_selectedObject!.area!.first.longitude}"
+                : "Lat: -  Long: -",
           ),
           Text(
             "Status: ${_selectedObject!.status == 1 ? "ON" : "OFF"}",
@@ -465,6 +483,8 @@ class _SetSelectOroLocationState extends State<SetSelectOroLocation> {
         ],
       ),
     );
+
+
   }
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
