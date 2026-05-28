@@ -165,8 +165,9 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
               spacing: 10,
               children: [
                 const SizedBox(height: 1,),
-                for(var programData in data["data"]["motorCyclic"])
-                  programBox(programData: programData),
+                if (data["data"] != null && data["data"]["motorCyclic"] != null)
+                  for(var programData in data["data"]["motorCyclic"])
+                    programBox(programData: programData),
                 const SizedBox(height: 100,),
               ],
             ),
@@ -199,22 +200,23 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
       child: Column(
         spacing: 8,
         children: [
-          getTitleValue(title: 'Program', value: programData["program"], titleColor: Colors.white, valueColor: Colors.white),
+          getTitleValue(title: 'Program', value: (programData["program"] ?? "").toString(), titleColor: Colors.white, valueColor: Colors.white),
           getTitleValue(title: 'Cyclic duration', value: getCyclicDuration(programData: programData), titleColor: Colors.white, valueColor: Colors.white),
           getTitleValue(title: 'Cyclic flow', value: getCyclicFlow(programData: programData), titleColor: Colors.white, valueColor: Colors.white),
-          if(programData["zoneList"].isNotEmpty)
+          if(programData["zoneList"] != null && programData["zoneList"].isNotEmpty)
             ...[
-              getTitleValue(title: 'Start time', value: programData["zoneList"][0]['OnTime'],
+              getTitleValue(title: 'Start time', value: (programData["zoneList"][0]['onTime'] ?? "").toString(),
                   titleColor: Colors.white, valueColor: Colors.white),
-              getTitleValue(title: 'End time', value: programData["zoneList"][programData["zoneList"].length - 1]['OnTime'], titleColor: Colors.white, valueColor: Colors.white),
+              getTitleValue(title: 'End time', value: (programData["zoneList"][programData["zoneList"].length - 1]['offTime'] ?? "").toString(), titleColor: Colors.white, valueColor: Colors.white),
             ],
-          Column(
-            spacing: 10,
-            children: [
-              for(var zoneData in programData["zoneList"])
-                zoneBox(zoneData: zoneData)
-            ],
-          ),
+          if(programData["zoneList"] != null)
+            Column(
+              spacing: 10,
+              children: [
+                for(var zoneData in programData["zoneList"])
+                  zoneBox(zoneData: zoneData)
+              ],
+            ),
         ],
       ),
     );
@@ -223,16 +225,20 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
   String getCyclicDuration({required Map<String, dynamic> programData,}){
     DataConvert dataConvert = DataConvert();
     int totalSeconds = 0;
-    for(var zoneData in programData['zoneList']){
-      totalSeconds += dataConvert.parseTimeString(zoneData["duration"]);
+    if (programData['zoneList'] != null) {
+      for(var zoneData in programData['zoneList']){
+        totalSeconds += dataConvert.parseTimeString((zoneData["duration"] ?? "00:00:00").toString());
+      }
     }
     return dataConvert.formatTime(totalSeconds);
   }
 
   String getCyclicFlow({required Map<String, dynamic> programData}){
     double totalFlow = 0;
-    for(var zoneData in programData['zoneList']){
-      totalFlow += double.parse(zoneData["flow"]);
+    if (programData['zoneList'] != null) {
+      for(var zoneData in programData['zoneList']){
+        totalFlow += double.tryParse((zoneData["flow"] ?? "0").toString()) ?? 0;
+      }
     }
     return totalFlow.toString();
   }
@@ -248,7 +254,7 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
           color: Theme.of(context).primaryColorDark,
           child: Row(
             children: [
-              Expanded(child: getTitleValue(title: 'Zone', value: zoneData["zone"], titleColor: Colors.white, valueColor: Colors.white)),
+              Expanded(child: getTitleValue(title: 'Zone', value: (zoneData["zone"] ?? "").toString(), titleColor: Colors.white, valueColor: Colors.white)),
               Expanded(child: Container())
             ],
           ),
@@ -264,16 +270,16 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
             children: [
               Row(
                 children: [
-                  Expanded(child: getTitleValue(title: 'On Time', value: zoneData["OnTime"], fontSize : 12, titleColor: Colors.black54)),
+                  Expanded(child: getTitleValue(title: 'On Time', value: (zoneData["onTime"] ?? "").toString(), fontSize : 12, titleColor: Colors.black54)),
                   getDivider(),
-                  Expanded(child: getTitleValue(title: 'Off Time', value: zoneData["OffTime"], fontSize : 12, titleColor: Colors.black54))
+                  Expanded(child: getTitleValue(title: 'Off Time', value: (zoneData["offTime"] ?? "").toString(), fontSize : 12, titleColor: Colors.black54))
                 ],
               ),
               Row(
                 children: [
-                  Expanded(child: getTitleValue(title: 'Duration', value: zoneData["duration"], fontSize : 12, titleColor: Colors.black54)),
+                  Expanded(child: getTitleValue(title: 'Duration', value: (zoneData["duration"] ?? "").toString(), fontSize : 12, titleColor: Colors.black54)),
                   getDivider(),
-                  Expanded(child: getTitleValue(title: 'Flow', value: zoneData["flow"], fontSize : 12, titleColor: Colors.black54))
+                  Expanded(child: getTitleValue(title: 'Flow', value: (zoneData["flow"] ?? "").toString(), fontSize : 12, titleColor: Colors.black54))
                 ],
               ),
             ],
