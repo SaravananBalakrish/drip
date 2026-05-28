@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
@@ -45,7 +46,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
 
   @override
   void initState() {
-    print("modelID == ${widget.modelId}");
+    AppLog.log("modelID == ${widget.modelId}");
     super.initState();
     _init();
   }
@@ -243,7 +244,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
       final String? data = cMData["2402"]?.toString();
 
       if (data == null || data.isEmpty) {
-        print('data is empty or null');
+        AppLog.log('data is empty or null');
         return {"status": 0, "percentage": 0};
       }
 
@@ -265,18 +266,18 @@ class _MapScreenValveState extends State<MapScreenValve> {
         }
       }
 
-      print('No match found for serialNumber');
+      AppLog.log('No match found for serialNumber');
       return {"status": 0, "percentage": 0};
 
     } catch (e, stacktrace) {
-      print("Error getting valve data: $e");
-      print("Stacktrace: $stacktrace");
+      AppLog.log("Error getting valve data: $e");
+      AppLog.log("Stacktrace: $stacktrace");
       return {"status": 0, "percentage": 0};
     }
   }
 
   LatLng? _getInitialCenter(List deviceList) {
-    print("_getInitialCenter");
+    AppLog.log("_getInitialCenter");
     // 1️⃣ First Valve Object
     for (var device in deviceList) {
       for (var obj in device["connectedObject"] ?? []) {
@@ -295,7 +296,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
       for (var obj in device["connectedObject"] ?? []) {
         if (obj["lat"] != null && obj["long"] != null) {
 
-          // print("object:%:${LatLng(obj["lat"], obj["long"])}");
+          // AppLog.log("object:%:${LatLng(obj["lat"], obj["long"])}");
           return LatLng(obj["lat"], obj["long"]);
         }
       }
@@ -307,7 +308,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
       if (geo != null &&
           geo["lat"] != null &&
           geo["long"] != null) {
-        // print("geography:%:${LatLng(geo["lat"], geo["long"])}");
+        // AppLog.log("geography:%:${LatLng(geo["lat"], geo["long"])}");
 
         return LatLng(geo["lat"], geo["long"]);
       }
@@ -466,7 +467,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: center,
-            zoom: 17, // 🔥 your zoom level
+            zoom: 17, //
           ),
         ),
       );
@@ -478,7 +479,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
 
   @override
   Widget build(BuildContext context) {
-    // print("build center:$center");
+    // AppLog.log("build center:$center");
 
     return Scaffold(
       appBar: AppBar(title: const Text("Geography"),

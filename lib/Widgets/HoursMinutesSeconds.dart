@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import '../modules/IrrigationProgram/state_management/irrigation_program_provider.dart';
 import '../StateManagement/overall_use.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+
 
 class HoursMinutesSeconds extends StatefulWidget {
   final String initialTime;
@@ -47,8 +49,8 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
         overAllPvd.editTime('hrs', double.parse(widget.initialTime.split(':')[0]).toInt());
         overAllPvd.editTime('min', double.parse(widget.initialTime.split(':')[1]).toInt());
         overAllPvd.editTime('sec', double.parse(widget.initialTime.split(':')[2]).toInt());
-        // print('hr : ${overAllPvd.hrs}');
-        // print('initialTime : ${widget.initialTime}');
+        // AppLog.log('hr : ${overAllPvd.hrs}');
+        // AppLog.log('initialTime : ${widget.initialTime}');
       });
     }
   }
@@ -77,7 +79,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
       duration3 = parseTimeString('${overAllPvd.hrs}:${overAllPvd.min}:${overAllPvd.sec}');
     }
     var result = duration1 - (duration2 + duration3);
-    // print(result);
+    // AppLog.log(result);
     if(result > 0 || result == 0){
       setState(() {
         releaseTimeForPrePost = true;
@@ -110,7 +112,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
       fertilizer.add(parseTimeString(widget.fertilizerTime!['list'][i]));
     }
     var result = water - (pre + post);
-    // print("result : ${result}");
+    // AppLog.log("result : ${result}");
     if(result > 0 || result == 0){
       setState(() {
         releaseTimeForWater = true;
@@ -141,7 +143,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
     int post = parseTimeString(widget.postTime!);
     int fertilizer = parseTimeString('${overAllPvd.hrs!}:${overAllPvd.min!}:${overAllPvd.sec!}');
     var result = water - (pre + post);
-    // print('result  : $result');
+    // AppLog.log('result  : $result');
     if(fertilizer < result || fertilizer == result){
       setState(() {
         releaseTimeForFertilizer = true;
@@ -489,7 +491,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                                       ),
                                       InkWell(
                                         onTap: (){
-                                          print('tap function work');
+                                          AppLog.log('tap function work');
                                           overAllPvd.editTime('min', int.parse(mins[i][1]));
                                         },
                                         child: Padding(
@@ -784,7 +786,7 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                 ),
                 onPressed: widget.onPressed ?? (){
                   if(widget.validation == 'pre' || widget.validation == 'post'){
-                    print('ok for prepost');
+                    AppLog.log('ok for prepost');
                     checkCondition(overAllPvd);
                     if(widget.validation == 'pre' && releaseTimeForPrePost){
                       programPvd.editPrePostMethod('preValue', programPvd.selectedGroup,'${overAllPvd.hrs < 10 ? '0' :''}${overAllPvd.hrs}:${overAllPvd.min < 10 ? '0' :''}${overAllPvd.min}:${overAllPvd.sec < 10 ? '0' :''}${overAllPvd.sec}');
@@ -795,21 +797,21 @@ class _HoursMinutesSecondsState extends State<HoursMinutesSeconds> {
                       Navigator.pop(context);
                     }
                   }else if(widget.validation == 'water'){
-                    print('ok for water');
+                    AppLog.log('ok for water');
                     checkCondition1(overAllPvd);
                     if(widget.validation == 'water' && releaseTimeForWater){
                       programPvd.editWaterSetting('timeValue', '${overAllPvd.hrs < 10 ? '0' :''}${overAllPvd.hrs}:${overAllPvd.min < 10 ? '0' :''}${overAllPvd.min}:${overAllPvd.sec < 10 ? '0' :''}${overAllPvd.sec}');
                       Navigator.pop(context);
                     }
                   }else if(widget.validation!.contains('fertilizer')){
-                    print('widget1 : ${widget.validation}');
+                    AppLog.log('widget1 : ${widget.validation}');
                     checkCondition2(overAllPvd);
                     if(widget.validation!.contains('fertilizer') && releaseTimeForFertilizer){
                       programPvd.editParticularChannelDetails('timeValue', programPvd.segmentedControlCentralLocal == 0 ? 'centralDosing' : 'localDosing','${overAllPvd.hrs < 10 ? '0' :''}${overAllPvd.hrs}:${overAllPvd.min < 10 ? '0' :''}${overAllPvd.min}:${overAllPvd.sec < 10 ? '0' :''}${overAllPvd.sec}',widget.index!);
                       Navigator.pop(context);
                     }
                   }else{
-                    print('widget : ${widget.validation}');
+                    AppLog.log('widget : ${widget.validation}');
                   }
                 },
                 child: const Text('Ok',style: TextStyle(color: Colors.white),)
