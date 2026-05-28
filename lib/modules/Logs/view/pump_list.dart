@@ -1,36 +1,53 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
+import 'package:oro_drip_irrigation/modules/Logs/view/pump_list.dart' as repository;
 import 'package:oro_drip_irrigation/modules/Logs/view/pump_log.dart';
 import 'package:oro_drip_irrigation/modules/Logs/view/voltage_log.dart';
 import 'package:responsive_grid/responsive_grid.dart';
 import '../../../models/customer/site_model.dart';
+import '../../../services/http_service.dart';
 import '../../../utils/constants.dart';
+import '../repository/log_repos.dart';
 import 'power_graph_screen.dart';
 
 class PumpList extends StatefulWidget {
   final List pumpList;
   final int userId;
+  final Map<String, dynamic> userData;
   final MasterControllerModel masterData;
-  const PumpList({super.key, required this.pumpList, required this.userId, required this.masterData});
+  const PumpList({super.key, required this.pumpList,required this.userData, required this.userId, required this.masterData});
 
   @override
   State<PumpList> createState() => _PumpListState();
 }
 
 class _PumpListState extends State<PumpList> {
+  List pumpList = [];
+  String message = '';
+  final LogRepository repository = LogRepository(HttpService());
+
+  @override
+  void initState() {
+    print('call PumpList init');
+    getUserNodePumpList();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    print('call PumpList');
     return ResponsiveGridList(
       desiredItemWidth: MediaQuery.of(context).size.width >= 600
           ? MediaQuery.of(context).size.width / 3
           : MediaQuery.of(context).size.width,
       minSpacing: 10,
-      children: List.generate(AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? 1: widget.pumpList.length, (index) {
+      children: List.generate(AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? 1: pumpList.length, (index) {
         Map<String, dynamic> pumpItem = {};
-        if(widget.pumpList.isNotEmpty) {
-          pumpItem = widget.pumpList[index];
+        if(pumpList.isNotEmpty) {
+          pumpItem = pumpList[index];
         }
 
         return Container(
@@ -175,4 +192,20 @@ class _PumpListState extends State<PumpList> {
       elevation: 8,
     );
   }
+
+  Future<void> getUserNodePumpList() async{
+    print("getUserNodePumpList call");
+    final userData = {'userId' : widget.userData['customerId'], 'controllerId' :  widget.userData['controllerId']};
+    print("userData in the getUserNodePumpList :: ${widget.userData}");
+    final result = await repository.getUserNodePumpList(userData);
+    setState(() {
+      if(result.statusCode == 200 && jsonDecode(result.body)['data'] != null) {
+        pumpList = jsonDecode(result.body)['data'];
+      } else {
+        message = jsonDecode(result.body)['message'];
+      }
+    });
+    // print(result.body);
+  }
+
 }
