@@ -30,10 +30,21 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
   void initState() {
     // TODO: implement initState
     tabController = TabController(length: _calculateTabLength(), vsync: this);
+    tabController.addListener(_handleTabSelection);
+
     getUserNodePumpList();
     super.initState();
   }
 
+  void _handleTabSelection() {
+    if (!tabController.indexIsChanging) {
+      return;
+    }
+
+     if (tabController.index == 2) {
+      getUserNodePumpList();
+    }
+  }
   int _calculateTabLength() {
     int length = 0;
 
@@ -75,8 +86,9 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
   }*/
 
   Future<void> getUserNodePumpList() async{
+    print("getUserNodePumpList call");
     final userData = {'userId' : widget.userData['customerId'], 'controllerId' :  widget.userData['controllerId']};
-    // print("userData in the getUserNodePumpList :: ${widget.userData}");
+    print("userData in the getUserNodePumpList :: ${widget.userData}");
     final result = await repository.getUserNodePumpList(userData);
     setState(() {
       if(result.statusCode == 200 && jsonDecode(result.body)['data'] != null) {
@@ -102,6 +114,7 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
 
   @override
   Widget build(BuildContext context) {
+    print("irrigation and pump log call");
     return Scaffold(
       body: SafeArea(
           child: DefaultTabController(
@@ -141,11 +154,14 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
                                 StandaloneLog(userData: widget.userData,),
                               ],
                             if(!AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? pumpList.isNotEmpty : true)
-                              PumpList(
+                              ...[
+                                PumpList(
                                 pumpList: pumpList,
                                 userId: widget.userData['customerId'],
                                 masterData: widget.masterData,
+                                userData: widget.userData,
                               )
+    ],
                           ]
                       )
                   )
