@@ -490,7 +490,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                     final failedPayload = preferenceProvider.passwordValidationCode == 200
                         ? getCalibrationPayload(isToGem: isToGem).split(';')
                         : getFailedPayload(sendAll: false, isToGem: isToGem).split(';');
-                    // print(failedPayload);
+                    print(failedPayload);
                     List temp = List.from(selectedOroPumpList);
                     preferenceProvider.temp.clear();
                     showDialog(
@@ -891,7 +891,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                     settingList[categoryIndex].changed = true;
                                     rtcSetting.onTime = newTime;
                                   });
-                                  // print(settingList[categoryIndex].changed);
+                                  print(settingList[categoryIndex].changed);
                                 },
                                 is24HourMode: true, modelId: 1,
                               ),
@@ -1348,7 +1348,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       "400": {"401": onDelayTimer()}
     };
 
-    // print("payloadForSlave ==> $payloadForSlave");
+    print("payloadForSlave ==> $payloadForSlave");
 
     final payload = shouldSendFailedPayloads ? getFailedPayload(isToGem: isToGem, sendAll: false) : getPayload(isToGem: isToGem, sendAll: false);
     final payloadParts = payload.split("?")[0].split(';');
@@ -1389,7 +1389,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         if((isToGem ? preferenceProvider.generalData!.controllerReadStatus == "1" : true) && payloadForGem.any((item) => item.trim().isNotEmpty)) {
           for (var i = 0; i < payloadForGem.length; i++) {
             var payloadToDecode = isToGem ? payloadForGem[i].split('+')[4] : payloadForGem[i];
-            // print("payloadToDecode :: $payloadToDecode");
+            print("payloadToDecode :: $payloadToDecode");
             var decodedData = jsonDecode(payloadToDecode);
             var key = decodedData.keys.first;
             int oroPumpIndex = 0;
@@ -1442,9 +1442,9 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                 isWlc: isWlc,
                 onDone: () {
                   Navigator.of(context).pop(true);
-                  setState(() {
-                    viewConfig = !viewConfig;
-                  });
+                  // setState(() {
+                  //   viewConfig = !viewConfig;
+                  // });
                 },
               );
             },
@@ -1527,7 +1527,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         }
       }
     }
-    // print("payload ======= > ${jsonEncode(payload)}");
+    print("payload ======= > ${jsonEncode(payload)}");
     return payload;
   }
 
@@ -1730,7 +1730,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             temp.add(isToGem
                 ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId"
                 : payload);
-            // print("payload ==>$payload");
+            print("payload ==>$payload");
           } else if ([209].contains(settingCategory.type)) {
             var splitParts = [];
             if(isToGem) {

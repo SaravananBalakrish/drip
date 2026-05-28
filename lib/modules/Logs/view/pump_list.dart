@@ -31,15 +31,13 @@ class _PumpListState extends State<PumpList> {
 
   @override
   void initState() {
-    print('call PumpList init');
-    getUserNodePumpList();
+     getUserNodePumpList();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    print('call PumpList');
-    return ResponsiveGridList(
+     return ResponsiveGridList(
       desiredItemWidth: MediaQuery.of(context).size.width >= 600
           ? MediaQuery.of(context).size.width / 3
           : MediaQuery.of(context).size.width,
@@ -194,10 +192,8 @@ class _PumpListState extends State<PumpList> {
   }
 
   Future<void> getUserNodePumpList() async{
-    print("getUserNodePumpList call");
-    final userData = {'userId' : widget.userData['customerId'], 'controllerId' :  widget.userData['controllerId']};
-    print("userData in the getUserNodePumpList :: ${widget.userData}");
-    final result = await repository.getUserNodePumpList(userData);
+     final userData = {'userId' : widget.userData['customerId'], 'controllerId' :  widget.userData['controllerId']};
+     final result = await repository.getUserNodePumpList(userData);
     setState(() {
       if(result.statusCode == 200 && jsonDecode(result.body)['data'] != null) {
         pumpList = jsonDecode(result.body)['data'];

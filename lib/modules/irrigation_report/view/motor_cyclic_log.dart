@@ -193,8 +193,8 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Theme.of(context).primaryColorLight,
-        borderRadius: BorderRadius.circular(8)
+          color: Theme.of(context).primaryColorLight,
+          borderRadius: BorderRadius.circular(8)
       ),
       child: Column(
         spacing: 8,
@@ -203,11 +203,11 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
           getTitleValue(title: 'Cyclic duration', value: getCyclicDuration(programData: programData), titleColor: Colors.white, valueColor: Colors.white),
           getTitleValue(title: 'Cyclic flow', value: getCyclicFlow(programData: programData), titleColor: Colors.white, valueColor: Colors.white),
           if(programData["zoneList"].isNotEmpty)
-          ...[
-            getTitleValue(title: 'Start time', value: programData["zoneList"][0]['OnTime'], 
-                titleColor: Colors.white, valueColor: Colors.white),
-            getTitleValue(title: 'End time', value: programData["zoneList"][programData["zoneList"].length - 1]['OnTime'], titleColor: Colors.white, valueColor: Colors.white),
-          ],
+            ...[
+              getTitleValue(title: 'Start time', value: programData["zoneList"][0]['OnTime'],
+                  titleColor: Colors.white, valueColor: Colors.white),
+              getTitleValue(title: 'End time', value: programData["zoneList"][programData["zoneList"].length - 1]['OnTime'], titleColor: Colors.white, valueColor: Colors.white),
+            ],
           Column(
             spacing: 10,
             children: [
@@ -238,7 +238,7 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
   }
 
   Widget zoneBox({
-  required Map<String, dynamic> zoneData,
+    required Map<String, dynamic> zoneData,
   }){
     return Column(
       children: [
@@ -256,8 +256,8 @@ class _MotorCyclicLogState extends State<MotorCyclicLog> {
         Container(
           padding: const EdgeInsets.all(8),
           decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5))
+              color: Colors.white,
+              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(5), bottomRight: Radius.circular(5))
           ),
           child: Column(
             spacing: 10,
