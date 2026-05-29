@@ -54,10 +54,12 @@ List<Widget> appBarActions(
         isNarrow: isNarrow,
       ),
       IconButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const AIChatScreen()),
-        ),
+        onPressed: () {
+        //   Navigator.push(
+        //   context,
+        //   MaterialPageRoute(builder: (context) => const AIChatScreen()),
+        // );
+        },
         icon: const Icon(Icons.assistant),
       ),
     ];
@@ -82,10 +84,12 @@ List<Widget> appBarActions(
           const SizedBox(width: 10),
           IconButton(
             color: Colors.transparent,
-            onPressed: () => Navigator.push(
-              context,
-               MaterialPageRoute(builder: (context) => const Getuserinformationscreen()),
-            ),
+            onPressed: () {
+            //   Navigator.push(
+            //   context,
+            //    MaterialPageRoute(builder: (context) => const Getuserinformationscreen()),
+            // );
+            },
             icon: const CircleAvatar(
               radius: 17,
               backgroundColor: Colors.black12,
@@ -490,10 +494,10 @@ Widget _buildNonGemActions(BuildContext context, dynamic master,
           ),
         InkWell(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const AIChatScreen()),
-            );
+            // Navigator.push(
+            //   context,
+            //   MaterialPageRoute(builder: (context) => const AIChatScreen()),
+            // );
           },
           child: const Padding(
             padding: EdgeInsets.symmetric(horizontal: 8),

@@ -8,6 +8,7 @@ import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../services/mqtt_service.dart';
 import '../../utils/constants.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 import '../../utils/snack_bar.dart';
 
 class PumpConditionScreen extends StatefulWidget {
@@ -63,8 +64,8 @@ class _PumpConditionScreenState extends State<PumpConditionScreen> {
         });
       }
     } catch (e, stackTrace) {
-      print('Error in fetchData: $e');
-      print('Stack trace: $stackTrace');
+      AppLog.log('Error in fetchData: $e');
+      AppLog.log('Stack trace: $stackTrace');
     }
   }
 
@@ -255,7 +256,7 @@ class _PumpConditionScreenState extends State<PumpConditionScreen> {
      final repository = Repository(HttpService());
 
     String mqttSendData = convertPumpDataToString(pumpConditionModel);
-    print('mqttSendData$mqttSendData');
+    AppLog.log('mqttSendData$mqttSendData');
 
     // Prepare JSON for server
     Map<String, dynamic> pumpConditionJson = pumpConditionModel.toJson();
@@ -271,7 +272,7 @@ class _PumpConditionScreenState extends State<PumpConditionScreen> {
         {"7101": isNova ? novadata : mqttSendData},
     };
 
-    print("payLoadFinal,$payLoadFinal");
+    AppLog.log("payLoadFinal,$payLoadFinal");
     // Main request body
     Map<String, dynamic> body = {
       "userId": widget.customerId,
@@ -286,7 +287,7 @@ class _PumpConditionScreenState extends State<PumpConditionScreen> {
       final getUserDetails = await repository.updateUserPlanningPumpCondition(body);
       final jsonDataResponse = jsonDecode(getUserDetails.body);
 
-      print('Response ---> $jsonDataResponse');
+      AppLog.log('Response ---> $jsonDataResponse');
 
       if (MqttService().isConnected == true) {
         await validatePayloadSent(
@@ -312,8 +313,8 @@ class _PumpConditionScreenState extends State<PumpConditionScreen> {
         jsonDataResponse['code'],
       );
     } catch (e ,stacktrace) {
-      print("Error in _sendData: $e");
-      print("stacktrace in _sendData: $stacktrace");
+      AppLog.log("Error in _sendData: $e");
+      AppLog.log("stacktrace in _sendData: $stacktrace");
       GlobalSnackBar.show(context, 'Error sending data: $e', 500);
     }
   }

@@ -13,6 +13,7 @@ import '../../services/mqtt_service.dart';
 import '../../services/sftp_service.dart';
 import '../../utils/environment.dart';
 import '../../utils/snack_bar.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 // Enum for log types
 enum LogType {
@@ -185,9 +186,9 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
     final String dateString = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
     mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
-    print(' mqttPayloadProvider.traceLog----->${ mqttPayloadProvider.traceLog}');
+    AppLog.log(' mqttPayloadProvider.traceLog----->${ mqttPayloadProvider.traceLog}');
    List<String> traceData =  mqttPayloadProvider.traceLog;
-   print('traceData----->$traceData');
+   AppLog.log('traceData----->$traceData');
     SftpService sftpService = SftpService();
     int connectResponse =  await sftpService.connect();
     if(connectResponse == 200){
@@ -201,10 +202,10 @@ class _ControllerLogState extends State<ControllerLog> with SingleTickerProvider
       int uploadResponse = await sftpService.uploadFile(localFileName: localFileNameForTrace, remoteFilePath: '/home/ubuntu/oro2024/OroGem/OroGemLogs/${widget.deviceID}_${type}_${dateString}.txt');
       if(uploadResponse == 200){
         _showSnackBar("/home/ubuntu/oro2024/OroGem/OroGemLogs/${widget.deviceID}_${type}_${dateString}.txt \n FTP upload success'...");
-        print('upload success');
+        AppLog.log('upload success');
       }else{
         _showSnackBar("FTP upload failed...");
-        print('upload failed');
+        AppLog.log('upload failed');
       }
       sftpService.disconnect();
     }

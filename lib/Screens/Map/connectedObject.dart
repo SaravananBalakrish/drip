@@ -101,8 +101,7 @@ class _MapScreenConnectedObjectsState extends State<MapScreenConnectedObjects> {
     });
   }
   double getMarkerHueByStatus(int? status) {
-    print('getMarkerHueByStatus $status');
-    switch (status) {
+     switch (status) {
       case 1:
         return BitmapDescriptor.hueGreen;
       case 2:
