@@ -51,8 +51,8 @@ class _CropAdvisoryMainScreenState extends State<CropAdvisoryMainScreen> {
         inactiveColorPrimary: inactiveColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/Images/CropAdvisory/irrigation_active_icon.png', width: 24, height: 24, color: activeColor),
-        inactiveIcon: Image.asset('assets/Images/CropAdvisory/irrigation.png', width: 24, height: 24, color: inactiveColor),
+        icon: const Icon(Icons.water_drop, size: 24, color: activeColor),
+        inactiveIcon: const Icon(Icons.water_drop_outlined, size: 24, color: inactiveColor),
         title: ("Irrigation"),
         activeColorPrimary: activeColor,
         inactiveColorPrimary: inactiveColor,
