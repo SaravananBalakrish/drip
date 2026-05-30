@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 class ServiceRequestAdmin extends StatefulWidget {
    const ServiceRequestAdmin({
@@ -45,10 +46,10 @@ class _ServiceRequestAdminState extends State<ServiceRequestAdmin> {
               if (dataList is List) {
                data = List<Map<String, dynamic>>.from(dataList);
              } else {
-               print("Expected 'data' to be a list but found ${dataList.runtimeType}");
+               AppLog.log("Expected 'data' to be a list but found ${dataList.runtimeType}");
               }
            } else {
-             print("Unexpected JSON format or missing 'data' key");
+             AppLog.log("Unexpected JSON format or missing 'data' key");
            }
 
            filteredData = List.from(data);
@@ -57,8 +58,8 @@ class _ServiceRequestAdminState extends State<ServiceRequestAdmin> {
          //_showSnackBar(response.body);
        }
      } catch (e, stackTrace) {
-       print('Error overAll getData => ${e.toString()}');
-       print('trace overAll getData  => ${stackTrace}');
+       AppLog.log('Error overAll getData => ${e.toString()}');
+       AppLog.log('trace overAll getData  => ${stackTrace}');
      }
    }
 

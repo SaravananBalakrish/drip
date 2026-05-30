@@ -208,7 +208,7 @@ class BluetoothClassicService {
 
       int sizeInBytes = getTraceLogSize();
       debugPrint('TraceLog size in bytes: $sizeInBytes');
-      providerState?.setTraceLoadingSize(sizeInBytes);
+      providerState?.setTraceLoadingsize(sizeInBytes);
 
       traceChunk = ''; // Clear buffer for next round
     }
@@ -219,14 +219,14 @@ class BluetoothClassicService {
       final startIndex = _buffer.indexOf('*StartLog');
       traceChunk += _buffer.substring(startIndex);
       int sizeInBytes = getCurrentChunkSize();
-      providerState?.setTraceLoadingSize(sizeInBytes);
+      providerState?.setTraceLoadingsize(sizeInBytes);
     }
 
     // Continue logging: append new data to traceChunk
     if (isLogging && !_buffer.contains('*StartLog')) {
       traceChunk += _buffer;
       int sizeInBytes = getCurrentChunkSize();
-      providerState?.setTraceLoadingSize(sizeInBytes);
+      providerState?.setTraceLoadingsize(sizeInBytes);
     }
 
     // Extract and set LogFileSize if available
@@ -332,4 +332,7 @@ class BluetoothClassicService {
     }
   }
 
+  classic.BluetoothDevice? get connectedDevice {
+    return _devices.firstWhere((d) => d.address == _connectedAddress);
+  }
 }

@@ -7,9 +7,10 @@ import 'package:oro_drip_irrigation/modules/open_ai/widget/chat_bubble.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../cropAdvisory/view/CropDetailsScreen.dart';
+import '../../../cropAdvisory/view/getUserInformationScreen.dart';
 import '../model/chat_model.dart';
 import '../model/message_model.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
 
 class AIChatScreen extends StatefulWidget {
   const AIChatScreen({super.key});
@@ -548,6 +549,20 @@ class _AIChatScreenState extends State<AIChatScreen> {
                     );
                   },
                 ),
+                Builder(
+                  builder: (BuildContext context) {
+                    return IconButton(
+                      onPressed: () =>  Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const Getuserinformationscreen(),
+                        ),
+                      ),
+                      icon: const Icon(Icons.crop),
+                      tooltip: 'Chat History',
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -853,33 +868,9 @@ class _MessageBubbleState extends State<MessageBubble> {
                             fontSize: 16,
                           ),
                         )
-                            : AnimatedTextKit(
-                          animatedTexts: [
-                            TypewriterAnimatedText(
-                              widget.message.isImage
-                                  ? widget.message.text!
-                                  : widget.message.content,
-                              textStyle: const TextStyle(
-                                color: Colors.black87,
-                                fontSize: 16,
-                              ),
-                              speed: Duration(milliseconds: widget.message.enableAnimation ? 10 : 0),
-                            ),
-                          ],
-                          totalRepeatCount: 1,
-                          /*displayFullTextOnTap: true,
-                          stopPauseOnTap: true,*/
-                          onFinished: () {
-                            setState(() {
-                              widget.message.enableAnimation = false;
-                            });
-                            /*(context as Element)
-                                .findAncestorStateOfType<_AIChatScreenState>()
-                                ?._scrollToBottom();*/
-                            // widget.onAnimationCompleted?.call(widget.message);
-                          },
-                        ),
-                      ),
+                            :
+
+                        Text(''),),
                     if (widget.message.source != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 4),

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../Screens/Dealer/sevicecustomer.dart';
+ import '../../../Screens/Dealer/sevicecustomer.dart';
 import '../../../Screens/Logs/irrigation_and_pump_log.dart';
 import '../../../Screens/Map/oro_map/map_areator.dart';
 import '../../../Screens/planning/weather/view/weather_Gsm.dart';
@@ -28,7 +28,9 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
   final isGsmWeather = [...AppConstants.weatherModelList].contains(cMaster.modelId);
 
 
-  switch (index) {
+
+
+   switch (index) {
     case 0:
       return (isGem || isNova || isOms) ?
       const DashboardLayoutSelector(userRole: UserRole.customer) : isGsmWeather ?
