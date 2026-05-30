@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/modules/Preferences/view/view_config.dart';
+import 'package:oro_drip_irrigation/services/communication_service.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
@@ -338,11 +339,16 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                                                   final viewConfig = {
                                                                     "5900": {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${4}"}
                                                                   };
-                                                                  mqttService.topicToPublishAndItsMessage(
-                                                                      isToGem ? jsonEncode(viewConfig)
-                                                                          : isWlc ? Constants.sendPayloadWithCrc(payload)
-                                                                          : payload,
-                                                                      "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
+                                                                  final result = await context.read<CommunicationService>().sendCommand(
+                                                                    serverMsg: '',
+                                                                    payload: isToGem ? jsonEncode(viewConfig)
+                                                                        : isWlc ? Constants.sendPayloadWithCrc(payload)
+                                                                        : payload,
+                                                                  );
+                                                                  debugPrint("preference main screen result => $result");
+                                                                  // mqttService.topicToPublishAndItsMessage(
+                                                                  //     ,
+                                                                  //     "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
                                                                 }
                                                                 await Future.delayed(Duration.zero, () {
                                                                   preferenceProvider.updateValidationCode();
@@ -657,7 +663,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                 unselectedLabelStyle: TextStyle(fontWeight: FontWeight.normal,color: Colors.grey.shade400),
                 dividerColor: Colors.transparent,
                 isScrollable: true,
-                onTap: (value) {
+                onTap: (value) async{
                   preferenceProvider.updateTabIndex(commonPumpTabController.index);
                   if(selectedSetting == 2 && isToGem) {
                     mqttPayloadProvider.viewSettingsList.clear();
@@ -671,8 +677,12 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                     final viewConfig = {"5900": {
                       "5901": "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload2+$categoryId",
                       }};
-                    mqttService.topicToPublishAndItsMessage(isWlc ? Constants.sendPayloadWithCrc(payload) : jsonEncode(viewConfig),
-                        "${Environment.mqttPublishTopic}/${widget.masterData['deviceId']}");
+                    final result = await context.read<CommunicationService>().sendCommand(
+                      serverMsg: '',
+                      payload: isWlc ? Constants.sendPayloadWithCrc(payload) : jsonEncode(viewConfig),
+                    );
+                    // mqttService.topicToPublishAndItsMessage(isWlc ? Constants.sendPayloadWithCrc(payload) : jsonEncode(viewConfig),
+                    //     "${Environment.mqttPublishTopic}/${widget.masterData['deviceId']}");
                   }
                 },
                 tabs: [
@@ -772,7 +782,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                         FilteringTextInputFormatter.deny(RegExp('[^0-9.]')),
                                         LengthLimitingTextInputFormatter(6),
                                       ],
-                                      dataList: settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "SENSOR HEIGHT" ? ["20", "35"] : ["10", "12"],
+                                      dataList: settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "SENSOR HEIGHT"
+                                          ? ["20", "35"] : settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == 'CABLE SELECT' ? ['0', '1', '2', '3'] : ["10", "12"],
                                       value: _getInitialValue(categoryIndex, settingIndex, settingList, pumpIndex),
                                       leading: _buildLeading(categoryIndex, settingIndex, settingList),
                                       onValueChange: (newValue) => onChangeValue(categoryIndex, settingIndex, settingList, newValue),
@@ -1498,7 +1509,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         }
       }
     }
-    // print("payload ======= > ${jsonEncode(payload)}");
     return payload;
   }
 
@@ -1861,7 +1871,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     return values.join(",");
   }
 
-/*  Future<void> processPayloads({
+  /*  Future<void> processPayloads({
     required BuildContext context,
     required List<String> payload,
     required bool isToGem,
@@ -1882,6 +1892,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       },
     );
   }*/
+
 }
 
 Widget buildCustomListTileWidget({
@@ -1911,7 +1922,7 @@ Widget buildCustomListTileWidget({
           initialValue: value is String ? value : "",
           textAlign: TextAlign.center,
           keyboardType: TextInputType.number,
-          inputFormatters: inputFormatters,
+          inputFormatters: (widgetType == 1 && AppConstants.gemModelList.contains(modelId)) ? AppProperties.regexForNumbers : inputFormatters,
           decoration: const InputDecoration(
             hintText: "000",
             isDense: true,

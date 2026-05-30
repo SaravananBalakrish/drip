@@ -758,6 +758,8 @@ class AppConstants {
         return 'Sensor-based conditions such as moisture, pressure, time-based triggers, and program ON/OFF logic.';
       case 'Valve Group':
         return 'Group valves under a controller for simplified scheduling, monitoring, and centralized activity logs.';
+      case 'Calibration':
+        return 'Calibrate the available sensor.';
       case 'Pump Condition':
         return 'Pump-based conditions such as program ON/OFF logic.';
       case 'Controller Log':

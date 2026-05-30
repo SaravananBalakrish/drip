@@ -74,7 +74,7 @@ class CommunicationService {
           debugPrint('Failed to send via Classic Bluetooth: $e');
         }
       }
-
+      print("bleService.isConnected : ${bleService.isConnected}");
       if (bleService.isConnected) {
         try {
           await bleService.write(payload);

@@ -157,10 +157,12 @@ class _ConfigWebViewState extends State<ConfigWebView> {
     print("normalCriticalPayload : $normalCriticalPayload");
     var filterPayload = constPvd.getFilterSitePayload();
     print("filterPayload : $filterPayload");
+    print("constPvd.userData['modelId'] : ${constPvd.userData['modelId']}");
     bool isGem = AppConstants.gemModelList.contains(constPvd.userData['modelId']);
+    bool isOms = AppConstants.omsGemList.contains(constPvd.userData['modelId']);
     var hardwarePayload = {
       "300" : {
-        "301" : generalPayload,
+        "301" : isOms ? '' : generalPayload,
         if(isGem)
           "302" : mainValvePayload,
         "303" : valvePayload,
