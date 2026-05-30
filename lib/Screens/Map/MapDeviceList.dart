@@ -8,6 +8,8 @@ import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
 import 'oro_map/SetSelectAreatorLocation.dart';
 import 'googlemap_model.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+
 
 class DeviceListScreen extends StatefulWidget {
   const DeviceListScreen(
@@ -50,12 +52,12 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
          "userId": widget.customerId,
          "controllerId" :  widget.controllerId
        });
-       print('getUserDetails${getUserDetails.body}');
+       AppLog.log('getUserDetails${getUserDetails.body}');
        // final jsonData = jsonDecode(getUserDetails.body);
        if (getUserDetails.statusCode == 200) {
          setState(() {
            var jsonData = jsonDecode(getUserDetails.body);
-           print('jsonData$jsonData');
+           AppLog.log('jsonData$jsonData');
             mqttPayloadProvider.updateMapData(jsonData);
          });
        } else {
@@ -64,8 +66,8 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
      }
      catch (e, stackTrace) {
        mqttPayloadProvider.httpError = true;
-       print(' Error overAll getData => ${e.toString()}');
-       print(' trace overAll getData  => ${stackTrace}');
+       AppLog.log(' Error overAll getData => ${e.toString()}');
+       AppLog.log(' trace overAll getData  => ${stackTrace}');
      }
     }
 
@@ -77,7 +79,7 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
        builder: (context, mqttProvider, _) {
          final deviceList = mqttProvider.mapModelInstance.data?.deviceList;
 
-         print("deviceList:->${deviceList.toString()}");
+         AppLog.log("deviceList:->${deviceList.toString()}");
 
          if (deviceList == null || deviceList.isEmpty) {
            return Scaffold(
@@ -197,17 +199,17 @@ class _DeviceListScreenState extends State<DeviceListScreen> {
 
      final Repository repository = Repository(HttpService());
 var data = mqttPayloadProvider.mapModelInstance.data?.toJson();
-           print("send data -> $data ");
+           AppLog.log("send data -> $data ");
      Map<String, dynamic> body = {
        "userId": widget.customerId,
        "controllerId": widget.controllerId,
        "userGeography": data!['deviceList'],
        "createUser": widget.userId
      };
-     print(body);
+     AppLog.log(body);
      var getUserDetails = await repository.creategeography(body);
      var jsonDataResponse = jsonDecode(getUserDetails.body);
-      print(jsonDataResponse);
+      AppLog.log(jsonDataResponse);
       GlobalSnackBar.show(context, jsonDataResponse['message'], 200);
    }
 }

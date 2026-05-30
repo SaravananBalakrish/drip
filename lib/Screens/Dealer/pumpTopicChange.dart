@@ -7,6 +7,7 @@ import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../services/mqtt_service.dart';
 import '../../utils/environment.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 class PumpTopicChangePage extends StatefulWidget {
   final deviceID;
@@ -135,8 +136,8 @@ class _PumpTopicChangePageState extends State<PumpTopicChangePage> {
     } catch (e, stacktrace) {
       if (!mounted) return;
       setState(() {
-        print(e);
-        print(stacktrace);
+        AppLog.log(e);
+        AppLog.log(stacktrace);
         errorMessage = 'Error fetching data: $e';
         isLoading = false;
       });
@@ -168,7 +169,7 @@ class _PumpTopicChangePageState extends State<PumpTopicChangePage> {
   }
 
   String formatIp(String ip) {
-    print('ip: $ip');
+    AppLog.log('ip: $ip');
     return ip.split('.')
         .map((part) => part.padLeft(3, '0'))
         .join('.');
@@ -186,7 +187,7 @@ class _PumpTopicChangePageState extends State<PumpTopicChangePage> {
       sentStatus[fieldName] = true;
     });
 
-    print("Send $fieldName: ${controller.text}");
+    AppLog.log("Send $fieldName: ${controller.text}");
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text("$fieldName Sent")));
   }
@@ -208,7 +209,7 @@ class _PumpTopicChangePageState extends State<PumpTopicChangePage> {
 
       String Sendalldataip = "${config!['MQTT_USER_NAME']},${config['MQTT_PASSWORD']},${formatIp(config['MQTT_IP'])}";
 
-      print('Sendalldataip:   $Sendalldataip');
+      AppLog.log('Sendalldataip:   $Sendalldataip');
 
      Map<String, dynamic> payLoadFinalip = {
        "sentSms":"mqttcred,$Sendalldataip,"};
@@ -242,7 +243,7 @@ class _PumpTopicChangePageState extends State<PumpTopicChangePage> {
         _showSnackBar(data["message"]);
       }
     }
-    print('topic:------> ${topic == 'topic' ? payLoadFinaltopic : topic == 'ip' ? payLoadFinalip : topic == 'reset' ? payLoadReset : payLoadview}');
+    AppLog.log('topic:------> ${topic == 'topic' ? payLoadFinaltopic : topic == 'ip' ? payLoadFinalip : topic == 'reset' ? payLoadReset : payLoadview}');
 
      MqttService().topicToPublishAndItsMessage(jsonEncode(topic == 'topic' ? payLoadFinaltopic : topic == 'ip' ? payLoadFinalip : topic == 'reset' ? payLoadReset : payLoadview),'${Environment.mqttPublishTopic}/${widget.deviceID}');
 
@@ -316,7 +317,7 @@ class _PumpTopicChangePageState extends State<PumpTopicChangePage> {
       sentStatus.updateAll((key, value) => true);
     });
 
-    print("Send All Fields: $fields");
+    AppLog.log("Send All Fields: $fields");
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text("All Fields Sent")));
   }

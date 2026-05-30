@@ -6,6 +6,8 @@ import '../../models/names_model.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+
 
 class Names extends StatefulWidget {
   final int userID, customerID, controllerId, menuId;
@@ -54,8 +56,8 @@ class _NamesState extends State<Names> {
         });
       }
     } catch (e, stackTrace) {
-      print('Error overAll getData => ${e.toString()}');
-      print('trace overAll getData  => ${stackTrace}');
+      AppLog.log('Error overAll getData => ${e.toString()}');
+      AppLog.log('trace overAll getData  => ${stackTrace}');
     }
   }
 
@@ -225,8 +227,8 @@ class _NamesState extends State<Names> {
                         setState(() {
                           // bool nameExists = (configModel.configObject ?? []).any(
                           //         (element) => element.name == val && element != data);
-                          print(data.location);
-                          bool nameExists = (configModel.configObject ?? []).any(
+
+                           bool nameExists = (configModel.configObject ?? []).any(
                                   (element) =>
                               element != data &&
                                   element.name?.trim().toLowerCase() == val.trim().toLowerCase() &&
@@ -243,6 +245,7 @@ class _NamesState extends State<Names> {
                               const SnackBar(content: Text('Name length Maximum reached')),
                             );
                           } else if (val.isNotEmpty) {
+                            AppLog.log("val->$val");
                             data.name = val;
                           }
                         });
@@ -300,7 +303,7 @@ class _NamesState extends State<Names> {
      Map<String, dynamic> namesModelData = configModel.toJson();
 
     final Repository repository = Repository(HttpService());
-    print(namesModelData['configObject']);
+    AppLog.log(namesModelData['configObject']);
     Map<String, dynamic> body = {
       "userId": widget.customerID,
       "controllerId": widget.controllerId,
@@ -313,10 +316,10 @@ class _NamesState extends State<Names> {
       "moistureSensor": namesModelData['moistureSensor'],
       "createUser": widget.userID,
     };
-     print('body:-$body');
+     AppLog.log('body:-$body');
 
      var getUserDetails = await repository.updateUserNames(body);
-       // print('getUserDetails.body-:${getUserDetails.body}');
+       // AppLog.log('getUserDetails.body-:${getUserDetails.body}');
       final jsonDataResponsePut = json.decode(getUserDetails.body);
       GlobalSnackBar.show(context, jsonDataResponsePut['message'], jsonDataResponsePut['code']);
 

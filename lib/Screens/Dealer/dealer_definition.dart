@@ -10,6 +10,7 @@ import '../../StateManagement/overall_use.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 
 class DealerDefinitionInConfig extends StatefulWidget {
@@ -74,7 +75,7 @@ class DealerDefinitionInConfigState extends State<DealerDefinitionInConfig> {
       if (getUserDetails.statusCode == 200) {
         setState(() {
           var jsonData = jsonDecode(getUserDetails.body);
-          print("jsonData:$jsonData");
+          AppLog.log("jsonData:$jsonData");
           data = DataModelDDConfig.fromJson(jsonData);
           indicatorViewHide();
         });
@@ -83,8 +84,8 @@ class DealerDefinitionInConfigState extends State<DealerDefinitionInConfig> {
       }
     }
     catch (e, stackTrace) {
-       print(' Error overAll getData => ${e.toString()}');
-      print(' trace overAll getData  => ${stackTrace}');
+       AppLog.log(' Error overAll getData => ${e.toString()}');
+      AppLog.log(' trace overAll getData  => ${stackTrace}');
     }
   }
 

@@ -183,13 +183,13 @@ class SettingsScreenFactory {
         ) : MapScreenOro(userId: ctx.userId, customerId: ctx.customerId, controllerId: ctx.controllerId, imeiNo: ctx.imeiNo, modelId: ctx.modelId,)
         ;
 
-      case 'Geography Area':
-        return MapScreenAllArea(
-          userId: ctx.userId,
-          customerId: ctx.customerId,
-          controllerId: ctx.controllerId,
-          imeiNo: ctx.imeiNo,
-        );
+      // case 'Geography Area':
+      //   return MapScreenAllArea(
+      //     userId: ctx.userId,
+      //     customerId: ctx.customerId,
+      //     controllerId: ctx.controllerId,
+      //     imeiNo: ctx.imeiNo,
+      //   );
 
       case 'Pump Condition':
         return PumpConditionScreen(

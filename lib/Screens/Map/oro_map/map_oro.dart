@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
@@ -196,7 +197,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
 
        _fitMapToBounds(newMarkers, newPolygons);
      } catch (e) {
-       debugPrint("Error: $e");
+       AppLog.log("Error: $e");
      }
    }
 
@@ -216,7 +217,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
   final String? data = cMData["2402"]?.toString();
 
   if (data == null || data.isEmpty) {
-  print('data is empty or null');
+  AppLog.log('data is empty or null');
   return {"status": 0, "percentage": 0};
   }
 
@@ -238,12 +239,12 @@ class _MapScreenOroState extends State<MapScreenOro> {
   }
   }
 
-  print('No match found for serialNumber');
+  AppLog.log('No match found for serialNumber');
   return {"status": 0, "percentage": 0};
 
   } catch (e, stacktrace) {
-  print("Error getting valve data: $e");
-  print("Stacktrace: $stacktrace");
+  AppLog.log("Error getting valve data: $e");
+  AppLog.log("Stacktrace: $stacktrace");
   return {"status": 0, "percentage": 0};
   }
   }
@@ -267,7 +268,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
   for (var obj in device["connectedObject"] ?? []) {
   if (obj["lat"] != null && obj["long"] != null) {
 
-  // print("object:%:${LatLng(obj["lat"], obj["long"])}");
+  // AppLog.log("object:%:${LatLng(obj["lat"], obj["long"])}");
   return LatLng(obj["lat"], obj["long"]);
   }
   }
@@ -279,7 +280,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
   if (geo != null &&
   geo["lat"] != null &&
   geo["long"] != null) {
-  // print("geography:%:${LatLng(geo["lat"], geo["long"])}");
+  // AppLog.log("geography:%:${LatLng(geo["lat"], geo["long"])}");
 
   return LatLng(geo["lat"], geo["long"]);
   }
@@ -313,7 +314,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
      int st = status ?? 0;
      int per = percentage ?? 0;
 
-     if (st == 1 && per == 100) {
+     if (per == 100) {
        return Colors.blue;
      } else if (st == 0 && per == 0) {
        return Colors.grey;
@@ -363,7 +364,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
        text: TextSpan(
          text: text,
          style: const TextStyle(
-           fontSize: 11,
+           fontSize: 13,
            color: Colors.black,
            fontWeight: FontWeight.bold,
          ),
@@ -450,7 +451,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
   // ---------------- UI ----------------
   @override
   Widget build(BuildContext context) {
-  // print("build center:$center");
+  // AppLog.log("build center:$center");
 
   return Scaffold(
   appBar: AppBar(title: const Text("Geography"),
@@ -498,7 +499,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
             "Live sync: $_sentTime",
             textAlign: TextAlign.center,
             style: const TextStyle(
-              color: Colors.white,
+              color: Colors.redAccent,
               fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
