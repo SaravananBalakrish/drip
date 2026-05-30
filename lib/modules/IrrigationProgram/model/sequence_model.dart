@@ -379,7 +379,7 @@ class AdditionalData {
   bool changeOverMode;
   bool programBasedSet;
   bool programBasedInjector;
-  List<Map<String, dynamic>> nodeSelection;
+  List<dynamic> nodeSelection;
 
   AdditionalData(
       {required this.centralFiltrationOperationMode,

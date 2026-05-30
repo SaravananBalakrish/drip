@@ -7,7 +7,9 @@ import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:provider/provider.dart';
 
+import '../../../Constants/constants.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
+import '../../../services/communication_service.dart';
 import '../model/preference_data_model.dart';
 import '../state_management/preference_provider.dart';
 
@@ -71,7 +73,7 @@ class _ViewConfigState extends State<ViewConfig> {
     return indexToName;
   }
 
-  void requestViewConfig(int index, {String? newSelectedPayload}) {
+  void requestViewConfig(int index, {String? newSelectedPayload}) async{
     final mqttProvider = context.read<MqttPayloadProvider>();
     final preferenceProvider = context.read<PreferenceProvider>();
 
@@ -125,10 +127,16 @@ class _ViewConfigState extends State<ViewConfig> {
         "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
       );
     } else {
-      mqttService.topicToPublishAndItsMessage(
-        jsonEncode({"sentSms": "viewconfig"}),
-        "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
+      var payload = jsonEncode({"sentSms": "viewconfig"});
+      final result = await context.read<CommunicationService>().sendCommand(
+        serverMsg: '',
+        payload: AppConstants.wlcModelList.contains(widget.modelId) ? Constants.sendPayloadWithCrc(payload) : payload,
       );
+      debugPrint('view config result => $result');
+      // mqttService.topicToPublishAndItsMessage(
+      //   payload,
+      //   "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}",
+      // );
     }
   }
 

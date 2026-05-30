@@ -1105,16 +1105,15 @@ class ConfigMakerProvider extends ChangeNotifier{
         }
       }
       if (device.masterId != null && device.serialNumber != null) {
-        print("S_No => ${device.serialNumber}  |  DeviceId => ${device.deviceId}");
         devicePayload.add({
           "S_No": device.serialNumber,
           "DeviceTypeNumber": validateDeviceTypeNumber(device),
           "DeviceRunningNumber": findOutReferenceNumber(device),
           "DeviceId": device.deviceId,
           "InterfaceType": extendDeviceId.isNotEmpty ? 4 : device.interfaceTypeId,
-          if(AppConstants.gemModelList.contains(masterData['modelId']))
+          if([...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(masterData['modelId']))
             "ExtendNode": extendDeviceId,
-          if(AppConstants.gemModelList.contains(masterData['modelId']))
+          if([...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(masterData['modelId']))
             "Name" : device.deviceName
         }.entries.map((e) => e.value).join(","));
       }
@@ -1226,13 +1225,13 @@ class ConfigMakerProvider extends ChangeNotifier{
         }
         String objectSerialNoForEcoGem = objectSerialNoForEcoGemSplitList.join(',');
         objectPayload.add({
-          "S_No": AppConstants.gemModelList.contains(masterData['modelId']) ? object.sNo : objectSerialNoForEcoGem,
+          "S_No": [...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(masterData['modelId']) ? object.sNo : objectSerialNoForEcoGem,
           "ObjectType": object.objectId,
           "DeviceTypeNumber": controller.categoryId,
           "DeviceRunningNumber": findOutReferenceNumber(controller),
           "Output_InputNumber": object.connectionNo,
           "IO_Mode": controller.categoryId ==  4 ? 8 : getObjectTypeCodeToHardware(object.type),
-          if(AppConstants.gemModelList.contains(masterData['modelId']))
+          if([...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(masterData['modelId']))
             "Name" : object.name
         }.entries.map((e) => e.value).join(","));
       }
