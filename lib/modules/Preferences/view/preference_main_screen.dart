@@ -1921,7 +1921,7 @@ Widget buildCustomListTileWidget({
           enabled: enabled,
           initialValue: value is String ? value : "",
           textAlign: TextAlign.center,
-          keyboardType: TextInputType.number,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
           inputFormatters: (widgetType == 1 && AppConstants.gemModelList.contains(modelId)) ? AppProperties.regexForNumbers : inputFormatters,
           decoration: const InputDecoration(
             hintText: "000",

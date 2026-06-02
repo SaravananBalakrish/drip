@@ -216,12 +216,13 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
                     lightColor: greenLight,
                     darkColor: greenDark,
                   ),
-                buildControllerSection(
-                    title: "Select OMS",
-                    dataList: widget.nodeList.map((e) => {"controllerId": e.controllerId, "deviceId": e.deviceId, 'serialNo': e.serialNumber}).toList(),
-                    lightColor: greenLight,
-                    darkColor: greenDark
-                ),
+                if(AppConstants.omsGemList.contains(widget.modelId))
+                  buildControllerSection(
+                      title: "Select OMS",
+                      dataList: widget.nodeList.map((e) => {"controllerId": e.controllerId, "deviceId": e.deviceId, 'serialNo': e.serialNumber}).toList(),
+                      lightColor: greenLight,
+                      darkColor: greenDark
+                  ),
                 if(irrigationLine.map((e) => e.centralFertilization != null ? [e.centralFertilization!] : []).expand((list) => list).whereType<DeviceObjectModel>().toList().isNotEmpty
                     || irrigationLine.map((e) => e.localFertilization != null ? [e.localFertilization!] : []).expand((list) => list).whereType<DeviceObjectModel>().toList().isNotEmpty)
                   buildSectionTitle(title: "Fertilizer", context: context),

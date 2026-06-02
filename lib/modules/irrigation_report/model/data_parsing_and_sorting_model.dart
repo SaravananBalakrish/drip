@@ -2600,29 +2600,34 @@ class IrrigationLogModel {
     List<dynamic> list = [];
     try{
       for(var parameter in channelParameterList){
-        if(parameter.payloadKey == '${central ? 'Central' : 'Local'}FertMethod') {
-          if(parameter.show == true){
-            var data = date['irrigation']['${central ? 'Central' : 'Local'}FertMethod'][howMany];
-            list.add([null,''].contains(data) ? data : (data.split('_')[channelNo] == '1' ? 'Time' : data.split('_')[channelNo] == '0' ? null :'Quantity (L)'));
+        // if(date['irrigation']['${central ? 'Central' : 'Local'}FertOnOff'][howMany] == 1){
+          if(parameter.payloadKey == '${central ? 'Central' : 'Local'}FertMethod') {
+            if(parameter.show == true){
+              var data = date['irrigation']['${central ? 'Central' : 'Local'}FertMethod'][howMany];
+              list.add([null,''].contains(data) ? data : (data.split('_')[channelNo] == '1' ? 'Time' : data.split('_')[channelNo] == '0' ? null :'Quantity (L)'));
+            }
           }
-        }
-        if(parameter.payloadKey == '${central ? 'Central' : 'Local'}FertilizerChannelDuration/${central ? 'Central' : 'Local'}FertilizerChannelQuantity') {
-          if(parameter.show == true){
-            list.add([null,''].contains(list[0]) ? '-' : list[0] == 'Time' ? date['irrigation']['${central ? 'Central' : 'Local'}FertilizerChannelDuration'][howMany].split('_')[channelNo] : date['irrigation']['${central ? 'Central' : 'Local'}FertilizerChannelQuantity'][howMany].split('_')[channelNo]);
+          if(parameter.payloadKey == '${central ? 'Central' : 'Local'}FertilizerChannelDuration/${central ? 'Central' : 'Local'}FertilizerChannelQuantity') {
+            if(parameter.show == true){
+              list.add([null,'', '-'].contains(list[0]) ? '-' : list[0] == 'Time' ? date['irrigation']['${central ? 'Central' : 'Local'}FertilizerChannelDuration'][howMany].split('_')[channelNo] : date['irrigation']['${central ? 'Central' : 'Local'}FertilizerChannelQuantity'][howMany].split('_')[channelNo]);
+            }
           }
-        }
-        if(parameter.payloadKey == '${central ? 'Central' : 'Local'}FertilizerChannelDurationCompleted/${central ? 'Central' : 'Local'}FertilizerChannelQuantityCompleted') {
-          if(parameter.show == true){
-            var qtyCompletedData = date['irrigation']['${central ? 'Central' : 'Local'}FertilizerChannelQuantityCompleted'];
-            list.add([null,''].contains(list[0]) ? '-' : list[0] == 'Time' ? date['irrigation']['${central ? 'Central' : 'Local'}FertilizerChannelDurationCompleted'][howMany].split('_')[channelNo]
-                : (howMany < qtyCompletedData.length ? qtyCompletedData[howMany].split('_')[channelNo] : '-'));
+          if(parameter.payloadKey == '${central ? 'Central' : 'Local'}FertilizerChannelDurationCompleted/${central ? 'Central' : 'Local'}FertilizerChannelQuantityCompleted') {
+            if(parameter.show == true){
+              var qtyCompletedData = date['irrigation']['${central ? 'Central' : 'Local'}FertilizerChannelQuantityCompleted'];
+              list.add([null,'', '-'].contains(list[0]) ? '-' : list[0] == 'Time' ? (qtyCompletedData[howMany] != null ? qtyCompletedData[howMany].split('_')[channelNo] : '-')
+                  : (howMany < qtyCompletedData.length ? qtyCompletedData[howMany].split('_')[channelNo] : '-'));
+            }
           }
-        }
+        // }
+        // else{
+        //   list = ['-', '-', '-'];
+        // }
 
       }
     }catch(e,stackTrace){
-      print('getChannelData error => ${e.toString()}');
-      print('getChannelData stackTrac => ${stackTrace}');
+      debugPrint('getChannelData error => ${e.toString()}');
+      debugPrint('getChannelData stackTrac => $stackTrace');
     }
     return list;
   }
@@ -2638,10 +2643,9 @@ class IrrigationLogModel {
     }
     return list;
   }
-
 }
 
-class GraphData{
+class GraphData {
   final dynamic preFrom;
   final dynamic preTo;
   final dynamic postFrom;
@@ -2669,7 +2673,6 @@ GraphData getGraphData({required method, required planned, required actualDurati
   var plannedInLiters = finalMethod == 1 ? (plannedSeconds * flowRateForPerSec) : planned;
   var actualInLiters =  finalMethod == 1 ? (actualSeconds * flowRateForPerSec) : actualLiters;
   if(plannedInLiters is String){
-    print("plannedInLiters => ${plannedInLiters}");
     plannedInLiters = int.parse(plannedInLiters);
   }
   if(actualInLiters is String){
