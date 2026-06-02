@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+
 
 class PhoneAuthScreen extends StatefulWidget {
   @override
@@ -21,7 +23,7 @@ class _PhoneAuthScreenState extends State<PhoneAuthScreen> {
         await _auth.signInWithCredential(credential);
       },
       verificationFailed: (FirebaseAuthException e) {
-        print('Verification failed: ${e.message}');
+        AppLog.log('Verification failed: ${e.message}');
       },
       codeSent: (String verificationId, int? resendToken) {
         setState(() {

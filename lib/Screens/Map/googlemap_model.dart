@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+
 
 MapConfigModel mapConfigModelFromJson(String str) =>
     MapConfigModel.fromJson(json.decode(str));
@@ -236,7 +238,7 @@ int getValueOfStatus(String serialNumber, Map<String, dynamic>? liveMessage) {
     }
     return 0;
   } catch (e) {
-    print('Error parsing status for $serialNumber: $e');
+    AppLog.log('Error parsing status for $serialNumber: $e');
     return 0;
   }
 }
@@ -258,7 +260,7 @@ int getValuepercentage(String serialNumber, Map<String, dynamic>? liveMessage) {
     }
     return 0;
   } catch (e) {
-    print('Error parsing status for $serialNumber: $e');
+    AppLog.log('Error parsing status for $serialNumber: $e');
     return 0;
   }
 }

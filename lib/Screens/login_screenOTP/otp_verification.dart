@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/shared_preferences_helper.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 
 // ignore: must_be_immutable
@@ -39,7 +40,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
     super.initState();
     Future.delayed(Duration.zero, () {
       // widget.contact = '${ModalRoute.of(context)?.settings.arguments as String}';
-      print(widget.contact);
+      AppLog.log(widget.contact);
       generateOtp(widget.contact);
 
     });
@@ -182,7 +183,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
   }
 
    Future<void> generateOtp(String contact) async {
-    print("generateOtp called");
+    AppLog.log("generateOtp called");
     final PhoneCodeSent smsOTPSent = (verId, forceResendingToken) {
       verificationId = verId;
     };
@@ -196,16 +197,16 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
         timeout: const Duration(seconds: 60),
         verificationCompleted: (AuthCredential phoneAuthCredential) {},
         verificationFailed: (error) {
-          print(error);
+          AppLog.log(error);
           _showSnackBar(error.message ?? 'verificationFailed',Colors.red);
         },
       );
     } catch (e,stackTrace) {
-      print('error generateOtp');
-      print(e.toString());
+      AppLog.log('error generateOtp');
+      AppLog.log(e.toString());
       _showSnackBar(e.toString(),Colors.red);
-      print('error $e');
-      print("stackTrace $stackTrace");
+      AppLog.log('error $e');
+      AppLog.log("stackTrace $stackTrace");
       handleError(e as PlatformException);
     }
   }
@@ -236,13 +237,13 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
       await checkNumber(widget.contact);
     } on PlatformException catch(e){
       handleError(e);
-      print(e.toString());
+      AppLog.log(e.toString());
       _showSnackBar(e.message!,Colors.red);
     }
     catch (e, stackTrace) {
       _showSnackBar(e.toString(),Colors.red);
-      print('error $e');
-      print("stackTrace $stackTrace");
+      AppLog.log('error $e');
+      AppLog.log("stackTrace $stackTrace");
     }
   }
 
@@ -270,7 +271,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
       final repository = Repository(HttpService());
       final response = await repository.checkMobileNumber(body);
 
-       print("response: ${response.body}");
+       AppLog.log("response: ${response.body}");
       if (response.statusCode != 200) {
         _showSnackBar("Server error: ${response.statusCode}", Colors.red);
         return false;
@@ -308,8 +309,8 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
       });
       return true;
     } catch (error, stackTrace) {
-      print("Error on checkNumber $error");
-      print("StackTrace on checkNumber $stackTrace");
+      AppLog.log("Error on checkNumber $error");
+      AppLog.log("StackTrace on checkNumber $stackTrace");
       _showSnackBar("Something went wrong", Colors.red);
       return false;
     }

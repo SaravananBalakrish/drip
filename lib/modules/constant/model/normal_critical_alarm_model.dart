@@ -29,21 +29,31 @@ class NormalCriticalAlarmModel{
     required Map<String, dynamic>? oldSetting,
     required Map<String, dynamic> userData,
   }){
+    print("userData['modelId'] : ${userData['modelId']}");
     bool isEcoGem = AppConstants.ecoGemModelList.contains(userData['modelId']);
+    bool isOmsGem = AppConstants.omsGemList.contains(userData['modelId']);
+    print('isEcoGem : $isEcoGem');
+    print('isOmsGem : $isOmsGem');
     return NormalCriticalAlarmModel(
         objectId: objectData['objectId'],
         sNo: objectData['sNo'],
         name: objectData['name'],
         objectName: objectData['objectName'],
         location: objectData['location'],
-        normal: globalAlarm.where((setting) => (isEcoGem ?  setting['ecoGemDisplay'] : setting['gemDisplay'])).map((alarm){
+        normal: globalAlarm.where((setting) => (
+            isEcoGem ? setting['ecoGemDisplay']
+                : isOmsGem ?  setting['omsGemDisplay']
+                : setting['gemDisplay'])).map((alarm){
           return AlarmInConstantModel.fromJson(
               objectData: alarm,
               defaultSetting: defaultSetting,
               oldSetting: oldSetting == null ? [] : (oldSetting['normal'] as List<dynamic>).where((item) => item['sNo'] == alarm['sNo']).toList()
           );
         }).toList(),
-        critical: globalAlarm.where((setting) => (isEcoGem ?  setting['ecoGemDisplay'] : setting['gemDisplay'])).map((alarm){
+        critical: globalAlarm.where((setting) => (
+            isEcoGem ?  setting['ecoGemDisplay']
+                : isOmsGem ?  setting['omsGemDisplay']
+                : setting['gemDisplay'])).map((alarm){
           return AlarmInConstantModel.fromJson(
               objectData: alarm,
               defaultSetting: defaultSetting,

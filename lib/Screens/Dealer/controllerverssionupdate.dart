@@ -16,6 +16,7 @@ import '../../utils/shared_preferences_helper.dart';
 import 'configureMqttTopic.dart';
 import 'controllerlogfile.dart';
 import 'frequencyLoRaPage.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 class ResetVerssion extends StatefulWidget {
   const ResetVerssion(
@@ -80,9 +81,9 @@ class _ResetVerssionState extends State<ResetVerssion> {
       var response = await repository.getUserDeviceFirmwareDetails({"userId": widget.userId});
       if (response.statusCode == 200) {
         setState(() {
-          print("widget.userId:${widget.userId}");
+          AppLog.log("widget.userId:${widget.userId}");
           var jsondata = jsonDecode(response.body);
-          print('jsondata:$jsondata');
+          AppLog.log('jsondata:$jsondata');
           valAssing(jsondata['data']);
 
           MqttService().connect();
@@ -92,8 +93,8 @@ class _ResetVerssionState extends State<ResetVerssion> {
       }
     }
     catch (e, stackTrace) {
-      print(' Error overAll getData => ${e.toString()}');
-      print(' trace overAll getData  => ${stackTrace}');
+      AppLog.log(' Error overAll getData => ${e.toString()}');
+      AppLog.log(' trace overAll getData  => ${stackTrace}');
     }
 
 
@@ -271,7 +272,7 @@ class _ResetVerssionState extends State<ResetVerssion> {
                                         Colors.teal.shade100)),
                                 onPressed: () {
                                   setState(() {
-                                    print('mergedList[index]:${mergedList[index]['modelId']}');
+                                    AppLog.log('mergedList[index]:${mergedList[index]['modelId']}');
                                     selectindex = index;
                                     if (AppConstants.pumpList.contains(mergedList[index]['modelId'])) {
                                       Navigator.push(
@@ -679,10 +680,10 @@ class _ResetVerssionState extends State<ResetVerssion> {
       }
     }
     if(kDebugMode) {
-      print("selectindex----$selectindex");
+      AppLog.log("selectindex----$selectindex");
 
-      print("payLoadFinal----$payLoadFinal");
-      print("payLoadFinal----${Environment
+      AppLog.log("payLoadFinal----$payLoadFinal");
+      AppLog.log("payLoadFinal----${Environment
           .mqttPublishTopic}/${mergedList[selectindex!]["deviceId"]}");
     }
     MqttService().topicToPublishAndItsMessage(jsonEncode(payLoadFinal), '${Environment.mqttPublishTopic}/${mergedList[selectindex ?? 0]["deviceId"]}');

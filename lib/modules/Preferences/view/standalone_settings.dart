@@ -254,6 +254,8 @@ class _StandAloneSettingsState extends State<StandAloneSettings> {
           'valvesetting,${provider.programSettings!.setting.map((e) {
             if(e.widgetTypeId == 2) {
               return e.value ? '1' : '0';
+            }else if(e.value is String && (e.value as String).isEmpty){
+              return '0';
             } else {
               if(e.value.toString().contains(':')) {
                 final result = e.value.split(':');
