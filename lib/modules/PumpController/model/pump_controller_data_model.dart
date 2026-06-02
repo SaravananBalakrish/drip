@@ -107,6 +107,7 @@ class IndividualPumpData {
   });
 
   factory IndividualPumpData.fromJson(Map<String, dynamic> json) {
+    print("json :: $json");
     final value = json["CF"] ?? "-";
     int firstIndex = 0;
     if (value != "-") {

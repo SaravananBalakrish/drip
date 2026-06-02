@@ -44,15 +44,15 @@ class _ZoneCyclicLogState extends State<ZoneCyclicLog> {
   }
 
   void getData()async{
-    print('data request to the server.............');
+    debugPrint('data request to the server.............');
     DateTime now = DateTime.now();
     String formattedDate = DateFormat('dd/MM/yyyy').format(now);
-    print('_selectedDate : $_selectedDate');
+    debugPrint('_selectedDate : $_selectedDate');
     _selectedDate = _selectedDate == '' ? '$formattedDate - $formattedDate' : _selectedDate;
-    print('_selectedDate : $_selectedDate');
+    debugPrint('_selectedDate : $_selectedDate');
     String dateString1 = _selectedDate.split(' - ')[0];
     String dateString2 = _selectedDate.split(' - ')[1];
-    print("dateString2 ==> $dateString2");
+    debugPrint("dateString2 ==> $dateString2");
 
     List<String> parts1 = dateString1.split('/');
     List<String> parts2 = dateString2.split('/');
@@ -67,11 +67,8 @@ class _ZoneCyclicLogState extends State<ZoneCyclicLog> {
 
     try{
       String? startMonth = selectedDateRange?.start.month.toString();
-      print('startMonth : $startMonth');
+      debugPrint('startMonth : $startMonth');
 
-      String? startday = selectedDateRange?.start.day.toString();
-      String? endMonth = selectedDateRange?.end.month.toString();
-      String? endday = selectedDateRange?.end.day.toString();
       var body = {
         "userId": widget.userData['customerId'],
         "controllerId": widget.userData['controllerId'],
@@ -81,27 +78,26 @@ class _ZoneCyclicLogState extends State<ZoneCyclicLog> {
       };
       var response = await IrrigationRepository().getNovaLogDateWise(body);
       Map<String, dynamic> jsonData = jsonDecode(response.body);
-      print('jsonData $jsonData');
+      debugPrint('jsonData $jsonData');
       if(jsonData['code'] == 200){
         setState(() {
-          data = jsonData;
+          data = jsonData['data'];
         });
       }
-
     }catch(e,stackTrace){
-      print('error in log = > ${e.toString()}');
-      print('error in log stackTrace= > $stackTrace');
+      debugPrint('error in log = > ${e.toString()}');
+      debugPrint('error in log stackTrace= > $stackTrace');
     }
   }
 
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
-    print('args : ${args}');
+    debugPrint('args : $args');
     setState(() {
       if (args.value is PickerDateRange) {
         _selectedDate  = '${DateFormat('dd/MM/yyyy').format(args.value.startDate)} -'
             ' ${DateFormat('dd/MM/yyyy').format(args.value.endDate ?? args.value.startDate)}';
 
-        print('_selectedDate : $_selectedDate');
+        debugPrint('_selectedDate : $_selectedDate');
       } else if (args.value is DateTime) {
         _selectedDate = args.value.toString();
       } else if (args.value is List<DateTime>) {
@@ -109,10 +105,9 @@ class _ZoneCyclicLogState extends State<ZoneCyclicLog> {
       } else {
         _rangeCount = args.value.length.toString();
       }
-      print("range: ${_range},rangecount:${_rangeCount},Select date:${_selectedDate}");
+      debugPrint("range: $_range,rangecount:$_rangeCount,Select date:$_selectedDate");
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -160,9 +155,9 @@ class _ZoneCyclicLogState extends State<ZoneCyclicLog> {
 
           });
         },
-        child: Icon(Icons.date_range),
+        child: const Icon(Icons.date_range),
       ),
-      body: data.isEmpty ? SafeArea(
+      body: data.isNotEmpty ? SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(left: 8, right: 8),
           child: SingleChildScrollView(
@@ -170,8 +165,9 @@ class _ZoneCyclicLogState extends State<ZoneCyclicLog> {
               spacing: 10,
               children: [
                 const SizedBox(height: 1,),
-                // for(var programData in data["data"]["motorCyclic"])
-                zoneCyclicBox(zoneCyclicData: {})
+                for(var date in data["zoneCyclic"])
+                  dateWiseBox(data: date),
+                const SizedBox(height: 100,),
               ],
             ),
           ),
@@ -192,8 +188,8 @@ class _ZoneCyclicLogState extends State<ZoneCyclicLog> {
     );
   }
 
-  Widget zoneCyclicBox({
-    required Map<String, dynamic> zoneCyclicData,
+  Widget dateWiseBox({
+    required Map<String, dynamic> data,
   }){
     return Container(
       padding: const EdgeInsets.all(8),
@@ -204,14 +200,15 @@ class _ZoneCyclicLogState extends State<ZoneCyclicLog> {
       child: Column(
         spacing: 8,
         children: [
-          getTitleValue(title: 'Date', value: "15-09-2025", titleColor: Colors.white, valueColor: Colors.white),
-          getTitleValue(title: 'Cyclic duration', value: "06:29:42", titleColor: Colors.white, valueColor: Colors.white),
-          getTitleValue(title: 'Cyclic flow', value: '0', titleColor: Colors.white, valueColor: Colors.white),
+          getTitleValue(title: 'Date', value: data["date"], titleColor: Colors.white, valueColor: Colors.white),
+          getTitleValue(title: 'Cyclic duration', value: getCyclicDuration(data: data), titleColor: Colors.white, valueColor: Colors.white),
+          getTitleValue(title: 'Cyclic flow', value: getCyclicFlow(data: data), titleColor: Colors.white, valueColor: Colors.white),
+          getTitleValue(title: 'Cyclic time', value: '${data["zoneList"][0]["onTime"]} to ${data["zoneList"][data["zoneList"].length - 1]["offTime"]}', titleColor: Colors.white, valueColor: Colors.white),
           Column(
             spacing: 10,
             children: [
-              for(var i = 0; i < 3; i++)
-                programBox(programData: {})
+              for(var zoneData in data["zoneList"])
+                zoneBox(zoneData: zoneData)
             ],
           ),
         ],
@@ -219,35 +216,37 @@ class _ZoneCyclicLogState extends State<ZoneCyclicLog> {
     );
   }
 
-  String getCyclicDuration({required Map<String, dynamic> programData,}){
+  String getCyclicDuration({required Map<String, dynamic> data,}){
     DataConvert dataConvert = DataConvert();
     int totalSeconds = 0;
-    for(var zoneData in programData['zoneList']){
+    for(var zoneData in data['zoneList']){
       totalSeconds += dataConvert.parseTimeString(zoneData["duration"]);
     }
     return dataConvert.formatTime(totalSeconds);
   }
 
-  String getCyclicFlow({required Map<String, dynamic> programData,}){
+  String getCyclicFlow({required Map<String, dynamic> data}){
     double totalFlow = 0;
-    for(var zoneData in programData['zoneList']){
+    for(var zoneData in data['zoneList']){
       totalFlow += double.parse(zoneData["flow"]);
     }
     return totalFlow.toString();
   }
 
-  Widget programBox({
-    required Map<String, dynamic> programData,
+  Widget zoneBox({
+    required Map<String, dynamic> zoneData,
   }){
     return Column(
       children: [
         Container(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
+          height: 30,
           color: Theme.of(context).primaryColorDark,
           child: Row(
             children: [
-              Expanded(child: getTitleValue(title: 'Program', value: "1", titleColor: Colors.white, valueColor: Colors.white)),
-              Expanded(child: Container())
+              Expanded(child: getTitleValue(title: 'Program', value: zoneData["program"], titleColor: Colors.white, valueColor: Colors.white)),
+              getDivider(color: Colors.white),
+              Expanded(child: getTitleValue(title: 'Zone', value: zoneData["zone"], titleColor: Colors.white, valueColor: Colors.white)),
             ],
           ),
         ),
@@ -262,36 +261,49 @@ class _ZoneCyclicLogState extends State<ZoneCyclicLog> {
             children: [
               Row(
                 children: [
-                  Expanded(child: getTitleValue(title: 'Set Time', value: '00:00:00', fontSize : 12, titleColor: Colors.black54)),
+                  Expanded(child: getTitleValue(title: 'Set Time', value: zoneData["setTime"], fontSize : 12, titleColor: Colors.black54)),
                   getDivider(),
-                  Expanded(child: getTitleValue(title: 'Run Time', value: '00:00:00', fontSize : 12, titleColor: Colors.black54))
+                  Expanded(child: getTitleValue(title: 'Run Time', value: zoneData["duration"], fontSize : 12, titleColor: Colors.black54))
                 ],
               ),
               Row(
                 children: [
-                  Expanded(child: getTitleValue(title: 'Set Flow', value: '0', fontSize : 12, titleColor: Colors.black54)),
+                  Expanded(child: getTitleValue(title: 'Set Flow', value: zoneData["setFlow"], fontSize : 12, titleColor: Colors.black54)),
                   getDivider(),
-                  Expanded(child: getTitleValue(title: 'Run Flow', value: '0', fontSize : 12, titleColor: Colors.black54))
+                  Expanded(child: getTitleValue(title: 'Run Flow', value: zoneData["flow"], fontSize : 12, titleColor: Colors.black54))
                 ],
               ),
               Row(
                 children: [
-                  Expanded(child: getTitleValue(title: 'Start Time', value: '00:00:00', fontSize : 12, titleColor: Colors.black54)),
+                  Expanded(child: getTitleValue(title: 'Start Time', value: zoneData["onTime"], fontSize : 12, titleColor: Colors.black54)),
                   getDivider(),
-                  Expanded(child: getTitleValue(title: 'End Time', value: '00:00:00', fontSize : 12, titleColor: Colors.black54))
+                  Expanded(child: getTitleValue(title: 'End Time', value: zoneData["offTime"], fontSize : 12, titleColor: Colors.black54))
                 ],
               ),
               Row(
                 children: [
-                  Expanded(child: getTitleValue(title: 'Level', value: '0.00 F', fontSize : 12, titleColor: Colors.black54)),
+                  Expanded(child: getTitleValue(title: 'Prs In', value: zoneData["pressureIn"], fontSize : 12, titleColor: Colors.black54)),
                   getDivider(),
-                  Expanded(child: getTitleValue(title: 'Percentage', value: '0 %', fontSize : 12, titleColor: Colors.black54))
+                  Expanded(child: getTitleValue(title: 'Prs Out', value: zoneData["pressureOut"], fontSize : 12, titleColor: Colors.black54))
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(child: getTitleValue(title: 'Well Level', value: zoneData["wellLevel"], fontSize : 12, titleColor: Colors.black54)),
+                  getDivider(),
+                  Expanded(child: getTitleValue(title: 'Percentage', value: zoneData["wellPercentage"], fontSize : 12, titleColor: Colors.black54))
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(child: getTitleValue(title: 'Ec', value: zoneData["ec"], fontSize : 12, titleColor: Colors.black54)),
+                  getDivider(),
+                  Expanded(child: getTitleValue(title: 'pH', value: zoneData["ph"], fontSize : 12, titleColor: Colors.black54))
                 ],
               ),
             ],
           ),
         ),
-
       ],
     );
   }
@@ -305,5 +317,4 @@ class _ZoneCyclicLogState extends State<ZoneCyclicLog> {
       ),
     );
   }
-
 }

@@ -5,6 +5,8 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'notifi_service.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+
 
 class NotificationServiceCall {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -71,7 +73,7 @@ class NotificationServiceCall {
   void configureFirebaseMessaging() {
     // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Foreground message received: ${message.messageId}');
+      AppLog.log('Foreground message received: ${message.messageId}');
       if (message.notification != null) {
         _showNotification({
           'notification': {
@@ -85,7 +87,7 @@ class NotificationServiceCall {
 
     // Handle notifications when the app is opened from a notification
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Message opened app: ${message.messageId}');
+      AppLog.log('Message opened app: ${message.messageId}');
       _navigateToScreen({
         'notification': {
           'title': message.notification?.title,
@@ -98,7 +100,7 @@ class NotificationServiceCall {
     // Handle initial message when the app is launched from a terminated state
     FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
       if (message != null) {
-        print('Initial message: ${message.messageId}');
+        AppLog.log('Initial message: ${message.messageId}');
         _navigateToScreen({
           'notification': {
             'title': message.notification?.title,
@@ -131,7 +133,7 @@ class NotificationServiceCall {
   }
   void _navigateToScreen(Map<String, dynamic> notification) {
     // Implement navigation logic based on notification data
-    print('Navigate based on: $notification');
+    AppLog.log('Navigate based on: $notification');
     // Example: Navigate to a specific screen if notification contains a route
     // if (notification['data']['route'] != null) {
     //   Navigator.pushNamed(context, notification['data']['route']);

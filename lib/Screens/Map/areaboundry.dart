@@ -8,6 +8,8 @@ import 'package:oro_drip_irrigation/Screens/Map/MapAreaModel.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import 'oro_map/getlatlong.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+
 
  // MapScreenArea widget
 class MapScreenArea extends StatefulWidget {
@@ -45,19 +47,19 @@ class _MapScreenAreaState extends State<MapScreenArea> {
   }
 
   Future<void> fetchData() async {
-    print('fetchData');
+    AppLog.log('fetchData');
     try{
       final Repository repository = Repository(HttpService());
       var getUserDetails = await repository.getgeographyArea({
         "userId": widget.customerId,
         "controllerId" : widget.controllerId
       });
-      // print('getUserDetails${getUserDetails.body.runtimeType}');
+      // AppLog.log('getUserDetails${getUserDetails.body.runtimeType}');
       // final jsonData = jsonDecode(getUserDetails.body);
       if (getUserDetails.statusCode == 200) {
         setState(() {
           var jsonData = getUserDetails.body;
-          print('jsonData${jsonData.runtimeType}');
+          AppLog.log('jsonData${jsonData.runtimeType}');
 
           _valveResponseModel = valveResponseModelFromJson(jsonData);
           setState(() {
@@ -73,8 +75,8 @@ class _MapScreenAreaState extends State<MapScreenArea> {
       }
     }
     catch (e, stackTrace) {
-      print(' Error overAll getData => ${e.toString()}');
-      print(' trace overAll getData  => ${stackTrace}');
+      AppLog.log(' Error overAll getData => ${e.toString()}');
+      AppLog.log(' trace overAll getData  => ${stackTrace}');
     }
   }
 
@@ -103,27 +105,27 @@ class _MapScreenAreaState extends State<MapScreenArea> {
     try {
 
       List<Map<String, dynamic>> jsondata = convertValvesToJson();
-      print('\n json: $jsondata');
+      AppLog.log('\n json: $jsondata');
       Map<String, dynamic> body = {
         "userId": widget.customerId,
         "controllerId" : widget.controllerId,
         "valveGeographyArea" : jsondata,
         "modifyUser" : widget.userId
       };
-      print('\n body:$body');
+      AppLog.log('\n body:$body');
 
       final Repository repository = Repository(HttpService());
       final response = await repository.updategeographyArea(body);
-      print('response:${response.body}');
+      AppLog.log('response:${response.body}');
       if (response.statusCode != 200) {
-        print('Failed to send valve : ${response.body}');
+        AppLog.log('Failed to send valve : ${response.body}');
       }
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('All valves sent successfully!')),
       );
     } catch (e) {
-      print('Error sending valves: $e');
+      AppLog.log('Error sending valves: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to send valves')),
       );

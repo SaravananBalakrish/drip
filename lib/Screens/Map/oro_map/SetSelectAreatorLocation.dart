@@ -5,6 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../googlemap_model.dart';
@@ -152,9 +153,9 @@ class _MapScreenState extends State<MapScreen> {
       );
     });
 
-    print('Lat: ${_selectedObject?.lat}, Long: ${_selectedObject?.long}');
-    print('Lat: ${lat}, Long: ${long}');
-    print('_selectedObject:${_selectedObject?.name} ${_selectedObject?.objectId}');
+    AppLog.log('Lat: ${_selectedObject?.lat}, Long: ${_selectedObject?.long}');
+    AppLog.log('Lat: ${lat}, Long: ${long}');
+    AppLog.log('_selectedObject:${_selectedObject?.name} ${_selectedObject?.objectId}');
     _selectedObject!.lat = lat;
     _selectedObject!.long = long;
     _selectedObject!.status = 1;

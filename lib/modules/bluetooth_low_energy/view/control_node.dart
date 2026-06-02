@@ -232,7 +232,6 @@ class _ControlNodeState extends State<ControlNode> {
                         var sumOfAscii = 0;
                         for (var i in payload.split('')) {
                           var bytes = i.codeUnitAt(0);
-                          // listOfBytes.add(bytes);
                           sumOfAscii += bytes;
                         }
                         payload += '${bleService.sendThreeDigit('${sumOfAscii % 256}')}:\r';

@@ -4,6 +4,7 @@ import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/schedule_scre
 import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/sequence_screen.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
+import '../../../models/customer/site_model.dart';
 import '../state_management/irrigation_program_provider.dart';
 import '../widgets/custom_animated_switcher.dart';
 import '../widgets/custom_lShape_divider.dart';
@@ -21,8 +22,13 @@ const yellowDark = Color(0xfffdce7f);
 final primaryColorLight = const Color(0xffE3FFF5).withOpacity(0.5);
 
 class SelectionScreen extends StatefulWidget{
+  final List<NodeListModel> nodeList;
   final int modelId;
-  const SelectionScreen({super.key, required this.modelId});
+  const SelectionScreen({
+    super.key,
+    required this.modelId,
+    required this.nodeList,
+  });
 
   @override
   State<SelectionScreen> createState() => _SelectionScreenState();
@@ -209,6 +215,13 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
                         : irrigationLine.map((e) => e.irrigationLine).toList(),
                     lightColor: greenLight,
                     darkColor: greenDark,
+                  ),
+                if(AppConstants.omsGemList.contains(widget.modelId))
+                  buildControllerSection(
+                      title: "Select OMS",
+                      dataList: widget.nodeList.map((e) => {"controllerId": e.controllerId, "deviceId": e.deviceId, 'serialNo': e.serialNumber}).toList(),
+                      lightColor: greenLight,
+                      darkColor: greenDark
                   ),
                 if(irrigationLine.map((e) => e.centralFertilization != null ? [e.centralFertilization!] : []).expand((list) => list).whereType<DeviceObjectModel>().toList().isNotEmpty
                     || irrigationLine.map((e) => e.localFertilization != null ? [e.localFertilization!] : []).expand((list) => list).whereType<DeviceObjectModel>().toList().isNotEmpty)
@@ -687,6 +700,72 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
     }
   }
 
+  Widget buildControllerSection({
+    required String title,
+    required List<Map<String, dynamic>> dataList,
+    required Color lightColor,
+    required Color darkColor,
+    bool showSubList = false,
+    Widget? image,
+    int? siteMode,
+    int? connectedObject,
+    bool isTitle = false,
+  }) {
+    if (dataList.isNotEmpty) {
+      // Deduplicate by controllerId
+      final data = dataList.fold<List<Map<String, dynamic>>>([], (list, element) {
+        if (!list.any((ele) => ele['controllerId'] == element['controllerId'])) {
+          list.add(element);
+        }
+        return list;
+      });
+      return Column(
+        children: [
+          buildLineAndValveContainerUpdated(
+            context: context,
+            title: title,
+            isTitle: isTitle,
+            leading: image != null
+                ? Container(
+              padding: const EdgeInsets.all(5),
+              decoration: const BoxDecoration(
+                color: cardColor,
+                shape: BoxShape.circle,
+              ),
+              child: image,
+            )
+                : null,
+            children: [
+              for (var index = 0; index < data.length; index++)
+                buildListOfContainer(
+                  context: context,
+                  onTap: () {
+                    final controllerId = data[index]['controllerId'];
+
+                    if (irrigationProgramProvider.additionalData!.nodeSelection
+                        .any((element) => element['controllerId'] == controllerId)) {
+                      irrigationProgramProvider.additionalData!.nodeSelection
+                          .removeWhere((element) => element['controllerId'] == controllerId);
+                    } else {
+                      irrigationProgramProvider.additionalData!.nodeSelection.add(data[index]);
+                    }
+                  },
+                  selected: irrigationProgramProvider.additionalData!.nodeSelection
+                      .any((element) => element['controllerId'] == data[index]['controllerId']),
+                  itemName: data[index]['deviceId'] ?? "-",
+                  darkColor: darkColor,
+                ),
+            ],
+          ),
+          const SizedBox(height: 20),
+        ],
+      );
+    } else {
+      return Container();
+    }
+  }
+
+
   Widget buildRow({required BuildContext context, required String title, required dataList,
     required darkColor, required lightColor, required height, required bool condition, child, int? siteMode, int? connectedObject}) {
 
@@ -713,4 +792,3 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
     );
   }
 }
-

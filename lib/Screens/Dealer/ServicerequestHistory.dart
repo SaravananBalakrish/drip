@@ -9,6 +9,7 @@ import '../../StateManagement/overall_use.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import '../../utils/snack_bar.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 
 class ServiceRequestsHistory extends StatefulWidget {
@@ -40,7 +41,7 @@ class _ServiceRequestsHistoryState extends State<ServiceRequestsHistory> {
     try{
       final Repository repository = Repository(HttpService());
       var getUserDetails = await repository.getUserAllServiceRequestForDealer({});
-      // print("getUserDetails.body ${getUserDetails.body}");
+      // AppLog.log("getUserDetails.body ${getUserDetails.body}");
       if (getUserDetails.statusCode == 200) {
         setState(() {
           var jsonData1 = jsonDecode(getUserDetails.body);
@@ -51,8 +52,8 @@ class _ServiceRequestsHistoryState extends State<ServiceRequestsHistory> {
       }
     }
     catch (e, stackTrace) {
-      print(' Error overAll getData => ${e.toString()}');
-      print(' trace overAll getData  => ${stackTrace}');
+      AppLog.log(' Error overAll getData => ${e.toString()}');
+      AppLog.log(' trace overAll getData  => ${stackTrace}');
     }
   }
 

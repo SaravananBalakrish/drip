@@ -4,6 +4,7 @@ import 'package:mqtt_client/mqtt_client.dart';
 import 'package:oro_drip_irrigation/modules/Preferences/state_management/preference_provider.dart';
 import 'package:provider/provider.dart';
 import '../../../Constants/constants.dart';
+import '../../../services/communication_service.dart';
 import '../../../services/mqtt_service.dart';
 import '../../../utils/environment.dart';
 
@@ -127,11 +128,16 @@ class _PayloadProgressDialogState extends State<PayloadProgressDialog> {
           }
         };
       }
-
-      await widget.mqttService.topicToPublishAndItsMessage(
-        widget.isToGem ? jsonEncode(gemPayload) : widget.isWlc ? Constants.sendPayloadWithCrc(jsonDecode(payload)[key]) :
+      final result = await context.read<CommunicationService>().sendCommand(
+        serverMsg: '',
+        payload: widget.isToGem ? jsonEncode(gemPayload) : widget.isWlc ? Constants.sendPayloadWithCrc(jsonDecode(payload)[key]) :
         jsonDecode(payload)[key],
-        "${Environment.mqttPublishTopic}/${widget.deviceId}",);
+      );
+      debugPrint("progress dialog result => $result");
+      // await widget.mqttService.topicToPublishAndItsMessage(
+      //   widget.isToGem ? jsonEncode(gemPayload) : widget.isWlc ? Constants.sendPayloadWithCrc(jsonDecode(payload)[key]) :
+      //   jsonDecode(payload)[key],
+      //   "${Environment.mqttPublishTopic}/${widget.deviceId}",);
 
       bool isAcknowledged = false;
       int maxWaitTime = 20;

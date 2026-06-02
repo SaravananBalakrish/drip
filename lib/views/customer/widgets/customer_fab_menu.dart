@@ -42,10 +42,11 @@ class CustomerFabMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final isGem = [...AppConstants.gemModelList].contains(currentMaster.modelId);
+    final isGem = [...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(currentMaster.modelId);
     final isGemNova = [...AppConstants.ecoGemModelList].contains(currentMaster.modelId);
+    final isWlc = [...AppConstants.wlcModelList].contains(currentMaster.modelId);
 
-    if (!isGem && !isGemNova) return const SizedBox.shrink();
+    if (!isGem && !isGemNova && !isWlc) return const SizedBox.shrink();
 
     final commMode = Provider.of<CustomerProvider>(context).controllerCommMode;
 
@@ -53,43 +54,44 @@ class CustomerFabMenu extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        FloatingActionButton(
-          heroTag: null,
-          onPressed: null,
-          child: PopupMenuButton<String>(
-            offset: const Offset(0, -180),
-            color: Colors.white,
-            onSelected: (value) => _handleMenuSelection(value, context),
-            icon: const Icon(Icons.menu, color: Colors.black),
-            surfaceTintColor: Theme.of(context).primaryColorLight,
-            itemBuilder: (context) => [
-              _buildPopupItem(
-                  context, 'Node Status', Icons.format_list_numbered, 'Node Status'),
-              if(isGem)...[
-                _buildPopupItem(context, 'I/O Connection', Icons.settings_input_component_outlined, 'I/O Connection details'),
-              ],
+        if(!isWlc)
+          ...[
+            FloatingActionButton(
+              heroTag: null,
+              onPressed: null,
+              child: PopupMenuButton<String>(
+                offset: const Offset(0, -180),
+                color: Colors.white,
+                onSelected: (value) => _handleMenuSelection(value, context),
+                icon: const Icon(Icons.menu, color: Colors.black),
+                surfaceTintColor: Theme.of(context).primaryColorLight,
+                itemBuilder: (context) => [
+                  _buildPopupItem(
+                      context, 'Node Status', Icons.format_list_numbered, 'Node Status'),
+                  if(isGem)...[
+                    _buildPopupItem(context, 'I/O Connection', Icons.settings_input_component_outlined, 'I/O Connection details'),
+                  ],
 
-              if(myPermissionFlags[0])...[
-                _buildPopupItem(context, 'Program', Icons.list_alt, 'Program'),
-              ],
+                  if(myPermissionFlags[0])...[
+                    _buildPopupItem(context, 'Program', Icons.list_alt, 'Program'),
+                  ],
 
-              if(isGem)...[
-                if(myPermissionFlags[2])...[
-                  _buildPopupItem(context, 'ScheduleView', Icons.view_list_outlined, 'Scheduled program details'),
+                  if(isGem)...[
+                    if(myPermissionFlags[2])...[
+                      _buildPopupItem(context, 'ScheduleView', Icons.view_list_outlined, 'Scheduled program details'),
+                    ],
+                  ],
+
+                  if(myPermissionFlags[1])...[
+                    _buildPopupItem(context, 'Manual', Icons.touch_app_outlined, 'Manual'),
+                  ],
+
+                  _buildPopupItem(context, 'Sent & Received', Icons.question_answer_outlined, 'Sent & Received'),
                 ],
-              ],
-
-              if(myPermissionFlags[1])...[
-                _buildPopupItem(context, 'Manual', Icons.touch_app_outlined, 'Manual'),
-              ],
-
-              _buildPopupItem(context, 'Sent & Received', Icons.question_answer_outlined, 'Sent & Received'),
-            ],
-          ),
-        ),
-
-        const SizedBox(height: 10),
-
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
         FloatingActionButton(
           heroTag: null,
           backgroundColor: (commMode == 2 && !(vm.bluetoothClassicService.isConnected &&
@@ -117,10 +119,13 @@ class CustomerFabMenu extends StatelessWidget {
           ) :
           Icon((commMode == 2 && (vm.bluetoothClassicService.isConnected
               || vm.bluetoothBleService.isConnected)) ? Icons.bluetooth
-                : Icons.bluetooth_disabled,
+              : Icons.bluetooth_disabled,
             color: Colors.black,
           ),
         ),
+
+        if(isWlc)
+          const SizedBox(height: 50,)
       ],
     );
   }
@@ -182,6 +187,7 @@ class CustomerFabMenu extends StatelessWidget {
               deviceName: currentMaster.deviceName,
               categoryName: currentMaster.categoryName,
               callbackFunction: callbackFunction,
+              nodeList: currentMaster.nodeList,
             ),
           ),
         );
@@ -316,7 +322,7 @@ class CustomerFabMenu extends StatelessWidget {
                     ]
                     else...[
 
-                      if(currentMaster.modelId == 75)...[
+                      if([75, ...AppConstants.wlcModelList].contains(currentMaster.modelId))...[
                         BleScanTile (vm: vm),
                         const SizedBox(height: 10),
                         Consumer<MqttPayloadProvider>(

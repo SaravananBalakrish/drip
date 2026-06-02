@@ -88,7 +88,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
       payload: jsonEncode({"sentSms": "#live"}),
       serverMsg: '',
     );
-
     debugPrint("Send result: $result");
     mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "#live"}), "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}");
   }
@@ -426,8 +425,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
     return Icon(iconData, color: iconColor);
   }
 
-  String calculatePhToPh(double val1, double val2)
-  {
+  String calculatePhToPh(double val1, double val2) {
     double tpc, tp2c;
 
     tpc = val1 * val1;
@@ -442,7 +440,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
 
     return tp2c.toStringAsFixed(0);
   }
-
 
   Widget buildNewPumpDetails({required int index, required PumpControllerData pumpData}) {
     final pumps = widget.masterData.configObjects.where((e) => e.objectId == 5).toList();
@@ -962,6 +959,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                                         icon: MdiIcons.formatFloatCenter,
                                         color: const Color(0xffb6f6e5)
                                     ),
+
                               ],
                             )
                           ],
@@ -1010,13 +1008,14 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
       ],
     );
   }
+
   Widget buildManualModeCard({
     required String manualModeStatus,
     required Function(bool) onToggle,
     required String pumpName,
     bool isLoading = false,
   }) {
-    bool isOn = manualModeStatus == '1';
+    bool isOn = manualModeStatus == '0';
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -1161,7 +1160,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
       ),
     );
   }
-
 
   Widget _buildLight(PumpValveModel pumpItem, PumpControllerData pumpData) {
     return Column(
@@ -1588,7 +1586,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(footer1, style: const TextStyle(fontWeight: FontWeight.bold, ), overflow: TextOverflow.ellipsis,),
+                          Text(footer1, style: const TextStyle(fontWeight: FontWeight.bold), overflow: TextOverflow.ellipsis,),
                           const SizedBox(height: 5,),
                           if(footer2 != '')
                             Text(footer2.split(':')[1], style: const TextStyle(fontWeight: FontWeight.bold, ),),
@@ -1616,7 +1614,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
           // Text(footer2)
             Container(
               decoration: BoxDecoration(
-                // color: cardColor,
                   borderRadius: BorderRadius.circular(5)
               ),
               padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),

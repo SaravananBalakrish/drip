@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/field_information_screen.dart';
+import '../helper/image_compressor.dart';
 import '../service/cropadvisory_model.dart';
 
 import '../widgets/AppTextField.dart';
@@ -94,12 +95,37 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
   Future<void> openCamera() async {
     final XFile? image = await _picker.pickImage(
       source: ImageSource.camera,
-      imageQuality: 80,
+      imageQuality: 100,
     );
 
-    if (image != null) {
+    if (image == null) return;
+
+    final File originalFile = File(image.path);
+
+    // Original size
+    final originalSize =
+        await originalFile.length() / 1024;
+
+    print(
+      "Original Size : ${originalSize.toStringAsFixed(2)} KB",
+    );
+
+    // Compress image
+    final File? compressedFile =
+    await ImageCompressHelper.compressImage(
+      originalFile,
+    );
+
+    if (compressedFile != null) {
+      final compressedSize =
+          await compressedFile.length() / 1024;
+
+      print(
+        "Compressed Size : ${compressedSize.toStringAsFixed(2)} KB",
+      );
+
       setState(() {
-        cropImage = File(image.path);
+        cropImage = compressedFile;
       });
     }
   }

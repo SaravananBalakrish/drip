@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 import '../../services/sftp_service.dart';
 
@@ -19,7 +20,7 @@ class FileLogger {
   static Future<void> writeToFile(String text) async {
     final file = await _localFile;
     await file.writeAsString('$text\n', mode: FileMode.append);
-    print('File written: $text');
+    AppLog.log('File written: $text');
   }
 
   static Future<String> readFromFile() async {
@@ -49,9 +50,9 @@ class FileLogger {
       await localFile.writeAsString(traceData.join('\n$text'));
       int uploadResponse = await sftpService.uploadFile(localFileName: localFileNameForTrace, remoteFilePath: '/home/ubuntu/oro2024/OroGem/OroGemLogs$deviceId.txt');
       if(uploadResponse == 200){
-        print('success');
+        AppLog.log('success');
        }else{
-        print('failed');
+        AppLog.log('failed');
        }
       sftpService.disconnect();
     }

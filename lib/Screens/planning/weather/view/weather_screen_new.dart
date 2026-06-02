@@ -18,6 +18,7 @@ import '../widgets/info_box.dart';
 import '../widgets/sensor_chip.dart';
 import '../widgets/sun_time_card.dart';
 import '../widgets/time_of_day_icon_new.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 Color sensorStatusColor(int code) {
   if (code == 255) return Colors.green.shade700;
@@ -335,10 +336,10 @@ class _LineTabViewState extends State<_LineTabView> {
                     children: station.sensors.map<Widget>((s) {
                       return GestureDetector(
                         onTap: (){
-                          // print('deviceID ->${station.device[selectedStationIndex].deviceId}');
-                          print('device ->${station.device.controllerId}');
-                          print('deviceID ->${station}');
-                           // print('userId ->${widget.userId} customerId ->${widget.customerId}');
+                          // AppLog.log('deviceID ->${station.device[selectedStationIndex].deviceId}');
+                          AppLog.log('device ->${station.device.controllerId}');
+                          AppLog.log('deviceID ->${station}');
+                           // AppLog.log('userId ->${widget.userId} customerId ->${widget.customerId}');
                           Navigator.push(
                             context,
                             MaterialPageRoute(

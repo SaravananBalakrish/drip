@@ -379,6 +379,7 @@ class AdditionalData {
   bool changeOverMode;
   bool programBasedSet;
   bool programBasedInjector;
+  List<dynamic> nodeSelection;
 
   AdditionalData(
       {required this.centralFiltrationOperationMode,
@@ -388,7 +389,9 @@ class AdditionalData {
         required this.pumpStationMode,
         required this.changeOverMode,
         required this.programBasedSet,
-        required this.programBasedInjector});
+        required this.programBasedInjector,
+        required this.nodeSelection,
+      });
 
   factory AdditionalData.fromJson(Map<String, dynamic> json) {
     return AdditionalData(
@@ -400,6 +403,7 @@ class AdditionalData {
       changeOverMode: json['changeOverMode'] ?? false,
       programBasedSet: json['programBasedSet'] ?? false,
       programBasedInjector: json['programBasedInjector'] ?? false,
+      nodeSelection: json['nodeSelection'] ?? [],
     );
   }
 
@@ -411,7 +415,8 @@ class AdditionalData {
     "pumpStationMode": pumpStationMode,
     "changeOverMode": changeOverMode,
     "programBasedSet": programBasedSet,
-    "programBasedInjector": programBasedInjector
+    "programBasedInjector": programBasedInjector,
+    "nodeSelection": nodeSelection,
   };
 }
 

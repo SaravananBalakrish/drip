@@ -6,6 +6,8 @@ import 'package:widget_to_marker/widget_to_marker.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import 'areaboundry.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+
 
 class MapScreenAllArea extends StatefulWidget {
   const MapScreenAllArea({
@@ -56,7 +58,7 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
   }
 
   Future<void> fetchData() async {
-    print('Fetching geography data...');
+    AppLog.log('Fetching geography data...');
     try {
       final repository = Repository(HttpService());
       final response = await repository.getgeographyArea({
@@ -74,11 +76,11 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
 
         await _updatePolygons();
       } else {
-        print('Failed to load data: ${response.statusCode}');
+        AppLog.log('Failed to load data: ${response.statusCode}');
       }
     } catch (e, stackTrace) {
-      print('Error fetching data: $e');
-      print('StackTrace: $stackTrace');
+      AppLog.log('Error fetching data: $e');
+      AppLog.log('StackTrace: $stackTrace');
     } finally {
       setState(() {
         _isLoading = false;  // Set loading to false once data is fetched
@@ -146,7 +148,7 @@ class _MapScreenAllAreaState extends State<MapScreenAllArea> {
   }
   //COLOR FOR MAP
   Color getColorByStatus(int? status, int? percentage) {
-    print('status:$status,percentage:$percentage');
+    AppLog.log('status:$status,percentage:$percentage');
     if (status == 1 || status == 2) {
       if (percentage == 100) {
         return Colors.blue;
