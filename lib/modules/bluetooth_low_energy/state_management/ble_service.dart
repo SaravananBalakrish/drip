@@ -145,7 +145,7 @@ class BleProvider extends ChangeNotifier {
     // }else if(AppConstants.pumpWithValveModelList.contains(nodeData['modelId'])){
     //   nodeDataFromServer['pathSetting']['downloadDirectory'] = "/home/ubuntu/FTP/download/PUMP_VALVE/";
     // }
-    print("nodeDataFromServer : ${nodeDataFromServer['pathSetting']}");
+    debugPrint("nodeDataFromServer : ${nodeDataFromServer['pathSetting']}");
     notifyListeners();
   }
 
@@ -170,16 +170,16 @@ class BleProvider extends ChangeNotifier {
         return;
       }
       await Future.delayed(const Duration(seconds: 1));
-      print("_isScanning :: $_isScanning");
+      debugPrint("_isScanning :: $_isScanning");
       for(var result in _scanResults){
         var adv = result.advertisementData;
         String upComingMacAddress = result.device.remoteId.toString().split(':').join('');
-        print("upComingMacAddress : ${upComingMacAddress}");
+        debugPrint("upComingMacAddress : ${upComingMacAddress}");
         if(macAddressToConnect == upComingMacAddress){
           device = result.device;
           bleNodeState = BleNodeState.deviceFound;
           notifyListeners();
-          print("device is found ...............................................");
+          debugPrint("device is found ...............................................");
           await Future.delayed(const Duration(seconds: 2));
           break outerLoop;
         }
@@ -203,8 +203,8 @@ class BleProvider extends ChangeNotifier {
       _systemDevices = await FlutterBluePlus.systemDevices(withServices);
     } catch (e, backtrace) {
       Snackbar.show(ABC.b, prettyException("System Devices Error:", e), success: false);
-      print(e);
-      print("backtrace: $backtrace");
+      debugPrint(e.toString());
+      debugPrint("backtrace: $backtrace");
     }
     try {
       await FlutterBluePlus.startScan(
@@ -224,8 +224,8 @@ class BleProvider extends ChangeNotifier {
       );
     } catch (e, backtrace) {
       Snackbar.show(ABC.b, prettyException("Start Scan Error:", e), success: false);
-      print(e);
-      print("backtrace: $backtrace");
+      debugPrint(e.toString());
+      debugPrint("backtrace: $backtrace");
     }
   }
 
@@ -234,8 +234,8 @@ class BleProvider extends ChangeNotifier {
       FlutterBluePlus.stopScan();
     } catch (e, backtrace) {
       Snackbar.show(ABC.b, prettyException("Stop Scan Error:", e), success: false);
-      print(e);
-      print("backtrace: $backtrace");
+      debugPrint(e.toString());
+      debugPrint("backtrace: $backtrace");
     }
   }
 
@@ -264,9 +264,9 @@ class BleProvider extends ChangeNotifier {
     listeningConnectionState();
     for(var connectLoop = 0;connectLoop < 30;connectLoop++){
       await Future.delayed(const Duration(seconds: 1));
-      print("connecting seconds :: ${connectLoop+1}");
+      debugPrint("connecting seconds :: ${connectLoop+1}");
       if(forceStop){
-        print('force stop when connecting...........');
+        debugPrint('force stop when connecting...........');
         return;
       }
       if(bleConnectionState == BluetoothConnectionState.connected){
@@ -287,35 +287,33 @@ class BleProvider extends ChangeNotifier {
   void listeningConnectionState(){
     onConnect();
     _connectionStateSubscription = device!.connectionState.listen((state) async {
-      print("connection state :: $state");
       bleConnectionState = state;
       notifyListeners();
       if (state == BluetoothConnectionState.connected) {
-        gettingStatusAfterConnect();
+
         _services = []; // must rediscover services
         _isDiscoveringServices = true;
         try {
           _services = await device!.discoverServices();
           onRequestMtuPressed();
           updateCharacteristic();
+          gettingStatusAfterConnect();
           if (kDebugMode) {
-            print('_services === $_services');
-            print(
+            debugPrint('_services === $_services');
+            debugPrint(
                 '----------------------------------------MTU SIZE REQUEST TO MAXIMUM------------------');
           }
-          // Snackbar.show(ABC.c, "Discover Services: Success", success: true);
         } catch (e) {
           if (kDebugMode) {
-            print('Error on discover repository: $e');
+            debugPrint('Error on discover repository: $e');
           }
-          // Snackbar.show(ABC.c, prettyException("Discover Services Error:", e),
-          //     success: false);
         }
         _isDiscoveringServices = false;
-      }else if(state == BluetoothConnectionState.disconnected && bleNodeState != BleNodeState.connecting){
+      }
+      else if(state == BluetoothConnectionState.disconnected && bleNodeState != BleNodeState.connecting){
         if (kDebugMode) {
-          print("state ::: $state");
-          print("bleNodeState.name ::: ${bleNodeState.name}");
+          debugPrint("state ::: $state");
+          debugPrint("bleNodeState.name ::: ${bleNodeState.name}");
         }
         clearBluetoothDeviceState();
         bleNodeState = BleNodeState.disConnected;
@@ -340,7 +338,6 @@ class BleProvider extends ChangeNotifier {
   }
 
   void gettingStatusAfterConnect() async {
-    // nodeDataFromHw = {};
     for (var i = 0; i < 200; i++) {
       if(bleConnectionState == BluetoothConnectionState.disconnected){
         break;
@@ -354,14 +351,13 @@ class BleProvider extends ChangeNotifier {
           return;
         }
         if (kDebugMode) {
-          print('after connect ${i + 1}');
-          print('Requesting mac address.....');
+          debugPrint('after connect ${i + 1}');
+          debugPrint('Requesting mac address.....');
         }
-
         requestingMac();
       } catch (e) {
         if (kDebugMode) {
-          print('requesting mac is stopped due to : ${e.toString()}');
+          debugPrint('requesting mac is stopped due to : ${e.toString()}');
         }
         break;
       }
@@ -392,16 +388,27 @@ class BleProvider extends ChangeNotifier {
   }
 
   void updateCharacteristic(){
-    myService = _services[1];
+    for (var s in _services){
+      print(s);
+    }
+    if(AppConstants.wlcModelList.contains(nodeData['modelId'])){
+      debugPrint("connect to wlc model....");
+      myService = _services[2];
+    }else{
+      debugPrint("connect to node model....");
+      myService = _services[1];
+    }
     for (BluetoothCharacteristic c in myService!.characteristics) {
       // if(c.uuid.str.toUpperCase() == swWritingId){
       //   swWritingCharacteristic = c;
       //   notifyListeners();
       // }
-      // print('uuid in ble : ${c.uuid.str}');
-      if (c.properties.writeWithoutResponse == false &&
+      // debugPrint('uuid in ble : ${c.uuid.str}');
+      if (
+      c.properties.writeWithoutResponse == false &&
           c.properties.write == true &&
-          c.properties.notify == true) {
+          c.properties.notify == true
+      ) {
         if (readFromHardware == null) {
           listeningReadFromHardwareSubscription(c);
         }
@@ -417,13 +424,13 @@ class BleProvider extends ChangeNotifier {
   }
 
   void listeningSendToHardwareSubscription(BluetoothCharacteristic? characteristic) {
-    print('listeningSendingData called............................................................');
+    debugPrint('listeningSendingData called............................................................');
     if (characteristic != null) {
       sendToHardwareSubscription =
           characteristic.lastValueStream.listen((value) {
             String convertToString = String.fromCharCodes(value);
             if (kDebugMode) {
-              print('AppToHardware =>  $convertToString');
+              debugPrint('AppToHardware =>  $convertToString');
             }
             if(fileMode != FileMode.sendingToHardware){
               sentAndReceive.add('AppToHardware =>  $convertToString');
@@ -436,28 +443,28 @@ class BleProvider extends ChangeNotifier {
             // if (value.isNotEmpty) {
             //   sentAndReceive += '${value.toString()} \n len ${value.length} \n';
             //   // await Future.delayed(Duration(seconds: 1));
-            //   print('swListeningValue == > $value');
+            //   debugPrint('swListeningValue == > $value');
             //   // notifyListeners();
             // }
           });
     } else {
-      print('sending characteristic is null');
+      debugPrint('sending characteristic is null');
     }
   }
 
   void listeningReadFromHardwareSubscription(BluetoothCharacteristic? characteristic) {
-    print(
+    debugPrint(
         'listeningReceivingData called............................................................');
     if (characteristic != null) {
       characteristic.setNotifyValue(true);
       readFromHardwareSubscription =
           characteristic.lastValueStream.listen((value) async {
             if (kDebugMode) {
-              print('from hardware :: $value');
+              debugPrint('from hardware :: $value');
             }
             String convertToString = String.fromCharCodes(value);
             if (kDebugMode) {
-              print("read :: $convertToString");
+              debugPrint("read :: $convertToString");
             }
             if(traceMode == TraceMode.traceOff){
               sentAndReceive.add("hardwareToApp = > ${convertToString}");
@@ -565,7 +572,7 @@ class BleProvider extends ChangeNotifier {
                 wifiPassword.text = nodeDataFromHw['WIFIPASS'];
               }
               if (kDebugMode) {
-                print("nodeDataFromHw : $nodeDataFromHw");
+                debugPrint("nodeDataFromHw : $nodeDataFromHw");
               }
               notifyListeners();
             }else if(traceMode == TraceMode.traceOn){
@@ -585,7 +592,7 @@ class BleProvider extends ChangeNotifier {
           });
     } else {
       if (kDebugMode) {
-        print('receiving characteristic is null');
+        debugPrint('receiving characteristic is null');
       }
     }
   }
@@ -599,7 +606,7 @@ class BleProvider extends ChangeNotifier {
       }
       await Future.delayed(const Duration(seconds: 1));
       if (kDebugMode) {
-        print("waiting for boot pass ${second+1}");
+        debugPrint("waiting for boot pass ${second+1}");
       }
       if(second == (totalTimeOut - 1)){
         fileMode = FileMode.bootFail;
@@ -618,8 +625,8 @@ class BleProvider extends ChangeNotifier {
     //   }
     //   await Future.delayed(const Duration(seconds: 2));
     //   requestingMac();
-    //   print("userShouldWaitForBootModeToApp seconds : ${waitLoop + 1}");
-    //   print("nodeDataFromHw : ${nodeDataFromHw}");
+    //   debugPrint("userShouldWaitForBootModeToApp seconds : ${waitLoop + 1}");
+    //   debugPrint("nodeDataFromHw : ${nodeDataFromHw}");
     // }
   }
 
@@ -633,8 +640,8 @@ class BleProvider extends ChangeNotifier {
       } else {
         // Snackbar.show(ABC.c, prettyException("Connect Error:", e), success: false);
         if (kDebugMode) {
-          print(e);
-          print("backtrace: $backtrace");
+          debugPrint(e.toString());
+          debugPrint("backtrace: $backtrace");
         }
 
       }
@@ -648,8 +655,8 @@ class BleProvider extends ChangeNotifier {
     } catch (e, backtrace) {
       // Snackbar.show(ABC.c, prettyException("Cancel Error:", e), success: false);
       if (kDebugMode) {
-        print("$e");
-        print("backtrace: $backtrace");
+        debugPrint("$e");
+        debugPrint("backtrace: $backtrace");
       }
 
     }
@@ -665,7 +672,7 @@ class BleProvider extends ChangeNotifier {
     } catch (e, backtrace) {
       // Snackbar.show(ABC.c, prettyException("Disconnect Error:", e), success: false);
       if (kDebugMode) {
-        print("$e backtrace: $backtrace");
+        debugPrint("$e backtrace: $backtrace");
       }
     }
   }
@@ -677,8 +684,8 @@ class BleProvider extends ChangeNotifier {
     } catch (e, backtrace) {
       // Snackbar.show(ABC.c, prettyException("Change Mtu Error:", e), success: false);
       if (kDebugMode) {
-        print(e);
-        print("backtrace: $backtrace");
+        debugPrint(e.toString());
+        debugPrint("backtrace: $backtrace");
       }
 
     }
@@ -719,11 +726,11 @@ class BleProvider extends ChangeNotifier {
         fileMode = FileMode.connected;
         notifyListeners();
         if (kDebugMode) {
-          print("nodeDataFromServer['pathSetting'] :: ${nodeDataFromServer['pathSetting']}");
+          debugPrint("nodeDataFromServer['pathSetting'] :: ${nodeDataFromServer['pathSetting']}");
         }
         String pathToFindOutFile = nodeDataFromServer['pathSetting']['downloadDirectory'];
         if (kDebugMode) {
-          print("pathToFindOutFile : $pathToFindOutFile");
+          debugPrint("pathToFindOutFile : $pathToFindOutFile");
         }
         List<SftpName> listOfFile = await sftpService.listFilesInPath(pathToFindOutFile);
         for(var file in listOfFile){
@@ -757,7 +764,7 @@ class BleProvider extends ChangeNotifier {
     }catch(e, backTrace){
       fileMode = FileMode.errorOnWhileGetFileName;
       if (kDebugMode) {
-        print('Error on getting File Name :: ${e}');
+        debugPrint('Error on getting File Name :: ${e}');
       }
       rethrow;
     }
@@ -833,8 +840,8 @@ class BleProvider extends ChangeNotifier {
         }
         currentLine += 8;
         if (kDebugMode) {
-          print("line ==================== $line");
-          print("currentLine ==================== $currentLine");
+          debugPrint("line ==================== $line");
+          debugPrint("currentLine ==================== $currentLine");
         }
 
         notifyListeners();
@@ -842,7 +849,7 @@ class BleProvider extends ChangeNotifier {
       sendCalculatedCrc(lengthOfFile: listOfLine.length);
     } catch (e) {
       if (kDebugMode) {
-        print('overAll Error => ${e.toString()}');
+        debugPrint('overAll Error => ${e.toString()}');
       }
       Snackbar.show(ABC.c, prettyException("Write Error:", e), success: false);
     }
@@ -859,7 +866,7 @@ class BleProvider extends ChangeNotifier {
     File file = File(filePath);
     String fileContent = await file.readAsString();
     if (kDebugMode) {
-      print('noOfLine   => ${fileContent.split('\n').length}');
+      debugPrint('noOfLine   => ${fileContent.split('\n').length}');
     }
     totalNoOfLines = 0;
     currentLine = 0;
@@ -875,8 +882,8 @@ class BleProvider extends ChangeNotifier {
     try {
       await Future.delayed(Duration(seconds: 1));
       if (kDebugMode) {
-        print('addingResult === > ${addingResult}');
-        print('result is : ${addingResult.toRadixString(16).toUpperCase()}');
+        debugPrint('addingResult === > ${addingResult}');
+        debugPrint('result is : ${addingResult.toRadixString(16).toUpperCase()}');
       }
 
 
@@ -889,7 +896,7 @@ class BleProvider extends ChangeNotifier {
         // Using sublist to get the last 8 elements
         // resultList = resultList.sublist(resultList.length - 8);
         // Now `resultList` contains only the last 8 elements
-        // print(resultList); // Output: [3, 4, 5, 6, 7, 8, 9, 10]
+        // debugPrint(resultList); // Output: [3, 4, 5, 6, 7, 8, 9, 10]
         // .................................................................
         resultList = resultList.sublist(resultList.length - 8);
       } else {
@@ -915,7 +922,7 @@ class BleProvider extends ChangeNotifier {
       }
       int fileSize = ((lengthOfFile) * 16).toInt();
       if (kDebugMode) {
-        print('fileSize => ${fileSize}');
+        debugPrint('fileSize => ${fileSize}');
       }
       String fileSizeString = fileSize.toRadixString(16).toUpperCase();
       var fileSizeStringList = fileSizeString.split('');
@@ -926,7 +933,7 @@ class BleProvider extends ChangeNotifier {
         // Using sublist to get the last 8 elements
         // fileSizeStringList = fileSizeStringList.sublist(fileSizeStringList.length - 8);
         // Now `fileSizeStringList` contains only the last 8 elements
-        // print(fileSizeStringList); // Output: [3, 4, 5, 6, 7, 8, 9, 10]
+        // debugPrint(fileSizeStringList); // Output: [3, 4, 5, 6, 7, 8, 9, 10]
         // .................................................................
         fileSizeStringList =
             fileSizeStringList.sublist(fileSizeStringList.length - 8);
@@ -937,7 +944,7 @@ class BleProvider extends ChangeNotifier {
         }
       }
       if (kDebugMode) {
-        print('fileSizeStringList => ${fileSizeStringList}');
+        debugPrint('fileSizeStringList => ${fileSizeStringList}');
       }
       List<int> crcFormatFileSizeStringList = [];
       for (var cfsf = 0; cfsf < fileSizeStringList.length; cfsf += 2) {
@@ -953,14 +960,14 @@ class BleProvider extends ChangeNotifier {
       ];
       await Future.delayed(const Duration(milliseconds: 100));
       if (kDebugMode) {
-        print("finalOutPutOfCrcAndFileSize ==> $finalOutPutOfCrcAndFileSize");
+        debugPrint("finalOutPutOfCrcAndFileSize ==> $finalOutPutOfCrcAndFileSize");
       }
       await sendToHardware?.write(finalOutPutOfCrcAndFileSize,
           withoutResponse:
           sendToHardware!.properties.writeWithoutResponse);
       var beforeConversion = 'before conversion :: $crcNameStr$addingResult$fileLengthStr$fileSize';
       if (kDebugMode) {
-        print("beforeConversion => $beforeConversion");
+        debugPrint("beforeConversion => $beforeConversion");
       }
       sentAndReceive.add(beforeConversion);
       for (var crc in finalOutPutOfCrcAndFileSize) {
@@ -971,7 +978,7 @@ class BleProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       if (kDebugMode) {
-        print('Error on crc & others => ${e.toString()}');
+        debugPrint('Error on crc & others => ${e.toString()}');
       }
     }
 
@@ -993,7 +1000,7 @@ class BleProvider extends ChangeNotifier {
     int crcDelay = 8;
     for(var i = 0; i < crcDelay;i++){
       if (kDebugMode) {
-        print("waiting for crc command :: ${i+1}");
+        debugPrint("waiting for crc command :: ${i+1}");
       }
       await Future.delayed(const Duration(seconds: 1));
       if(fileMode == FileMode.crcPass || fileMode == FileMode.crcFail || fileMode == FileMode.firmwareUpdating){
@@ -1043,10 +1050,10 @@ class BleProvider extends ChangeNotifier {
     }
 
     if (kDebugMode) {
-      print('listOfBytes : $listOfBytes');
-      print('sumOfAscii : $sumOfAscii');
-      print('crc : ${sumOfAscii % 256}');
-      print('payload : $payload');
+      debugPrint('listOfBytes : $listOfBytes');
+      debugPrint('sumOfAscii : $sumOfAscii');
+      debugPrint('crc : ${sumOfAscii % 256}');
+      debugPrint('payload : $payload');
     }
 
     await sendToHardware?.write(listOfBytes,
