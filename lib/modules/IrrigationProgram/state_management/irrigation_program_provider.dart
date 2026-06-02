@@ -65,7 +65,9 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
   List<DeviceObjectModel>? get mainValves => _mainValves;
 
   List<DeviceObjectModel>? _selectedObjects;
+  List<Map<String, dynamic>> _selectedControllers = [];
   List<DeviceObjectModel>? get selectedObjects=> _selectedObjects;
+  List<Map<String, dynamic>> get selectedControllers=> _selectedControllers;
   List<Map<String, dynamic>> irrigationLineFromConfigMaker = [];
   int selectedPumpLocation = 0;
 
@@ -2513,7 +2515,10 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       print("selected objects :: ${jsonData['data']['selection']['selected']}");
       _additionalData = null;
       _selectedObjects = [];
-
+      // _selectedControllers = [];
+      // if(jsonData['data']['selection']['nodeSelection'] != null){
+      //   _selectedControllers = jsonData['data']['selection']['nodeSelection'];
+      // }
       if (jsonData['data']['selection']['selected'] != null) {
         _selectedObjects = (jsonData['data']['selection']['selected'] as List)
             .map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>))
@@ -3135,14 +3140,20 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         .where((agitator) => !(selectedAgitators ?? []).contains(agitator))
         .toList().join(',')}");
     */
+    print("additionalData!.nodeSelection : ${additionalData!.nodeSelection}");
     return {
       "2500" : {
         "2501" : "${hwPayloadForWF(serialNumber, programType)};",
         "2502": "${
             {
               "S_No": '$serialNumber',/*S_No*/
-              "ProgramType": '${programType == "Irrigation Program" ? 1 : programType.contains('Aerator') ? 4 : 2}',/*ProgramType*/
-              "ProgramCategory": '${programType == "Irrigation Program"
+              "ProgramType": AppConstants.omsGemList.contains(modelId)
+                  ?
+              5 :
+              '${programType == "Irrigation Program" ? 1 : programType.contains('Aerator') ? 4 : 2}',/*ProgramType*/
+              "ProgramCategory": AppConstants.omsGemList.contains(modelId)
+                  ? additionalData!.nodeSelection.map((e) => e['serialNo']).join('_') :
+              '${programType == "Irrigation Program"
                   ? selectedObjects!.any((element) => element.objectId == 5)
                   ? sampleIrrigationLine!.where((line) => selectedObjects!
                   .any((element) => line.irrigationPump != null && line.irrigationPump!.any((pump) => element.sNo == pump.sNo)))
@@ -3161,11 +3172,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   : _irrigationLine?.sequence.map((e) {
                 List valveSerialNumbers = e['valve'].map((valve) => valve['sNo']).toSet().toList();
                 return valveSerialNumbers.join('_');
-              }).toList().join("+")}',/*ProgramCategory*/
-              /*"Sequence": '${_irrigationLine?.sequence.map((e) {
-                List valveSerialNumbers = e['valve'].map((valve) => valve['sNo']).toList();
-                return valveSerialNumbers.join('_');
-              }).toList().join("+")}',*//*Sequence*/
+              }).toList().join("+")}', /*ProgramCategory*/
               "Sequence": '${_irrigationLine?.sequence.map((e) => e['sNo']).toList().join("_")}',/*Sequence*/
               "PumpStationMode": '${isPumpStationMode ? 1 : 0}',/*PumpStationMode*/
               "Pump": selectedObjects!.where((pump) => pump.objectId == 5).map((e) => e.sNo).toList().join('_'),/*Pump*/
@@ -3307,7 +3314,10 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   : 0
                   : 0}',/*ConditionBasedProgram*/
               "Conditions": conditionList.map((value) => value ?? '0').toList().join("_"),/*Conditions*/
-              "AlarmOnOff": newAlarmList!.alarmList.map((e) => e.value == true ? 1 : 0).toList().join('_'),/*AlarmOnOff*/
+              "AlarmOnOff": AppConstants.omsGemList.contains(modelId)
+                  ?
+              '${newAlarmList!.alarmList[0].sNo}:${newAlarmList!.alarmList[0].value ? 1 : 0}:${newAlarmList!.alarmList[2].sNo}:${newAlarmList!.alarmList[2].value ? 1 : 0}'
+                  : newAlarmList!.alarmList.map((e) => e.value == true ? 1 : 0).toList().join('_'),
               "PumpChangeOverFlag": '${isChangeOverMode ? 1 : 0}',/*PumpChangeOverFlag*/
               "HeadUnit": '${programType == "Irrigation Program"
                   ? sampleIrrigationLine!.where((line) => selectedObjects!

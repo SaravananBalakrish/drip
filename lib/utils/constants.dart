@@ -758,6 +758,8 @@ class AppConstants {
         return 'Sensor-based conditions such as moisture, pressure, time-based triggers, and program ON/OFF logic.';
       case 'Valve Group':
         return 'Group valves under a controller for simplified scheduling, monitoring, and centralized activity logs.';
+      case 'Calibration':
+        return 'Calibrate the available sensor.';
       case 'Pump Condition':
         return 'Pump-based conditions such as program ON/OFF logic.';
       case 'Controller Log':
@@ -913,6 +915,8 @@ class AppConstants {
   static List<int> shine4V = [52, 53];
   static List<int> elite10V = [54, 55];
   static List<int> ecoGemFlowControlValveModel = [89, 90];
+  static List<int> omsGemList = [91];
+  static List<int> omsRtuList = [92];
   static List<int> ecoGemModelList = [56, 57, 58, 59, 60, 61, 62, 63, ...ecoGemFlowControlValveModel];
   static List<int> ecoGemPlusModelList = [60, 61, 62, 63];
   static List<int> ecoGemAndPlusModelList = [...ecoGemModelList, ...ecoGemPlusModelList];

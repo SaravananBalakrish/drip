@@ -10,6 +10,8 @@ import '../../../utils/snack_bar.dart';
 import '../set_device_areator_location.dart';
 import 'SetSelectAreatorLocation.dart';
 import 'SetSelectValveOroLocation.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+
 import 'map_oro.dart';
 
 
@@ -56,7 +58,7 @@ class _MapConnectionObjectState extends State<MapConnectionObject> {
       });
 
       if (response.statusCode == 200) {
-        print(response.body);
+        AppLog.log(response.body);
         final jsonData = jsonDecode(response.body);
         provider.updateMapData(jsonData);
       }

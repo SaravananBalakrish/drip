@@ -265,7 +265,10 @@ class ProgramIrrigationLine with DiagnosticableTreeMixin {
       centralFertilization: _parseObject(json['centralFertilization']),
       localFertilization: _parseObject(json['localFertilization']),
       valve: _parseList(json['valve']),
-      mainValve: _parseList(json['mainValve']),
+      mainValve: [
+        ..._parseList(json['mainValve'])!,
+        if(json['flowControlValve'] != null)
+          ..._parseList(json['flowControlValve'])!],
       fan: _parseList(json['fan']),
       fogger: _parseList(json['fogger']),
       pesticides: _parseList(json['pesticides']),

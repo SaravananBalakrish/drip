@@ -4,9 +4,10 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
 
 Future<LatLng?> getLatLngFromInput(String input) async {
-  print("getLatLngFromInput call");
+  AppLog.log("getLatLngFromInput call");
   try {
     input = input.trim();
     if (input.isEmpty) return null;
@@ -63,13 +64,13 @@ Future<LatLng?> getLatLngFromInput(String input) async {
     // 3️⃣ Area name → Google Geocoding API
     // final apiKey = dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
     final apiKey = 'AIzaSyCVcK18rhs06E0rP7QAyOY8J_35CbZpBlw';
-    print("apiKey $apiKey");
+    AppLog.log("apiKey $apiKey");
     final url =
         "https://maps.googleapis.com/maps/api/geocode/json?address=$input&key=$apiKey";
 
     final response = await http.get(Uri.parse(url));
     final data = jsonDecode(response.body);
-
+    AppLog.log('data:$data');
     if (data["status"] == "OK") {
       final location = data["results"][0]["geometry"]["location"];
       return LatLng(location["lat"], location["lng"]);
@@ -78,7 +79,7 @@ Future<LatLng?> getLatLngFromInput(String input) async {
     return null;
 
   } catch (e) {
-    print("Location parse error: $e");
+    AppLog.log("Location parse error: $e");
     return null;
   }
 }

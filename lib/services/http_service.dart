@@ -3,13 +3,15 @@ import 'dart:convert';
 import '../utils/constants.dart';
 import '../utils/shared_preferences_helper.dart';
 import 'api_service.dart';
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+
 
 class HttpService implements ApiService {
   @override
   Future<http.Response> getRequest(String endpoint, {String? type, Map<String, String>? queryParams}) async {
     final token = await PreferenceHelper.getToken();
     final uri = Uri.parse('${AppConstants.apiUrl}$endpoint').replace(queryParameters: queryParams);
-    print('uri:$uri');
+    AppLog.log('uri:$uri');
     final headers = {
       'Content-Type': 'application/json',
       'auth_token': token?.isNotEmpty == true ? token! : 'default_token',
@@ -23,8 +25,8 @@ class HttpService implements ApiService {
   @override
   Future<http.Response> postRequest(String endpoint, Map<String, dynamic> bodyData) async {
 
-    print('bodyData : $bodyData');
-    print('${AppConstants.apiUrl}$endpoint');
+    AppLog.log('bodyData : $bodyData');
+    AppLog.log('${AppConstants.apiUrl}$endpoint');
     final token = await PreferenceHelper.getToken();
 
     final headers = {

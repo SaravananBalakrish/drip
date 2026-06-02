@@ -4,6 +4,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import '../service/cropadvisory_model.dart';
 import 'package:intl/intl.dart';
 import 'irrigation_fertigation_screen.dart';
+import 'crop_weatherScreen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String? temperature;
@@ -25,105 +26,124 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   final CropAdvisoryModel _model = CropAdvisoryModel.instance;
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FBFF),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        toolbarHeight: 70,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
-          child: IconButton(
-            icon: const Icon(Icons.menu, color: Colors.black, size: 28),
-            onPressed: () {},
-          ),
-        ),
-        title: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(25),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha:0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 2),
-              )
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.location_on_outlined, size: 18, color: Colors.grey),
-              const SizedBox(width: 6),
-              Text(
-                _model.address ?? 'Mettupalayam, Coimbatore',
-                style: GoogleFonts.poppins(
-                  fontSize: 13,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w400,
+      appBar: _selectedIndex == 0
+          ? AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              toolbarHeight: 70,
+              leading: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: IconButton(
+                  icon: const Icon(Icons.menu, color: Colors.black, size: 28),
+                  onPressed: () {},
                 ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
               ),
-            ],
-          ),
-        ),
-        centerTitle: true,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: IconButton(
-              icon: const Icon(Icons.notifications_none, color: Colors.black, size: 28),
-              onPressed: () {},
-            ),
-          ),
+              title: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    )
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.location_on_outlined, size: 18, color: Colors.grey),
+                    const SizedBox(width: 6),
+                    Text(
+                      _model.address ?? 'Mettupalayam, Coimbatore',
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        color: Colors.black87,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+              centerTitle: true,
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: IconButton(
+                    icon: const Icon(Icons.notifications_none, color: Colors.black, size: 28),
+                    onPressed: () {},
+                  ),
+                ),
+              ],
+            )
+          : null,
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          _buildHomeBody(),
+           CropWeatherscreen(),
+          const Center(child: Text('Irrigation')),
+          const Center(child: Text('Disease')),
+          const Center(child: Text('Report')),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
-              _buildHeader(),
-              const SizedBox(height: 24),
-              _buildCropHealthCard(),
-              const SizedBox(height: 24),
-              _buildWeatherReport(),
-              const SizedBox(height: 24),
-              _buildWaterSourceStatus(),
-              const SizedBox(height: 100),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10.0),
-        child: SizedBox(
-          height: 85,
-          width: 85,
-          child: FloatingActionButton(
-            onPressed: () {},
-            backgroundColor: const Color(0xFF1B7F8A),
-            elevation: 4,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(45),
-                topRight: Radius.circular(45),
-                bottomLeft: Radius.circular(45),
-                bottomRight: Radius.circular(2),
+      floatingActionButton: _selectedIndex == 0
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 10.0),
+              child: SizedBox(
+                height: 85,
+                width: 85,
+                child: FloatingActionButton(
+                  onPressed: () {},
+                  backgroundColor: const Color(0xFF1B7F8A),
+                  elevation: 4,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(45),
+                      topRight: Radius.circular(45),
+                      bottomLeft: Radius.circular(45),
+                      bottomRight: Radius.circular(2),
+                    ),
+                  ),
+                  child: Image.asset(
+                    'assets/Images/CropAdvisory/chatbot_icon.png',
+                    fit: BoxFit.contain,
+                  ),
+                ),
               ),
-            ),
-            child: Image.asset(
-              'assets/Images/CropAdvisory/chatbot_icon.png',
-              fit: BoxFit.contain,
-            ),
-          ),
+            )
+          : null,
+      // bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  Widget _buildHomeBody() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 10),
+            _buildHeader(),
+            const SizedBox(height: 24),
+            _buildCropHealthCard(),
+            const SizedBox(height: 24),
+            _buildWeatherReport(),
+            const SizedBox(height: 24),
+            _buildWaterSourceStatus(),
+            const SizedBox(height: 100),
+          ],
         ),
       ),
     );
@@ -162,6 +182,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 const Icon(Icons.calendar_today_outlined, size: 14, color: Colors.black54),
                 const SizedBox(width: 6),
+                Text(
+                  DateFormat('dd.MM.yyyy').format(DateTime.now()),
+                  style: GoogleFonts.poppins(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
             Text(
               DateFormat('DD/MM/YYYY').format(DateTime.now()),
               style: GoogleFonts.poppins(
@@ -220,7 +248,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.04),
+            color: Colors.black.withValues(alpha: 0.04),
             blurRadius: 15,
             offset: const Offset(0, 5),
           ),
@@ -331,6 +359,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
+                      setState(() {
+                        _selectedIndex = 2; // Irrigation tab index
+                      });
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => const IrrigationFertigationScreen()),
@@ -389,19 +420,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Weather Report',
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _selectedIndex = 1; // Weather tab index
+            });
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Weather Report',
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
               ),
-            ),
-            const Icon(Icons.arrow_forward, size: 22, color: Colors.black87),
-          ],
+              const Icon(Icons.arrow_forward, size: 22, color: Colors.black87),
+            ],
+          ),
         ),
         const SizedBox(height: 16),
         Row(
@@ -447,8 +485,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Icon(icon, color: Colors.black87, size: 22),
-                if (showTrend)
-                  const Icon(Icons.north, color: Color(0xFF1B7F8A), size: 18),
+                if (showTrend) const Icon(Icons.north, color: Color(0xFF1B7F8A), size: 18),
               ],
             ),
             const SizedBox(height: 12),
@@ -570,7 +607,100 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
-}
+
+  Widget _buildBottomNavigationBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.1),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.white,
+        selectedItemColor: const Color(0xFF1B7F8A),
+        unselectedItemColor: Colors.grey,
+        showUnselectedLabels: true,
+        currentIndex: _selectedIndex,
+        selectedLabelStyle: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500),
+        unselectedLabelStyle: GoogleFonts.poppins(fontSize: 12),
+        elevation: 0,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Image.asset(
+                'assets/Images/CropAdvisory/home_icon_active.png',
+                width: 24,
+                height: 24,
+                color: _selectedIndex == 0 ? const Color(0xFF1B7F8A) : Colors.grey,
+              ),
+            ),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Image.asset(
+                'assets/Images/CropAdvisory/weather.png',
+                width: 24,
+                height: 24,
+                color: _selectedIndex == 1 ? const Color(0xFF1B7F8A) : Colors.grey,
+              ),
+            ),
+            label: 'Weather',
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Image.asset(
+                'assets/Images/CropAdvisory/irrigation.png',
+                width: 24,
+                height: 24,
+                color: _selectedIndex == 2 ? const Color(0xFF1B7F8A) : Colors.grey,
+              ),
+            ),
+            label: 'Irrigation',
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Image.asset(
+                'assets/Images/CropAdvisory/disease.png',
+                width: 24,
+                height: 24,
+                color: _selectedIndex == 3 ? const Color(0xFF1B7F8A) : Colors.grey,
+              ),
+            ),
+            label: 'Disease',
+          ),
+          BottomNavigationBarItem(
+            icon: Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Image.asset(
+                'assets/Images/CropAdvisory/report.png',
+                width: 24,
+                height: 24,
+                color: _selectedIndex == 4 ? const Color(0xFF1B7F8A) : Colors.grey,
+              ),
+            ),
+            label: 'Report',
+          ),
+        ],
+      ),
+    );
+  }
+ }
 
 class _ChartData {
   _ChartData(this.x, this.y);

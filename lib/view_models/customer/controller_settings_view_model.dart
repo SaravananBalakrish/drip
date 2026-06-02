@@ -30,7 +30,7 @@ class ControllerSettingsViewModel extends ChangeNotifier {
     {'title': 'Dealer Definition', 'icon': Icons.person_outline},
     {'title': 'View Settings', 'icon': Icons.remove_red_eye_outlined},
     {'title': 'Geography', 'icon': Icons.map_outlined},
-    {'title': 'Geography Area', 'icon': Icons.map_sharp},
+    // {'title': 'Geography Area', 'icon': Icons.map_sharp},
     {'title': 'Pump Condition', 'icon': Icons.library_books},
     {'title': 'Controller Log', 'icon': Icons.home_repair_service_outlined},
     {'title': 'Crop Advisory', 'icon': Icons.agriculture_outlined},
@@ -39,9 +39,7 @@ class ControllerSettingsViewModel extends ChangeNotifier {
   ControllerSettingsViewModel(this.repository);
 
   Future<void> getSettingsMenu(int customerId, int controllerId, int modelId) async {
-
     final isGem = [...AppConstants.gemModelList].contains(modelId);
-
     setLoading(true);
     try {
       Map<String, Object> body = {
@@ -52,7 +50,6 @@ class ControllerSettingsViewModel extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
-
         if (jsonData["code"] == 200 && jsonData["data"] is List) {
           final List<dynamic> dataList = jsonData["data"];
 
@@ -60,7 +57,7 @@ class ControllerSettingsViewModel extends ChangeNotifier {
               .map((e) => e["parameter"]?.toString() ?? '')
               .toSet();
 
-          if(![...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(modelId)){
+          if(![...AppConstants.gemModelList, ...AppConstants.ecoGemModelList, ...AppConstants.omsGemList].contains(modelId)){
             final allowedTitles = {
               'General',
               'Preference',
@@ -71,12 +68,13 @@ class ControllerSettingsViewModel extends ChangeNotifier {
               return allowedTitles.contains(title);
             }).toList();
           }
-          else if([...AppConstants.ecoGemModelList].contains(modelId)) {
+          else if([...AppConstants.ecoGemModelList, ...AppConstants.omsGemList].contains(modelId)) {
             final allowedTitles = {
               'General',
               'Preference',
               'Name',
               'Constant',
+              'Calibration',
               'Valve Group',
               'Dealer Definition',
               'Pump Condition',
@@ -93,7 +91,7 @@ class ControllerSettingsViewModel extends ChangeNotifier {
                     || setting['title'] == 'Dealer Definition'
                     || setting['title'] == 'Notification'
                     || setting['title'] == 'Geography'
-                    || setting['title'] == 'Geography Area'
+                    // || setting['title'] == 'Geography Area'
                     || setting['title'] == 'Pump Condition'
                     || setting['title'] == 'Controller Log'
                     || setting['title'] == 'Crop Advisory'
