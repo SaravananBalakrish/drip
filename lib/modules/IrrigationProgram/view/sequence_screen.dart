@@ -374,9 +374,8 @@ class _SequenceScreenState extends State<SequenceScreen> {
     final sequence = _provider.irrigationLine!.sequence;
     final indexToShow = _getIndexToShow;
 
-    return ButtonBar(
+    return OverflowBar(
       alignment: MainAxisAlignment.end,
-      layoutBehavior: ButtonBarLayoutBehavior.constrained,
       children: [
         _buildAddNextButton(context, sequence, indexToShow),
         _buildDeleteButton(context, indexToShow),
