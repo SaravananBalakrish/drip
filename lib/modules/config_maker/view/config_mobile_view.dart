@@ -126,7 +126,7 @@ ConfigMakerTabs updateConfigMakerTabs({
     bool valveAvailable = valveObject.count != '0';
     bool dosingAvailable = dosingObject.count != '0';
     bool channelAvailable = channelObject.count != '0';
-    if(!pumpAvailable && !AppConstants.ecoGemFlowControlValveModel.contains(configPvd.masterData['modelId'])){
+    if(!pumpAvailable && ![...AppConstants.ecoGemFlowControlValveModel, ...AppConstants.omsGemList].contains(configPvd.masterData['modelId'])){
       update = false;
       simpleDialogBox(context: context, title: 'Alert', message: 'At least one ${!pumpAvailable ? pumpObject.objectName : ''} must be provided in the product limit.');
       List<int> notice = [];

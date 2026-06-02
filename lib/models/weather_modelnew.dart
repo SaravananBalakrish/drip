@@ -1,3 +1,5 @@
+import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+
 class WeatherStation {
   final int deviceId; // Device ID (S_No for the weather station)
   final List<Sensor> sensors;
@@ -8,9 +10,9 @@ class WeatherStation {
   });
 
   factory WeatherStation.fromString(String data) {
-    print('data: $data');
+    AppLog.log('data: $data');
     final parts = data.split(',');
-    print('parts: $parts');
+    AppLog.log('parts: $parts');
     final deviceId = int.parse(parts[0]); // First index is device ID
     final sensors = <Sensor>[];
 
@@ -27,7 +29,7 @@ class WeatherStation {
           errorStatus: errorStatus,
         ));
       } catch (e) {
-        print('Error parsing sensor at index $i: $e');
+        AppLog.log('Error parsing sensor at index $i: $e');
         break;
       }
     }

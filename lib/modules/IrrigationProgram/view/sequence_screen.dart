@@ -586,10 +586,11 @@ class _SequenceScreenState extends State<SequenceScreen> {
         sections.addAll(sampleIrrigationLine.asMap().entries.map((entry) {
           final index = entry.key;
           final line = entry.value;
+
           return _buildIrrigationSection(
             context: context,
             title: line.irrigationLine.name ?? 'Unnamed Line',
-            items: line.valve ?? [],
+            items: AppConstants.omsGemList.contains(widget.modelId)? line.valve!.take(4).toList() :  line.valve ?? [],
             lineIndex: index,
           );
         }));

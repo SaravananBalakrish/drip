@@ -216,9 +216,11 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
     var normalCriticalPayload = AppConstants.ecoGemModelList.contains(widget.userData['modelId']) ? widget.constPvd.getNormalCriticalAlarmForEcoGem() : widget.constPvd.getNormalCriticalAlarm();
     var filterPayload = widget.constPvd.getFilterSitePayload();
     bool isGem = AppConstants.gemModelList.contains(widget.constPvd.userData['modelId']);
+    bool isNova = AppConstants.ecoGemModelList.contains(widget.constPvd.userData['modelId']);
+    bool isOms = AppConstants.omsGemList.contains(widget.constPvd.userData['modelId']);
     var hardwarePayload = {
       "300" : {
-        "301" : generalPayload,
+        "301" : isOms ? '' : generalPayload,
         if(isGem)
           "302" : mainValvePayload,
         "303" : valvePayload,

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../Constants/data_convertion.dart';
+import '../cropAdvisory/service/cropadvisory_model.dart';
 import '../models/Weather_model.dart';
 import '../Screens/Map/googlemap_model.dart';
 import '../models/customer/fertilizer_site_live_model.dart';
@@ -113,19 +114,19 @@ class MqttPayloadProvider with ChangeNotifier {
    List<String> _novaVoltage =[];
 
 
-   final Map<String, String> _pumpOnOffStatus = {};
-   final Map<String, String> _pumpOtherDetail = {};
-   final Map<String, String> _filterOnOffStatus = {};
-   final Map<String, String> _filterOtherDetail = {};
-   final Map<String, String> _channelOnOffStatus = {};
-   final Map<String, String> _channelOtherDetail = {};
-   final Map<String, String> _valveOnOffStatus = {};
-   final Map<String, String> _lightOnOffStatus = {};
-   final Map<String, String> _fanOnOffStatus = {};
-   final Map<String, String> _gateOnOffStatus = {};
-   final Map<String, String> _sensorValue = {};
-   final Map<String, String> _boosterPumpOnOffStatus = {};
-   final Map<String, String> _agitatorOnOffStatus = {};
+   final Map<String, String> _pumpOnOffStatusMap = {};
+   final Map<String, String> _pumpOtherDetailMap = {};
+   final Map<String, String> _filterOnOffStatusMap = {};
+   final Map<String, String> _filterOtherDetailMap = {};
+   final Map<String, String> _channelOnOffStatusMap = {};
+   final Map<String, String> _channelOtherDetailMap = {};
+   final Map<String, String> _valveOnOffStatusMap = {};
+   final Map<String, String> _lightOnOffStatusMap = {};
+   final Map<String, String> _fanOnOffStatusMap = {};
+   final Map<String, String> _gateOnOffStatusMap = {};
+   final Map<String, String> _sensorValueMap = {};
+   final Map<String, String> _boosterPumpOnOffStatusMap = {};
+   final Map<String, String> _agitatorOnOffStatusMap = {};
 
    final Map<String, FertilizerSiteLiveModel> _fertilizerSiteMap = {};
    final Map<String, FertilizerChannelLiveModel> _fertilizerChannelMap = {};
@@ -151,6 +152,9 @@ class MqttPayloadProvider with ChangeNotifier {
    bool isTraceLoading = false;
    int traceLogSize = 0;
    int totalTraceLogSize = 0;
+
+   CropAdvisoryModel cropAdvisoryModelInstance = CropAdvisoryModel();
+
 
    //for blue repository classic
    ClassicBluetoothDeviceModel? _connectedDeviceClassic;
@@ -204,7 +208,7 @@ class MqttPayloadProvider with ChangeNotifier {
      for (var device in _pairedDevicesClassic) {
        if (device.device.address == address) {
          if (status >= 0 && status < BlueConnectionState.values.length) {
-           device.connectionState = BlueConnectionState.values[status];
+           device.connectionState= BlueConnectionState.values[status];
            notifyListeners();
          } else {
            debugPrint('Invalid status int: $status');
@@ -222,7 +226,7 @@ class MqttPayloadProvider with ChangeNotifier {
            if (device.connectionState != newState) {
              device.connectionState = newState;
              debugPrint("🔵 BLE Device $deviceId state changed to: $newState");
-             notifyListeners();
+             notifyListeners(); // CRITICAL: This triggers UI update
            }
          } else {
            debugPrint('Invalid status int: $status');
@@ -254,6 +258,7 @@ class MqttPayloadProvider with ChangeNotifier {
      notifyListeners();
    }
 
+
    void updateWifiMessage(String? message) {
      _wifiMessage = message;
      notifyListeners();
@@ -264,46 +269,43 @@ class MqttPayloadProvider with ChangeNotifier {
      notifyListeners();
    }
 
-   void updateMapData(data){
+  void updateMapData(data){
      mapModelInstance = MapConfigModel.fromJson(data);
-     notifyListeners();
-   }
+    notifyListeners();
+  }
 
-   void editSensorLogData(data){
-     sensorLogData = data;
-     notifyListeners();
-   }
+  void editSensorLogData(data){
+    sensorLogData = data;
+    notifyListeners();
+  }
 
-   void editLoading(bool value){
-     loading = value;
-     notifyListeners();
-   }
+  void editLoading(bool value){
+    loading = value;
+    notifyListeners();
+  }
 
-   void editPublishMessage(String message){
-     publishMessage = message;
-     notifyListeners();
-   }
+  void editPublishMessage(String message){
+    publishMessage = message;
+    notifyListeners();
+  }
 
-   void editSubscribeTopic(String topic){
-     subscribeTopic = topic;
-     notifyListeners();
-   }
+  void editSubscribeTopic(String topic){
+    subscribeTopic = topic;
+    notifyListeners();
+  }
 
-   void x(String topic){
-     publishTopic = topic;
-     notifyListeners();
-   }
-
+  void x(String topic){
+    publishTopic = topic;
+    notifyListeners();
+  }
    void setTraceLoading(bool loading) {
      isTraceLoading = loading;
      notifyListeners();
    }
-
-   void setTraceLoadingSize(int size) {
+   void setTraceLoadingsize(int size) {
      traceLogSize = size;
-     notifyListeners();
+      notifyListeners();
    }
-
    void setTotalTraceSize(int size) {
      totalTraceLogSize = size;
      notifyListeners();
@@ -760,6 +762,7 @@ class MqttPayloadProvider with ChangeNotifier {
           // for nova
           _novaVoltage = data['cM']['2404'].split(";");
 
+          notifyListeners();
         }
         else if(data.containsKey('3600') && data['3600'] != null && data['3600'].isNotEmpty){
           schedulePayload = _receivedPayload;
@@ -771,8 +774,7 @@ class MqttPayloadProvider with ChangeNotifier {
           cCList = {...cCList, data['cC']}.toList();
           viewSetting = data;
           if (!viewSettingsList.contains(jsonEncode(data['cM']))) {
-            print("""data["cM"]  : ${data["cM"]}""");
-            viewSettingsList.add(jsonEncode(data["cM"]));
+             viewSettingsList.add(jsonEncode(data["cM"]));
           }
         }
 
@@ -803,7 +805,8 @@ class MqttPayloadProvider with ChangeNotifier {
         }
 
         if(data['cM'] is! List<dynamic> && data['cM'] is! String) {
-          if (data['mC'] != null && data['cM'].containsKey('4201')) {
+          if (data['mC'] != null && data['cM'].containsKey('4201'))
+          {
             if (data['cM']['4201']['PayloadCode'] == '2903') {
               proogressstatus = data['cM']['4201']['Status'];
             }
@@ -821,6 +824,7 @@ class MqttPayloadProvider with ChangeNotifier {
           }
 
           if (cM.containsKey("6602")) {
+
             String msg = cM["6602"];
             if (!uardMessagesSet.contains(msg)) {
               uardLog += "\n$msg";
@@ -843,33 +847,37 @@ class MqttPayloadProvider with ChangeNotifier {
               uard4MessagesSet.add(msg);
             }
           }
+
         }
 
         if(data['mC']=='7400'){
-          String loraVersion = data['cM']['7401'];
-          final parts = loraVersion.split(',');
-          if(parts[0] == '1') {
-            final rawFrequency = int.parse(parts[2]);
-            final frequency = (rawFrequency / 10).toStringAsFixed(1);
-            Loara1verssion = "${parts[1]},$frequency,${parts[3]}";
-          }
-          else {
-            final rawFrequency = int.parse(parts[2]);
-            final frequency = (rawFrequency / 10).toStringAsFixed(1);
-            Loara2verssion = "${parts[1]},$frequency,${parts[3]}";
-          }
-        }
 
-        if (data['mC'] == "7900") {
-          liveDateAndTime = '${data['cD'] ?? "--"} ${data['cT'] ?? "--"}';
+         String loraVersion = data['cM']['7401'];
+         final parts = loraVersion.split(',');
+         if(parts[0] == '1')
+           {
+             final rawFrequency = int.parse(parts[2]);
+             final frequency = (rawFrequency / 10).toStringAsFixed(1);
+
+             Loara1verssion = "${parts[1]},$frequency,${parts[3]}";
+           }
+         else
+           {
+             final rawFrequency = int.parse(parts[2]);
+             final frequency = (rawFrequency / 10).toStringAsFixed(1);
+             Loara2verssion = "${parts[1]},$frequency,${parts[3]}";
+           }
+
         }
 
         if (data["mC"] == "PRGVIEW") {
           _programPreview = data["cM"];
+          notifyListeners();
         }
 
         if (data["mC"] == "SEQVIEW") {
           _sequencePreview = data["cM"];
+          notifyListeners();
         }
       } catch (e, stackTrace) {
         debugPrint('Error parsing JSON: $e');
@@ -914,20 +922,21 @@ class MqttPayloadProvider with ChangeNotifier {
     outputOnOffPayload = message;
   }
 
+
    void updateAllPumpPayloads(List<String> pumpStatusPayload, List<String> pumpOtherPayload) {
      for (final entry in pumpStatusPayload) {
        if (!entry.startsWith('5.')) continue;
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].trim().isEmpty) continue;
        final sNo = parts[0].trim();
-       _pumpOnOffStatus[sNo] = entry;
+       _pumpOnOffStatusMap[sNo] = entry;
      }
 
      for (final entry in pumpOtherPayload) {
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].trim().isEmpty) continue;
        final sNo = parts[0].trim();
-       _pumpOtherDetail[sNo] = entry;
+       _pumpOtherDetailMap[sNo] = entry;
      }
    }
 
@@ -937,14 +946,14 @@ class MqttPayloadProvider with ChangeNotifier {
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].trim().isEmpty) continue;
        final sNo = parts[0].trim();
-       _filterOnOffStatus[sNo] = entry;
+       _filterOnOffStatusMap[sNo] = entry;
      }
 
      for (final entry in filterOtherPayload) {
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].trim().isEmpty) continue;
        final sNo = parts[0].trim();
-       _filterOtherDetail[sNo] = entry;
+       _filterOtherDetailMap[sNo] = entry;
      }
    }
 
@@ -954,14 +963,14 @@ class MqttPayloadProvider with ChangeNotifier {
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].isEmpty) continue;
        final sNo = parts[0];
-       _channelOnOffStatus[sNo] = entry;
+       _channelOnOffStatusMap[sNo] = entry;
      }
 
      for (final entry in channelOtherPayload) {
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].isEmpty) continue;
        final sNo = parts[0];
-       _channelOtherDetail[sNo] = entry;
+       _channelOtherDetailMap[sNo] = entry;
      }
    }
 
@@ -973,7 +982,7 @@ class MqttPayloadProvider with ChangeNotifier {
        if (parts.isEmpty || parts[0].isEmpty) continue;
 
        final sNo = parts[0];
-       _valveOnOffStatus[sNo] = entry;
+       _valveOnOffStatusMap[sNo] = entry;
      }
    }
 
@@ -983,7 +992,7 @@ class MqttPayloadProvider with ChangeNotifier {
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].isEmpty) continue;
        final sNo = parts[0];
-       _gateOnOffStatus[sNo] = entry;
+       _gateOnOffStatusMap[sNo] = entry;
      }
    }
 
@@ -993,7 +1002,7 @@ class MqttPayloadProvider with ChangeNotifier {
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].isEmpty) continue;
        final sNo = parts[0];
-       _lightOnOffStatus[sNo] = entry;
+       _lightOnOffStatusMap[sNo] = entry;
      }
    }
 
@@ -1003,7 +1012,7 @@ class MqttPayloadProvider with ChangeNotifier {
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].isEmpty) continue;
        final sNo = parts[0];
-       _fanOnOffStatus[sNo] = entry;
+       _fanOnOffStatusMap[sNo] = entry;
      }
    }
 
@@ -1012,7 +1021,7 @@ class MqttPayloadProvider with ChangeNotifier {
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].isEmpty) continue;
        final sNo = parts[0];
-       _sensorValue[sNo] = entry;
+       _sensorValueMap[sNo] = entry;
      }
    }
 
@@ -1022,7 +1031,7 @@ class MqttPayloadProvider with ChangeNotifier {
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].isEmpty) continue;
        final sNo = parts[0];
-       _boosterPumpOnOffStatus[sNo] = entry;
+       _boosterPumpOnOffStatusMap[sNo] = entry;
      }
    }
 
@@ -1032,7 +1041,7 @@ class MqttPayloadProvider with ChangeNotifier {
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].isEmpty) continue;
        final sNo = parts[0];
-       _agitatorOnOffStatus[sNo] = entry;
+       _agitatorOnOffStatusMap[sNo] = entry;
      }
    }
 
@@ -1091,19 +1100,19 @@ class MqttPayloadProvider with ChangeNotifier {
    }
 
 
-   String? getPumpOnOffStatus(String sNo) => _pumpOnOffStatus[sNo];
-   String? getPumpOtherData(String sNo) => _pumpOtherDetail[sNo];
-   String? getFilterOnOffStatus(String sNo) => _filterOnOffStatus[sNo];
-   String? getFilterOtherData(String sNo) => _filterOtherDetail[sNo];
-   String? getChannelOnOffStatus(String sNo) => _channelOnOffStatus[sNo];
-   String? getChannelOtherData(String sNo) => _channelOtherDetail[sNo];
-   String? getValveOnOffStatus(String sNo) => _valveOnOffStatus[sNo];
-   String? getLightOnOffStatus(String sNo) => _lightOnOffStatus[sNo];
-   String? getFanOnOffStatus(String sNo) => _fanOnOffStatus[sNo];
-   String? getGateOnOffStatus(String sNo) => _gateOnOffStatus[sNo];
-   String? getSensorUpdatedValve(String sNo) => _sensorValue[sNo];
-   String? getBoosterPumpOnOffStatus(String sNo) => _boosterPumpOnOffStatus[sNo];
-   String? getAgitatorOnOffStatus(String sNo) => _agitatorOnOffStatus[sNo];
+   String? getPumpOnOffStatus(String sNo) => _pumpOnOffStatusMap[sNo];
+   String? getPumpOtherData(String sNo) => _pumpOtherDetailMap[sNo];
+   String? getFilterOnOffStatus(String sNo) => _filterOnOffStatusMap[sNo];
+   String? getFilterOtherData(String sNo) => _filterOtherDetailMap[sNo];
+   String? getChannelOnOffStatus(String sNo) => _channelOnOffStatusMap[sNo];
+   String? getChannelOtherData(String sNo) => _channelOtherDetailMap[sNo];
+   String? getValveOnOffStatus(String sNo) => _valveOnOffStatusMap[sNo];
+   String? getLightOnOffStatus(String sNo) => _lightOnOffStatusMap[sNo];
+   String? getFanOnOffStatus(String sNo) => _fanOnOffStatusMap[sNo];
+   String? getGateOnOffStatus(String sNo) => _gateOnOffStatusMap[sNo];
+   String? getSensorUpdatedValve(String sNo) => _sensorValueMap[sNo];
+   String? getBoosterPumpOnOffStatus(String sNo) => _boosterPumpOnOffStatusMap[sNo];
+   String? getAgitatorOnOffStatus(String sNo) => _agitatorOnOffStatusMap[sNo];
 
    Map<String, FertilizerSiteLiveModel> get fertilizerSiteMap => _fertilizerSiteMap;
    Map<String, FertilizerChannelLiveModel> get fertilizerChannelMap => _fertilizerChannelMap;
@@ -1111,6 +1120,7 @@ class MqttPayloadProvider with ChangeNotifier {
    String? getProgramPreview() => _programPreview;
    String? getSequencePreview() => _sequencePreview;
    List<String> getNovaVoltage() => _novaVoltage;
+
 
   String get receivedDashboardPayload => dashBoardPayload;
   String get receivedSchedulePayload => schedulePayload;

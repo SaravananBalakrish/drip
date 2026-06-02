@@ -95,13 +95,22 @@ class _AlarmScreenState extends State<AlarmScreen> {
               minItemWidth: 350,
               children: [
                 for(var index = 0; index < alarmList.length; index++)
-                  Column(
-                    children: [
-                      _buildAlarmListTile(index),
-                      if(index == alarmList.length - 1)
-                        const SizedBox(height: 80)
-                    ],
-                  ),
+                  if(AppConstants.omsGemList.contains(widget.modelId) && [1, 3].contains(alarmList[index].sNo))
+                    Column(
+                      children: [
+                        _buildAlarmListTile(index),
+                        if(index == alarmList.length - 1)
+                          const SizedBox(height: 80)
+                      ],
+                    )
+                  else if(!AppConstants.omsGemList.contains(widget.modelId))
+                    Column(
+                      children: [
+                        _buildAlarmListTile(index),
+                        if(index == alarmList.length - 1)
+                          const SizedBox(height: 80)
+                      ],
+                    ),
               ],
             ),
           ),
