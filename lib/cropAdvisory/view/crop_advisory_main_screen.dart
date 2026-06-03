@@ -3,6 +3,7 @@ import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'dashboard_screen.dart';
 import 'crop_weatherScreen.dart';
 import 'irrigation_fertigation_screen.dart';
+import 'report_screen.dart';
 
 class CropAdvisoryMainScreen extends StatefulWidget {
   final int initialIndex;
@@ -27,7 +28,7 @@ class _CropAdvisoryMainScreenState extends State<CropAdvisoryMainScreen> {
       const CropWeatherscreen(),
       const IrrigationFertigationScreen(isInsideMain: true),
       const Center(child: Text('Disease Screen (Coming Soon)')),
-      const Center(child: Text('Report Screen (Coming Soon)')),
+      const ReportScreen(),
     ];
   }
 

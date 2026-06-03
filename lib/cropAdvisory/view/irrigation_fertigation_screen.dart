@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../service/cropadvisory_model.dart';
+import 'water_budget_manager_screen.dart';
 
 class IrrigationFertigationScreen extends StatefulWidget {
   final bool isInsideMain;
@@ -20,10 +21,12 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leading: widget.isInsideMain
+            ? null
+            : IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
+              ),
         title: Text(
           'Irrigation And Fertigation',
           style: GoogleFonts.poppins(
@@ -55,7 +58,13 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
               const SizedBox(height: 24),
               _buildIrrigationActionCard(),
               const SizedBox(height: 24),
-              _buildSectionHeader('Water Budget'),
+              _buildSectionHeader('Water Budget', onMoreDetails: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const WaterBudgetManagerScreen()),
+                );
+              }),
               const SizedBox(height: 12),
               _buildWaterBudgetCards(),
               const SizedBox(height: 24),
@@ -325,7 +334,7 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
     );
   }
 
-  Widget _buildSectionHeader(String title) {
+  Widget _buildSectionHeader(String title, {VoidCallback? onMoreDetails}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -338,7 +347,7 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
           ),
         ),
         TextButton.icon(
-          onPressed: () {},
+          onPressed: onMoreDetails,
           icon: Text(
             'More Details',
             style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
