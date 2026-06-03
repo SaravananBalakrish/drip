@@ -220,23 +220,19 @@ class _GlobalAlarmInConstantState extends State<GlobalAlarmInConstant> {
     bool isOms = AppConstants.omsGemList.contains(widget.constPvd.userData['modelId']);
     var hardwarePayload = {
       "300" : {
-        "301" : generalPayload,
+        "301" : isOms ? '' : generalPayload,
         if(isGem)
           "302" : mainValvePayload,
         "303" : valvePayload,
         "304" : waterMeterPayload,
-        if(isGem || isNova)
-          "305" : channelPayload,
+        "305" : channelPayload,
         if(isGem)
           "306" : fertilizerSitePayload,
         if(isGem)
           "307" : levelSensorPayload,
         "308" : normalCriticalPayload,
-        if(isGem || isNova)
-          ...{
-            "309": pumpPayload,
-            "310": filterPayload,
-          }
+        "309" : pumpPayload,
+        "310" : filterPayload,
       }
     };
     return hardwarePayload;

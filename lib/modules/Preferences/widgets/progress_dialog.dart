@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:mqtt_client/mqtt_client.dart';
@@ -16,9 +15,8 @@ class PayloadProgressDialog extends StatefulWidget {
   final bool isWlc;
   final MqttService mqttService;
   final bool shouldSendFailedPayloads;
-  void Function()? onDone;
 
-  PayloadProgressDialog({
+  const PayloadProgressDialog({
     super.key,
     required this.payloads,
     required this.deviceId,
@@ -26,7 +24,6 @@ class PayloadProgressDialog extends StatefulWidget {
     required this.isWlc,
     required this.mqttService,
     required this.shouldSendFailedPayloads,
-    this.onDone,
   });
 
   @override
@@ -121,59 +118,62 @@ class _PayloadProgressDialogState extends State<PayloadProgressDialog> {
     _checkAllProcessed();
   }
 
-  Future<bool> _waitForControllerResponse(
-      String payload, String key, int index) async {
-
+  Future<bool> _waitForControllerResponse(String payload, String key, int index) async {
     try {
+      Map<String, dynamic> gemPayload = {};
+      if (widget.isToGem) {
+        gemPayload = {
+          "5900": {
+            "5901": payload,
+          }
+        };
+      }
       final result = await context.read<CommunicationService>().sendCommand(
-        payload: widget.isToGem
-            ? jsonEncode({"5900": {"5901": payload}})
-            : widget.isWlc
-            ? Constants.sendPayloadWithCrc(jsonDecode(payload)[key])
-            : jsonDecode(payload)[key],
         serverMsg: '',
+        payload: widget.isToGem ? jsonEncode(gemPayload) : widget.isWlc ? Constants.sendPayloadWithCrc(jsonDecode(payload)[key]) :
+        jsonDecode(payload)[key],
       );
-
-      debugPrint("Send result: $result");
+      debugPrint("progress dialog result => $result");
+      // await widget.mqttService.topicToPublishAndItsMessage(
+      //   widget.isToGem ? jsonEncode(gemPayload) : widget.isWlc ? Constants.sendPayloadWithCrc(jsonDecode(payload)[key]) :
+      //   jsonDecode(payload)[key],
+      //   "${Environment.mqttPublishTopic}/${widget.deviceId}",);
 
       bool isAcknowledged = false;
-      int timeoutSeconds = 20;
+      int maxWaitTime = 20;
+      int elapsedTime = 0;
+      int oroPumpIndex = 0;
+      if(widget.isToGem) {
+        oroPumpIndex = context.read<PreferenceProvider>().commonPumpSettings!.indexWhere((element) => element.deviceId == payload.split('+')[2]);
+      }
+      await for (var mqttMessage in widget.mqttService.preferenceAckStream.timeout(
+        Duration(seconds: maxWaitTime),
+        onTimeout: (sink) {
+          sink.close();
+        },
+      )) {
+        if (elapsedTime >= maxWaitTime || breakLoop) break;
 
-      final completer = Completer<bool>();
-
-      late StreamSubscription sub;
-
-      sub = widget.mqttService.preferenceAckStream.listen((mqttMessage) {
-        if (mqttMessage != null &&
-            mqttMessage['cM'].contains(key)) {
-
-          debugPrint("✅ ACK RECEIVED FOR $key");
-
+        if (mqttMessage!['cM'].contains(key) && (widget.isToGem ? mqttMessage['cC'] == payload.split('+')[2] : true)) {
+          context.read<PreferenceProvider>().updateControllerReaStatus(
+              key: key,
+              oroPumpIndex: oroPumpIndex,
+              failed: widget.shouldSendFailedPayloads
+          );
           isAcknowledged = true;
-
-          if (!completer.isCompleted) {
-            completer.complete(true);
-          }
-          sub.cancel();
+          break;
         }
-      });
 
-      /// ⏳ Timeout handler
-      Future.delayed(Duration(seconds: timeoutSeconds), () {
-        if (!completer.isCompleted) {
-          debugPrint("❌ TIMEOUT for $key");
-          completer.complete(false);
-          sub.cancel();
-        }
-      });
+        await Future.delayed(const Duration(seconds: 1));
+        elapsedTime++;
+      }
 
-      return await completer.future;
-    } catch (e) {
-      debugPrint("Error: $e");
+      return isAcknowledged;
+    } catch (error) {
+      // print(error);
       return false;
     }
   }
-
 
   Future<void> retryFailedPayloads() async {
     setState(() {
@@ -307,7 +307,7 @@ class _PayloadProgressDialogState extends State<PayloadProgressDialog> {
       actions: [
         if(isAllProcessed && isAllSent)
           FilledButton(
-            onPressed: widget.onDone ?? () {
+            onPressed: () {
               Navigator.of(context).pop(true);
             },
             child: const Text("Done"),

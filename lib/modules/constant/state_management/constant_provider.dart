@@ -416,7 +416,8 @@ class ConstantProvider extends ChangeNotifier{
   String getObjectInConstantPayload(List<ObjectInConstantModel> object){
     return object.map((object){
       bool isGem = AppConstants.gemModelList.contains(userData['modelId']);
-      var objectSno = isGem ? object.sNo : serialNumberFormatForEcoGem(object.sNo);
+      bool isOms = AppConstants.omsGemList.contains(userData['modelId']);
+      var objectSno = (isGem || isOms) ? object.sNo : serialNumberFormatForEcoGem(object.sNo);
       return [
         objectSno,
         ...object.setting.where((setting){
@@ -516,7 +517,6 @@ class ConstantProvider extends ChangeNotifier{
     }
     return payloadList.join(';');
   }
-
 
   String getFilterSitePayload(){
     return filterSite.map((site){

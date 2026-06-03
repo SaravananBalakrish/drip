@@ -129,6 +129,7 @@ class IrrigationLineModel{
       'localFertilization' : localFertilization,
       'valve' : valve,
       'mainValve' : mainValve,
+      'flowControlValve' : flowControlValve,
       'light' : light,
       'gate' : gate,
       'fan' : fan,

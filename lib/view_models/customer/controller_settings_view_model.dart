@@ -39,9 +39,7 @@ class ControllerSettingsViewModel extends ChangeNotifier {
   ControllerSettingsViewModel(this.repository);
 
   Future<void> getSettingsMenu(int customerId, int controllerId, int modelId) async {
-
     final isGem = [...AppConstants.gemModelList].contains(modelId);
-
     setLoading(true);
     try {
       Map<String, Object> body = {
@@ -52,7 +50,6 @@ class ControllerSettingsViewModel extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
-
         if (jsonData["code"] == 200 && jsonData["data"] is List) {
           final List<dynamic> dataList = jsonData["data"];
 
@@ -77,6 +74,7 @@ class ControllerSettingsViewModel extends ChangeNotifier {
               'Preference',
               'Name',
               'Constant',
+              'Calibration',
               'Valve Group',
               'Dealer Definition',
               'Pump Condition',
