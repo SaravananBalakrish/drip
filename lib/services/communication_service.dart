@@ -75,7 +75,7 @@ class CommunicationService {
       } else{
         debugPrint("bluetooth not connected...");
       }
-
+      print("bleService.isConnected : ${bleService.isConnected}");
       if (bleService.isConnected) {
         debugPrint("bluetooth connected...");
         try {

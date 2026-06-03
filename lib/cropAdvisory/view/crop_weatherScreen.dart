@@ -16,6 +16,44 @@ class CropWeatherscreen extends StatefulWidget {
 }
 
 class _CropWeatherscreenState extends State<CropWeatherscreen> {
+  final ScrollController _scrollController = ScrollController();
+
+  final double cardWidth = 90;
+
+  late int currentHour;
+  void _scrollToCurrentHour() {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    final offset =
+        (currentHour * cardWidth) - (screenWidth / 2) + (cardWidth / 2);
+
+    _scrollController.animateTo(
+      offset.clamp(
+        0,
+        _scrollController.position.maxScrollExtent,
+      ),
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  String formatHour(int hour) {
+    final period = hour >= 12 ? "PM" : "AM";
+    final displayHour = hour % 12 == 0 ? 12 : hour % 12;
+    return "$displayHour $period";
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    currentHour = DateTime.now().hour;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _scrollToCurrentHour();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -67,31 +105,27 @@ class _CropWeatherscreenState extends State<CropWeatherscreen> {
                 ),
       
                 const SizedBox(height: 20),
-      
-                SizedBox(
-                  height: 120,
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    children: const [
-                      HourlyWeatherCard(
-                        time: "10 am",
-                        temp: "36°",
+
+              SizedBox(
+                height: 120,
+                child: ListView.builder(
+                  controller: _scrollController,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: 24,
+                  itemBuilder: (context, index) {
+                    final isCurrentHour = index == currentHour;
+
+                    return SizedBox(
+                      width: cardWidth,
+                      child: HourlyWeatherCard(
+                        time: formatHour(index),
+                        temp: "${25 + index % 10}°",
+                        isSelected: isCurrentHour,
                       ),
-                      HourlyWeatherCard(
-                        time: "11 am",
-                        temp: "27°",
-                      ),
-                      HourlyWeatherCard(
-                        time: "12 pm",
-                        temp: "38°",
-                      ),
-                      HourlyWeatherCard(
-                        time: "01 pm",
-                        temp: "39°",
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
+              ),
       
                 const SizedBox(height: 20),
       

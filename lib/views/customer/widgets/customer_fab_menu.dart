@@ -42,7 +42,7 @@ class CustomerFabMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    final isGem = [...AppConstants.gemModelList].contains(currentMaster.modelId);
+    final isGem = [...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(currentMaster.modelId);
     final isGemNova = [...AppConstants.ecoGemModelList].contains(currentMaster.modelId);
     final isWlc = [...AppConstants.wlcModelList].contains(currentMaster.modelId);
 

@@ -29,8 +29,11 @@ class NormalCriticalAlarmModel{
     required Map<String, dynamic>? oldSetting,
     required Map<String, dynamic> userData,
   }){
+    print("userData['modelId'] : ${userData['modelId']}");
     bool isEcoGem = AppConstants.ecoGemModelList.contains(userData['modelId']);
     bool isOmsGem = AppConstants.omsGemList.contains(userData['modelId']);
+    print('isEcoGem : $isEcoGem');
+    print('isOmsGem : $isOmsGem');
     return NormalCriticalAlarmModel(
         objectId: objectData['objectId'],
         sNo: objectData['sNo'],

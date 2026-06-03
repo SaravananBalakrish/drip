@@ -153,7 +153,7 @@ class _CalibrationScreenState extends State<CalibrationScreen> {
                                     });
                                   },
                                   textAlign: TextAlign.center,
-                                  keyboardType: TextInputType.number,
+                                  keyboardType: TextInputType.numberWithOptions(decimal: true),
                                   cursorHeight: 20,
                                   decoration: const InputDecoration(
                                       contentPadding: EdgeInsets.only(bottom: 10),
