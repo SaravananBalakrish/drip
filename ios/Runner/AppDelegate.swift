@@ -82,6 +82,7 @@ import FirebaseMessaging
   // <--- 3. Indha function-ah AppDelegate kulla kalla add pannunga
   func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
     print(" FCM Token: \(fcmToken ?? "")")
+      
   }
 
   override func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
