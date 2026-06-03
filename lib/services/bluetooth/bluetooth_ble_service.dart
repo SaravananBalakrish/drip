@@ -7,6 +7,7 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../../Constants/constants.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../utils/enums.dart';
 import 'helper/bluetooth_helper.dart';
@@ -27,19 +28,24 @@ class BluetoothBleService {
   }
 
   /// ---------------- VARIABLES ----------------
+  static const String serviceUuidForWlc = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
   static const String serviceUuid = "12345678-1234-5678-1234-56789abcdef0";
   static const String writeUuid = "12345678-1234-5678-1234-56789abcdef1";
+  static const String writeUuidForWlc = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
   static const String notifyUuid1 = "12345678-1234-5678-1234-56789abcdef2";
   static const String notifyUuid2 = "12345678-1234-5678-1234-56789abcdef4";
   static const String notifyUuid3 = "12345678-1234-5678-1234-56789abcdef6";
+  static const String notifyUuidForWlc = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 
   static const List<String> notifyUuids = [
+    notifyUuidForWlc,
     notifyUuid1,
     notifyUuid2,
     notifyUuid3,
   ];
 
   static const List<String> writeUuids = [
+    writeUuidForWlc,
     writeUuid,
     "12345678-1234-5678-1234-56789abcdef3",
     "12345678-1234-5678-1234-56789abcdef5",
@@ -236,8 +242,8 @@ class BluetoothBleService {
 
     try {
       await FlutterBluePlus.startScan(
-        withServices: [Guid(serviceUuid)],
-        timeout: const Duration(seconds: 15),
+        withServices: [Guid(serviceUuid), Guid(serviceUuidForWlc)],
+        timeout: const Duration(seconds: 20),
       );
       debugPrint("✅ BLE Scan started successfully");
 
@@ -301,8 +307,8 @@ class BluetoothBleService {
         }
       });
 
-      await Future.delayed(const Duration(seconds: 10));
-      stopScan();
+      // await Future.delayed(const Duration(seconds: 10));
+      // stopScan();
 
     } catch (e) {
       debugPrint("❌ Error starting BLE scan: $e");
@@ -731,7 +737,7 @@ class BluetoothBleService {
         }
 
         bool foundCustomService = services.any(
-                (s) => s.uuid.toString().toLowerCase() == serviceUuid.toLowerCase()
+                (s) => [serviceUuid.toLowerCase(), serviceUuidForWlc.toLowerCase()].contains(s.uuid.toString().toLowerCase())
         );
 
         if (foundCustomService) {
@@ -762,9 +768,48 @@ class BluetoothBleService {
 
   /// ---------------- PROCESS SERVICES ----------------
   Future<void> _processServices(List<BluetoothService> services) async {
+    print("_processServices : $_processServices");
     for (var service in services) {
-      if (service.uuid.toString().toLowerCase() == serviceUuid.toLowerCase()) {
+      if ([serviceUuid.toLowerCase(), serviceUuidForWlc.toLowerCase()].contains(service.uuid.toString().toLowerCase())) {
         debugPrint("✅ BLE Target Service Found: ${service.uuid}");
+        debugPrint("📊 Found ${service.characteristics.length} BLE characteristics");
+        for (var char in service.characteristics) {
+          final uuid = char.uuid.toString().toLowerCase();
+          debugPrint("  BLE Characteristic: $uuid");
+          debugPrint("    Properties: ${char.properties}");
+
+          if (writeUuids.contains(uuid) && (char.properties.write || char.properties.writeWithoutResponse)) {
+            if (_writeChar == null) {
+              _writeChar = char;
+              _writeReady = true;
+              debugPrint("✅ BLE Write characteristic ready: $uuid");
+            }
+          }
+
+          if (notifyUuids.contains(uuid) && char.properties.notify) {
+            if (_notifyChar == null) {
+              _notifyChar = char;
+              debugPrint("✅ BLE Notify characteristic found: $uuid");
+
+              try {
+                await _notifyChar!.setNotifyValue(true);
+                debugPrint("✅ BLE Notify enabled successfully");
+
+                _notifySubscription = _notifyChar!.onValueReceived.listen((value) {
+                  print("value => $value | ${value.length}");
+                  final response = String.fromCharCodes(value);
+                  debugPrint("📩 BLE Device Response: $response");
+                  _handleDeviceResponse(response);
+                });
+              } catch (e) {
+                debugPrint("⚠️ Could not enable BLE notifications: $e");
+              }
+            }
+          }
+        }
+      }
+      if (service.uuid.toString().toLowerCase() == serviceUuidForWlc.toLowerCase()) {
+        debugPrint("✅ BLE Target Service Found For WLC: ${service.uuid}");
         debugPrint("📊 Found ${service.characteristics.length} BLE characteristics");
 
         for (var char in service.characteristics) {
@@ -837,6 +882,19 @@ class BluetoothBleService {
     debugPrint('BLE _buffer----> $_buffer');
 
     if (_buffer.isEmpty) return;
+
+    if(_buffer.isNotEmpty && _buffer[0] =='*' && _buffer[_buffer.length-1] == '#'){
+      String sliced = _buffer.substring(1, _buffer.length - 1);
+      debugPrint("sliced : $sliced");
+      final result = Constants.validatePayloadWithCrc(sliced);
+      debugPrint("wlc ble result => $result");
+      if(result != null){
+        _processData(result);
+        _buffer = '';
+      }else{
+        debugPrint('Crc not match in ble ....');
+      }
+    }
 
     while (_buffer.contains('*Start') && _buffer.contains('#End')) {
       final start = _buffer.indexOf('*Start');

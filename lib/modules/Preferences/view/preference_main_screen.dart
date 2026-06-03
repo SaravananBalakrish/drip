@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
 import 'package:oro_drip_irrigation/modules/Preferences/view/view_config.dart';
+import 'package:oro_drip_irrigation/services/communication_service.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
@@ -11,7 +12,6 @@ import 'package:provider/provider.dart';
 import '../../../Constants/constants.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../Widgets/custom_animated_switcher.dart';
-import '../../../services/communication_service.dart';
 import '../../IrrigationProgram/view/schedule_screen.dart';
 import '../../IrrigationProgram/widgets/custom_native_time_picker.dart';
 import '../model/preference_data_model.dart';
@@ -333,7 +333,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                                           TextButton(
                                                               onPressed: () async {
                                                                 if (isNova || isToGem || isWlc) {
-                                                                  print("thisssss");
                                                                   final pump = preferenceProvider.commonPumpSettings![preferenceProvider.selectedTabIndex];
                                                                   final payload = jsonEncode({"sentSms": "viewconfig,4"});
                                                                   final payload2 = jsonEncode({"0": payload});
@@ -341,27 +340,14 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                                                     "5900": {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${4}"}
                                                                   };
                                                                   final result = await context.read<CommunicationService>().sendCommand(
-                                                                      payload: isToGem ? jsonEncode(viewConfig)
-                                                                          : isWlc ? Constants.sendPayloadWithCrc(payload)
-                                                                          : payload,
-                                                                      serverMsg: '');
-                                                                  print("result : $result");
-                                                                  ScaffoldMessenger.of(context).showSnackBar(
-                                                                    const SnackBar(content: Text("update settings sent Ble")),
+                                                                    serverMsg: '',
+                                                                    payload: isToGem ? jsonEncode(viewConfig)
+                                                                        : isWlc ? Constants.sendPayloadWithCrc(payload)
+                                                                        : payload,
                                                                   );
-                                                                  if (result['http'] == true) {
-                                                                    debugPrint("Payload sent to Server");
-                                                                  }
-                                                                  if (result['mqtt'] == true) {
-                                                                    debugPrint("Payload sent to MQTT Box");
-                                                                  }
-                                                                  if (result['bluetooth'] == true) {
-                                                                    debugPrint("Payload sent via Bluetooth");
-                                                                  }
+                                                                  debugPrint("preference main screen result => $result");
                                                                   // mqttService.topicToPublishAndItsMessage(
-                                                                  //     isToGem ? jsonEncode(viewConfig)
-                                                                  //         : isWlc ? Constants.sendPayloadWithCrc(payload)
-                                                                  //         : payload,
+                                                                  //     ,
                                                                   //     "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
                                                                 }
                                                                 await Future.delayed(Duration.zero, () {
@@ -490,7 +476,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                     final failedPayload = preferenceProvider.passwordValidationCode == 200
                         ? getCalibrationPayload(isToGem: isToGem).split(';')
                         : getFailedPayload(sendAll: false, isToGem: isToGem).split(';');
-                    print(failedPayload);
+                    // print(failedPayload);
                     List temp = List.from(selectedOroPumpList);
                     preferenceProvider.temp.clear();
                     showDialog(
@@ -692,10 +678,11 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                       "5901": "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload2+$categoryId",
                       }};
                     final result = await context.read<CommunicationService>().sendCommand(
-                      payload: isWlc ? Constants.sendPayloadWithCrc(payload) : jsonEncode(viewConfig),
                       serverMsg: '',
+                      payload: isWlc ? Constants.sendPayloadWithCrc(payload) : jsonEncode(viewConfig),
                     );
-                    debugPrint("Send result: $result");
+                    // mqttService.topicToPublishAndItsMessage(isWlc ? Constants.sendPayloadWithCrc(payload) : jsonEncode(viewConfig),
+                    //     "${Environment.mqttPublishTopic}/${widget.masterData['deviceId']}");
                   }
                 },
                 tabs: [
@@ -795,7 +782,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                         FilteringTextInputFormatter.deny(RegExp('[^0-9.]')),
                                         LengthLimitingTextInputFormatter(6),
                                       ],
-                                      dataList: settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "SENSOR HEIGHT" ? ["20", "35"] : ["10", "12"],
+                                      dataList: settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "SENSOR HEIGHT"
+                                          ? ["20", "35"] : settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == 'CABLE SELECT' ? ['0', '1', '2', '3'] : ["10", "12"],
                                       value: _getInitialValue(categoryIndex, settingIndex, settingList, pumpIndex),
                                       leading: _buildLeading(categoryIndex, settingIndex, settingList),
                                       onValueChange: (newValue) => onChangeValue(categoryIndex, settingIndex, settingList, newValue),
@@ -891,7 +879,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                     settingList[categoryIndex].changed = true;
                                     rtcSetting.onTime = newTime;
                                   });
-                                  print(settingList[categoryIndex].changed);
+                                  // print(settingList[categoryIndex].changed);
                                 },
                                 is24HourMode: true, modelId: 1,
                               ),
@@ -1348,7 +1336,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       "400": {"401": onDelayTimer()}
     };
 
-    print("payloadForSlave ==> $payloadForSlave");
+    // print("payloadForSlave ==> $payloadForSlave");
 
     final payload = shouldSendFailedPayloads ? getFailedPayload(isToGem: isToGem, sendAll: false) : getPayload(isToGem: isToGem, sendAll: false);
     final payloadParts = payload.split("?")[0].split(';');
@@ -1389,7 +1377,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         if((isToGem ? preferenceProvider.generalData!.controllerReadStatus == "1" : true) && payloadForGem.any((item) => item.trim().isNotEmpty)) {
           for (var i = 0; i < payloadForGem.length; i++) {
             var payloadToDecode = isToGem ? payloadForGem[i].split('+')[4] : payloadForGem[i];
-            print("payloadToDecode :: $payloadToDecode");
+            // print("payloadToDecode :: $payloadToDecode");
             var decodedData = jsonDecode(payloadToDecode);
             var key = decodedData.keys.first;
             int oroPumpIndex = 0;
@@ -1440,12 +1428,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                 mqttService: mqttService,
                 shouldSendFailedPayloads: shouldSendFailedPayloads,
                 isWlc: isWlc,
-                onDone: () {
-                  Navigator.of(context).pop(true);
-                  // setState(() {
-                  //   viewConfig = !viewConfig;
-                  // });
-                },
               );
             },
           );
@@ -1527,7 +1509,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         }
       }
     }
-    print("payload ======= > ${jsonEncode(payload)}");
     return payload;
   }
 
@@ -1730,7 +1711,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             temp.add(isToGem
                 ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId"
                 : payload);
-            print("payload ==>$payload");
+            // print("payload ==>$payload");
           } else if ([209].contains(settingCategory.type)) {
             var splitParts = [];
             if(isToGem) {
@@ -1890,7 +1871,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     return values.join(",");
   }
 
-/*  Future<void> processPayloads({
+  /*  Future<void> processPayloads({
     required BuildContext context,
     required List<String> payload,
     required bool isToGem,
@@ -1911,6 +1892,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       },
     );
   }*/
+
 }
 
 Widget buildCustomListTileWidget({
@@ -1939,8 +1921,8 @@ Widget buildCustomListTileWidget({
           enabled: enabled,
           initialValue: value is String ? value : "",
           textAlign: TextAlign.center,
-          keyboardType: TextInputType.number,
-          inputFormatters: inputFormatters,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          inputFormatters: (widgetType == 1 && AppConstants.gemModelList.contains(modelId)) ? AppProperties.regexForNumbers : inputFormatters,
           decoration: const InputDecoration(
             hintText: "000",
             isDense: true,
