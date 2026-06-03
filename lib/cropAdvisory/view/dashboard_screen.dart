@@ -87,16 +87,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             )
           : null,
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: [
-          _buildHomeBody(),
-           CropWeatherscreen(),
-          const Center(child: Text('Irrigation')),
-          const Center(child: Text('Disease')),
-          const Center(child: Text('Report')),
-        ],
-      ),
+      body: _buildHomeBody(),
       floatingActionButton: _selectedIndex == 0
           ? Padding(
               padding: const EdgeInsets.only(bottom: 10.0),
@@ -359,12 +350,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      setState(() {
-                        _selectedIndex = 2; // Irrigation tab index
-                      });
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const IrrigationFertigationScreen()),
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const IrrigationFertigationScreen()),
                       );
                     },
                     style: OutlinedButton.styleFrom(
@@ -422,9 +412,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            setState(() {
-              _selectedIndex = 1; // Weather tab index
-            });
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const CropWeatherscreen()),
+            );
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
