@@ -51,7 +51,7 @@ class NavigationDestinationsBuilder {
           selectedIcon: Icon(Icons.wb_sunny_rounded, color: Colors.white),
           label: Text(''),
         ),
-      if ([...AppConstants.aquacultureModelList].contains(master.modelId))
+      if ([...AppConstants.aquacultureModelList].contains(master.modelId) || [...AppConstants.gemModelList].contains(master.modelId))
         const NavigationRailDestination(
           icon: Tooltip(message: 'Geography', child: Icon(Icons.map_outlined)),
           selectedIcon: Icon(Icons.map_outlined, color: Colors.white),
