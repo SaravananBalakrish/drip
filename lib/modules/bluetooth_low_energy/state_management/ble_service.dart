@@ -399,11 +399,6 @@ class BleProvider extends ChangeNotifier {
       myService = _services[1];
     }
     for (BluetoothCharacteristic c in myService!.characteristics) {
-      // if(c.uuid.str.toUpperCase() == swWritingId){
-      //   swWritingCharacteristic = c;
-      //   notifyListeners();
-      // }
-      // debugPrint('uuid in ble : ${c.uuid.str}');
       if (
       c.properties.writeWithoutResponse == false &&
           c.properties.write == true &&
@@ -435,7 +430,6 @@ class BleProvider extends ChangeNotifier {
             if(fileMode != FileMode.sendingToHardware){
               sentAndReceive.add('AppToHardware =>  $convertToString');
             }
-
             // if (fileTraceControl != 'File') {
             // sentAndReceive +=
             // 'AppToHardware ==> \n ${String.fromCharCodes(value)}\n len ${String.fromCharCodes(value).length}\n';
