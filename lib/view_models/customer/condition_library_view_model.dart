@@ -404,6 +404,12 @@ class ConditionLibraryViewModel extends ChangeNotifier {
       }
       return 22;
     }
+    else if(condition.component == 'Any Pre(Time/Qty) program'){
+      if (condition.threshold == 'is Running' && condition.value=='True') {
+        return 24;
+      }
+      return 25;
+    }
     else{
       if (condition.threshold == 'is Starting') {
         return 8;
