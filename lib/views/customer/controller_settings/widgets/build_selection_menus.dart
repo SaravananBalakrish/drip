@@ -36,7 +36,8 @@ Widget buildSelectionMenus(
                 ],
               ),
               const SizedBox(height: 5),
-              (component == "Any irrigation program" || component == "Any fertilizer program") ?
+              (component == "Any irrigation program" || component == "Any fertilizer program"
+                  || component == "Any Pre(Time/Qty) program") ?
               LineNameSelectionMenu(index: index, vm: vm) :
               ReasonSelectionMenu(index: index, vm: vm),
               const SizedBox(height: 5),
