@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -16,8 +18,44 @@ class CropWeatherscreen extends StatefulWidget {
 }
 
 class _CropWeatherscreenState extends State<CropWeatherscreen> {
+
+  final ScrollController _controller = ScrollController();
+  static const double itemWidth = 110;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final screenWidth = MediaQuery.of(context).size.width;
+
+      final offset =
+          (DateTime.now().hour * itemWidth) -
+              (screenWidth / 2) +
+              (itemWidth / 2);
+
+      _controller.jumpTo(
+        offset.clamp(0.0, _controller.position.maxScrollExtent),
+      );
+    });
+  }
+
+  double getTemperature(int hour) {
+    // Peak around 2 PM (14:00)
+    const minTemp = 22;
+    const maxTemp = 33;
+
+    final radians = ((hour - 2) / 24) * 2 * pi;
+
+    return minTemp +
+        ((sin(radians - pi / 2) + 1) / 2) *
+            (maxTemp - minTemp);
+  }
+
   @override
   Widget build(BuildContext context) {
+    final now = DateTime.now();
+
     return  Scaffold(
       body: SafeArea(
           child: SingleChildScrollView(
@@ -67,29 +105,38 @@ class _CropWeatherscreenState extends State<CropWeatherscreen> {
                 ),
       
                 const SizedBox(height: 20),
-      
+
                 SizedBox(
-                  height: 120,
-                  child: ListView(
+                  height: 100,
+                  child: ListView.builder(
+                    controller: _controller,
                     scrollDirection: Axis.horizontal,
-                    children: const [
-                      HourlyWeatherCard(
-                        time: "10 am",
-                        temp: "36°",
-                      ),
-                      HourlyWeatherCard(
-                        time: "11 am",
-                        temp: "27°",
-                      ),
-                      HourlyWeatherCard(
-                        time: "12 pm",
-                        temp: "38°",
-                      ),
-                      HourlyWeatherCard(
-                        time: "01 pm",
-                        temp: "39°",
-                      ),
-                    ],
+                    itemCount: 24,
+                    itemBuilder: (context, index) {
+                      final temp = getTemperature(index).round();
+
+                      final hourTime = DateTime(
+                        now.year,
+                        now.month,
+                        now.day,
+                        index,
+                      );
+
+                      final isCurrentHour = index == now.hour;
+
+                      final time =
+                          "${hourTime.hour % 12 == 0 ? 12 : hourTime.hour % 12} "
+                          "${hourTime.hour >= 12 ? "pm" : "am"}";
+
+                      return SizedBox(
+                        width: 110,
+                        child: HourlyWeatherCard(
+                          time: time,
+                          temp: '$temp°',
+                          isHour: isCurrentHour,
+                        ),
+                      );
+                    },
                   ),
                 ),
       

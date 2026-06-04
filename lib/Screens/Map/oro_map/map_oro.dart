@@ -14,17 +14,19 @@ import 'map_conection_objects.dart';
 
 
 class MapScreenOro extends StatefulWidget {
-  const MapScreenOro({
+   MapScreenOro({
     Key? key,
     required this.userId,
     required this.customerId,
     required this.controllerId,
     required this.imeiNo,
     required this.modelId,
+     this.isCheckDashboard = false,
   }) : super(key: key);
 
   final int userId, customerId, controllerId,modelId;
   final String imeiNo;
+  final bool isCheckDashboard;
 
   @override
   State<MapScreenOro> createState() => _MapScreenOroState();
@@ -454,7 +456,8 @@ class _MapScreenOroState extends State<MapScreenOro> {
   // AppLog.log("build center:$center");
 
   return Scaffold(
-  appBar: AppBar(title: const Text("Geography"),
+  appBar: (widget.isCheckDashboard || isSkiaWeb) ? null : AppBar(title: const Text(" Geography"),
+    automaticallyImplyLeading: false,
   actions: [
     IconButton(
       icon: const Icon(Icons.refresh),
@@ -462,7 +465,8 @@ class _MapScreenOroState extends State<MapScreenOro> {
         await _init();
       },
     ),
-  IconButton(
+    if (!widget.isCheckDashboard)
+      IconButton(
   icon: Icon(Icons.map_outlined),
   onPressed: () {
   Navigator.of(context).push(MaterialPageRoute(
@@ -472,7 +476,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
   tooltip: 'Edit',
   ),
   ],
-  ),
+  ) ,
 
   body: Stack(
     children: [
@@ -494,15 +498,43 @@ class _MapScreenOroState extends State<MapScreenOro> {
         left: 20,
         right: 20,
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Text(
-            "Live sync: $_sentTime",
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: Colors.redAccent,
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
+          color: Colors.white.withOpacity(0.7),
+          child: Row(
+            children: [
+                   Expanded(
+                     child: Center(
+                                       child: Text(
+                      "Live sync: $_sentTime",
+                      style: const TextStyle(
+                        color: Colors.redAccent,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                                       ),
+                                     ),
+                   ),
+               if (isSkiaWeb)
+                 IconButton(
+                icon: const Icon(
+                  Icons.refresh,
+                  color: Colors.red,
+                ),
+                onPressed: () async {
+                   await _init();
+                },
+              ),
+              if (isSkiaWeb)
+                if (!widget.isCheckDashboard)
+                IconButton(
+                icon: Icon(Icons.map_outlined,color: Colors.red,),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => MapConnectionObject(userId: widget.userId, customerId: widget.customerId, controllerId: widget.controllerId, imeiNo: widget.imeiNo,modelId: widget.modelId,),
+                  ));
+                },
+                tooltip: 'Edit',
+              ),
+            ],
           ),
         ),
       ),
