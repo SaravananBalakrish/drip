@@ -152,6 +152,18 @@ class DefaultData {
 
     if (programs.length > 1) {
 
+      final hasPreDefault = programs.any((p) => p.name == 'Any Pre(Time/Qty) program');
+      if (!hasPreDefault) {
+        programs.insert(0,
+          Program(
+            sNo: 0,
+            id: '0',
+            name: 'Any Pre(Time/Qty) program',
+            location: 'Global',
+          ),
+        );
+      }
+
       final hasFrtDefault = programs.any((p) => p.name == 'Any fertilizer program');
       if (!hasFrtDefault) {
         programs.insert(0,
