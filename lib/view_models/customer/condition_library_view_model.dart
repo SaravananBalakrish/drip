@@ -360,8 +360,8 @@ class ConditionLibraryViewModel extends ChangeNotifier {
 
   int getConditionCategory(Condition condition) {
     if (condition.type == 'Program') {
-      if(condition.component == 'Any irrigation program'
-          || condition.component == 'Any fertilizer program'){
+      if(condition.component == 'Any irrigation program' || condition.component == 'Any fertilizer program'
+          || condition.component == 'Any Pre(Time/Qty) program'){
         return 11;
       }
       return 1;
