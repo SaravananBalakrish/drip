@@ -8,6 +8,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../cropAdvisory/view/CropDetailsScreen.dart';
+import '../../../cropAdvisory/view/crop_list_screen.dart';
 import '../../../cropAdvisory/view/getUserInformationScreen.dart';
 import '../model/chat_model.dart';
 import '../model/message_model.dart';
@@ -555,7 +556,9 @@ class _AIChatScreenState extends State<AIChatScreen> {
                       onPressed: () =>  Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (_) => const Getuserinformationscreen(),
+                          builder: (_) =>  CropListScreen(
+                              userId: 1, controllerId: 1,
+                          ),
                         ),
                       ),
                       icon: const Icon(Icons.crop),

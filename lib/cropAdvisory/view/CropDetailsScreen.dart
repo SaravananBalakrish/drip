@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/field_information_screen.dart';
 import '../helper/image_compressor.dart';
-import '../service/cropadvisory_model.dart';
+import '../model/cropadvisory_model.dart';
 
 import '../widgets/AppTextField.dart';
 import '../widgets/ContinueButton.dart';

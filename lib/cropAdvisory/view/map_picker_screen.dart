@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart' as geo;
 import 'package:oro_drip_irrigation/cropAdvisory/service/location_service.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/CropDetailsScreen.dart';
-import '../service/cropadvisory_model.dart';
+import '../model/cropadvisory_model.dart';
 import 'getUserInformationScreen.dart';
 
 class MapPickerScreen extends StatefulWidget {
@@ -115,7 +115,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const Getuserinformationscreen(),
+        builder: (_) => const Cropinformationscreen(),
       ),
     );
   }
