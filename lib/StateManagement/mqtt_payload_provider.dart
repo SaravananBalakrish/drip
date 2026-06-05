@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../Constants/data_convertion.dart';
-import '../cropAdvisory/service/cropadvisory_model.dart';
+import '../cropAdvisory/model/cropadvisory_model.dart';
 import '../models/Weather_model.dart';
 import '../Screens/Map/googlemap_model.dart';
 import '../models/customer/fertilizer_site_live_model.dart';

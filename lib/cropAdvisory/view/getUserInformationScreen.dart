@@ -8,17 +8,17 @@ import 'package:oro_drip_irrigation/cropAdvisory/widgets/ProgressWidget.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/widgets/SectionCard.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/map_picker_screen.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/service/location_service.dart';
-import '../service/cropadvisory_model.dart';
+import '../model/cropadvisory_model.dart';
 
 
-class Getuserinformationscreen extends StatefulWidget {
-  const Getuserinformationscreen({super.key});
+class Cropinformationscreen extends StatefulWidget {
+  const Cropinformationscreen({super.key});
 
   @override
-  State<Getuserinformationscreen> createState() => _GetuserinformationscreenState();
+  State<Cropinformationscreen> createState() => _CropinformationscreenState();
 }
 
-class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
+class _CropinformationscreenState extends State<Cropinformationscreen> {
   // --- Location related ---
   double? _latitude;
   double? _longitude;

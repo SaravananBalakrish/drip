@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import '../service/cropadvisory_model.dart';
+import '../model/cropadvisory_model.dart';
 import 'package:intl/intl.dart';
 import 'irrigation_fertigation_screen.dart';
 import 'crop_weatherScreen.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../service/cropadvisory_model.dart';
+import '../model/cropadvisory_model.dart';
 import 'water_budget_manager_screen.dart';
 
 class IrrigationFertigationScreen extends StatefulWidget {
