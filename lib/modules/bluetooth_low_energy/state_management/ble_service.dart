@@ -140,6 +140,8 @@ class BleProvider extends ChangeNotifier {
   void editNodeDataFromServer(data, nodeDataFromNodeStatus){
     nodeDataFromServer = data;
     nodeData = nodeDataFromNodeStatus;
+    print("nodeDataFromServer : $nodeDataFromServer");
+    print("nodeData : $nodeData");
     // if(AppConstants.ecoGemModelList.contains(nodeData['modelId'])){
     //   nodeDataFromServer['pathSetting']['downloadDirectory'] = "/home/ubuntu/FTP/download/EC25/";
     // }else if(AppConstants.pumpWithValveModelList.contains(nodeData['modelId'])){
@@ -388,8 +390,9 @@ class BleProvider extends ChangeNotifier {
   }
 
   void updateCharacteristic(){
+    print("nodeData['modelId'] : ${nodeData}");
     for (var s in _services){
-      print(s);
+      print('service => ${s}');
     }
     if(AppConstants.wlcModelList.contains(nodeData['modelId'])){
       debugPrint("connect to wlc model....");
@@ -399,11 +402,6 @@ class BleProvider extends ChangeNotifier {
       myService = _services[1];
     }
     for (BluetoothCharacteristic c in myService!.characteristics) {
-      // if(c.uuid.str.toUpperCase() == swWritingId){
-      //   swWritingCharacteristic = c;
-      //   notifyListeners();
-      // }
-      // debugPrint('uuid in ble : ${c.uuid.str}');
       if (
       c.properties.writeWithoutResponse == false &&
           c.properties.write == true &&
@@ -435,17 +433,6 @@ class BleProvider extends ChangeNotifier {
             if(fileMode != FileMode.sendingToHardware){
               sentAndReceive.add('AppToHardware =>  $convertToString');
             }
-
-            // if (fileTraceControl != 'File') {
-            // sentAndReceive +=
-            // 'AppToHardware ==> \n ${String.fromCharCodes(value)}\n len ${String.fromCharCodes(value).length}\n';
-            // // }
-            // if (value.isNotEmpty) {
-            //   sentAndReceive += '${value.toString()} \n len ${value.length} \n';
-            //   // await Future.delayed(Duration(seconds: 1));
-            //   debugPrint('swListeningValue == > $value');
-            //   // notifyListeners();
-            // }
           });
     } else {
       debugPrint('sending characteristic is null');
@@ -467,7 +454,7 @@ class BleProvider extends ChangeNotifier {
               debugPrint("read :: $convertToString");
             }
             if(traceMode == TraceMode.traceOff){
-              sentAndReceive.add("hardwareToApp = > ${convertToString}");
+              sentAndReceive.add("hardwareToApp = > $convertToString");
               if(convertToString == "PASS"){
                 fileMode = FileMode.crcPass;
                 notifyListeners();
