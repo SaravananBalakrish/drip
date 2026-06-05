@@ -68,7 +68,7 @@ class _LogHomeState extends State<LogHome> {
     'Date','Status','ProgramS_No','ProgramCategory','ScheduledStartTime',
     'SequenceData','ValveFlowrate','IrrigationDurationCompleted','ProgramName',
     'IrrigationMethod','IrrigationDuration_Quantity','IrrigationQuantityCompleted','ProgramCategoryName','Pretime','PostTime',
-    'CentralFilterOnDuration','LocalFilterOnDuration'
+    'CentralFilterOnDuration','LocalFilterOnDuration', 'CentralFertOnOff', 'LocalFertOnOff'
   ];
 
   int httpError = 0;

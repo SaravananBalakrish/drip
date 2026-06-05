@@ -2600,7 +2600,7 @@ class IrrigationLogModel {
     List<dynamic> list = [];
     try{
       for(var parameter in channelParameterList){
-        // if(date['irrigation']['${central ? 'Central' : 'Local'}FertOnOff'][howMany] == 1){
+        if(date['irrigation']['${central ? 'Central' : 'Local'}FertOnOff'][howMany] == 1){
           if(parameter.payloadKey == '${central ? 'Central' : 'Local'}FertMethod') {
             if(parameter.show == true){
               var data = date['irrigation']['${central ? 'Central' : 'Local'}FertMethod'][howMany];
@@ -2619,11 +2619,10 @@ class IrrigationLogModel {
                   : (howMany < qtyCompletedData.length ? qtyCompletedData[howMany].split('_')[channelNo] : '-'));
             }
           }
-        // }
-        // else{
-        //   list = ['-', '-', '-'];
-        // }
-
+        }
+        else{
+          list = ['-', '-', '-'];
+        }
       }
     }catch(e,stackTrace){
       debugPrint('getChannelData error => ${e.toString()}');
