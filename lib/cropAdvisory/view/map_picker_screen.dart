@@ -10,11 +10,18 @@ import 'getUserInformationScreen.dart';
 class MapPickerScreen extends StatefulWidget {
   final double? initialLatitude;
   final double? initialLongitude;
+  final int? userId,cropId;
+  final int? controllerId;
+
 
   const MapPickerScreen({
     super.key,
     this.initialLatitude,
     this.initialLongitude,
+    this.userId,
+    this.cropId,
+    this.controllerId,
+
   });
 
   @override
@@ -115,7 +122,7 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => const Cropinformationscreen(),
+        builder: (_) =>  Cropinformationscreen(userId: widget.userId!,controllerId: widget.controllerId!, cropId: widget.cropId!,),
       ),
     );
   }

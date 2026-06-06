@@ -86,7 +86,7 @@ List<Widget> appBarActions(
             onPressed: () => Navigator.push(
               context,
                MaterialPageRoute(builder: (context) =>  CropListScreen(
-                 userId: loggedInUser.id,
+                 userId: vm.mySiteList.data[vm.sIndex].customerId,
                  controllerId: master.controllerId,
                )),
             ),

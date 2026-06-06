@@ -288,7 +288,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       flex: 3,
                       child: Column(
                         children: [
-                          _buildInfoRow(Icons.water_drop, 'Variety', _model.variety ?? 'Hybrid'),
+                          _buildInfoRow(Icons.water_drop, 'Variety', _model.cropVariety ?? 'Hybrid'),
                           const SizedBox(height: 12),
                           _buildInfoRow(Icons.water_drop, 'Crop Type', _model.cropType ?? 'Open Field'),
                           const SizedBox(height: 12),

@@ -13,8 +13,8 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class CropDetailsScreen extends StatefulWidget {
-  const CropDetailsScreen({super.key});
-
+  const CropDetailsScreen({super.key, required this.cropId});
+final cropId;
   @override
   State<CropDetailsScreen> createState() => _CropDetailsScreenState();
 }
@@ -39,7 +39,7 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
     super.initState();
     // Pre-fill fields from singleton instance if they have values
     _cropNameController.text = _model.cropName ?? '';
-    _varietyController.text = _model.variety ?? '';
+    _varietyController.text = _model.cropVariety ?? '';
     _plantingDateController.text = _model.plantingDate ?? '';
     _harvestDateController.text = _model.expectedHarvestDate ?? '';
     _durationController.text = _model.cropDuration ?? '';
@@ -170,12 +170,12 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                 const SizedBox(height: 20),
                 const ProgressWidget(current: 2),
                 const SizedBox(height: 20),
-                 if (_model.area?.isNotEmpty ?? false)
+                 if (_model.areaName?.isNotEmpty ?? false)
                   SectionCard(
                     title: 'Selected Area',
                     icon: Icons.square_foot,
                     child: Text(
-                      _model.area!,
+                      _model.areaName!,
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
@@ -349,7 +349,7 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                   onTap: () {
                     // Update singleton instance with data from this screen
                     _model.cropName = _cropNameController.text;
-                    _model.variety = _varietyController.text;
+                    _model.cropVariety = _varietyController.text;
                     _model.plantingMethod = _plantingMethod;
                     _model.plantingDate = _plantingDateController.text;
                     _model.expectedHarvestDate = _harvestDateController.text;
@@ -360,7 +360,7 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                        builder: (_) => const FieldInformationScreen(),
+                        builder: (_) =>  FieldInformationScreen(cropId: widget.cropId,),
                       ),
                     );
                   },
