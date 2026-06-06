@@ -10,9 +10,14 @@ import 'package:oro_drip_irrigation/cropAdvisory/view/map_picker_screen.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/service/location_service.dart';
 import '../model/cropadvisory_model.dart';
 
-
 class Cropinformationscreen extends StatefulWidget {
-  const Cropinformationscreen({super.key});
+  const Cropinformationscreen({
+    super.key,
+    required this.userId,
+    required this.cropId,
+    required this.controllerId,
+  });
+  final int userId, controllerId, cropId;
 
   @override
   State<Cropinformationscreen> createState() => _CropinformationscreenState();
@@ -31,6 +36,18 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
   final TextEditingController _farmIdController = TextEditingController();
   final CropAdvisoryModel _model = CropAdvisoryModel.instance;
 
+  @override
+  void initState() {
+    super.initState();
+    // Pre-fill fields if we are editing (data already in singleton)
+    _areaController.text = _model.areaName ?? '';
+    _selectedAddress = _model.address ?? '';
+    if (_model.latitude != null && _model.longitude != null) {
+      _latitude = double.tryParse(_model.latitude!);
+      _longitude = double.tryParse(_model.longitude!);
+      _locationController.text = '${_model.latitude}, ${_model.longitude}';
+    }
+  }
 
   @override
   void dispose() {
@@ -48,6 +65,8 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
         builder: (_) => MapPickerScreen(
           initialLatitude: _latitude,
           initialLongitude: _longitude,
+          userId: widget.userId,
+          controllerId: widget.controllerId,
         ),
       ),
     );
@@ -56,8 +75,8 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
       setState(() {
         _latitude = result['latitude'];
         _longitude = result['longitude'];
-        _locationController.text = '${_model.latitude}, ${_model.latitude}';
-        _selectedAddress = _locationController.text;
+        _locationController.text = '$_latitude, $_longitude';
+        _selectedAddress = result['address'] ?? _locationController.text;
       });
     }
   }
@@ -102,7 +121,6 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
 
   @override
   Widget build(BuildContext context) {
-    _locationController.text = '${_model.latitude},${_model.longitude}';
     return Scaffold(
       appBar: AppBar(title: const Text("Crop Advisory")),
       body: SafeArea(
@@ -176,25 +194,23 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
                 // ---------- Continue Button ----------
                 CropContinueButton(
                   onTap: () {
-                    if (_model.longitude == null || _model.longitude == null) {
+                    if (_locationController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Please select a location')),
                       );
                       return;
                     }
+                    
                     // Update singleton instance
-                    final model = CropAdvisoryModel.instance;
-                    final locationParts = _locationController.text.split(',');
-                    model.latitude = locationParts[0].trim();
-                    model.longitude = locationParts[1].trim();
-                    model.address = _selectedAddress;
-                    model.area = _areaController.text;
-                    model.farmId = _farmIdController.text;
-                    // Navigate without params
+                    _model.latitude = _latitude?.toString();
+                    _model.longitude = _longitude?.toString();
+                    _model.address = _selectedAddress;
+                    _model.areaName = _areaController.text;
+                    
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                        builder: (_) => const CropDetailsScreen(),
+                        builder: (_) => CropDetailsScreen(cropId: widget.cropId),
                       ),
                     );
                   },

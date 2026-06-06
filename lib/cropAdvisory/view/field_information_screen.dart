@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/repository/repository.dart';
+import 'package:oro_drip_irrigation/services/http_service.dart';
 import '../model/cropadvisory_model.dart';
 
 import '../widgets/AppTextField.dart';
@@ -10,7 +12,8 @@ import 'crop_advisory_main_screen.dart';
 import 'dashboard_screen.dart';
 
 class FieldInformationScreen extends StatefulWidget {
-  const FieldInformationScreen({super.key});
+  const FieldInformationScreen({super.key, required this.cropId});
+  final int cropId;
 
   @override
   State<FieldInformationScreen> createState() => _FieldInformationScreenState();
@@ -21,6 +24,15 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
   final TextEditingController _previousCropController = TextEditingController();
   String? _selectedSoilType;
   final CropAdvisoryModel _model = CropAdvisoryModel.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-fill fields for editing
+    _mulchingController.text = _model.mulchingUsed ?? 'Yes';
+    _previousCropController.text = _model.previousCrop ?? '';
+    _selectedSoilType = _model.soilType;
+  }
 
   @override
   void dispose() {
@@ -187,23 +199,40 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                 const SizedBox(height: 30),
 
                 CropContinueButton(
-                  onTap: () {
+                  onTap: () async {
                     // Final update to the model singleton
                     _model.mulchingUsed = _mulchingController.text;
                     _model.soilType = _selectedSoilType;
                     _model.previousCrop = _previousCropController.text;
+                    _model.cropId = widget.cropId;
 
                     // Printing all data for verification
                     debugPrint('Sending Data: ${_model.toJson()}');
 
-                    // Navigate to Dashboard and clear the stack to restrict access back to setup
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (context) => const CropAdvisoryMainScreen(),
-                      ),
-                      (route) => false,
-                    );
+                    try {
+                      final repository = Repository(HttpService());
+                      // Assuming createCropList handles both create and update
+                      final response = await repository.createCropList(_model.toJson());
+                      
+                      if (response.statusCode == 200) {
+                        // Navigate to Dashboard and clear the stack to restrict access back to setup
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => const CropAdvisoryMainScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      } else {
+                         ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Failed to save crop: ${response.body}')),
+                        );
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error: $e')),
+                      );
+                    }
                   },
                 ),
 
