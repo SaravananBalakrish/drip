@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../../Screens/Dealer/controllerverssionupdate.dart';
 import '../../../Screens/planning/FactoryReset.dart';
+import '../../../cropAdvisory/view/crop_list_screen.dart';
 import '../../../cropAdvisory/view/getUserInformationScreen.dart';
 import '../../../flavors.dart';
 import '../../../models/customer/site_model.dart';
@@ -84,7 +85,10 @@ List<Widget> appBarActions(
             color: Colors.transparent,
             onPressed: () => Navigator.push(
               context,
-               MaterialPageRoute(builder: (context) => const Getuserinformationscreen()),
+               MaterialPageRoute(builder: (context) =>  CropListScreen(
+                 userId: vm.mySiteList.data[vm.sIndex].customerId,
+                 controllerId: master.controllerId,
+               )),
             ),
             icon: const CircleAvatar(
               radius: 17,

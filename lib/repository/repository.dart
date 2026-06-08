@@ -512,5 +512,13 @@ class Repository{
   Future<http.Response> getMqttConfigure() async {
     return await apiService.getRequest('http://13.235.254.21:9000/getConfigs',type: "MQTTCONFIG");
   }
+///Todo: Crop Advisory urls
+
+  Future<http.Response> getCropList(body) async {
+    return await apiService.postRequest('/user/cropAdvisoryInfo/get', body);
+  }
+  Future<http.Response> createCropList(body) async {
+    return await apiService.postRequest('/user/cropAdvisoryInfo/create', body);
+  }
 }
 

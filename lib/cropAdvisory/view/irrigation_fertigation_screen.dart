@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../service/cropadvisory_model.dart';
+import '../model/cropadvisory_model.dart';
 import 'water_budget_manager_screen.dart';
 
 class IrrigationFertigationScreen extends StatefulWidget {
@@ -152,7 +152,7 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
         ),
         children: [
           TextSpan(
-            text: 'This ${_model.variety ?? "hybrid"} ${_model.cropName ?? "tomato"} crop is being cultivated in an ${_model.cropType ?? "open-field"} environment using ${_model.soilType ?? "loam"} soil, which provides good water retention and proper root ',
+            text: 'This ${_model.cropVariety ?? "hybrid"} ${_model.cropName ?? "tomato"} crop is being cultivated in an ${_model.cropType ?? "open-field"} environment using ${_model.soilType ?? "loam"} soil, which provides good water retention and proper root ',
           ),
           TextSpan(
             text: 'See More..',

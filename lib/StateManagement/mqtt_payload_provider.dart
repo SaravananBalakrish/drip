@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import '../Constants/data_convertion.dart';
-import '../cropAdvisory/service/cropadvisory_model.dart';
+import '../cropAdvisory/model/cropadvisory_model.dart';
 import '../models/Weather_model.dart';
 import '../Screens/Map/googlemap_model.dart';
 import '../models/customer/fertilizer_site_live_model.dart';
@@ -670,37 +670,28 @@ class MqttPayloadProvider with ChangeNotifier {
         Map<String, dynamic> data = _receivedPayload.isNotEmpty? jsonDecode(_receivedPayload) : {};
          debugPrint('_receivedPayload------>:$_receivedPayload');
 
+        if (data.containsKey('cD') && data.containsKey('cT')) {
+          liveDateAndTime = '${data['cD'] ?? "--"} ${data['cT'] ?? "--"}';
+        }
+
         if(data['mC']=='2400'){
+          activeDeviceId = data['cC'] ?? "";
 
-          try {
-            Map<String, dynamic> data =
-            _receivedPayload.isNotEmpty ? jsonDecode(_receivedPayload) : {};
+          activeDeviceVersion =
+          data['cM'] != null && data['cM'].containsKey('Version')
+              ? data['cM']['Version']
+              : "";
 
-            if (data['mC'] == '2400') {
+          wifiStrength =
+          data['cM'] != null ? data['cM']['WifiStrength'] ?? 0 : 0;
 
-              liveDateAndTime = '${data['cD'] ?? "--"} ${data['cT'] ?? "--"}';
+          powerSupply =
+          data['cM'] != null ? data['cM']['PowerSupply'] ?? 0 : 0;
 
-              activeDeviceId = data['cC'] ?? "";
-
-              activeDeviceVersion =
-              data['cM'] != null && data['cM'].containsKey('Version')
-                  ? data['cM']['Version']
-                  : "";
-
-              wifiStrength =
-              data['cM'] != null ? data['cM']['WifiStrength'] ?? 0 : 0;
-
-              powerSupply =
-              data['cM'] != null ? data['cM']['PowerSupply'] ?? 0 : 0;
-
-              activeLoraData =
-              data['cM'] != null && data['cM'].containsKey('LoraData')
-                  ? data['cM']['LoraData']
-                  : "";
-            }
-          } catch (e) {
-            debugPrint("Error: $e");
-          }
+          activeLoraData =
+          data['cM'] != null && data['cM'].containsKey('LoraData')
+              ? data['cM']['LoraData']
+              : "";
 
           final cm = data['cM'];
           if (cm == null || cm is! Map || !cm.containsKey('2401') || cm['2401'] == null ||
@@ -1083,6 +1074,11 @@ class MqttPayloadProvider with ChangeNotifier {
 
    void updateScheduledProgram(List<String> program) {
      scheduledProgramPayload = program;
+   }
+
+   void updateCurrentProgramManual(List<String> program) {
+     currentSchedule = program;
+     notifyListeners();
    }
 
    void updateCondition(List<String> con) {
