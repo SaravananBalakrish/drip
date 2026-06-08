@@ -92,14 +92,14 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
     ] :
     [
       vm.isChanged ? Scaffold(
-        floatingActionButton: AppConstants.wlcModelList.contains(cM.modelId) ?
-        CustomerFabMenu(
-          currentMaster: cM,
-          loggedInUser: loggedInUser,
-          vm: vm,
-          callbackFunction: callbackFunction,
-          myPermissionFlags: [],
-        ) : null,
+        // floatingActionButton: AppConstants.wlcModelList.contains(cM.modelId) ?
+        // CustomerFabMenu(
+        //   currentMaster: cM,
+        //   loggedInUser: loggedInUser,
+        //   vm: vm,
+        //   callbackFunction: callbackFunction,
+        //   myPermissionFlags: [],
+        // ) : null,
         body: isGsmWeather ? WeatherGsm(customerId: loggedInUser.id, controllerId: cM.controllerId, deviceID: cM.deviceId,jsondata: dashboardToWeatherFormat(cM))
             : PumpControllerHome(
           userId: loggedInUser.id,

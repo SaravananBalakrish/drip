@@ -788,11 +788,10 @@ class _ViewConfigState extends State<ViewConfig> {
           child: Column(
             children: [
               ...List.generate(setting.setting.length, (i) {
-                if(delayValues.length > i){
+                if(delayValues.length > (widget.isLora ? (i + 1) : i)){
                   return _buildListTile(setting.setting[i].title, widget.isLora ? delayValues[i + 1] : delayValues[i]);
                 }
                 return Container();
-
                 return (i == 11 || i == 12)
                     ? Container()
                     : _buildListTile(setting.setting[i].title, widget.isLora ? delayValues[i + 1] : delayValues[i]);

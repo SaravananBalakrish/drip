@@ -997,9 +997,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                 'Manual mode ${isEnabled ? "ON" : "OFF"} successfully',
                 200
             );
-
-            await Future.delayed(const Duration(seconds: 2));
-            liveRequest(); // Refresh to get updated status
           }, pumpName: '',
         ) : Container(),
       ],
