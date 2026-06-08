@@ -182,6 +182,18 @@ class _LogHomeState extends State<LogHome> {
     }
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (mounted) {
+        dataSource = [];
+        dataToShow = {};
+        program = [];
+        programDuplicate = [];
+        valve = [];
+        valveDuplicate = [];
+        line = [];
+        lineDuplicate = [];
+        date = [];
+        dateDuplicate = [];
+        status = [];
+        statusDuplicate = [];
         IrrigationLogParameterFromServer = widget.serverData['irrigationLog'];
         for(var globalParameter in IrrigationLogParameterFromServer.keys){
           for(var localParameter in IrrigationLogParameterFromServer[globalParameter].keys){

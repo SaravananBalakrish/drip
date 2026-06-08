@@ -619,7 +619,7 @@ class BluetoothBleService {
     int attempts = 0;
     while (attempts < maxRetries) {
       try {
-        final finalPayload = '*$payload#';
+        final finalPayload = payload;
         final dataWithTerminator = '$finalPayload\r\n';
         final bytes = utf8.encode(dataWithTerminator);
 

@@ -136,6 +136,7 @@ class BleProvider extends ChangeNotifier {
   String nodeFirmwareFileName = '';
   Map<String, dynamic> nodeData = {};
   List<String> loraModel = ['40', '41', '42'];
+  int modelId = 0;
 
   void editNodeDataFromServer(data, nodeDataFromNodeStatus){
     nodeDataFromServer = data;
@@ -161,7 +162,8 @@ class BleProvider extends ChangeNotifier {
     }
   }
 
-  void autoScanAndFoundDevice({required String macAddressToConnect}) async{
+  void autoScanAndFoundDevice({required String macAddressToConnect, required int modelIdToUpdate}) async{
+    modelId = modelIdToUpdate;
     bleNodeState = BleNodeState.scanning;
     forceStop = false;
     notifyListeners();
@@ -394,7 +396,7 @@ class BleProvider extends ChangeNotifier {
     for (var s in _services){
       print('service => ${s}');
     }
-    if(AppConstants.wlcModelList.contains(nodeData['modelId'])){
+    if(AppConstants.wlcModelList.contains(modelId)){
       debugPrint("connect to wlc model....");
       myService = _services[2];
     }else{
@@ -402,6 +404,7 @@ class BleProvider extends ChangeNotifier {
       myService = _services[1];
     }
     for (BluetoothCharacteristic c in myService!.characteristics) {
+      print("characteristic => $c");
       if (
       c.properties.writeWithoutResponse == false &&
           c.properties.write == true &&
@@ -412,7 +415,7 @@ class BleProvider extends ChangeNotifier {
         }
         readFromHardware = c;
       }
-      if (c.properties.writeWithoutResponse && !c.properties.notify) {
+      if ((c.properties.writeWithoutResponse || AppConstants.wlcModelList.contains(modelId)) && !c.properties.notify) {
         if (sendToHardware == null) {
           listeningSendToHardwareSubscription(c);
         }
