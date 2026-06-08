@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import '../service/cropadvisory_model.dart';
+import '../model/cropadvisory_model.dart';
 import 'package:intl/intl.dart';
 import 'irrigation_fertigation_screen.dart';
 import 'crop_weatherScreen.dart';
@@ -288,7 +288,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       flex: 3,
                       child: Column(
                         children: [
-                          _buildInfoRow(Icons.water_drop, 'Variety', _model.variety ?? 'Hybrid'),
+                          _buildInfoRow(Icons.water_drop, 'Variety', _model.cropVariety ?? 'Hybrid'),
                           const SizedBox(height: 12),
                           _buildInfoRow(Icons.water_drop, 'Crop Type', _model.cropType ?? 'Open Field'),
                           const SizedBox(height: 12),
