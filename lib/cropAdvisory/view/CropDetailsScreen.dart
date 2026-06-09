@@ -141,6 +141,27 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
     }
   }
 
+  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+    DateTime initialDate = DateTime.now();
+    if (controller.text.isNotEmpty) {
+      final parsed = DateTime.tryParse(controller.text);
+      if (parsed != null) {
+        initialDate = parsed;
+      }
+    }
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        controller.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -244,6 +265,8 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                                 AppTextField(
                                   controller: _plantingDateController,
                                   hint: 'Select Date',
+                                  readOnly: true,
+                                  onTap: () => _selectDate(context, _plantingDateController),
                                   suffix: const Icon(Icons.calendar_month),
                                 ),
                               ],
@@ -261,7 +284,9 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                                 const SizedBox(height: 8),
                                 AppTextField(
                                   controller: _harvestDateController,
-                                  hint: 'Auto-Calculate',
+                                  hint: 'Select Date',
+                                  readOnly: true,
+                                  onTap: () => _selectDate(context, _harvestDateController),
                                   suffix: const Icon(Icons.calendar_month),
                                 ),
                               ],
@@ -359,7 +384,8 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     _model.cropDuration = _durationController.text;
                     _model.plantArrangement = _arrangementController.text;
                     _model.cropType = _cropTypeController.text;
-                    _model.cropImage = kIsWeb ? webImage.toString() : cropImage?.path;
+                    _model.cropImage = kIsWeb ? '' : cropImage?.path;
+                    _model.cropImageBytes = kIsWeb ? webImage : null;
 
                     Navigator.push(
                       context,

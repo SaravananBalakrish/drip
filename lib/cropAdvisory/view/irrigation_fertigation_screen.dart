@@ -152,7 +152,7 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
         ),
         children: [
           TextSpan(
-            text: 'This ${_model.cropVariety ?? "hybrid"} ${_model.cropName ?? "tomato"} crop is being cultivated in an ${_model.cropType ?? "open-field"} environment using ${_model.soilType ?? "loam"} soil, which provides good water retention and proper root ',
+            text: 'This ${_model.cropVariety ?? "hybrid"} ${_model.cropName ?? "tomato"} crop is being cultivated in an ${_model.cropType ?? "open-field"} environment using ${_model.soilTypeName.toLowerCase()} soil, which provides good water retention and proper root ',
           ),
           TextSpan(
             text: 'See More..',
