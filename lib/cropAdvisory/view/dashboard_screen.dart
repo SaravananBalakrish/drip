@@ -218,12 +218,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   String _getSoilImage(String? soilType) {
     switch (soilType) {
+      case '1':
       case 'Clay Soil':
         return 'assets/Images/CropAdvisory/clay_soil.png';
+      case '2':
       case 'Loam Soil':
         return 'assets/Images/CropAdvisory/loam_soil.png';
+      case '3':
       case 'Sandy Soil':
         return 'assets/Images/CropAdvisory/sandy_soil.png';
+      case '4':
       case 'Volcanic soil':
         return 'assets/Images/CropAdvisory/Volcanic_soil.png';
       default:
@@ -292,7 +296,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                           const SizedBox(height: 12),
                           _buildInfoRow(Icons.water_drop, 'Crop Type', _model.cropType ?? 'Open Field'),
                           const SizedBox(height: 12),
-                          _buildInfoRow(Icons.water_drop, 'Soil Type', _model.soilType ?? 'Loam'),
+                          _buildInfoRow(Icons.water_drop, 'Soil Type', _model.soilTypeName),
                         ],
                       ),
                     ),

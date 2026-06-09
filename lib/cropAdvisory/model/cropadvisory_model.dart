@@ -1,4 +1,4 @@
-
+import 'dart:typed_list';
 import 'package:flutter/material.dart';
 
 class CropAdvisoryModel extends ChangeNotifier {
@@ -54,9 +54,25 @@ class CropAdvisoryModel extends ChangeNotifier {
   // Field Information
   String? mulchingUsed;
   String? soilType;
+  String get soilTypeName {
+    switch (soilType) {
+      case '1':
+        return 'Clay Soil';
+      case '2':
+        return 'Loam Soil';
+      case '3':
+        return 'Sandy Soil';
+      case '4':
+        return 'Volcanic soil';
+      case '5':
+        return 'Others';
+      default:
+        return soilType ?? 'Loam';
+    }
+  }
   String? previousCrop;
   String? cropImage;
-  // Uint8List? cropImageByte;
+  Uint8List? cropImageByte;
 
   void updateLocation({String? lat, String? lng, String? addr}) {
     latitude = lat;
@@ -85,7 +101,7 @@ class CropAdvisoryModel extends ChangeNotifier {
     soilType = null;
     previousCrop = null;
     cropImage = null;
-    // cropImageByte = null;
+    cropImageByte = null;
     notifyListeners();
   }
 
@@ -110,7 +126,6 @@ class CropAdvisoryModel extends ChangeNotifier {
       'soilType': soilType,
       'previousCrop': previousCrop,
       'cropImage': cropImage,
-      // 'cropImageByte': cropImageByte,
     };
   }
 
@@ -134,7 +149,6 @@ class CropAdvisoryModel extends ChangeNotifier {
     soilType = json['soilType'];
     previousCrop = json['previousCrop'];
     cropImage = json['cropImage'];
-    // cropImageByte = json['cropImageByte'];
     notifyListeners();
   }
 }
