@@ -13,6 +13,7 @@ import 'package:oro_drip_irrigation/services/communication_service.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/network_utils.dart';
+import 'package:oro_drip_irrigation/view_models/admin_dealer/customer_search_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -152,6 +153,7 @@ FutureOr<void> main() async {
         providers: [
           ChangeNotifierProvider(create: (_) => UserProvider()),
           ChangeNotifierProvider(create: (_) => CustomerProvider()),
+          ChangeNotifierProvider(create: (_) => CustomerSearchViewModel()),
           ChangeNotifierProvider(create: (_) => ConfigMakerProvider()),
           ChangeNotifierProvider(create: (_) => IrrigationProgramMainProvider()),
           ChangeNotifierProvider(create: (_) => MqttPayloadProvider()),

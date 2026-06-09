@@ -620,6 +620,35 @@ class _GeneralSettingWideState extends State<GeneralSettingWide> {
               child: const Text('Submit'),
               onPressed: () async {
                 List<MasterItem> masterList = [];
+
+                for (int gix = 0; gix < userGroups.length; gix++) {
+                  for (int mix = 0; mix < userGroups[gix].master.length; mix++) {
+                    final master = userGroups[gix].master[mix];
+                    masterList.add(
+                      MasterItem(
+                        id: master.controllerId,
+                        action: master.isSharedDevice,
+                        userPermission: master.userPermission,
+                        linePermission: master.linePermission,
+                      ),
+                    );
+                  }
+                }
+
+                Map<String, Object> body = {
+                  "userId": widget.customerId,
+                  "sharedUser": suId,
+                  "masterList": masterList.map((item) => item.toMap()).toList(),
+                  "createUser": widget.userId,
+                };
+
+                vm.updatedSubUserPermission(body, suId, pntContext);
+              },
+            ),
+            /*TextButton(
+              child: const Text('Submit'),
+              onPressed: () async {
+                List<MasterItem> masterList = [];
                 for(int gix=0; gix<userGroups.length; gix++){
                   for(int mix=0; mix<userGroups[gix].master.length; mix++){
                     masterList.add(MasterItem(id: userGroups[gix].master[mix].controllerId,
@@ -636,7 +665,7 @@ class _GeneralSettingWideState extends State<GeneralSettingWide> {
                 };
                 vm.updatedSubUserPermission(body, suId, pntContext);
               },
-            ),
+            ),*/
           ],
         );
       },
@@ -761,18 +790,35 @@ class Master {
   final String deviceName;
   bool isSharedDevice;
   final List<UserPermission> userPermission;
+  final List<LinePermission> linePermission;
 
-  Master({required this.controllerId, required this.deviceId, required this.deviceName, required this.isSharedDevice, required this.userPermission});
+  Master({
+    required this.controllerId,
+    required this.deviceId,
+    required this.deviceName,
+    required this.isSharedDevice,
+    required this.userPermission,
+    required this.linePermission
+  });
 
   factory Master.fromJson(Map<String, dynamic> json) {
     var list = json['userPermission'] as List;
     List<UserPermission> userPermissionList = list.map((i) => UserPermission.fromJson(i)).toList();
+
+    // Handle linePermission (might be null or empty)
+    List<LinePermission> linePermissionListData = [];
+    if (json['linePermission'] != null) {
+      var linePermissionList = json['linePermission'] as List;
+      linePermissionListData = linePermissionList.map((i) => LinePermission.fromJson(i)).toList();
+    }
+
     return Master(
       controllerId: json['controllerId'],
       deviceId: json['deviceId'],
       deviceName: json['deviceName'],
-      isSharedDevice: json['isSharedDevice'],
+      isSharedDevice: json['isSharedDevice'] ?? false,
       userPermission: userPermissionList,
+      linePermission: linePermissionListData,
     );
   }
 }
@@ -796,13 +842,36 @@ class UserPermission {
     return UserPermission(
       sNo: json['sNo'],
       name: json['name'],
-      status: json['status'],
+      status: json['status'] ?? false,
     );
   }
-
 }
 
+class LinePermission {
+  final double sNo;
+  final String name;
+  bool status;
 
+  LinePermission({required this.sNo, required this.name, required this.status});
+
+  Map<String, dynamic> toMap() {
+    return {
+      'sNo': sNo,
+      'name': name,
+      'status': status,
+    };
+  }
+
+  factory LinePermission.fromJson(Map<String, dynamic> json) {
+    return LinePermission(
+      sNo: (json['sNo'] as num).toDouble(),
+      name: json['name'],
+      status: json['status'] ?? false,
+    );
+  }
+}
+
+// Updated UserGroupWidget with line permissions
 class UserGroupWidget extends StatefulWidget {
   final UserGroup group;
   const UserGroupWidget({super.key, required this.group});
@@ -812,110 +881,162 @@ class UserGroupWidget extends StatefulWidget {
 }
 
 class _UserGroupWidgetState extends State<UserGroupWidget> {
-  void toggleGroup(UserGroup group, bool value) {
+  void toggleGroup(UserGroup group, bool? value) {
+    if (value == null) return;
     setState(() {
       for (var master in group.master) {
         master.isSharedDevice = value;
         for (var permission in master.userPermission) {
           permission.status = value;
         }
+        for (var linePermission in master.linePermission) {
+          linePermission.status = value;
+        }
       }
     });
   }
 
-  void toggleMaster(Master master, bool value) {
+  void toggleMaster(Master master, bool? value) {
+    if (value == null) return;
     setState(() {
       master.isSharedDevice = value;
       for (var permission in master.userPermission) {
         permission.status = value;
       }
-
-      if (!value) {
-        for (var otherMaster in widget.group.master) {
-          if (otherMaster != master && otherMaster.isSharedDevice) return;
-        }
+      for (var linePermission in master.linePermission) {
+        linePermission.status = value;
       }
     });
   }
 
-  void togglePermission(UserGroup group, Master master, UserPermission permission, bool value) {
+  void toggleUserPermission(Master master, UserPermission permission, bool? value) {
+    if (value == null) return;
     setState(() {
       permission.status = value;
 
-      if (!value) {
-        bool allPermissionsUnchecked = master.userPermission.every((p) => !p.status);
-        if (allPermissionsUnchecked) {
-          master.isSharedDevice = false;
-          bool allMastersUnchecked = group.master.every((m) => !m.isSharedDevice);
-          if (allMastersUnchecked) {
-            for (var m in group.master) {
-              m.isSharedDevice = false;
-            }
-          }
-        }
-      } else {
-        master.isSharedDevice = true;
-        for (var m in group.master) {
-          m.isSharedDevice = true;
-        }
-      }
+      // Update master shared status based on permissions
+      bool anyPermissionSelected = master.userPermission.any((p) => p.status) ||
+          master.linePermission.any((lp) => lp.status);
+      master.isSharedDevice = anyPermissionSelected;
+    });
+  }
+
+  void toggleLinePermission(Master master, LinePermission permission, bool? value) {
+    if (value == null) return;
+    setState(() {
+      permission.status = value;
+
+      // Update master shared status based on permissions
+      bool anyPermissionSelected = master.userPermission.any((p) => p.status) ||
+          master.linePermission.any((lp) => lp.status);
+      master.isSharedDevice = anyPermissionSelected;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return ExpansionTile(
-      initiallyExpanded: true,
-      childrenPadding: const EdgeInsets.only(left: 16),
-      enabled: false,
-      title: Row(
-        children: [
-          Checkbox(
-            value: widget.group.master.every((m) => m.isSharedDevice),
-            onChanged: (value) => toggleGroup(widget.group, value!),
-          ),
-          Text(widget.group.groupName),
-        ],
-      ),
-      children: widget.group.master.map((master){
-        return ExpansionTile(
-          initiallyExpanded: true,
-          childrenPadding: const EdgeInsets.only(left: 16),
-          enabled: false,
-          shape: InputBorder.none,
-          title: Row(
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      child: ExpansionTile(
+        initiallyExpanded: true,
+        title: Row(
+          children: [
+            Checkbox(
+              value: widget.group.master.every((m) => m.isSharedDevice),
+              onChanged: (value) => toggleGroup(widget.group, value),
+            ),
+            Expanded(
+              child: Text(
+                widget.group.groupName,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        ),
+        children: widget.group.master.map((master) {
+          return ExpansionTile(
+            initiallyExpanded: true,
+            title: Row(
+              children: [
+                Checkbox(
+                  value: master.isSharedDevice,
+                  onChanged: (value) => toggleMaster(master, value),
+                ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        master.deviceName,
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                      ),
+                      Text(
+                        master.deviceId,
+                        style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             children: [
-              Checkbox(
-                value: master.isSharedDevice,
-                onChanged: (value) => toggleMaster(master, value!),
-              ),
-              Text(master.deviceName),
+              // User Permissions Section
+              if (master.userPermission.isNotEmpty) ...[
+
+                ...master.userPermission.map((permission) {
+                  return ListTile(
+                    dense: true,
+                    leading: Checkbox(
+                      value: permission.status,
+                      onChanged: (value) => toggleUserPermission(master, permission, value),
+                    ),
+                    title: Text(
+                      permission.name,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  );
+                }),
+              ],
+
+              // Line Permissions Section
+              if (master.linePermission.isNotEmpty) ...[
+
+                ...master.linePermission.map((permission) {
+                  return ListTile(
+                    dense: true,
+                    leading: Checkbox(
+                      value: permission.status,
+                      onChanged: (value) => toggleLinePermission(master, permission, value),
+                    ),
+                    title: Text(
+                      permission.name,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  );
+                }),
+              ],
+
+              const SizedBox(height: 8),
             ],
-          ),
-          children: master.userPermission.map((permission) {
-            return ListTile(
-              leading: Checkbox(
-                value: permission.status,
-                onChanged: (value) => togglePermission(widget.group, master, permission, value!),
-              ),
-              title: Text(permission.name),
-            );
-          }).toList(),
-        );
-      }).toList(),
+          );
+        }).toList(),
+      ),
     );
   }
 }
 
+// Updated MasterItem with proper fromJson
 class MasterItem {
   final int id;
   final bool action;
   final List<UserPermission> userPermission;
+  final List<LinePermission> linePermission;
 
   MasterItem({
     required this.id,
     required this.action,
     required this.userPermission,
+    required this.linePermission,
   });
 
   Map<String, dynamic> toMap() {
@@ -923,9 +1044,9 @@ class MasterItem {
       'id': id,
       'action': action,
       'userPermission': userPermission.map((perm) => perm.toMap()).toList(),
+      'linePermission': linePermission.map((perm) => perm.toMap()).toList(),
     };
   }
-
 
   factory MasterItem.fromJson(Map<String, dynamic> json) {
     return MasterItem(
@@ -934,6 +1055,11 @@ class MasterItem {
       userPermission: List<UserPermission>.from(
           json['userPermission'].map((x) => UserPermission.fromJson(x))
       ),
+      linePermission: json['linePermission'] != null
+          ? List<LinePermission>.from(
+          json['linePermission'].map((x) => LinePermission.fromJson(x))
+      )
+          : [],
     );
   }
 }
