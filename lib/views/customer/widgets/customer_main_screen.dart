@@ -28,9 +28,6 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
       cMaster.modelId);
   final isGsmWeather = [...AppConstants.weatherModelList].contains(cMaster.modelId);
 
-
-
-
    switch (index) {
     case 0:
       return (isGem || isNova || isOms) ?
