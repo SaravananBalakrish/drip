@@ -70,6 +70,7 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
           userId: widget.userId,
           controllerId: widget.controllerId,
           cropId: widget.cropId,
+          edit: widget.edit,
         ),
       ),
     );
