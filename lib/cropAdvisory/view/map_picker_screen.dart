@@ -119,13 +119,14 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
     );
     print("lat long: ${_pickedLocation.latitude} ${_pickedLocation.longitude} ");
     print("widget.cropId: ${widget.cropId}  ");
+    print("widget.edit: ${widget.edit}");
 
     // Navigator.pop(context);
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) =>  Cropinformationscreen(userId: widget.userId!,controllerId: widget.controllerId!, cropId: widget.cropId!, edit: widget.edit!,),
+        builder: (_) =>  Cropinformationscreen(userId: widget.userId!,controllerId: widget.controllerId!, cropId: widget.cropId!, edit: widget.edit ?? false,),
       ),
     );
   }

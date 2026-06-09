@@ -21,7 +21,7 @@ class FieldInformationScreen extends StatefulWidget {
 }
 
 class _FieldInformationScreenState extends State<FieldInformationScreen> {
-  final TextEditingController _mulchingController = TextEditingController(text: 'Yes');
+  bool _mulchingValue = true;
   final TextEditingController _previousCropController = TextEditingController();
   String? _selectedSoilType;
   final CropAdvisoryModel _model = CropAdvisoryModel.instance;
@@ -30,25 +30,92 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
   void initState() {
     super.initState();
     // Pre-fill fields for editing
-    _mulchingController.text = _model.mulchingUsed ?? 'Yes';
+    String rawMulching = _model.mulchingUsed ?? 'true';
+    if (rawMulching.toLowerCase() == 'true' || rawMulching.toLowerCase() == 'yes') {
+      _mulchingValue = true;
+    } else {
+      _mulchingValue = false;
+    }
     _previousCropController.text = _model.previousCrop ?? '';
-    _selectedSoilType = _model.soilType;
+    
+    // Select option soilType if null or empty first one select ('1')
+    String rawSoilType = _model.soilType ?? '';
+    if (rawSoilType.isEmpty) {
+      _selectedSoilType = '1';
+    } else {
+      if (['1', '2', '3', '4', '5'].contains(rawSoilType)) {
+        _selectedSoilType = rawSoilType;
+      } else {
+        switch (rawSoilType) {
+          case 'Clay Soil':
+            _selectedSoilType = '1';
+            break;
+          case 'Loam Soil':
+            _selectedSoilType = '2';
+            break;
+          case 'Sandy Soil':
+            _selectedSoilType = '3';
+            break;
+          case 'Volcanic soil':
+            _selectedSoilType = '4';
+            break;
+          case 'Others':
+          default:
+            _selectedSoilType = '5';
+            break;
+        }
+      }
+    }
   }
 
   @override
   void dispose() {
-    _mulchingController.dispose();
     _previousCropController.dispose();
     super.dispose();
   }
 
+  Widget buildMulchingButton(String title) {
+    bool isSelected = (title == 'Yes') ? _mulchingValue : !_mulchingValue;
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            _mulchingValue = (title == 'Yes');
+          });
+        },
+        child: Container(
+          height: 55,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: isSelected
+                ? const Color(0xff0E8797).withOpacity(0.1)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+                color: isSelected
+                    ? const Color(0xff0E8797)
+                    : Colors.grey.shade300),
+          ),
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: 16,
+              color: isSelected ? const Color(0xff0E8797) : Colors.black,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   // Improved soilItem with uniform image sizing and proper fitting
-  Widget soilItem(String title, [String? imagePath]) {
-    bool isSelected = _selectedSoilType == title;
+  Widget soilItem(String id, String title, [String? imagePath]) {
+    bool isSelected = _selectedSoilType == id;
     return GestureDetector(
       onTap: () {
         setState(() {
-          _selectedSoilType = title;
+          _selectedSoilType = id;
         });
       },
       child: Container(
@@ -164,10 +231,12 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                 SectionCard(
                   title: 'Mulching used',
                   icon: Icons.eco,
-                  child: AppTextField(
-                    controller: _mulchingController,
-                    hint: 'Yes',
-                    suffix: const Icon(Icons.keyboard_arrow_down),
+                  child: Row(
+                    children: [
+                      buildMulchingButton('Yes'),
+                      const SizedBox(width: 12),
+                      buildMulchingButton('No'),
+                    ],
                   ),
                 ),
 
@@ -178,11 +247,11 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                     spacing: 19,
                     runSpacing: 20,
                     children: [
-                      soilItem('Clay Soil', 'assets/Images/CropAdvisory/clay_soil.png'),
-                      soilItem('Loam Soil', 'assets/Images/CropAdvisory/loam_soil.png'),
-                      soilItem('Sandy Soil', 'assets/Images/CropAdvisory/sandy_soil.png'),
-                      soilItem('Volcanic soil', 'assets/Images/CropAdvisory/Volcanic_soil.png'),
-                      soilItem('Others'), // now shows a help icon
+                      soilItem('1', 'Clay Soil', 'assets/Images/CropAdvisory/clay_soil.png'),
+                      soilItem('2', 'Loam Soil', 'assets/Images/CropAdvisory/loam_soil.png'),
+                      soilItem('3', 'Sandy Soil', 'assets/Images/CropAdvisory/sandy_soil.png'),
+                      soilItem('4', 'Volcanic soil', 'assets/Images/CropAdvisory/Volcanic_soil.png'),
+                      soilItem('5', 'Others'), // now shows a help icon
                     ],
                   ),
                 ),
@@ -201,7 +270,7 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
 
                 CropContinueButton(
                   onTap: () async {
-                    _model.mulchingUsed = _mulchingController.text;
+                    _model.mulchingUsed = _mulchingValue.toString();
                     _model.soilType = _selectedSoilType;
                     _model.previousCrop = _previousCropController.text;
                     _model.cropId = widget.cropId;
