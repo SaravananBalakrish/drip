@@ -5,7 +5,6 @@ import 'package:oro_drip_irrigation/cropAdvisory/view/crop_advisory_main_screen.
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
-
 import '../model/cropadvisory_model.dart';
 import 'getUserInformationScreen.dart';
 
