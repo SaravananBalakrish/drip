@@ -2,8 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/repository/repository.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
+import '../../utils/constants.dart';
 import '../model/cropadvisory_model.dart';
-
+import 'package:http/http.dart' as http;
 import '../widgets/AppTextField.dart';
 import '../widgets/ContinueButton.dart';
 import '../widgets/ProgressWidget.dart';
@@ -12,9 +13,9 @@ import 'crop_advisory_main_screen.dart';
 import 'dashboard_screen.dart';
 
 class FieldInformationScreen extends StatefulWidget {
-  const FieldInformationScreen({super.key, required this.cropId});
+  const FieldInformationScreen({super.key, required this.cropId,required this.edit});
   final int cropId;
-
+  final bool edit;
   @override
   State<FieldInformationScreen> createState() => _FieldInformationScreenState();
 }
@@ -200,37 +201,95 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
 
                 CropContinueButton(
                   onTap: () async {
-                    // Final update to the model singleton
                     _model.mulchingUsed = _mulchingController.text;
                     _model.soilType = _selectedSoilType;
                     _model.previousCrop = _previousCropController.text;
                     _model.cropId = widget.cropId;
 
-                    // Printing all data for verification
-                    debugPrint('Sending Data: ${_model.toJson()}');
+                    print("Image Path : ${_model.cropImage}");
 
                     try {
-                      final repository = Repository(HttpService());
-                      // Assuming createCropList handles both create and update
-                      final response = await repository.createCropList(_model.toJson());
-                      
+                      var request = http.MultipartRequest(
+                        'POST',
+                        Uri.parse(
+                          '${AppConstants.apiUrl}/user/cropAdvisoryInfo/create',
+                        ),
+                      );
+
+                      // All data as form-data
+                      request.fields.addAll({
+                        'cropId': _model.cropId.toString(),
+                        'userId': _model.userId.toString(),
+                        'controllerId': _model.controllerId.toString(),
+                        'latitude': _model.latitude.toString(),
+                        'longitude': _model.longitude.toString(),
+                        'address': _model.address ?? '',
+                        'areaName': _model.areaName ?? '',
+                        'cropName': _model.cropName ?? '',
+                        'cropVariety': _model.cropVariety ?? '',
+                        'plantingMethod': _model.plantingMethod ?? '',
+                        'plantingDate': _model.plantingDate ?? '',
+                        'expectedHarvestDate': _model.expectedHarvestDate ?? '',
+                        'cropDuration': _model.cropDuration?.toString() ?? '',
+                        'plantArrangement': _model.plantArrangement ?? '',
+                        'cropType': _model.cropType ?? '',
+                        'mulchingUsed': _model.mulchingUsed ?? '',
+                        'soilType': _model.soilType ?? '',
+                        'previousCrop': _model.previousCrop ?? '',
+                        'deleteImageUrl': widget.edit ? _model.cropImage ?? '' : '',
+                      });
+
+                      // Image as file
+                      if (_model.cropImage != null &&
+                          _model.cropImage!.isNotEmpty) {
+                        request.files.add(
+                          await http.MultipartFile.fromPath(
+                            'cropImage',
+                            _model.cropImage!,
+                          ),
+                        );
+                      }
+                      print("Files Count : ${request.files.length}");
+                      print("Fields : ${request.fields}");
+
+
+                      for (var file in request.files) {
+                        print("File Name : ${file.filename}");
+                        print("Field Name : ${file.field}");
+                      }
+
+                      final response = await request.send();
+                      final responseBody =
+                      await response.stream.bytesToString();
+
+                      print("Status Code : ${response.statusCode}");
+                      print("Response : $responseBody");
+
                       if (response.statusCode == 200) {
-                        // Navigate to Dashboard and clear the stack to restrict access back to setup
                         Navigator.pushAndRemoveUntil(
                           context,
                           CupertinoPageRoute(
-                            builder: (context) => const CropAdvisoryMainScreen(),
+                            builder: (context) =>
+                            const CropAdvisoryMainScreen(),
                           ),
-                          (route) => false,
+                              (route) => false,
                         );
                       } else {
-                         ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Failed to save crop: ${response.body}')),
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Failed to save crop: $responseBody',
+                            ),
+                          ),
                         );
                       }
                     } catch (e) {
+                      print("Error : $e");
+
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error: $e')),
+                        SnackBar(
+                          content: Text('Error: $e'),
+                        ),
                       );
                     }
                   },

@@ -16,8 +16,10 @@ class Cropinformationscreen extends StatefulWidget {
     required this.userId,
     required this.cropId,
     required this.controllerId,
+    required this.edit,
   });
   final int userId, controllerId, cropId;
+  final bool edit;
 
   @override
   State<Cropinformationscreen> createState() => _CropinformationscreenState();
@@ -67,6 +69,7 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
           initialLongitude: _longitude,
           userId: widget.userId,
           controllerId: widget.controllerId,
+          cropId: widget.cropId,
         ),
       ),
     );
@@ -210,7 +213,7 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                        builder: (_) => CropDetailsScreen(cropId: widget.cropId),
+                        builder: (_) => CropDetailsScreen(cropId: widget.cropId, edit: widget.edit,),
                       ),
                     );
                   },

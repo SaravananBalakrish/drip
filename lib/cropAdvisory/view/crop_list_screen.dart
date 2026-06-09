@@ -117,7 +117,7 @@ class _CropListScreenState extends State<CropListScreen> {
                             builder: (_) => Cropinformationscreen(
                               userId: widget.userId,
                               controllerId: widget.controllerId,
-                              cropId: crop.cropId!,
+                              cropId: crop.cropId!, edit: true,
                             ),
                           ),
                         );
@@ -140,6 +140,7 @@ class _CropListScreenState extends State<CropListScreen> {
                 userId: widget.userId,
                 controllerId: widget.controllerId,
                 cropId: cropId,
+                edit: false,
               ),
             ),
           );
