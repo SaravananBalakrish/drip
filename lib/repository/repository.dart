@@ -56,6 +56,10 @@ class Repository{
     return await apiService.postRequest('/user/getUserList', body);
   }
 
+  Future<http.Response> searchAllMyCustomers(query) async {
+    return await apiService.postRequest('/user/search', query);
+  }
+
   Future<http.Response> fetchAllMyInventory(body) async {
     return await apiService.postRequest('/product/getInventory', body);
   }
