@@ -1,4 +1,4 @@
-import 'dart:typed_list';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 class CropAdvisoryModel extends ChangeNotifier {
@@ -72,7 +72,7 @@ class CropAdvisoryModel extends ChangeNotifier {
   }
   String? previousCrop;
   String? cropImage;
-  Uint8List? cropImageByte;
+  Uint8List? cropImageBytes;
 
   void updateLocation({String? lat, String? lng, String? addr}) {
     latitude = lat;
@@ -101,7 +101,7 @@ class CropAdvisoryModel extends ChangeNotifier {
     soilType = null;
     previousCrop = null;
     cropImage = null;
-    cropImageByte = null;
+    cropImageBytes = null;
     notifyListeners();
   }
 

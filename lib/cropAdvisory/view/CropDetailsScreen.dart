@@ -384,7 +384,8 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     _model.cropDuration = _durationController.text;
                     _model.plantArrangement = _arrangementController.text;
                     _model.cropType = _cropTypeController.text;
-                    _model.cropImage = kIsWeb ? webImage.toString() : cropImage?.path;
+                    _model.cropImage = kIsWeb ? '' : cropImage?.path;
+                    _model.cropImageBytes = kIsWeb ? webImage : null;
 
                     Navigator.push(
                       context,
