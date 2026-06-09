@@ -35,7 +35,7 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
 
   // --- Other fields ---
   final TextEditingController _areaController = TextEditingController();
-  final TextEditingController _farmIdController = TextEditingController();
+  final TextEditingController _farmNameController = TextEditingController();
   final CropAdvisoryModel _model = CropAdvisoryModel.instance;
 
   @override
@@ -44,6 +44,7 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
     // Pre-fill fields if we are editing (data already in singleton)
     _areaController.text = _model.areaName ?? '';
     _selectedAddress = _model.address ?? '';
+    _farmNameController.text = _model.farmName ?? '';
     if (_model.latitude != null && _model.longitude != null) {
       _latitude = double.tryParse(_model.latitude!);
       _longitude = double.tryParse(_model.longitude!);
@@ -55,7 +56,7 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
   void dispose() {
     _locationController.dispose();
     _areaController.dispose();
-    _farmIdController.dispose();
+    _farmNameController.dispose();
     super.dispose();
   }
 
@@ -185,11 +186,11 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
 
                 // ---------- Plot / Farm ID ----------
                 SectionCard(
-                  title: 'Plot / farm ID',
+                  title: 'Farm Name',
                   icon: Icons.edit,
                   child: AppTextField(
-                    controller: _farmIdController,
-                    hint: 'Enter The Plot Or Farm ID',
+                    controller: _farmNameController,
+                    hint: 'Enter The Plot Or Farm Name',
                   ),
                 ),
 
@@ -210,11 +211,12 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
                     _model.longitude = _longitude?.toString();
                     _model.address = _selectedAddress;
                     _model.areaName = _areaController.text;
-                    
+                    _model.farmName = _farmNameController.text;
+
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                        builder: (_) => CropDetailsScreen(cropId: widget.cropId, edit: widget.edit,),
+                        builder: (_) => CropDetailsScreen(userId:widget.userId,controllerId: widget.controllerId, cropId: widget.cropId, edit: widget.edit,),
                       ),
                     );
                   },

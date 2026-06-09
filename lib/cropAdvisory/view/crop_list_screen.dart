@@ -87,7 +87,7 @@ class _CropListScreenState extends State<CropListScreen> {
 
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const CropAdvisoryMainScreen()),
+                        MaterialPageRoute(builder: (context) =>  CropAdvisoryMainScreen(userId: widget.userId,controllerId: widget.controllerId,)),
                       );
                     },
                     title: Text(
