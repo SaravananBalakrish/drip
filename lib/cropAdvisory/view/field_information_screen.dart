@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/repository/repository.dart';
@@ -309,14 +310,26 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                       });
 
                       // Image as file
-                      if (_model.cropImage != null &&
-                          _model.cropImage!.isNotEmpty) {
-                        request.files.add(
-                          await http.MultipartFile.fromPath(
-                            'cropImage',
-                            _model.cropImage!,
-                          ),
-                        );
+                      if (kIsWeb) {
+                        if (_model.cropImageBytes != null) {
+                          request.files.add(
+                            http.MultipartFile.fromBytes(
+                              'cropImage',
+                              _model.cropImageBytes!,
+                              filename: 'crop.jpg',
+                            ),
+                          );
+                        }
+                      } else {
+                        if (_model.cropImage != null &&
+                            _model.cropImage!.isNotEmpty) {
+                          request.files.add(
+                            await http.MultipartFile.fromPath(
+                              'cropImage',
+                              _model.cropImage!,
+                            ),
+                          );
+                        }
                       }
                       print("Files Count : ${request.files.length}");
                       print("Fields : ${request.fields}");
