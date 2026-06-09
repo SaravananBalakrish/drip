@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 class CropAdvisoryModel extends ChangeNotifier {
@@ -26,7 +27,8 @@ class CropAdvisoryModel extends ChangeNotifier {
       ..cropType = json['cropType']
       ..mulchingUsed = json['mulchingUsed']?.toString()
       ..soilType = json['soilType']?.toString()
-      ..previousCrop = json['previousCrop'];
+      ..previousCrop = json['previousCrop']?.toString()
+      ..cropImage = json['cropImage'];
   }
   CropAdvisoryModel._internal();
 
@@ -53,6 +55,8 @@ class CropAdvisoryModel extends ChangeNotifier {
   String? mulchingUsed;
   String? soilType;
   String? previousCrop;
+  String? cropImage;
+  // Uint8List? cropImageByte;
 
   void updateLocation({String? lat, String? lng, String? addr}) {
     latitude = lat;
@@ -80,6 +84,8 @@ class CropAdvisoryModel extends ChangeNotifier {
     mulchingUsed = null;
     soilType = null;
     previousCrop = null;
+    cropImage = null;
+    // cropImageByte = null;
     notifyListeners();
   }
 
@@ -103,6 +109,8 @@ class CropAdvisoryModel extends ChangeNotifier {
       'mulchingUsed': mulchingUsed,
       'soilType': soilType,
       'previousCrop': previousCrop,
+      'cropImage': cropImage,
+      // 'cropImageByte': cropImageByte,
     };
   }
 
@@ -125,6 +133,8 @@ class CropAdvisoryModel extends ChangeNotifier {
     mulchingUsed = json['mulchingUsed'];
     soilType = json['soilType'];
     previousCrop = json['previousCrop'];
+    cropImage = json['cropImage'];
+    // cropImageByte = json['cropImageByte'];
     notifyListeners();
   }
 }

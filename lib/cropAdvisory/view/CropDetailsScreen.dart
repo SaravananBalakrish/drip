@@ -2,8 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/field_information_screen.dart';
+import 'package:path_provider/path_provider.dart';
+import '../../repository/repository.dart';
+import '../../services/http_service.dart';
 import '../helper/image_compressor.dart';
 import '../model/cropadvisory_model.dart';
+import 'package:http/http.dart' as http;
 
 import '../widgets/AppTextField.dart';
 import '../widgets/ContinueButton.dart';
@@ -13,8 +17,9 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class CropDetailsScreen extends StatefulWidget {
-  const CropDetailsScreen({super.key, required this.cropId});
-final cropId;
+  const CropDetailsScreen({super.key, required this.cropId, required this.edit} );
+  final cropId;
+  final bool edit;
   @override
   State<CropDetailsScreen> createState() => _CropDetailsScreenState();
 }
@@ -75,9 +80,14 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
           height: 55,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xff0E8797).withOpacity(0.1) : Colors.white,
+            color: isSelected
+                ? const Color(0xff0E8797).withOpacity(0.1)
+                : Colors.white,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: isSelected ? const Color(0xff0E8797) : Colors.grey.shade300),
+            border: Border.all(
+                color: isSelected
+                    ? const Color(0xff0E8797)
+                    : Colors.grey.shade300),
           ),
           child: Text(
             title,
@@ -100,29 +110,30 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
 
     if (image == null) return;
 
-    final File originalFile = File(image.path);
+    final Uint8List bytes = await image.readAsBytes();
 
-    // Original size
-    final originalSize =
-        await originalFile.length() / 1024;
+    final originalSize = bytes.lengthInBytes / 1024;
 
-    print(
-      "Original Size : ${originalSize.toStringAsFixed(2)} KB",
-    );
+    print("Original Size : ${originalSize.toStringAsFixed(2)} KB");
 
-    // Compress image
-    final File? compressedFile =
-    await ImageCompressHelper.compressImage(
-      originalFile,
-    );
+    if (kIsWeb) {
+      setState(() {
+        webImage = bytes;
+      });
+      return;
+    }
+
+    // MOBILE ONLY BELOW
+    final tempDir = await getTemporaryDirectory();
+    final file = File('${tempDir.path}/cropImage.jpg');
+    await file.writeAsBytes(bytes);
+
+    final compressedFile = await ImageCompressHelper.compressImage(file);
 
     if (compressedFile != null) {
-      final compressedSize =
-          await compressedFile.length() / 1024;
+      final compressedSize = await compressedFile.length() / 1024;
 
-      print(
-        "Compressed Size : ${compressedSize.toStringAsFixed(2)} KB",
-      );
+      print("Compressed Size : ${compressedSize.toStringAsFixed(2)} KB");
 
       setState(() {
         cropImage = compressedFile;
@@ -170,7 +181,7 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                 const SizedBox(height: 20),
                 const ProgressWidget(current: 2),
                 const SizedBox(height: 20),
-                 if (_model.areaName?.isNotEmpty ?? false)
+                if (_model.areaName?.isNotEmpty ?? false)
                   SectionCard(
                     title: 'Selected Area',
                     icon: Icons.square_foot,
@@ -179,7 +190,6 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
-
                 SectionCard(
                   title: 'Crop Name',
                   icon: Icons.energy_savings_leaf,
@@ -189,7 +199,6 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     suffix: const Icon(Icons.keyboard_arrow_down),
                   ),
                 ),
-
                 SectionCard(
                   title: 'Variety or Hybrid (Seed Type)',
                   icon: Icons.spa,
@@ -199,7 +208,6 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     suffix: const Icon(Icons.keyboard_arrow_down),
                   ),
                 ),
-
                 SectionCard(
                   title: 'Planting Details',
                   icon: Icons.grass,
@@ -264,7 +272,6 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     ],
                   ),
                 ),
-
                 SectionCard(
                   title: 'Crop Duration',
                   icon: Icons.agriculture,
@@ -274,7 +281,6 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     suffix: const Icon(Icons.keyboard_arrow_down),
                   ),
                 ),
-
                 SectionCard(
                   title: 'Plant Arrangement',
                   icon: Icons.grid_view,
@@ -284,7 +290,6 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     suffix: const Icon(Icons.keyboard_arrow_down),
                   ),
                 ),
-
                 SectionCard(
                   title: 'Crop type',
                   icon: Icons.park,
@@ -306,48 +311,46 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                         border: Border.all(color: Colors.grey.shade300),
                         borderRadius: BorderRadius.circular(10),
                       ),
-
                       child: (cropImage == null && webImage == null)
-                          ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
-                            'Capture Crop Image',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          Icon(Icons.camera_alt),
-                        ],
-                      )
-
+                          ? const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Capture Crop Image',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                Icon(Icons.camera_alt),
+                              ],
+                            )
                           : ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                         child: ClipRRect(
-    borderRadius: BorderRadius.circular(10),
-    child: kIsWeb
-    ? (webImage != null
-    ? Image.memory(
-    webImage!,
-    height: 180,
-    width: double.infinity,
-    fit: BoxFit.cover,
-    )
-        : const SizedBox())
-        : (cropImage != null
-    ? Image.file(
-    cropImage!,
-    height: 180,
-    width: double.infinity,
-    fit: BoxFit.cover,
-    )
-        : const SizedBox()),
-    ),
-                      ),
+                              borderRadius: BorderRadius.circular(10),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: kIsWeb
+                                    ? (webImage != null
+                                        ? Image.memory(
+                                            webImage!,
+                                            height: 180,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : const SizedBox())
+                                    : (cropImage != null
+                                        ? Image.file(
+                                            cropImage!,
+                                            height: 180,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : const SizedBox()),
+                              ),
+                            ),
                     ),
                   ),
                 ),
                 CropContinueButton(
-                  onTap: () {
-                    // Update singleton instance with data from this screen
+                  onTap: () async {
+                     // Update singleton instance with data from this screen
                     _model.cropName = _cropNameController.text;
                     _model.cropVariety = _varietyController.text;
                     _model.plantingMethod = _plantingMethod;
@@ -356,11 +359,14 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     _model.cropDuration = _durationController.text;
                     _model.plantArrangement = _arrangementController.text;
                     _model.cropType = _cropTypeController.text;
+                    _model.cropImage = kIsWeb ? webImage.toString() : cropImage?.path;
 
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                        builder: (_) =>  FieldInformationScreen(cropId: widget.cropId,),
+                        builder: (_) => FieldInformationScreen(
+                          cropId: widget.cropId, edit: widget.edit,
+                        ),
                       ),
                     );
                   },

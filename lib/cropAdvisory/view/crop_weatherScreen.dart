@@ -63,7 +63,16 @@ class _CropWeatherscreenState extends State<CropWeatherscreen> {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-      
+
+                Container(child:
+                Image.network(
+                  'https://oroprodblob.blob.core.windows.net/images/1780744311762-crop_image.jpg',
+                  errorBuilder: (context, error, stackTrace) {
+                    debugPrint('Image error: $error');
+                    debugPrint('$stackTrace');
+                    return const Icon(Icons.error);
+                  },
+                ),),
                 const WeatherHeader(temp: '32',),
       
                 const SizedBox(height: 20),

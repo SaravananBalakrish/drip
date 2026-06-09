@@ -57,7 +57,10 @@ List<Widget> appBarActions(
       IconButton(
         onPressed: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const AIChatScreen()),
+          MaterialPageRoute(builder: (context) => AIChatScreen(
+            userId: vm.mySiteList.data[vm.sIndex].customerId,
+            controllerId: master.controllerId,
+          )),
         ),
         icon: const Icon(Icons.assistant),
       ),
@@ -496,7 +499,10 @@ Widget _buildNonGemActions(BuildContext context, dynamic master,
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const AIChatScreen()),
+              MaterialPageRoute(builder: (context) =>  AIChatScreen(
+                userId: customerId,
+                controllerId: master.controllerId,
+              )),
             );
           },
           child: const Padding(
