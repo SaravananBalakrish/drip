@@ -6,8 +6,8 @@ import 'irrigation_fertigation_screen.dart';
 import 'report_screen.dart';
 
 class CropAdvisoryMainScreen extends StatefulWidget {
-  final int initialIndex;
-  const CropAdvisoryMainScreen({super.key, this.initialIndex = 0});
+  final int initialIndex,userId,controllerId;
+  const CropAdvisoryMainScreen({super.key, this.initialIndex = 0, required this.userId, required this.controllerId});
 
   @override
   State<CropAdvisoryMainScreen> createState() => _CropAdvisoryMainScreenState();
@@ -24,7 +24,7 @@ class _CropAdvisoryMainScreenState extends State<CropAdvisoryMainScreen> {
 
   List<Widget> _buildScreens() {
     return [
-      const DashboardScreen(isInsideMain: true),
+       DashboardScreen(isInsideMain: true, userID: widget.userId, controllerId: widget.controllerId),
       const CropWeatherscreen(),
       const IrrigationFertigationScreen(isInsideMain: true),
       const Center(child: Text('Disease Screen (Coming Soon)')),
