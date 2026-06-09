@@ -345,7 +345,6 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                       await response.stream.bytesToString();
 
                       print("Status Code : ${response.statusCode}");
-                      print("Response : $responseBody");
 
                       if (response.statusCode == 200) {
                         Navigator.pushAndRemoveUntil(
