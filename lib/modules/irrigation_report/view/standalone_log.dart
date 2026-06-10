@@ -70,7 +70,7 @@ class _StandaloneLogState extends State<StandaloneLog> {
   void getUserName()async{
     try{
       var body = {
-        "userId": widget.userData['userId'],
+        "userId": widget.userData['customerId'],
         "controllerId": widget.userData['controllerId'],
       };
       var response = await IrrigationRepository().getUserNames(body);
@@ -114,7 +114,7 @@ class _StandaloneLogState extends State<StandaloneLog> {
       String? endMonth = selectedDateRange?.end.month.toString();
       String? endday = selectedDateRange?.end.day.toString();
       var body = {
-        "userId": widget.userData['userId'],
+        "userId": widget.userData['customerId'],
         "controllerId": widget.userData['controllerId'],
         "logType" : "Standalone",
         "fromDate" : formattedDate1,

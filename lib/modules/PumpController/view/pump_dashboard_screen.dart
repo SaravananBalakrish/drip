@@ -984,11 +984,15 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
               "createUser": widget.userId,
               "hardware": payLoadFinal,
             };
-
-            await mqttService.topicToPublishAndItsMessage(
-                payLoadFinal,
-                "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}"
+            final result = await context.read<CommunicationService>().sendCommand(
+              serverMsg: '',
+              payload: payLoadFinal,
             );
+            debugPrint("manual or auto result => $result");
+            // await mqttService.topicToPublishAndItsMessage(
+            //     payLoadFinal,
+            //     "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}"
+            // );
 
             await repository.sendManualOperationToServer(data);
 

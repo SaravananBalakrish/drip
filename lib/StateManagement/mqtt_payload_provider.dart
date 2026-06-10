@@ -1117,9 +1117,7 @@ class MqttPayloadProvider with ChangeNotifier {
    String? getSequencePreview() => _sequencePreview;
    List<String> getNovaVoltage() => _novaVoltage;
 
-
   String get receivedDashboardPayload => dashBoardPayload;
   String get receivedSchedulePayload => schedulePayload;
   MQTTConnectionState get getAppConnectionState => _appConnectionState;
-
 }
