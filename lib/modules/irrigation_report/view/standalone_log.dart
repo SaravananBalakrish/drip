@@ -244,7 +244,7 @@ class _StandaloneLogState extends State<StandaloneLog> {
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Center(
+                                      const Center(
                                         child: Text('Standalone',style: TextStyle(color: Colors.white),),
                                       ),
                                       Row(
@@ -257,7 +257,7 @@ class _StandaloneLogState extends State<StandaloneLog> {
                                               width: standaloneColumn[i] == 'Others' ? 1000 : 100,
                                               height: 25,
                                               alignment: Alignment.centerLeft,
-                                              child: Text('${standaloneColumn[i]}',style: TextStyle(color: Colors.black),),
+                                              child: Text(standaloneColumn[i],style: const TextStyle(color: Colors.black),),
                                             ),
       
                                         ],
@@ -299,7 +299,7 @@ class _StandaloneLogState extends State<StandaloneLog> {
                                                       height: 70,
                                                       child: CustomPaint(
                                                         painter: VerticalDotBorder(),
-                                                        size: Size(10,50),
+                                                        size: const Size(10,50),
                                                       ),
                                                     ),
                                                     for(var j = 0;j < i.length;j++)
@@ -308,17 +308,16 @@ class _StandaloneLogState extends State<StandaloneLog> {
                                                         width: j == 5 ? 1000 : 100,
                                                         height: 70,
                                                         alignment: Alignment.centerLeft,
-                                                        child: Text('${i[j] ?? '-'}',style: TextStyle(fontSize: 12,fontWeight: FontWeight.normal),),
+                                                        child: Text('${i[j] ?? '-'}',style: const TextStyle(fontSize: 12,fontWeight: FontWeight.normal),),
                                                       ),
                                                     SizedBox(
                                                       width: 0,
                                                       height: 70,
                                                       child: CustomPaint(
                                                         painter: VerticalDotBorder(),
-                                                        size: Size(0,50),
+                                                        size: const Size(0,50),
                                                       ),
                                                     )
-      
                                                   ],
                                                 )
                                             ],
