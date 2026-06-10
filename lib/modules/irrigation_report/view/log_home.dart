@@ -458,7 +458,6 @@ class _LogHomeState extends State<LogHome> {
             }
           }
           setState(() {
-            // Check if the valve list has elements before splitting and sorting
             if (valve.isNotEmpty) {
               valve.sort((a, b) {
                 var aParts = a['name'].split('VL.');
@@ -519,7 +518,6 @@ class _LogHomeState extends State<LogHome> {
             }else if(_irrigationOptionWise[4][1] == true){
               dataToShow = irrigationParameterArray.editStatusWise(dataSource, status);
             }
-            print("dataToShow => ${dataToShow}");
 
           });
           if (kDebugMode) {
@@ -543,8 +541,10 @@ class _LogHomeState extends State<LogHome> {
       setState(() {
         httpError = 1;
       });
-      print('error in log = > ${e.toString()}');
-      print('error in log stackTrace= > $stackTrace');
+      if (kDebugMode){
+        print('error in log = > ${e.toString()}');
+        print('error in log stackTrace= > $stackTrace');
+      }
     }
   }
 
