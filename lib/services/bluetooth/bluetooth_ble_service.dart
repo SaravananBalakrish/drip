@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../Constants/constants.dart';
@@ -619,7 +620,7 @@ class BluetoothBleService {
     int attempts = 0;
     while (attempts < maxRetries) {
       try {
-        final finalPayload = '*$payload#';
+        final finalPayload = payload;
         final dataWithTerminator = '$finalPayload\r\n';
         final bytes = utf8.encode(dataWithTerminator);
 
@@ -916,6 +917,8 @@ class BluetoothBleService {
     try {
       final data = json.decode(jsonString);
       final jsonStr = json.encode(data);
+
+      MqttService().onMqttPayloadReceived(jsonString);
 
       providerState?.updateReceivedPayload(jsonStr, false);
 

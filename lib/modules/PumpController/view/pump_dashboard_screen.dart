@@ -85,11 +85,9 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
 
   Future<void> liveRequest() async{
     final result = await context.read<CommunicationService>().sendCommand(
-      payload: jsonEncode({"sentSms": "#live"}),
+      payload: AppConstants.wlcModelList.contains(widget.masterData.modelId) ?  '*${jsonEncode({"sentSms": "#live"})}#' : jsonEncode({"sentSms": "#live"}),
       serverMsg: '',
     );
-    debugPrint("Send result: $result");
-    mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "#live"}), "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}");
   }
 
   Future<void> getLive() async{
@@ -427,7 +425,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
 
   String calculatePhToPh(double val1, double val2) {
     double tpc, tp2c;
-
     tpc = val1 * val1;
     tp2c = val2 * val2;
 
@@ -978,7 +975,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
           manualModeStatus: pumpData.manualMode, // Your live payload value
           isLoading: false,
           onToggle: (bool isEnabled) async {
-            String payLoadFinal = jsonEncode({"sentSms":"MANUAL${isEnabled ? 'ON' : 'OFF'}"});
+            String payLoadFinal = '*${jsonEncode({"sentSms":"MANUAL${isEnabled ? 'ON' : 'OFF'}"})}#';
             var data = {
               "userId": widget.customerId,
               "controllerId": widget.masterData.controllerId,
@@ -987,11 +984,15 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
               "createUser": widget.userId,
               "hardware": payLoadFinal,
             };
-
-            await mqttService.topicToPublishAndItsMessage(
-                payLoadFinal,
-                "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}"
+            final result = await context.read<CommunicationService>().sendCommand(
+              serverMsg: '',
+              payload: payLoadFinal,
             );
+            debugPrint("manual or auto result => $result");
+            // await mqttService.topicToPublishAndItsMessage(
+            //     payLoadFinal,
+            //     "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}"
+            // );
 
             await repository.sendManualOperationToServer(data);
 
@@ -1000,9 +1001,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                 'Manual mode ${isEnabled ? "ON" : "OFF"} successfully',
                 200
             );
-
-            await Future.delayed(const Duration(seconds: 2));
-            liveRequest(); // Refresh to get updated status
           }, pumpName: '',
         ) : Container(),
       ],

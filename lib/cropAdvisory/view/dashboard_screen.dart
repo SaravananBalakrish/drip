@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import '../service/cropadvisory_model.dart';
+import '../model/cropadvisory_model.dart';
 import 'package:intl/intl.dart';
+import 'crop_list_screen.dart';
 import 'irrigation_fertigation_screen.dart';
 import 'crop_weatherScreen.dart';
 
@@ -11,13 +12,14 @@ class DashboardScreen extends StatefulWidget {
   final String? humidity;
   final String? windspeed;
   final bool isInsideMain;
+  final int userID,controllerId;
 
   const DashboardScreen({
     super.key,
     this.temperature,
     this.humidity,
     this.windspeed,
-    this.isInsideMain = false,
+    this.isInsideMain = false, required this.userID, required this.controllerId,
   });
 
   @override
@@ -41,7 +43,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 padding: const EdgeInsets.only(left: 8.0),
                 child: IconButton(
                   icon: const Icon(Icons.menu, color: Colors.black, size: 28),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>  CropListScreen(userId: widget.userID,controllerId: widget.controllerId)),
+                    );
+                  },
                 ),
               ),
               title: Container(
@@ -87,16 +95,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             )
           : null,
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: [
-          _buildHomeBody(),
-           CropWeatherscreen(),
-          const Center(child: Text('Irrigation')),
-          const Center(child: Text('Disease')),
-          const Center(child: Text('Report')),
-        ],
-      ),
+      body: _buildHomeBody(),
       floatingActionButton: _selectedIndex == 0
           ? Padding(
               padding: const EdgeInsets.only(bottom: 10.0),
@@ -227,12 +226,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   String _getSoilImage(String? soilType) {
     switch (soilType) {
+      case '1':
       case 'Clay Soil':
         return 'assets/Images/CropAdvisory/clay_soil.png';
+      case '2':
       case 'Loam Soil':
         return 'assets/Images/CropAdvisory/loam_soil.png';
+      case '3':
       case 'Sandy Soil':
         return 'assets/Images/CropAdvisory/sandy_soil.png';
+      case '4':
       case 'Volcanic soil':
         return 'assets/Images/CropAdvisory/Volcanic_soil.png';
       default:
@@ -297,11 +300,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       flex: 3,
                       child: Column(
                         children: [
-                          _buildInfoRow(Icons.water_drop, 'Variety', _model.variety ?? 'Hybrid'),
+                          _buildInfoRow(Icons.water_drop, 'Variety', _model.cropVariety ?? 'Hybrid'),
                           const SizedBox(height: 12),
                           _buildInfoRow(Icons.water_drop, 'Crop Type', _model.cropType ?? 'Open Field'),
                           const SizedBox(height: 12),
-                          _buildInfoRow(Icons.water_drop, 'Soil Type', _model.soilType ?? 'Loam'),
+                          _buildInfoRow(Icons.water_drop, 'Soil Type', _model.soilTypeName),
                         ],
                       ),
                     ),
@@ -359,12 +362,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      setState(() {
-                        _selectedIndex = 2; // Irrigation tab index
-                      });
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const IrrigationFertigationScreen()),
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const IrrigationFertigationScreen()),
                       );
                     },
                     style: OutlinedButton.styleFrom(
@@ -422,9 +424,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            setState(() {
-              _selectedIndex = 1; // Weather tab index
-            });
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const CropWeatherscreen()),
+            );
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

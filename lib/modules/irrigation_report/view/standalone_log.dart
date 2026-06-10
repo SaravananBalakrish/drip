@@ -70,7 +70,7 @@ class _StandaloneLogState extends State<StandaloneLog> {
   void getUserName()async{
     try{
       var body = {
-        "userId": widget.userData['userId'],
+        "userId": widget.userData['customerId'],
         "controllerId": widget.userData['controllerId'],
       };
       var response = await IrrigationRepository().getUserNames(body);
@@ -114,7 +114,7 @@ class _StandaloneLogState extends State<StandaloneLog> {
       String? endMonth = selectedDateRange?.end.month.toString();
       String? endday = selectedDateRange?.end.day.toString();
       var body = {
-        "userId": widget.userData['userId'],
+        "userId": widget.userData['customerId'],
         "controllerId": widget.userData['controllerId'],
         "logType" : "Standalone",
         "fromDate" : formattedDate1,
@@ -199,7 +199,7 @@ class _StandaloneLogState extends State<StandaloneLog> {
                           width: 100,
                           height: 50,
                           alignment: Alignment.center,
-                          child: Text('Date',style: TextStyle(color: Colors.white),),
+                          child: const Text('Date',style: TextStyle(color: Colors.white),),
       
                         ),
                         Expanded(
@@ -210,14 +210,14 @@ class _StandaloneLogState extends State<StandaloneLog> {
                                 children: [
                                   Column(
                                     children: [
-                                      for(var i = 0;i < filterDataByPages(data : standaloneData['fixedColumnData']).length;i++)
+                                      for(var i in filterDataByPages(data : standaloneData['fixedColumnData']))
                                         Container(
                                           color: Color(0xffDCF3DD),
                                           padding: const EdgeInsets.only(left: 8),
                                           width: 100,
                                           height: 70,
                                           alignment: Alignment.center,
-                                          child: Text('${standaloneData['fixedColumnData'][i]}'),
+                                          child: Text('${i}'),
                                         ),
                                     ],
                                   ),
@@ -290,7 +290,7 @@ class _StandaloneLogState extends State<StandaloneLog> {
                                           //TODO : Standalone DATA
                                           Column(
                                             children: [
-                                              for(var i = 0;i < filterDataByPages(data: standaloneData['standaloneColumnData']).length;i++)
+                                              for(var i in filterDataByPages(data: standaloneData['standaloneColumnData']))
                                                 Row(
                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                   children: [
@@ -302,13 +302,13 @@ class _StandaloneLogState extends State<StandaloneLog> {
                                                         size: Size(10,50),
                                                       ),
                                                     ),
-                                                    for(var j = 0;j < standaloneData['standaloneColumnData'][i].length;j++)
+                                                    for(var j = 0;j < i.length;j++)
                                                       Container(
                                                         padding: const EdgeInsets.only(left: 8),
                                                         width: j == 5 ? 1000 : 100,
                                                         height: 70,
                                                         alignment: Alignment.centerLeft,
-                                                        child: Text('${standaloneData['standaloneColumnData'][i][j] ?? '-'}',style: TextStyle(fontSize: 12,fontWeight: FontWeight.normal),),
+                                                        child: Text('${i[j] ?? '-'}',style: TextStyle(fontSize: 12,fontWeight: FontWeight.normal),),
                                                       ),
                                                     SizedBox(
                                                       width: 0,
@@ -641,6 +641,7 @@ class _StandaloneLogState extends State<StandaloneLog> {
     }
     return slicingList;
   }
+
   void _onSelectionChanged(DateRangePickerSelectionChangedArgs args) {
     setState(() {
       if (args.value is PickerDateRange) {

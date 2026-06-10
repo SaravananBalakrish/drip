@@ -86,13 +86,12 @@ class Constants {
         crcHigh.toRadixString(16).padLeft(2, '0') +
             crcLow.toRadixString(16).padLeft(2, '0');
 
-    String finalPayload = '$payloadStr|$crcHex';
+    String finalPayload = '*$payloadStr|$crcHex#';
 
     if (kDebugMode) {
       print('CRC16: $crcHex');
       print('Payload: $finalPayload');
     }
-
     return finalPayload;
   }
 

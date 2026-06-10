@@ -84,7 +84,7 @@ class _NodeConnectionPageState extends State<NodeConnectionPage> {
       return;
     }
     if(bleService.bleNodeState != BleNodeState.deviceFound){
-      bleService.autoScanAndFoundDevice(macAddressToConnect: widget.nodeData['deviceId']);
+      bleService.autoScanAndFoundDevice(macAddressToConnect: widget.nodeData['deviceId'], modelIdToUpdate: widget.nodeData['modelId']);
     }
   }
 
@@ -302,7 +302,7 @@ class _NodeConnectionPageState extends State<NodeConnectionPage> {
           icon: const Icon(Icons.bluetooth_rounded),
           label: const Text('Scan Again'),
           onPressed: () {
-            bleService.autoScanAndFoundDevice(macAddressToConnect: widget.nodeData['deviceId']);
+            bleService.autoScanAndFoundDevice(macAddressToConnect: widget.nodeData['deviceId'], modelIdToUpdate: widget.nodeData['modelId']);
           },
           style: FilledButton.styleFrom(
             backgroundColor: Theme.of(context).primaryColor,
