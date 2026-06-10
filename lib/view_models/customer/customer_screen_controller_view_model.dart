@@ -337,6 +337,9 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
           await repository.fetchSharedUserSite({"userId": customerId});
           if (sharedResponse.statusCode == 200) {
             final jsonShared = jsonDecode(sharedResponse.body);
+
+            debugPrint('My Site Data Subuser:${sharedResponse.body}');
+
             if (jsonShared["code"] == 200) {
               _handleFetchedSites(jsonShared, 'subUser', preserveSelection);
             }

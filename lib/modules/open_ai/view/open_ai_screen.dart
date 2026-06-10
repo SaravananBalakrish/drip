@@ -14,7 +14,8 @@ import '../model/chat_model.dart';
 import '../model/message_model.dart';
 
 class AIChatScreen extends StatefulWidget {
-  const AIChatScreen({super.key});
+  const AIChatScreen({super.key, required this.userId, required this.controllerId});
+  final userId, controllerId;
   @override
   State<AIChatScreen> createState() => _AIChatScreenState();
 }
@@ -561,8 +562,8 @@ class _AIChatScreenState extends State<AIChatScreen> {
                           ),
                         ),
                       ),
-                      icon: const Icon(Icons.crop),
-                      tooltip: 'Chat History',
+                      icon: const Icon(Icons.agriculture_rounded),
+                      tooltip: 'Crop Advisory',
                     );
                   },
                 ),
