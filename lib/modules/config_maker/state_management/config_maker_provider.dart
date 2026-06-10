@@ -1186,6 +1186,18 @@ class ConfigMakerProvider extends ChangeNotifier{
     return moisturePayload.join(";");
   }
 
+  String sendThreeDigitAfterDecimal(double sNo){
+    String strSerialNo = sNo.toString();
+    List<String> splitSerialNo = strSerialNo.split('.');
+    String afterDecimal = splitSerialNo[1];
+    String beforeDecimal = splitSerialNo[0];
+    if(afterDecimal.length == 2){
+      return '$beforeDecimal.${afterDecimal}0';
+    }else{
+      return strSerialNo;
+    }
+  }
+
   String getObjectPayload() {
     List<dynamic> objectPayload = [];
     List<DeviceObjectModel> objectListToSend = [];
@@ -1225,8 +1237,8 @@ class ConfigMakerProvider extends ChangeNotifier{
         }
         String objectSerialNoForEcoGem = objectSerialNoForEcoGemSplitList.join(',');
         objectPayload.add({
-          "S_No": [...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(masterData['modelId']) ? object.sNo : objectSerialNoForEcoGem,
-          "ObjectType": object.objectId,
+          "S_No": [...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(masterData['modelId']) ? sendThreeDigitAfterDecimal(object.sNo!) : objectSerialNoForEcoGem,
+          "ObjectType": object.objectId == AppConstants.analogWaterMeterObjectId ? AppConstants.waterMeterObjectId : object.objectId,
           "DeviceTypeNumber": controller.categoryId,
           "DeviceRunningNumber": findOutReferenceNumber(controller),
           "Output_InputNumber": object.connectionNo,
