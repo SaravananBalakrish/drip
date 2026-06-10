@@ -5,7 +5,6 @@ import 'package:oro_drip_irrigation/cropAdvisory/view/crop_advisory_main_screen.
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
-
 import '../model/cropadvisory_model.dart';
 import 'getUserInformationScreen.dart';
 
@@ -88,7 +87,7 @@ class _CropListScreenState extends State<CropListScreen> {
 
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const CropAdvisoryMainScreen()),
+                        MaterialPageRoute(builder: (context) =>  CropAdvisoryMainScreen(userId: widget.userId,controllerId: widget.controllerId,)),
                       );
                     },
                     title: Text(
@@ -117,7 +116,7 @@ class _CropListScreenState extends State<CropListScreen> {
                             builder: (_) => Cropinformationscreen(
                               userId: widget.userId,
                               controllerId: widget.controllerId,
-                              cropId: crop.cropId!,
+                              cropId: crop.cropId!, edit: true,
                             ),
                           ),
                         );
@@ -140,6 +139,7 @@ class _CropListScreenState extends State<CropListScreen> {
                 userId: widget.userId,
                 controllerId: widget.controllerId,
                 cropId: cropId,
+                edit: false,
               ),
             ),
           );

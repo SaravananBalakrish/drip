@@ -12,6 +12,7 @@ class MapPickerScreen extends StatefulWidget {
   final double? initialLongitude;
   final int? userId,cropId;
   final int? controllerId;
+  final bool? edit;
 
 
   const MapPickerScreen({
@@ -21,6 +22,7 @@ class MapPickerScreen extends StatefulWidget {
     this.userId,
     this.cropId,
     this.controllerId,
+    this.edit,
 
   });
 
@@ -116,13 +118,15 @@ class _MapPickerScreenState extends State<MapPickerScreen> {
       addr: _address,
     );
     print("lat long: ${_pickedLocation.latitude} ${_pickedLocation.longitude} ");
+    print("widget.cropId: ${widget.cropId}  ");
+    print("widget.edit: ${widget.edit}");
 
     // Navigator.pop(context);
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) =>  Cropinformationscreen(userId: widget.userId!,controllerId: widget.controllerId!, cropId: widget.cropId!,),
+        builder: (_) =>  Cropinformationscreen(userId: widget.userId!,controllerId: widget.controllerId!, cropId: widget.cropId!, edit: widget.edit ?? false,),
       ),
     );
   }

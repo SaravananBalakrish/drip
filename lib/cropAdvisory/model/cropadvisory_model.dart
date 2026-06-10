@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 class CropAdvisoryModel extends ChangeNotifier {
@@ -26,7 +27,9 @@ class CropAdvisoryModel extends ChangeNotifier {
       ..cropType = json['cropType']
       ..mulchingUsed = json['mulchingUsed']?.toString()
       ..soilType = json['soilType']?.toString()
-      ..previousCrop = json['previousCrop'];
+      ..previousCrop = json['previousCrop']?.toString()
+      ..farmName = json['farmName']?.toString()
+      ..cropImage = json['cropImage'];
   }
   CropAdvisoryModel._internal();
 
@@ -48,11 +51,30 @@ class CropAdvisoryModel extends ChangeNotifier {
   String? cropDuration;
   String? plantArrangement;
   String? cropType;
+  String? farmName;
 
   // Field Information
   String? mulchingUsed;
   String? soilType;
+  String get soilTypeName {
+    switch (soilType) {
+      case '1':
+        return 'Clay Soil';
+      case '2':
+        return 'Loam Soil';
+      case '3':
+        return 'Sandy Soil';
+      case '4':
+        return 'Volcanic soil';
+      case '5':
+        return 'Others';
+      default:
+        return soilType ?? 'Loam';
+    }
+  }
   String? previousCrop;
+  String? cropImage;
+  Uint8List? cropImageBytes;
 
   void updateLocation({String? lat, String? lng, String? addr}) {
     latitude = lat;
@@ -80,6 +102,9 @@ class CropAdvisoryModel extends ChangeNotifier {
     mulchingUsed = null;
     soilType = null;
     previousCrop = null;
+    cropImage = null;
+    cropImageBytes = null;
+    farmName = null;
     notifyListeners();
   }
 
@@ -103,6 +128,8 @@ class CropAdvisoryModel extends ChangeNotifier {
       'mulchingUsed': mulchingUsed,
       'soilType': soilType,
       'previousCrop': previousCrop,
+      'cropImage': cropImage,
+      'farmName': farmName,
     };
   }
 
@@ -125,6 +152,8 @@ class CropAdvisoryModel extends ChangeNotifier {
     mulchingUsed = json['mulchingUsed'];
     soilType = json['soilType'];
     previousCrop = json['previousCrop'];
+    cropImage = json['cropImage'];
+    farmName = json['farmName'];
     notifyListeners();
   }
 }
