@@ -576,7 +576,6 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
                       "createUser": widget.userId,
                       "controllerReadStatus": controllerReadStatusForDayCount,
                     });
-
                     final message = jsonDecode(response.body)['message'];
                     ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: message));
                   } catch (e) {
