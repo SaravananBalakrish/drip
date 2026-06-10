@@ -410,18 +410,6 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                           );
                         }
                       }
-                      // print("===== FORM DATA =====");
-                      // request.fields.forEach((key, value) {
-                      //   print("$key : $value");
-                      // });
-                      //
-                      // print("===== FILES =====");
-                      // for (var file in request.files) {
-                      //   print("Field Name : ${file.field}");
-                      //   print("File Name  : ${file.filename}");
-                      //   print("Length     : ${file.length}");
-                      //   print("ContentType: ${file.contentType}");
-                      // }
 
                       final response = await request.send();
                       final responseBody =
@@ -448,7 +436,6 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                       }
                     } catch (e) {
                       print("Error : $e");
-
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Error: $e'),

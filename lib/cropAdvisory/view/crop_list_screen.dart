@@ -46,7 +46,8 @@ class _CropListScreenState extends State<CropListScreen> {
         final List<dynamic> cropData = body['data'];
 
         setState(() {
-          cropList = cropData.map((e) => CropAdvisoryModel.fromJson(e)).toList();
+          cropList =
+              cropData.map((e) => CropAdvisoryModel.fromJson(e)).toList();
           cropId = cropData.length + 1;
         });
       }
@@ -73,26 +74,35 @@ class _CropListScreenState extends State<CropListScreen> {
                 final crop = cropList[index];
 
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   elevation: 2,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
                   child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     onTap: () {
                       // Populate singleton and navigate to Main Screen (Dashboard)
                       CropAdvisoryModel.instance.fromJson(crop.toJson());
                       CropAdvisoryModel.instance.cropId = crop.cropId;
                       CropAdvisoryModel.instance.userId = widget.userId;
-                      CropAdvisoryModel.instance.controllerId = widget.controllerId;
+                      CropAdvisoryModel.instance.controllerId =
+                          widget.controllerId;
 
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) =>  CropAdvisoryMainScreen(userId: widget.userId,controllerId: widget.controllerId,)),
+                        MaterialPageRoute(
+                            builder: (context) => CropAdvisoryMainScreen(
+                                  userId: widget.userId,
+                                  controllerId: widget.controllerId,
+                                )),
                       );
                     },
                     title: Text(
                       crop.cropName ?? 'Unnamed Crop',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 18),
                     ),
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 4.0),
@@ -101,27 +111,44 @@ class _CropListScreenState extends State<CropListScreen> {
                         style: TextStyle(color: Colors.grey.shade600),
                       ),
                     ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.edit_outlined, color: Color(0xff0E8797)),
-                      onPressed: () async {
-                        // Populate singleton for editing flow
-                        CropAdvisoryModel.instance.fromJson(crop.toJson());
-                        CropAdvisoryModel.instance.cropId = crop.cropId;
-                        CropAdvisoryModel.instance.userId = widget.userId;
-                        CropAdvisoryModel.instance.controllerId = widget.controllerId;
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit_outlined,
+                              color: Color(0xff0E8797)),
+                          onPressed: () async {
+                            // Populate singleton for editing flow
+                            CropAdvisoryModel.instance.fromJson(crop.toJson());
+                            CropAdvisoryModel.instance.cropId = crop.cropId;
+                            CropAdvisoryModel.instance.userId = widget.userId;
+                            CropAdvisoryModel.instance.controllerId =
+                                widget.controllerId;
 
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => Cropinformationscreen(
-                              userId: widget.userId,
-                              controllerId: widget.controllerId,
-                              cropId: crop.cropId!, edit: true,
-                            ),
-                          ),
-                        );
-                        fetchData();
-                      },
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => Cropinformationscreen(
+                                  userId: widget.userId,
+                                  controllerId: widget.controllerId,
+                                  cropId: crop.cropId!,
+                                  edit: true,
+                                ),
+                              ),
+                            );
+                            fetchData();
+                          },
+                        ),
+                        IconButton(
+                          icon:
+                              const Icon(Icons.delete, color: Colors.redAccent),
+                          onPressed: () async {
+                            setState(() {
+                              fetchData();
+                            });
+                          },
+                        ),
+                      ],
                     ),
                   ),
                 );
