@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:oro_drip_irrigation/repository/repository.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
 import '../../utils/constants.dart';
@@ -14,8 +17,8 @@ import 'crop_advisory_main_screen.dart';
 import 'dashboard_screen.dart';
 
 class FieldInformationScreen extends StatefulWidget {
-  const FieldInformationScreen({super.key, required this.cropId,required this.edit});
-  final int cropId;
+  const FieldInformationScreen({super.key, required this.cropId,required this.edit, required this.userId, required this.controllerId});
+  final int cropId,userId,controllerId;
   final bool edit;
   @override
   State<FieldInformationScreen> createState() => _FieldInformationScreenState();
@@ -24,8 +27,18 @@ class FieldInformationScreen extends StatefulWidget {
 class _FieldInformationScreenState extends State<FieldInformationScreen> {
   bool _mulchingValue = true;
   final TextEditingController _previousCropController = TextEditingController();
+  final FocusNode _previousCropFocusNode = FocusNode();
   String? _selectedSoilType;
   final CropAdvisoryModel _model = CropAdvisoryModel.instance;
+
+  final List<String> _cropSuggestions = [
+    'Cotton', 'Sugarcane', 'Maize', 'Groundnut', 'Wheat', 'Tomato', 'Chilli', 
+    'Brinjal', 'Okra', 'Cabbage', 'Cauliflower', 'Cucumber', 'Capsicum', 
+    'Pumpkin', 'Bitter Gourd', 'Banana', 'Pomegranate', 'Papaya', 'Grapes', 
+    'Mango', 'Guava', 'Sweet Lime', 'Orange', 'Watermelon', 'Muskmelon', 
+    'Turmeric', 'Ginger', 'Aloe Vera', 'Ashwagandha', 'Tulsi', 'Coconut', 
+    'Arecanut', 'Coffee', 'Tea', 'Rubber'
+  ];
 
   @override
   void initState() {
@@ -67,12 +80,69 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
         }
       }
     }
+
+    _previousCropFocusNode.addListener(() => setState(() {}));
+    _previousCropController.addListener(() => setState(() {}));
   }
 
   @override
   void dispose() {
     _previousCropController.dispose();
+    _previousCropFocusNode.dispose();
     super.dispose();
+  }
+
+  Widget _buildInlineSuggestions({
+    required FocusNode focusNode,
+    required TextEditingController controller,
+    required List<String> suggestions,
+  }) {
+    if (!focusNode.hasFocus) return const SizedBox.shrink();
+    
+    final query = controller.text.toLowerCase();
+    final filtered = suggestions.where((item) => item.toLowerCase().contains(query)).toList();
+    
+    if (filtered.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 200),
+      margin: const EdgeInsets.only(top: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListView.builder(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        itemCount: filtered.length,
+        itemBuilder: (context, index) {
+          final item = filtered[index];
+          return GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapDown: (_) {
+              setState(() {
+                controller.text = item;
+                controller.selection = TextSelection.fromPosition(
+                  TextPosition(offset: item.length),
+                );
+              });
+              Future.microtask(() => focusNode.unfocus());
+            },
+            child: ListTile(
+              title: Text(item),
+            ),
+          );
+        },
+      ),
+    );
   }
 
   Widget buildMulchingButton(String title) {
@@ -260,10 +330,21 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                 SectionCard(
                   title: 'Previous crop grown',
                   icon: Icons.energy_savings_leaf,
-                  child: AppTextField(
-                    controller: _previousCropController,
-                    hint: 'Search Or Select The Crop(Eg.Rice,etc..)',
-                    suffix: const Icon(Icons.keyboard_arrow_down),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppTextField(
+                        controller: _previousCropController,
+                        focusNode: _previousCropFocusNode,
+                        hint: 'Search Or Select The Crop(Eg.Rice,etc..)',
+                        suffix: const Icon(Icons.keyboard_arrow_down),
+                      ),
+                      _buildInlineSuggestions(
+                        focusNode: _previousCropFocusNode,
+                        controller: _previousCropController,
+                        suggestions: _cropSuggestions,
+                      ),
+                    ],
                   ),
                 ),
 
@@ -306,8 +387,11 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                         'mulchingUsed': _model.mulchingUsed ?? '',
                         'soilType': _model.soilType ?? '',
                         'previousCrop': _model.previousCrop ?? '',
-                        'deleteImageUrl': widget.edit ? _model.cropImage ?? '' : '',
-                      });
+                        'farmName': _model.farmName ?? '',
+                        'deleteImageUrl': '',
+                        'edit': 'false',
+                        'createUser': widget.userId.toString(),
+                       });
 
                       // Image as file
                       if (kIsWeb) {
@@ -317,6 +401,7 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                               'cropImage',
                               _model.cropImageBytes!,
                               filename: 'crop.jpg',
+                              contentType: MediaType('image', 'jpg'),
                             ),
                           );
                         }
@@ -327,34 +412,30 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                             await http.MultipartFile.fromPath(
                               'cropImage',
                               _model.cropImage!,
+                              contentType: MediaType('image', 'jpg'),
                             ),
                           );
                         }
                       }
-                      print("Files Count : ${request.files.length}");
-                      print("Fields : ${request.fields}");
 
-
-                      for (var file in request.files) {
-                        print("File Name : ${file.filename}");
-                        print("Field Name : ${file.field}");
-                      }
-
+                      print("Request : ${request.fields}");
                       final response = await request.send();
                       final responseBody =
                       await response.stream.bytesToString();
-
+                      final data = jsonDecode(responseBody);
+                      print("data:$data");
+                      print("responseBody:$responseBody");
                       print("Status Code : ${response.statusCode}");
+                      print("Status Code : ${response}");
 
                       if (response.statusCode == 200) {
-                        Navigator.pushAndRemoveUntil(
+                        Navigator.push(
                           context,
                           CupertinoPageRoute(
                             builder: (context) =>
-                            const CropAdvisoryMainScreen(),
+                             CropAdvisoryMainScreen(userId: widget.userId,controllerId: widget.controllerId,),
                           ),
-                              (route) => false,
-                        );
+                         );
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
@@ -366,7 +447,6 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                       }
                     } catch (e) {
                       print("Error : $e");
-
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Error: $e'),

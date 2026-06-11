@@ -566,22 +566,18 @@ class _ProgramLibraryScreenNewState extends State<ProgramLibraryScreenNew> {
 
                     if (result != null) setState(() => controllerReadStatus = result);
 
-                    // Save to backend
-                    if(initialDayCountSnapshot.toString() != dayCountRtcModel.toJson().toString() || initialQueueSnapshot.toString() != programQueueModel.toJson().toString()) {
-                      final response = await repository.createDayCountRtc({
-                        "userId": widget.customerId,
-                        "controllerId": widget.controllerId,
-                        "dayCountRtc": {
-                          "dayCountRtc": dayCountRtcModel.toJson(),
-                          "programQueue": programQueueModel.toJson(),
-                        },
-                        "createUser": widget.userId,
-                        "controllerReadStatus": controllerReadStatusForDayCount,
-                      });
-
-                      final message = jsonDecode(response.body)['message'];
-                      ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: message));
-                    }
+                    final response = await repository.createDayCountRtc({
+                      "userId": widget.customerId,
+                      "controllerId": widget.controllerId,
+                      "dayCountRtc": {
+                        "dayCountRtc": dayCountRtcModel.toJson(),
+                        "programQueue": programQueueModel.toJson(),
+                      },
+                      "createUser": widget.userId,
+                      "controllerReadStatus": controllerReadStatusForDayCount,
+                    });
+                    final message = jsonDecode(response.body)['message'];
+                    ScaffoldMessenger.of(context).showSnackBar(CustomSnackBar(message: message));
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('$e'), backgroundColor: Colors.red));
                   }

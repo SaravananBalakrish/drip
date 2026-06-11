@@ -28,8 +28,9 @@ class CropAdvisoryModel extends ChangeNotifier {
       ..mulchingUsed = json['mulchingUsed']?.toString()
       ..soilType = json['soilType']?.toString()
       ..previousCrop = json['previousCrop']?.toString()
-      ..cropImage = json['cropImage'];
-  }
+      ..farmName = json['farmName']?.toString()
+      ..cropImageUrl = json['cropImageUrl'];
+   }
   CropAdvisoryModel._internal();
 
   // User Information
@@ -50,6 +51,8 @@ class CropAdvisoryModel extends ChangeNotifier {
   String? cropDuration;
   String? plantArrangement;
   String? cropType;
+  String? farmName;
+   String? cropImageUrl;
 
   // Field Information
   String? mulchingUsed;
@@ -100,8 +103,9 @@ class CropAdvisoryModel extends ChangeNotifier {
     mulchingUsed = null;
     soilType = null;
     previousCrop = null;
-    cropImage = null;
+    cropImageUrl = null;
     cropImageBytes = null;
+    farmName = null;
     notifyListeners();
   }
 
@@ -125,7 +129,8 @@ class CropAdvisoryModel extends ChangeNotifier {
       'mulchingUsed': mulchingUsed,
       'soilType': soilType,
       'previousCrop': previousCrop,
-      'cropImage': cropImage,
+      'cropImageUrl': cropImageUrl,
+      'farmName': farmName,
     };
   }
 
@@ -148,7 +153,8 @@ class CropAdvisoryModel extends ChangeNotifier {
     mulchingUsed = json['mulchingUsed'];
     soilType = json['soilType'];
     previousCrop = json['previousCrop'];
-    cropImage = json['cropImage'];
+    cropImageUrl = json['cropImageUrl'];
+    farmName = json['farmName'];
     notifyListeners();
   }
 }
