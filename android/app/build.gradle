@@ -107,6 +107,10 @@ android {
     kotlinOptions {
         jvmTarget = '17'
     }
+
+    configurations.all {
+        exclude group: "com.google.firebase", module: "firebase-iid"
+    }
 }
 
 /* ================= FLUTTER ================= */
