@@ -1186,6 +1186,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     return moisturePayload.join(";");
   }
 
+
   String getObjectPayload() {
     List<dynamic> objectPayload = [];
     List<DeviceObjectModel> objectListToSend = [];
@@ -1225,8 +1226,8 @@ class ConfigMakerProvider extends ChangeNotifier{
         }
         String objectSerialNoForEcoGem = objectSerialNoForEcoGemSplitList.join(',');
         objectPayload.add({
-          "S_No": [...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(masterData['modelId']) ? object.sNo : objectSerialNoForEcoGem,
-          "ObjectType": object.objectId,
+          "S_No": [...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(masterData['modelId']) ? object.sNo! : objectSerialNoForEcoGem,
+          "ObjectType": object.objectId == AppConstants.analogWaterMeterObjectId ? AppConstants.waterMeterObjectId : object.objectId,
           "DeviceTypeNumber": controller.categoryId,
           "DeviceRunningNumber": findOutReferenceNumber(controller),
           "Output_InputNumber": object.connectionNo,
