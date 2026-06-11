@@ -5,6 +5,8 @@ import 'package:oro_drip_irrigation/cropAdvisory/view/field_information_screen.d
 import 'package:path_provider/path_provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
+import '../../services/ai_service.dart';
+import '../../services/image_verification_service.dart';
 import '../helper/image_compressor.dart';
 import '../model/cropadvisory_model.dart';
 import 'package:http/http.dart' as http;
@@ -245,9 +247,48 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
 
     if (image == null) return;
 
+    // Verify if it's a crop image using ML Kit (Offline)
+    if (!kIsWeb) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Verifying image...'), duration: Duration(seconds: 1)),
+        );
+      }
+
+      final bool isCrop = await ImageVerificationService.isCropImage(image.path);
+
+      if (!isCrop) {
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text("Invalid Image"),
+              content: const Text("The image does not appear to be a crop or plant. Please take a clear photo of your crop to proceed."),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text("OK"),
+                ),
+              ],
+            ),
+          );
+        }
+        return;
+      }
+    }
+
     final Uint8List bytes = await image.readAsBytes();
 
     final originalSize = bytes.lengthInBytes / 1024;
+
+    print("Original Size : ${originalSize.toStringAsFixed(2)} KB");
+
+    if (kIsWeb) {
+      setState(() {
+        webImage = bytes;
+      });
+      return;
+    }
 
     print("Original Size : ${originalSize.toStringAsFixed(2)} KB");
 
