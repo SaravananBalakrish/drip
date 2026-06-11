@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../model/cropadvisory_model.dart';
 import 'package:intl/intl.dart';
+import 'crop_list_screen.dart';
 import 'irrigation_fertigation_screen.dart';
 import 'crop_weatherScreen.dart';
 
@@ -11,13 +12,14 @@ class DashboardScreen extends StatefulWidget {
   final String? humidity;
   final String? windspeed;
   final bool isInsideMain;
+  final int userID,controllerId;
 
   const DashboardScreen({
     super.key,
     this.temperature,
     this.humidity,
     this.windspeed,
-    this.isInsideMain = false,
+    this.isInsideMain = false, required this.userID, required this.controllerId,
   });
 
   @override
@@ -41,7 +43,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 padding: const EdgeInsets.only(left: 8.0),
                 child: IconButton(
                   icon: const Icon(Icons.menu, color: Colors.black, size: 28),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>  CropListScreen(userId: widget.userID,controllerId: widget.controllerId)),
+                    );
+                  },
                 ),
               ),
               title: Container(

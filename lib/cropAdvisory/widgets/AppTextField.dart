@@ -6,6 +6,7 @@ class AppTextField extends StatelessWidget {
   final TextEditingController? controller;
   final bool readOnly;
   final VoidCallback? onTap;
+  final FocusNode? focusNode;
 
   const AppTextField({
     super.key,
@@ -14,6 +15,7 @@ class AppTextField extends StatelessWidget {
     this.controller,
     this.readOnly = false,
     this.onTap,
+    this.focusNode,
   });
 
   @override
@@ -22,6 +24,7 @@ class AppTextField extends StatelessWidget {
       controller: controller,
       readOnly: readOnly,
       onTap: onTap,
+      focusNode: focusNode,
       decoration: InputDecoration(
         hintText: hint,
         suffixIcon: suffix,

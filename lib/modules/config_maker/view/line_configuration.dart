@@ -184,8 +184,8 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                     if(availability(AppConstants.pressureSensorObjectId))
                                       getLineParameter(line: selectedIrrigationLine, currentParameterValue: [selectedIrrigationLine.pressureIn], parameterType: LineParameter.pressureIn, objectId: AppConstants.pressureSensorObjectId, objectName: 'Pressure In', validateAllLine: true, singleSelection: true,
                                           listOfObject: widget.configPvd.listOfGeneratedObject
-                                              .where((object) => (object.objectId == AppConstants.pressureSensorObjectId && !widget.configPvd.pump.any((pump) => [pump.pressureIn,pump.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureOut))
-                                              .where((object) => (!widget.configPvd.filtration.any((filterSite) => [filterSite.pressureIn,filterSite.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureOut))
+                                              .where((object) => (object.objectId == AppConstants.pressureSensorObjectId && object.sNo != selectedIrrigationLine.pressureOut))
+                                              // .where((object) => (!widget.configPvd.filtration.any((filterSite) => [filterSite.pressureIn,filterSite.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureOut))
                                               .where((object) => (!widget.configPvd.line.any((line) => line.commonDetails.sNo != selectedIrrigationLine.commonDetails.sNo && [line.pressureIn,line.pressureOut].contains(object.sNo)) && object.sNo != selectedIrrigationLine.pressureOut))
                                               .toList()),
                                     if(availability(AppConstants.pressureSensorObjectId))
