@@ -46,6 +46,7 @@ assets/ssh/
 build/
 android/build/
 
+
 # Symbolication related
 app.*.symbols
 
@@ -63,8 +64,8 @@ notification.env
 *.p12
 key.properties
 android/key.properties
-android/
-ios/
-linux/
-macos/
-windows/
+android/**
+ios/**
+linux/**
+macos/**
+windows/**
