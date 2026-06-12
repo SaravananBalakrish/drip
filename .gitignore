@@ -68,3 +68,18 @@ ios/
 linux/
 macos/
 windows/
+
+
+# Ignore everything
+*
+
+# Allow lib folder and all files inside it
+!lib/
+!lib/**
+
+# Allow pubspec files (required for Flutter)
+!pubspec.yaml
+!pubspec.lock
+
+# Allow README if needed
+!README.md

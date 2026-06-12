@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/field_information_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../repository/repository.dart';
@@ -589,7 +590,7 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     );
                   },
                 ),
-                const SizedBox(height: 20),
+                 const SizedBox(height: 20),
               ],
             ),
           ),

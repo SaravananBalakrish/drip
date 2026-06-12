@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:oro_drip_irrigation/repository/repository.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
 import '../../utils/constants.dart';
@@ -385,8 +388,12 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                         'soilType': _model.soilType ?? '',
                         'previousCrop': _model.previousCrop ?? '',
                         'farmName': _model.farmName ?? '',
-                        'deleteImageUrl': widget.edit ? _model.cropImage ?? '' : '',
-                      });
+                        'deleteImageUrl': '',
+                        'isEdit': widget.edit.toString(),
+                        'isImageChanged': widget.edit.toString(),
+                        'existingImageUrl': widget.edit.toString(),
+                        'createUser': widget.userId.toString(),
+                       });
 
                       // Image as file
                       if (kIsWeb) {
@@ -396,6 +403,7 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                               'cropImage',
                               _model.cropImageBytes!,
                               filename: 'crop.jpg',
+                              contentType: MediaType('image', 'jpg'),
                             ),
                           );
                         }
@@ -410,12 +418,17 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                           );
                         }
                       }
+                      for (var file in request.files) {
+                        print("File Name : ${file.filename}");
+                        print("Field Name : ${file.field}");
+                      }
 
+                      print("Request : ${request.fields}");
                       final response = await request.send();
                       final responseBody =
                       await response.stream.bytesToString();
-
-                      print("Status Code : ${response.statusCode}");
+                      final data = jsonDecode(responseBody);
+                      print("data:$data");
 
                       if (response.statusCode == 200) {
                         Navigator.push(
