@@ -368,7 +368,9 @@ class _InterfaceSettingState extends State<InterfaceSetting> {
                       String serverIp = AppConstants.mqttMobileUrl.split('.').map((val){
                         return bleService.sendThreeDigit(val);
                       }).join(':');
-                      var payload = '\$:29:210:${bleService.wifiSsid.text}:${bleService.wifiPassword.text}:${AppConstants.mqttUserName}:${AppConstants.mqttPassword}:$staticIp:$subNetMask:$gateWay:$dnsServer:$serverIp:';
+                      var payload = '\$:29:210:${bleService.wifiSsid.text}:'
+                          '${bleService.wifiPassword.text}:${AppConstants.mqttUserName}:'
+                          '${AppConstants.mqttPassword}:$staticIp:$subNetMask:$gateWay:$dnsServer:$serverIp:';
                       List<int> listOfBytes = [];
                       var sumOfAscii = 0;
                       for(var i in payload.split('')){
@@ -380,10 +382,10 @@ class _InterfaceSettingState extends State<InterfaceSetting> {
                         var bytes = i.codeUnitAt(0);
                         listOfBytes.add(bytes);
                       }
-                      print('listOfBytes : $listOfBytes');
-                      print('sumOfAscii : $sumOfAscii');
-                      print('crc : ${sumOfAscii % 256}');
-                      print('payload : ${payload}');
+                      debugPrint('listOfBytes : $listOfBytes');
+                      debugPrint('sumOfAscii : $sumOfAscii');
+                      debugPrint('crc : ${sumOfAscii % 256}');
+                      debugPrint('payload : $payload');
                       bleService.sendDataToHw(listOfBytes);
                       loadingDialog();
                     },
