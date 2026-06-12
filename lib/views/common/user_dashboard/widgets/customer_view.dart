@@ -395,7 +395,7 @@ class CustomerView extends StatelessWidget {
 
     userProvider.pushViewedCustomer(user);
 
-    print("userType : ${customer.isSubdealer}");
+    //print("userType : ${customer.isSubdealer}");
 
     final route = role.name == 'admin' || customer.isSubdealer == '1'
         ? const DealerScreenLayout()
