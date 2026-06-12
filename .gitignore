@@ -72,7 +72,7 @@ windows/
 
 # Ignore everything
 *
-
+!.gitignore
 # Allow lib folder and all files inside it
 !lib/
 !lib/**
