@@ -76,7 +76,7 @@
 # Allow lib folder and all files inside it
 !lib/
 !lib/**
-!assets/
+!assets/**
 
 # Allow pubspec files (required for Flutter)
 !pubspec.yaml
