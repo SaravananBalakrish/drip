@@ -240,80 +240,117 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
   }
 
   Future<void> openCamera() async {
-    final XFile? image = await _picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 100,
-    );
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
 
-    if (image == null) return;
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Open Camera"),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await pickImage(ImageSource.camera);
+                },
+              ),
 
-    // Verify if it's a crop image using ML Kit (Offline)
-    if (!kIsWeb) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Verifying image...'), duration: Duration(seconds: 1)),
+              ListTile(
+                leading: const Icon(Icons.photo),
+                title: const Text("Choose From Gallery"),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await pickImage(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
         );
-      }
+      },
+    );
+  }
 
-      final bool isCrop = await ImageVerificationService.isCropImage(image.path);
+  Future<void> pickImage(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        imageQuality: 80,
+      );
 
-      if (!isCrop) {
+      if (image == null) return;
+
+      // Verify if it's a crop image using ML Kit (Offline)
+      if (!kIsWeb) {
         if (mounted) {
-          showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text("Invalid Image"),
-              content: const Text("The image does not appear to be a crop or plant. Please take a clear photo of your crop to proceed."),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text("OK"),
-                ),
-              ],
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Verifying image...'),
+              duration: Duration(seconds: 1),
             ),
           );
         }
+
+        final bool isCrop = await ImageVerificationService.isCropImage(image.path);
+
+        if (!isCrop) {
+          if (mounted) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text("Invalid Image"),
+                content: const Text(
+                  "The image does not appear to be a crop or plant. "
+                      "Please take a clear photo of your crop to proceed.",
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text("OK"),
+                  ),
+                ],
+              ),
+            );
+          }
+          return;
+        }
+      }
+
+      final Uint8List bytes = await image.readAsBytes(); // ✅ single declaration
+
+      final originalSize = bytes.lengthInBytes / 1024;
+      print("Original Size: ${originalSize.toStringAsFixed(2)} KB"); // ✅ printed once
+
+      if (kIsWeb) {
+        setState(() {
+          webImage = bytes;
+        });
+        _model.cropImage = '';
         return;
       }
-    }
 
-    final Uint8List bytes = await image.readAsBytes();
+      final tempDir = await getTemporaryDirectory();
+      final file = File(
+        '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
+      await file.writeAsBytes(bytes);
 
-    final originalSize = bytes.lengthInBytes / 1024;
+      final compressedFile = await ImageCompressHelper.compressImage(file);
 
-    print("Original Size : ${originalSize.toStringAsFixed(2)} KB");
+      if (compressedFile != null) { // ✅ block is now properly closed
+        final compressedSize = await compressedFile.length() / 1024;
+        print("Compressed Size: ${compressedSize.toStringAsFixed(2)} KB");
 
-    if (kIsWeb) {
-      setState(() {
-        webImage = bytes;
-      });
-      return;
-    }
+        setState(() {
+          cropImage = file;
+          _model.cropImage = file.path;
+        });
 
-    print("Original Size : ${originalSize.toStringAsFixed(2)} KB");
+        print("Saved Image: ${cropImage?.path}");
+      } // ✅ closes if (compressedFile != null)
 
-    if (kIsWeb) {
-      setState(() {
-        webImage = bytes;
-      });
-      return;
-    }
-
-    // MOBILE ONLY BELOW
-    final tempDir = await getTemporaryDirectory();
-    final file = File('${tempDir.path}/cropImage.jpg');
-    await file.writeAsBytes(bytes);
-
-    final compressedFile = await ImageCompressHelper.compressImage(file);
-
-    if (compressedFile != null) {
-      final compressedSize = await compressedFile.length() / 1024;
-
-      print("Compressed Size : ${compressedSize.toStringAsFixed(2)} KB");
-
-      setState(() {
-        cropImage = compressedFile;
-      });
+    } catch (e) {
+      print("Image Error: $e");
     }
   }
 
