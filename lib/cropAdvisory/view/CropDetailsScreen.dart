@@ -126,7 +126,7 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
         border: Border.all(color: Colors.grey.shade300),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha:0.05),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -319,7 +319,9 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
       final Uint8List bytes = await image.readAsBytes(); // ✅ single declaration
 
       final originalSize = bytes.lengthInBytes / 1024;
-      print("Original Size: ${originalSize.toStringAsFixed(2)} KB"); // ✅ printed once
+      if (kDebugMode) {
+        print("Original Size: ${originalSize.toStringAsFixed(2)} KB");
+      } // ✅ printed once
 
       if (kIsWeb) {
         setState(() {
@@ -339,18 +341,24 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
 
       if (compressedFile != null) { // ✅ block is now properly closed
         final compressedSize = await compressedFile.length() / 1024;
-        print("Compressed Size: ${compressedSize.toStringAsFixed(2)} KB");
+        if (kDebugMode) {
+          print("Compressed Size: ${compressedSize.toStringAsFixed(2)} KB");
+        }
 
         setState(() {
           cropImage = file;
           _model.cropImage = file.path;
         });
 
-        print("Saved Image: ${cropImage?.path}");
+        if (kDebugMode) {
+          print("Saved Image: ${cropImage?.path}");
+        }
       } // ✅ closes if (compressedFile != null)
 
     } catch (e) {
-      print("Image Error: $e");
+      if (kDebugMode) {
+        print("Image Error: $e");
+      }
     }
   }
 
