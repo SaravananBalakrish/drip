@@ -1350,7 +1350,15 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
           "createUser": widget.userId,
           "hardware": {"sentSms": "motor${index+1}$command"},
         };
-        await mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "motor${index+1}$command"}), "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}",);
+        var payload = {"sentSms": "motor${index+1}$command"};
+        var normalCommand = jsonEncode(payload);
+        String? wlcCommand = '*$normalCommand#';
+        final result = await context.read<CommunicationService>().sendCommand(
+          serverMsg: '',
+          payload: AppConstants.wlcModelList.contains(widget.masterData.modelId) ? wlcCommand : normalCommand,
+        );
+        debugPrint("motor on/off result => $result");
+        // await mqttService.topicToPublishAndItsMessage(jsonEncode({"sentSms": "motor${index+1}$command"}), "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}",);
         await repository.sendManualOperationToServer(data);
         await Future.delayed(Duration(seconds: delay));
         liveRequest();
