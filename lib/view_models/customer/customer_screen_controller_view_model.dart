@@ -444,7 +444,8 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
       commMode:  master.communicationMode!,
     );
 
-    if ([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(master.modelId)) {
+    if ([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList,
+      ...AppConstants.omsGemList].contains(master.modelId)) {
       updateMasterLine(sIdx, mIdx, lIdx);
       mqttProvider.saveUnits(Unit.toJsonList(master.units));
       mqttProvider.updateReceivedPayload(
@@ -483,8 +484,8 @@ class CustomerScreenControllerViewModel extends ChangeNotifier {
     }
 
     final master = mySiteList.data[sIndex].master[mIndex];
-    final isGem = [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList]
-        .contains(master.modelId);
+    final isGem = [...AppConstants.gemModelList, ...AppConstants.ecoGemModelList,
+      ...AppConstants.omsGemList].contains(master.modelId);
 
     final payload = isGem
         ? jsonEncode({"3000": {"3001": ""}})

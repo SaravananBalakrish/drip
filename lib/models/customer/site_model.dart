@@ -317,10 +317,8 @@ class MasterControllerModel {
 
       ioConnection: ioConnection,
       isSubUser: isSubUser,
-
       ecSensors: ecSensors,
       phSensors: phSensors,
-
     );
   }
 
@@ -659,6 +657,8 @@ class IrrigationLineModel {
   final List<SensorModel> soilTemperature;
   final bool hasWeatherStation;
   int? linePauseFlag;
+  final List<FCValveModel> fcValveObjects;
+
 
   IrrigationLineModel({
     required this.sNo,
@@ -686,6 +686,7 @@ class IrrigationLineModel {
     required this.soilTemperature,
     required this.hasWeatherStation,
     this.linePauseFlag = 0,
+    required this.fcValveObjects,
   });
 
   factory IrrigationLineModel.fromJson(Map<String, dynamic> json, List<ConfigObject> configObjects,
@@ -756,10 +757,7 @@ class IrrigationLineModel {
         .map((obj) => SensorModel.fromConfigObject(obj))
         .toList();
 
-
     final valveSNoSet = ((json['valve'] as List?) ?? []).map((e) => e).toSet();
-
-
     final valves = configObjects
         .where((obj) => valveSNoSet.contains(obj.sNo))
         .map((obj) => ValveModel.fromConfigObject(obj, waterSources))
@@ -770,6 +768,12 @@ class IrrigationLineModel {
     final mainValves = configObjects
         .where((obj) => mainValveSNoSet.contains(obj.sNo))
         .map((obj) => MainValveModel.fromConfigObject(obj, waterSources))
+        .toList();
+
+    final flwCValveSNoSet = ((json['flowControlValve'] as List?) ?? []).map((e) => e).toSet();
+    final fcValves = configObjects
+        .where((obj) => flwCValveSNoSet.contains(obj.sNo))
+        .map((obj) => FCValveModel.fromConfigObject(obj))
         .toList();
 
     final Map<double, List<MoistureSensorModel>> valveToMoistureSensors = {};
@@ -855,6 +859,8 @@ class IrrigationLineModel {
 
       valveObjects: valves,
       mainValveObjects: mainValves,
+      fcValveObjects: fcValves,
+
       lightObjects: lights,
       fanObjects: fans,
       gateObjects: gates,
@@ -1828,6 +1834,34 @@ class MainValveModel {
   }
 }
 
+class FCValveModel {
+  final double sNo;
+  final String name;
+  int status;
+
+  FCValveModel({
+    required this.sNo,
+    required this.name,
+    this.status = 0,
+  });
+
+  factory FCValveModel.fromConfigObject(ConfigObject obj) {
+
+    return FCValveModel(
+      sNo: obj.sNo,
+      name: obj.name,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sNo': sNo,
+      'name': name,
+      "status": status,
+    };
+  }
+}
+
 class LightModel {
   final double sNo;
   final String name;
@@ -2087,8 +2121,8 @@ class NodeListModel{
   String analogInput;
   String digitalInput;
   String version;
-
   List<dynamic> subNode;
+  LiveMessage? liveMessage;
 
 
   NodeListModel({
@@ -2116,8 +2150,8 @@ class NodeListModel{
     required this.analogInput,
     required this.digitalInput,
     this.version = '0.0.0',
-
     this.subNode = const [],
+    required this.liveMessage,
 
   });
 
@@ -2169,6 +2203,7 @@ class NodeListModel{
       analogInput: json['analogInput'] ?? '',
       digitalInput: json['digitalInput'] ?? '',
       subNode: subNodeList,
+      liveMessage: json['liveMessage'] != null ? LiveMessage.fromJson(json['liveMessage']) : null,
     );
   }
 
@@ -2221,6 +2256,7 @@ class NodeListModel{
       digitalInput: '',
       version: '0.0.0',
       subNode: [],
+      liveMessage: null,
     );
   }
 }

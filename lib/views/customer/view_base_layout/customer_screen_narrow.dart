@@ -54,7 +54,6 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
     bool isGemOrNova = isGemOrNovaModel(cM.modelId);
     final isGsmWeather = [...AppConstants.weatherModelList].contains(cM.modelId);
     print("isGemOrNova : $isGemOrNova");
-    print("vm.isChanged : ${vm.isChanged}");
 
     bool hasWeatherStation = cM.irrigationLine.any((line) => line.hasWeatherStation);
 
@@ -92,14 +91,6 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
     ] :
     [
       vm.isChanged ? Scaffold(
-        // floatingActionButton: AppConstants.wlcModelList.contains(cM.modelId) ?
-        // CustomerFabMenu(
-        //   currentMaster: cM,
-        //   loggedInUser: loggedInUser,
-        //   vm: vm,
-        //   callbackFunction: callbackFunction,
-        //   myPermissionFlags: [],
-        // ) : null,
         body: isGsmWeather ? WeatherGsm(customerId: loggedInUser.id, controllerId: cM.controllerId, deviceID: cM.deviceId,jsondata: dashboardToWeatherFormat(cM))
             : PumpControllerHome(
           userId: loggedInUser.id,
@@ -130,7 +121,7 @@ class _CustomerScreenNarrowState extends BaseCustomerScreenState<CustomerScreenN
           customerMobileNo: viewedCustomer.mobileNo
       ),
 
-      floatingActionButton: navModel.index==0?
+      floatingActionButton: navModel.index==0 ?
       CustomerFabMenu(
         currentMaster: cM,
         loggedInUser: loggedInUser,
