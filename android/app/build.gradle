@@ -64,8 +64,8 @@ android {
         applicationId "com.niagaraautomations.oroDripirrigation"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 2221
-        versionName "1.5.07"
+        versionCode 1699
+        versionName "1.5.09"
         multiDexEnabled true
     }
 
@@ -106,10 +106,6 @@ android {
 
     kotlinOptions {
         jvmTarget = '17'
-    }
-
-    configurations.all {
-        exclude group: "com.google.firebase", module: "firebase-iid"
     }
 }
 
