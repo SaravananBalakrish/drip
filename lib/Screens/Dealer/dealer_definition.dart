@@ -71,7 +71,7 @@ class DealerDefinitionInConfigState extends State<DealerDefinitionInConfig> {
         "userId":  widget.customerId,
         "controllerId": widget.controllerId
       });
-       // final jsonData = jsonDecode(getUserDetails.body);
+      // final jsonData = jsonDecode(getUserDetails.body);
       if (getUserDetails.statusCode == 200) {
         setState(() {
           var jsonData = jsonDecode(getUserDetails.body);
@@ -84,7 +84,7 @@ class DealerDefinitionInConfigState extends State<DealerDefinitionInConfig> {
       }
     }
     catch (e, stackTrace) {
-       AppLog.log(' Error overAll getData => ${e.toString()}');
+      AppLog.log(' Error overAll getData => ${e.toString()}');
       AppLog.log(' trace overAll getData  => ${stackTrace}');
     }
   }
@@ -125,7 +125,7 @@ class DealerDefinitionInConfigState extends State<DealerDefinitionInConfig> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                 TextButton.icon(
+                TextButton.icon(
                   onPressed: () async {
 
                     final sendData = jsonEncode(data.dealerDefinition);
@@ -138,9 +138,9 @@ class DealerDefinitionInConfigState extends State<DealerDefinitionInConfig> {
                     };
                     var getUserDetails = await repository.createdealerDefinition(body);
                     final jsonDataResponseput = json.decode(getUserDetails.body);
-                     GlobalSnackBar.show(context, jsonDataResponseput['message'], jsonDataResponseput['code']);
+                    GlobalSnackBar.show(context, jsonDataResponseput['message'], jsonDataResponseput['code']);
                   },
-                  label: const Text('Save'),
+                  label: const Text(' Save '),
                   icon: const Icon(
                     Icons.save_as_outlined,
                   ),style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor,),foregroundColor: MaterialStateProperty.all<Color>(Colors.white)),),
@@ -538,18 +538,18 @@ class _MyContainerWithTabsState extends State<MyContainerWithTabs> {
                 TextButton.icon(
                   onPressed: () async {
 
-                     final sendData = jsonEncode(widget.data.dealerDefinition);
+                    final sendData = jsonEncode(widget.data.dealerDefinition);
                     final Repository repository = Repository(HttpService());
                     Map<String, Object> body = {
                       "userId": widget.customerID,
                       "controllerId": widget.controllerId,
-                      "dealerDefinition": sendData,
+                      "dealerDefinition": widget.data.dealerDefinition,
                       "createUser": widget.userID
                     };
                     var getUserDetails = await repository.createdealerDefinition(body);
                     final jsonDataResponseput = json.decode(getUserDetails.body);
                     GlobalSnackBar.show(context, jsonDataResponseput['message'], jsonDataResponseput['code']);
-                    },
+                  },
                   label: const Text('Save'),
                   icon: const Icon(
                     Icons.save_as_outlined,

@@ -452,6 +452,7 @@ class ConfigMakerProvider extends ChangeNotifier{
   }
 
   void updateObjectCount(int objectId, String count){
+    bool isAquaCulture = AppConstants.aquacultureModelList.contains(masterData['modelId']);
     for(var object in listOfSampleObjectModel){
       if(object.objectId == objectId){
         int oldCount = object.count == '' ? 0 : int.parse(object.count!);
@@ -459,13 +460,19 @@ class ConfigMakerProvider extends ChangeNotifier{
         object.count = count;
         if(oldCount <= newCount){
           for(var start = oldCount;start < newCount;start++){
+            String objName = '';
+            if(AppConstants.aquacultureModelList.contains(masterData['modelId']) && object.objectId == AppConstants.pumpObjectId){
+              objName = 'Aerator';
+            }else{
+              objName = object.objectName;
+            }
             int increment = start+1;
             String stringDecimalNo = '${object.objectId}.${increment < 100 ? '0' : ''}${increment < 10 ? '0' : ''}${start+1}';
             DeviceObjectModel deviceObjectModel = DeviceObjectModel(
               objectId: object.objectId,
               objectName: object.objectName,
               type: object.type,
-              name: '${object.objectName} ${start+1}',
+              name: '$objName ${start+1}',
               sNo: double.parse(stringDecimalNo),
               controllerId: null,
               assignObject: [],
@@ -486,11 +493,11 @@ class ConfigMakerProvider extends ChangeNotifier{
               );
             }else if(deviceObjectModel.objectId == AppConstants.sourceObjectId){
               source.add(
-                  SourceModel(commonDetails: deviceObjectModel, inletPump: [], outletPump: [], valves: [], outletValves: [])
+                  SourceModel(commonDetails: deviceObjectModel, inletPump: [], outletPump: [], aerator: [], valves: [], outletValves: [])
               );
             }else if(deviceObjectModel.objectId == AppConstants.pumpObjectId){
               pump.add(
-                  PumpModel(commonDetails: deviceObjectModel)
+                  PumpModel(commonDetails: deviceObjectModel, pumpType: isAquaCulture ? 3 : 1)
               );
             }else if(deviceObjectModel.objectId == AppConstants.moistureObjectId){
               moisture.add(
@@ -698,7 +705,6 @@ class ConfigMakerProvider extends ChangeNotifier{
     // for(var obj in listOfGeneratedObject){
     //   print('generated : ${obj.toJson()}');
     // }
-
     notifyListeners();
   }
 
@@ -1186,6 +1192,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     return moisturePayload.join(";");
   }
 
+
   String getObjectPayload() {
     List<dynamic> objectPayload = [];
     List<DeviceObjectModel> objectListToSend = [];
@@ -1225,8 +1232,8 @@ class ConfigMakerProvider extends ChangeNotifier{
         }
         String objectSerialNoForEcoGem = objectSerialNoForEcoGemSplitList.join(',');
         objectPayload.add({
-          "S_No": [...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(masterData['modelId']) ? object.sNo : objectSerialNoForEcoGem,
-          "ObjectType": object.objectId,
+          "S_No": [...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(masterData['modelId']) ? object.sNo! : objectSerialNoForEcoGem,
+          "ObjectType": object.objectId == AppConstants.analogWaterMeterObjectId ? AppConstants.waterMeterObjectId : object.objectId,
           "DeviceTypeNumber": controller.categoryId,
           "DeviceRunningNumber": findOutReferenceNumber(controller),
           "Output_InputNumber": object.connectionNo,
@@ -1368,14 +1375,15 @@ class ConfigMakerProvider extends ChangeNotifier{
   }
 
   List<Map<String, dynamic>> getOroPumpPayload() {
+    bool isAquaCulture = AppConstants.aquacultureModelList.contains(masterData['modelId']);
     HardwareType hardwareType = AppConstants.gemModelList.contains(masterData['modelId']) ? HardwareType.gem : HardwareType.pump;
     List<Map<String, dynamic>> listOfPumpPayload = [];
     List<int> modelIdForPump1000 = [5, 6, 7];
-    List<int> modelIdForPump2000 = [8, 9, 10, ...AppConstants.ecoGemModelList, ...AppConstants.wlcModelList];
+    List<int> modelIdForPump2000 = [8, 9, 10, ...AppConstants.ecoGemModelList, ...AppConstants.wlcModelList, ...AppConstants.aquaculturePumpModelList];
     List<DeviceModel> listOfPump1000 = listOfDeviceModel.where((device) => modelIdForPump1000.contains(device.modelId) && device.masterId != null).toList();
     List<DeviceModel> listOfPump2000 = listOfDeviceModel.where((device) => modelIdForPump2000.contains(device.modelId) && device.masterId != null).toList();
     // int pumpCodeUnderGem = 5900;
-    var payloadPumpCount = 3;
+    var payloadPumpCount = isAquaCulture ? 4 : 3;
     for(var p1000 in listOfPump1000){
       int pumpCount = listOfGeneratedObject.where((object) => (object.controllerId == p1000.controllerId && object.objectId == AppConstants.pumpObjectId)).length;
       List<String> findOutHowManySourceAndIrrigationPump = pump.where((pumpModel) => ((pumpModel.commonDetails.controllerId == p1000.controllerId || AppConstants.ecoGemModelList.contains(masterData['modelId'])) && pumpModel.commonDetails.objectId == AppConstants.pumpObjectId))
@@ -1546,7 +1554,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         }.entries.map((e) => e.value).join(','));
       }
 
-      int fixedLengthOfTankPayload = 3;
+      int fixedLengthOfTankPayload = isAquaCulture ? 4 : 3;
       if(listOfTankPayload.length != fixedLengthOfTankPayload){
         for(var flp = 0;flp < fixedLengthOfTankPayload - listOfTankPayload.length;flp++){
           listOfTankPayload.add(List.generate(9, (index){

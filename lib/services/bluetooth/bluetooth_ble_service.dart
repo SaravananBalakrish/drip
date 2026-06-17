@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../../Constants/constants.dart';
@@ -619,7 +620,7 @@ class BluetoothBleService {
     int attempts = 0;
     while (attempts < maxRetries) {
       try {
-        final finalPayload = '*$payload#';
+        final finalPayload = payload;
         final dataWithTerminator = '$finalPayload\r\n';
         final bytes = utf8.encode(dataWithTerminator);
 
@@ -872,7 +873,9 @@ class BluetoothBleService {
       _isAlreadyConnected = true;
       _connectedDevice!.connectionState = BlueConnectionState.connected;
     }
-
+    if(response[0] =='*' && _buffer.isNotEmpty){
+      _buffer = '';
+    }
     _buffer += response;
     _parseBuffer();
   }
@@ -882,7 +885,6 @@ class BluetoothBleService {
     debugPrint('BLE _buffer----> $_buffer');
 
     if (_buffer.isEmpty) return;
-
     if(_buffer.isNotEmpty && _buffer[0] =='*' && _buffer[_buffer.length-1] == '#'){
       String sliced = _buffer.substring(1, _buffer.length - 1);
       debugPrint("sliced : $sliced");
@@ -916,6 +918,8 @@ class BluetoothBleService {
     try {
       final data = json.decode(jsonString);
       final jsonStr = json.encode(data);
+
+      MqttService().onMqttPayloadReceived(jsonString);
 
       providerState?.updateReceivedPayload(jsonStr, false);
 

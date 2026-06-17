@@ -212,7 +212,7 @@ class _ScrollingTableState extends State<ScrollingTable> {
                                         width: widget.generalColumn[i] == 'Status' ? 150 : ['Start Stop Reason','Pause Resume Reason', 'Pump CT Average', 'Pump CT Maximum', 'Pump CT Minimum', 'Pressure Average', 'Pressure Maximum', 'Pressure Minimum'].contains(widget.generalColumn[i]) ? 200 : 100,
                                         height: 50,
                                         alignment: Alignment.centerLeft,
-                                        child: Text('${widget.generalColumn[i]}',style: TextStyle(color: Colors.black),),
+                                        child: Text('${widget.generalColumn[i]}',style: TextStyle(color: Colors.black), maxLines: 2,),
                                       ),
 
                                   ],
@@ -224,7 +224,7 @@ class _ScrollingTableState extends State<ScrollingTable> {
                             Column(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Center(
+                                const Center(
                                   child: Text('Water',style: TextStyle(color: Colors.white),),
                                 ),
                                 Row(

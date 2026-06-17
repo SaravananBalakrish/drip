@@ -8,17 +8,24 @@ import 'package:oro_drip_irrigation/cropAdvisory/widgets/ProgressWidget.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/widgets/SectionCard.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/map_picker_screen.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/service/location_service.dart';
-import '../service/cropadvisory_model.dart';
+import '../model/cropadvisory_model.dart';
 
-
-class Getuserinformationscreen extends StatefulWidget {
-  const Getuserinformationscreen({super.key});
+class Cropinformationscreen extends StatefulWidget {
+  const Cropinformationscreen({
+    super.key,
+    required this.userId,
+    required this.cropId,
+    required this.controllerId,
+    required this.edit,
+  });
+  final int userId, controllerId, cropId;
+  final bool edit;
 
   @override
-  State<Getuserinformationscreen> createState() => _GetuserinformationscreenState();
+  State<Cropinformationscreen> createState() => _CropinformationscreenState();
 }
 
-class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
+class _CropinformationscreenState extends State<Cropinformationscreen> {
   // --- Location related ---
   double? _latitude;
   double? _longitude;
@@ -28,15 +35,28 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
 
   // --- Other fields ---
   final TextEditingController _areaController = TextEditingController();
-  final TextEditingController _farmIdController = TextEditingController();
+  final TextEditingController _farmNameController = TextEditingController();
   final CropAdvisoryModel _model = CropAdvisoryModel.instance;
 
+  @override
+  void initState() {
+    super.initState();
+    // Pre-fill fields if we are editing (data already in singleton)
+    _areaController.text = _model.areaName ?? '';
+    _selectedAddress = _model.address ?? '';
+    _farmNameController.text = _model.farmName ?? '';
+    if (_model.latitude != null && _model.longitude != null) {
+      _latitude = double.tryParse(_model.latitude!);
+      _longitude = double.tryParse(_model.longitude!);
+      _locationController.text = '${_model.latitude}, ${_model.longitude}';
+    }
+  }
 
   @override
   void dispose() {
     _locationController.dispose();
     _areaController.dispose();
-    _farmIdController.dispose();
+    _farmNameController.dispose();
     super.dispose();
   }
 
@@ -48,6 +68,10 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
         builder: (_) => MapPickerScreen(
           initialLatitude: _latitude,
           initialLongitude: _longitude,
+          userId: widget.userId,
+          controllerId: widget.controllerId,
+          cropId: widget.cropId,
+          edit: widget.edit,
         ),
       ),
     );
@@ -56,8 +80,8 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
       setState(() {
         _latitude = result['latitude'];
         _longitude = result['longitude'];
-        _locationController.text = '${_model.latitude}, ${_model.latitude}';
-        _selectedAddress = _locationController.text;
+        _locationController.text = '$_latitude, $_longitude';
+        _selectedAddress = result['address'] ?? _locationController.text;
       });
     }
   }
@@ -102,7 +126,6 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
 
   @override
   Widget build(BuildContext context) {
-    _locationController.text = '${_model.latitude},${_model.longitude}';
     return Scaffold(
       appBar: AppBar(title: const Text("Crop Advisory")),
       body: SafeArea(
@@ -163,11 +186,11 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
 
                 // ---------- Plot / Farm ID ----------
                 SectionCard(
-                  title: 'Plot / farm ID',
+                  title: 'Farm Name',
                   icon: Icons.edit,
                   child: AppTextField(
-                    controller: _farmIdController,
-                    hint: 'Enter The Plot Or Farm ID',
+                    controller: _farmNameController,
+                    hint: 'Enter The Plot Or Farm Name',
                   ),
                 ),
 
@@ -176,25 +199,24 @@ class _GetuserinformationscreenState extends State<Getuserinformationscreen> {
                 // ---------- Continue Button ----------
                 CropContinueButton(
                   onTap: () {
-                    if (_model.longitude == null || _model.longitude == null) {
+                    if (_locationController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Please select a location')),
                       );
                       return;
                     }
+                    
                     // Update singleton instance
-                    final model = CropAdvisoryModel.instance;
-                    final locationParts = _locationController.text.split(',');
-                    model.latitude = locationParts[0].trim();
-                    model.longitude = locationParts[1].trim();
-                    model.address = _selectedAddress;
-                    model.area = _areaController.text;
-                    model.farmId = _farmIdController.text;
-                    // Navigate without params
+                    _model.latitude = _latitude?.toString();
+                    _model.longitude = _longitude?.toString();
+                    _model.address = _selectedAddress;
+                    _model.areaName = _areaController.text;
+                    _model.farmName = _farmNameController.text;
+
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                        builder: (_) => const CropDetailsScreen(),
+                        builder: (_) => CropDetailsScreen(userId:widget.userId,controllerId: widget.controllerId, cropId: widget.cropId, edit: widget.edit,),
                       ),
                     );
                   },

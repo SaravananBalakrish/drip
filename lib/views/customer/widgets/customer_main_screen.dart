@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
  import '../../../Screens/Dealer/sevicecustomer.dart';
 import '../../../Screens/Logs/irrigation_and_pump_log.dart';
 import '../../../Screens/Map/oro_map/map_areator.dart';
+import '../../../Screens/Map/oro_map/map_oro.dart';
 import '../../../Screens/planning/weather/view/weather_Gsm.dart';
 import '../../../Screens/planning/weather/view/weather_screen_new.dart';
 import '../../../layouts/layout_selector.dart';
@@ -26,9 +27,6 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
   final isAquaculture = [...AppConstants.aquacultureModelList].contains(
       cMaster.modelId);
   final isGsmWeather = [...AppConstants.weatherModelList].contains(cMaster.modelId);
-
-
-
 
    switch (index) {
     case 0:
@@ -120,6 +118,13 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
           controllerId: cMaster.controllerId,
           deviceID: cMaster.deviceId,
           isNarrow: false);
+
+     case 8:
+       return  MapScreenOro(customerId: cSite.customerId,
+         controllerId: cMaster.controllerId,
+         userId: cSite.customerId,
+         imeiNo: cMaster.deviceId, modelId: cMaster.modelId,
+       isCheckDashboard: true,);
 
     default:
       return const Scaffold(

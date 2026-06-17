@@ -2,8 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/field_information_screen.dart';
+import 'package:path_provider/path_provider.dart';
+import '../../repository/repository.dart';
+import '../../services/http_service.dart';
 import '../helper/image_compressor.dart';
-import '../service/cropadvisory_model.dart';
+import '../model/cropadvisory_model.dart';
+import 'package:http/http.dart' as http;
 
 import '../widgets/AppTextField.dart';
 import '../widgets/ContinueButton.dart';
@@ -13,8 +17,9 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class CropDetailsScreen extends StatefulWidget {
-  const CropDetailsScreen({super.key});
-
+  const CropDetailsScreen({super.key, required this.cropId, required this.edit, this.userId, this.controllerId} );
+  final cropId,userId,controllerId;
+  final bool edit;
   @override
   State<CropDetailsScreen> createState() => _CropDetailsScreenState();
 }
@@ -28,18 +33,136 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
   final TextEditingController _arrangementController = TextEditingController();
   final TextEditingController _cropTypeController = TextEditingController();
 
+  final FocusNode _cropNameFocusNode = FocusNode();
+  final FocusNode _varietyFocusNode = FocusNode();
+  final FocusNode _durationFocusNode = FocusNode();
+  final FocusNode _arrangementFocusNode = FocusNode();
+  final FocusNode _cropTypeFocusNode = FocusNode();
+
   String _plantingMethod = 'Sowing';
   final CropAdvisoryModel _model = CropAdvisoryModel.instance;
   File? cropImage;
   final ImagePicker _picker = ImagePicker();
   Uint8List? webImage;
 
+  final List<String> _cropNameSuggestions = [
+    'Cotton', 'Sugarcane', 'Maize', 'Groundnut', 'Wheat', 'Tomato', 'Chilli', 
+    'Brinjal', 'Okra', 'Cabbage', 'Cauliflower', 'Cucumber', 'Capsicum', 
+    'Pumpkin', 'Bitter Gourd', 'Banana', 'Pomegranate', 'Papaya', 'Grapes', 
+    'Mango', 'Guava', 'Sweet Lime', 'Orange', 'Watermelon', 'Muskmelon', 
+    'Turmeric', 'Ginger', 'Aloe Vera', 'Ashwagandha', 'Tulsi', 'Coconut', 
+    'Arecanut', 'Coffee', 'Tea', 'Rubber'
+  ];
+
+  final List<String> _varietySuggestions = [
+    'Traditional (Local) varieties',
+    'Improved varieties',
+    'Hybrid varieties',
+    'High-yielding varieties (HYVs)',
+    'Disease-resistant varieties',
+    'Drought-tolerant varieties',
+    'Open-pollinated varieties (OPVs)',
+    'Organic seeds',
+    'Genetically Modified (GMO) seeds',
+  ];
+
+  final List<String> _arrangementSuggestions = [
+    'Formal rows',
+    'Staggered rows',
+    'Mass planting',
+    'Border planting',
+    'Layered planting',
+    'Cluster planting',
+    'Mixed planting',
+    'Container grouping',
+    'Line arrangement',
+    'Mass arrangement',
+    'Line-mass arrangement',
+    'Triangular arrangement',
+    'Circular arrangement',
+    'Crescent arrangement',
+    'Ikebana style',
+  ];
+
+  final List<String> _durationSuggestions = [
+    'Short term (< 3 months)',
+    'Medium term (3-6 months)',
+    'Long term (> 6 months)',
+    'Annual',
+    'Biennial',
+    'Perennial',
+  ];
+
+  final List<String> _cropTypeSuggestions = [
+    'Open-field cultivation',
+    'Greenhouse / Polyhouse cultivation',
+    'Hydroponics / Soilless cultivation',
+    'Aeroponics',
+    'Orchard / Plantation',
+    'Protected cultivation',
+    'Container Gardening',
+  ];
+
+  Widget _buildInlineSuggestions({
+    required FocusNode focusNode,
+    required TextEditingController controller,
+    required List<String> suggestions,
+  }) {
+    if (!focusNode.hasFocus) return const SizedBox.shrink();
+    
+    final query = controller.text.toLowerCase();
+    final filtered = suggestions.where((item) => item.toLowerCase().contains(query)).toList();
+    
+    if (filtered.isEmpty) return const SizedBox.shrink();
+
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 200),
+      margin: const EdgeInsets.only(top: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade300),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 5,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ListView.builder(
+        shrinkWrap: true,
+        padding: EdgeInsets.zero,
+        itemCount: filtered.length,
+        itemBuilder: (context, index) {
+          final item = filtered[index];
+          return GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTapDown: (_) {
+              setState(() {
+                controller.text = item;
+                controller.selection = TextSelection.fromPosition(
+                  TextPosition(offset: item.length),
+                );
+              });
+              // Unfocus after a tiny delay to ensure input registers
+              Future.microtask(() => focusNode.unfocus());
+            },
+            child: ListTile(
+              title: Text(item),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
     // Pre-fill fields from singleton instance if they have values
     _cropNameController.text = _model.cropName ?? '';
-    _varietyController.text = _model.variety ?? '';
+    _varietyController.text = _model.cropVariety ?? '';
     _plantingDateController.text = _model.plantingDate ?? '';
     _harvestDateController.text = _model.expectedHarvestDate ?? '';
     _durationController.text = _model.cropDuration ?? '';
@@ -48,6 +171,18 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
     if (_model.plantingMethod != null) {
       _plantingMethod = _model.plantingMethod!;
     }
+
+    _cropNameFocusNode.addListener(() => setState(() {}));
+    _varietyFocusNode.addListener(() => setState(() {}));
+    _durationFocusNode.addListener(() => setState(() {}));
+    _arrangementFocusNode.addListener(() => setState(() {}));
+    _cropTypeFocusNode.addListener(() => setState(() {}));
+
+    _cropNameController.addListener(() => setState(() {}));
+    _varietyController.addListener(() => setState(() {}));
+    _durationController.addListener(() => setState(() {}));
+    _arrangementController.addListener(() => setState(() {}));
+    _cropTypeController.addListener(() => setState(() {}));
   }
 
   @override
@@ -59,6 +194,11 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
     _durationController.dispose();
     _arrangementController.dispose();
     _cropTypeController.dispose();
+    _cropNameFocusNode.dispose();
+    _varietyFocusNode.dispose();
+    _durationFocusNode.dispose();
+    _arrangementFocusNode.dispose();
+    _cropTypeFocusNode.dispose();
     super.dispose();
   }
 
@@ -75,9 +215,14 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
           height: 55,
           alignment: Alignment.center,
           decoration: BoxDecoration(
-            color: isSelected ? const Color(0xff0E8797).withOpacity(0.1) : Colors.white,
+            color: isSelected
+                ? const Color(0xff0E8797).withOpacity(0.1)
+                : Colors.white,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: isSelected ? const Color(0xff0E8797) : Colors.grey.shade300),
+            border: Border.all(
+                color: isSelected
+                    ? const Color(0xff0E8797)
+                    : Colors.grey.shade300),
           ),
           child: Text(
             title,
@@ -93,39 +238,98 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
   }
 
   Future<void> openCamera() async {
-    final XFile? image = await _picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 100,
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Open Camera"),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await pickImage(ImageSource.camera);
+                },
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.photo),
+                title: const Text("Choose From Gallery"),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await pickImage(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
+  }
 
-    if (image == null) return;
-
-    final File originalFile = File(image.path);
-
-    // Original size
-    final originalSize =
-        await originalFile.length() / 1024;
-
-    print(
-      "Original Size : ${originalSize.toStringAsFixed(2)} KB",
-    );
-
-    // Compress image
-    final File? compressedFile =
-    await ImageCompressHelper.compressImage(
-      originalFile,
-    );
-
-    if (compressedFile != null) {
-      final compressedSize =
-          await compressedFile.length() / 1024;
-
-      print(
-        "Compressed Size : ${compressedSize.toStringAsFixed(2)} KB",
+  Future<void> pickImage(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        imageQuality: 80,
       );
 
+      if (image == null) return;
+
+      final bytes = await image.readAsBytes();
+
+      print(
+        "Original Size : ${(bytes.lengthInBytes / 1024).toStringAsFixed(2)} KB",
+      );
+
+      if (kIsWeb) {
+        setState(() {
+          webImage = bytes;
+        });
+
+        _model.cropImage = '';
+        return;
+      }
+
+      final tempDir = await getTemporaryDirectory();
+
+      final file = File(
+        '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
+
+      await file.writeAsBytes(bytes);
+
       setState(() {
-        cropImage = compressedFile;
+        cropImage = file;
+        _model.cropImage = file.path;
+      });
+
+      print("Saved Image : ${cropImage?.path}");
+
+    } catch (e) {
+      print("Image Error : $e");
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context, TextEditingController controller) async {
+    DateTime initialDate = DateTime.now();
+    if (controller.text.isNotEmpty) {
+      final parsed = DateTime.tryParse(controller.text);
+      if (parsed != null) {
+        initialDate = parsed;
+      }
+    }
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: initialDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+    if (picked != null) {
+      setState(() {
+        controller.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
       });
     }
   }
@@ -170,36 +374,55 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                 const SizedBox(height: 20),
                 const ProgressWidget(current: 2),
                 const SizedBox(height: 20),
-                 if (_model.area?.isNotEmpty ?? false)
+                if (_model.areaName?.isNotEmpty ?? false)
                   SectionCard(
                     title: 'Selected Area',
                     icon: Icons.square_foot,
                     child: Text(
-                      _model.area!,
+                      _model.areaName!,
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
-
-                SectionCard(
-                  title: 'Crop Name',
-                  icon: Icons.energy_savings_leaf,
-                  child: AppTextField(
-                    controller: _cropNameController,
-                    hint: 'Search Or Select The Crop(Eg.Rice,etc..)',
-                    suffix: const Icon(Icons.keyboard_arrow_down),
-                  ),
-                ),
-
-                SectionCard(
-                  title: 'Variety or Hybrid (Seed Type)',
-                  icon: Icons.spa,
-                  child: AppTextField(
-                    controller: _varietyController,
-                    hint: 'Search Or Select Variety Or Hybrid',
-                    suffix: const Icon(Icons.keyboard_arrow_down),
-                  ),
-                ),
-
+                  SectionCard(
+                   title: 'Crop Name',
+                   icon: Icons.energy_savings_leaf,
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       AppTextField(
+                         controller: _cropNameController,
+                         focusNode: _cropNameFocusNode,
+                         hint: 'Search Or Select The Crop(Eg.Rice,etc..)',
+                         suffix: const Icon(Icons.keyboard_arrow_down),
+                       ),
+                       _buildInlineSuggestions(
+                         focusNode: _cropNameFocusNode,
+                         controller: _cropNameController,
+                         suggestions: _cropNameSuggestions,
+                       ),
+                     ],
+                   ),
+                 ),
+                  SectionCard(
+                   title: 'Variety or Hybrid (Seed Type)',
+                   icon: Icons.spa,
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       AppTextField(
+                         controller: _varietyController,
+                         focusNode: _varietyFocusNode,
+                         hint: 'Search Or Select Variety Or Hybrid',
+                         suffix: const Icon(Icons.keyboard_arrow_down),
+                       ),
+                       _buildInlineSuggestions(
+                         focusNode: _varietyFocusNode,
+                         controller: _varietyController,
+                         suggestions: _varietySuggestions,
+                       ),
+                     ],
+                   ),
+                 ),
                 SectionCard(
                   title: 'Planting Details',
                   icon: Icons.grass,
@@ -236,6 +459,8 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                                 AppTextField(
                                   controller: _plantingDateController,
                                   hint: 'Select Date',
+                                  readOnly: true,
+                                  onTap: () => _selectDate(context, _plantingDateController),
                                   suffix: const Icon(Icons.calendar_month),
                                 ),
                               ],
@@ -253,7 +478,9 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                                 const SizedBox(height: 8),
                                 AppTextField(
                                   controller: _harvestDateController,
-                                  hint: 'Auto-Calculate',
+                                  hint: 'Select Date',
+                                  readOnly: true,
+                                  onTap: () => _selectDate(context, _harvestDateController),
                                   suffix: const Icon(Icons.calendar_month),
                                 ),
                               ],
@@ -264,36 +491,66 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     ],
                   ),
                 ),
-
-                SectionCard(
-                  title: 'Crop Duration',
-                  icon: Icons.agriculture,
-                  child: AppTextField(
-                    controller: _durationController,
-                    hint: 'Select The growth period',
-                    suffix: const Icon(Icons.keyboard_arrow_down),
+     SectionCard(
+                   title: 'Crop Duration',
+                   icon: Icons.agriculture,
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       AppTextField(
+                         controller: _durationController,
+                         focusNode: _durationFocusNode,
+                         hint: 'Select The growth period',
+                         suffix: const Icon(Icons.keyboard_arrow_down),
+                       ),
+                       _buildInlineSuggestions(
+                         focusNode: _durationFocusNode,
+                         controller: _durationController,
+                         suggestions: _durationSuggestions,
+                       ),
+                     ],
+                   ),
+                 ),
+                  SectionCard(
+                   title: 'Plant Arrangement',
+                   icon: Icons.grid_view,
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       AppTextField(
+                         controller: _arrangementController,
+                         focusNode: _arrangementFocusNode,
+                         hint: 'Select The Plant Arrangement',
+                         suffix: const Icon(Icons.keyboard_arrow_down),
+                       ),
+                       _buildInlineSuggestions(
+                         focusNode: _arrangementFocusNode,
+                         controller: _arrangementController,
+                         suggestions: _arrangementSuggestions,
+                       ),
+                     ],
+                   ),
+                 ),
+                  SectionCard(
+                   title: 'Crop type',
+                   icon: Icons.park,
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     children: [
+                       AppTextField(
+                         controller: _cropTypeController,
+                         focusNode: _cropTypeFocusNode,
+                         hint: 'Select The Type Of Cultivation Environment',
+                         suffix: const Icon(Icons.keyboard_arrow_down),
+                       ),
+                       _buildInlineSuggestions(
+                         focusNode: _cropTypeFocusNode,
+                         controller: _cropTypeController,
+                         suggestions: _cropTypeSuggestions,
+                       ),
+                     ],
+                    ),
                   ),
-                ),
-
-                SectionCard(
-                  title: 'Plant Arrangement',
-                  icon: Icons.grid_view,
-                  child: AppTextField(
-                    controller: _arrangementController,
-                    hint: 'Select The Plant Arrangement',
-                    suffix: const Icon(Icons.keyboard_arrow_down),
-                  ),
-                ),
-
-                SectionCard(
-                  title: 'Crop type',
-                  icon: Icons.park,
-                  child: AppTextField(
-                    controller: _cropTypeController,
-                    hint: 'Select The Type Of Cultivation Environment',
-                    suffix: const Icon(Icons.keyboard_arrow_down),
-                  ),
-                ),
                 SectionCard(
                   title: 'Crop Image',
                   icon: Icons.photo,
@@ -306,61 +563,65 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                         border: Border.all(color: Colors.grey.shade300),
                         borderRadius: BorderRadius.circular(10),
                       ),
-
                       child: (cropImage == null && webImage == null)
-                          ? Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
-                            'Capture Crop Image',
-                            style: TextStyle(color: Colors.grey),
-                          ),
-                          Icon(Icons.camera_alt),
-                        ],
-                      )
-
+                          ? const Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Capture Crop Image',
+                                  style: TextStyle(color: Colors.grey),
+                                ),
+                                Icon(Icons.camera_alt),
+                              ],
+                            )
                           : ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                         child: ClipRRect(
-    borderRadius: BorderRadius.circular(10),
-    child: kIsWeb
-    ? (webImage != null
-    ? Image.memory(
-    webImage!,
-    height: 180,
-    width: double.infinity,
-    fit: BoxFit.cover,
-    )
-        : const SizedBox())
-        : (cropImage != null
-    ? Image.file(
-    cropImage!,
-    height: 180,
-    width: double.infinity,
-    fit: BoxFit.cover,
-    )
-        : const SizedBox()),
-    ),
-                      ),
+                              borderRadius: BorderRadius.circular(10),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(10),
+                                child: kIsWeb
+                                    ? (webImage != null
+                                        ? Image.memory(
+                                            webImage!,
+                                            height: 180,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : const SizedBox())
+                                    : (cropImage != null
+                                        ? Image.file(
+                                            cropImage!,
+                                            height: 180,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : const SizedBox()),
+                              ),
+                            ),
                     ),
                   ),
                 ),
                 CropContinueButton(
-                  onTap: () {
-                    // Update singleton instance with data from this screen
+                  onTap: () async {
+                    print('userId:${widget.userId},controllerId:${widget.controllerId},edit:${widget.edit},cropId:${widget.cropId}');
+                     // Update singleton instance with data from this screen
                     _model.cropName = _cropNameController.text;
-                    _model.variety = _varietyController.text;
+                    _model.cropVariety = _varietyController.text;
                     _model.plantingMethod = _plantingMethod;
                     _model.plantingDate = _plantingDateController.text;
                     _model.expectedHarvestDate = _harvestDateController.text;
                     _model.cropDuration = _durationController.text;
                     _model.plantArrangement = _arrangementController.text;
                     _model.cropType = _cropTypeController.text;
+                     _model.cropImage = kIsWeb ? '' : cropImage?.path;
+                    _model.cropImageBytes = kIsWeb ? webImage : null;
 
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                        builder: (_) => const FieldInformationScreen(),
+                        builder: (_) => FieldInformationScreen(
+                          cropId: widget.cropId, edit: widget.edit,
+                          userId: widget.userId,controllerId: widget.controllerId,
+                        ),
                       ),
                     );
                   },

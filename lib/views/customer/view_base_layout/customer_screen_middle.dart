@@ -115,7 +115,7 @@ class _CustomerScreenMiddleState
 
   int _getTotalPagesCount(CustomerScreenControllerViewModel vm) {
     final mId = vm.mySiteList.data[vm.sIndex].master[vm.mIndex].modelId;
-    if ([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(mId)) return 8;
+    if ([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList].contains(mId)) return 9;
     return 6;
   }
 }

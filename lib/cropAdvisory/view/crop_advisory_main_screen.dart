@@ -3,10 +3,11 @@ import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'dashboard_screen.dart';
 import 'crop_weatherScreen.dart';
 import 'irrigation_fertigation_screen.dart';
+import 'report_screen.dart';
 
 class CropAdvisoryMainScreen extends StatefulWidget {
-  final int initialIndex;
-  const CropAdvisoryMainScreen({super.key, this.initialIndex = 0});
+  final int initialIndex,userId,controllerId;
+  const CropAdvisoryMainScreen({super.key, this.initialIndex = 0, required this.userId, required this.controllerId});
 
   @override
   State<CropAdvisoryMainScreen> createState() => _CropAdvisoryMainScreenState();
@@ -23,11 +24,11 @@ class _CropAdvisoryMainScreenState extends State<CropAdvisoryMainScreen> {
 
   List<Widget> _buildScreens() {
     return [
-      const DashboardScreen(isInsideMain: true),
+       DashboardScreen(isInsideMain: true, userID: widget.userId, controllerId: widget.controllerId),
       const CropWeatherscreen(),
       const IrrigationFertigationScreen(isInsideMain: true),
       const Center(child: Text('Disease Screen (Coming Soon)')),
-      const Center(child: Text('Report Screen (Coming Soon)')),
+      const ReportScreen(),
     ];
   }
 
@@ -51,8 +52,8 @@ class _CropAdvisoryMainScreenState extends State<CropAdvisoryMainScreen> {
         inactiveColorPrimary: inactiveColor,
       ),
       PersistentBottomNavBarItem(
-        icon: Image.asset('assets/Images/CropAdvisory/irrigation_active_icon.png', width: 24, height: 24, color: activeColor),
-        inactiveIcon: Image.asset('assets/Images/CropAdvisory/irrigation.png', width: 24, height: 24, color: inactiveColor),
+        icon: const Icon(Icons.water_drop, size: 24, color: activeColor),
+        inactiveIcon: const Icon(Icons.water_drop_outlined, size: 24, color: inactiveColor),
         title: ("Irrigation"),
         activeColorPrimary: activeColor,
         inactiveColorPrimary: inactiveColor,

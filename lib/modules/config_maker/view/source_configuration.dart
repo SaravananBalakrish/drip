@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:oro_drip_irrigation/modules/config_maker/model/device_object_model.dart';
 import 'package:oro_drip_irrigation/modules/config_maker/view/site_configure.dart';
+import 'package:oro_drip_irrigation/utils/Theme/smart_comm_theme.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
 import '../../../Constants/communication_codes.dart';
 import '../../../Constants/dialog_boxes.dart';
@@ -44,7 +45,83 @@ class _SourceConfigurationState extends State<SourceConfiguration> {
                   ),
                   children: [
                     for(var source in widget.configPvd.source)
-                      Container(
+                      if(AppConstants.aquacultureModelList.contains(widget.configPvd.masterData['modelId']))
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.white,
+                              boxShadow: AppProperties.customBoxShadowLiteTheme
+                          ),
+                          child: Column(
+                            children: [
+                              Text('${source.commonDetails.name}', style: TextStyle(color: primary, fontSize: 14),),
+                              SingleChildScrollView(
+                                child: Row(
+                                  children: List.generate(source.aerator.length, (index){
+                                    return Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      spacing: 10,
+                                      children: [
+                                        Image.asset(
+                                          'assets/png/aerators_o.png',
+                                          height: 100,
+                                          width: 100,
+                                        ),
+                                        Text(getObjectName(source.aerator[index], widget.configPvd).name!,style: AppProperties.listTileBlackBoldStyle,)                                      ],
+                                    );
+                                  }),
+                                ),
+                              ),
+                              const SizedBox(height: 10,),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  color: Theme.of(context).primaryColorLight.withOpacity(0.1),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedImage(imagePath: 'assets/png/aerators_o.png', color: Colors.black,),
+                                    const SizedBox(width: 20,),
+                                    const Text('Aerators : ', style: AppProperties.listTileBlackBoldStyle,),
+                                    Expanded(
+                                      child: Center(
+                                        child: Text(source.valves.map((sNo) => getObjectName(sNo, widget.configPvd).name!).join(', '), style: const TextStyle(color: Colors.teal, fontSize: 12, fontWeight: FontWeight.bold, overflow: TextOverflow.ellipsis),),
+                                      ),
+                                    ),
+                                    IconButton(
+                                        onPressed: (){
+                                          setState(() {
+                                            widget.configPvd.listOfSelectedSno.clear();
+                                            widget.configPvd.listOfSelectedSno.addAll(source.valves);
+                                          });
+                                          selectionDialogBox(
+                                              context: context,
+                                              title: 'Select Aerator',
+                                              singleSelection: false,
+                                              listOfObject: widget.configPvd.listOfGeneratedObject.where((object) => (object.objectId == AppConstants.pumpObjectId)).toList(),
+                                              onPressed: (){
+                                                setState(() {
+                                                  source.aerator.clear();
+                                                  source.aerator.addAll(widget.configPvd.listOfSelectedSno);
+                                                  widget.configPvd.updateAssignObject(sNo: source.commonDetails.sNo!, objectId: AppConstants.pumpObjectId, listOfSerialNo: widget.configPvd.listOfSelectedSno);
+                                                  widget.configPvd.listOfSelectedSno.clear();
+                                                });
+                                                Navigator.pop(context);
+                                              }
+                                          );
+                                        },
+                                        icon: Icon(Icons.touch_app, color: Theme.of(context).primaryColor, size: 20,)
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
+                          ),
+                        )
+                      else
+                        Container(
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             color: Colors.white,

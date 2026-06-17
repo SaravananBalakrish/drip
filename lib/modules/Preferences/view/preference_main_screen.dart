@@ -332,23 +332,14 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                                           ),
                                                           TextButton(
                                                               onPressed: () async {
-                                                                if (isNova || isToGem || isWlc) {
+                                                                if (isNova || isToGem) {
                                                                   final pump = preferenceProvider.commonPumpSettings![preferenceProvider.selectedTabIndex];
                                                                   final payload = jsonEncode({"sentSms": "viewconfig,4"});
                                                                   final payload2 = jsonEncode({"0": payload});
                                                                   final viewConfig = {
                                                                     "5900": {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${4}"}
                                                                   };
-                                                                  final result = await context.read<CommunicationService>().sendCommand(
-                                                                    serverMsg: '',
-                                                                    payload: isToGem ? jsonEncode(viewConfig)
-                                                                        : isWlc ? Constants.sendPayloadWithCrc(payload)
-                                                                        : payload,
-                                                                  );
-                                                                  debugPrint("preference main screen result => $result");
-                                                                  // mqttService.topicToPublishAndItsMessage(
-                                                                  //     ,
-                                                                  //     "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
+                                                                  mqttService.topicToPublishAndItsMessage(isToGem ? jsonEncode(viewConfig) : payload, "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
                                                                 }
                                                                 await Future.delayed(Duration.zero, () {
                                                                   preferenceProvider.updateValidationCode();
@@ -359,6 +350,34 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                                                   passwordController.text = "";
                                                                 }
                                                               },
+                                                              // onPressed: () async {
+                                                              //   if (isNova || isToGem) {
+                                                              //     final pump = preferenceProvider.commonPumpSettings![preferenceProvider.selectedTabIndex];
+                                                              //     final payload = jsonEncode({"sentSms": "viewconfig,4"});
+                                                              //     final payload2 = jsonEncode({"0": payload});
+                                                              //     final viewConfig = {
+                                                              //       "5900": {"5901": "${pump.serialNumber}+${pump.referenceNumber}+${pump.deviceId}+${pump.interfaceTypeId}+$payload2+${4}"}
+                                                              //     };
+                                                              //     final result = await context.read<CommunicationService>().sendCommand(
+                                                              //       serverMsg: '',
+                                                              //       payload: isToGem ? jsonEncode(viewConfig)
+                                                              //           : isWlc ? Constants.sendPayloadWithCrc(payload)
+                                                              //           : payload,
+                                                              //     );
+                                                              //     debugPrint("preference main screen result => $result");
+                                                              //     // mqttService.topicToPublishAndItsMessage(
+                                                              //     //     ,
+                                                              //     //     "${Environment.mqttPublishTopic}/${preferenceProvider.generalData!.deviceId}");
+                                                              //   }
+                                                              //   await Future.delayed(Duration.zero, () {
+                                                              //     preferenceProvider.updateValidationCode();
+                                                              //   });
+                                                              //   await preferenceProvider.checkPassword(userId: widget.customerId, password: passwordController.text);
+                                                              //   if(preferenceProvider.passwordValidationCode == 200) {
+                                                              //     Navigator.of(context).pop();
+                                                              //     passwordController.text = "";
+                                                              //   }
+                                                              // },
                                                               child: const Text("OK")
                                                           ),
                                                         ],
@@ -1336,8 +1355,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       "400": {"401": onDelayTimer()}
     };
 
-    // print("payloadForSlave ==> $payloadForSlave");
-
     final payload = shouldSendFailedPayloads ? getFailedPayload(isToGem: isToGem, sendAll: false) : getPayload(isToGem: isToGem, sendAll: false);
     final payloadParts = payload.split("?")[0].split(';');
 
@@ -1609,7 +1626,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
           }
         }
       }
-
       result.addAll(temp);
     }
 

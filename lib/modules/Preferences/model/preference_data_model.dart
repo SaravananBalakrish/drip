@@ -80,7 +80,7 @@ class WidgetSetting {
     required this.serialNumber
   });
 
-  factory WidgetSetting.fromJson(Map<String, dynamic> json, bool isNova) {
+  factory WidgetSetting.fromJson(Map<String, dynamic> json, bool isNova, bool isAquaCulture) {
     final rtcData = json['value'];
     List<RtcTimeSetting>? rtcSettings;
     if (rtcData is List<dynamic> && json['title'].toString().toUpperCase() == "RTC TIMER") {
@@ -97,7 +97,8 @@ class WidgetSetting {
                 json['title'].toString().toUpperCase() == "LOWER TANK LINEAR LEVEL SENSOR"
         ))
     )  {
-      value = json['value'] is bool ? List<bool>.filled(3, false) : json['value'];
+      int noOfPumpLimit = isAquaCulture ? 4 : 3;
+      value = json['value'] is bool ? List<bool>.filled(noOfPumpLimit, false) : json['value'];
     } else {
       switch (json['widgetTypeId']) {
         case 1:
@@ -159,11 +160,11 @@ class SettingList {
     required this.setting,
   });
 
-  factory SettingList.fromJson(Map<String, dynamic> json, {bool isNova = false}) {
+  factory SettingList.fromJson(Map<String, dynamic> json, {bool isNova = false, bool isAquaCulture = false}) {
     final settingsData = json['setting'] as List;
 
     final settings = settingsData.map((setting) {
-      return WidgetSetting.fromJson(setting, isNova);
+      return WidgetSetting.fromJson(setting, isNova, isAquaCulture);
     }).toList();
 
     return SettingList(
@@ -311,7 +312,7 @@ class CommonPumpSetting {
   factory CommonPumpSetting.fromJson(Map<String, dynamic> json) {
     // print("json in the common settings ==> $json");
     final settingsDats = json['settingList'] as List<dynamic>;
-    final settingsList = settingsDats.map((element) => SettingList.fromJson(element, isNova: AppConstants.ecoGemAndPlusModelList.contains(json['modelId']))).toList();
+    final settingsList = settingsDats.map((element) => SettingList.fromJson(element, isNova: AppConstants.ecoGemAndPlusModelList.contains(json['modelId']), isAquaCulture: AppConstants.aquaculturePumpModelList.contains(json['modelId']))).toList();
     return CommonPumpSetting(
         controllerId: json["controllerId"],
         categoryId: json["categoryId"] ?? 0,

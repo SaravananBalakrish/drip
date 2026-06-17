@@ -360,8 +360,8 @@ class ConditionLibraryViewModel extends ChangeNotifier {
 
   int getConditionCategory(Condition condition) {
     if (condition.type == 'Program') {
-      if(condition.component == 'Any irrigation program'
-          || condition.component == 'Any fertilizer program'){
+      if(condition.component == 'Any irrigation program' || condition.component == 'Any fertilizer program'
+          || condition.component == 'Any Pre(Time/Qty) program'){
         return 11;
       }
       return 1;
@@ -403,6 +403,12 @@ class ConditionLibraryViewModel extends ChangeNotifier {
         return 21;
       }
       return 22;
+    }
+    else if(condition.component == 'Any Pre(Time/Qty) program'){
+      if (condition.threshold == 'is Running' && condition.value=='True') {
+        return 24;
+      }
+      return 25;
     }
     else{
       if (condition.threshold == 'is Starting') {
