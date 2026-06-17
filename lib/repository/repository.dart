@@ -524,5 +524,8 @@ class Repository{
   Future<http.Response> createCropList(body) async {
     return await apiService.postRequest('/user/cropAdvisoryInfo/create', body);
   }
+  Future<http.Response> deleteCropList(body) async {
+    return await apiService.deleteRequest('/user/cropAdvisoryInfo/delete', body);
+  }
 }
 
