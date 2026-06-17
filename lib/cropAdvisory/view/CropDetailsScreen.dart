@@ -238,41 +238,78 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
   }
 
   Future<void> openCamera() async {
-    final XFile? image = await _picker.pickImage(
-      source: ImageSource.camera,
-      imageQuality: 100,
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text("Open Camera"),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await pickImage(ImageSource.camera);
+                },
+              ),
+
+              ListTile(
+                leading: const Icon(Icons.photo),
+                title: const Text("Choose From Gallery"),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await pickImage(ImageSource.gallery);
+                },
+              ),
+            ],
+          ),
+        );
+      },
     );
+  }
 
-    if (image == null) return;
+  Future<void> pickImage(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        imageQuality: 80,
+      );
 
-    final Uint8List bytes = await image.readAsBytes();
+      if (image == null) return;
 
-    final originalSize = bytes.lengthInBytes / 1024;
+      final bytes = await image.readAsBytes();
 
-    print("Original Size : ${originalSize.toStringAsFixed(2)} KB");
+      print(
+        "Original Size : ${(bytes.lengthInBytes / 1024).toStringAsFixed(2)} KB",
+      );
 
-    if (kIsWeb) {
+      if (kIsWeb) {
+        setState(() {
+          webImage = bytes;
+        });
+
+        _model.cropImage = '';
+        return;
+      }
+
+      final tempDir = await getTemporaryDirectory();
+
+      final file = File(
+        '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
+
+      await file.writeAsBytes(bytes);
+
       setState(() {
-        webImage = bytes;
+        cropImage = file;
+        _model.cropImage = file.path;
       });
-      return;
-    }
 
-    // MOBILE ONLY BELOW
-    final tempDir = await getTemporaryDirectory();
-    final file = File('${tempDir.path}/cropImage.jpg');
-    await file.writeAsBytes(bytes);
+      print("Saved Image : ${cropImage?.path}");
 
-    final compressedFile = await ImageCompressHelper.compressImage(file);
-
-    if (compressedFile != null) {
-      final compressedSize = await compressedFile.length() / 1024;
-
-      print("Compressed Size : ${compressedSize.toStringAsFixed(2)} KB");
-
-      setState(() {
-        cropImage = compressedFile;
-      });
+    } catch (e) {
+      print("Image Error : $e");
     }
   }
 
