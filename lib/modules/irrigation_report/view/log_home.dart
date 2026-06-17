@@ -68,7 +68,7 @@ class _LogHomeState extends State<LogHome> {
     'Date','Status','ProgramS_No','ProgramCategory','ScheduledStartTime',
     'SequenceData','ValveFlowrate','IrrigationDurationCompleted','ProgramName',
     'IrrigationMethod','IrrigationDuration_Quantity','IrrigationQuantityCompleted','ProgramCategoryName','Pretime','PostTime',
-    'CentralFilterOnDuration','LocalFilterOnDuration'
+    'CentralFilterOnDuration','LocalFilterOnDuration', 'CentralFertOnOff', 'LocalFertOnOff'
   ];
 
   int httpError = 0;
@@ -182,6 +182,18 @@ class _LogHomeState extends State<LogHome> {
     }
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       if (mounted) {
+        dataSource = [];
+        dataToShow = {};
+        program = [];
+        programDuplicate = [];
+        valve = [];
+        valveDuplicate = [];
+        line = [];
+        lineDuplicate = [];
+        date = [];
+        dateDuplicate = [];
+        status = [];
+        statusDuplicate = [];
         IrrigationLogParameterFromServer = widget.serverData['irrigationLog'];
         for(var globalParameter in IrrigationLogParameterFromServer.keys){
           for(var localParameter in IrrigationLogParameterFromServer[globalParameter].keys){
@@ -446,7 +458,6 @@ class _LogHomeState extends State<LogHome> {
             }
           }
           setState(() {
-            // Check if the valve list has elements before splitting and sorting
             if (valve.isNotEmpty) {
               valve.sort((a, b) {
                 var aParts = a['name'].split('VL.');
@@ -507,7 +518,6 @@ class _LogHomeState extends State<LogHome> {
             }else if(_irrigationOptionWise[4][1] == true){
               dataToShow = irrigationParameterArray.editStatusWise(dataSource, status);
             }
-            print("dataToShow => ${dataToShow}");
 
           });
           if (kDebugMode) {
@@ -531,8 +541,10 @@ class _LogHomeState extends State<LogHome> {
       setState(() {
         httpError = 1;
       });
-      print('error in log = > ${e.toString()}');
-      print('error in log stackTrace= > $stackTrace');
+      if (kDebugMode){
+        print('error in log = > ${e.toString()}');
+        print('error in log stackTrace= > $stackTrace');
+      }
     }
   }
 

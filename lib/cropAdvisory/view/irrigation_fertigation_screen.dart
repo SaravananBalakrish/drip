@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../service/cropadvisory_model.dart';
+import '../model/cropadvisory_model.dart';
+import 'water_budget_manager_screen.dart';
 
 class IrrigationFertigationScreen extends StatefulWidget {
   final bool isInsideMain;
@@ -20,10 +21,12 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
+        leading: widget.isInsideMain
+            ? null
+            : IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.pop(context),
+              ),
         title: Text(
           'Irrigation And Fertigation',
           style: GoogleFonts.poppins(
@@ -32,6 +35,12 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
             fontSize: 18,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.settings_outlined, color: Colors.black),
+            onPressed: () {},
+          ),
+        ],
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -41,17 +50,27 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 16),
-              _buildCropImageCard(),
+              _buildSatelliteImageCard(),
               const SizedBox(height: 16),
               _buildDescriptionText(),
               const SizedBox(height: 20),
-              _buildMoistureStatusCard(),
-              const SizedBox(height: 16),
-              _buildActionButtons(),
+              _buildStatsRow(),
               const SizedBox(height: 24),
-              _buildFieldHeader(),
-              const SizedBox(height: 16),
-              _buildInfoGrid(),
+              _buildIrrigationActionCard(),
+              const SizedBox(height: 24),
+              _buildSectionHeader('Water Budget', onMoreDetails: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const WaterBudgetManagerScreen()),
+                );
+              }),
+              const SizedBox(height: 12),
+              _buildWaterBudgetCards(),
+              const SizedBox(height: 24),
+              _buildSectionHeader('Fertigation'),
+              const SizedBox(height: 12),
+              _buildFertigationPlanCard(),
               const SizedBox(height: 30),
             ],
           ),
@@ -60,34 +79,48 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
     );
   }
 
-  Widget _buildCropImageCard() {
+  Widget _buildSatelliteImageCard() {
     return Container(
-      height: 240,
+      height: 280,
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFF1B7F8A), width: 2),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Stack(
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(14),
-            child: Image.asset(
-              'assets/Images/CropAdvisory/tomatoes.png', // Assuming user will add this or has it
+            borderRadius: BorderRadius.circular(20),
+            child: Container(
+              color: Colors.grey[200], // Placeholder for the satellite image
               width: double.infinity,
               height: double.infinity,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                color: Colors.grey[200],
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.image, size: 50, color: Colors.grey[400]),
-                      const SizedBox(height: 8),
-                      Text('Crop Image', style: GoogleFonts.poppins(color: Colors.grey)),
-                    ],
-                  ),
+              child: Center(
+                child: Icon(Icons.satellite_alt, size: 60, color: Colors.grey[400]),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 12,
+            left: 12,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.9),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Generate by Satellite imagery services',
+                style: GoogleFonts.poppins(
+                  color: Colors.black87,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -96,19 +129,12 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
             bottom: 12,
             right: 12,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFEBEE),
-                borderRadius: BorderRadius.circular(12),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
               ),
-              child: Text(
-                'Soil Moisture Is Low',
-                style: GoogleFonts.poppins(
-                  color: const Color(0xFFE53935),
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
+              child: const Icon(Icons.fullscreen, size: 24, color: Colors.black87),
             ),
           ),
         ],
@@ -117,234 +143,322 @@ class _IrrigationFertigationScreenState extends State<IrrigationFertigationScree
   }
 
   Widget _buildDescriptionText() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        RichText(
-          text: TextSpan(
+    return RichText(
+      text: TextSpan(
+        style: GoogleFonts.poppins(
+          fontSize: 13,
+          color: Colors.black87,
+          height: 1.5,
+        ),
+        children: [
+          TextSpan(
+            text: 'This ${_model.cropVariety ?? "hybrid"} ${_model.cropName ?? "tomato"} crop is being cultivated in an ${_model.cropType ?? "open-field"} environment using ${_model.soilTypeName.toLowerCase()} soil, which provides good water retention and proper root ',
+          ),
+          TextSpan(
+            text: 'See More..',
             style: GoogleFonts.poppins(
-              fontSize: 13,
-              color: Colors.black87,
-              height: 1.5,
+              color: const Color(0xFF1B7F8A),
+              fontWeight: FontWeight.w500,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatsRow() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          _buildStatItem('56 mm', 'ET Today'),
+          _buildDivider(),
+          _buildStatItem('No', 'Rain Fall'),
+          _buildDivider(),
+          _buildStatItem('Low', 'Soil Moisture', valueColor: Colors.red),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String value, String label, {Color? valueColor}) {
+    return Expanded(
+      child: Column(
+        children: [
+          Text(
+            value,
+            style: GoogleFonts.poppins(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: valueColor ?? Colors.black87,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text( label,
+            style: GoogleFonts.poppins(
+              fontSize: 12,
+              color: Colors.grey[600],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(
+      height: 30,
+      width: 1,
+      color: Colors.grey[200],
+    );
+  }
+
+  Widget _buildIrrigationActionCard() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Column(
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               TextSpan(
-                text: 'This ${_model.variety ?? "hybrid"} ${_model.cropName ?? "tomato"} crop is being cultivated in an ${_model.cropType ?? "open-field"} environment using ${_model.soilType ?? "loam"} soil, which provides good water retention and proper root aeration for healthy plant development. ',
+              Column(
+                children: [
+                  Container(
+                    width: 60,
+                    height: 60,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF0F9F8),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Image.asset(
+                      'assets/Images/CropAdvisory/plant_icon.png',
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Zone A',
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF1B7F8A),
+                    ),
+                  ),
+                ],
               ),
-              TextSpan(
-                text: 'See More..',
-                style: GoogleFonts.poppins(
-                  color: Colors.blue,
-                  fontWeight: FontWeight.w500,
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            style: GoogleFonts.poppins(fontSize: 13, color: Colors.black87),
+                            children: const [
+                              TextSpan(text: 'Duration: '),
+                              TextSpan(
+                                text: '45 mins',
+                                style: TextStyle(color: Color(0xFF1B7F8A), fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.wb_sunny_outlined, size: 20, color: Colors.grey),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    RichText(
+                      text: TextSpan(
+                        style: GoogleFonts.poppins(fontSize: 13, color: Colors.black87),
+                        children: const [
+                          TextSpan(text: 'Water Required: '),
+                          TextSpan(
+                            text: '3,000 Liters',
+                            style: TextStyle(color: Color(0xFF1B7F8A), fontWeight: FontWeight.w500),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1B7F8A),
+                              foregroundColor: Colors.white,
+                              elevation: 0,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                            child: Text('Start Irrigation', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600)),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {},
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.grey[600],
+                              side: BorderSide(color: Colors.grey.shade300),
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                            child: Text('Edit Duration', style: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w600)),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, {VoidCallback? onMoreDetails}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+        TextButton.icon(
+          onPressed: onMoreDetails,
+          icon: Text(
+            'More Details',
+            style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
+          ),
+          label: const Icon(Icons.chevron_right, size: 16, color: Colors.black54),
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.grey[200],
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildMoistureStatusCard() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        border: Border.all(color: Colors.grey.shade100),
-      ),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
+  Widget _buildWaterBudgetCards() {
+    return Row(
+      children: [
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFEBEE),
-              shape: BoxShape.circle,
+              color: const Color(0xFFE3F2FD).withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: const Icon(Icons.auto_awesome, color: Color(0xFFE53935), size: 24),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Current 28% (Low) Soil Moisture Is Low And Irrigation May Be Required Soon',
-                  style: GoogleFonts.poppins(
-                    fontSize: 13,
-                    color: const Color(0xFFE53935),
-                    fontWeight: FontWeight.w500,
-                  ),
+                  'Available Water:',
+                  style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        '91,400 Liters',
+                        style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black87),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                      child: const Icon(Icons.chevron_right, size: 14, color: Colors.grey),
+                    ),
+                  ],
                 ),
               ],
-            ),
-          ),
-          const Icon(Icons.arrow_forward, color: Color(0xFFE53935), size: 20),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButtons() {
-    return Row(
-      children: [
-        Expanded(
-          child: ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF1B7F8A),
-              foregroundColor: Colors.white,
-              elevation: 0,
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-            child: Text(
-              'Start Irrigation',
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
             ),
           ),
         ),
         const SizedBox(width: 12),
         Expanded(
-          child: OutlinedButton(
-            onPressed: () {},
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.grey[700],
-              side: BorderSide(color: Colors.blue.shade100, width: 1.5),
-              padding: const EdgeInsets.symmetric(vertical: 14),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFFE3F2FD).withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(16),
             ),
-            child: Text(
-              'Edit Duration',
-              style: GoogleFonts.poppins(
-                fontWeight: FontWeight.w500,
-                fontSize: 14,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildFieldHeader() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Row(
-          children: [
-            Text(
-              '${_model.cropName ?? "Tomatoes"} Field',
-              style: GoogleFonts.poppins(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(width: 8),
-            const Icon(Icons.edit_outlined, size: 18, color: Colors.grey),
-          ],
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: const Color(0xFFF1F3F4),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Row(
-            children: [
-              Text(
-                'More Details',
-                style: GoogleFonts.poppins(
-                  fontSize: 12,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w500,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Season Need',
+                  style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey[600]),
                 ),
-              ),
-              const Icon(Icons.chevron_right, size: 18),
-            ],
+                const SizedBox(height: 8),
+                Text(
+                  '2,46,800 Liters',
+                  style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.black87),
+                ),
+              ],
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildInfoGrid() {
-    return GridView.count(
-      crossAxisCount: 2,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      mainAxisSpacing: 12,
-      crossAxisSpacing: 12,
-      childAspectRatio: 1.7,
-      children: [
-        _buildInfoCard('Crop Health', 'Good', backgroundColor: const Color(0xFFE8F5E9), textColor: const Color(0xFF4CAF50), hasArrow: true),
-        _buildInfoCard('Planting date', _model.plantingDate ?? '12/03/2026'),
-        _buildInfoCard('Available Water:', '91,400 Liters', hasArrow: true),
-        _buildInfoCard('Season Need', '2,46,800 Liters'),
-      ],
-    );
-  }
-
-  Widget _buildInfoCard(String title, String value, {Color? backgroundColor, Color? textColor, bool hasArrow = false}) {
+  Widget _buildFertigationPlanCard() {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: backgroundColor ?? Colors.white,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey.shade100),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      child: Row(
         children: [
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-              fontSize: 12,
-              color: Colors.grey[600],
-              fontWeight: FontWeight.w500,
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF0F9F8),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.auto_awesome, color: Color(0xFF1B7F8A), size: 24),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Text(
+              'Today\'s Fertigation Plan',
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: const Color(0xFF1B7F8A),
+              ),
             ),
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  value,
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                    color: textColor ?? Colors.black87,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-              if (hasArrow)
-                Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(Icons.chevron_right, size: 16, color: Colors.grey),
-                ),
-            ],
-          ),
+          const Icon(Icons.arrow_forward, color: Color(0xFF1B7F8A), size: 20),
         ],
       ),
     );

@@ -56,6 +56,7 @@ class Group {
   }
 }
 
+
 class MasterControllerModel {
   final int controllerId;
   final String deviceId;
@@ -80,6 +81,7 @@ class MasterControllerModel {
   LiveMessage? live;
   final List<Unit> units;
   final List<UserPermission> userPermission;
+  final List<LinePermission> linePermission;
   List<RelayStatus> ioConnection;
   final bool isSubUser;
 
@@ -95,7 +97,6 @@ class MasterControllerModel {
     required this.modelId,
     required this.modelName,
     required this.modelDescription,
-
     required this.interfaceTypeId,
     required this.interface,
     required this.relayOutput,
@@ -105,6 +106,7 @@ class MasterControllerModel {
     required this.communicationMode,
     required this.units,
     required this.userPermission,
+    required this.linePermission,
     required this.irrigationLine,
     required this.nodeList,
     required this.programList,
@@ -119,6 +121,210 @@ class MasterControllerModel {
   });
 
   factory MasterControllerModel.fromJson(Map<String, dynamic> json,
+      bool isSubUser) {
+
+    final config = json['config'] ?? json;
+
+    final configObjectsRaw = (config['configObject'] as List?) ?? [];
+
+    // STEP 1: Parse linePermission from JSON FIRST
+    List<LinePermission> linePermissions = [];
+    if (json.containsKey('linePermission') && json['linePermission'] is List) {
+      linePermissions = (json['linePermission'] as List)
+          .map((e) => LinePermission.fromJson(e))
+          .toList();
+    }
+
+    // STEP 2: Get permitted line SNo values
+    Set<double> permittedLineSNos = {};
+    if (linePermissions.isNotEmpty) {
+      permittedLineSNos = linePermissions
+          .where((permission) => permission.status)
+          .map((permission) => permission.sNo)
+          .toSet();
+    }
+
+    // STEP 3: Get raw irrigation lines
+    final irrigationLinesRaw = (config['irrigationLine'] as List?) ?? [];
+
+    // STEP 4: Filter irrigation lines based on permissions
+    List<dynamic> filteredIrrigationLines = irrigationLinesRaw;
+    if (permittedLineSNos.isNotEmpty) {
+      filteredIrrigationLines = irrigationLinesRaw.where((line) {
+        final lineSNo = (line['sNo'] as num?)?.toDouble();
+        return lineSNo != null && permittedLineSNos.contains(lineSNo);
+      }).toList();
+    }
+
+    bool isAquaculture = [...AppConstants.aquacultureModelList].contains(
+        json['modelId'] ?? 0);
+
+    // STEP 5: Only add "All" line if there are multiple permitted lines
+    if(filteredIrrigationLines.isNotEmpty && filteredIrrigationLines.length > 1){
+      var allLine = {
+        "objectId": 0,
+        "sNo": 0,
+        "name": isAquaculture ? "All Aquaculture line" : "All irrigation line",
+        "connectionNo": null,
+        "objectName": "All Line",
+        "type": "",
+        "controllerId": null,
+        "count": null,
+        "connectedObject": null,
+        "siteMode": null,
+        "source": [],
+        "sourcePump": [],
+        "irrigationPump": [],
+        "aerator": [],
+        "centralFiltration": 0,
+        "localFiltration": 0,
+        "centralFertilization": 0,
+        "localFertilization": 0,
+        "valve": [],
+        "mainValve": [],
+        "fan": [],
+        "fogger": [],
+        "pesticides": [],
+        "heater": [],
+        "screen": [],
+        "vent": [],
+        "powerSupply": 0,
+        "pressureSwitch": 0,
+        "waterMeter": 0,
+        "pressureIn": 0,
+        "pressureOut": 0,
+        "moistureSensor": [],
+        "temperature": [],
+        "soilTemperature": [],
+        "humidity": [],
+        "co2": []
+      };
+      filteredIrrigationLines.insert(0, allLine);
+    }
+
+    final waterSourcesRaw = config['waterSource'] as List? ?? [];
+    final filterSiteRaw = config['filterSite'] as List? ?? [];
+    final fertilizerSiteRaw = config['fertilizerSite'] as List? ?? [];
+    final moistureSensorRaw = config['moistureSensor'] as List? ?? [];
+
+    List<ConfigObject> configObjectsR = json["config"] != null &&
+        json["config"] is Map<String, dynamic> &&
+        json["config"]['configObject'] != null
+        ? (json["config"]['configObject'] as List)
+        .map((item) => ConfigObject.fromJson(item))
+        .toList()
+        : [];
+
+    List<ConfigObject> configObjects = configObjectsRaw
+        .map((item) => ConfigObject.fromJson(item))
+        .toList();
+
+    List<WaterSourceModel> waterSources = waterSourcesRaw
+        .map((item) => WaterSourceModel.fromJson(item, configObjects))
+        .toList();
+    WaterSourceModel.assignFloatSwitchesToWaterSources(waterSources, config, configObjects);
+
+    List<FilterSiteModel> filterSites =
+    filterSiteRaw.map((item) => FilterSiteModel.fromJson(item, configObjects)).toList();
+    final filterSiteMap = {
+      for (var site in filterSites) site.sNo: site,
+    };
+
+    List<FertilizerSiteModel> fertilizerSites =
+    fertilizerSiteRaw.map((item) => FertilizerSiteModel.fromJson(item, configObjects)).toList();
+    final fertilizerSiteMap = {
+      for (var site in fertilizerSites) site.sNo: site,
+    };
+
+    // STEP 6: Create IrrigationLineModel from filtered list
+    List<IrrigationLineModel> irrigationLines = filteredIrrigationLines
+        .map((item) => IrrigationLineModel.fromJson(item, configObjects, moistureSensorRaw, waterSources))
+        .toList();
+
+    for (var line in irrigationLines) {
+
+      final matchedCtrlFilterSite = filterSiteMap[line.centralFiltration];
+      final matchedCtrlFertilizerSite = fertilizerSiteMap[line.centralFertilization];
+
+      final matchedLocalFilterSite = filterSiteMap[line.localFiltration];
+      final matchedLocalFertilizerSite = fertilizerSiteMap[line.localFertilization];
+
+      line.linkReferences(matchedCtrlFilterSite, matchedCtrlFertilizerSite,
+          matchedLocalFilterSite, matchedLocalFertilizerSite);
+    }
+
+    final ecSensorRaw = (config['ecSensor'] as List?) ?? [];
+    final phSensorRaw = (config['phSensor'] as List?) ?? [];
+
+    //sub nodes
+    final nodeListForSensors = (json['nodeList'] as List?)?.where((item) {
+      final serialStr = item['serialNumber']?.toString();
+      final serial = int.tryParse(serialStr ?? '0') ?? 0;
+      return serial == 0 || serialStr == null;
+    }).map((item) => NodeListModel.fromJson(item, configObjects,[],[])).toList()
+        .cast<NodeListModel>() ?? <NodeListModel>[];
+
+    final ecSensors = ecSensorRaw.map((e) => EcSensorModel.fromJson(e, nodeListForSensors)).toList();
+    final phSensors = phSensorRaw.map((e) => PhSensorModel.fromJson(e, nodeListForSensors)).toList();
+
+    //master nodes
+    final nodeList = (json['nodeList'] as List?)?.where((item) {
+      final serialStr = item['serialNumber']?.toString();
+      final serial = int.tryParse(serialStr ?? '0') ?? 0;
+      return serial != 0 && serialStr != null;
+    }).map((item) => NodeListModel.fromJson(item, configObjects, ecSensors, phSensors)).toList()
+        .cast<NodeListModel>() ?? <NodeListModel>[];
+
+
+    List<ConfigObject> filteredConfigObjects =
+    configObjects.where((config) => config.controllerId == json['controllerId']).toList();
+    List<RelayStatus> ioConnection = filteredConfigObjects.map((config) => RelayStatus.fromJson(config.toJson())).toList();
+
+    return MasterControllerModel(
+      controllerId: json['controllerId'] ?? 0,
+      deviceId: json['deviceId'] ?? '',
+      deviceName: json['deviceName'] ?? '',
+      categoryId: json['categoryId'] ?? 0,
+      categoryName: isSubUser ? json['groupName'] ?? '' : json['categoryName'] ?? '',
+      modelId: json['modelId'] ?? 0,
+      modelName: json['modelName'] ?? '',
+      modelDescription: json['modelDescription'] ?? '',
+      interfaceTypeId: json['interfaceTypeId'] ?? '',
+      interface: json['interface'] ?? '',
+      relayOutput: json['relayOutput'] ?? '',
+      latchOutput: json['latchOutput'] ?? '',
+      analogInput: json['analogInput'] ?? '',
+      digitalInput: json['digitalInput'] ?? '',
+      communicationMode: json['communicationMode'] ?? 1,
+      configObjects: configObjectsR,
+      units: json['units'] != null ? List<Unit>.from(json['units'].map((x) => Unit.fromJson(x)))
+          : [],
+      userPermission: (json.containsKey('userPermission') && json['userPermission'] is List)
+          ? (json['userPermission'] as List)
+          .map((e) => UserPermission.fromJson(e))
+          .toList()
+          : [],
+      linePermission: linePermissions,
+      live: json['liveMessage'] != null ? LiveMessage.fromJson(json['liveMessage']) : null,
+      irrigationLine: irrigationLines,
+
+      nodeList : nodeList,
+
+      programList: json['program'] != null ? (json['program'] as List)
+          .map((prgList) => ProgramList.fromJson(prgList))
+          .toList()
+          : [],
+
+      ioConnection: ioConnection,
+      isSubUser: isSubUser,
+
+      ecSensors: ecSensors,
+      phSensors: phSensors,
+
+    );
+  }
+
+  /*factory MasterControllerModel.fromJson(Map<String, dynamic> json,
       bool isSubUser) {
 
     final config = json['config'] ?? json;
@@ -248,6 +454,15 @@ class MasterControllerModel {
     configObjects.where((config) => config.controllerId == json['controllerId']).toList();
     List<RelayStatus> ioConnection = filteredConfigObjects.map((config) => RelayStatus.fromJson(config.toJson())).toList();
 
+    // Parse linePermission from JSON
+    List<LinePermission> linePermissions = [];
+    if (json.containsKey('linePermission') && json['linePermission'] is List) {
+      linePermissions = (json['linePermission'] as List)
+          .map((e) => LinePermission.fromJson(e))
+          .toList();
+    }
+
+
     return MasterControllerModel(
       controllerId: json['controllerId'] ?? 0,
       deviceId: json['deviceId'] ?? '',
@@ -272,6 +487,7 @@ class MasterControllerModel {
           .map((e) => UserPermission.fromJson(e))
           .toList()
           : [],
+      linePermission: linePermissions,
       live: json['liveMessage'] != null ? LiveMessage.fromJson(json['liveMessage']) : null,
       irrigationLine: irrigationLines,
 
@@ -289,7 +505,7 @@ class MasterControllerModel {
       phSensors: phSensors,
 
     );
-  }
+  }*/
 
 }
 
@@ -439,6 +655,7 @@ class IrrigationLineModel {
   final List<SensorModel> waterMeter;
   final List<SensorModel> co2Sensor;
   final List<SensorModel> humiditySensor;
+  final List<SensorModel> temperature;
   final List<SensorModel> soilTemperature;
   final bool hasWeatherStation;
   int? linePauseFlag;
@@ -465,6 +682,7 @@ class IrrigationLineModel {
     required this.waterMeter,
     required this.co2Sensor,
     required this.humiditySensor,
+    required this.temperature,
     required this.soilTemperature,
     required this.hasWeatherStation,
     this.linePauseFlag = 0,
@@ -523,6 +741,12 @@ class IrrigationLineModel {
     final co2SNoSet = ((json['co2'] as List?) ?? []).map((e) => e).toSet();
     final co2 = configObjects
         .where((obj) => co2SNoSet.contains(obj.sNo))
+        .map((obj) => SensorModel.fromConfigObject(obj))
+        .toList();
+
+    final temperatureSNoSet = ((json['temperature'] as List?) ?? []).map((e) => e).toSet();
+    final temperature = configObjects
+        .where((obj) => temperatureSNoSet.contains(obj.sNo))
         .map((obj) => SensorModel.fromConfigObject(obj))
         .toList();
 
@@ -642,6 +866,7 @@ class IrrigationLineModel {
       co2Sensor: co2,
       humiditySensor: humidity,
       soilTemperature: soilTemperature,
+      temperature: temperature,
 
       hasWeatherStation: hasWeatherStation,
     );
@@ -2242,6 +2467,34 @@ class UserPermission {
   factory UserPermission.fromJson(Map<String, dynamic> json) {
     return UserPermission(
       sNo: json['sNo'] as int,
+      name: json['name'] as String,
+      status: json['status'] as bool,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sNo': sNo,
+      'name': name,
+      'status': status,
+    };
+  }
+}
+
+class LinePermission {
+  final double sNo;
+  final String name;
+  final bool status;
+
+  LinePermission({
+    required this.sNo,
+    required this.name,
+    required this.status,
+  });
+
+  factory LinePermission.fromJson(Map<String, dynamic> json) {
+    return LinePermission(
+      sNo: json['sNo'] as double,
       name: json['name'] as String,
       status: json['status'] as bool,
     );

@@ -88,7 +88,7 @@ class CustomerHomeWide extends StatelessWidget {
         final hasLinePP = cM.getPermissionStatus(
             "Irrigation Line Pause/Resume Manually");
         if(AppConstants.omsGemList.contains(cM.modelId)){
-          return SizedBox();
+          return const SizedBox();
         }
         return Column(
           children: [
@@ -98,8 +98,7 @@ class CustomerHomeWide extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ...irrigationLine.map((line) =>
-                        Padding(
+                    ...irrigationLine.map((line) => Padding(
                           padding: const EdgeInsets.only(
                               left: 8, right: 8, top: 8, bottom: 5),
                           child: Container(
@@ -173,8 +172,7 @@ class CustomerHomeWide extends StatelessWidget {
                                     ),
                                   ),
                                 ),
-                                isAquaculture
-                                    ? AquacultureLine(irrLine: line, customerId: customerId,
+                                isAquaculture ? AquacultureLine(irrLine: line, customerId: customerId,
                                   controllerId: controllerId, modelId: modelId, deviceId: deviceId)
                                     : buildIrrigationLine(
                                     context, line, customerId, controllerId,
@@ -276,6 +274,7 @@ class CustomerHomeWide extends StatelessWidget {
       waterMeter: irrLine.waterMeter,
       humidity: irrLine.humiditySensor,
       co2: irrLine.co2Sensor,
+      temperature: irrLine.temperature,
       soilTemperature: irrLine.soilTemperature,
       customerId: customerId,
       controllerId: controllerId,

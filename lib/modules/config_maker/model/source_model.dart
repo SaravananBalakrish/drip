@@ -12,6 +12,7 @@ class SourceModel {
   double bottomFloatForOutletPump;
   List<double> inletPump;
   List<double> outletPump;
+  List<double> aerator;
   List<double> valves;
   List<double> outletValves;
 
@@ -26,6 +27,7 @@ class SourceModel {
     this.bottomFloatForOutletPump = 0.0,
     required this.inletPump,
     required this.outletPump,
+    required this.aerator,
     required this.valves,
     required this.outletValves,
   });
@@ -57,6 +59,7 @@ class SourceModel {
         bottomFloatForOutletPump: intOrDoubleValidate(data['bottomFloatForOutletPump'] ?? 0.0),
         inletPump: (data['inletPump'] as List<dynamic>).map((sNo) => sNo as double).toList(),
         outletPump: (data['outletPump'] as List<dynamic>).map((sNo) => sNo as double).toList(),
+        aerator: data['aerator'] != null ?  (data['aerator'] as List<dynamic>).map((sNo) => sNo as double).toList() : [],
         valves: (data['valves'] as List<dynamic>).map((sNo) => sNo as double).toList(),
         outletValves: data['outletValves'] != null ? (data['outletValves'] as List<dynamic>).map((sNo) => sNo as double).toList() : [],
     );
@@ -74,6 +77,7 @@ class SourceModel {
       'bottomFloatForOutletPump' : bottomFloatForOutletPump,
       'inletPump' : inletPump,
       'outletPump' : outletPump,
+      'aerator' : aerator,
       'valves' : valves,
       'outletValves' : outletValves,
     });

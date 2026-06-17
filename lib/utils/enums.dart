@@ -1,6 +1,6 @@
-enum ScreenType { narrow, middle, wide }
+enum ScreenType {narrow, middle, wide}
 
-enum UserRole { superAdmin, admin, dealer, customer, subUser }
+enum UserRole {superAdmin, admin, dealer, customer, subUser}
 
 enum MySegment {all, year}
 enum MainMenuSegment {dashboard, product, stock}
@@ -125,7 +125,11 @@ enum PumpReasonCode {
   motorOffPOn(34,'Motor off due to other pump is on'),
   motorOffPOff(35,'Motor off due to waiting for other pump to turn off'),
   motorOffPrsSwtHigh(36,'Motor off due to pressure switch high'),
-  noComm(37,'Motor off due to no communication to nodes');
+  noComm(37,'Motor off due to no communication to nodes'),
+  sumpCableDisconnected(38,'Motor off due to sump cable disconnected'),
+  tankCableDisconnected(39,'Motor off due to tank cable disconnected'),
+  sumpFloatFailed(40,'Motor off due to sump float failed'),
+  tankFloatFailed(41,'Motor off due to tank float failed');
 
   final int code;
   final String content;
@@ -140,5 +144,5 @@ enum PumpReasonCode {
   }
 }
 
-enum BlueConnectionState { connected, connecting, disconnecting, disconnected }
-enum MQTTConnectionState { connected, disconnected, connecting }
+enum BlueConnectionState {connected, connecting, disconnecting, disconnected}
+enum MQTTConnectionState {connected, disconnected, connecting}

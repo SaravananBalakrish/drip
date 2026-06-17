@@ -5,7 +5,7 @@ class Environment {
   static const String appVersion = String.fromEnvironment('APP_VERSION', defaultValue: '1.0.0');
   static Map<String, Map<String, dynamic>> config = <String, Map<String, dynamic>>{
     'oroDevelopment' : {
-      'apiUrl': 'http://192.168.68.141:5000/api/v1',
+      'apiUrl': 'http://192.168.1.85:5000/api/v1',
       'apiKey': 'dev-api-key',
       'mqttWebUrl': 'ws://192.168.68.141',
       'mqttMobileUrl': '192.168.68.141',
@@ -45,7 +45,7 @@ class Environment {
       'mqttWebPort': 8083,
       'mqttMobilePort': 1883,
       "mqttUserName" : 'mqttuser',
-      "mqttPassword" : 'Mqtt#456',
+      "mqttPassword" : 'Mqtt@456',
       'sftpIpAddress': '54.179.114.89',
       'sftpPort': 22,
       'privateKeyPath': 'assets/ssh/smartComm/id_rsa',

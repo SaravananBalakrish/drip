@@ -193,6 +193,7 @@ class GeneralSettingViewModel extends ChangeNotifier {
     try {
       var response = await repository.updatedSubUserPermission(body);
       if (response.statusCode == 200) {
+        print(response.body);
         final data = jsonDecode(response.body);
         GlobalSnackBar.show(context, data["message"], data["code"]);
         Navigator.pop(context);
