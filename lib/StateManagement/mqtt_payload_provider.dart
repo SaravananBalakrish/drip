@@ -838,26 +838,23 @@ class MqttPayloadProvider with ChangeNotifier {
               uard4MessagesSet.add(msg);
             }
           }
-
         }
 
         if(data['mC']=='7400'){
 
          String loraVersion = data['cM']['7401'];
          final parts = loraVersion.split(',');
-         if(parts[0] == '1')
-           {
+         if(parts[0] == '1') {
              final rawFrequency = int.parse(parts[2]);
              final frequency = (rawFrequency / 10).toStringAsFixed(1);
-
              Loara1verssion = "${parts[1]},$frequency,${parts[3]}";
-           }
+         }
          else
-           {
+         {
              final rawFrequency = int.parse(parts[2]);
              final frequency = (rawFrequency / 10).toStringAsFixed(1);
              Loara2verssion = "${parts[1]},$frequency,${parts[3]}";
-           }
+         }
 
         }
 
