@@ -209,7 +209,7 @@ class _FirmwareBLEPageState extends State<FirmwareBLEPage> {
       });
     } catch (e) {
       setState(() => isLoading = false);
-      AppLog.log('Error sending firmware: $e');
+      AppLog.log('Error sending firmware:');
     }
   }
 
