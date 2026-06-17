@@ -628,7 +628,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
       listOfPayload.addAll(configPvd.getWeatherMasterPayload());
     });
 
-    if([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList, ...AppConstants.omsGemList].contains(configPvd.masterData['modelId'])){
+    if([...AppConstants.gemModelList, ...AppConstants.ecoGemModelList, ...AppConstants.omsGemList, ...AppConstants.aquacultureModelList].contains(configPvd.masterData['modelId'])){
       bool gem = AppConstants.gemModelList.contains(configPvd.masterData['modelId']);
       bool omsGem = AppConstants.omsGemList.contains(configPvd.masterData['modelId']);
       final Map<String, dynamic> configMakerPayload = {
