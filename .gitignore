@@ -64,8 +64,3 @@ notification.env
 *.p12
 key.properties
 android/key.properties
-android/**
-ios/**
-linux/**
-macos/**
-windows/**
