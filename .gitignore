@@ -48,10 +48,10 @@ android/build/
 
 
 # Symbolication related
-app.*.symbols
+#app.*.symbols
 
 # Obfuscation related
-app.*.map.json
+#app.*.map.json
 
 # Android Studio will place build artifacts here
 #/android/app/debug
@@ -64,7 +64,7 @@ app.*.map.json
 #*.p12
 #key.properties
 #android/key.properties
-android/**
+#android/**
 ios/**
 linux/**
 macos/**
