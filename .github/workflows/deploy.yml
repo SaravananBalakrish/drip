@@ -31,6 +31,12 @@ jobs:
           key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
           restore-keys: ${{ runner.os }}-pub-
 
+      - name: 🔍 Detect old Android embedding
+        run: |
+          grep -R "PluginRegistry.Registrar" ~/.pub-cache || true
+          grep -R "registerWith(" ~/.pub-cache || true
+          grep -R "io.flutter.app.FlutterActivity" ~/.pub-cache || true    
+
       - name: 🦋 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
