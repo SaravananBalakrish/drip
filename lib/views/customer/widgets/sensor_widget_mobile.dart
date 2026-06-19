@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 
 import '../../../models/customer/site_model.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../utils/my_function.dart';
+import '../../common/user_dashboard/widgets/sensor_popover_content.dart';
 
 class SensorWidgetMobile extends StatelessWidget {
   final SensorModel sensor;
@@ -52,13 +54,34 @@ class SensorWidgetMobile extends StatelessWidget {
               : Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              SizedBox(
-                width: 40,
-                height: 40,
-                child: Image(
-                  image: AssetImage(imagePath),
-                  color: Colors.black,
+              TextButton(
+                onPressed: () async {
+
+                  showPopover(
+                    context: context,
+                    bodyBuilder: (context) => SensorPopoverContent(
+                      sensor: sensor,
+                      sensorType: sensorType,
+                      customerId: customerId,
+                      controllerId: controllerId,
+                    ),
+                    direction: PopoverDirection.top,
+                    width: MediaQuery.sizeOf(context).width-26,
+                    height: 310,
+                    arrowHeight: 15,
+                    arrowWidth: 30,
+                    barrierColor: Colors.black54,
+                    arrowDyOffset: -5,
+                    arrowDxOffset: -180,
+                  );
+                },
+                style: ButtonStyle(
+                  padding: WidgetStateProperty.all(EdgeInsets.zero),
+                  minimumSize: WidgetStateProperty.all(Size.zero),
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  backgroundColor: WidgetStateProperty.all(Colors.transparent),
                 ),
+                child: Image.asset(imagePath, width: 40, height: 40),
               ),
               const SizedBox(width: 5),
               _unitBox(context, sensor, sensorType),
