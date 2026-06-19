@@ -12,14 +12,16 @@ class DashboardScreen extends StatefulWidget {
   final String? humidity;
   final String? windspeed;
   final bool isInsideMain;
-  final int userID,controllerId;
+  final int userID, controllerId;
 
   const DashboardScreen({
     super.key,
     this.temperature,
     this.humidity,
     this.windspeed,
-    this.isInsideMain = false, required this.userID, required this.controllerId,
+    this.isInsideMain = false,
+    required this.userID,
+    required this.controllerId,
   });
 
   @override
@@ -30,97 +32,120 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final CropAdvisoryModel _model = CropAdvisoryModel.instance;
   int _selectedIndex = 0;
 
+  /// Strips Plus Code (e.g. "4XGQ+9C") and trailing pincode from address.
+  /// Input : "4XGQ+9C, Coimbatore, Tamil Nadu 641001"
+  /// Output: "Coimbatore, Tamil Nadu"
+  String _formatAddress(String? raw) {
+    if (raw == null || raw.trim().isEmpty) return '';
+
+    final parts = raw.split(',').map((e) => e.trim()).toList();
+
+    final filtered = parts
+        .where((part) => !part.contains('+')) // remove Plus Code segment
+        .map((part) => part.replaceAll(RegExp(r'\s*\d{4,6}$'), '').trim()) // strip pincode
+        .where((part) => part.isNotEmpty)
+        .toList();
+
+    return filtered.join(', ');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FBFF),
       appBar: _selectedIndex == 0
           ? AppBar(
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              toolbarHeight: 70,
-              leading: Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: IconButton(
-                  icon: const Icon(Icons.menu, color: Colors.black, size: 28),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>  CropListScreen(userId: widget.userID,controllerId: widget.controllerId)),
-                    );
-                  },
-                ),
-              ),
-              title: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(25),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    )
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.location_on_outlined, size: 18, color: Colors.grey),
-                    const SizedBox(width: 6),
-                    Text(
-                      _model.address ?? 'Mettupalayam, Coimbatore',
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w400,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              ),
-              centerTitle: true,
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: IconButton(
-                    icon: const Icon(Icons.notifications_none, color: Colors.black, size: 28),
-                    onPressed: () {},
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        toolbarHeight: 70,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: IconButton(
+            icon: const Icon(Icons.menu, color: Colors.black, size: 28),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CropListScreen(
+                    userId: widget.userID,
+                    controllerId: widget.controllerId,
                   ),
                 ),
-              ],
-            )
+              );
+            },
+          ),
+        ),
+        title: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(25),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 2),
+              )
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.location_on_outlined, size: 18, color: Colors.grey),
+              const SizedBox(width: 6),
+              Text(
+                _formatAddress(_model.address ?? _model.areaName).isEmpty
+                    ? 'Location not found'
+                    : _formatAddress(_model.address ?? _model.areaName),
+                style: GoogleFonts.poppins(
+                  fontSize: 13,
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w400,
+                ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: IconButton(
+              icon: const Icon(Icons.notifications_none, color: Colors.black, size: 28),
+              onPressed: () {},
+            ),
+          ),
+        ],
+      )
           : null,
       body: _buildHomeBody(),
       floatingActionButton: _selectedIndex == 0
           ? Padding(
-              padding: const EdgeInsets.only(bottom: 10.0),
-              child: SizedBox(
-                height: 85,
-                width: 85,
-                child: FloatingActionButton(
-                  onPressed: () {},
-                  backgroundColor: const Color(0xFF1B7F8A),
-                  elevation: 4,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(45),
-                      topRight: Radius.circular(45),
-                      bottomLeft: Radius.circular(45),
-                      bottomRight: Radius.circular(2),
-                    ),
-                  ),
-                  child: Image.asset(
-                    'assets/Images/CropAdvisory/chatbot_icon.png',
-                    fit: BoxFit.contain,
-                  ),
-                ),
+        padding: const EdgeInsets.only(bottom: 10.0),
+        child: SizedBox(
+          height: 85,
+          width: 85,
+          child: FloatingActionButton(
+            onPressed: () {},
+            backgroundColor: const Color(0xFF1B7F8A),
+            elevation: 4,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(45),
+                topRight: Radius.circular(45),
+                bottomLeft: Radius.circular(45),
+                bottomRight: Radius.circular(2),
               ),
-            )
+            ),
+            child: Image.asset(
+              'assets/Images/CropAdvisory/chatbot_icon.png',
+              fit: BoxFit.contain,
+            ),
+          ),
+        ),
+      )
           : null,
       // bottomNavigationBar: _buildBottomNavigationBar(),
     );
@@ -182,6 +207,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const Icon(Icons.calendar_today_outlined, size: 14, color: Colors.black54),
                 const SizedBox(width: 6),
                 Text(
+                  // ✅ FIX 2: Removed duplicate Text widget, kept only this one
                   DateFormat('dd.MM.yyyy').format(DateTime.now()),
                   style: GoogleFonts.poppins(
                     fontSize: 12,
@@ -189,14 +215,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     color: Colors.black87,
                   ),
                 ),
-            Text(
-              DateFormat('DD/MM/YYYY').format(DateTime.now()),
-              style: GoogleFonts.poppins(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
-              ),
-            ),
                 const Icon(Icons.keyboard_arrow_down, size: 16, color: Colors.black54),
               ],
             ),
@@ -209,7 +227,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  DateFormat('HH:MM:SS').format(DateTime.now()),
+                  // ✅ FIX 3: Corrected from 'HH:MM:SS' to 'HH:mm:ss'
+                  DateFormat('HH:mm:ss').format(DateTime.now()),
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -239,7 +258,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       case 'Volcanic soil':
         return 'assets/Images/CropAdvisory/Volcanic_soil.png';
       default:
-        return ''; // Or a default image
+        return '';
     }
   }
 
@@ -320,10 +339,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: soilImg.isNotEmpty
-                              ? Image.asset(
-                                  soilImg,
-                                  fit: BoxFit.cover,
-                                )
+                              ? Image.asset(soilImg, fit: BoxFit.cover)
                               : const Icon(Icons.image_not_supported, color: Colors.grey),
                         ),
                       ),
@@ -365,8 +381,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) =>
-                                const IrrigationFertigationScreen()),
+                          builder: (context) => const IrrigationFertigationScreen(),
+                        ),
                       );
                     },
                     style: OutlinedButton.styleFrom(
@@ -427,7 +443,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const CropWeatherscreen()),
+                builder: (context) => const CropWeatherscreen(),
+              ),
             );
           },
           child: Row(
@@ -448,26 +465,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         const SizedBox(height: 16),
         Row(
           children: [
-            _buildWeatherItem(
-              'Temperature',
-              widget.temperature ?? '32°C',
-              Icons.wb_sunny_outlined,
-              true,
-            ),
+            _buildWeatherItem('Temperature', widget.temperature ?? '32°C', Icons.wb_sunny_outlined, true),
             const SizedBox(width: 12),
-            _buildWeatherItem(
-              'Humidity',
-              widget.humidity ?? '88%',
-              Icons.water_drop,
-              true,
-            ),
+            _buildWeatherItem('Humidity', widget.humidity ?? '88%', Icons.water_drop, true),
             const SizedBox(width: 12),
-            _buildWeatherItem(
-              'Wind Speed',
-              widget.windspeed ?? '14 km/h',
-              Icons.air,
-              false,
-            ),
+            _buildWeatherItem('Wind Speed', widget.windspeed ?? '14 km/h', Icons.air, false),
           ],
         ),
       ],
@@ -704,7 +706,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
- }
+}
 
 class _ChartData {
   _ChartData(this.x, this.y);
