@@ -29,6 +29,7 @@ class CustomerHomeWide extends StatelessWidget {
     bool isNova = [...AppConstants.ecoGemModelList].contains(cM.modelId);
     bool isAquaculture = [...AppConstants.aquacultureModelList].contains(
         cM.modelId);
+
     bool isOMS = [...AppConstants.omsGemList].contains(cM.modelId);
 
     final irrigationLines = viewModel.mySiteList.data[viewModel.sIndex]
