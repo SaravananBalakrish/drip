@@ -9,7 +9,6 @@ import '../../../../repository/repository.dart';
 import '../../../../services/http_service.dart';
 import '../../../../view_models/customer/node_list_view_model.dart';
 
-
 class OmsLine extends StatefulWidget {
   final MasterControllerModel master;
   final int customerId, controllerId, modelId, groupId;
@@ -30,8 +29,52 @@ class OmsLine extends StatefulWidget {
 }
 
 class _OmsLineState extends State<OmsLine> {
-  // Track selected nodes
-  Set<int> selectedNodeIndices = {};
+  /// Node index -> set of selected valve indices (within that node's
+  /// filtered valve list). A node index appears here the moment ANY of its
+  /// valves is checked, even if not all of them are.
+  final Map<int, Set<int>> nodeValveSelections = {};
+
+  /// Node indices where the node checkbox itself is "fully selected"
+  /// (i.e. all of that node's valves are selected). This drives whether
+  /// "Apply program" is enabled.
+  ///
+  /// Takes `vm` explicitly rather than reading it via `context.read` —
+  /// `_OmsLineState`'s own `context` sits ABOVE the `ChangeNotifierProvider`
+  /// created in `build()`, so `context.read<NodeListViewModel>()` from here
+  /// would throw a ProviderNotFoundError. Callers already have `vm` from
+  /// the `Consumer2` builder, so we just pass it down.
+  Set<int> fullySelectedNodeIndices(NodeListViewModel vm) {
+    return nodeValveSelections.entries
+        .where((e) => e.value.isNotEmpty)
+        .where((e) => _isNodeFullySelected(vm, e.key, e.value))
+        .map((e) => e.key)
+        .toSet();
+  }
+
+  /// True if there is at least one valve selected anywhere, regardless of
+  /// whether its parent node counts as "fully selected".
+  bool get hasAnyValveSelected {
+    return nodeValveSelections.values.any((valves) => valves.isNotEmpty);
+  }
+
+  bool _isNodeFullySelected(
+      NodeListViewModel vm, int nodeIndex, Set<int> selectedValveIdx) {
+    final node = vm.nodeList[nodeIndex];
+    final totalValves = node.rlyStatus
+        .where((rly) => rly.sNo.toString().startsWith('13.'))
+        .length;
+    return totalValves > 0 && selectedValveIdx.length == totalValves;
+  }
+
+  void _onValveSelectionChanged(int nodeIndex, Set<int> selectedValveIdx) {
+    setState(() {
+      if (selectedValveIdx.isEmpty) {
+        nodeValveSelections.remove(nodeIndex);
+      } else {
+        nodeValveSelections[nodeIndex] = selectedValveIdx;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,23 +121,18 @@ class _OmsLineState extends State<OmsLine> {
                     crossAxisCount: 3,
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: 1.4,
+                    childAspectRatio: 1.45,
                   ),
                   itemBuilder: (context, index) {
+                    final selectedValves = nodeValveSelections[index] ?? <int>{};
                     return NodeCard(
                       node: vm.nodeList[index],
                       customerId: widget.customerId,
                       controllerId: widget.controllerId,
                       modelId: widget.modelId,
-                      isSelected: selectedNodeIndices.contains(index),
-                      onSelectionChanged: (isSelected) {
-                        setState(() {
-                          if (isSelected) {
-                            selectedNodeIndices.add(index);
-                          } else {
-                            selectedNodeIndices.remove(index);
-                          }
-                        });
+                      selectedValveIndices: selectedValves,
+                      onValveSelectionChanged: (newSelection) {
+                        _onValveSelectionChanged(index, newSelection);
                       },
                     );
                   },
@@ -109,13 +147,16 @@ class _OmsLineState extends State<OmsLine> {
 
   Widget _buildTopHeader(NodeListViewModel vm, MasterControllerModel cMaster,
       int controllerId, String deviceId, int customerId, int groupId) {
-    final selectedCount = selectedNodeIndices.length;
+    final fullNodeSelection = fullySelectedNodeIndices(vm);
+    final anyValveSelected = hasAnyValveSelected;
+
+    final selectedCount = fullNodeSelection.length;
     final totalNodes = vm.nodeList.length;
 
-    // Get names of selected nodes (first 3)
+    // Get names of fully-selected nodes (first 3) for the header label.
     String selectedNames = '';
     if (selectedCount > 0) {
-      final names = selectedNodeIndices
+      final names = fullNodeSelection
           .map((index) => vm.nodeList[index].deviceName)
           .take(3)
           .join(', ');
@@ -156,18 +197,20 @@ class _OmsLineState extends State<OmsLine> {
           Row(
             children: [
               _buildActionButton(
-                label: 'Start all',
+                label: 'Open all',
                 icon: Icons.play_arrow,
-                onPressed: selectedCount > 0 ? () {
+                // Enabled if ANY valve is selected anywhere (node need not
+                // be fully selected).
+                onPressed: anyValveSelected ? () {
                   _onStartAll(vm);
                 } : null,
                 color: Colors.green,
               ),
               const SizedBox(width: 12),
               _buildActionButton(
-                label: 'Stop all',
+                label: 'Close all',
                 icon: Icons.stop,
-                onPressed: selectedCount > 0 ? () {
+                onPressed: anyValveSelected ? () {
                   _onStopAll(vm);
                 } : null,
                 color: Colors.red,
@@ -176,6 +219,9 @@ class _OmsLineState extends State<OmsLine> {
               _buildActionButton(
                 label: 'Apply program',
                 icon: Icons.playlist_add_check,
+                // Enabled ONLY when at least one node is fully selected
+                // (every valve under it checked) — partial valve picks
+                // don't count.
                 onPressed: selectedCount > 0 ? () {
                   _onApplyProgram(vm);
                 } : null,
@@ -218,7 +264,7 @@ class _OmsLineState extends State<OmsLine> {
   }
 
   void callbackFunction(String status) {
-    if (status == 'Program created' && mounted) print(status);
+    if (status == 'Program created' && mounted) debugPrint(status);
   }
 
   Widget _buildActionButton({
@@ -251,38 +297,74 @@ class _OmsLineState extends State<OmsLine> {
     );
   }
 
+  /// Builds a flat list of (nodeId, valveId) pairs for every currently
+  /// selected valve across all nodes. nodeId is the node's deviceId and
+  /// valveId is the valve's sNo — adjust these two lines if your backend
+  /// expects different identifiers (e.g. a numeric node id field instead
+  /// of deviceId).
+  List<Map<String, dynamic>> _collectSelectedNodeValveIds(NodeListViewModel vm) {
+    final List<Map<String, dynamic>> result = [];
+
+    nodeValveSelections.forEach((nodeIndex, valveIdxSet) {
+      if (valveIdxSet.isEmpty) return;
+      final node = vm.nodeList[nodeIndex];
+      final valves = node.rlyStatus
+          .where((rly) => rly.sNo.toString().startsWith('13.'))
+          .toList();
+
+      for (final valveIdx in valveIdxSet) {
+        if (valveIdx < 0 || valveIdx >= valves.length) continue;
+        final valve = valves[valveIdx];
+        result.add({
+          'nodeId': node.deviceId,
+          'valveId': valve.sNo,
+        });
+      }
+    });
+
+    return result;
+  }
+
   void _onStartAll(NodeListViewModel vm) {
-    print('Start all selected nodes: $selectedNodeIndices');
-    // Implement your start logic here
-    for (var index in selectedNodeIndices) {
-      final node = vm.nodeList[index];
-      // Send start command
-      print('Starting node: ${node.deviceName}');
+    final targets = _collectSelectedNodeValveIds(vm);
+    debugPrint('Start all selected valves: $targets');
+    for (final t in targets) {
+      // Send start command using t['nodeId'] and t['valveId'].
+      debugPrint('Starting nodeId=${t['nodeId']} valveId=${t['valveId']}');
     }
   }
 
   void _onStopAll(NodeListViewModel vm) {
-    print('Stop all selected nodes: $selectedNodeIndices');
-    // Implement your stop logic here
-    for (var index in selectedNodeIndices) {
-      final node = vm.nodeList[index];
-      // Send stop command
-      print('Stopping node: ${node.deviceName}');
+    final targets = _collectSelectedNodeValveIds(vm);
+    debugPrint('Stop all selected valves: $targets');
+    for (final t in targets) {
+      // Send stop command using t['nodeId'] and t['valveId'].
+      debugPrint('Stopping nodeId=${t['nodeId']} valveId=${t['valveId']}');
     }
   }
 
   void _onApplyProgram(NodeListViewModel vm) {
-    print('Apply program to selected nodes: $selectedNodeIndices');
-    // Implement your apply program logic here
-    // Show dialog or navigate to program selection
+    final targets = fullySelectedNodeIndices(vm)
+        .map((i) => vm.nodeList[i].deviceId)
+        .toList();
+    debugPrint('Apply program to fully-selected node ids: $targets');
+    // Show dialog or navigate to program selection, passing `targets`.
   }
 }
 
-class NodeCard extends StatefulWidget {
+class NodeCard extends StatelessWidget {
   final NodeListModel node;
   final int customerId, controllerId, modelId;
-  final bool isSelected;
-  final Function(bool) onSelectionChanged;
+
+  /// Indices (within this node's filtered valve list) that are currently
+  /// selected. Owned by the parent (_OmsLineState) — this widget is now
+  /// stateless with respect to selection so the parent always has an
+  /// accurate, real-time picture of every valve pick.
+  final Set<int> selectedValveIndices;
+
+  /// Called with the FULL updated set of selected valve indices for this
+  /// node whenever the user toggles the node checkbox or any single valve.
+  final ValueChanged<Set<int>> onValveSelectionChanged;
 
   const NodeCard({
     super.key,
@@ -290,57 +372,43 @@ class NodeCard extends StatefulWidget {
     required this.customerId,
     required this.controllerId,
     required this.modelId,
-    required this.isSelected,
-    required this.onSelectionChanged,
+    required this.selectedValveIndices,
+    required this.onValveSelectionChanged,
   });
 
-  @override
-  State<NodeCard> createState() => _NodeCardState();
-}
+  List<RelayStatus> get _valves {
 
-class _NodeCardState extends State<NodeCard> {
-  // Track selected valves for this node
-  Set<int> selectedValves = {};
+    final allValves = node.rlyStatus.where((rly) {
+      final sNo = rly.sNo.toString();
+      return sNo.startsWith('45.') || sNo.startsWith('13.');
+    }).toList();
 
-  @override
-  void initState() {
-    super.initState();
-    // If node is selected, select all valves
-    if (widget.isSelected) {
-      final valves = widget.node.rlyStatus
-          .where((rly) => rly.sNo.toString().startsWith('13.'))
-          .toList();
-      selectedValves = valves.asMap().entries
-          .map((entry) => entry.key)
-          .toSet();
-    }
+    allValves.sort((a, b) {
+      final aSNo = a.sNo.toString();
+      final bSNo = b.sNo.toString();
+
+      // Check if valve starts with '45.'
+      final aIsFlowControl = aSNo.startsWith('45.');
+      final bIsFlowControl = bSNo.startsWith('45.');
+
+      // Flow control valves (45.) come first
+      if (aIsFlowControl && !bIsFlowControl) return -1;
+      if (!aIsFlowControl && bIsFlowControl) return 1;
+
+      // If both are same type, sort by sNo numerically
+      return aSNo.compareTo(bSNo);
+    });
+
+    return allValves;
   }
 
-  @override
-  void didUpdateWidget(NodeCard oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.isSelected != oldWidget.isSelected) {
-      final valves = widget.node.rlyStatus
-          .where((rly) => rly.sNo.toString().startsWith('13.'))
-          .toList();
-      if (widget.isSelected) {
-        // Select all valves when node is selected
-        selectedValves = valves.asMap().entries
-            .map((entry) => entry.key)
-            .toSet();
-      } else {
-        // Deselect all valves when node is deselected
-        selectedValves.clear();
-      }
-      setState(() {});
-    }
-  }
+  bool get _isNodeFullySelected =>
+      _valves.isNotEmpty && selectedValveIndices.length == _valves.length;
 
   @override
   Widget build(BuildContext context) {
-    final valves = widget.node.rlyStatus
-        .where((rly) => rly.sNo.toString().startsWith('13.'))
-        .toList();
+    final valves = _valves;
+    final isSelected = _isNodeFullySelected;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -348,13 +416,13 @@ class _NodeCardState extends State<NodeCard> {
         color: Colors.white,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: widget.isSelected ? Colors.blue.shade300 : Colors.grey.shade300,
-          width: widget.isSelected ? 2 : 1,
+          color: isSelected ? Colors.blue.shade300 : Colors.grey.shade300,
+          width: isSelected ? 2 : 1,
         ),
-        boxShadow: widget.isSelected
+        boxShadow: isSelected
             ? [
           BoxShadow(
-            color: Colors.blue.withOpacity(0.1),
+            color: Colors.blue.withValues(alpha: 0.1),
             blurRadius: 8,
             spreadRadius: 2,
           )
@@ -368,23 +436,29 @@ class _NodeCardState extends State<NodeCard> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Node Checkbox
+              // Node Checkbox: checking/unchecking toggles ALL valves.
               GestureDetector(
                 onTap: () {
-                  widget.onSelectionChanged(!widget.isSelected);
+                  if (isSelected) {
+                    onValveSelectionChanged(<int>{});
+                  } else {
+                    onValveSelectionChanged(
+                      valves.asMap().keys.toSet(),
+                    );
+                  }
                 },
                 child: Container(
                   width: 20,
                   height: 20,
                   decoration: BoxDecoration(
-                    color: widget.isSelected ? Colors.blue : Colors.transparent,
+                    color: isSelected ? Colors.blue : Colors.transparent,
                     border: Border.all(
-                      color: widget.isSelected ? Colors.blue : Colors.grey.shade400,
+                      color: isSelected ? Colors.blue : Colors.grey.shade400,
                       width: 2,
                     ),
                     borderRadius: BorderRadius.circular(4),
                   ),
-                  child: widget.isSelected
+                  child: isSelected
                       ? const Icon(Icons.check, size: 14, color: Colors.white)
                       : null,
                 ),
@@ -395,7 +469,7 @@ class _NodeCardState extends State<NodeCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.node.deviceName,
+                      node.deviceName,
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -439,7 +513,7 @@ class _NodeCardState extends State<NodeCard> {
             children: [
               Expanded(
                 child: Text(
-                  widget.node.deviceId,
+                  node.deviceId,
                   style: const TextStyle(
                     color: Colors.grey,
                     fontSize: 12,
@@ -447,7 +521,7 @@ class _NodeCardState extends State<NodeCard> {
                 ),
               ),
               Text(
-                widget.node.lastFeedbackReceivedTime,
+                node.lastFeedbackReceivedTime,
                 style: const TextStyle(
                   color: Colors.grey,
                   fontSize: 12,
@@ -472,7 +546,7 @@ class _NodeCardState extends State<NodeCard> {
               Expanded(
                 child: _infoCard(
                   'Solar',
-                  '${widget.node.sVolt} V',
+                  '${node.sVolt} V',
                   false,
                 ),
               ),
@@ -480,60 +554,49 @@ class _NodeCardState extends State<NodeCard> {
               Expanded(
                 child: _infoCard(
                   'Battery',
-                  '${widget.node.batVolt} V',
+                  '${node.batVolt} V',
                   false,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
 
           /// Valves Section with Checkboxes
           if (valves.isNotEmpty) ...[
             Row(
               children: [
-                // Select all checkbox for valves
                 GestureDetector(
                   onTap: () {
-                    setState(() {
-                      if (selectedValves.length == valves.length) {
-                        selectedValves.clear();
-                      } else {
-                        selectedValves = valves.asMap().entries
-                            .map((entry) => entry.key)
-                            .toSet();
-                      }
-                      // Update node selection state
-                      if (selectedValves.length == valves.length && !widget.isSelected) {
-                        widget.onSelectionChanged(true);
-                      } else if (selectedValves.length < valves.length && widget.isSelected) {
-                        widget.onSelectionChanged(false);
-                      }
-                    });
+                    if (selectedValveIndices.length == valves.length) {
+                      onValveSelectionChanged(<int>{});
+                    } else {
+                      onValveSelectionChanged(valves.asMap().keys.toSet());
+                    }
                   },
                   child: Container(
                     width: 16,
                     height: 16,
                     decoration: BoxDecoration(
-                      color: selectedValves.length == valves.length && valves.isNotEmpty
+                      color: selectedValveIndices.length == valves.length && valves.isNotEmpty
                           ? Colors.blue
                           : Colors.transparent,
                       border: Border.all(
-                        color: selectedValves.length == valves.length && valves.isNotEmpty
+                        color: selectedValveIndices.length == valves.length && valves.isNotEmpty
                             ? Colors.blue
                             : Colors.grey.shade400,
                         width: 2,
                       ),
                       borderRadius: BorderRadius.circular(3),
                     ),
-                    child: selectedValves.length == valves.length && valves.isNotEmpty
+                    child: selectedValveIndices.length == valves.length && valves.isNotEmpty
                         ? const Icon(Icons.check, size: 10, color: Colors.white)
                         : null,
                   ),
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  '${selectedValves.length} of ${valves.length} selected',
+                  '${selectedValveIndices.length} of ${valves.length} selected',
                   style: TextStyle(
                     fontSize: 11,
                     color: Colors.grey.shade600,
@@ -541,140 +604,32 @@ class _NodeCardState extends State<NodeCard> {
                 ),
               ],
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 10),
             Wrap(
               spacing: 8,
               runSpacing: 8,
               children: valves.asMap().entries.map<Widget>((entry) {
                 final index = entry.key;
                 final valve = entry.value;
-                return _buildValveWithCheckbox(valve, index);
+                return _ValveTile(
+                  valve: valve,
+                  isSelected: selectedValveIndices.contains(index),
+                  onTap: () {
+                    final updated = Set<int>.from(selectedValveIndices);
+                    if (updated.contains(index)) {
+                      updated.remove(index);
+                    } else {
+                      updated.add(index);
+                    }
+                    onValveSelectionChanged(updated);
+                  },
+                );
               }).toList(),
             ),
           ],
         ],
       ),
     );
-  }
-
-  Widget _buildValveWithCheckbox(RelayStatus valve, int index) {
-    return Selector<MqttPayloadProvider, String?>(
-      selector: (_, provider) => provider.getValveOnOffStatus(
-        double.parse(valve.sNo.toString()).toStringAsFixed(3),
-      ),
-      builder: (_, status, __) {
-        int currentStatus = valve.status;
-        int completePercent = 0;
-
-        final statusParts = status?.split(',') ?? [];
-        if (statusParts.isNotEmpty) {
-          currentStatus = int.tryParse(statusParts[1]) ?? valve.status;
-          completePercent = statusParts.length > 2
-              ? int.parse(statusParts[2])
-              : 0;
-        }
-
-        Color valveColor = _valveColor(currentStatus, completePercent);
-        bool isOn = currentStatus == 1;
-        bool isSelected = selectedValves.contains(index);
-
-        return GestureDetector(
-          onTap: () {
-            setState(() {
-              if (isSelected) {
-                selectedValves.remove(index);
-              } else {
-                selectedValves.add(index);
-              }
-              // Update node selection state
-              final valves = widget.node.rlyStatus
-                  .where((rly) => rly.sNo.toString().startsWith('13.'))
-                  .toList();
-              if (selectedValves.length == valves.length && !widget.isSelected) {
-                widget.onSelectionChanged(true);
-              } else if (selectedValves.length < valves.length && widget.isSelected) {
-                widget.onSelectionChanged(false);
-              }
-            });
-          },
-          child: Container(
-            width: 70,
-            height: 60,
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? Colors.blue.shade50
-                  : _relayColor(currentStatus),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: isSelected ? Colors.blue : Colors.grey.shade300,
-                width: isSelected ? 2 : 1,
-              ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Checkbox for individual valve
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 14,
-                      height: 14,
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.blue : Colors.transparent,
-                        border: Border.all(
-                          color: isSelected ? Colors.blue : Colors.grey.shade400,
-                          width: 1.5,
-                        ),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                      child: isSelected
-                          ? const Icon(Icons.check, size: 10, color: Colors.white)
-                          : null,
-                    ),
-                    const SizedBox(width: 4),
-                    // Valve Icon
-                    SizedBox(
-                      width: 30,
-                      height: 30,
-                      child: isOn
-                          ? Image.asset(
-                        'assets/gif/m_valve_green.gif',
-                        fit: BoxFit.contain,
-                      )
-                          : Image.asset(
-                        'assets/png/m_valve_grey.png',
-                        color: valveColor,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  valve.name.toString(),
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w600,
-                    color: isSelected ? Colors.blue.shade700 : Colors.grey.shade700,
-                  ),
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Color _valveColor(int status, int cPer) {
-    if (status == 0 && cPer == 0) return Colors.black54;
-    if (status == 0 && cPer == 100) return Colors.blue;
-    if (status == 0 && cPer > 0 && cPer < 100) return Colors.yellow;
-    if (status == 2) return Colors.orange;
-    return Colors.red;
   }
 
   Widget _infoCard(String title, String value, bool isSignal) {
@@ -711,17 +666,160 @@ class _NodeCardState extends State<NodeCard> {
       ),
     );
   }
+}
+
+/// A single valve tile. Stateless: status/percent are derived live from
+/// MqttPayloadProvider via Selector, selection state comes from the parent.
+class _ValveTile extends StatelessWidget {
+  final RelayStatus valve;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _ValveTile({
+    required this.valve,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Selector<MqttPayloadProvider, String?>(
+      selector: (_, provider) => provider.getValveOnOffStatus(
+        double.parse(valve.sNo.toString()).toStringAsFixed(3),
+      ),
+      builder: (_, status, __) {
+        int currentStatus = valve.status;
+        int completePercent = 0;
+
+        final statusParts = status?.split(',') ?? [];
+        if (statusParts.isNotEmpty) {
+          currentStatus = int.tryParse(statusParts[1]) ?? valve.status;
+          completePercent = statusParts.length > 2
+              ? int.parse(statusParts[2])
+              : 0;
+        }
+
+        Color valveColor = _valveColor(currentStatus, completePercent);
+        bool isOn = currentStatus == 1;
+
+        // Check if it's a flow control valve (starts with '45.')
+        final isFlowControl = valve.sNo.toString().startsWith('45.');
+
+        return GestureDetector(
+          onTap: onTap,
+          child: Container(
+            width: 75,
+            height: 60,
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.blue.shade50 : _relayColor(currentStatus),
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(
+                color: isSelected ? Colors.blue : Colors.grey.shade300,
+                width: isSelected ? 2 : 1,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Checkbox for individual valve
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Valve Icon
+                    SizedBox(
+                      width: 45,
+                      height: 38,
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Positioned.fill(
+                            child: isOn ? Image.asset(
+                              isFlowControl
+                                  ? 'assets/png/m_flow_control_valve.png'
+                                  : 'assets/gif/m_valve_green.gif',
+                              color: isFlowControl ? valveColor : null,
+                              fit: BoxFit.contain,
+                            )
+                                : Image.asset(
+                              isFlowControl
+                                  ? 'assets/png/m_flow_control_valve.png'
+                                  : 'assets/png/m_valve_grey.png',
+                              color: valveColor,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                          // Checkbox at top-right corner
+                          Positioned(
+                            top: -3,
+                            right: -14,
+                            child: Container(
+                              width: 16,
+                              height: 16,
+                              decoration: BoxDecoration(
+                                color: isSelected ? Colors.blue : Colors.white,
+                                border: Border.all(
+                                  color: isSelected ? Colors.blue : Colors.grey.shade400,
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(3),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withValues(alpha: 0.1),
+                                    blurRadius: 2,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ],
+                              ),
+                              child: isSelected
+                                  ? const Icon(Icons.check, size: 10, color: Colors.white)
+                                  : null,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 5.0),
+                  child: Text(
+                    valve.name.toString(),
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: isSelected ? Colors.blue.shade500 : Colors.black87,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Color _valveColor(int status, int cPer) {
+    if (status == 0 && cPer == 0) return Colors.black54;
+    if (status == 0 && cPer == 100) return Colors.blue;
+    if (status == 0 && cPer > 0 && cPer < 100) return Colors.yellow;
+    if (status == 2) return Colors.orange;
+    return Colors.red;
+  }
 
   Color _relayColor(int? status) {
     switch (status) {
       case 1:
-        return Colors.green.shade100;
-      case 0:
-        return Colors.grey.shade200;
+        return Colors.green.shade50;
       case 2:
-        return Colors.red.shade100;
+        return Colors.orange.shade50;
+      case 3:
+        return Colors.red.shade50;
       default:
-        return Colors.grey.shade100;
+        return Colors.grey.shade200;
     }
   }
 }
