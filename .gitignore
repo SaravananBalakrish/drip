@@ -34,13 +34,13 @@ migrate_working_dir/
 /build/
 
 # Secrets
-#.env*
-#*.jks
-#*.keystore
-#keystore.txt
-#*.pem
-#*.key
-#assets/ssh/
+.env*
+*.jks
+*.keystore
+keystore.txt
+*.pem
+*.key
+assets/ssh/
 
 # Flutter build
 build/
@@ -54,17 +54,17 @@ app.*.symbols
 app.*.map.json
 
 # Android Studio will place build artifacts here
-#/android/app/debug
-#/android/app/profile
-#/android/app/release
-#/android/key.properties
-#/android/app/release-key.jks
-#notification.env
+/android/app/debug
+/android/app/profile
+/android/app/release
+/android/key.properties
+/android/app/release-key.jks
+notification.env
 
-#*.p12
-#key.properties
-#android/key.properties
-#ios/**
-#linux/**
-#macos/**
-#windows/**
+*.p12
+key.properties
+android/key.properties
+ios/**
+linux/**
+macos/**
+windows/**
