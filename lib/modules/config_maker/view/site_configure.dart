@@ -3,6 +3,7 @@ import 'package:oro_drip_irrigation/modules/config_maker/view/ec_configuration.d
 import 'package:oro_drip_irrigation/modules/config_maker/view/ph_configuration.dart';
 import 'package:oro_drip_irrigation/modules/config_maker/view/pump_configuration.dart';
 import 'package:oro_drip_irrigation/modules/config_maker/view/source_configuration.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 import '../model/device_object_model.dart';
 import '../state_management/config_maker_provider.dart';
 import 'fertilization_configuration.dart';
@@ -86,7 +87,11 @@ class _SiteConfigureState extends State<SiteConfigure> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               for(var tab in widget.configPvd.configurationTab.entries)
-                if(widget.configPvd.listOfGeneratedObject.any((object) => object.objectId == widget.configPvd.configurationTabObjectId[tab.key]))
+                if(
+                widget.configPvd.listOfGeneratedObject.any((object) => object.objectId == widget.configPvd.configurationTabObjectId[tab.key])
+                &&
+                showTabForAquaCulture(tab.key)
+                )
                   InkWell(
                     onTap: (){
                     setState(() {
@@ -115,6 +120,17 @@ class _SiteConfigureState extends State<SiteConfigure> {
       ],
     );
     return child;
+  }
+
+  bool showTabForAquaCulture(int tabKey){
+    bool isAquaCultureGem = AppConstants.aquacultureModelList.contains(widget.configPvd.masterData['modelId']);
+    if(!isAquaCultureGem) return true;
+    List<int> tabKeyNotToShowForAquaCulture = [1, 2, 3, 4, 6, 7];
+    if(tabKeyNotToShowForAquaCulture.contains(tabKey)) {
+      print("these tab not to show aqua culture..");
+      return false;
+    }
+    return true;
   }
 }
 
