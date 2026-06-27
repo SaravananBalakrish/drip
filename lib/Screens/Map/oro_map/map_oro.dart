@@ -33,7 +33,7 @@ class MapScreenOro extends StatefulWidget {
 }
 
 class _MapScreenOroState extends State<MapScreenOro> {
-   late GoogleMapController mapController;
+   GoogleMapController? mapController;
   LatLng center = const LatLng(11.7749, 78.4194);
    double _currentZoom = 15;
 
@@ -456,7 +456,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
   // AppLog.log("build center:$center");
 
   return Scaffold(
-  appBar: (widget.isCheckDashboard || isSkiaWeb) ? null : AppBar(title: const Text(" Geography"),
+  appBar: (widget.isCheckDashboard || kIsWeb) ? null : AppBar(title: const Text(" Geography"),
     automaticallyImplyLeading: false,
   actions: [
     IconButton(
@@ -513,7 +513,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
                                        ),
                                      ),
                    ),
-               if (isSkiaWeb)
+               if (kIsWeb)
                  IconButton(
                 icon: const Icon(
                   Icons.refresh,
@@ -523,7 +523,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
                    await _init();
                 },
               ),
-              if (isSkiaWeb)
+              if (kIsWeb)
                 if (!widget.isCheckDashboard)
                 IconButton(
                 icon: Icon(Icons.map_outlined,color: Colors.red,),
