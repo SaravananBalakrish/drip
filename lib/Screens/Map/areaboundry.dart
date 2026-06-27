@@ -27,7 +27,7 @@ class MapScreenArea extends StatefulWidget {
 }
 
 class _MapScreenAreaState extends State<MapScreenArea> {
-  late GoogleMapController _mapController;
+  GoogleMapController? _mapController;
   bool _isDrawerOpen = false;
   double _drawerWidth = 280;
   double _currentZoom = 15;
@@ -140,7 +140,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
       final LatLng? result = await getLatLngFromInput(input);
 
       if (result != null) {
-        _mapController.animateCamera(
+        _mapController?.animateCamera(
           CameraUpdate.newLatLngZoom(result, 15),
         );
       } else {
@@ -267,7 +267,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
     final allPoints = _valves.values.expand((v) => v.area).toList();
     if (allPoints.isEmpty) return;
     final bounds = _calculateBounds(allPoints);
-    _mapController.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
+    _mapController?.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
   }
 
   LatLngBounds _calculateBounds(List<LatLng> points) {
@@ -387,7 +387,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
     _saveAreas();
 
     // ✅ Move camera
-    _mapController.animateCamera(
+    _mapController?.animateCamera(
       CameraUpdate.newLatLngZoom(currentLatLng, _currentZoom),
     );
   }
@@ -477,7 +477,7 @@ class _MapScreenAreaState extends State<MapScreenArea> {
                           _selectValve(valve.name);
 
                           if (valve.area.isNotEmpty) {
-                            _mapController.animateCamera(
+                            _mapController?.animateCamera(
                               CameraUpdate.newLatLngZoom(
                                 valve.area.first,
                                 _currentZoom,

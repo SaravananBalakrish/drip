@@ -26,7 +26,7 @@ class MapScreenAllArea extends StatefulWidget {
 }
 
 class _MapScreenAllAreaState extends State<MapScreenAllArea> {
-  late GoogleMapController _mapController;
+  GoogleMapController? _mapController;
   final Completer<GoogleMapController> _controllerCompleter = Completer();
   bool _isLoading = true;  // To track loading state
 
