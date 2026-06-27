@@ -140,7 +140,7 @@ class DealerDefinitionInConfigState extends State<DealerDefinitionInConfig> {
                     final jsonDataResponseput = json.decode(getUserDetails.body);
                     GlobalSnackBar.show(context, jsonDataResponseput['message'], jsonDataResponseput['code']);
                   },
-                  label: const Text(' Save '),
+                  label: const Text(' Save'),
                   icon: const Icon(
                     Icons.save_as_outlined,
                   ),style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Theme.of(context).primaryColor,),foregroundColor: MaterialStateProperty.all<Color>(Colors.white)),),
