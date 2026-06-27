@@ -26,9 +26,19 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
+
+
 class _DashboardScreenState extends State<DashboardScreen> {
   final CropAdvisoryModel _model = CropAdvisoryModel.instance;
   int _selectedIndex = 0;
+
+
+  @override
+  void initState() {
+    super.initState();
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
