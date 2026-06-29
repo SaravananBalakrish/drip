@@ -64,8 +64,8 @@ android {
         applicationId "com.niagaraautomations.oroDripirrigation"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 2221
-        versionName "1.5.07"
+        versionCode 2279
+        versionName "1.6.01"
         multiDexEnabled true
     }
 
@@ -75,6 +75,7 @@ android {
         release {
             if (keystorePropertiesFile.exists()) {
                 keyAlias keystoreProperties['keyAlias']
+                println "Using keystore: " + keystoreProperties['storeFile']
                 keyPassword keystoreProperties['keyPassword']
                 storeFile file(keystoreProperties['storeFile'])
                 storePassword keystoreProperties['storePassword']

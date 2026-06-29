@@ -5,6 +5,7 @@ import 'package:oro_drip_irrigation/cropAdvisory/view/crop_advisory_main_screen.
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+import '../../utils/snack_bar.dart';
 import '../model/cropadvisory_model.dart';
 import 'getUserInformationScreen.dart';
 
@@ -49,6 +50,32 @@ class _CropListScreenState extends State<CropListScreen> {
           cropList =
               cropData.map((e) => CropAdvisoryModel.fromJson(e)).toList();
           cropId = cropData.length + 1;
+        });
+      }
+    } catch (e) {
+      AppLog.log(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> deleteCropList(int cropId) async {
+    try {
+      final repository = Repository(HttpService());
+
+      final response = await repository.deleteCropList({
+        "userId": widget.userId,
+        "controllerId": widget.controllerId,
+        "cropId": cropId
+      });
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> body = jsonDecode(response.body);
+         GlobalSnackBar.show(context, body['message'], response.statusCode);
+        setState(() {
+          fetchData();
         });
       }
     } catch (e) {
@@ -144,7 +171,7 @@ class _CropListScreenState extends State<CropListScreen> {
                               const Icon(Icons.delete, color: Colors.redAccent),
                           onPressed: () async {
                             setState(() {
-                              fetchData();
+                              deleteCropList(crop.cropId!);
                             });
                           },
                         ),

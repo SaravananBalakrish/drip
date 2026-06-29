@@ -13,6 +13,7 @@ import '../../../customer/scheduled_program/scheduled_program_wide.dart';
 import '../../../customer/widgets/my_material_button.dart';
 import '../widgets/aquaculture_line.dart';
 import '../widgets/irrigation_line_wide.dart';
+import '../widgets/oms_line.dart';
 import '../widgets/valve_status_legend.dart';
 
 class CustomerHomeWide extends StatelessWidget {
@@ -28,6 +29,8 @@ class CustomerHomeWide extends StatelessWidget {
     bool isNova = [...AppConstants.ecoGemModelList].contains(cM.modelId);
     bool isAquaculture = [...AppConstants.aquacultureModelList].contains(
         cM.modelId);
+
+    bool isOMS = [...AppConstants.omsGemList].contains(cM.modelId);
 
     final irrigationLines = viewModel.mySiteList.data[viewModel.sIndex]
         .master[viewModel.mIndex].irrigationLine;
@@ -53,7 +56,8 @@ class CustomerHomeWide extends StatelessWidget {
         scheduledProgram,
         viewModel,
         isNova,
-        isAquaculture);
+        isAquaculture,
+        isOMS);
   }
 
   Widget displayLinearProgressIndicator() {
@@ -77,30 +81,27 @@ class CustomerHomeWide extends StatelessWidget {
       scheduledProgram,
       CustomerScreenControllerViewModel viewModel,
       bool isNova,
-      bool isAquaculture,) {
+      bool isAquaculture,
+      bool isOMS) {
     return Consumer<CustomerScreenControllerViewModel>(
       builder: (context, viewModel, _) {
-        final cM = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel
-            .mIndex];
+        final cM = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel.mIndex];
         final scheduledProgram = cM.programList;
-        final hasProgramOnOff = cM.getPermissionStatus(
-            "Program On/Off Manually");
-        final hasLinePP = cM.getPermissionStatus(
-            "Irrigation Line Pause/Resume Manually");
-        if(AppConstants.omsGemList.contains(cM.modelId)){
-          return const SizedBox();
-        }
+
+        final hasProgramOnOff = cM.getPermissionStatus("Program On/Off Manually");
+        final hasLinePP = cM.getPermissionStatus("Irrigation Line Pause/Resume Manually");
+
         return Column(
           children: [
             buildValveStatusLegend(isAquaculture),
             Expanded(
               child: SingleChildScrollView(
-                child: Column(
+                child: isOMS ? buildOMSLine (cM, customerId, controllerId, modelId, deviceId,
+                    viewModel.mySiteList.data[viewModel.sIndex].groupId) : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     ...irrigationLine.map((line) => Padding(
-                          padding: const EdgeInsets.only(
-                              left: 8, right: 8, top: 8, bottom: 5),
+                          padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 5),
                           child: Container(
                             decoration: BoxDecoration(
                               color: Colors.white,
@@ -226,6 +227,14 @@ class CustomerHomeWide extends StatelessWidget {
     );
   }
 
+  Widget buildOMSLine(MasterControllerModel master,
+      int customerId, int controllerId, int modelId, String deviceId, int groupId){
+
+    return OmsLine(customerId: customerId,
+        controllerId: controllerId, modelId: modelId, deviceId: deviceId, master: master, groupId: groupId);
+
+  }
+
   Widget buildIrrigationLine(BuildContext context, IrrigationLineModel irrLine,
       int customerId, int controllerId, int modelId, String deviceId) {
     final inletWaterSources = {
@@ -274,12 +283,11 @@ class CustomerHomeWide extends StatelessWidget {
       waterMeter: irrLine.waterMeter,
       humidity: irrLine.humiditySensor,
       co2: irrLine.co2Sensor,
+      temperature: irrLine.temperature,
       soilTemperature: irrLine.soilTemperature,
       customerId: customerId,
       controllerId: controllerId,
-      containerWidth: MediaQuery
-          .sizeOf(context)
-          .width,
+      containerWidth: MediaQuery.sizeOf(context).width,
       deviceId: deviceId,
       modelId: modelId,
       isNava: false,
