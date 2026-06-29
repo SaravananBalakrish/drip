@@ -43,6 +43,7 @@ class ConstantProvider extends ChangeNotifier{
   List<ConstantSettingModel> defaultNormalCriticalAlarmSetting = [];
   List<PopUpItemModel> filterSiteWhileBackwash = [];
   List<PopUpItemModel> mainValveMode = [];
+  List<PopUpItemModel> sourceType = [];
   List<PopUpItemModel> fertilizerSiteControlFlag = [];
   List<PopUpItemModel> fertilizerChannelMode = [];
   List<PopUpItemModel> moistureMode = [];
@@ -230,6 +231,7 @@ class ConstantProvider extends ChangeNotifier{
 
 
       // update level
+      sourceType = generatePopUpItemModel(defaultData: defaultData, keyName: 'sourceType');
       defaultLevelSetting = generateDefaultSetting(defaultData: defaultData, keyName: 'levelSensor');
       level = generateObjectInConstantModel(listOfObject: listOfLevelObject, defaultData: defaultData, constantOldData: constantOldData, keyName: 'levelSensor');
       if (kDebugMode) {
@@ -240,7 +242,6 @@ class ConstantProvider extends ChangeNotifier{
       if (kDebugMode) {
         print('pump updated..');
       }
-
 
       // update filterSite
       filterSiteWhileBackwash = generatePopUpItemModel(defaultData: defaultData, keyName: 'filterSiteWhileBackwash');
@@ -430,9 +431,7 @@ class ConstantProvider extends ChangeNotifier{
   }
 
   String getFertilizerSitePayload(){
-    print(AppConstants.gemModelList.contains(userData['modelId']) ?  'Gem' : 'Ecogem');
     return List.generate(fertilizerSite.length, (siteIndex){
-      print('ecPhSensor ::: $ecPhSensor');
       return [
         fertilizerSite[siteIndex].sNo,
         ...fertilizerSite[siteIndex].setting.where((setting){

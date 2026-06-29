@@ -168,6 +168,10 @@ class IndividualPumpData {
           : reason == 40 ? "No communication"
           : reason == 41 ? "$motorOff Pressure sensor low"
           : reason == 42 ? "$motorOff Pressure sensor high"
+          : reason == 43 ? "$motorOff sump cable disconnected"
+          : reason == 44 ? "$motorOff tank cable disconnected"
+          : reason == 45 ? "$motorOff sump float failed"
+          : reason == 46 ? "$motorOff tank float failed"
           : "Unknown",
       waterMeter: json["WM"] ?? "",
       cumulativeFlow: value != "-" ? value.substring(firstIndex) : "-",
