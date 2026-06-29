@@ -755,6 +755,12 @@ class MqttPayloadProvider with ChangeNotifier {
 
           notifyListeners();
         }
+        else if(data['mC']=='8200'){
+
+          updateNodeLiveMessage(data['cM']['8201'].split(";"));
+          updateValveStatus(data['cM']['8202'].split(";"));
+
+        }
         else if(data.containsKey('3600') && data['3600'] != null && data['3600'].isNotEmpty){
           schedulePayload = _receivedPayload;
         }
@@ -838,26 +844,23 @@ class MqttPayloadProvider with ChangeNotifier {
               uard4MessagesSet.add(msg);
             }
           }
-
         }
 
         if(data['mC']=='7400'){
 
          String loraVersion = data['cM']['7401'];
          final parts = loraVersion.split(',');
-         if(parts[0] == '1')
-           {
+         if(parts[0] == '1') {
              final rawFrequency = int.parse(parts[2]);
              final frequency = (rawFrequency / 10).toStringAsFixed(1);
-
              Loara1verssion = "${parts[1]},$frequency,${parts[3]}";
-           }
+         }
          else
-           {
+         {
              final rawFrequency = int.parse(parts[2]);
              final frequency = (rawFrequency / 10).toStringAsFixed(1);
              Loara2verssion = "${parts[1]},$frequency,${parts[3]}";
-           }
+         }
 
         }
 
@@ -870,6 +873,7 @@ class MqttPayloadProvider with ChangeNotifier {
           _sequencePreview = data["cM"];
           notifyListeners();
         }
+
       } catch (e, stackTrace) {
         debugPrint('Error parsing JSON: $e');
         debugPrint('Stacktrace while parsing json : $stackTrace');
@@ -967,7 +971,7 @@ class MqttPayloadProvider with ChangeNotifier {
 
    void updateValveStatus(List<String> valveOnOffPayload) {
      for (final entry in valveOnOffPayload) {
-       if (!(entry.startsWith('13.') || entry.startsWith('14.'))) continue;
+       if (!(entry.startsWith('13.') || entry.startsWith('14.') || entry.startsWith('45.'))) continue;
 
        final parts = entry.split(',');
        if (parts.isEmpty || parts[0].isEmpty) continue;

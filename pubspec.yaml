@@ -85,6 +85,7 @@ dependencies:
   usb_serial: ^0.5.2
   flutter_image_compress: ^2.4.0
   image_picker: ^1.2.2
+  http_parser: ^4.1.2
 #  audioplayers: ^6.5.0
 #  record: ^6.0.0
 
@@ -124,7 +125,6 @@ flutter:
     - assets/smartcomm_playstore.png
     - assets/smartcomm_launcher.png
     - assets/.env
-    - assets/ssh/smartComm/id_rsa
     - assets/localfile/Testing
     - assets/splash/oro_production.png
     - assets/splash/smart_comm.png

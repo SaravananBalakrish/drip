@@ -31,7 +31,7 @@ class MapScreenValve extends StatefulWidget {
 }
 
 class _MapScreenValveState extends State<MapScreenValve> {
-  late GoogleMapController mapController;
+  GoogleMapController? mapController;
   LatLng center = const LatLng(11.7749, 78.4194);
 
   Set<Marker> markers = {};
@@ -194,7 +194,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
 
     for (var entry in _gifObjects.entries) {
       final screen =
-      await mapController.getScreenCoordinate(entry.value);
+      await mapController!.getScreenCoordinate(entry.value);
 
       temp[entry.key] = Offset(
         screen.x.toDouble(),
@@ -463,7 +463,7 @@ class _MapScreenValveState extends State<MapScreenValve> {
 
     // Small delay to make sure map is fully rendered
     Future.delayed(const Duration(milliseconds: 500), () {
-      mapController.animateCamera(
+      mapController?.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
             target: center,
