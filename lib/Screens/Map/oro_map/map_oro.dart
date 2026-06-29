@@ -342,31 +342,16 @@ class _MapScreenOroState extends State<MapScreenOro> {
    }
 
    Future<BitmapDescriptor> _getLabelIcon(String text) async {
-     final recorder = ui.PictureRecorder();
-     final canvas = Canvas(recorder);
-
-     const double width = 120;
-     const double height = 15;
-
-     final paint = Paint()..color = Colors.white;
-     final border = Paint()
-       ..color = Colors.black
-       ..style = PaintingStyle.stroke
-       ..strokeWidth = 1;
-
-     final rect = RRect.fromRectAndRadius(
-       Rect.fromLTWH(0, 0, width, height),
-       const Radius.circular(10),
-     );
-
-     canvas.drawRRect(rect, paint);
-     canvas.drawRRect(rect, border);
+     // Use device pixel ratio for high-resolution markers on mobile
+     final double ratio = ui.PlatformDispatcher.instance.views.isNotEmpty
+         ? ui.PlatformDispatcher.instance.views.first.devicePixelRatio
+         : 1.0;
 
      final textPainter = TextPainter(
        text: TextSpan(
          text: text,
-         style: const TextStyle(
-           fontSize: 13,
+         style: TextStyle(
+           fontSize: 13 * ratio,
            color: Colors.black,
            fontWeight: FontWeight.bold,
          ),
@@ -375,7 +360,28 @@ class _MapScreenOroState extends State<MapScreenOro> {
        textAlign: TextAlign.center,
      );
 
-     textPainter.layout(maxWidth: width);
+     textPainter.layout();
+
+     // Calculate dynamic width and height with padding
+     final double width = textPainter.width + (16 * ratio);
+     final double height = textPainter.height + (6 * ratio);
+
+     final recorder = ui.PictureRecorder();
+     final canvas = Canvas(recorder);
+
+     final paint = Paint()..color = Colors.white;
+     final border = Paint()
+       ..color = Colors.black
+       ..style = PaintingStyle.stroke
+       ..strokeWidth = 1 * ratio;
+
+     final rect = RRect.fromRectAndRadius(
+       Rect.fromLTWH(0, 0, width, height),
+       Radius.circular(10 * ratio),
+     );
+
+     canvas.drawRRect(rect, paint);
+     canvas.drawRRect(rect, border);
 
      textPainter.paint(
        canvas,
@@ -457,7 +463,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
 
   return Scaffold(
   appBar: (widget.isCheckDashboard || kIsWeb) ? null : AppBar(title: const Text(" Geography"),
-    automaticallyImplyLeading: false,
+    // automaticallyImplyLeading: false,
   actions: [
     IconButton(
       icon: const Icon(Icons.refresh),
