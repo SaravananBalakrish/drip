@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/password_field.dart';
 import 'package:provider/provider.dart';
 
+import '../../../Screens/Map/oro_map/map_oro.dart';
 import '../../../models/customer/site_model.dart';
 import '../../../Screens/Dealer/ble_mobile_screen.dart';
 import '../../../StateManagement/customer_provider.dart';
@@ -87,6 +88,7 @@ class CustomerFabMenu extends StatelessWidget {
                   ],
 
                   _buildPopupItem(context, 'Sent & Received', Icons.question_answer_outlined, 'Sent & Received'),
+                  _buildPopupItem(context, 'GeoGraphy', Icons.map, 'GeoGraphy'),
                 ],
               ),
             ),
@@ -221,6 +223,15 @@ class CustomerFabMenu extends StatelessWidget {
               userId: loggedInUser.id,
               masterData: currentMaster,
             ),
+          ),
+        );
+        break;
+
+      case 'GeoGraphy':
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MapScreenOro(userId: loggedInUser.id, customerId: vm.mySiteList.data[vm.sIndex].customerId, controllerId: currentMaster.controllerId, imeiNo: currentMaster.deviceId, modelId: currentMaster.modelId,)
           ),
         );
         break;
