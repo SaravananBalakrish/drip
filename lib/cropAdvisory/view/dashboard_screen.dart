@@ -443,7 +443,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const CropWeatherscreen(),
+                builder: (context) => CropWeatherscreen(
+                  userId: widget.userID,
+                  controllerId: widget.controllerId,
+                ),
               ),
             );
           },
