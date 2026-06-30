@@ -1,3 +1,4 @@
+import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/utils/Theme/agritel_theme.dart';
 import 'package:provider/provider.dart';
@@ -7,6 +8,7 @@ import '../../../../modules/IrrigationProgram/view/program_library.dart';
 import '../../../../providers/user_provider.dart';
 import '../../../../repository/repository.dart';
 import '../../../../services/http_service.dart';
+import '../../../../utils/my_function.dart';
 import '../../../../view_models/customer/node_list_view_model.dart';
 
 class OmsLine extends StatefulWidget {
@@ -60,9 +62,14 @@ class _OmsLineState extends State<OmsLine> {
   bool _isNodeFullySelected(
       NodeListViewModel vm, int nodeIndex, Set<int> selectedValveIdx) {
     final node = vm.nodeList[nodeIndex];
+
     final totalValves = node.rlyStatus
-        .where((rly) => rly.sNo.toString().startsWith('13.'))
+        .where((rly) {
+      final sNo = rly.sNo.toString();
+      return sNo.startsWith('13.') || sNo.startsWith('45.');
+    })
         .length;
+
     return totalValves > 0 && selectedValveIdx.length == totalValves;
   }
 
@@ -100,7 +107,7 @@ class _OmsLineState extends State<OmsLine> {
         });
 
         return SizedBox(
-          height: MediaQuery.of(context).size.height,
+          height: (vm.nodeList.length * 60) + 150,
           width: MediaQuery.of(context).size.width,
           child: Column(
             children: [
@@ -112,30 +119,199 @@ class _OmsLineState extends State<OmsLine> {
               ),
               const SizedBox(height: 8),
 
-              /// Node Grid
-              Expanded(
-                child: GridView.builder(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: vm.nodeList.length,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 1.45,
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: Colors.grey.shade300,
+                      width: 1,
+                    ),
                   ),
-                  itemBuilder: (context, index) {
-                    final selectedValves = nodeValveSelections[index] ?? <int>{};
-                    return NodeCard(
-                      node: vm.nodeList[index],
-                      customerId: widget.customerId,
-                      controllerId: widget.controllerId,
-                      modelId: widget.modelId,
-                      selectedValveIndices: selectedValves,
-                      onValveSelectionChanged: (newSelection) {
-                        _onValveSelectionChanged(index, newSelection);
-                      },
-                    );
-                  },
+                  height: (vm.nodeList.length * 60) + 40,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 3, right: 3, top: 5),
+                    child: DataTable2(
+                      columnSpacing: 12,
+                      horizontalMargin: 12,
+                      minWidth: 800,
+                      headingRowHeight: 30,
+                      dataRowHeight: 60,
+                      headingRowColor: WidgetStateProperty.all(primary.withValues(alpha: 0.3)),
+                      border: TableBorder(
+                        horizontalInside: BorderSide(
+                          color: Colors.grey.shade50,
+                        ),
+                      ),
+                      columns: const [
+                        DataColumn2(
+                          label: Center(child: Text('Select', style: TextStyle(fontWeight: FontWeight.bold))),
+                          fixedWidth: 50,
+                        ),
+                        DataColumn2(
+                          label: Text('Node', style: TextStyle(fontWeight: FontWeight.bold)),
+                          fixedWidth: 200,
+                        ),
+                        DataColumn2(
+                          label: Text('Device ID', style: TextStyle(fontWeight: FontWeight.bold)),
+                          fixedWidth: 130,
+                        ),
+                        DataColumn2(
+                          label: Center(child: Text('Signal', style: TextStyle(fontWeight: FontWeight.bold))),
+                          fixedWidth: 60,
+                        ),
+                        DataColumn2(
+                          label: Center(child: Text('Solar', style: TextStyle(fontWeight: FontWeight.bold))),
+                          fixedWidth: 60,
+                        ),
+                        DataColumn2(
+                          label: Center(child: Text('Battery', style: TextStyle(fontWeight: FontWeight.bold))),
+                          fixedWidth: 60,
+                        ),
+                        DataColumn2(
+                          label: Center(child: Text('Sensor', style: TextStyle(fontWeight: FontWeight.bold))),
+                          fixedWidth: 140,
+                        ),
+                        DataColumn2(
+                          label: Text('Valves', style: TextStyle(fontWeight: FontWeight.bold)),
+                          size: ColumnSize.L,
+                        ),
+                      ],
+                      rows: List.generate(
+                        vm.nodeList.length, (index) {
+
+                        final node = vm.nodeList[index];
+
+                        final sensors = node.rlyStatus.where((rly) {
+                          final sNo = rly.sNo.toString();
+                          return sNo.startsWith('24.') || sNo.startsWith('46.');
+                        }).toList();
+
+                        final selectedValves = nodeValveSelections[index] ?? <int>{};
+
+                        final valves = node.rlyStatus.where((rly) {
+                          final sNo = rly.sNo.toString();
+                          return sNo.startsWith('45.') || sNo.startsWith('13.');
+                        }).toList();
+
+                        valves.sort((a, b) {
+                          final aSNo = a.sNo.toString();
+                          final bSNo = b.sNo.toString();
+
+                          final aIsFlowControl = aSNo.startsWith('45.');
+                          final bIsFlowControl = bSNo.startsWith('45.');
+
+                          if (aIsFlowControl && !bIsFlowControl) return -1;
+                          if (!aIsFlowControl && bIsFlowControl) return 1;
+
+                          return aSNo.compareTo(bSNo);
+                        });
+
+                        final isNodeFullySelected = selectedValves.length == valves.length && valves.isNotEmpty;
+
+
+                          return DataRow2(
+                            selected: isNodeFullySelected,
+                            cells: [
+
+                              // In the checkbox cell
+                              DataCell(
+                                Center(
+                                  child: Checkbox(
+                                    value: isNodeFullySelected,
+                                    onChanged: (_) => _toggleNodeSelection(vm, index),
+                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                ),
+                              ),
+
+                              DataCell(
+                                Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      node.deviceName,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      node.lastFeedbackReceivedTime,
+                                      style: const TextStyle(
+                                        fontSize: 11,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+
+                              DataCell(
+                                Text(node.deviceId),
+                              ),
+
+                              const DataCell(
+                                Center(child: Text('0%')),
+                              ),
+
+                              DataCell(
+                                Center(child: Text('${node.sVolt} V')),
+                              ),
+
+                              DataCell(
+                                Center(child: Text('${node.batVolt} V')),
+                              ),
+
+                              DataCell(
+                                Wrap(
+                                  spacing: 4,
+                                  runSpacing: 4,
+                                  children: sensors.asMap().entries.map((entry) {
+                                    final sensor = entry.value;
+
+                                    return sensorWidget(sensor);
+                                  }).toList(),
+                                ),
+                              ),
+
+                              DataCell(
+                                Wrap(
+                                  spacing: 4,
+                                  runSpacing: 4,
+                                  children: valves.asMap().entries.map((entry) {
+                                    final valveIndex = entry.key;
+                                    final valve = entry.value;
+
+                                    return _ValveTile(
+                                      valve: valve,
+                                      isSelected: selectedValves.contains(valveIndex),
+                                      onTap: () {
+                                        final updated = Set<int>.from(selectedValves);
+
+                                        if (updated.contains(valveIndex)) {
+                                          updated.remove(valveIndex);
+                                        } else {
+                                          updated.add(valveIndex);
+                                        }
+
+                                        _onValveSelectionChanged(index, updated);
+                                      },
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -144,6 +320,7 @@ class _OmsLineState extends State<OmsLine> {
       },
     );
   }
+
 
   Widget _buildTopHeader(NodeListViewModel vm, MasterControllerModel cMaster,
       int controllerId, String deviceId, int customerId, int groupId) {
@@ -197,7 +374,7 @@ class _OmsLineState extends State<OmsLine> {
           Row(
             children: [
               _buildActionButton(
-                label: 'Open all',
+                label: 'Open',
                 icon: Icons.play_arrow,
                 // Enabled if ANY valve is selected anywhere (node need not
                 // be fully selected).
@@ -208,7 +385,7 @@ class _OmsLineState extends State<OmsLine> {
               ),
               const SizedBox(width: 12),
               _buildActionButton(
-                label: 'Close all',
+                label: 'Close',
                 icon: Icons.stop,
                 onPressed: anyValveSelected ? () {
                   _onStopAll(vm);
@@ -263,6 +440,80 @@ class _OmsLineState extends State<OmsLine> {
     );
   }
 
+
+  Widget sensorWidget(RelayStatus sensor) {
+
+    return Selector<MqttPayloadProvider, String?>(
+      selector: (_, provider) => provider.getSensorUpdatedValve(sensor.sNo.toString()),
+      builder: (_, status, __) {
+        String sensorVal = '0';
+        final statusParts = status?.split(',') ?? [];
+        if (statusParts.isNotEmpty) {
+          sensorVal = statusParts[1];
+          print('sensorVal:$sensorVal');
+        }
+
+        final sNo = sensor.sNo?.toString() ?? '';
+        String sensorType = sNo.startsWith('24.') ? 'Pressure Sensor' : 'Water Meter';
+        String imagePath = sNo.startsWith('24.') ? 'assets/png/pressure_sensor.png'
+            :'assets/png/water_meter.png';
+
+        return SizedBox(
+          width: 60,
+          height: 60,
+          child: Column(
+            children: [
+              const SizedBox(height: 3),
+              Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Image.asset(imagePath, width: 32, height: 32),
+                  Positioned(
+                    top: 21,
+                    right: -5,
+                    child: _unitBox(context, sensorVal, sensorType),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 5),
+              Text(
+                sensor.name.toString(),
+                style: const TextStyle(
+                  fontSize: 8,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _unitBox(BuildContext context, String sensorVal, String sensorType) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+      decoration: BoxDecoration(
+        color: Colors.yellow,
+        borderRadius: BorderRadius.circular(4),
+        border: Border.all(color: Colors.grey, width: 0.5),
+      ),
+      child: Text(
+        MyFunction().getUnitByParameter(context, sensorType, sensorVal.toString()) ??
+            '',
+        style: const TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.bold,
+          color: Colors.black87,
+        ),
+      ),
+    );
+  }
+
   void callbackFunction(String status) {
     if (status == 'Program created' && mounted) debugPrint(status);
   }
@@ -295,6 +546,32 @@ class _OmsLineState extends State<OmsLine> {
         elevation: 0,
       ),
     );
+  }
+
+  void _toggleNodeSelection(NodeListViewModel vm, int nodeIndex) {
+    final node = vm.nodeList[nodeIndex];
+
+    // Get all valves for this node (BOTH 13. and 45. series)
+    final valves = node.rlyStatus
+        .where((rly) {
+      final sNo = rly.sNo.toString();
+      return sNo.startsWith('13.') || sNo.startsWith('45.');
+    })
+        .toList();
+
+    // Get current selection for this node
+    final currentSelection = nodeValveSelections[nodeIndex] ?? <int>{};
+
+    // Check if all valves are currently selected
+    final isFullySelected = currentSelection.length == valves.length && valves.isNotEmpty;
+
+    if (isFullySelected) {
+      // If fully selected, deselect ALL valves
+      _onValveSelectionChanged(nodeIndex, <int>{});
+    } else {
+      // If not fully selected, select ALL valves
+      _onValveSelectionChanged(nodeIndex, valves.asMap().keys.toSet());
+    }
   }
 
   /// Builds a flat list of (nodeId, valveId) pairs for every currently
@@ -352,322 +629,6 @@ class _OmsLineState extends State<OmsLine> {
   }
 }
 
-class NodeCard extends StatelessWidget {
-  final NodeListModel node;
-  final int customerId, controllerId, modelId;
-
-  /// Indices (within this node's filtered valve list) that are currently
-  /// selected. Owned by the parent (_OmsLineState) — this widget is now
-  /// stateless with respect to selection so the parent always has an
-  /// accurate, real-time picture of every valve pick.
-  final Set<int> selectedValveIndices;
-
-  /// Called with the FULL updated set of selected valve indices for this
-  /// node whenever the user toggles the node checkbox or any single valve.
-  final ValueChanged<Set<int>> onValveSelectionChanged;
-
-  const NodeCard({
-    super.key,
-    required this.node,
-    required this.customerId,
-    required this.controllerId,
-    required this.modelId,
-    required this.selectedValveIndices,
-    required this.onValveSelectionChanged,
-  });
-
-  List<RelayStatus> get _valves {
-
-    final allValves = node.rlyStatus.where((rly) {
-      final sNo = rly.sNo.toString();
-      return sNo.startsWith('45.') || sNo.startsWith('13.');
-    }).toList();
-
-    allValves.sort((a, b) {
-      final aSNo = a.sNo.toString();
-      final bSNo = b.sNo.toString();
-
-      // Check if valve starts with '45.'
-      final aIsFlowControl = aSNo.startsWith('45.');
-      final bIsFlowControl = bSNo.startsWith('45.');
-
-      // Flow control valves (45.) come first
-      if (aIsFlowControl && !bIsFlowControl) return -1;
-      if (!aIsFlowControl && bIsFlowControl) return 1;
-
-      // If both are same type, sort by sNo numerically
-      return aSNo.compareTo(bSNo);
-    });
-
-    return allValves;
-  }
-
-  bool get _isNodeFullySelected =>
-      _valves.isNotEmpty && selectedValveIndices.length == _valves.length;
-
-  @override
-  Widget build(BuildContext context) {
-    final valves = _valves;
-    final isSelected = _isNodeFullySelected;
-
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: isSelected ? Colors.blue.shade300 : Colors.grey.shade300,
-          width: isSelected ? 2 : 1,
-        ),
-        boxShadow: isSelected
-            ? [
-          BoxShadow(
-            color: Colors.blue.withValues(alpha: 0.1),
-            blurRadius: 8,
-            spreadRadius: 2,
-          )
-        ]
-            : null,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          /// Header with Checkbox and Program Name
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Node Checkbox: checking/unchecking toggles ALL valves.
-              GestureDetector(
-                onTap: () {
-                  if (isSelected) {
-                    onValveSelectionChanged(<int>{});
-                  } else {
-                    onValveSelectionChanged(
-                      valves.asMap().keys.toSet(),
-                    );
-                  }
-                },
-                child: Container(
-                  width: 20,
-                  height: 20,
-                  decoration: BoxDecoration(
-                    color: isSelected ? Colors.blue : Colors.transparent,
-                    border: Border.all(
-                      color: isSelected ? Colors.blue : Colors.grey.shade400,
-                      width: 2,
-                    ),
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: isSelected
-                      ? const Icon(Icons.check, size: 14, color: Colors.white)
-                      : null,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      node.deviceName,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    const Text(
-                      'Program: Morning cycle',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 3,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.green.shade100,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Text(
-                  'Live',
-                  style: TextStyle(
-                    color: Colors.green,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 10,
-                  ),
-                ),
-              )
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
-          /// Device ID Row
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  node.deviceId,
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12,
-                  ),
-                ),
-              ),
-              Text(
-                node.lastFeedbackReceivedTime,
-                style: const TextStyle(
-                  color: Colors.grey,
-                  fontSize: 12,
-                ),
-              ),
-            ],
-          ),
-
-          const Divider(color: Colors.black12),
-
-          /// Voltage Cards
-          Row(
-            children: [
-              Expanded(
-                child: _infoCard(
-                  'Signal',
-                  '0',
-                  true,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _infoCard(
-                  'Solar',
-                  '${node.sVolt} V',
-                  false,
-                ),
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: _infoCard(
-                  'Battery',
-                  '${node.batVolt} V',
-                  false,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-
-          /// Valves Section with Checkboxes
-          if (valves.isNotEmpty) ...[
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    if (selectedValveIndices.length == valves.length) {
-                      onValveSelectionChanged(<int>{});
-                    } else {
-                      onValveSelectionChanged(valves.asMap().keys.toSet());
-                    }
-                  },
-                  child: Container(
-                    width: 16,
-                    height: 16,
-                    decoration: BoxDecoration(
-                      color: selectedValveIndices.length == valves.length && valves.isNotEmpty
-                          ? Colors.blue
-                          : Colors.transparent,
-                      border: Border.all(
-                        color: selectedValveIndices.length == valves.length && valves.isNotEmpty
-                            ? Colors.blue
-                            : Colors.grey.shade400,
-                        width: 2,
-                      ),
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                    child: selectedValveIndices.length == valves.length && valves.isNotEmpty
-                        ? const Icon(Icons.check, size: 10, color: Colors.white)
-                        : null,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  '${selectedValveIndices.length} of ${valves.length} selected',
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: valves.asMap().entries.map<Widget>((entry) {
-                final index = entry.key;
-                final valve = entry.value;
-                return _ValveTile(
-                  valve: valve,
-                  isSelected: selectedValveIndices.contains(index),
-                  onTap: () {
-                    final updated = Set<int>.from(selectedValveIndices);
-                    if (updated.contains(index)) {
-                      updated.remove(index);
-                    } else {
-                      updated.add(index);
-                    }
-                    onValveSelectionChanged(updated);
-                  },
-                );
-              }).toList(),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _infoCard(String title, String value, bool isSignal) {
-    return Container(
-      height: 50,
-      padding: const EdgeInsets.only(left: 10, top: 5, bottom: 5),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Colors.grey.shade300,
-          width: 0.7,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
-          ),
-          const Spacer(),
-          Text(
-            isSignal ? '$value %' : '$value Volts',
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 /// A single valve tile. Stateless: status/percent are derived live from
 /// MqttPayloadProvider via Selector, selection state comes from the parent.
 class _ValveTile extends StatelessWidget {
@@ -707,78 +668,63 @@ class _ValveTile extends StatelessWidget {
 
         return GestureDetector(
           onTap: onTap,
-          child: Container(
+          child: SizedBox(
             width: 75,
             height: 60,
-            decoration: BoxDecoration(
-              color: isSelected ? Colors.blue.shade50 : _relayColor(currentStatus),
-              borderRadius: BorderRadius.circular(5),
-              border: Border.all(
-                color: isSelected ? Colors.blue : Colors.grey.shade300,
-                width: isSelected ? 2 : 1,
-              ),
-            ),
+            //color: isSelected ? Colors.blue.shade50 : Colors.white,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Checkbox for individual valve
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Valve Icon
-                    SizedBox(
-                      width: 45,
-                      height: 38,
-                      child: Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Positioned.fill(
-                            child: isOn ? Image.asset(
-                              isFlowControl
-                                  ? 'assets/png/m_flow_control_valve.png'
-                                  : 'assets/gif/m_valve_green.gif',
-                              color: isFlowControl ? valveColor : null,
-                              fit: BoxFit.contain,
-                            )
-                                : Image.asset(
-                              isFlowControl
-                                  ? 'assets/png/m_flow_control_valve.png'
-                                  : 'assets/png/m_valve_grey.png',
-                              color: valveColor,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          // Checkbox at top-right corner
-                          Positioned(
-                            top: -3,
-                            right: -14,
-                            child: Container(
-                              width: 16,
-                              height: 16,
-                              decoration: BoxDecoration(
-                                color: isSelected ? Colors.blue : Colors.white,
-                                border: Border.all(
-                                  color: isSelected ? Colors.blue : Colors.grey.shade400,
-                                  width: 1,
-                                ),
-                                borderRadius: BorderRadius.circular(3),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.1),
-                                    blurRadius: 2,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ],
-                              ),
-                              child: isSelected
-                                  ? const Icon(Icons.check, size: 10, color: Colors.white)
-                                  : null,
-                            ),
-                          ),
-                        ],
+                SizedBox(
+                  width: 55,
+                  height: 35,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Positioned.fill(
+                        child: isOn ? Image.asset(
+                          isFlowControl
+                              ? 'assets/png/m_flow_control_valve.png'
+                              : 'assets/gif/m_valve_green.gif',
+                          color: isFlowControl ? valveColor : null,
+                          fit: BoxFit.contain,
+                        )
+                            : Image.asset(
+                          isFlowControl
+                              ? 'assets/png/m_flow_control_valve.png'
+                              : 'assets/png/m_valve_grey.png',
+                          color: valveColor,
+                          fit: BoxFit.contain,
+                        ),
                       ),
-                    ),
-                  ],
+                      Positioned(
+                        top: 14,
+                        right: 45,
+                        child: Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: isSelected ? primary : Colors.white,
+                            border: Border.all(
+                              color: isSelected ? primary : Colors.grey.shade400,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.circular(3),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withValues(alpha: 0.1),
+                                blurRadius: 2,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: isSelected
+                              ? const Icon(Icons.check, size: 10, color: Colors.white)
+                              : null,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 5.0),
@@ -787,7 +733,7 @@ class _ValveTile extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
-                      color: isSelected ? Colors.blue.shade500 : Colors.black87,
+                      color: isSelected ? primary : Colors.black87,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 1,
@@ -810,16 +756,4 @@ class _ValveTile extends StatelessWidget {
     return Colors.red;
   }
 
-  Color _relayColor(int? status) {
-    switch (status) {
-      case 1:
-        return Colors.green.shade50;
-      case 2:
-        return Colors.orange.shade50;
-      case 3:
-        return Colors.red.shade50;
-      default:
-        return Colors.grey.shade200;
-    }
-  }
 }

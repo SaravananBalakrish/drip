@@ -271,7 +271,7 @@ class _StandAloneWideState extends State<StandAloneWide> with SingleTickerProvid
     if(isAerator) {
       final aerator = masterData.irrigationLine
           .expand((line) => line.aeratorSources)
-          .expand((ws) => ws.outletPump)
+          .expand((ws) => ws.aeratorPump)
           .toList();
 
       final allAerator = aerator.fold<Map<double, PumpModel>>({}, (map, pump) {
