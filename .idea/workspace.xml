@@ -4,7 +4,134 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="98ecc927-f5f4-40af-89f4-2482b1cde4ec" name="Changes" comment="" />
+    <list default="true" id="98ecc927-f5f4-40af-89f4-2482b1cde4ec" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/aot_android_asset_bundle.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/app.dill" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/dart_build.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/dart_build.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/dart_build_result.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/flutter_assets.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/gen_dart_plugin_registrant.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/gen_localizations.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/install_code_assets.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/install_code_assets.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/kernel_snapshot_program.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/kernel_snapshot_program.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/native_assets.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/dart_plugin_registrant.dart" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/dart_plugin_registrant.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/.last_build_id" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/8dd4b6756ca3cbcd39307219c48c959e/.filecache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/8dd4b6756ca3cbcd39307219c48c959e/gen_localizations.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/8dd4b6756ca3cbcd39307219c48c959e/outputs.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/AssetManifest.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/AssetManifest.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/NOTICES.Z" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/NOTICES.Z" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/.filecache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/_composite.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/dart_build.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/dart_build.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/dart_build_result.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/gen_dart_plugin_registrant.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/gen_localizations.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/outputs.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/project/PROJECT@v11_mod=3b8428d66f2c2801884bfdce6a666711_hash=bfdfe7dc352907fc980b868725387e98plugins=1OJSG6M1FOV3XYQCBH7Z29RZ0FPR9XDE1-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=00a68b7c6468d303c75b8327542b94af-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=011f5113e57ca101fe25d0e3d11c264c-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=01934321c270117887dcbb3101049750-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=01f8680d874047fae83b1ac04de183ac-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=05070ba23f9ef35a670bc37e7c47b630-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=05437e4a3a86c01632442118da246030-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=06662115c7d9fe22c083f1f3cd689a45-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=07dcde47072f2fc13529aebc3e7792eb-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=07e2cb91e6a0fdb76e214a46ccc76503-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=0996d44a1daff70cefb77ff38f032be7-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=0c16074cd5f58a6078356b06a38241f2-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=0f125855890d31ebdae21e494bf5b284-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=145ee74f727da54f5b35b133269533a3-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=1e7a2a2475ba30ca35263f36db5d0004-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=26403b91a4bd698b1674ce4539bbbdf7-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=26412e8638cfecd0669a5c575bdd4ba5-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=2e049155ae1e1a601cc2da1130312b83-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=3115f4db5e045d341c7969db3319c679-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=319266d59b3f2467bef55f4b84c8239a-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=356e3e6c8772d44059b6e24c66abbf15-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=371907683e3ceabffbf4fcb2b6d99508-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=3743ce71fcc96d9e6adf4740e3f05034-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=391cf258db222da619e6ab65b6f54b2c-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=3d64e422a6cace3dfdcfd7595875b6f0-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=40dfbf44804b3bdee9a3f9bd3f21bd84-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=43a5a2945a1dad5cebea231531ec8be9-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=46d2c94264cdad0f8eaaa63abc3f2ae2-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=478b8e7e49d5534f9e8937904113dc43-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=48b1e965cf33f6dc106113078582f027-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=499ea6fb91421874d70d373ef895cf03-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=49e30154234cda97f7d49a1a3fb3264c-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=4ad99829f1e8fb585fa03a700985a54d-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=4b5b7fe4e8a6f59d8d3f4bc3dc14af9a-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=528923b7eb30673adfcb4a8c7a17f138-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=56622e3a5b18999097096bd6c0201b0c-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=57a10dc5fb30d577566415b8d0572a81-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=5cc468ba1a65743362b0f298370e80eb-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=614c0925ba4eb31ee52104cda4b3307f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=65b367c5dca9b90f8cb3bea41d020a41-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=6d449072ea5c6c9240cbd70e50c8140d-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=7011495f5c7f4fc3c40945b28d986a73-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=727bf3da6253923bbb725e0e00553a31-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=77d95ba8cc51a0f217d57fc6e2130c31-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=787b25b38a708ff9ce2017a837055342-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=8191cbea57657ab302d94907817c7afc-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=835ad8869ce2f1f96620ac0d27e4b798-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=841f40def98edaee07ff0c8789378544-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=88b13944f4c73e0047b7868bc2a9433f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=8a675ff8768d6f4b788adb7f54347649-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=8f8dd8d376c4cf9cb4f785475fc95e75-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=92b0464cb03e00478f43b7e6b27c782a-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=93ff95b63ce5dd46624861ba99dc321f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=9c6d4b04c6c90c8c83ac834893d0ae54-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=9ebc309709eae14abc87785b8506087a-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=a1642ef34a2885550cab6c67b1b00256-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=a5e8e482b772b7e8ac7984f6384f4a61-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=a9f2a3d2d18eea0d8e420915c2a1d572-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=ab4dc408d1be612a858329a35b116016-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=ba4d6215e8ab812b0a63cc5cc8e4c014-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=bb590d037f917bdf850b5ae0ec50842d-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=bc0af6077125974620c14da0c534f9d3-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=bf5b5192d48eec8bbf7bd8e573e7019c-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=c1ba95185b5569654d2fcb4d7892e676-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=c3a9ef11346bc43282c5efdee9eb1d53-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=c882e9d99f831f5f7fc3bb83547a22ac-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=c8f975e5047738ea964e961e3d9ec11f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=cb6a071cf178506d9a935a56b6fed7a0-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=cf73b4fe42d7f76001699107524e6c90-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d0ccdcdb144776337f38a4cb4d3eb86f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d17d55be4dc64b073fc0c0804c2b70de-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d2b40b0d059a9f18767cea3917ee791f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d5c1c12fdfdda430847d540077904f5a-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d69a14d849bcfcced428fd3ea39972a8-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d70a352fed2a6125286a724843143488-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d72dd9e4ac266acc85788c5b29677a4f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d7d7b90e659c887c30afe68735f3efa0-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d85808d41eb247a940a6f1e816c11e51-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=e531fcca46829769082deebfdf65f201-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=e541f92e05160eb2d5c2cbe69ea6a45d-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=e78acdc1429a82b0e5a7a91b2a9361f2-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=eb545666fed925a82c6117c30e8f1d09-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=f11312cb2045a17dc6b865034a83cea2-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=f8c2e754a4ab78905ec0f373b1a01b7c-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/workspace/WORKSPACE@v11_hash=(null)_subobjects=6628ad760d4b1f1690114090564b87a0-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/last_build_run.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/native_hooks/.last_build_id" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Flutter/Generated.xcconfig" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Flutter/Generated.xcconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Flutter/ephemeral/flutter_lldb_helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Flutter/ephemeral/flutter_lldb_helper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Flutter/ephemeral/flutter_lldbinit" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Flutter/ephemeral/flutter_lldbinit" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Flutter/flutter_export_environment.sh" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Flutter/flutter_export_environment.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/macos/Flutter/ephemeral/Flutter-Generated.xcconfig" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/ephemeral/Flutter-Generated.xcconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/macos/Flutter/ephemeral/flutter_export_environment.sh" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/ephemeral/flutter_export_environment.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -67,18 +194,18 @@
     &quot;io.flutter.project.isFirstOpen&quot;: &quot;true&quot;,
     &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/user/Downloads/drip/android&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;emulator&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/drip/assets/ssh/smartComm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;flutter.settings&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
 }</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\drip\assets\ssh\smartComm" />
+      <recent name="C:\drip\assets" />
       <recent name="$PROJECT_DIR$/android" />
       <recent name="$PROJECT_DIR$/android/app" />
       <recent name="$PROJECT_DIR$/android/app/src/main" />
-      <recent name="$PROJECT_DIR$/assets" />
-      <recent name="$PROJECT_DIR$/lib/Screens/planning/weather" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/android" />
