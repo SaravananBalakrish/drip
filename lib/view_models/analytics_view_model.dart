@@ -30,8 +30,7 @@ class AnalyticsViewModel extends SafeChangeNotifier {
     };
 
     try {
-      final response =
-      await repository.fetchAllMySalesReports(body);
+      final response = await repository.fetchAllMySalesReports(body);
 
       if (isDisposed) return;
 

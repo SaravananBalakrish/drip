@@ -241,6 +241,7 @@ class PressureSensorWidget extends StatelessWidget {
         if(statusParts.isNotEmpty){
           sensor.value = statusParts[1];
         }
+
         return SizedBox(
           width: 70,
           height: 100,
