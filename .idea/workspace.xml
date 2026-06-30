@@ -106,6 +106,7 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Flutter.main.dart" />
       <item itemvalue="Flutter.Agritel" />
       <item itemvalue="Flutter.OroProduction" />
       <item itemvalue="Flutter.oroDevelopment" />
