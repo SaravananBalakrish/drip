@@ -130,7 +130,7 @@ flutter:
     - assets/splash/smart_comm.png
     - assets/splash/transparent.png
     - assets/Images/CropAdvisory/
-#    - .env.apikey
+    - assets/ssh/smartComm/id_rsa
 
 #flutter_launcher_icons:
 #  android: true
