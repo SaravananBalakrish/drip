@@ -13,6 +13,8 @@ import 'package:oro_drip_irrigation/services/communication_service.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/network_utils.dart';
+import 'package:oro_drip_irrigation/view_models/admin_dealer/customer_search_view_model.dart';
+import 'package:oro_drip_irrigation/view_models/customer/current_program_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -24,7 +26,6 @@ import 'StateManagement/search_provider.dart';
 import 'app/app.dart';
 import 'StateManagement/customer_provider.dart';
 import 'firebase_options.dart';
-import 'flavors.dart';
 import 'modules/IrrigationProgram/state_management/irrigation_program_provider.dart';
 import 'modules/Preferences/state_management/preference_provider.dart';
 import 'modules/SystemDefinitions/state_management/system_definition_provider.dart';
@@ -41,7 +42,9 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 // Background message handler for Firebase
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print("Handling a background message: ${message.messageId}");
+  if (kDebugMode) {
+    print("Handling a background message: ${message.messageId}");
+  }
 }
 
 // Permissions request
@@ -52,32 +55,63 @@ Future<void> requestAppPermissions() async {
   final notifStatus = await Permission.notification.request();
   debugPrint("Notification permission: $notifStatus");
 
+  if (Platform.isAndroid) {
+    final statuses = await [
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect,
+      Permission.locationWhenInUse, // better than generic .location
+    ].request();
 
+    debugPrint("BLE + Location permissions: $statuses");
+
+    // Handle permanently denied
+    if (notifStatus.isPermanentlyDenied ||
+        statuses.values.any((s) => s.isPermanentlyDenied)) {
+      await openAppSettings();
+    }
+  }
 }
 
 
 FutureOr<void> main() async {
+  // CRITICAL: Initialize binding FIRST, before any other setup
   WidgetsFlutterBinding.ensureInitialized();
 
-  tz.initializeTimeZones();
-  F.appFlavor = Flavor.oroProduction;
-  await NetworkUtils.initialize();
-  // await dotenv.load(fileName: ".env.apikey");
+  // Set up error handling AFTER binding initialization
+  FlutterError.onError = (FlutterErrorDetails details) {
+    print('Flutter Error: ${details.exception}');
+    print('Stack trace: ${details.stack}');
+    // Log to file or service
+  };
 
-  // Request runtime permissions before providers start
-  if (!kIsWeb && Platform.isAndroid) {
-    await requestAppPermissions();
-  }
-  // Firebase init
-  if (!kIsWeb) {
+  // Now wrap everything in the same zone
+  await runZonedGuarded(() async {
+    // All initialization code goes HERE, inside the zone
+    tz.initializeTimeZones();
+
+    await NetworkUtils.initialize();
+    // await dotenv.load(fileName: ".env.apikey");
+
+    // Request runtime permissions before providers start
+    if (!kIsWeb && Platform.isAndroid) {
+      await requestAppPermissions();
+    }
+
     // Firebase init
-    await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform);
+    if (!kIsWeb) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
 
-    // Firebase Messaging
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    await messaging.requestPermission(alert: true, badge: true, sound: true);
-    const initializationSettingsIOS = DarwinInitializationSettings(
+      // Firebase Messaging
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
+      await messaging.requestPermission(
+        alert: true,
+        badge: true,
+        sound: true,
+      );
+
+      const initializationSettingsIOS = DarwinInitializationSettings(
         requestAlertPermission: true,
         requestBadgePermission: true,
         requestSoundPermission: true,
@@ -122,6 +156,7 @@ FutureOr<void> main() async {
         providers: [
           ChangeNotifierProvider(create: (_) => UserProvider()),
           ChangeNotifierProvider(create: (_) => CustomerProvider()),
+          ChangeNotifierProvider(create: (_) => CustomerSearchViewModel()),
           ChangeNotifierProvider(create: (_) => ConfigMakerProvider()),
           ChangeNotifierProvider(create: (_) => IrrigationProgramMainProvider()),
           ChangeNotifierProvider(create: (_) => MqttPayloadProvider()),
@@ -148,9 +183,15 @@ FutureOr<void> main() async {
           Provider<ApiRepository>(create: (context) =>
               RepositoryImpl(context.read<HttpService>()),
           ),
+          ChangeNotifierProvider(
+            create: (context) => CurrentProgramViewModel(context, 0),
+          ),
         ],
         child: const MyApp(),
       ),
     );
-
+  }, (error, stack) {
+    print('Zone Error: $error');
+    print('Stack: $stack');
+  });
 }

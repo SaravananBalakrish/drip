@@ -160,7 +160,7 @@ class _ConnectionState extends State<Connection> {
                             ),
                           ),
                         const SizedBox(height: 20,),
-                        if(AppConstants.gemModelList.contains(widget.configPvd.masterData['modelId']))
+                        if([...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(widget.configPvd.masterData['modelId']))
                           Center(child: getSelectionCategory()),
                         if(widget.configPvd.selectedSelectionMode == SelectionMode.auto)
                           ...getAutoSelection(selectedDevice)

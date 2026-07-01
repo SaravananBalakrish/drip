@@ -46,11 +46,11 @@ class _AquacultureLineState extends State<AquacultureLine> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: aeratorWaterSources.map((source) {
-              final aerators = source.outletPump;
+              final aerators = source.aeratorPump;
               return Padding(
                 padding: const EdgeInsets.only(right: 16),
                 child: Container(
-                  width: 300,
+                  width: 400,
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.blue.shade50,
@@ -78,7 +78,7 @@ class _AquacultureLineState extends State<AquacultureLine> {
                           physics: const NeverScrollableScrollPhysics(),
                           gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
+                            crossAxisCount: 4,
                             mainAxisSpacing: 8,
                             crossAxisSpacing: 8,
                           ),
@@ -122,8 +122,8 @@ class _AquacultureLineState extends State<AquacultureLine> {
     );
   }
 
-  Widget _buildWaterSource(source) {
-    final aerators = source.outletPump;
+  Widget _buildWaterSource(WaterSourceModel source) {
+    final aerators = source.aeratorPump;
 
     return Padding(
       padding: const EdgeInsets.only(right: 16, bottom: 16),
