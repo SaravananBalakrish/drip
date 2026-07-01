@@ -760,7 +760,7 @@ class MqttPayloadProvider with ChangeNotifier {
           updateNodeLiveMessage(data['cM']['8201'].split(";"));
           updateValveStatus(data['cM']['8202'].split(";"));
           updateSensorValue(data['cM']['8203'].split(";"));
-          //updateCurrentProgram(data['cM']['8408'].split(";"));
+          updateCurrentProgram(data['cM']['8204'].split(";"));
 
         }
         else if(data.containsKey('3600') && data['3600'] != null && data['3600'].isNotEmpty){
