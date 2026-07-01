@@ -40,7 +40,7 @@ class PumpStationMobile extends StatelessWidget {
 
   final ValueNotifier<int> popoverUpdateNotifier = ValueNotifier<int>(0);
 
-  @override
+  /*@override
   Widget build(BuildContext context) {
     final wsAndFilterItems = [
       if (inletWaterSources.isNotEmpty)
@@ -157,9 +157,9 @@ class PumpStationMobile extends StatelessWidget {
           ),
       ],
     );
-  }
+  }*/
 
-  /*@override
+  @override
   Widget build(BuildContext context) {
 
     final wsAndFilterItems = [
@@ -250,7 +250,7 @@ class PumpStationMobile extends StatelessWidget {
         );
       },
     );
-  }*/
+  }
 
   void showRightSheet(BuildContext context, Widget child) {
     showGeneralDialog(
