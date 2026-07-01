@@ -4,7 +4,15 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="98ecc927-f5f4-40af-89f4-2482b1cde4ec" name="Changes" comment="" />
+    <list default="true" id="98ecc927-f5f4-40af-89f4-2482b1cde4ec" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/caches/deviceStreaming.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/gen_dart_plugin_registrant.stamp" beforeDir="false" afterPath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/gen_dart_plugin_registrant.stamp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/cropAdvisory/view/crop_advisory_main_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/cropAdvisory/view/crop_advisory_main_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/cropAdvisory/view/crop_list_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/cropAdvisory/view/crop_list_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/cropAdvisory/view/dashboard_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/cropAdvisory/view/dashboard_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/cropAdvisory/view/field_information_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/cropAdvisory/view/field_information_screen.dart" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -63,12 +71,12 @@
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;venkatmobile&quot;,
     &quot;io.flutter.project.isFirstOpen&quot;: &quot;true&quot;,
     &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/user/Downloads/drip/android&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;emulator&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;dart.settings&quot;,
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
 }</component>

@@ -110,19 +110,13 @@ class _CropListScreenState extends State<CropListScreen> {
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     onTap: () {
-                      // Populate singleton and navigate to Main Screen (Dashboard)
-                      CropAdvisoryModel.instance.fromJson(crop.toJson());
-                      CropAdvisoryModel.instance.cropId = crop.cropId;
-                      CropAdvisoryModel.instance.userId = widget.userId;
-                      CropAdvisoryModel.instance.controllerId =
-                          widget.controllerId;
-
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => CropAdvisoryMainScreen(
                                   userId: widget.userId,
                                   controllerId: widget.controllerId,
+                                  cropModel: crop,
                                 )),
                       );
                     },
