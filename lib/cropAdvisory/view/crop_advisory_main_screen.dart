@@ -24,8 +24,8 @@ class _CropAdvisoryMainScreenState extends State<CropAdvisoryMainScreen> {
 
   List<Widget> _buildScreens() {
     return [
-       DashboardScreen(isInsideMain: true, userID: widget.userId, controllerId: widget.controllerId),
-      const CropWeatherscreen(),
+      DashboardScreen(isInsideMain: true, userID: widget.userId, controllerId: widget.controllerId),
+      CropWeatherscreen(userId: widget.userId, controllerId: widget.controllerId),
       const IrrigationFertigationScreen(isInsideMain: true),
       const Center(child: Text('Disease Screen (Coming Soon)')),
       const ReportScreen(),
