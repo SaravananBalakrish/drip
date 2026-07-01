@@ -22,13 +22,7 @@ class _LevelInConstantState extends State<LevelInConstant> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    int settingLength = widget.constPvd.defaultLevelSetting.where((setting) {
-      if(AppConstants.gemModelList.contains(widget.constPvd.userData['modelId'])){
-        return setting.gemDisplay;
-      }else{
-        return setting.gemDisplay;
-      }
-    }).length;
+    int settingLength = widget.constPvd.defaultLevelSetting.length;
     double minWidth = (cellWidth * 4) + (settingLength * cellWidth) + 50;
     Color borderColor = const Color(0xffE1E2E3);
     return DataTable2(
@@ -49,7 +43,10 @@ class _LevelInConstantState extends State<LevelInConstant> {
           );
         }),
         ...widget.constPvd.defaultLevelSetting
-            .where((defaultSetting) => AppConstants.gemModelList.contains(widget.constPvd.userData['modelId']) ? defaultSetting.gemDisplay : defaultSetting.ecoGemPayload)
+            .where((defaultSetting) => AppConstants.gemModelList.contains(widget.constPvd.userData['modelId'])
+            ? defaultSetting.gemDisplay : AppConstants.gemModelList.contains(widget.constPvd.userData['modelId'])
+            ? defaultSetting.omsGemDisplay
+            : defaultSetting.ecoGemPayload)
             .map((defaultSetting) {
           return DataColumn2(
               headingRowAlignment: MainAxisAlignment.center,
@@ -89,7 +86,9 @@ class _LevelInConstantState extends State<LevelInConstant> {
                   )
               ),
               ...level.setting
-                  .where((setting) => AppConstants.gemModelList.contains(widget.constPvd.userData['modelId']) ? setting.gemDisplay : setting.ecoGemPayload)
+                  .where((setting) => AppConstants.gemModelList.contains(widget.constPvd.userData['modelId'])
+                  ? setting.gemDisplay : AppConstants.gemModelList.contains(widget.constPvd.userData['modelId'])
+                  ? setting.omsGemDisplay : setting.ecoGemPayload)
                   .map((setting) {
                 return DataCell(
                     AnimatedBuilder(
@@ -104,7 +103,7 @@ class _LevelInConstantState extends State<LevelInConstant> {
                             setting.value.value = widget.overAllPvd.getTime();
                             Navigator.pop(context);
                           },
-                          popUpItemModelList: [],
+                          popUpItemModelList: widget.constPvd.sourceType,
                         );
                       },
                     )

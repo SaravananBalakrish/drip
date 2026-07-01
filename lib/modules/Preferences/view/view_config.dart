@@ -381,6 +381,7 @@ class _ViewConfigState extends State<ViewConfig> {
   }
 
   bool _hasPayload(String key, MqttPayloadProvider provider, String deviceId) {
+    print("key : ${key}");
     if (widget.isLora) {
       String mqttKey = key;
       if (key.startsWith('currentconfig')) mqttKey = 'currentconfig';

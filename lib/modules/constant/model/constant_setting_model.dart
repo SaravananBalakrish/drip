@@ -9,6 +9,8 @@ class ConstantSettingModel{
   final bool gemPayload;
   final bool ecoGemDisplay;
   final bool ecoGemPayload;
+  final bool omsGemDisplay;
+  final bool omsGemPayload;
   bool? common;
   ValueNotifier<dynamic> value;
 
@@ -22,12 +24,13 @@ class ConstantSettingModel{
     required this.gemPayload,
     required this.ecoGemDisplay,
     required this.ecoGemPayload,
+    required this.omsGemDisplay,
+    required this.omsGemPayload,
     required this.value,
     required this.common,
   });
 
   factory ConstantSettingModel.fromJson(data, oldValue){
-    print('name : ${data['title']}  ${data['common']}');
     return ConstantSettingModel(
         sNo: data['sNo'],
         title: data['title'],
@@ -37,6 +40,8 @@ class ConstantSettingModel{
         gemPayload: data['gemPayload'],
         ecoGemDisplay: data['ecoGemDisplay'],
         ecoGemPayload: data['ecoGemDisplay'],
+        omsGemDisplay: data.containsKey('omsGemDisplay') ? data['omsGemDisplay'] : false,
+        omsGemPayload: data.containsKey('omsGemDisplay') ? data['omsGemPayload'] : false,
         common: data['common'],
         value: ValueNotifier<dynamic>(oldValue != null ? oldValue['value'] : data['value'])
         // value: ValueNotifier<dynamic>(data['value'])

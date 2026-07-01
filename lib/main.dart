@@ -13,6 +13,8 @@ import 'package:oro_drip_irrigation/services/communication_service.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:oro_drip_irrigation/utils/network_utils.dart';
+import 'package:oro_drip_irrigation/view_models/admin_dealer/customer_search_view_model.dart';
+import 'package:oro_drip_irrigation/view_models/customer/current_program_view_model.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -40,7 +42,9 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 // Background message handler for Firebase
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
-  print("Handling a background message: ${message.messageId}");
+  if (kDebugMode) {
+    print("Handling a background message: ${message.messageId}");
+  }
 }
 
 // Permissions request
@@ -177,6 +181,9 @@ FutureOr<void> main() async {
           Provider<HttpService>(create: (_) => HttpService()),
           Provider<ApiRepository>(create: (context) =>
               RepositoryImpl(context.read<HttpService>()),
+          ),
+          ChangeNotifierProvider(
+            create: (context) => CurrentProgramViewModel(context, 0),
           ),
         ],
         child: const MyApp(),
