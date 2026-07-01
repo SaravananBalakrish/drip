@@ -72,8 +72,8 @@ android {
         applicationId "com.niagaraautomations.oroDripirrigation"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 2281
-        versionName "1.6.02"
+        versionCode 2282
+        versionName "1.6.03"
         multiDexEnabled true
     }
 
