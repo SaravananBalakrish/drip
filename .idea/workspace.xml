@@ -4,7 +4,973 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="98ecc927-f5f4-40af-89f4-2482b1cde4ec" name="Changes" comment="" />
+    <list default="true" id="7874f2d8-27a6-4abd-9638-7a530f480b45" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.dart_tool/dartpad/web_plugin_registrant.dart" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/dartpad/web_plugin_registrant.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/aot_android_asset_bundle.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/app.dill" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/dart_build.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/dart_build.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/dart_build_result.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/flutter_assets.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/gen_dart_plugin_registrant.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/gen_localizations.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/install_code_assets.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/install_code_assets.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/kernel_snapshot_program.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/kernel_snapshot_program.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/0337d4662f1217ddd34c0d0c5076cc95/native_assets.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/dart_plugin_registrant.dart" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/dart_plugin_registrant.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_graph.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_graph.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/drip.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/drip.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_SDK.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/8dd4b6756ca3cbcd39307219c48c959e/.filecache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/8dd4b6756ca3cbcd39307219c48c959e/gen_localizations.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/8dd4b6756ca3cbcd39307219c48c959e/outputs.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/AssetManifest.bin" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/FontManifest.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/NOTICES.Z" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/NativeAssetsManifest.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/.env" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/CropAdvisory/Volcanic_soil.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/CropAdvisory/chatbot_icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/CropAdvisory/clay_soil.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/CropAdvisory/disease.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/CropAdvisory/home_icon_active.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/CropAdvisory/irrigation.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/CropAdvisory/irrigation_active_icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/CropAdvisory/loam_soil.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/CropAdvisory/plant_icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/CropAdvisory/report.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/CropAdvisory/sandy_soil.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/CropAdvisory/weather.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/agitator_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/agitator_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/agitator_connection_pipe_first_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/agitator_connection_pipe_first_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/agitator_connection_pipe_last_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/agitator_connection_pipe_last_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/booster_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/booster_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/multiple_channel_first_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/multiple_channel_first_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/multiple_channel_last_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/multiple_channel_last_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/multiple_channel_middle_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/multiple_channel_middle_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/single_channel_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Fertilization/single_channel_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/disc.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/filtration_joint_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/filtration_to_fertilization_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/horizontal_pipe_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/horizontal_pipe_4.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/multiple_filter_first_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/multiple_filter_first_4.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/multiple_filter_first_backwash_pipe_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/multiple_filter_last_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/multiple_filter_last_4.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/multiple_filter_last_bottom_filtration_pipe.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/multiple_filter_last_bottom_filtration_pipe_4.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/multiple_filter_middle_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/multiple_filter_middle_4.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/multiple_filter_middle_backwash_pipe_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/single_filter_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Filtration/single_filter_4.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Agritel/category_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Agritel/category_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Agritel/category_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Agritel/category_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Agritel/category_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Agritel/category_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Agritel/category_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Agritel/category_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Agritel/category_9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Oro/category_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Oro/category_10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Oro/category_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Oro/category_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Oro/category_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Oro/category_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Oro/category_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Oro/category_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Oro/category_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Oro/category_9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Oro/oro%20elite.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Oro/oro%20nova.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/Oro/oro%20shine.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/SmartComm/bluetooth_connected.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/SmartComm/bluetooth_connecting.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/SmartComm/category_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/SmartComm/category_10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/SmartComm/category_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/SmartComm/category_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/SmartComm/category_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/SmartComm/category_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/SmartComm/category_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/SmartComm/category_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/SmartComm/category_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/SmartComm/category_9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/arrow.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/bulb_grey.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/bulb_orange.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/bulb_red.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/bulb_yellow.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/clock_needle.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/connection.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/device_list.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/file_not_available.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/firmware_updated.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/interface_setting.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/no_data.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_10.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_11.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_12.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_13.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_14.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_15.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_16.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_17.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_18.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_19.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_20.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_21.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_22.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_23.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_24.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_25.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_26.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_27.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_28.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_29.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_3.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_30.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_31.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_32.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_33.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_34.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_35.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_36.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_37.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_38.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_39.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_40.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_41.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_43.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_44.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_45.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_46.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_5.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_6.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_7.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_8.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/objectId_9.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/product_limit.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/site_configure.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Png/weather_station.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/backside_pipe_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/bore_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/bottom_float.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/front_corner_left_radius_pipe_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/front_corner_right_radius_pipe_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/pond_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/pump_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/pump_joint_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/pump_t_joint_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/radius_pipe_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/sump_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/sump_outlet_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/tank_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/tank_outlet_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/top_float.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/vertical_pipe_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/water_view.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/well_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Source/well_outlet_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/Oro/bluetooth_off.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/Oro/bootMode.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/Oro/calibration.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/Oro/connecting.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/Oro/control.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/Oro/get_live.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/Oro/latch.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/Oro/sent_and_receive.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/SmartComm/bluetooth_kit.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/SmartComm/bluetooth_off.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/SmartComm/bootMode.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/SmartComm/calibration.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/SmartComm/connecting.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/SmartComm/control.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/SmartComm/get_live.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/SmartComm/interface_setting.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/SmartComm/latch.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/SmartComm/location_off.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/SmartComm/sent_and_receive.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/SmartComm/trace_file.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/arrow.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/clear.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/connection.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/constant.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/device_list.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/level_condition.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/method.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/moisture_condition.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_10.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_11.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_12.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_13.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_14.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_15.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_16.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_17.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_18.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_19.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_2.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_20.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_21.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_22.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_23.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_24.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_25.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_26.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_27.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_28.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_29.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_3.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_30.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_31.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_32.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_33.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_34.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_35.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_36.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_37.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_38.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_39.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_4.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_40.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_41.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_42.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_43.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_44.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_45.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_5.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_6.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_7.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_8.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/objectId_9.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/post_value.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/pre_post_method.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/pre_value.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/preference.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/product_limit.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/send.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/site_configure.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/svgviewer-output.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/time_quantity.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/white.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/Svg/winddirection.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/central_fertilizer_site2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/default.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/irrigation_line1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/m_valve.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/otp.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/otpmobile.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/sunrise.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/sunset.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/Images/w08.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/SVGPicture/Pump.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/SVGPicture/ec%20diff.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/SVGPicture/ec%20high.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/SVGPicture/no%20communication.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/SVGPicture/ph%20high.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/SVGPicture/ph%20low.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/SVGPicture/ph-differencef.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/SVGPicture/pressure%20switch.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/SVGPicture/pumpoff1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/SVGPicture/sump%20empty.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/SVGPicture/tank%20full.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/SVGPicture/wrong%20feedback1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/Run-motor.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/aerators_g.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/download.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/dp_agitator_right_g.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/dp_frt_booster_pump_g.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/dp_irr_pump_g.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/greenpump.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/greenpump1.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/light%20on.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/m_dp_frt_booster_pump_g.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/m_fan_green.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/m_pump_first.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/m_valve_green.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/runningmotor.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/sendfiles.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/gif/water_drop_ani.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/ic_launcher.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/json/bluetooth_scanning.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/json/device_found.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/json/file_matched.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/localfile/Testing" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/lottie/check.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/lottie/error.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/lottie/success.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/lottie/verified.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/CO-2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/LDR.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/L_joint.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/Lux.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/SoilMoisture.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/SoilTemp%20.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/WindDirection.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/WindSpeed.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/WindSpeedColor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/agitator_b.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/agitator_g.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/agitator_o.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/agitator_r.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/booster.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/booster_b.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/booster_g.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/booster_g.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/booster_o.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/booster_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/booster_r.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/channel_b.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/channel_g.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/channel_o.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/channel_r.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/compass.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/filter_mode_0.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/filter_mode_1.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/filter_mode_2.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/filter_mode_3.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/filter_mode_4.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/horizontal_air_pipe.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/horizontal_water_fert_pipe.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/horizontal_water_pipe.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/horizontal_water_pipe_g.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/humidity.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/leafWetness.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/pressure.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/rainFall.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/sump.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/sunrise.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/temperature.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/vertical_water_pipe.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/vertical_water_pipe_b.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/vertical_water_pipe_g.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/weatherbgcloud.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/weathergraphemtyval.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/mob_dashboard/weathergraphval.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/oro_store.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/playstore.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/Soil_temperature.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/aerators_grey.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/aerators_o.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/aerators_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/agitator_gray.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/agritel_logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/agritel_logo_white.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/booster_pump.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/booster_pump_g.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/booster_pump_o.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/booster_pump_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/choose_controller.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/co2_sensor_wj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/company_logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/company_logo_nia.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/delete_icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_agitator_right.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_agitator_right_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_agitator_right_y.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_bore_well_center.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_bore_well_first.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_filter.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_filter_g.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_filter_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_filter_y.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_booster_pump.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_booster_pump_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_booster_pump_y.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_center.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_center_aj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_center_aj_g.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_center_aj_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_center_aj_y.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_center_g.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_center_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_center_y.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_first_aj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_first_aj_g.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_first_aj_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_first_aj_y.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_last.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_last_aj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_last_aj_g.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_last_aj_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_last_aj_y.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_last_g.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_last_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_frt_channel_last_y.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_irr_pump.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_irr_pump_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_irr_pump_y.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_prs_sensor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_pump.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_pump_green.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_pump_orange.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_pump_red.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_sump.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_sump_center.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_sump_first.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_sump_first_cws.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_sump_last.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_well_center.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_well_first.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/dp_well_last.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/edit_icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/fan_green.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/fan_grey.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/fan_orange.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/fan_red.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/faultmotor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/fert_chanel.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/filter.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/float_switch.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/gate_close.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/gate_open.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/humidity_sensor_wj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/idealmotor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/independent_valve_gray.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/irrigation_line1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/light%20off.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/light_gray.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/light_yellow.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/lk_login_left_picture.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/lk_login_top_corner.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/lk_logo_white.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/login_top_corner.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/m_flow_control_valve.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/m_light_gray.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/m_light_orange.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/m_light_red.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/m_light_yellow.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/m_main_valve_gray.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/m_valve_grey.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/main_valve_blue.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/main_valve_gray.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/main_valve_green.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/main_valve_orange.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/main_valve_red.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/map.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markeragitator.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerblue.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerfertilizer.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerfilter.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markergray.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markergreen.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerinjector.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerorange.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerpump.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerred.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markersensor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerxme.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerxmh.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerxml.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerxmm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerxmp.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerxmr.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerxms.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markerxmw.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/markeryellow.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/menucondition.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/menufertlizerset.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/menufilter.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/menufrost.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/menuglobal.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/menugroup.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/menuprogramque.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/menuradiationset.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/menusatelite.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/menuwatersource.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/menuweather.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_Co2_sensor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_bore_well_center.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_bore_well_first.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_dp_filter.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_dp_filter_g.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_dp_filter_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_dp_filter_y.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_dp_prs_sensor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_fan_grey.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_fan_orange.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_fan_red.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_humidity_sensor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_pressure_sensor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_pressure_switch.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_pump_first_g.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_pump_first_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_pump_first_y.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_rever_first.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_soil_temperature.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_sump_center.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_sump_first.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_temperature_sensor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_water_meter.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_well_center.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/m_well_first.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/ms_dp_filter.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/ms_dp_filter_g.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/ms_dp_filter_r.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/mobile/ms_dp_filter_y.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/moisture_sensor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/oro_logo_white.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/pressure_sensor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/pressure_sensor_wj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/pressure_sensor_wjl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/pressure_switch.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/pressure_switch_wj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/readymotor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/selector.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/street-lamp%20(1).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/street-lamp.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/street-light%20(1).png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/street-light.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/temperature_sensor.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/textmarker.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/user_thumbnail.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_blue.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_blue_cws.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_blue_lj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_gray.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_gray_cws.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_gray_lj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_green.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_green_cws.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_green_lj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_green_wol.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_grey_wol.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_orange.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_orange_cws.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_orange_lj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_orange_wol.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_red.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_red_cws.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_red_lj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_red_wol.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_yellow.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_yellow_cws.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/valve_yellow_lj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/water_meter.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/png/water_meter_wj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/smartcomm_launcher.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/smartcomm_playstore.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/splash/oro_production.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/splash/smart_comm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/splash/transparent.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/svg_images/agritel_left_picture.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/svg_images/lk_login_top_corner.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/svg_images/login_left_picture.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/svg_images/oro_logo.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/svg_images/top_corner.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/assets/svg_images/white_arrow.svg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/fonts/MaterialIcons-Regular.otf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/cupertino_icons/assets/CupertinoIcons.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/font_awesome_flutter/lib/fonts/fa-brands-400.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/font_awesome_flutter/lib/fonts/fa-regular-400.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/font_awesome_flutter/lib/fonts/fa-solid-900.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ad.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ae.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/af.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ag.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ai.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/al.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/am.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/an.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ao.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/aq.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ar.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/as.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/at.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/au.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/aw.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ax.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/az.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ba.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bb.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bd.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/be.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bf.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bg.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bh.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bi.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bq.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/br.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bs.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bt.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bv.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bw.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/by.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/bz.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ca.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cd.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cf.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cg.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ch.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ci.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ck.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/co.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cr.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cu.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cv.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cw.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cx.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/cz.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/de.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/dj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/dk.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/dm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/do.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/dz.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ec.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ee.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/eg.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/eh.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/er.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/es.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/et.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/eu.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/fi.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/fj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/fk.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/fm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/fo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/fr.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ga.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gb-eng.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gb-nir.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gb-sct.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gb-wls.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gb.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gd.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ge.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gf.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gg.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gh.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gi.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gp.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gq.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gr.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gs.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gt.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gu.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gw.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/gy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/hk.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/hm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/hn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/hr.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ht.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/hu.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/id.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ie.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/il.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/im.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/in.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/io.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/iq.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ir.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/is.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/it.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/je.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/jm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/jo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/jp.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ke.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/kg.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/kh.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ki.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/km.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/kn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/kp.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/kr.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/kw.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ky.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/kz.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/la.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/lb.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/lc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/li.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/lk.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/lr.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ls.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/lt.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/lu.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/lv.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ly.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ma.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/md.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/me.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mf.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mg.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mh.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mk.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ml.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mp.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mq.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mr.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ms.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mt.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mu.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mv.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mw.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mx.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/my.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/mz.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/na.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/nc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ne.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/nf.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ng.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ni.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/nl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/no.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/np.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/nr.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/nu.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/nz.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/om.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/pa.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/pe.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/pf.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/pg.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ph.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/pk.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/pl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/pm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/pn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/pr.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ps.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/pt.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/pw.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/py.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/qa.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/re.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ro.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/rs.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ru.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/rw.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sa.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sb.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sd.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/se.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sg.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sh.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/si.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sk.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/so.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sr.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ss.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/st.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sv.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sx.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/sz.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/tc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/td.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/tf.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/tg.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/th.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/tj.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/tk.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/tl.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/tm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/tn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/to.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/tr.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/tt.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/tv.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/tw.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/tz.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ua.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ug.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/um.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/us.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/uy.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/uz.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/va.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/vc.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ve.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/vg.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/vi.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/vn.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/vu.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/wf.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ws.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/xk.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/ye.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/yt.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/za.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/zm.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/intl_phone_field/assets/flags/zw.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/packages/material_design_icons_flutter/lib/fonts/materialdesignicons-webfont.ttf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/shaders/ink_sparkle.frag" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/app/intermediates/flutter/agritelRelease/flutter_assets/shaders/stretch_effect.frag" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/.filecache" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/_composite.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/dart_build.d" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/dart_build.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/dart_build_result.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/gen_dart_plugin_registrant.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/gen_localizations.stamp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/cf086a5562f3cc9b86298df346df9d3f/outputs.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/project/PROJECT@v11_mod=3b8428d66f2c2801884bfdce6a666711_hash=bfdfe7dc352907fc980b868725387e98plugins=1OJSG6M1FOV3XYQCBH7Z29RZ0FPR9XDE1-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=00a68b7c6468d303c75b8327542b94af-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=011f5113e57ca101fe25d0e3d11c264c-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=01934321c270117887dcbb3101049750-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=01f8680d874047fae83b1ac04de183ac-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=05070ba23f9ef35a670bc37e7c47b630-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=05437e4a3a86c01632442118da246030-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=06662115c7d9fe22c083f1f3cd689a45-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=07dcde47072f2fc13529aebc3e7792eb-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=07e2cb91e6a0fdb76e214a46ccc76503-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=0996d44a1daff70cefb77ff38f032be7-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=0c16074cd5f58a6078356b06a38241f2-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=0f125855890d31ebdae21e494bf5b284-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=145ee74f727da54f5b35b133269533a3-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=1e7a2a2475ba30ca35263f36db5d0004-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=26403b91a4bd698b1674ce4539bbbdf7-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=26412e8638cfecd0669a5c575bdd4ba5-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=2e049155ae1e1a601cc2da1130312b83-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=3115f4db5e045d341c7969db3319c679-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=319266d59b3f2467bef55f4b84c8239a-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=356e3e6c8772d44059b6e24c66abbf15-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=371907683e3ceabffbf4fcb2b6d99508-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=3743ce71fcc96d9e6adf4740e3f05034-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=391cf258db222da619e6ab65b6f54b2c-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=3d64e422a6cace3dfdcfd7595875b6f0-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=40dfbf44804b3bdee9a3f9bd3f21bd84-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=43a5a2945a1dad5cebea231531ec8be9-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=46d2c94264cdad0f8eaaa63abc3f2ae2-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=478b8e7e49d5534f9e8937904113dc43-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=48b1e965cf33f6dc106113078582f027-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=499ea6fb91421874d70d373ef895cf03-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=49e30154234cda97f7d49a1a3fb3264c-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=4ad99829f1e8fb585fa03a700985a54d-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=4b5b7fe4e8a6f59d8d3f4bc3dc14af9a-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=528923b7eb30673adfcb4a8c7a17f138-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=56622e3a5b18999097096bd6c0201b0c-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=57a10dc5fb30d577566415b8d0572a81-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=5cc468ba1a65743362b0f298370e80eb-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=614c0925ba4eb31ee52104cda4b3307f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=65b367c5dca9b90f8cb3bea41d020a41-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=6d449072ea5c6c9240cbd70e50c8140d-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=7011495f5c7f4fc3c40945b28d986a73-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=727bf3da6253923bbb725e0e00553a31-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=77d95ba8cc51a0f217d57fc6e2130c31-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=787b25b38a708ff9ce2017a837055342-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=8191cbea57657ab302d94907817c7afc-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=835ad8869ce2f1f96620ac0d27e4b798-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=841f40def98edaee07ff0c8789378544-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=88b13944f4c73e0047b7868bc2a9433f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=8a675ff8768d6f4b788adb7f54347649-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=8f8dd8d376c4cf9cb4f785475fc95e75-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=92b0464cb03e00478f43b7e6b27c782a-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=93ff95b63ce5dd46624861ba99dc321f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=9c6d4b04c6c90c8c83ac834893d0ae54-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=9ebc309709eae14abc87785b8506087a-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=a1642ef34a2885550cab6c67b1b00256-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=a5e8e482b772b7e8ac7984f6384f4a61-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=a9f2a3d2d18eea0d8e420915c2a1d572-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=ab4dc408d1be612a858329a35b116016-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=ba4d6215e8ab812b0a63cc5cc8e4c014-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=bb590d037f917bdf850b5ae0ec50842d-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=bc0af6077125974620c14da0c534f9d3-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=bf5b5192d48eec8bbf7bd8e573e7019c-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=c1ba95185b5569654d2fcb4d7892e676-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=c3a9ef11346bc43282c5efdee9eb1d53-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=c882e9d99f831f5f7fc3bb83547a22ac-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=c8f975e5047738ea964e961e3d9ec11f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=cb6a071cf178506d9a935a56b6fed7a0-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=cf73b4fe42d7f76001699107524e6c90-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d0ccdcdb144776337f38a4cb4d3eb86f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d17d55be4dc64b073fc0c0804c2b70de-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d2b40b0d059a9f18767cea3917ee791f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d5c1c12fdfdda430847d540077904f5a-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d69a14d849bcfcced428fd3ea39972a8-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d70a352fed2a6125286a724843143488-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d72dd9e4ac266acc85788c5b29677a4f-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d7d7b90e659c887c30afe68735f3efa0-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=d85808d41eb247a940a6f1e816c11e51-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=e531fcca46829769082deebfdf65f201-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=e541f92e05160eb2d5c2cbe69ea6a45d-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=e78acdc1429a82b0e5a7a91b2a9361f2-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=eb545666fed925a82c6117c30e8f1d09-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=f11312cb2045a17dc6b865034a83cea2-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/target/TARGET@v11_hash=f8c2e754a4ab78905ec0f373b1a01b7c-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/ios/XCBuildData/PIFCache/workspace/WORKSPACE@v11_hash=(null)_subobjects=6628ad760d4b1f1690114090564b87a0-json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/build/native_hooks/.last_build_id" beforeDir="false" afterPath="$PROJECT_DIR$/build/native_hooks/.last_build_id" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Flutter/Generated.xcconfig" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Flutter/Generated.xcconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Flutter/ephemeral/flutter_lldb_helper.py" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Flutter/ephemeral/flutter_lldb_helper.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Flutter/ephemeral/flutter_lldbinit" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Flutter/ephemeral/flutter_lldbinit" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Flutter/flutter_export_environment.sh" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Flutter/flutter_export_environment.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.h" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/StateManagement/mqtt_payload_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/StateManagement/mqtt_payload_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/view_models/customer/current_program_view_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/view_models/customer/current_program_view_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/views/common/user_dashboard/narrow/customer_home_narrow.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/common/user_dashboard/narrow/customer_home_narrow.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/views/common/user_dashboard/widgets/oms_line.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/common/user_dashboard/widgets/oms_line.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/views/common/user_dashboard/widgets/pump_station_mobile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/common/user_dashboard/widgets/pump_station_mobile.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/views/customer/home_sub_classes/current_program.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/customer/home_sub_classes/current_program.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/connectivity_plus" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/connectivity_plus" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/device_info_plus" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/device_info_plus" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/file_selector_linux" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/file_selector_linux" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/flutter_blue_plus_linux" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/flutter_blue_plus_linux" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/flutter_local_notifications_linux" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/flutter_local_notifications_linux" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/image_picker_linux" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/image_picker_linux" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/package_info_plus" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/package_info_plus" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/path_provider_linux" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/shared_preferences_linux" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/shared_preferences_linux" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/url_launcher_linux" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/ephemeral/.plugin_symlinks/url_launcher_linux" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.cc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.h" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/linux/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/generated_plugins.cmake" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/macos/Flutter/ephemeral/Flutter-Generated.xcconfig" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/ephemeral/Flutter-Generated.xcconfig" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/macos/Flutter/ephemeral/flutter_export_environment.sh" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/ephemeral/flutter_export_environment.sh" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -13,127 +979,64 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Dart File" />
-      </list>
-    </option>
-  </component>
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="ios" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;rahulniagaradev2025-debug&quot;
-  }
-}</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/venkatesanios/drip.git&quot;,
-    &quot;accountId&quot;: &quot;ab901d65-f9a0-4027-a04a-dd326fda4b77&quot;
-  }
-}</component>
   <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 0
+  &quot;associatedIndex&quot;: 7
 }</component>
-  <component name="ProjectId" id="3Bz3tpgZ2KY9kb61KCkJi63cTAV" />
+  <component name="ProjectId" id="3FqEFSBdVUw5H5HldPdwxKBFaCX" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Flutter.Agritel.executor&quot;: &quot;Run&quot;,
-    &quot;Flutter.OroProduction.executor&quot;: &quot;Run&quot;,
-    &quot;Flutter.oroDevelopment.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
-    &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;io.flutter.project.isFirstOpen&quot;: &quot;true&quot;,
-    &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/user/Downloads/drip/android&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;emulator&quot;,
-    &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Flutter.main_oroProduction.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "kamaraj",
+    "io.flutter.project.isFirstOpen": "true",
+    "io.flutter.reload.alreadyRun": "true",
+    "kotlin-language-version-configured": "true",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "dart.settings",
+    "show.migrate.to.gradle.popup": "false"
   }
-}</component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/android" />
-      <recent name="$PROJECT_DIR$/android/app" />
-      <recent name="$PROJECT_DIR$/android/app/src/main" />
-      <recent name="$PROJECT_DIR$/assets" />
-      <recent name="$PROJECT_DIR$/lib/Screens/planning/weather" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/android" />
-      <recent name="$PROJECT_DIR$/lib/cropAdvisory/model" />
-      <recent name="$PROJECT_DIR$/assets/Images" />
-    </key>
-  </component>
-  <component name="RunManager" selected="Flutter.OroProduction">
-    <configuration name="Agritel" type="FlutterRunConfigurationType" factoryName="Flutter">
-      <option name="additionalArgs" value="lib/main_agritel.dart" />
-      <option name="buildFlavor" value="Agritel" />
-      <option name="filePath" value="$PROJECT_DIR$/lib/main_agritel.dart" />
-      <method v="2" />
-    </configuration>
-    <configuration name="OroProduction" type="FlutterRunConfigurationType" factoryName="Flutter">
+}]]></component>
+  <component name="RunManager" selected="Flutter.main_oroProduction">
+    <configuration name="main_oroProduction" type="FlutterRunConfigurationType" factoryName="Flutter">
       <option name="additionalArgs" value="lib/main_oroProduction.dart" />
       <option name="buildFlavor" value="oroProduction" />
       <option name="filePath" value="$PROJECT_DIR$/lib/main_oroProduction.dart" />
       <method v="2" />
     </configuration>
-    <configuration name="oroDevelopment" type="FlutterRunConfigurationType" factoryName="Flutter">
-      <option name="additionalArgs" value="lib/main_oroDevelopment.dart" />
-      <option name="buildFlavor" value="oroDevelopment" />
-      <option name="filePath" value="$PROJECT_DIR$/lib/main_oroDevelopment.dart" />
+    <configuration name="main_smartComm" type="FlutterRunConfigurationType" factoryName="Flutter">
+      <option name="additionalArgs" value="lib/main_smartComm.dart" />
+      <option name="buildFlavor" value="smartComm" />
+      <option name="filePath" value="$PROJECT_DIR$/lib/main_smartComm.dart" />
       <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Flutter.main.dart" />
-      <item itemvalue="Flutter.Agritel" />
-      <item itemvalue="Flutter.OroProduction" />
-      <item itemvalue="Flutter.oroDevelopment" />
+      <item itemvalue="Flutter.main_oroProduction" />
+      <item itemvalue="Flutter.main_smartComm" />
     </list>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="98ecc927-f5f4-40af-89f4-2482b1cde4ec" name="Changes" comment="" />
-      <created>1775478289238</created>
+      <changelist id="7874f2d8-27a6-4abd-9638-7a530f480b45" name="Changes" comment="" />
+      <created>1782794096884</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1775478289238</updated>
+      <updated>1782794096884</updated>
     </task>
     <servers />
-  </component>
-  <component name="UnknownFeatures">
-    <option featureType="com.intellij.fileTypeFactory" implementationName="*.dart" />
-  </component>
-  <component name="Vcs.Log.Tabs.Properties">
-    <option name="TAB_STATES">
-      <map>
-        <entry key="MAIN">
-          <value>
-            <State />
-          </value>
-        </entry>
-      </map>
-    </option>
   </component>
 </project>
