@@ -563,7 +563,7 @@ class _SequenceScreenState extends State<SequenceScreen> {
         sections.add(_buildIrrigationSection(
           context: context,
           title: 'Main valves',
-          items: mainValves,
+          items: AppConstants.omsGemList.contains(widget.modelId)? mainValves.take(1).toList() : mainValves,
           isMainValve: true,
           leading: _buildLeadingIcon('assets/Images/m_valve.png'),
         ));
@@ -590,7 +590,7 @@ class _SequenceScreenState extends State<SequenceScreen> {
           return _buildIrrigationSection(
             context: context,
             title: line.irrigationLine.name ?? 'Unnamed Line',
-            items: AppConstants.omsGemList.contains(widget.modelId)? line.valve!.take(4).toList() :  line.valve ?? [],
+            items: AppConstants.omsGemList.contains(widget.modelId)? line.valve!.take(6).toList() :  line.valve ?? [],
             lineIndex: index,
           );
         }));
@@ -606,8 +606,6 @@ class _SequenceScreenState extends State<SequenceScreen> {
         leading: _buildLeadingIcon('assets/png/dp_agitator_right.png'),
       ));
     }
-
-    print("_isAeratorProgram => $_isAeratorProgram  |  _provider.aerators => ${_provider.aerators}");
 
     // Aerators
     if (_isAeratorProgram && _provider.aerators != null) {

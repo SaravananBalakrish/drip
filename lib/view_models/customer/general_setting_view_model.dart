@@ -166,10 +166,10 @@ class GeneralSettingViewModel extends ChangeNotifier {
         "controllerLocation": controllerLocation,
         "groupId": groupId,
         "groupName": farmName,
-        "countryCode":
-        AppConstants.ecoGemModelList.contains(modelId) ? countryCode : null,
-        "simNumber":
-        AppConstants.ecoGemModelList.contains(modelId) ? simNumber : null,
+        "countryCode": [...AppConstants.ecoGemModelList, ...AppConstants.gsmModelList]
+            .contains(modelId) ? countryCode : null,
+        "simNumber": [...AppConstants.ecoGemModelList, ...AppConstants.gsmModelList]
+            .contains(modelId) ? simNumber : null,
         "modifyUser": userId,
       };
 

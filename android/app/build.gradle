@@ -58,14 +58,22 @@ android {
             applicationId "com.niagaraautomations.agritel"
             resValue "string", "app_name", "Agritel"
         }
+
+
+        configurations.all {
+            resolutionStrategy {
+                force 'com.google.firebase:firebase-iid:21.1.0'
+            }
+            exclude group: "com.google.firebase", module: "firebase-iid"
+        }
     }
 
     defaultConfig {
         applicationId "com.niagaraautomations.oroDripirrigation"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion flutter.targetSdkVersion
-        versionCode 2279
-        versionName "1.6.01"
+        versionCode 2281
+        versionName "1.6.02"
         multiDexEnabled true
     }
 

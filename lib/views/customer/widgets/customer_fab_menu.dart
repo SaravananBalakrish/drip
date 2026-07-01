@@ -231,7 +231,7 @@ class CustomerFabMenu extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => MapScreenOro(userId: loggedInUser.id, customerId: vm.mySiteList.data[vm.sIndex].customerId, controllerId: currentMaster.controllerId, imeiNo: currentMaster.deviceId, modelId: currentMaster.modelId,)
+              builder: (context) => MapScreenOro(userId: loggedInUser.id, customerId: vm.mySiteList.data[vm.sIndex].customerId, controllerId: currentMaster.controllerId, imeiNo: currentMaster.deviceId, modelId: currentMaster.modelId,)
           ),
         );
         break;

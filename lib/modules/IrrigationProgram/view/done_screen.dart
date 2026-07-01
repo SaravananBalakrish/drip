@@ -78,14 +78,14 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
                   margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * 0.05, vertical: MediaQuery.of(context).size.width * 0.025),
                   child: ListView(
                     children: [
-                      for(var index = 0; index < ((widget.isIrrigationProgram && !isEcoGem) ? 8 : 3); index++)
+                      for(var index = 0; index < ((widget.isIrrigationProgram && !isEcoGem) ? 13 : 3); index++)
                         Column(
                           children: [
                             buildListTile(
                               padding: EdgeInsets.symmetric(vertical: MediaQuery.of(context).size.width > 1200 ? 8 : 0),
                               context: context,
                               title: isEcoGem ? ['Program Name', 'Valve Off Delay', 'Scale factor'][index].toUpperCase()
-                                  : ['Program Name', 'Priority', 'Valve Off Delay', 'Scale factor', 'Cyclic OnTime', 'Cyclic OffTime', 'Enable Pressure', 'Pressure Value'][index].toUpperCase(),
+                                  : ['Program Name', 'Priority', 'Valve Off Delay', 'Scale factor', 'Cyclic OnTime', 'Cyclic OffTime', 'Enable Pressure', 'Pressure Value', 'Control Mode', 'Set Pressure', 'Pressure Tolerance', 'Set Flow', 'Flow Tolerance'][index].toUpperCase(),
                               subTitle: isEcoGem ? [tempProgramName != '' ? tempProgramName : widget.serialNumber == 0
                                   ? "Program ${doneProvider.programCount}"
                                   : doneProvider.programDetails!.programName.isNotEmpty ? programName : doneProvider.programDetails!.defaultProgramName,
@@ -93,11 +93,11 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
                                   : [tempProgramName != '' ? tempProgramName : widget.serialNumber == 0
                                   ? "Program ${doneProvider.programCount}"
                                   : doneProvider.programDetails!.programName.isNotEmpty ? programName : doneProvider.programDetails!.defaultProgramName,
-                                'Prioritize the program to run', 'Set valve off delay', 'Adjust duration or flow', 'Set Cyclic On Time', 'Set Cyclic Off Time', 'Enable Pressure', 'Set Pressure Value'][index],
+                                'Prioritize the program to run', 'Set valve off delay', 'Adjust duration or flow', 'Set Cyclic On Time', 'Set Cyclic Off Time', 'Enable Pressure', 'Set Pressure Value', 'Choose control mode', 'Set Pressure Value', 'Set Pressure Tolerance', 'Set Flow Value', 'Set Flow Tolerance'][index],
                               textColor: Colors.black,
                               icon: isEcoGem
                                   ? [Icons.drive_file_rename_outline_rounded, Icons.timer_outlined, Icons.safety_check][index]
-                                  : [Icons.drive_file_rename_outline_rounded, Icons.priority_high, Icons.timer_outlined, Icons.safety_check, Icons.timer, Icons.timer, Icons.check_box, Icons.speed][index],
+                                  : [Icons.drive_file_rename_outline_rounded, Icons.priority_high, Icons.timer_outlined, Icons.safety_check, Icons.timer, Icons.timer, Icons.check_box, Icons.speed, Icons.speed, Icons.speed, Icons.speed, Icons.speed, Icons.speed][index],
                               trailing: isEcoGem ? [
                                 InkWell(
                                   child: Icon(Icons.drive_file_rename_outline_rounded, color: Theme.of(context).primaryColor,),
@@ -340,6 +340,114 @@ class _AdditionalDataScreenState extends State<AdditionalDataScreen> {
                                         ),
                                       ),
                                       Text("bar", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
+                                    ],
+                                  ),
+                                ),
+                                IntrinsicWidth(
+                                  child: DropdownButton<String>(
+                                    value: doneProvider.controlMode, // define a state variable like String? selectedValue;
+                                    items: <String>['pressure', 'flow']
+                                        .map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    onChanged: (String? newValue) {
+                                      doneProvider.updateProgramName(newValue, 'controlMode');
+
+                                    },
+                                  ),
+                                ),
+                                IntrinsicWidth(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        child: TextFormField(
+                                          initialValue: doneProvider.setPressure,
+                                          decoration: const InputDecoration(
+                                            // hintText: '0%',
+                                          ),
+                                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: AppProperties.regexForDecimal,
+                                          onChanged: (newValue){
+                                            doneProvider.updateProgramName(newValue, 'setPressure');
+                                          },
+                                        ),
+                                      ),
+                                      Text("bar", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
+                                    ],
+                                  ),
+                                ),
+                                IntrinsicWidth(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        child: TextFormField(
+                                          initialValue: doneProvider.pressureTolerance,
+                                          decoration: const InputDecoration(
+                                            // hintText: '0%',
+                                          ),
+                                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: AppProperties.regexForDecimal,
+                                          onChanged: (newValue){
+                                            doneProvider.updateProgramName(newValue, 'pressureTolerance');
+                                          },
+                                        ),
+                                      ),
+                                      Text("%", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
+                                    ],
+                                  ),
+                                ),
+                                IntrinsicWidth(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        child: TextFormField(
+                                          initialValue: doneProvider.setFlow,
+                                          decoration: const InputDecoration(
+                                            // hintText: '0%',
+                                          ),
+                                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: AppProperties.regexForDecimal,
+                                          onChanged: (newValue){
+                                            doneProvider.updateProgramName(newValue, 'setFlow');
+                                          },
+                                        ),
+                                      ),
+                                      Text("l/h", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
+                                    ],
+                                  ),
+                                ),
+                                IntrinsicWidth(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        child: TextFormField(
+                                          initialValue: doneProvider.flowTolerance,
+                                          decoration: const InputDecoration(
+                                            // hintText: '0%',
+                                          ),
+                                          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),
+                                          keyboardType: TextInputType.number,
+                                          inputFormatters: AppProperties.regexForDecimal,
+                                          onChanged: (newValue){
+                                            doneProvider.updateProgramName(newValue, 'flowTolerance');
+                                          },
+                                        ),
+                                      ),
+                                      Text("%", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: Theme.of(context).textTheme.bodyLarge!.fontSize),)
                                     ],
                                   ),
                                 ),

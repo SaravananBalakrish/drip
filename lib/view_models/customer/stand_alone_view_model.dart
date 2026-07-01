@@ -485,13 +485,17 @@ class StandAloneViewModel extends ChangeNotifier {
     standaloneSelection.clear();
 
     bool isNova = [...AppConstants.ecoGemModelList].contains(masterData.modelId);
+    bool isAerator = [...AppConstants.aquacultureModelList].contains(masterData.modelId);
 
     String strSldSourcePumpSrlNo = extractRelaySrlNosFromSources(
-      masterData.irrigationLine.expand((line) => line.inletSources).toList(),
+      masterData.irrigationLine.expand((line) => line.inletSources).toList(), false,
     );
 
     String strSldIrrigationPumpSrlNo = extractRelaySrlNosFromSources(
-        masterData.irrigationLine.expand((line) => line.outletSources).toList());
+        masterData.irrigationLine.expand((line) => line.outletSources).toList(), false);
+
+    String strSldAeratorPumpSrlNo = extractRelaySrlNosFromSources(
+        masterData.irrigationLine.expand((line) => line.aeratorSources).toList(), true);
 
     String strSldCtrlFilterSrlNo = extractFilterRelaySrlNos(masterData.irrigationLine,'central');
     String strSldCtrlFrtBoosterSrlNo = extractCFrtBoosterSNos(masterData.irrigationLine,'central');
@@ -514,7 +518,8 @@ class StandAloneViewModel extends ChangeNotifier {
 
       allPumpSrlNo = [
         strSldSourcePumpSrlNo,
-        strSldIrrigationPumpSrlNo
+        strSldIrrigationPumpSrlNo,
+        strSldAeratorPumpSrlNo,
       ];
 
       for (var line in masterData.irrigationLine) {
@@ -680,10 +685,10 @@ class StandAloneViewModel extends ChangeNotifier {
     }
   }
 
-  String extractRelaySrlNosFromSources(List<dynamic> sources) {
+  String extractRelaySrlNosFromSources(List<dynamic> sources, bool isAerator) {
     final Set<String> serialNos = {};
     for (var source in sources) {
-      final srlNo = getSelectedRelaySrlNo(source.outletPump);
+      final srlNo = getSelectedRelaySrlNo(isAerator ? source.aeratorPump : source.outletPump);
       if (srlNo.isNotEmpty) {
         serialNos.addAll(srlNo.split(','));
       }
@@ -845,7 +850,6 @@ class StandAloneViewModel extends ChangeNotifier {
 
   Future<void> sentManualModeToServer(int sNo, int sFlag, int method, String dur, String flow, List<Map<String, dynamic>> selection, String payLoad) async {
     try {
-
       final body = {
         "userId": customerId,
         "controllerId": controllerId,
