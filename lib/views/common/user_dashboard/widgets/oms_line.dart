@@ -296,13 +296,13 @@ class _OmsLineState extends State<OmsLine> {
         children: [
           SizedBox(width: 28),
           SizedBox(width: 42),
-          Expanded(flex: 3, child: Text('Node', style: headerStyle)),
+          SizedBox(width: 150, child: Text('Node', style: headerStyle)),
           Expanded(flex: 3, child: Text('Street', style: headerStyle)),
-          Expanded(flex: 1, child: Text('Signal', style: headerStyle)),
-          Expanded(flex: 1, child: Text('Battery', style: headerStyle)),
+          SizedBox(width: 100, child: Text('Signal', style: headerStyle)),
+          SizedBox(width: 100, child: Text('Battery', style: headerStyle)),
           Expanded(flex: 3, child: Text('Valves', style: headerStyle)),
           Expanded(flex: 2, child: Text('Running', style: headerStyle)),
-          SizedBox(width: 70),
+          SizedBox(width: 120),
         ],
       ),
     );
@@ -363,8 +363,8 @@ class _OmsLineState extends State<OmsLine> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                Expanded(
-                  flex: 3,
+                SizedBox(
+                  width: 150,
                   child: Text(
                     node.deviceId,
                     style: const TextStyle(fontSize: 11, color: _Tone.textPrimary, fontFamily: 'monospace'),
@@ -378,9 +378,9 @@ class _OmsLineState extends State<OmsLine> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const Expanded(flex: 1, child: _MetricChip(label: '0%', warn: true)),
-                Expanded(
-                  flex: 1,
+                const SizedBox(width: 100, child: _MetricChip(label: '0%', warn: true)),
+                SizedBox(
+                  width: 100,
                   child: _MetricChip(
                     label: '${node.batVolt} V',
                     warn: (double.tryParse(node.batVolt.toString()) ?? 0) <= 0,
@@ -400,6 +400,21 @@ class _OmsLineState extends State<OmsLine> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
                     ),
                     child: const Text('Details', style: TextStyle(fontSize: 11)),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 40,
+                  child: OutlinedButton(
+                    onPressed: () => {},
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      side: const BorderSide(color: _Tone.subBorder),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                    ),
+                    child: const Text('Edit', style: TextStyle(fontSize: 11)),
                   ),
                 ),
               ],
