@@ -923,8 +923,9 @@ class AppConstants {
   static List<int> gemModelList = [1, 2, 4, 72, 73, 74, 75];
   static List<int> weatherModelList = [13, 14];
   static List<int> weatherGsmModelList = [14];
-  static List<int> pumpModelList = [5, 6, 7, ...pumpPlusModelList, ...wlcModelList];
-  static List<int> pumpPlusModelList = [8, 9, 10, ...wlcModelList];
+  static List<int> gsmModelList = [6, 9, 94, 67, 70];
+  static List<int> pumpModelList = [5, 6, 7, ...pumpPlusModelList, ...wlcModelList, ...aquaculturePumpModelList];
+  static List<int> pumpPlusModelList = [8, 9, 10, ...wlcModelList, ...aquaculturePumpModelList];
   static List<int> wlcModelList = [76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86];
   static List<int> pumpList = [...pumpWithValveModelList, ...pumpModelList, ...shine2V, ...shine4V, ...elite10V, ...pumpPlusModelList];
   static List<int> senseModelList = [41, 42, 43, 44, 45];
@@ -933,4 +934,5 @@ class AppConstants {
   static List<int> extendGsmList = [47];
   static List<int> extendList = [...extendLoraList, ...extendGsmList];
   static List<int> aquacultureModelList = [72];
+  static List<int> aquaculturePumpModelList = [93, 94, 95];
 }

@@ -5,6 +5,7 @@ import 'package:oro_drip_irrigation/cropAdvisory/view/crop_advisory_main_screen.
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
 import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+import '../../utils/snack_bar.dart';
 import '../model/cropadvisory_model.dart';
 import 'getUserInformationScreen.dart';
 
@@ -60,6 +61,32 @@ class _CropListScreenState extends State<CropListScreen> {
     }
   }
 
+  Future<void> deleteCropList(int cropId) async {
+    try {
+      final repository = Repository(HttpService());
+
+      final response = await repository.deleteCropList({
+        "userId": widget.userId,
+        "controllerId": widget.controllerId,
+        "cropId": cropId
+      });
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> body = jsonDecode(response.body);
+         GlobalSnackBar.show(context, body['message'], response.statusCode);
+        setState(() {
+          fetchData();
+        });
+      }
+    } catch (e) {
+      AppLog.log(e.toString());
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,19 +110,13 @@ class _CropListScreenState extends State<CropListScreen> {
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     onTap: () {
-                      // Populate singleton and navigate to Main Screen (Dashboard)
-                      CropAdvisoryModel.instance.fromJson(crop.toJson());
-                      CropAdvisoryModel.instance.cropId = crop.cropId;
-                      CropAdvisoryModel.instance.userId = widget.userId;
-                      CropAdvisoryModel.instance.controllerId =
-                          widget.controllerId;
-
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => CropAdvisoryMainScreen(
                                   userId: widget.userId,
                                   controllerId: widget.controllerId,
+                                  cropModel: crop,
                                 )),
                       );
                     },
@@ -144,7 +165,7 @@ class _CropListScreenState extends State<CropListScreen> {
                               const Icon(Icons.delete, color: Colors.redAccent),
                           onPressed: () async {
                             setState(() {
-                              fetchData();
+                              deleteCropList(crop.cropId!);
                             });
                           },
                         ),

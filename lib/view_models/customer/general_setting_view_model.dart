@@ -166,10 +166,10 @@ class GeneralSettingViewModel extends ChangeNotifier {
         "controllerLocation": controllerLocation,
         "groupId": groupId,
         "groupName": farmName,
-        "countryCode":
-        AppConstants.ecoGemModelList.contains(modelId) ? countryCode : null,
-        "simNumber":
-        AppConstants.ecoGemModelList.contains(modelId) ? simNumber : null,
+        "countryCode": [...AppConstants.ecoGemModelList, ...AppConstants.gsmModelList]
+            .contains(modelId) ? countryCode : null,
+        "simNumber": [...AppConstants.ecoGemModelList, ...AppConstants.gsmModelList]
+            .contains(modelId) ? simNumber : null,
         "modifyUser": userId,
       };
 
@@ -193,6 +193,7 @@ class GeneralSettingViewModel extends ChangeNotifier {
     try {
       var response = await repository.updatedSubUserPermission(body);
       if (response.statusCode == 200) {
+        print(response.body);
         final data = jsonDecode(response.body);
         GlobalSnackBar.show(context, data["message"], data["code"]);
         Navigator.pop(context);

@@ -256,6 +256,7 @@ class CustomerHomeNarrow extends StatelessWidget {
                                   waterMeter: line.waterMeter,
                                   co2: line.co2Sensor,
                                   humidity: line.humiditySensor,
+                                  temperature: line.temperature,
                                   soilTemperature: line.soilTemperature,
                                   customerId: customerId,
                                   controllerId: cM.controllerId,
@@ -301,7 +302,7 @@ class CustomerHomeNarrow extends StatelessWidget {
 
                     if (currentSchedule.isNotEmpty) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        vm.updateSchedule(currentSchedule);
+                        vm.updateSchedule(currentSchedule, false);
                       });
                     }
 

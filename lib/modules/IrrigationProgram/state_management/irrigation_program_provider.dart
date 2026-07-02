@@ -86,6 +86,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         "groupId": groupId,
         "categoryId": categoryId
       };
+      print("userBody : $userBody");
       var getUserConfigMaker = await repository.getUserConfigMaker(userBody);
       var getUserProgramSequence = await repository.getUserProgramSequence(userData);
       apiData = null;
@@ -104,10 +105,23 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       irrigationLineFromConfigMaker.clear();
       if(getUserConfigMaker.statusCode == 200) {
         final responseJson = getUserProgramSequence.body;
-        final sequenceJson = jsonDecode(responseJson);
+        var sequenceJson = jsonDecode(responseJson);
         final configMakerJson = jsonDecode(getUserConfigMaker.body);
         configObjects = configMakerJson['data']['configObject'];
-
+        for(var seq in sequenceJson['data']['sequence']){
+          for(var v = (seq['valve'].length - 1); v >= 0; v--){
+            bool isValveAvailable = configObjects.any((obj) => obj['sNo'] == seq['valve'][v]['sNo']);
+            if(isValveAvailable == false){
+              seq['valve'].removeAt(v);
+            }
+          }
+          for(var v = (seq['mainValve'].length - 1); v >= 0; v--){
+            bool isMainValveAvailable = configObjects.any((obj) => obj['sNo'] == seq['mainValve'][v]['sNo']);
+            if(isMainValveAvailable == false){
+              seq['mainValve'].removeAt(v);
+            }
+          }
+        }
         for(var line in configMakerJson['data']['irrigationLine']){
           irrigationLineFromConfigMaker.add(
             {
@@ -2512,7 +2526,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
     try {
       final response = await repository.getUserProgramSelection(userData);
       final jsonData = json.decode(response.body);
-      print("selected objects :: ${jsonData['data']['selection']['selected']}");
       _additionalData = null;
       _selectedObjects = [];
       // _selectedControllers = [];
@@ -2524,9 +2537,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
             .map((e) => DeviceObjectModel.fromJson(e as Map<String, dynamic>))
             .toList();
 
-        print("configObjects: $configObjects");
-        print("selectedObjects before filter: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
-
         if (configObjects.isNotEmpty) {
           _selectedObjects!.removeWhere((element) => !configObjects.any((element2) {
             double configSNo = double.tryParse(element2['sNo'].toString()) ?? 0.0;
@@ -2535,7 +2545,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
               irrigationPumpSnoList.contains(element.sNo);
               // sampleIrrigationLine!.map((e) => e.irrigationPump
             }
-            print("Comparing element.sNo: ${element.sNo} with configSNo: $configSNo");
             return element.objectId == 5
                 ? sampleIrrigationLine!.map((e) => e.irrigationPump ?? []).expand((list) => list).toList().map((ele) => ele.sNo).toList().contains(element.sNo)
                 : configSNo == element.sNo;
@@ -2546,7 +2555,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
       } else {
         _selectedObjects = [];
       }
-      print("selected objects in the get function :: ${_selectedObjects!.map((e) => e.toJson()).toList()}");
       _additionalData = AdditionalData.fromJson(jsonData['data']['selection']);
     } catch (e) {
       log('Error: $e');
@@ -2607,6 +2615,11 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
   String get cyclicOffTime => _programDetails!.cyclicOffTime;
   bool get enablePressure => _programDetails!.enablePressure;
   String get pressureValue => _programDetails!.pressureValue;
+  String get controlMode => _programDetails!.controlMode;
+  String get setPressure => _programDetails!.setPressure;
+  String get pressureTolerance => _programDetails!.pressureTolerance;
+  String get setFlow => _programDetails!.setFlow;
+  String get flowTolerance => _programDetails!.flowTolerance;
 
   Future<void> doneData(int userId, int controllerId, int serialNumber) async {
     try {
@@ -2768,6 +2781,21 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         break;
       case "pressureValue":
         _programDetails!.pressureValue = newValue;
+        break;
+      case "controlMode":
+        _programDetails!.controlMode = newValue;
+        break;
+      case "setPressure":
+        _programDetails!.setPressure = newValue;
+        break;
+      case "pressureTolerance":
+        _programDetails!.pressureTolerance = newValue;
+        break;
+      case "setFlow":
+        _programDetails!.setFlow = newValue;
+        break;
+      case "flowTolerance":
+        _programDetails!.flowTolerance = newValue;
         break;
       default:
         log("Not found");
@@ -3140,7 +3168,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         .where((agitator) => !(selectedAgitators ?? []).contains(agitator))
         .toList().join(',')}");
     */
-    print("additionalData!.nodeSelection : ${additionalData!.nodeSelection}");
     return {
       "2500" : {
         "2501" : "${hwPayloadForWF(serialNumber, programType)};",
@@ -3192,7 +3219,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
               "ScheduleEndDate": isForceToEndDate ? (endDate.runtimeType == String ? formatter.format(DateTime.parse(endDate)) : formatter.format(DateTime.parse(endDate.toString()))) : "0001-01-01",/*ScheduleEndDate*/
               "RtcOnTime": (selectedScheduleType == scheduleTypes[3]/*RtcOnTime*/
                   ? _sampleScheduleModel!.dayCountSchedule.schedule["onTime"]
-                  : rtcOnTime),
+                  : (AppConstants.omsGemList.contains(modelId) ? rtcOnTime.split('_').first : rtcOnTime)),
               "ProgramStopMethod": _sampleScheduleModel!.defaultModel.allowStopMethod
                   ? rtcStopMethod
                   : (_sampleScheduleModel!.defaultModel.rtcMaxTime
@@ -3358,9 +3385,9 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   .toList().join(','),/*HeadUnitToPause*/
               "Name": programName,
               "CyclicOnTime": cyclicOnTime,
-              "CyclicOffTime": cyclicOffTime,
-              "EnablePressure": enablePressure ? '1' : '0',
-              "PressureValue": pressureValue,
+              "CyclicOffTime": AppConstants.omsGemList.contains(modelId) ? (controlMode == 'Pressure' ? pressureTolerance : flowTolerance) : cyclicOffTime,
+              "EnablePressure": AppConstants.omsGemList.contains(modelId) ?  (controlMode == 'Pressure' ? '1' : '2') : (enablePressure ? '1' : '0'),
+              "PressureValue": AppConstants.omsGemList.contains(modelId) ? (controlMode == 'Pressure' ? setPressure : setFlow) : pressureValue,
             }.entries.map((e) => e.value).join(",")
         };"
       }

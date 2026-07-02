@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -350,6 +349,8 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
 
                 const SizedBox(height: 30),
 
+
+
                 CropContinueButton(
                   onTap: () async {
                     _model.mulchingUsed = _mulchingValue.toString();
@@ -388,10 +389,9 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                         'soilType': _model.soilType ?? '',
                         'previousCrop': _model.previousCrop ?? '',
                         'farmName': _model.farmName ?? '',
-                        'deleteImageUrl': '',
-                        'isEdit': widget.edit.toString(),
-                        'isImageChanged': widget.edit.toString(),
-                        'existingImageUrl': widget.edit.toString(),
+                        'isImageChanged': 'false',
+                        'isEdit': 'false',
+                        'existingImageUrl': _model.cropImage ?? '',
                         'createUser': widget.userId.toString(),
                        });
 
@@ -414,13 +414,10 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                             await http.MultipartFile.fromPath(
                               'cropImage',
                               _model.cropImage!,
+                              contentType: MediaType('image', 'jpg'),
                             ),
                           );
                         }
-                      }
-                      for (var file in request.files) {
-                        print("File Name : ${file.filename}");
-                        print("Field Name : ${file.field}");
                       }
 
                       print("Request : ${request.fields}");
@@ -429,13 +426,20 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                       await response.stream.bytesToString();
                       final data = jsonDecode(responseBody);
                       print("data:$data");
+                      print("responseBody:$responseBody");
+                      print("Status Code : ${response.statusCode}");
+                      print("Status Code : ${response}");
 
                       if (response.statusCode == 200) {
                         Navigator.push(
                           context,
                           CupertinoPageRoute(
                             builder: (context) =>
-                             CropAdvisoryMainScreen(userId: widget.userId,controllerId: widget.controllerId,),
+                             CropAdvisoryMainScreen(
+                               userId: widget.userId,
+                               controllerId: widget.controllerId,
+                               cropModel: _model,
+                             ),
                           ),
                          );
                       } else {

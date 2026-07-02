@@ -1355,8 +1355,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       "400": {"401": onDelayTimer()}
     };
 
-    // print("payloadForSlave ==> $payloadForSlave");
-
     final payload = shouldSendFailedPayloads ? getFailedPayload(isToGem: isToGem, sendAll: false) : getPayload(isToGem: isToGem, sendAll: false);
     final payloadParts = payload.split("?")[0].split(';');
 
@@ -1628,7 +1626,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
           }
         }
       }
-
       result.addAll(temp);
     }
 
