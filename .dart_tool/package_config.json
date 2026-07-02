@@ -626,6 +626,18 @@
       "languageVersion": "3.6"
     },
     {
+      "name": "google_mlkit_commons",
+      "rootUri": "file:///C:/Users/noteb/AppData/Local/Pub/Cache/hosted/pub.dev/google_mlkit_commons-0.8.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
+      "name": "google_mlkit_image_labeling",
+      "rootUri": "file:///C:/Users/noteb/AppData/Local/Pub/Cache/hosted/pub.dev/google_mlkit_image_labeling-0.12.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.16"
+    },
+    {
       "name": "html",
       "rootUri": "file:///C:/Users/noteb/AppData/Local/Pub/Cache/hosted/pub.dev/html-0.15.6",
       "packageUri": "lib/",
