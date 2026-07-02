@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="7874f2d8-27a6-4abd-9638-7a530f480b45" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/dart_plugin_registrant.dart" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/views/common/user_dashboard/widgets/oms_line.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/common/user_dashboard/widgets/oms_line.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/views/common/user_dashboard/widgets/pump_station_mobile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/common/user_dashboard/widgets/pump_station_mobile.dart" afterDir="false" />
