@@ -302,7 +302,7 @@ class CustomerHomeNarrow extends StatelessWidget {
 
                     if (currentSchedule.isNotEmpty) {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        vm.updateSchedule(currentSchedule);
+                        vm.updateSchedule(currentSchedule, false);
                       });
                     }
 

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../repository/repository.dart';
@@ -30,7 +31,9 @@ class WeatherViewModel extends ChangeNotifier {
   WeatherViewModel(this.repository);
 
   Future<void> fetchWeatherData(int userId, int controllerId) async {
-    print("Call fetchWeatherData call ");
+    if (kDebugMode) {
+      print("Call fetchWeatherData call ");
+    }
     isLoadingWeather = true;
     notifyListeners();
 
@@ -42,18 +45,21 @@ class WeatherViewModel extends ChangeNotifier {
 
       final response = await repository.getweather(body);
 
-      if (response.statusCode == 200) {
+      if (response != null && response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print('data:$data');
+        if (kDebugMode) {
+          print('data:$data');
+        }
 
-        if (data["code"] == 200) {
+        if (data != null && data["code"] == 200 && data["data"] != null) {
           weatherModel = WeatherModelNew.fromJson(data["data"]);
-          liveCache = weatherModel!.parseLive5101();
+          liveCache = weatherModel?.parseLive5101() ?? {};
           _buildConfigIndex();
-          irrigationTree = weatherModel!.buildIrrigationLineTree();
+          irrigationTree = weatherModel?.buildIrrigationLineTree() ?? [];
 
-          if (weatherModel!.deviceList.isNotEmpty) {
-            selectedSerialNumber = weatherModel!.deviceList.first.serialNumber;
+          final deviceList = weatherModel?.deviceList;
+          if (deviceList != null && deviceList.isNotEmpty) {
+            selectedSerialNumber = deviceList.first.serialNumber;
             // Fetch hourly report data
             await fetchHourlyTempReport(userId, controllerId);
           }
@@ -68,19 +74,26 @@ class WeatherViewModel extends ChangeNotifier {
   }
 
   Future<void> fetchWeatherDataGsm(int userId, int controllerId, Map<String, dynamic> data) async {
-    print("call fetchWeatherDataGsm");
+    if (kDebugMode) {
+      print("call fetchWeatherDataGsm");
+    }
     isLoadingWeather = true;
     notifyListeners();
 
     try {
-      print('data:$data');
-      weatherModel = WeatherModelNew.fromJson(data["data"]);
-      liveCache = weatherModel!.parseLive5101();
-      _buildConfigIndex();
-      irrigationTree = weatherModel!.buildIrrigationLineTree();
-      if (weatherModel!.deviceList.isNotEmpty) {
-        selectedSerialNumber = weatherModel!.deviceList.first.serialNumber;
-        await fetchHourlyTempReport(userId, controllerId);
+      if (kDebugMode) {
+        print('data:$data');
+      }
+      if (data != null && data["data"] != null) {
+        weatherModel = WeatherModelNew.fromJson(data["data"]);
+        liveCache = weatherModel?.parseLive5101() ?? {};
+        _buildConfigIndex();
+        irrigationTree = weatherModel?.buildIrrigationLineTree() ?? [];
+        final deviceList = weatherModel?.deviceList;
+        if (deviceList != null && deviceList.isNotEmpty) {
+          selectedSerialNumber = deviceList.first.serialNumber;
+          await fetchHourlyTempReport(userId, controllerId);
+        }
       }
     } catch (e, st) {
       debugPrint("Weather error: $e\n$st");
@@ -139,18 +152,20 @@ class WeatherViewModel extends ChangeNotifier {
         };
 
         hourlyTempReport.clear();
-        hours.forEach((hourStr, raw) {
-          final data = parseSensorHourData(
-            hour: hourStr,
-            raw: raw,
-            deviceSrNo: selectedSerialNumber.toString(),
-            targetSensor: sNo,
-          );
-          if (data != null && data.value != "NA") {
-            int hourInt = int.parse(hourStr.split(':').first);
-            hourlyTempReport[hourInt] = data.value;
-          }
-        });
+    hours.forEach((hourStr, raw) {
+      if (raw != null) {
+        final data = parseSensorHourData(
+          hour: hourStr,
+          raw: raw,
+          deviceSrNo: selectedSerialNumber.toString(),
+          targetSensor: sNo,
+        );
+        if (data != null && data.value != "NA") {
+          int hourInt = int.parse(hourStr.split(':').first);
+          hourlyTempReport[hourInt] = data.value;
+        }
+      }
+    });
       }
     } catch (e) {
       debugPrint("Error fetching hourly report: $e");
@@ -162,7 +177,8 @@ class WeatherViewModel extends ChangeNotifier {
 
     configIndex = {
       for (final c in weatherModel!.configObject)
-        "${c.controllerId}_${c.objectName}": c
+        if (c.controllerId != null)
+          "${c.controllerId}_${c.objectName}": c
     };
   }
 
