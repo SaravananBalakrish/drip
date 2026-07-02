@@ -65,7 +65,7 @@
     "settings.editor.selected.configurable": "dart.settings",
     "show.migrate.to.gradle.popup": "false"
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Flutter.main_oroProduction">
     <configuration name="main_oroProduction" type="FlutterRunConfigurationType" factoryName="Flutter">
       <option name="additionalArgs" value="lib/main_oroProduction.dart" />
