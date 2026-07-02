@@ -3,15 +3,13 @@ import 'package:flutter/material.dart';
 class HourlyWeatherCard extends StatelessWidget {
   final String time;
   final String temp;
-  final bool isSelected;
-
+  final bool isHour;
 
   const HourlyWeatherCard({
     super.key,
     required this.time,
     required this.temp,
-    this.isSelected = false,
-
+    this.isHour = false ,
   });
 
   @override
@@ -20,17 +18,12 @@ class HourlyWeatherCard extends StatelessWidget {
       width: 80,
       margin: const EdgeInsets.only(right: 12),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? Color(0xFFEBFCFF)
-            : Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: isSelected
-              ? Color(0xFFEBFCFF)
-              : Colors.grey.shade200,
-          width: 2,
-        ),
+      decoration: isHour ? BoxDecoration(
+        color: const Color(0xFFEBFCFF),
+        borderRadius: BorderRadius.circular(20),
+      )  : BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
