@@ -535,7 +535,7 @@ class BluetoothBleService {
         debugPrint("✅ BLE Device connected and stable");
         d.connectionState = BlueConnectionState.connected;
         _isAlreadyConnected = true;
-      } else if (state == BluetoothConnectionState.connecting) {
+      } else if (state == BluetoothConnectionState.connected) {
         d.connectionState = BlueConnectionState.connecting;
       }
     });

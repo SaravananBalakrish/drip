@@ -420,15 +420,11 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                         }
                       }
 
-                      print("Request : ${request.fields}");
-                      final response = await request.send();
+                       final response = await request.send();
                       final responseBody =
                       await response.stream.bytesToString();
                       final data = jsonDecode(responseBody);
-                      print("data:$data");
-                      print("responseBody:$responseBody");
-                      print("Status Code : ${response.statusCode}");
-                      print("Status Code : ${response}");
+
 
                       if (response.statusCode == 200) {
                         Navigator.push(
