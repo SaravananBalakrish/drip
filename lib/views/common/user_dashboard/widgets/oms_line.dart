@@ -1,15 +1,24 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 import '../../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../../models/customer/site_model.dart';
 import '../../../../modules/IrrigationProgram/view/program_library.dart';
+import '../../../../providers/button_loading_provider.dart';
 import '../../../../providers/user_provider.dart';
 import '../../../../repository/repository.dart';
+import '../../../../services/communication_service.dart';
 import '../../../../services/http_service.dart';
+import '../../../../utils/helpers/program_code_helper.dart';
 import '../../../../utils/my_function.dart';
+import '../../../../utils/my_helper_class.dart';
+import '../../../../utils/snack_bar.dart';
 import '../../../../view_models/customer/node_list_view_model.dart';
 import '../../../../view_models/customer/current_program_view_model.dart'; // adjust path to your actual file
 import 'package:oro_drip_irrigation/utils/Theme/agritel_theme.dart';
+
 
 /// ---------------------------------------------------------------------
 /// Design tokens
@@ -297,7 +306,7 @@ class _OmsLineState extends State<OmsLine> {
           SizedBox(width: 28),
           SizedBox(width: 42),
           SizedBox(width: 150, child: Text('Node', style: headerStyle)),
-          Expanded(flex: 3, child: Text('Street', style: headerStyle)),
+          Expanded(flex: 3, child: Text('Zone – Area/Place Name', style: headerStyle)),
           SizedBox(width: 100, child: Text('Signal', style: headerStyle)),
           SizedBox(width: 100, child: Text('Battery', style: headerStyle)),
           Expanded(flex: 3, child: Text('Valves', style: headerStyle)),
@@ -374,7 +383,7 @@ class _OmsLineState extends State<OmsLine> {
                   flex: 3,
                   child: Text(
                     node.deviceName,
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: _Tone.textPrimary),
+                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800, color: _Tone.textPrimary),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -406,7 +415,7 @@ class _OmsLineState extends State<OmsLine> {
                 SizedBox(
                   width: 40,
                   child: OutlinedButton(
-                    onPressed: () => {},
+                    onPressed: () => showEditProductDialog(context, node, widget.customerId),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                       minimumSize: Size.zero,
@@ -447,11 +456,11 @@ class _OmsLineState extends State<OmsLine> {
 
   Widget _buildTopHeader(NodeListViewModel vm, MasterControllerModel cMaster,
       int controllerId, String deviceId, int customerId, int groupId) {
-    final fullNodeSelection = fullySelectedNodeIndices(vm);
     final anyValveSelected = hasAnyValveSelected;
-    final selectedCount = fullNodeSelection.length;
     final totalNodes = vm.nodeList.length;
     final valveCount = selectedValveCount;
+
+    final programList = cMaster.programList ?? [];
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -494,12 +503,109 @@ class _OmsLineState extends State<OmsLine> {
                 color: _Tone.statusNotClosed,
               ),
               const SizedBox(width: 8),
-              _buildActionButton(
-                label: 'Apply program',
-                icon: Icons.playlist_add_check,
-                onPressed: selectedCount > 0 ? () => _onApplyProgram(vm) : null,
-                color: _Tone.statusCompleted,
+
+              Builder(
+                builder: (buttonContext) {
+                  return OutlinedButton.icon(
+                    onPressed: () {
+                      showPopover(
+                        context: buttonContext,
+                        bodyBuilder: (context) => Padding(
+                          padding: const EdgeInsets.only(top: 8, bottom: 8),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: programList.length,
+                            itemBuilder: (context, index) {
+
+                              final program = programList[index];
+
+                              final buttonName = ProgramCodeHelper.getButtonName(int.parse(program.prgOnOff));
+                              final isStop = buttonName.contains('Stop');
+                              final isBypass = buttonName.contains('Bypass');
+
+                              return ListTile(
+                                dense: true,
+                                leading: Text('${index+1}'),
+                                title: Text(program.programName),
+                                trailing: OutlinedButton.icon(
+                                  onPressed: () async {
+                                    print(program.serialNumber);
+
+                                    final buttonState = context.read<ButtonLoadingProvider>();
+                                    final commService = context.read<CommunicationService>();
+
+                                    buttonState.setLoading('${program.serialNumber}_2900_ss', true);
+
+                                    try {
+                                      final contentKey = (int.parse("2900") + 1).toString();
+                                      final payLoadFinal = jsonEncode({
+                                        "2900": {contentKey: '${program.serialNumber},${program.prgOnOff}'},
+                                      });
+
+                                      MqttAckTracker.registerPending('${program.serialNumber}_2900_ss', "2900");
+
+                                      await Future.delayed(const Duration(milliseconds: 100));
+
+                                      await commService.sendCommand(
+                                        serverMsg: '${program.programName} ${ProgramCodeHelper.getDescription(int.parse(program.prgOnOff))}',
+                                        payload: payLoadFinal,
+                                      );
+
+                                      if (!mounted) return;
+                                      Navigator.pop(context);
+
+
+                                    } catch (e) {
+                                      GlobalSnackBar.show(context, 'Error sending command: $e', 500);
+                                      buttonState.setLoading('${program.serialNumber}_2900_ss', false);
+                                    }
+                                  },
+                                  label: Text(
+                                    buttonName,
+                                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                    ),
+                                  ),
+                                  style: OutlinedButton.styleFrom(
+                                    backgroundColor: int.parse(program.prgOnOff) >= 0 ? isStop ? Colors.red :
+                                    isBypass ? Colors.orange :
+                                    Colors.green : Colors.black26,
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                                    minimumSize: Size.zero,
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    side: const BorderSide(color: _Tone.subBorder),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                        direction: PopoverDirection.bottom,
+                        width: 400,
+                        height: (programList.length * 40) + 16,
+                        arrowHeight: 10,
+                        arrowWidth: 20,
+                      );
+                    },
+                    icon: const Icon(Icons.playlist_play, size: 16, color: Colors.white),
+                    label: const Text(
+                      'Programs',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: primary,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      side: const BorderSide(color: _Tone.subBorder),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  );
+
+                },
               ),
+
               const SizedBox(width: 8),
               _buildActionButton(
                 label: 'New program',
@@ -606,6 +712,8 @@ class _OmsLineState extends State<OmsLine> {
     if (status == 'Program created' && mounted) debugPrint(status);
   }
 
+
+
   Widget _buildActionButton({
     required String label,
     required IconData icon,
@@ -699,6 +807,69 @@ class _OmsLineState extends State<OmsLine> {
     final targets = fullySelectedNodeIndices(vm).map((i) => vm.nodeList[i].deviceId).toList();
     debugPrint('Apply program to fully-selected node ids: $targets');
   }
+
+  Future<void> showEditProductDialog(BuildContext context, NodeListModel node, int userId) async {
+    final TextEditingController nodeNameController = TextEditingController(text: node.deviceName);
+    final formKey = GlobalKey<FormState>();
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Change Node Name'),
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: nodeNameController,
+              maxLength: 30,
+              decoration: const InputDecoration(hintText: "Enter node name"),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Node name cannot be empty';
+                }
+                return null;
+              },
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Save'),
+              onPressed: () async {
+                if (formKey.currentState!.validate()) {
+                  Map<String, Object> body = {"userId": widget.customerId, "controllerId": widget.controllerId,
+                    "nodeControllerId": node.controllerId, "deviceName": nodeNameController.text, "modifyUser": userId};
+
+                  try {
+                    var response = await Repository(HttpService()).updateUserNodeDetails(body);
+                    if (response.statusCode == 200) {
+                      final jsonData = jsonDecode(response.body);
+                      if (jsonData["code"] == 200) {
+                        setState(() {
+                          node.deviceName = nodeNameController.text;
+                        });
+                        GlobalSnackBar.show(context, 'Node name updated successfully', 200);
+                        Navigator.of(context).pop();
+                      }
+                    }
+                  } catch (error) {
+                    debugPrint('Error fetching category list: $error');
+                  }
+
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }
 
 /// ---------------------------------------------------------------------
