@@ -5,8 +5,6 @@ import 'package:oro_drip_irrigation/cropAdvisory/view/field_information_screen.d
 import 'package:path_provider/path_provider.dart';
 import '../../repository/repository.dart';
 import '../../services/http_service.dart';
-import '../../services/ai_service.dart';
-import '../../services/image_verification_service.dart';
 import '../helper/image_compressor.dart';
 import '../model/cropadvisory_model.dart';
 import 'package:http/http.dart' as http;
@@ -126,7 +124,7 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
         border: Border.all(color: Colors.grey.shade300),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha:0.05),
+            color: Colors.black.withOpacity(0.05),
             blurRadius: 5,
             offset: const Offset(0, 2),
           ),
@@ -280,85 +278,38 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
 
       if (image == null) return;
 
-      // Verify if it's a crop image using ML Kit (Offline)
-      if (!kIsWeb) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Verifying image...'),
-              duration: Duration(seconds: 1),
-            ),
-          );
-        }
+      final bytes = await image.readAsBytes();
 
-        final bool isCrop = await ImageVerificationService.isCropImage(image.path);
-
-        if (!isCrop) {
-          if (mounted) {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text("Invalid Image"),
-                content: const Text(
-                  "The image does not appear to be a crop or plant. "
-                      "Please take a clear photo of your crop to proceed.",
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("OK"),
-                  ),
-                ],
-              ),
-            );
-          }
-          return;
-        }
-      }
-
-      final Uint8List bytes = await image.readAsBytes(); // ✅ single declaration
-
-      final originalSize = bytes.lengthInBytes / 1024;
-      if (kDebugMode) {
-        print("Original Size: ${originalSize.toStringAsFixed(2)} KB");
-      } // ✅ printed once
+      print(
+        "Original Size : ${(bytes.lengthInBytes / 1024).toStringAsFixed(2)} KB",
+      );
 
       if (kIsWeb) {
         setState(() {
           webImage = bytes;
         });
+
         _model.cropImage = '';
         return;
       }
 
       final tempDir = await getTemporaryDirectory();
+
       final file = File(
         '${tempDir.path}/${DateTime.now().millisecondsSinceEpoch}.jpg',
       );
+
       await file.writeAsBytes(bytes);
 
-      final compressedFile = await ImageCompressHelper.compressImage(file);
+      setState(() {
+        cropImage = file;
+        _model.cropImage = file.path;
+      });
 
-      if (compressedFile != null) { // ✅ block is now properly closed
-        final compressedSize = await compressedFile.length() / 1024;
-        if (kDebugMode) {
-          print("Compressed Size: ${compressedSize.toStringAsFixed(2)} KB");
-        }
-
-        setState(() {
-          cropImage = file;
-          _model.cropImage = file.path;
-        });
-
-        if (kDebugMode) {
-          print("Saved Image: ${cropImage?.path}");
-        }
-      } // ✅ closes if (compressedFile != null)
+      print("Saved Image : ${cropImage?.path}");
 
     } catch (e) {
-      if (kDebugMode) {
-        print("Image Error: $e");
-      }
+      print("Image Error : $e");
     }
   }
 

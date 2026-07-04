@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -349,8 +350,6 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
 
                 const SizedBox(height: 30),
 
-
-
                 CropContinueButton(
                   onTap: () async {
                     _model.mulchingUsed = _mulchingValue.toString();
@@ -389,9 +388,8 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                         'soilType': _model.soilType ?? '',
                         'previousCrop': _model.previousCrop ?? '',
                         'farmName': _model.farmName ?? '',
-                        'isImageChanged': 'false',
-                        'isEdit': 'false',
-                        'existingImageUrl': _model.cropImage ?? '',
+                        'deleteImageUrl': '',
+                        'edit': 'false',
                         'createUser': widget.userId.toString(),
                        });
 
@@ -435,11 +433,7 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                           context,
                           CupertinoPageRoute(
                             builder: (context) =>
-                             CropAdvisoryMainScreen(
-                               userId: widget.userId,
-                               controllerId: widget.controllerId,
-                               cropModel: _model,
-                             ),
+                             CropAdvisoryMainScreen(userId: widget.userId,controllerId: widget.controllerId,),
                           ),
                          );
                       } else {

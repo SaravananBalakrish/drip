@@ -30,4 +30,5 @@ class AIService {
       throw Exception('AI request failed: ${response.statusCode}');
     }
   }
+
 }
