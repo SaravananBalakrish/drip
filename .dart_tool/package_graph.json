@@ -40,6 +40,7 @@
         "gif",
         "google_fonts",
         "google_maps_flutter",
+        "google_mlkit_image_labeling",
         "http_parser",
         "image_picker",
         "in_app_update",
@@ -130,6 +131,14 @@
         "stream_channel",
         "test_api",
         "vector_math"
+      ]
+    },
+    {
+      "name": "google_mlkit_image_labeling",
+      "version": "0.14.2",
+      "dependencies": [
+        "flutter",
+        "google_mlkit_commons"
       ]
     },
     {
@@ -1005,6 +1014,13 @@
         "stream_channel",
         "string_scanner",
         "term_glyph"
+      ]
+    },
+    {
+      "name": "google_mlkit_commons",
+      "version": "0.11.1",
+      "dependencies": [
+        "flutter"
       ]
     },
     {
