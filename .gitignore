@@ -43,7 +43,7 @@ keystore.txt
 #assets/ssh/
 
 # Flutter build
-build/
+build/**
 android/build/
 
 
