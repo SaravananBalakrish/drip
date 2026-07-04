@@ -92,7 +92,11 @@ class _CropListScreenState extends State<CropListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Widget content = _isLoading
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text("Crop List"),
+        ),
+        body:  _isLoading
         ? const Center(child: CircularProgressIndicator())
         : Center(
       child: Container(
@@ -176,7 +180,7 @@ class _CropListScreenState extends State<CropListScreen> {
                   ),
                 );
               },
-            ),
+            ),),),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () async {
           CropAdvisoryModel.instance.reset();

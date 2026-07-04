@@ -447,7 +447,7 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                             CupertinoPageRoute(
                               builder: (context) => CropAdvisoryMainScreen(
                                 userId: widget.userId,
-                                controllerId: widget.controllerId,
+                                controllerId: widget.controllerId, cropModel: _model,
                               ),
                             ),
                           );
@@ -484,15 +484,5 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
       ),
     );
 
-    return Scaffold(
-      body: kIsWeb
-          ? Row(
-              children: [
-                const CropAdvisoryWebSidebar(isSetup: true),
-                Expanded(child: content),
-              ],
-            )
-          : content,
-    );
   }
 }

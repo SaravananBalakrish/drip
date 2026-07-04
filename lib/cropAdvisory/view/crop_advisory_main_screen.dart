@@ -50,7 +50,7 @@ class _CropAdvisoryMainScreenState extends State<CropAdvisoryMainScreen> {
           } else {
             _controller.jumpToTab(index);
           }
-        },
+        },  model: widget.cropModel,
       ),
       CropWeatherscreen(userId: widget.userId, controllerId: widget.controllerId),
       const IrrigationFertigationScreen(isInsideMain: true),

@@ -68,3 +68,8 @@ ios/**
 linux/**
 macos/**
 windows/**
+
+#.dart_tool
+#.ignore
+#.github/workflows
+#.idea
