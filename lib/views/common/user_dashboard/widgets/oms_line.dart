@@ -212,11 +212,13 @@ class _OmsLineState extends State<OmsLine> {
         final outputOnOffPayload = mqttProvider.outputOnOffPayload;
         final currentSchedule = mqttProvider.currentSchedule;
 
+        // Add a condition to update only when data changes
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (vm.shouldUpdate(nodeLiveMessage, outputOnOffPayload)) {
             vm.onLivePayloadReceived(
               List.from(nodeLiveMessage),
               List.from(outputOnOffPayload),
+              true,
             );
           }
         });
@@ -307,8 +309,8 @@ class _OmsLineState extends State<OmsLine> {
           SizedBox(width: 42),
           SizedBox(width: 150, child: Text('Node', style: headerStyle)),
           Expanded(flex: 3, child: Text('Zone – Area/Place Name', style: headerStyle)),
-          SizedBox(width: 100, child: Text('Signal', style: headerStyle)),
           SizedBox(width: 100, child: Text('Battery', style: headerStyle)),
+          SizedBox(width: 100, child: Text('Solar', style: headerStyle)),
           Expanded(flex: 3, child: Text('Valves', style: headerStyle)),
           Expanded(flex: 2, child: Text('Running', style: headerStyle)),
           SizedBox(width: 120),
@@ -387,7 +389,6 @@ class _OmsLineState extends State<OmsLine> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                const SizedBox(width: 100, child: _MetricChip(label: '0%', warn: true)),
                 SizedBox(
                   width: 100,
                   child: _MetricChip(
@@ -395,6 +396,7 @@ class _OmsLineState extends State<OmsLine> {
                     warn: (double.tryParse(node.batVolt.toString()) ?? 0) <= 0,
                   ),
                 ),
+                SizedBox(width: 100, child: _MetricChip(label: '${node.sVolt} V', warn: true)),
                 Expanded(flex: 3, child: _ValveDotRow(valves: valves)),
                 Expanded(flex: 2, child: _RunningSummary(valves: valves, programVm: programVm)),
                 SizedBox(
@@ -519,63 +521,93 @@ class _OmsLineState extends State<OmsLine> {
 
                               final program = programList[index];
 
-                              final buttonName = ProgramCodeHelper.getButtonName(int.parse(program.prgOnOff));
-                              final isStop = buttonName.contains('Stop');
-                              final isBypass = buttonName.contains('Bypass');
-
                               return ListTile(
                                 dense: true,
                                 leading: Text('${index+1}'),
                                 title: Text(program.programName),
-                                trailing: OutlinedButton.icon(
-                                  onPressed: () async {
-                                    print(program.serialNumber);
+                                trailing: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    OutlinedButton.icon(
+                                      onPressed: () async {
+                                        final commService = context.read<CommunicationService>();
+                                        try {
+                                          final payLoadFinal = jsonEncode({
+                                            "8400": {"8401": '${program.serialNumber}, 0'},
+                                          });
 
-                                    final buttonState = context.read<ButtonLoadingProvider>();
-                                    final commService = context.read<CommunicationService>();
+                                          await Future.delayed(const Duration(milliseconds: 100));
 
-                                    buttonState.setLoading('${program.serialNumber}_2900_ss', true);
+                                          await commService.sendCommand(
+                                            serverMsg: '${program.programName} ${ProgramCodeHelper.getDescription(0)}',
+                                            payload: payLoadFinal,
+                                          );
 
-                                    try {
-                                      final contentKey = (int.parse("2900") + 1).toString();
-                                      final payLoadFinal = jsonEncode({
-                                        "2900": {contentKey: '${program.serialNumber},${program.prgOnOff}'},
-                                      });
+                                          if (!mounted) return;
+                                          GlobalSnackBar.show(context, 'Program stopped successfully', 200);
+                                          Navigator.pop(context);
 
-                                      MqttAckTracker.registerPending('${program.serialNumber}_2900_ss', "2900");
-
-                                      await Future.delayed(const Duration(milliseconds: 100));
-
-                                      await commService.sendCommand(
-                                        serverMsg: '${program.programName} ${ProgramCodeHelper.getDescription(int.parse(program.prgOnOff))}',
-                                        payload: payLoadFinal,
-                                      );
-
-                                      if (!mounted) return;
-                                      Navigator.pop(context);
-
-
-                                    } catch (e) {
-                                      GlobalSnackBar.show(context, 'Error sending command: $e', 500);
-                                      buttonState.setLoading('${program.serialNumber}_2900_ss', false);
-                                    }
-                                  },
-                                  label: Text(
-                                    buttonName,
-                                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600,
-                                        color: Colors.white,
+                                        } catch (e) {
+                                          GlobalSnackBar.show(context, 'Error sending command: $e', 500);
+                                        }
+                                      },
+                                      label: const Text(
+                                        "Stop",
+                                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      style: OutlinedButton.styleFrom(
+                                        backgroundColor: Colors.red ,
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                                        minimumSize: Size.zero,
+                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        side: const BorderSide(color: _Tone.subBorder),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                      ),
                                     ),
-                                  ),
-                                  style: OutlinedButton.styleFrom(
-                                    backgroundColor: int.parse(program.prgOnOff) >= 0 ? isStop ? Colors.red :
-                                    isBypass ? Colors.orange :
-                                    Colors.green : Colors.black26,
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-                                    minimumSize: Size.zero,
-                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                    side: const BorderSide(color: _Tone.subBorder),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                  ),
+                                    const SizedBox(width: 8),
+                                    OutlinedButton.icon(
+                                      onPressed: () async {
+                                        final commService = context.read<CommunicationService>();
+                                        try {
+                                          final payLoadFinal = jsonEncode({
+                                            "8400": {"8401": '${program.serialNumber}, 1'},
+                                          });
+
+                                          await Future.delayed(const Duration(milliseconds: 100));
+
+                                          await commService.sendCommand(
+                                            serverMsg: '${program.programName} ${ProgramCodeHelper.getDescription(1)}',
+                                            payload: payLoadFinal,
+                                          );
+
+                                          if (!mounted) return;
+                                          GlobalSnackBar.show(context, 'Program started successfully', 200);
+                                          Navigator.pop(context);
+
+
+                                        } catch (e) {
+                                          GlobalSnackBar.show(context, 'Error sending command: $e', 500);
+                                        }
+
+                                      },
+                                      label: const Text(
+                                        "Start",
+                                        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      style: OutlinedButton.styleFrom(
+                                        backgroundColor: Colors.green ,
+                                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                                        minimumSize: Size.zero,
+                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        side: const BorderSide(color: _Tone.subBorder),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               );
                             },
@@ -787,20 +819,89 @@ class _OmsLineState extends State<OmsLine> {
     return result;
   }
 
-  void _onStartAll(NodeListViewModel vm) {
-    final targets = _collectSelectedNodeValveIds(vm);
+  Future<void> _onStartAll(NodeListViewModel vm) async {
+
+    final nodeIds = <String>[];
+    final nodeNames = <String>[];
+
+    nodeValveSelections.forEach((nodeIndex, valveIdxSet) {
+      if (valveIdxSet.isEmpty) return;
+      final node = vm.nodeList[nodeIndex];
+      nodeIds.add(node.controllerId.toString());
+      nodeNames.add(node.deviceName);
+    });
+
+    final nodeIdString = nodeIds.join('_');
+    final nodeNameString = nodeNames.join('_');
+
+
+    final commService = context.read<CommunicationService>();
+    try {
+      final payLoadFinal = jsonEncode({
+        "8300": {"8301": '$nodeIdString, 1'},
+      });
+
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      await commService.sendCommand(
+        serverMsg: '$nodeNameString ${ProgramCodeHelper.getDescription(1)}',
+        payload: payLoadFinal,
+      );
+
+      if (!mounted) return;
+      GlobalSnackBar.show(context, 'Node started successfully', 200);
+
+    } catch (e) {
+      GlobalSnackBar.show(context, 'Error sending command: $e', 500);
+    }
+
+    /*final targets = _collectSelectedNodeValveIds(vm);
     debugPrint('Start all selected valves: $targets');
     for (final t in targets) {
       debugPrint('Starting nodeId=${t['nodeId']} valveId=${t['valveId']}');
-    }
+    }*/
   }
 
-  void _onStopAll(NodeListViewModel vm) {
-    final targets = _collectSelectedNodeValveIds(vm);
+  Future<void> _onStopAll(NodeListViewModel vm) async {
+
+    final nodeIds = <String>[];
+    final nodeNames = <String>[];
+
+    nodeValveSelections.forEach((nodeIndex, valveIdxSet) {
+      if (valveIdxSet.isEmpty) return;
+      final node = vm.nodeList[nodeIndex];
+      nodeIds.add(node.controllerId.toString());
+      nodeNames.add(node.deviceName);
+    });
+
+    final nodeIdString = nodeIds.join('_');
+    final nodeNameString = nodeNames.join('_');
+
+    final commService = context.read<CommunicationService>();
+    try {
+      final payLoadFinal = jsonEncode({
+        "8300": {"8301": '$nodeIdString, 0'},
+      });
+
+      await Future.delayed(const Duration(milliseconds: 100));
+
+      await commService.sendCommand(
+        serverMsg: '$nodeNameString ${ProgramCodeHelper.getDescription(0)}',
+        payload: payLoadFinal,
+      );
+
+      if (!mounted) return;
+      GlobalSnackBar.show(context, 'Node stopped successfully', 200);
+
+    } catch (e) {
+      GlobalSnackBar.show(context, 'Error sending command: $e', 500);
+    }
+
+    /*final targets = _collectSelectedNodeValveIds(vm);
     debugPrint('Stop all selected valves: $targets');
     for (final t in targets) {
       debugPrint('Stopping nodeId=${t['nodeId']} valveId=${t['valveId']}');
-    }
+    }*/
   }
 
   void _onApplyProgram(NodeListViewModel vm) {
