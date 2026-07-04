@@ -1,11 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../model/cropadvisory_model.dart';
 import 'package:intl/intl.dart';
 import 'crop_list_screen.dart';
-import 'irrigation_fertigation_screen.dart';
-import 'crop_weatherScreen.dart';
 
 class DashboardScreen extends StatefulWidget {
   final String? temperature;
@@ -13,6 +12,7 @@ class DashboardScreen extends StatefulWidget {
   final String? windspeed;
   final bool isInsideMain;
   final int userID, controllerId;
+  final Function(int)? onTabChanged;
 
   const DashboardScreen({
     super.key,
@@ -22,6 +22,7 @@ class DashboardScreen extends StatefulWidget {
     this.isInsideMain = false,
     required this.userID,
     required this.controllerId,
+    this.onTabChanged,
   });
 
   @override
@@ -53,7 +54,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FBFF),
-      appBar: _selectedIndex == 0
+      appBar: widget.isInsideMain
           ? AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -121,7 +122,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       )
           : null,
       body: _buildHomeBody(),
-      floatingActionButton: _selectedIndex == 0
+      floatingActionButton: widget.isInsideMain
           ? Padding(
         padding: const EdgeInsets.only(bottom: 10.0),
         child: SizedBox(
@@ -147,9 +148,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       )
           : null,
-      // bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: !kIsWeb && !widget.isInsideMain ? _buildBottomNavigationBar() : null,
     );
   }
+
+  // Removed _buildBody and _buildRightSideNavigation as they are moved to CropAdvisoryMainScreen
 
   Widget _buildHomeBody() {
     return SingleChildScrollView(
@@ -378,12 +381,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const IrrigationFertigationScreen(),
-                        ),
-                      );
+                      if (widget.onTabChanged != null) {
+                        widget.onTabChanged!(2);
+                      } else {
+                        setState(() {
+                          _selectedIndex = 2; // Irrigation tab
+                        });
+                      }
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF1B7F8A),
@@ -440,15 +444,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CropWeatherscreen(
-                  userId: widget.userID,
-                  controllerId: widget.controllerId,
-                ),
-              ),
-            );
+            if (widget.onTabChanged != null) {
+              widget.onTabChanged!(1);
+            } else {
+              setState(() {
+                _selectedIndex = 1; // Weather tab
+              });
+            }
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

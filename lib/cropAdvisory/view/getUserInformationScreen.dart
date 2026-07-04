@@ -1,6 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
+import '../widgets/crop_advisory_web_sidebar.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/CropDetailsScreen.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/widgets/AppTextField.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/widgets/ContinueButton.dart';
@@ -126,10 +128,10 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Crop Advisory")),
-      body: SafeArea(
-        child: Padding(
+    Widget content = SafeArea(
+      child: Center(
+        child: Container(
+          constraints: BoxConstraints(maxWidth: kIsWeb ? 600 : double.infinity),
           padding: const EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Column(
@@ -205,7 +207,7 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
                       );
                       return;
                     }
-                    
+
                     // Update singleton instance
                     _model.latitude = _latitude?.toString();
                     _model.longitude = _longitude?.toString();
@@ -216,7 +218,12 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
-                        builder: (_) => CropDetailsScreen(userId:widget.userId,controllerId: widget.controllerId, cropId: widget.cropId, edit: widget.edit,),
+                        builder: (_) => CropDetailsScreen(
+                          userId: widget.userId,
+                          controllerId: widget.controllerId,
+                          cropId: widget.cropId,
+                          edit: widget.edit,
+                        ),
                       ),
                     );
                   },
@@ -226,6 +233,18 @@ class _CropinformationscreenState extends State<Cropinformationscreen> {
           ),
         ),
       ),
+    );
+
+    return Scaffold(
+      appBar: AppBar(title: const Text("Crop Advisory")),
+      body: kIsWeb
+          ? Row(
+              children: [
+                const CropAdvisoryWebSidebar(isSetup: true),
+                Expanded(child: content),
+              ],
+            )
+          : content,
     );
   }
 }

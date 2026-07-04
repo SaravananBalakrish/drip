@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http_parser/http_parser.dart';
+import '../widgets/crop_advisory_web_sidebar.dart';
 import 'package:oro_drip_irrigation/repository/repository.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
 import '../../utils/constants.dart';
@@ -249,11 +250,12 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
+    Widget content = SafeArea(
+      child: Center(
+        child: Container(
+          constraints: BoxConstraints(maxWidth: kIsWeb ? 600 : double.infinity),
+          padding: const EdgeInsets.all(16),
+          child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -391,7 +393,7 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                         'deleteImageUrl': '',
                         'edit': 'false',
                         'createUser': widget.userId.toString(),
-                       });
+                      });
 
                       // Image as file
                       if (kIsWeb) {
@@ -406,8 +408,7 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                           );
                         }
                       } else {
-                        if (_model.cropImage != null &&
-                            _model.cropImage!.isNotEmpty) {
+                        if (_model.cropImage != null && _model.cropImage!.isNotEmpty) {
                           request.files.add(
                             await http.MultipartFile.fromPath(
                               'cropImage',
@@ -420,8 +421,7 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
 
                       print("Request : ${request.fields}");
                       final response = await request.send();
-                      final responseBody =
-                      await response.stream.bytesToString();
+                      final responseBody = await response.stream.bytesToString();
                       final data = jsonDecode(responseBody);
                       print("data:$data");
                       print("responseBody:$responseBody");
@@ -429,29 +429,37 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
                       print("Status Code : ${response}");
 
                       if (response.statusCode == 200) {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                            builder: (context) =>
-                             CropAdvisoryMainScreen(userId: widget.userId,controllerId: widget.controllerId,),
-                          ),
-                         );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Failed to save crop: $responseBody',
+                        if (mounted) {
+                          Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (context) => CropAdvisoryMainScreen(
+                                userId: widget.userId,
+                                controllerId: widget.controllerId,
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        }
+                      } else {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Failed to save crop: $responseBody',
+                              ),
+                            ),
+                          );
+                        }
                       }
                     } catch (e) {
                       print("Error : $e");
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Error: $e'),
-                        ),
-                      );
+                      if (mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('Error: $e'),
+                          ),
+                        );
+                      }
                     }
                   },
                 ),
@@ -462,6 +470,17 @@ class _FieldInformationScreenState extends State<FieldInformationScreen> {
           ),
         ),
       ),
+    );
+
+    return Scaffold(
+      body: kIsWeb
+          ? Row(
+              children: [
+                const CropAdvisoryWebSidebar(isSetup: true),
+                Expanded(child: content),
+              ],
+            )
+          : content,
     );
   }
 }
