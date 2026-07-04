@@ -69,7 +69,7 @@ linux/**
 macos/**
 windows/**
 
-#.dart_tool
-#.ignore
-#.github/workflows
-#.idea
+.dart_tool
+.ignore
+.github/workflows
+.idea
