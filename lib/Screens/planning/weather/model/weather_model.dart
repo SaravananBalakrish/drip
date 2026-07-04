@@ -14,15 +14,15 @@ class WeatherModelNew {
   factory WeatherModelNew.fromJson(Map<String, dynamic> json) {
     return WeatherModelNew(
       weatherLive: WeatherLive.fromJson(json["weatherLive"] ?? {}),
-      deviceList: List<WeatherDeviceList>.from(
-        (json["deviceList"] as List? ?? []).map((x) => WeatherDeviceList.fromJson(x ?? {})),
-      ),
-      irrigationLine: List<IrrigationLine>.from(
-        (json["irrigationLine"] as List? ?? []).map((x) => IrrigationLine.fromJson(x ?? {})),
-      ),
-      configObject: List<ConfigObjectNew>.from(
-        (json["configObject"] as List? ?? []).map((x) => ConfigObjectNew.fromJson(x ?? {})),
-      ),
+      deviceList: (json["deviceList"] as List? ?? [])
+          .map((x) => WeatherDeviceList.fromJson(x))
+          .toList(),
+      irrigationLine: (json["irrigationLine"] as List? ?? [])
+          .map((x) => IrrigationLine.fromJson(x))
+          .toList(),
+      configObject: (json["configObject"] as List? ?? [])
+          .map((x) => ConfigObjectNew.fromJson(x))
+          .toList(),
     );
   }
 }
@@ -186,15 +186,12 @@ extension WeatherModelTreeBuilder on WeatherModelNew {
 
   List<IrrigationLineExpanded> buildIrrigationLineTree() {
     final result = <IrrigationLineExpanded>[];
-    
-    final currentDeviceList = deviceList;
-    final currentConfigObject = configObject;
 
     for (final line in irrigationLine) {
       final stations = <WeatherStationWithSensors>[];
 
       for (final controllerId in line.weatherStation) {
-        final device = currentDeviceList.firstWhere(
+        final device = deviceList.firstWhere(
               (d) => d.controllerId == controllerId,
           orElse: () =>
               WeatherDeviceList(
@@ -205,9 +202,11 @@ extension WeatherModelTreeBuilder on WeatherModelNew {
               ),
         );
 
-        final sensors = currentConfigObject.where((c) {
+        final sensors = configObject.where((c) {
+
           return c.controllerId == controllerId;
-        }).toList();
+        }
+        ).toList();
 
         stations.add(
           WeatherStationWithSensors(
@@ -232,34 +231,29 @@ extension WeatherModelTreeBuilder on WeatherModelNew {
     final raw = weatherLive.cM.get5101();
     final result = <int, List<LiveSensorValue>>{};
 
-    if (raw == null || raw.isEmpty) return result;
+    if (raw.isEmpty) return result;
 
     for (final part in raw.split(';')) {
-      if (part == null || !part.contains(':')) continue;
+      if (!part.contains(':')) continue;
 
       final split = part.split(':');
-      if (split.length < 2) continue;
-      
-      // Handle "1,8.10,36.00" format where serial is the first element
-      final header = split[0].split(',');
-      final serial = int.tryParse(header[0]);
+      final serial = int.tryParse(split[0]);
       if (serial == null) continue;
 
       final sensors = <LiveSensorValue>[];
 
       for (final block in split[1].split('_')) {
-        if (block == null) continue;
         final f = block.split(',');
-        if (f.length < 5) continue;
+        if (f.length < 6) continue;
 
         sensors.add(
           LiveSensorValue(
-            sNo: double.tryParse(f[0] ?? "") ?? 0,
-            value: double.tryParse(f[1] ?? "") ?? 0,
-            status: int.tryParse(f[2] ?? "") ?? 0,
-            min: double.tryParse(f[3] ?? "") ?? 0,
-            max: double.tryParse(f[4] ?? "") ?? 0,
-            avg: f.length > 5 ? (double.tryParse(f[5] ?? "") ?? 0) : 0,
+            sNo: double.tryParse(f[0]) ?? 0,
+            value: double.tryParse(f[1]) ?? 0,
+            status: int.tryParse(f[2]) ?? 0,
+            min: double.tryParse(f[3]) ?? 0,
+            max: double.tryParse(f[4]) ?? 0,
+            avg: double.tryParse(f[5]) ?? 0,
           ),
         );
       }

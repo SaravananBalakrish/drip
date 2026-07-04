@@ -50,8 +50,7 @@ SensorHourReport? parseSensorHourData({
     if (!deviceBlock.contains(':')) continue;
 
     final deviceParts = deviceBlock.split(':');
-    final header = deviceParts[0].split(',');
-    final currentDeviceSrNo = header[0].trim();
+     final currentDeviceSrNo = deviceParts[0].trim();
 
 
     // 2️⃣ Match device
@@ -63,14 +62,14 @@ SensorHourReport? parseSensorHourData({
      for (final sensorBlock in sensorBlocks) {
       final parts = sensorBlock.split(',');
 
-      if (parts.length < 5) continue;
+      if (parts.length < 6) continue;
 
       final sensorSrNo = parts[0].trim();
 
       // 4️⃣ Match sensor
       if (sensorSrNo != targetSensor) continue;
 
-      String v(int i) => (i < parts.length && parts[i].trim().isNotEmpty) ? parts[i].trim() : '0';
+      String v(int i) => parts[i].trim().isEmpty ? '0' : parts[i].trim();
 
       // 5️⃣ Create report
       return SensorHourReport(

@@ -7,8 +7,6 @@ import 'package:oro_drip_irrigation/modules/open_ai/widget/chat_bubble.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:oro_drip_irrigation/services/ai_service.dart';
-import 'package:oro_drip_irrigation/services/image_verification_service.dart';
 import '../../../cropAdvisory/view/CropDetailsScreen.dart';
 import '../../../cropAdvisory/view/crop_list_screen.dart';
 import '../../../cropAdvisory/view/getUserInformationScreen.dart';
@@ -189,25 +187,6 @@ class _AIChatScreenState extends State<AIChatScreen> {
 
     try {
       if (_selectedImage != null) {
-        // Verify if it's a crop image using ML Kit (Offline)
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Verifying image...'), duration: Duration(seconds: 1)),
-        );
-
-        final bool isCrop = await ImageVerificationService.isCropImage(_selectedImage!.path);
-
-        if (!isCrop) {
-          if (mounted) {
-            _showError("The selected image does not appear to be a crop or plant. Please provide a clear photo of your crop.");
-          }
-          setState(() {
-            _selectedImage = null;
-            _imageSource = null;
-            _isLoading = false;
-          });
-          return;
-        }
-
         final bytes = await _selectedImage!.readAsBytes();
         final base64Image = base64Encode(bytes);
         final userMessage = Message(

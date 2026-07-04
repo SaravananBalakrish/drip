@@ -85,7 +85,6 @@ dependencies:
   usb_serial: ^0.5.2
   flutter_image_compress: ^2.4.0
   image_picker: ^1.2.2
-  google_mlkit_image_labeling: ^0.12.0
   http_parser: ^4.1.2
 #  audioplayers: ^6.5.0
 #  record: ^6.0.0
@@ -131,7 +130,7 @@ flutter:
     - assets/splash/smart_comm.png
     - assets/splash/transparent.png
     - assets/Images/CropAdvisory/
-    - assets/ssh/smartComm/id_rsa
+#    - .env.apikey
 
 #flutter_launcher_icons:
 #  android: true
