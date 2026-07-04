@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/crop_advisory_main_screen.dart';
 import '../../repository/repository.dart';
@@ -73,7 +74,9 @@ class _CropListScreenState extends State<CropListScreen> {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> body = jsonDecode(response.body);
-         GlobalSnackBar.show(context, body['message'], response.statusCode);
+        if (mounted) {
+          GlobalSnackBar.show(context, body['message'], response.statusCode);
+        }
         setState(() {
           fetchData();
         });
@@ -89,16 +92,15 @@ class _CropListScreenState extends State<CropListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Crop List'),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-              itemCount: cropList.length,
-              itemBuilder: (context, index) {
-                final crop = cropList[index];
+    Widget content = _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : Center(
+      child: Container(
+        constraints: const BoxConstraints(maxWidth: kIsWeb ? 800 : double.infinity),
+        child: ListView.builder(
+          itemCount: cropList.length,
+          itemBuilder: (context, index) {
+            final crop = cropList[index];
 
                 return Card(
                   margin:
