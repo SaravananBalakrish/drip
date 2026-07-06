@@ -15,9 +15,11 @@ class CropListScreen extends StatefulWidget {
     Key? key,
     required this.userId,
     required this.controllerId,
+    this.isInsideTabs = false,
   }) : super(key: key);
 
   final int userId, controllerId;
+  final bool isInsideTabs;
 
   @override
   State<CropListScreen> createState() => _CropListScreenState();
@@ -95,6 +97,7 @@ class _CropListScreenState extends State<CropListScreen> {
     return Scaffold(
         appBar: AppBar(
           title: const Text("Crop List"),
+          // If we are inside tabs, we might want a custom back behavior or just the default pop
         ),
         body:  _isLoading
         ? const Center(child: CircularProgressIndicator())
@@ -116,16 +119,33 @@ class _CropListScreenState extends State<CropListScreen> {
                     contentPadding:
                         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CropAdvisoryMainScreen(
-                                  userId: widget.userId,
-                                  controllerId: widget.controllerId,
-                                  cropModel: crop,
-                                )),
-                      );
+                      if (widget.isInsideTabs) {
+                        // Switch crop and reset the main screen to avoid deep nesting
+                        Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                              builder: (context) => CropAdvisoryMainScreen(
+                                    userId: widget.userId,
+                                    controllerId: widget.controllerId,
+                                    cropModel: crop,
+                                  )),
+                          (route) => false,
+                        );
+                      } else {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CropAdvisoryMainScreen(
+                                    userId: widget.userId,
+                                    controllerId: widget.controllerId,
+                                    cropModel: crop,
+                                  )),
+                        );
+                      }
                     },
+                    leading: CircleAvatar(
+                      backgroundColor: const Color(0xff0E8797).withOpacity(0.1),
+                      child: const Icon(Icons.eco, color: Color(0xff0E8797)),
+                    ),
                     title: Text(
                       crop.cropName ?? 'Unnamed Crop',
                       style: const TextStyle(
@@ -134,7 +154,7 @@ class _CropListScreenState extends State<CropListScreen> {
                     subtitle: Padding(
                       padding: const EdgeInsets.only(top: 4.0),
                       child: Text(
-                        "${crop.cropType ?? 'N/A'} • ${crop.areaName ?? 'No area'}",
+                        "${crop.cropType ?? 'N/A'} • ${crop.farmName ?? 'No area'}",
                         style: TextStyle(color: Colors.grey.shade600),
                       ),
                     ),
@@ -170,9 +190,20 @@ class _CropListScreenState extends State<CropListScreen> {
                           icon:
                               const Icon(Icons.delete, color: Colors.redAccent),
                           onPressed: () async {
-                            setState(() {
+                            bool? confirm = await showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text("Delete Crop"),
+                                content: const Text("Are you sure you want to delete this crop?"),
+                                actions: [
+                                  TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
+                                  TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Delete", style: TextStyle(color: Colors.red))),
+                                ],
+                              ),
+                            );
+                            if (confirm == true) {
                               deleteCropList(crop.cropId!);
-                            });
+                            }
                           },
                         ),
                       ],
@@ -202,6 +233,8 @@ class _CropListScreenState extends State<CropListScreen> {
         },
         icon: const Icon(Icons.add),
         label: const Text("Create Crop"),
+        backgroundColor: const Color(0xff0E8797),
+        foregroundColor: Colors.white,
       ),
     );
   }

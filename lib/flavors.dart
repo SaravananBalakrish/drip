@@ -1,4 +1,4 @@
-enum Flavor {
+ enum Flavor {
   oroDevelopment,
   oroProduction,
   smartComm,

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import '../model/cropadvisory_model.dart';
 import 'package:intl/intl.dart';
@@ -42,18 +43,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.initState();
     _model = widget.model;
   }
-  /// Output: "Coimbatore, Tamil Nadu"
+
   String _formatAddress(String? raw) {
     if (raw == null || raw.trim().isEmpty) return '';
-
     final parts = raw.split(',').map((e) => e.trim()).toList();
-
     final filtered = parts
-        .where((part) => !part.contains('+')) // remove Plus Code segment
-        .map((part) => part.replaceAll(RegExp(r'\s*\d{4,6}$'), '').trim()) // strip pincode
+        .where((part) => !part.contains('+'))
+        .map((part) => part.replaceAll(RegExp(r'\s*\d{4,6}$'), '').trim())
         .where((part) => part.isNotEmpty)
         .toList();
-
     return filtered.join(', ');
   }
 
@@ -71,14 +69,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
           child: IconButton(
             icon: const Icon(Icons.menu, color: Colors.black, size: 28),
             onPressed: () {
-              Navigator.push(
+              // ✅ FIXED: Navigation now keeps the bottom bar
+              PersistentNavBarNavigator.pushNewScreen(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => CropListScreen(
-                    userId: widget.userID,
-                    controllerId: widget.controllerId,
-                  ),
+                screen: CropListScreen(
+                  userId: widget.userID,
+                  controllerId: widget.controllerId,
+                  isInsideTabs: true, // Tell CropList it's inside tabs
                 ),
+                withNavBar: true, 
+                pageTransitionAnimation: PageTransitionAnimation.cupertino,
               );
             },
           ),
@@ -155,7 +155,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ),
       )
           : null,
-      // bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -216,7 +215,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     size: 14, color: Colors.black54),
                 const SizedBox(width: 6),
                 Text(
-                  // ✅ FIX 2: Removed duplicate Text widget, kept only this one
                   DateFormat('dd.MM.yyyy').format(DateTime.now()),
                   style: GoogleFonts.poppins(
                     fontSize: 12,
@@ -224,14 +222,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     color: Colors.black87,
                   ),
                 ),
-            Text(
-              DateFormat('DD/MM/YYYY').format(DateTime.now()),
-              style: GoogleFonts.poppins(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
-              ),
-            ),
                 const Icon(Icons.keyboard_arrow_down, size: 16, color: Colors.black54),
               ],
             ),
@@ -244,7 +234,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ),
                 const SizedBox(width: 6),
                 Text(
-                  DateFormat('HH:MM:SS').format(DateTime.now()),
+                  DateFormat('HH:mm:ss').format(DateTime.now()),
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -418,10 +408,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     onPressed: () {
                       if (widget.onTabChanged != null) {
                         widget.onTabChanged!(2);
-                      } else {
-                        setState(() {
-                          _selectedIndex = 2; // Irrigation tab
-                        });
                       }
                     },
                     style: OutlinedButton.styleFrom(
@@ -481,10 +467,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
           onTap: () {
             if (widget.onTabChanged != null) {
               widget.onTabChanged!(1);
-            } else {
-              setState(() {
-                _selectedIndex = 1; // Weather tab
-              });
             }
           },
           child: Row(
@@ -648,99 +630,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 )
               ],
             ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNavigationBar() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 10,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF1B7F8A),
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        currentIndex: _selectedIndex,
-        selectedLabelStyle: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500),
-        unselectedLabelStyle: GoogleFonts.poppins(fontSize: 12),
-        elevation: 0,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        items: [
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset(
-                'assets/Images/CropAdvisory/home_icon_active.png',
-                width: 24,
-                height: 24,
-                color: _selectedIndex == 0 ? const Color(0xFF1B7F8A) : Colors.grey,
-              ),
-            ),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset(
-                'assets/Images/CropAdvisory/weather.png',
-                width: 24,
-                height: 24,
-                color: _selectedIndex == 1 ? const Color(0xFF1B7F8A) : Colors.grey,
-              ),
-            ),
-            label: 'Weather',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset(
-                'assets/Images/CropAdvisory/irrigation.png',
-                width: 24,
-                height: 24,
-                color: _selectedIndex == 2 ? const Color(0xFF1B7F8A) : Colors.grey,
-              ),
-            ),
-            label: 'Irrigation',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset(
-                'assets/Images/CropAdvisory/disease.png',
-                width: 24,
-                height: 24,
-                color: _selectedIndex == 3 ? const Color(0xFF1B7F8A) : Colors.grey,
-              ),
-            ),
-            label: 'Disease',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Image.asset(
-                'assets/Images/CropAdvisory/report.png',
-                width: 24,
-                height: 24,
-                color: _selectedIndex == 4 ? const Color(0xFF1B7F8A) : Colors.grey,
-              ),
-            ),
-            label: 'Report',
           ),
         ],
       ),
