@@ -139,7 +139,7 @@ class _IrrigationAndPumpLogState extends State<IrrigationAndPumpLog> with Ticker
                               ]
                             else
                               ...[
-                                ListOfLogConfig(userData: widget.userData,),
+                                ListOfLogConfig(userData: widget.userData, masterData: widget.masterData,),
                                 StandaloneLog(userData: widget.userData,),
                               ],
                             if(!AppConstants.ecoGemAndPlusModelList.contains(widget.masterData.modelId) ? pumpList.isNotEmpty : true)

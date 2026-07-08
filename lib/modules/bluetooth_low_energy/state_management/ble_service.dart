@@ -405,10 +405,13 @@ class BleProvider extends ChangeNotifier {
     }
     for (BluetoothCharacteristic c in myService!.characteristics) {
       print("characteristic => $c");
-      if (
-      c.properties.writeWithoutResponse == false &&
+
+      if (!AppConstants.wlcModelList.contains(modelId) ?
+      (c.properties.writeWithoutResponse == false &&
           c.properties.write == true &&
-          c.properties.notify == true
+          c.properties.notify == true) : (c.properties.writeWithoutResponse == false &&
+          c.properties.write == false &&
+          c.properties.notify == true)
       ) {
         if (readFromHardware == null) {
           listeningReadFromHardwareSubscription(c);
