@@ -11,6 +11,7 @@ import '../../../../providers/user_provider.dart';
 import '../../../../repository/repository.dart';
 import '../../../../services/communication_service.dart';
 import '../../../../services/http_service.dart';
+import '../../../../utils/formatters.dart';
 import '../../../../utils/helpers/program_code_helper.dart';
 import '../../../../utils/my_function.dart';
 import '../../../../utils/my_helper_class.dart';
@@ -26,6 +27,7 @@ import 'package:oro_drip_irrigation/utils/Theme/agritel_theme.dart';
 class _Tone {
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceMuted = Color(0xFFF7F8FA);
+  static const Color surfaceMutedBg = Color(0xFFDAF3BC);
   static const Color border = Color(0xFFE4E6EA);
   static const Color subBorder = Color(0xFFC5C6CA);
   static const Color textPrimary = Color(0xFF1A1D21);
@@ -247,17 +249,20 @@ class _OmsLineState extends State<OmsLine> {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: _Tone.subBorder, width: 0.5),
                 ),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.zero,
-                  itemCount: filteredIndices.length + 1,
-                  separatorBuilder: (_, __) => const Divider(height: 1, color: _Tone.border),
-                  itemBuilder: (context, i) {
-                    if (i == 0) return _buildTableHeaderRow();
-                    final nodeIndex = filteredIndices[i - 1];
-                    return _buildNodeRow(vm, programVm, nodeIndex);
-                  },
+                child: Padding(
+                  padding: const EdgeInsets.all(3.0),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.zero,
+                    itemCount: filteredIndices.length + 1,
+                    separatorBuilder: (_, __) => const Divider(height: 1, color: _Tone.border),
+                    itemBuilder: (context, i) {
+                      if (i == 0) return _buildTableHeaderRow();
+                      final nodeIndex = filteredIndices[i - 1];
+                      return _buildNodeRow(vm, programVm, nodeIndex);
+                    },
+                  ),
                 ),
               ),
             ),
@@ -286,7 +291,7 @@ class _OmsLineState extends State<OmsLine> {
     return SearchBar(
       constraints: const BoxConstraints(minHeight: 42),
       padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
-      hintText: "Search Street, Node ID...",
+      hintText: "Search Zone, Node ID...",
       hintStyle: WidgetStateProperty.all(const TextStyle(fontSize: 13)),
       textStyle: WidgetStateProperty.all(const TextStyle(fontSize: 13)),
       leading: Icon(Icons.search_rounded, color: primary, size: 20),
@@ -308,7 +313,7 @@ class _OmsLineState extends State<OmsLine> {
           SizedBox(width: 28),
           SizedBox(width: 42),
           SizedBox(width: 150, child: Text('Node', style: headerStyle)),
-          Expanded(flex: 3, child: Text('Zone – Area/Place Name', style: headerStyle)),
+          Expanded(flex: 3, child: Text('Zone/Place Name', style: headerStyle)),
           SizedBox(width: 100, child: Text('Battery', style: headerStyle)),
           SizedBox(width: 100, child: Text('Solar', style: headerStyle)),
           Expanded(flex: 3, child: Text('Valves', style: headerStyle)),
@@ -347,6 +352,7 @@ class _OmsLineState extends State<OmsLine> {
     final isNodeFullySelected = selectedValves.length == valves.length && valves.isNotEmpty;
     final isExpanded = expandedNodes.contains(index);
 
+
     return Column(
       children: [
         InkWell(
@@ -376,9 +382,19 @@ class _OmsLineState extends State<OmsLine> {
                 const SizedBox(width: 16),
                 SizedBox(
                   width: 150,
-                  child: Text(
-                    node.deviceId,
-                    style: const TextStyle(fontSize: 11, color: _Tone.textPrimary, fontFamily: 'monospace'),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        node.deviceId,
+                        style: const TextStyle(fontSize: 11, color: _Tone.textPrimary, fontFamily: 'monospace'),
+                      ),
+                      Text(
+                        Formatters().formatDateDMY(node.lastFeedbackReceivedTime),
+                        style: const TextStyle(fontSize: 10, color: _Tone.textMuted, fontFamily: 'monospace'),
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(
@@ -393,10 +409,11 @@ class _OmsLineState extends State<OmsLine> {
                   width: 100,
                   child: _MetricChip(
                     label: '${node.batVolt} V',
-                    warn: (double.tryParse(node.batVolt.toString()) ?? 0) <= 0,
+                    warn: (double.tryParse(node.batVolt.toString()) ?? 0) <= 10,
                   ),
                 ),
-                SizedBox(width: 100, child: _MetricChip(label: '${node.sVolt} V', warn: true)),
+                SizedBox(width: 100, child: _MetricChip(label: '${node.sVolt} V',
+                    warn: (double.tryParse(node.sVolt.toString()) ?? 0) <= 10)),
                 Expanded(flex: 3, child: _ValveDotRow(valves: valves)),
                 Expanded(flex: 2, child: _RunningSummary(valves: valves, programVm: programVm)),
                 SizedBox(
@@ -533,7 +550,7 @@ class _OmsLineState extends State<OmsLine> {
                                         final commService = context.read<CommunicationService>();
                                         try {
                                           final payLoadFinal = jsonEncode({
-                                            "8400": {"8401": '${program.serialNumber}, 0'},
+                                            "8400": {"8401": '${program.serialNumber},0'},
                                           });
 
                                           await Future.delayed(const Duration(milliseconds: 100));
@@ -572,7 +589,7 @@ class _OmsLineState extends State<OmsLine> {
                                         final commService = context.read<CommunicationService>();
                                         try {
                                           final payLoadFinal = jsonEncode({
-                                            "8400": {"8401": '${program.serialNumber}, 1'},
+                                            "8400": {"8401": '${program.serialNumber},1'},
                                           });
 
                                           await Future.delayed(const Duration(milliseconds: 100));
@@ -838,7 +855,7 @@ class _OmsLineState extends State<OmsLine> {
     final commService = context.read<CommunicationService>();
     try {
       final payLoadFinal = jsonEncode({
-        "8300": {"8301": '$nodeIdString, 1'},
+        "8300": {"8301": '$nodeIdString,1'},
       });
 
       await Future.delayed(const Duration(milliseconds: 100));
@@ -880,7 +897,7 @@ class _OmsLineState extends State<OmsLine> {
     final commService = context.read<CommunicationService>();
     try {
       final payLoadFinal = jsonEncode({
-        "8300": {"8301": '$nodeIdString, 0'},
+        "8300": {"8301": '$nodeIdString,0'},
       });
 
       await Future.delayed(const Duration(milliseconds: 100));
@@ -977,6 +994,7 @@ class _OmsLineState extends State<OmsLine> {
 /// Small metric chip
 /// ---------------------------------------------------------------------
 class _MetricChip extends StatelessWidget {
+
   final String label;
   final bool warn;
   const _MetricChip({required this.label, this.warn = false});
@@ -988,12 +1006,13 @@ class _MetricChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-          color: warn ? _Tone.statusPendingBg : _Tone.surfaceMuted,
+          color: warn ? _Tone.statusPendingBg : _Tone.surfaceMutedBg,
           borderRadius: BorderRadius.circular(6),
         ),
         child: Text(
           label,
-          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: warn ? _Tone.statusPending : _Tone.textSecondary),
+          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600,
+              color: warn ? _Tone.statusPending : _Tone.textSecondary),
         ),
       ),
     );
