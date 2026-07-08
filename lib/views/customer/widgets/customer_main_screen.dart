@@ -62,7 +62,7 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
       );
 
     case 3:
-      return (isGem || isNova) ? IrrigationAndPumpLog(
+      return (isGem || isNova || isOms) ? IrrigationAndPumpLog(
         userData: {
           'userId': userId,
           'controllerId': cMaster.controllerId,
@@ -77,7 +77,7 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
       );
 
     case 4:
-      return (isGem || isNova) ? ControllerSettingWide(
+      return (isGem || isNova || isOms) ? ControllerSettingWide(
         userId: userId,
         customerId: cSite.customerId,
         masterController: cMaster,
@@ -91,7 +91,7 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
       );
 
     case 5:
-      return (isGem || isNova) ? SiteConfig(
+      return (isGem || isNova || isOms) ? SiteConfig(
         userId: userId,
         customerId: cSite.customerId,
         customerName: cSite.customerName,
