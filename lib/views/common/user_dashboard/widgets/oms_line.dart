@@ -103,7 +103,7 @@ ValveDisplayStatus _displayStatusFor(int status, int completePercent) {
 class _ValveDuration {
   final bool isTimeBased;
   final String display; // "00:04:32" or "12.50 l" depending on mode
-  final bool isActive; // values[17] == '1'
+  final bool isActive;
   const _ValveDuration({required this.isTimeBased, required this.display, required this.isActive});
 }
 
@@ -115,13 +115,12 @@ _ValveDuration? _durationForValve(List<String> currentSchedule, String valveSNo)
     if (values.length <= 11) continue;
 
     final raw = values[5];
-    final isTimeBased = raw.contains(':');
-    final isActive = values[10] == '1';
+    final isTimeBased = values[3] == '1';
 
     return _ValveDuration(
       isTimeBased: isTimeBased,
       display: isTimeBased ? raw : '$raw L',
-      isActive: isActive,
+      isActive: true,
     );
   }
   return null;
@@ -761,8 +760,6 @@ class _OmsLineState extends State<OmsLine> {
     if (status == 'Program created' && mounted) debugPrint(status);
   }
 
-
-
   Widget _buildActionButton({
     required String label,
     required IconData icon,
@@ -1292,7 +1289,7 @@ class _ValveDetailCard extends StatelessWidget {
                           // ticking clock; flow-based shows remaining
                           // volume, matching whichever mode the program
                           // used (values[4] format in currentSchedule).
-                          if (duration != null && duration.isActive) ...[
+                          if (duration != null && duration.isActive && currentStatus == 1) ...[
                             const SizedBox(height: 5),
                             Row(
                               children: [
