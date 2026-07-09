@@ -36,7 +36,7 @@ class CurrentProgramViewModel extends ChangeNotifier {
       for (int i = 0; i < currentSchedule.length; i++) {
         List<String> values = currentSchedule[i].split(',');
 
-        if (isOMS ? values.length <= 11 || values[10] != '1' :
+        if (isOMS ? values.length <= 11 :
           values.length <= 17 || values[17] != '1') {
           continue;
         }
@@ -44,10 +44,10 @@ class CurrentProgramViewModel extends ChangeNotifier {
         //"8204": "4,1,1.2,1,1,00:18:23,01:05,0,0,3,1,;"
 
         if(isOMS){
-          if (values[5].contains(':')) {
+          if (values[3].contains('1')) {
             values[5] = _updateTime(values[5]);
           } else {
-            values[5] = _updateFlow(values[4], values[16]);
+            values[5] = _updateFlow(values[7], values[11]);
           }
         }else{
           if (values[4].contains(':')) {

@@ -202,7 +202,7 @@ class BluetoothClassicService {
       isLogging = false;
 
       traceLog.add(traceChunk); // Add collected chunk to log
-      providerState?.updatetracelog(traceLog);
+      providerState?.updateTraceLogs(traceLog);
 
       providerState?.setTraceLoading(false);
 

@@ -900,12 +900,10 @@ class MqttPayloadProvider with ChangeNotifier {
     updateLocalFiltrationSite();
   }
 
-   void updatetracelog(status){
-
+   void updateTraceLogs(status){
      traceLog = status;
      notifyListeners();
    }
-
 
   void updateNodeLiveMessage(List<String> message) {
     nodeLiveMessage = message;
