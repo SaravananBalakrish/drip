@@ -195,22 +195,13 @@ class _OmsLogState extends State<OmsLog> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F6F8),
-      appBar: AppBar(
-        title: const Text('OMS Log'),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.calendar_today_outlined),
-            onPressed: _pickDate,
-            tooltip: 'Select date',
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          _buildDateSelector(),
-          Expanded(child: _buildBody()),
-        ],
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildDateSelector(),
+            Expanded(child: _buildBody()),
+          ],
+        ),
       ),
     );
   }
@@ -265,7 +256,7 @@ class _OmsLogState extends State<OmsLog> {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: _fetchOmsLog,
-                child: const Text('Retry'),
+                child: const Text('Retry', style: TextStyle(color: Colors.white),),
               ),
             ],
           ),

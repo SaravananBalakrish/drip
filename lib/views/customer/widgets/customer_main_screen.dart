@@ -61,7 +61,7 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
         isWide: true,
       );
     case 3:
-      return (isGem || isNova || isOms) ? IrrigationAndPumpLog(
+      return (isGem || isNova) ? IrrigationAndPumpLog(
         userData: {
           'userId': userId,
           'controllerId': cMaster.controllerId,
@@ -69,7 +69,7 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
         },
         masterData: cMaster,
       ) : isOms ? OmsLog(
-          userId: userId,
+          userId: cSite.customerId,
           controllerId: cMaster.controllerId,
           nodeControllerId: 0
       ):
