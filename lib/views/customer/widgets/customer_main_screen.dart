@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oro_drip_irrigation/modules/irrigation_report/view/oms_log.dart';
  import '../../../Screens/Dealer/sevicecustomer.dart';
 import '../../../Screens/Logs/irrigation_and_pump_log.dart';
 import '../../../Screens/Map/oro_map/map_areator.dart';
@@ -59,7 +60,6 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
         controllerId: cMaster.controllerId,
         isWide: true,
       );
-
     case 3:
       return (isGem || isNova || isOms) ? IrrigationAndPumpLog(
         userData: {
@@ -68,7 +68,11 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
           'customerId': cSite.customerId,
         },
         masterData: cMaster,
-      ) :
+      ) : isOms ? OmsLog(
+          userId: userId,
+          controllerId: cMaster.controllerId,
+          nodeControllerId: 0
+      ):
       ControllerSettingWide(
         userId: userId,
         customerId: cSite.customerId,
