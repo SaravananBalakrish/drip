@@ -52,7 +52,7 @@ class _CropAdvisoryMainScreenState extends State<CropAdvisoryMainScreen> {
           }
         },  model: widget.cropModel,
       ),
-      CropWeatherscreen(userId: widget.userId, controllerId: widget.controllerId),
+      CropWeatherscreen(userId: widget.userId,controllerId: widget.controllerId,),
       const IrrigationFertigationScreen(isInsideMain: true),
       const DiseaseScreen(),
       const ReportScreen(),

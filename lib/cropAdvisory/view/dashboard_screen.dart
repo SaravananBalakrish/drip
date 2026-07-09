@@ -103,15 +103,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(width: 6),
               Text(
                 _formatAddress(_model.address ?? _model.areaName).isEmpty
-                    ? 'Location not found'
+                    ? 'Tamil nadu'
                     : _formatAddress(_model.address ?? _model.areaName),
                 style: GoogleFonts.poppins(
                   fontSize: 13,
                   color: Colors.black87,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w400
                 ),
                 maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                overflow: TextOverflow.fade,
               ),
             ],
           ),
@@ -196,7 +196,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
             Text(
-              "${_model.farmName ?? 'Farm '}",
+              "${_model.cropName ?? 'Farm '}",
               style: GoogleFonts.poppins(
                 fontSize: 26,
                 fontWeight: FontWeight.w600,
@@ -355,6 +355,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         child: CircularProgressIndicator());
                                   },
                                   errorBuilder: (context, error, stackTrace) {
+                                    print('image error $error $stackTrace');
                                     return soilImg.isNotEmpty
                                         ? Image.asset(soilImg,
                                             fit: BoxFit.cover)
@@ -439,22 +440,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Row(
       children: [
         Icon(icon, size: 20, color: Colors.black),
-        const SizedBox(width: 12),
-        RichText(
-          text: TextSpan(
-            style: GoogleFonts.poppins(fontSize: 14, color: Colors.black),
-            children: [
-              TextSpan(
-                text: '$label : ',
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-              TextSpan(
-                text: value,
-                style: const TextStyle(fontWeight: FontWeight.w400),
-              ),
-            ],
+        const SizedBox(width: 5),
+        Expanded(
+          child: Text.rich(
+            TextSpan(
+              children: [
+                TextSpan(
+                  text: '$label : ',
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+                TextSpan(text: value,style: const TextStyle(fontStyle: FontStyle.normal),),
+              ],
+            ),
+            // overflow: TextOverflow.ellipsis,
+            softWrap: true,
           ),
-        ),
+        )
       ],
     );
   }

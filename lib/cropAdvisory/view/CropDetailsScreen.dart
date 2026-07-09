@@ -282,40 +282,40 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
       if (image == null) return;
 
       // Verify if it's a crop image using ML Kit (Offline)
-      if (!kIsWeb) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Verifying image...'),
-              duration: Duration(seconds: 1),
-            ),
-          );
-        }
-
-        final bool isCrop = await ImageVerificationService.isCropImage(image.path);
-
-        if (!isCrop) {
-          if (mounted) {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text("Invalid Image"),
-                content: const Text(
-                  "The image does not appear to be a crop or plant. "
-                      "Please take a clear photo of your crop to proceed.",
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("OK"),
-                  ),
-                ],
-              ),
-            );
-          }
-          return;
-        }
-      }
+      // if (!kIsWeb) {
+      //   if (mounted) {
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //       const SnackBar(
+      //         content: Text('Verifying image...'),
+      //         duration: Duration(seconds: 1),
+      //       ),
+      //     );
+      //   }
+      //
+      //   final bool isCrop = await ImageVerificationService.isCropImage(image.path);
+      //
+      //   if (!isCrop) {
+      //     if (mounted) {
+      //       showDialog(
+      //         context: context,
+      //         builder: (context) => AlertDialog(
+      //           title: const Text("Invalid Image"),
+      //           content: const Text(
+      //             "The image does not appear to be a crop or plant. "
+      //                 "Please take a clear photo of your crop to proceed.",
+      //           ),
+      //           actions: [
+      //             TextButton(
+      //               onPressed: () => Navigator.pop(context),
+      //               child: const Text("OK"),
+      //             ),
+      //           ],
+      //         ),
+      //       );
+      //     }
+      //     return;
+      //   }
+      // }
 
       final Uint8List bytes = await image.readAsBytes(); // ✅ single declaration
 
