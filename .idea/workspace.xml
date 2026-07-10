@@ -5,8 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2f9418e-6c3f-4208-958b-3bdf91e8d388" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/lib/modules/irrigation_report/view/oms_log.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/irrigation_report/view/oms_log.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/views/customer/widgets/customer_main_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/customer/widgets/customer_main_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/IrrigationProgram/state_management/irrigation_program_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/IrrigationProgram/state_management/irrigation_program_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/IrrigationProgram/view/sequence_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/IrrigationProgram/view/sequence_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/config_maker/model/device_object_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/config_maker/model/device_object_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/config_maker/state_management/config_maker_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/config_maker/state_management/config_maker_provider.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

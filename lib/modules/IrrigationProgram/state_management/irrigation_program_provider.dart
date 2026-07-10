@@ -1539,6 +1539,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         }
       }
       payload += payload.isNotEmpty ? ';' : '';
+      print("sq['mainValve'] : ${sq['mainValve']}");
       Map<String, dynamic> jsonPayload = {
         'S_No' : sq['sNo'],
         'ProgramS_No' : serialNumber,
