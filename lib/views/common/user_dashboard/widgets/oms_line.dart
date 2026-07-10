@@ -120,7 +120,7 @@ _ValveDuration? _durationForValve(List<String> currentSchedule, String nodeSNo) 
     final scheduleNodeSNo = values[0].trim();
     if (scheduleNodeSNo != nodeSNo) continue;
 
-    print("Found matching node: $scheduleNodeSNo, values: $values");
+    //print("Found matching node: $scheduleNodeSNo, values: $values");
 
     // Check if the program is running (status = 1)
     final programStatus = int.tryParse(values[4].trim()) ?? 0;
@@ -152,30 +152,9 @@ _ValveDuration? _durationForValve(List<String> currentSchedule, String nodeSNo) 
       }
     }
   }
-  print("No matching running node found for: $nodeSNo");
+  //print("No matching running node found for: $nodeSNo");
   return null;
 }
-
-
-/*_ValveDuration? _durationForValve(List<String> currentSchedule, String valveSNo) {
-  for (final row in currentSchedule) {
-    final values = row.split(',');
-    if (values.isEmpty) continue;
-
-    if (values.length <= 11) continue;
-
-
-    final isTimeBased = values[3] == '1';
-    final raw = isTimeBased ? values[5] : values[7];
-
-    return _ValveDuration(
-      isTimeBased: isTimeBased,
-      display: isTimeBased ? raw : '$raw L',
-      isActive: true,
-    );
-  }
-  return null;
-}*/
 
 class OmsLine extends StatefulWidget {
   final MasterControllerModel master;
@@ -341,7 +320,7 @@ class _OmsLineState extends State<OmsLine> {
     return SearchBar(
       constraints: const BoxConstraints(minHeight: 42),
       padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
-      hintText: "Search Zone, Node ID...",
+      hintText: "Search by Zone, Node ID...",
       hintStyle: WidgetStateProperty.all(const TextStyle(fontSize: 13)),
       textStyle: WidgetStateProperty.all(const TextStyle(fontSize: 13)),
       leading: Icon(Icons.search_rounded, color: primary, size: 20),
@@ -379,7 +358,7 @@ class _OmsLineState extends State<OmsLine> {
 
     final sensors = node.rlyStatus.where((rly) {
       final sNo = rly.sNo.toString();
-      return sNo.startsWith('24.') || sNo.startsWith('46.');
+      return sNo.startsWith('22.') || sNo.startsWith('24.')  || sNo.startsWith('46.');
     }).toList();
 
     final selectedValves = nodeValveSelections[index] ?? <int>{};
@@ -408,7 +387,7 @@ class _OmsLineState extends State<OmsLine> {
         InkWell(
           onTap: () => _toggleExpanded(index),
           child: Container(
-            color: isNodeFullySelected ? primary.withOpacity(0.04) : Colors.transparent,
+            color: isNodeFullySelected ? primary.withValues(alpha: 0.04) : Colors.transparent,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: Row(
               children: [
@@ -892,7 +871,7 @@ class _OmsLineState extends State<OmsLine> {
     nodeValveSelections.forEach((nodeIndex, valveIdxSet) {
       if (valveIdxSet.isEmpty) return;
       final node = vm.nodeList[nodeIndex];
-      nodeIds.add(node.controllerId.toString());
+      nodeIds.add(node.serialNumber.toString());
       nodeNames.add(node.deviceName);
     });
 
@@ -935,7 +914,7 @@ class _OmsLineState extends State<OmsLine> {
     nodeValveSelections.forEach((nodeIndex, valveIdxSet) {
       if (valveIdxSet.isEmpty) return;
       final node = vm.nodeList[nodeIndex];
-      nodeIds.add(node.controllerId.toString());
+      nodeIds.add(node.serialNumber.toString());
       nodeNames.add(node.deviceName);
     });
 
@@ -1396,7 +1375,7 @@ class _ValveDetailCard extends StatelessWidget {
                           // ticking clock; flow-based shows remaining
                           // volume, matching whichever mode the program
                           // used (values[4] format in currentSchedule).
-                          if (duration != null && duration.isActive && currentStatus == 1) ...[
+                          /*if (duration != null && duration.isActive && currentStatus == 1) ...[
                             const SizedBox(height: 5),
                             Row(
                               children: [
@@ -1420,7 +1399,7 @@ class _ValveDetailCard extends StatelessWidget {
                           ] else if (display == ValveDisplayStatus.completed) ...[
                             const SizedBox(height: 4),
                             const Text('Finished', style: TextStyle(fontSize: 10, color: _Tone.textMuted)),
-                          ],
+                          ],*/
                         ],
                       ),
                     ),
