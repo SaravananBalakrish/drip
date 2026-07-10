@@ -760,7 +760,16 @@ class MqttPayloadProvider with ChangeNotifier {
           updateNodeLiveMessage(data['cM']['8201'].split(";"));
           updateValveStatus(data['cM']['8202'].split(";"));
           updateSensorValue(data['cM']['8203'].split(";"));
-          updateCurrentProgram(data['cM']['8204'].split(";"));
+
+          final scheduleData = data['cM']['8204'] as String?;
+          if (scheduleData != null && scheduleData.isNotEmpty) {
+            final scheduleRows = scheduleData.split(';')
+                .where((row) => row.trim().isNotEmpty)
+                .toList();
+            print("Parsed schedule rows: $scheduleRows");
+            updateCurrentProgram(scheduleRows);
+          }
+
 
         }
         else if(data.containsKey('3600') && data['3600'] != null && data['3600'].isNotEmpty){
