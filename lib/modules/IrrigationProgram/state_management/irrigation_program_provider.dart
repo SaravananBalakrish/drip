@@ -1382,6 +1382,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   break add;
                 }else{
                   sequenceData[j]['seqName'] = valSeqList[i]['seqName'];
+                  sequenceData[j]['mainValve'] = valSeqList[i]['mainValve'];
                   generateNew.addAll(returnSequenceDataUpdate(central: central, local: local, i: i,sequence: [sequenceData[j]],newSequence: false));
                   break add;
                 }
