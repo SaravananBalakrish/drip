@@ -225,7 +225,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     });
     preferenceProvider.updateTabIndex(0);
     mqttPayloadProvider.viewSettingsList.clear();
-    isToGem = AppConstants.gemModelList.contains(widget.masterData['modelId']);
+    isToGem = [...AppConstants.gemModelList, ...AppConstants.aquacultureModelList].contains(widget.masterData['modelId']);
     isPumpWithValveModel = AppConstants.pumpWithValveModelList.contains(widget.masterData['modelId']);
     isPumpOnly = AppConstants.pumpModelList.contains(widget.masterData['modelId']);
     isNova = AppConstants.ecoGemAndPlusModelList.contains(widget.masterData['modelId']);
@@ -747,7 +747,9 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             Wrap(
               children: [
                 for(var categoryIndex = 0; categoryIndex < settingList.length; categoryIndex++)
-                  if((settingList[categoryIndex].type == 207 && isToGem) ? preferenceProvider.individualPumpSetting![pumpIndex].controlGem : true)
+                  if(AppConstants.aquacultureModelList.contains(widget.masterData['modelId']) && categoryIndex == 2)
+                    Container()
+                  else if((settingList[categoryIndex].type == 207 && isToGem) ? preferenceProvider.individualPumpSetting![pumpIndex].controlGem : true)
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       width: constraints.maxWidth < 700 ? constraints.maxWidth : (constraints.maxWidth/2) - 40,
@@ -782,7 +784,9 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                             child: Column(
                               children: [
                                 for(var settingIndex = 0; settingIndex < settingList[categoryIndex].setting.length; settingIndex++)
-                                  if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "RTC TIMER")
+                                  if(!settingList[categoryIndex].setting[settingIndex].display)
+                                    Container()
+                                  else if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "RTC TIMER")
                                     _buildRtcTimer(categoryIndex, settingIndex, pumpIndex, settingList)
                                   else if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "2 PHASE"
                                       || settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "AUTO RESTART 2 PHASE"
@@ -985,21 +989,21 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
 
   Widget _buildIcon(int categoryIndex, int settingIndex, List settingList) {
     return Icon(
-        (settingList[categoryIndex].type == 206)
+        ([206, 606].contains(settingList[categoryIndex].type))
             ? otherSettingsIcons[settingIndex]
-            : (settingList[categoryIndex].type == 204)
+            : ([204, 604].contains(settingList[categoryIndex].type))
             ? voltageSettingsIcons[settingIndex]
-            : (settingList[categoryIndex].type == 202)
+            : ([202, 602].contains(settingList[categoryIndex].type))
             ? timerSettingsIcons[settingIndex]
-            : (settingList[categoryIndex].type == 203)
+            : ([203, 603].contains(settingList[categoryIndex].type))
             ? currentSettingIcons[settingIndex]
-            : (settingList[categoryIndex].type == 208 || settingList[categoryIndex].type == 209)
+            : ([208, 209, 608, 609].contains(settingList[categoryIndex].type))
             ? voltageCalibrationIcons[settingIndex]
-            : (settingList[categoryIndex].type == 210)
+            : ([210, 610].contains(settingList[categoryIndex].type))
             ? otherCalibrationIcons[settingIndex]
-            : settingList[categoryIndex].type == 207
+            : [207, 607].contains(settingList[categoryIndex].type)
             ? levelSettingsIcons[settingIndex]
-            : settingList[categoryIndex].type == 211
+            : [211, 611].contains(settingList[categoryIndex].type)
             ? Icons.numbers
             : additionalSettingsIcons[settingIndex],
         color: Theme.of(context).primaryColor
@@ -1343,6 +1347,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   };
 
   Future<void> sendFunction() async {
+    print('start sendFunction');
     // mqttPayloadProvider.preferencePayload = {};
     breakLoop = false;
     Map<String, dynamic> userData = {
@@ -1365,7 +1370,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         ? getFailedPayload(isToGem: isToGem, sendAll: true).split("?")[0].split(';')
         : getPayload(isToGem: isToGem, sendAll: true).split("?")[0].split(';')
         : payloadParts;
-
+    print('start sendFunction');
+    print("payloadForGem : ${payloadForGem}");
     try {
       bool isLevelSettingChanged = preferenceProvider.individualPumpSetting!.any((pump) => pump.settingList.any((setting) => setting.type == 207 && setting.changed));
       bool isAnyOtherChanged = preferenceProvider.commonPumpSettings!.any((pump) => pump.settingList.any((setting) => setting.changed));
@@ -1386,7 +1392,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             deviceId: widget.masterData['deviceId']
         );
       }
-
+      print('start sendFunction');
       /*print("isLevelSettingChanged :: $isLevelSettingChanged");
       print("isAnyOtherChanged :: $isAnyOtherChanged");
       print('isLevelSettingChanged && !isAnyOtherChanged :: ${isLevelSettingChanged && !isAnyOtherChanged}');*/
@@ -1414,13 +1420,13 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                   }
                   for (var individualPumpSetting in individualPump.settingList) {
                     switch (individualPumpSetting.type) {
-                      case 203:
+                      case (203 || 603):
                         if(key.contains("400-$pumpIndex")) individualPumpSetting.controllerReadStatus= "0";
                         break;
-                      case 202:
+                      case (202 || 602):
                         if(key.contains("300-$pumpIndex") || key.contains("500-$pumpIndex")) individualPumpSetting.controllerReadStatus = "0";
                         break;
-                      case 205:
+                      case (205 || 605):
                         if(key.contains("600-$pumpIndex")) individualPumpSetting.controllerReadStatus = "0";
                         break;
                     }
@@ -1432,6 +1438,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
               }
             });
           }
+          print('resultFromDialog');
           resultFromDialog = await showDialog(
             context: context,
             barrierDismissible: false,
@@ -1478,8 +1485,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       
     } catch (error, stackTrace) {
       showSnackBar(message: "Failed to update due to: $error");
-      // print("Error in preference sending: $error");
-      // print("Stack trace in preference sending: $stackTrace");
+      debugPrint("Error in preference sending: $error");
+      debugPrint("Stack trace in preference sending: $stackTrace");
     }
   }
 
@@ -1553,10 +1560,10 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       int modelId = commonSetting.modelId;
       if(selectedOroPumpList.contains(deviceId)) {
         for (var settingCategory in commonSetting.settingList) {
-          if (!sendAll ? ([204].contains(settingCategory.type) && settingCategory.changed) : [204].contains(settingCategory.type)) {
+          if (!sendAll ? ([204, 604].contains(settingCategory.type) && settingCategory.changed) : [204, 604].contains(settingCategory.type)) {
             final payload = jsonEncode({"200": jsonEncode({"sentSms": 'voltageconfig,${getSettingValue(settingCategory)}'})});
             temp.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
-          } else if (!sendAll ? ([206].contains(settingCategory.type) && settingCategory.changed) : [206].contains(settingCategory.type)) {
+          } else if (!sendAll ? ([206, 606].contains(settingCategory.type) && settingCategory.changed) : [206, 606].contains(settingCategory.type)) {
             final payload = jsonEncode({"100": jsonEncode({"sentSms": 'ctconfig,${getSettingValue(settingCategory)}'})});
             temp.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
           }
@@ -1595,13 +1602,13 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             for (var individualPumpSetting in individualPump.settingList) {
               final conditionToSend = (!sendAll ? individualPumpSetting.changed : true);
               switch (individualPumpSetting.type) {
-                case 203:
+                case (203 || 603):
                   if (conditionToSend) {
                     final payload = jsonEncode({"400-$pumpIndex": jsonEncode({"sentSms": 'currentconfig,$pumpIndex,${getSettingValue(individualPumpSetting)}'})});
                     currentConfigList.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
                   }
                   break;
-                case 202:
+                case (202 || 602):
                   if (conditionToSend) {
                     final payload = jsonEncode({"300-$pumpIndex": jsonEncode({"sentSms": 'delayconfig,$pumpIndex,${getSettingValue(individualPumpSetting)}'})});
                     delayConfigList.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
@@ -1609,7 +1616,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                     rtcConfigList.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload2+$categoryId2": payload2);
                   }
                   break;
-                case 205:
+                case (205 || 605):
                   if (conditionToSend) {
                     int index = preferenceProvider.individualPumpSetting!.indexWhere((e) => e.controllerId == commonSetting.controllerId);
                     final payload = jsonEncode({"600-$pumpIndex": jsonEncode({"sentSms": 'scheduleconfig,$pumpIndex,${getSettingValue(individualPumpSetting, controlToOroGem: (isPumpWithValveModel || !isToGem || isPumpOnly) ? false : preferenceProvider.individualPumpSetting![index].controlGem)}'})});
@@ -1708,8 +1715,9 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
 
   String getCalibrationPayload({required bool isToGem}) {
     List result = [];
-
+    print("preferenceProvider.calibrationSetting! : ${preferenceProvider.calibrationSetting!}");
     for (var commonSetting in preferenceProvider.calibrationSetting!) {
+      print("commonSetting : $commonSetting");
       List temp = [];
       List temp2 = [];
       int oroPumpSerialNumber = commonSetting.serialNumber;
@@ -1717,10 +1725,10 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       int categoryId = 4;
       int interfaceType = commonSetting.interfaceTypeId;
       int referenceNumber = commonSetting.referenceNumber;
-
+      print("selectedOroPumpList.contains(deviceId) : ${selectedOroPumpList.contains(deviceId)}");
       if(selectedOroPumpList.contains(deviceId)) {
         for (var settingCategory in commonSetting.settingList) {
-          if ([208].contains(settingCategory.type)) {
+          if ([208, 608].contains(settingCategory.type)) {
             final payload = jsonEncode({
               "900": jsonEncode({"sentSms": 'calibration,${getSettingValue(settingCategory)}'})
             });
@@ -1728,7 +1736,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                 ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId"
                 : payload);
             // print("payload ==>$payload");
-          } else if ([209].contains(settingCategory.type)) {
+          } else if ([209, 609].contains(settingCategory.type)) {
             var splitParts = [];
             if(isToGem) {
               splitParts = temp[0].split('+');
@@ -1743,7 +1751,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             } else {
               temp[0] = jsonEncode({"900": jsonEncode(tempMap)});
             }
-          } else if ([210].contains(settingCategory.type)) {
+          } else if ([210, 610].contains(settingCategory.type)) {
             var splitParts = [];
             if(isToGem) {
               splitParts = temp[0].split('+');
@@ -1794,7 +1802,9 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
 
   dynamic getSettingValue(settingCategory, {bool? controlToOroGem}) {
     List<String> values = [];
-    for (var setting in settingCategory.setting) {
+    List<WidgetSetting> filterList = List<WidgetSetting>.from(settingCategory.setting)
+      ..sort((a, b) => a.payloadIndex.compareTo(b.payloadIndex));
+    for (var setting in filterList) {
       String? value;
       if (setting.value is bool) {
         if(setting.title.toUpperCase() != 'RTC') {

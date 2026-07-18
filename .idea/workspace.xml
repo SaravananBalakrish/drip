@@ -7,8 +7,12 @@
     <list default="true" id="f2f9418e-6c3f-4208-958b-3bdf91e8d388" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/IrrigationProgram/state_management/irrigation_program_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/IrrigationProgram/state_management/irrigation_program_provider.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/PumpController/model/pump_controller_data_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/PumpController/model/pump_controller_data_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/Preferences/model/preference_data_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/Preferences/model/preference_data_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/Preferences/view/preference_main_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/Preferences/view/preference_main_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/Preferences/widgets/progress_dialog.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/Preferences/widgets/progress_dialog.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/views/customer/controller_settings/narrow/general_settings_narrow.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/customer/controller_settings/narrow/general_settings_narrow.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/views/customer/controller_settings/widgets/settings_screen_factory.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/customer/controller_settings/widgets/settings_screen_factory.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/views/customer/widgets/app_bar_action.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/customer/widgets/app_bar_action.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -43,7 +47,7 @@
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;dart.analysis.tool.window.visible&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;siva&quot;,
     &quot;io.flutter.project.isFirstOpen&quot;: &quot;true&quot;,
     &quot;io.flutter.reload.alreadyRun&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,

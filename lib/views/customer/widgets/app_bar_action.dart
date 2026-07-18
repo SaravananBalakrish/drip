@@ -458,7 +458,7 @@ Widget _buildNonGemActions(BuildContext context, dynamic master,
             child: Icon(Icons.question_answer_outlined),
           ),
         ),
-        if (!kIsWeb)
+        if (!kIsWeb && !AppConstants.wlcModelList.contains(master.modelId))
           InkWell(
             onTap: () {
               final Map<String, dynamic> data = {
