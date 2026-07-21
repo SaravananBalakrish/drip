@@ -1715,9 +1715,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
 
   String getCalibrationPayload({required bool isToGem}) {
     List result = [];
-    print("preferenceProvider.calibrationSetting! : ${preferenceProvider.calibrationSetting!}");
     for (var commonSetting in preferenceProvider.calibrationSetting!) {
-      print("commonSetting : $commonSetting");
       List temp = [];
       List temp2 = [];
       int oroPumpSerialNumber = commonSetting.serialNumber;
@@ -1725,9 +1723,34 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       int categoryId = 4;
       int interfaceType = commonSetting.interfaceTypeId;
       int referenceNumber = commonSetting.referenceNumber;
-      print("selectedOroPumpList.contains(deviceId) : ${selectedOroPumpList.contains(deviceId)}");
+
+      ///  This is doing for the aerator calibration payload position customization by (payload index)..
+      CommonPumpSetting aeratorCalibrationSetting = CommonPumpSetting(
+          controllerId: commonSetting.controllerId,
+          categoryId: commonSetting.categoryId,
+          modelId: commonSetting.modelId,
+          deviceId: commonSetting.deviceId,
+          deviceName: commonSetting.deviceName,
+          serialNumber: commonSetting.serialNumber,
+          referenceNumber: commonSetting.referenceNumber,
+          interfaceTypeId: commonSetting.interfaceTypeId,
+          settingList: [
+            SettingList(
+                type: 608,
+                changed: true,
+                controllerReadStatus: '0',
+                name: 'Aerator',
+                setting: [
+                  for(var i in commonSetting.settingList)
+                    ...i.setting
+                ]
+            )
+          ]
+      );
+      List<SettingList> aeratorOrNormal = AppConstants.aquacultureModelList.contains(widget.masterData['modelId'])
+          ? aeratorCalibrationSetting.settingList : commonSetting.settingList;
       if(selectedOroPumpList.contains(deviceId)) {
-        for (var settingCategory in commonSetting.settingList) {
+        for (var settingCategory in aeratorOrNormal) {
           if ([208, 608].contains(settingCategory.type)) {
             final payload = jsonEncode({
               "900": jsonEncode({"sentSms": 'calibration,${getSettingValue(settingCategory)}'})
@@ -1735,7 +1758,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             temp.add(isToGem
                 ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId"
                 : payload);
-            // print("payload ==>$payload");
+            print("payload ==>$payload");
           } else if ([209, 609].contains(settingCategory.type)) {
             var splitParts = [];
             if(isToGem) {
@@ -1745,6 +1768,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             temp2 = tempMap['sentSms'].toString().split(',');
             temp2.add('${getSettingValue(settingCategory)}');
             tempMap['sentSms'] = temp2.join(',');
+            debugPrint("tempMap : $tempMap");
             if(isToGem) {
               splitParts[4] = jsonEncode({"900": jsonEncode(tempMap)});
               temp[0] = splitParts.join('+');
@@ -1769,10 +1793,11 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
           }
         }
       }
+      print("temp : ${temp}");
 
       result.addAll(temp);
     }
-
+    print("result ==> $result");
     return result.join(';');
   }
 
@@ -1801,6 +1826,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   }
 
   dynamic getSettingValue(settingCategory, {bool? controlToOroGem}) {
+    debugPrint('settingCategory.name ::: ${settingCategory.name}');
     List<String> values = [];
     List<WidgetSetting> filterList = List<WidgetSetting>.from(settingCategory.setting)
       ..sort((a, b) => a.payloadIndex.compareTo(b.payloadIndex));
@@ -1893,7 +1919,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       }
       if (value != null) values.add(value);
     }
-
+    print("values => $values");
     return values.join(",");
   }
 
