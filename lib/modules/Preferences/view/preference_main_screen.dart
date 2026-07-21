@@ -747,7 +747,10 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             Wrap(
               children: [
                 for(var categoryIndex = 0; categoryIndex < settingList.length; categoryIndex++)
-                  if(AppConstants.aquacultureModelList.contains(widget.masterData['modelId']) && categoryIndex == 2)
+                  if([
+                    // ...AppConstants.aquacultureModelList,
+                    ...AppConstants.wlcModelList
+                  ].contains(widget.masterData['modelId']) && categoryIndex == 2)
                     Container()
                   else if((settingList[categoryIndex].type == 207 && isToGem) ? preferenceProvider.individualPumpSetting![pumpIndex].controlGem : true)
                     Container(
