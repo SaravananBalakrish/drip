@@ -1478,7 +1478,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         int sumpLowConnectionNo = 0;
         int levelConnectionNo = 0;
         int availableOfWaterMeter = pumpModel.waterMeter != 0.0 ? 1 : 0;
-        int availableOfPressure = pumpModel.pressureIn != 0.0 ? 1 : 0;
+        int availableOfPressure = (pumpModel.pressureIn != 0.0 || pumpModel.pressureOut != 0.0) ? 1 : 0;
         for(var float in listOfFloat){
           if(pumpModel.topSumpFloat == float.sNo){
             sumpPinCount += 1;
@@ -1588,7 +1588,7 @@ class ConfigMakerProvider extends ChangeNotifier{
       });
     }
 
-    print('listOfPumpPayload :: $listOfPumpPayload');
+    debugPrint('listOfPumpPayload :: $listOfPumpPayload');
     return listOfPumpPayload;
   }
 
