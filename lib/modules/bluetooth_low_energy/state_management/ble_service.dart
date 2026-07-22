@@ -392,36 +392,46 @@ class BleProvider extends ChangeNotifier {
   }
 
   void updateCharacteristic(){
-    print("nodeData['modelId'] : ${nodeData}");
     for (var s in _services){
-      print('service => ${s}');
+      debugPrint('service => $s');
     }
     if(AppConstants.wlcModelList.contains(modelId)){
       debugPrint("connect to wlc model....");
+      myService = _services[2];
+    }else if(AppConstants.pumpWifiDefault.contains(modelId)){
+      debugPrint("connect to pumpWifiDefault model....");
       myService = _services[2];
     }else{
       debugPrint("connect to node model....");
       myService = _services[1];
     }
+    debugPrint("myService!.characteristics : ${myService!.characteristics}");
     for (BluetoothCharacteristic c in myService!.characteristics) {
-      print("characteristic => $c");
+      debugPrint("characteristic => ${c.uuid} == $c");
 
-      if (!AppConstants.wlcModelList.contains(modelId) ?
+      if (AppConstants.wlcModelList.contains(modelId) ?
+      (c.properties.writeWithoutResponse == false &&
+          c.properties.write == false &&
+          c.properties.notify == true) :
+      AppConstants.pumpWifiDefault.contains(modelId) ?
+      (c.properties.writeWithoutResponse == true &&
+          c.properties.write == false &&
+          c.properties.notify == true) :
       (c.properties.writeWithoutResponse == false &&
           c.properties.write == true &&
-          c.properties.notify == true) : (c.properties.writeWithoutResponse == false &&
-          c.properties.write == false &&
           c.properties.notify == true)
       ) {
         if (readFromHardware == null) {
           listeningReadFromHardwareSubscription(c);
         }
+        debugPrint('readFromHardware == ${c.uuid}');
         readFromHardware = c;
       }
-      if ((c.properties.writeWithoutResponse || AppConstants.wlcModelList.contains(modelId)) && !c.properties.notify) {
+      if ((c.properties.writeWithoutResponse || [...AppConstants.wlcModelList, ...AppConstants.pumpWifiDefault].contains(modelId)) && !c.properties.notify) {
         if (sendToHardware == null) {
           listeningSendToHardwareSubscription(c);
         }
+        debugPrint('sendToHardware == ${c.uuid}');
         sendToHardware = c;
       }
     }

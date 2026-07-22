@@ -679,10 +679,11 @@ class _SelectionScreenState extends State<SelectionScreen> with SingleTickerProv
                       toggleSelection(data[index].objectId, siteMode!, index, data);
                     } else {
                       if (irrigationProgramProvider.selectedObjects!.any((element) => element.sNo == data[index].sNo)) {
-                        irrigationProgramProvider.selectedObjects!.removeWhere((element) => element.sNo == data[index].sNo);
+                        irrigationProgramProvider.selectedObjects!.removeWhere((element) => (element.sNo == data[index].sNo));
                       } else {
                         irrigationProgramProvider.selectedObjects!.add(data[index]);
                       }
+                      irrigationProgramProvider.selectedObjects!.removeWhere((element) => (element.objectId == 2 && element.sNo != data[index].sNo));
                     }
                   },
                   selected: irrigationProgramProvider.selectedObjects!.any((element) => element.sNo == data[index].sNo),
