@@ -331,6 +331,146 @@ class BluetoothBleService {
     }
   }
 
+  /*Future<void> startScan({String? deviceId}) async {
+    debugPrint("🔍 Starting BLE scan process...");
+    debugPrint("deviceNameFilter:$deviceId");
+
+    if (_isScanning) {
+      debugPrint("⚠️ BLE Scan already in progress");
+      return;
+    }
+
+    debugPrint("📱 Requesting BLE permissions...");
+    if (!await requestPermissions()) {
+      debugPrint("❌ BLE Permissions not granted");
+      return;
+    }
+
+    debugPrint("📱 Checking BLE Bluetooth...");
+    if (!await checkBluetooth()) {
+      debugPrint("❌ BLE Bluetooth not available");
+      return;
+    }
+
+    debugPrint("🧹 Clearing previous BLE devices...");
+    _devices.clear();
+    try {
+      providerState?.updateBlePairedDevices([]);
+    } catch (e) {
+      debugPrint("⚠️ Error updating BLE provider: $e");
+    }
+
+    debugPrint("🛑 Stopping any existing BLE scan...");
+    await stopScan();
+
+    _isScanning = true;
+    debugPrint("🔍 BLE Scan Started - Looking for WINC3400 devices...");
+
+    try {
+      // REMOVE the withServices filter to detect all devices
+      await FlutterBluePlus.startScan(
+        // withServices: [Guid(serviceUuid), Guid(serviceUuidForWlc)], // <-- COMMENT THIS OUT
+        timeout: const Duration(seconds: 20),
+      );
+      debugPrint("✅ BLE Scan started successfully");
+
+      _scanSubscription = FlutterBluePlus.scanResults.listen((List<ScanResult> results) {
+        debugPrint("📡 Received ${results.length} BLE scan results");
+
+        for (final r in results) {
+          final device = r.device;
+          final name = device.platformName;
+
+          // Get advertisement data from ScanResult
+          final advertisementData = r.advertisementData;
+          final localName = advertisementData.localName;
+          final serviceUuids = advertisementData.serviceUuids;
+          final manufacturerData = advertisementData.manufacturerData;
+          final serviceData = advertisementData.serviceData;
+          final txPowerLevel = advertisementData.txPowerLevel;
+
+          debugPrint("============ BLE DEVICE FOUND ============");
+          debugPrint("Name: $name");
+          debugPrint("Local Name (adv): $localName");
+          debugPrint("ID: ${device.remoteId}");
+          debugPrint("RSSI: ${r.rssi}");
+          debugPrint("Manufacturer Data: $manufacturerData");
+          debugPrint("Service Data: $serviceData");
+          debugPrint("Service UUIDs: $serviceUuids");
+          debugPrint("TX Power: $txPowerLevel");
+          debugPrint("======================================");
+
+          bool shouldAddDevice = false;
+
+          // Check for WINC3400 naming patterns
+          bool isWincDevice = false;
+          if (name.isNotEmpty) {
+            // WINC3400 typically has names like "WINC3400", "WINC", or custom names
+            isWincDevice = name.contains('WINC') ||
+                name.startsWith('NIA_') ||
+                name.startsWith('WIFI_') ||
+                (localName != null && localName.contains('WINC'));
+          }
+
+          if (deviceId != null && deviceId.isNotEmpty) {
+            // Your existing filter logic
+            if (name.startsWith("NIA_")) {
+              final deviceIdFromName = name.substring(4);
+              if (deviceIdFromName == deviceId) {
+                shouldAddDevice = true;
+                debugPrint("✅ BLE Device matches filter: $deviceIdFromName == $deviceId");
+              }
+            } else {
+              if (name == deviceId) {
+                shouldAddDevice = true;
+                debugPrint("✅ BLE Device matches direct filter: $name == $deviceId");
+              }
+            }
+          } else {
+            // Add any device with a name (less restrictive)
+            shouldAddDevice = name.isNotEmpty;
+            debugPrint("ℹ️ No filter applied, adding BLE device if name exists");
+          }
+
+          final exists = _devices.any((d) => d.deviceId == device.remoteId.str);
+
+          if (!exists && shouldAddDevice) {
+            debugPrint("➕ Adding new BLE device: $name");
+            final newDevice = BleBluetoothDeviceModel(
+              device: device,
+              connectionState: BlueConnectionState.disconnected,
+              rssi: r.rssi,
+              name: name,
+            );
+            _devices.add(newDevice);
+            final updatedDevices = List<BleBluetoothDeviceModel>.from(_devices);
+            try {
+              providerState?.updateBlePairedDevices(updatedDevices);
+            } catch (e) {
+              debugPrint("⚠️ Error updating BLE provider: $e");
+            }
+            onDeviceFound?.call();
+            debugPrint("✅ BLE Device added successfully. Total devices: ${_devices.length}");
+          }
+        }
+      });
+
+      await FlutterBluePlus.isScanning.where((scanning) => scanning == false).first;
+
+      _isScanning = false;
+
+      if (_devices.isEmpty) {
+        debugPrint("⚠️ BLE scan finished — no matching devices found");
+        onNoDeviceFound?.call();
+      }
+
+    } catch (e) {
+      debugPrint("❌ Error starting BLE scan: $e");
+      _isScanning = false;
+      rethrow;
+    }
+  }*/
+
   /// ---------------- STOP SCAN ----------------
   Future<void> stopScan() async {
     if (!_isScanning) {
