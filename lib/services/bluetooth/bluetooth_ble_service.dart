@@ -29,29 +29,57 @@ class BluetoothBleService {
     return _instance!;
   }
 
-  /// ---------------- VARIABLES ----------------
-  static const String serviceUuidForWlc = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
+  /// ---------------- BLE SERVICE / CHARACTERISTIC UUIDS ----------------
+
+  // WLC custom BLE module
   static const String serviceUuid = "12345678-1234-5678-1234-56789abcdef0";
   static const String writeUuid = "12345678-1234-5678-1234-56789abcdef1";
-  static const String writeUuidForWlc = "6e400002-b5a3-f393-e0a9-e50e24dcca9e";
   static const String notifyUuid1 = "12345678-1234-5678-1234-56789abcdef2";
   static const String notifyUuid2 = "12345678-1234-5678-1234-56789abcdef4";
   static const String notifyUuid3 = "12345678-1234-5678-1234-56789abcdef6";
-  static const String notifyUuidForWlc = "6e400003-b5a3-f393-e0a9-e50e24dcca9e";
 
-  static const List<String> notifyUuids = [
-    notifyUuidForWlc,
-    notifyUuid1,
-    notifyUuid2,
-    notifyUuid3,
+  // WLC / Nordic UART Service
+  static const String serviceUuidForWlc = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
+  static const String writeUuidForWlc = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
+  static const String notifyUuidForWlc = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
+
+// NEW: WINC3400 Transparent UART Service
+  static const String transparentUartServiceUuid = "49535343-FE7D-4AE5-8FA9-9FAFD205E455";
+// WINC3400: Phone -> WINC3400
+  static const String transparentUartRxUuid = "49535343-8841-43F4-A8D4-ECBE34729BB3";
+// WINC3400: WINC3400 -> Phone
+  static const String transparentUartTxUuid = "49535343-1E4D-4BD9-BA61-23C647249616";
+
+  // All supported services
+  static const List<String> supportedServiceUuids = [
+    serviceUuid,
+    serviceUuidForWlc,
+    transparentUartServiceUuid,
   ];
 
+  // All supported write characteristics
   static const List<String> writeUuids = [
-    writeUuidForWlc,
     writeUuid,
     "12345678-1234-5678-1234-56789abcdef3",
     "12345678-1234-5678-1234-56789abcdef5",
+    writeUuidForWlc,
+
+    // WINC3400 RX
+    transparentUartRxUuid,
   ];
+
+  // All supported notify characteristics
+  static const List<String> notifyUuids = [
+    notifyUuid1,
+    notifyUuid2,
+    notifyUuid3,
+    notifyUuidForWlc,
+
+    // WINC3400 TX
+    transparentUartTxUuid,
+  ];
+
+
 
   StreamSubscription<List<ScanResult>>? _scanSubscription;
   StreamSubscription<BluetoothAdapterState>? _adapterSubscription;
@@ -245,13 +273,19 @@ class BluetoothBleService {
     await stopScan();
 
     _isScanning = true;
-    debugPrint("🔍 BLE Scan Started - Looking for devices with service: $serviceUuid");
+    debugPrint("🔍 BLE Scan Started - Looking for devices...");
 
     try {
+      // Include ALL supported service UUIDs in the scan filter
       await FlutterBluePlus.startScan(
-        withServices: [Guid(serviceUuid), Guid(serviceUuidForWlc)],
+        withServices: [
+          Guid(serviceUuid),
+          Guid(serviceUuidForWlc),
+          Guid(transparentUartServiceUuid), // ADD THIS - WINC3400 service
+        ],
         timeout: const Duration(seconds: 20),
       );
+
       debugPrint("✅ BLE Scan started successfully");
 
       _scanSubscription = FlutterBluePlus.scanResults.listen((List<ScanResult> results) {
@@ -261,15 +295,35 @@ class BluetoothBleService {
           final device = r.device;
           final name = device.platformName;
 
+          // Get advertisement data
+          final advertisementData = r.advertisementData;
+          final localName = advertisementData.localName;
+          final serviceUuids = advertisementData.serviceUuids;
+
           debugPrint("============ BLE DEVICE FOUND ============");
           debugPrint("Name: $name");
+          debugPrint("Local Name: $localName");
           debugPrint("ID: ${device.remoteId}");
           debugPrint("RSSI: ${r.rssi}");
+          debugPrint("Advertised Services: $serviceUuids");
+          debugPrint("Manufacturer Data: ${advertisementData.manufacturerData}");
+          debugPrint("Service Data: ${advertisementData.serviceData}");
           debugPrint("======================================");
 
           bool shouldAddDevice = false;
 
+          // Check for WINC3400 devices (they may have specific naming patterns)
+          bool isWincDevice = false;
+          if (name.isNotEmpty) {
+            // WINC3400 typically has names like "WINC3400", "WINC", or custom names
+            isWincDevice = name.contains('WINC') ||
+                name.startsWith('NIA_') ||
+                name.startsWith('WIFI_') ||
+                (localName != null && localName.contains('WINC'));
+          }
+
           if (deviceId != null && deviceId.isNotEmpty) {
+            // Your existing filter logic
             if (name.startsWith("NIA_")) {
               final deviceIdFromName = name.substring(4);
               if (deviceIdFromName == deviceId) {
@@ -287,8 +341,9 @@ class BluetoothBleService {
               }
             }
           } else {
-            shouldAddDevice = name.isNotEmpty;
-            debugPrint("ℹ️ No filter applied, adding BLE device if name exists");
+            // Add any device with a name, or WINC devices even without name
+            shouldAddDevice = name.isNotEmpty || isWincDevice;
+            debugPrint("ℹ️ No filter applied, adding BLE device if name exists or is WINC device");
           }
 
           final exists = _devices.any((d) => d.deviceId == device.remoteId.str);
@@ -314,7 +369,7 @@ class BluetoothBleService {
         }
       });
 
-      // 👇 THIS is the missing piece — actually wait for the scan to end
+      // Wait for scan to finish
       await FlutterBluePlus.isScanning.where((scanning) => scanning == false).first;
 
       _isScanning = false;
@@ -885,13 +940,192 @@ class BluetoothBleService {
   }
 
   /// ---------------- DISCOVER SERVICES WITH RETRY ----------------
-  Future<bool> _discoverServicesWithRetry(BleBluetoothDeviceModel d, {int maxRetries = 3}) async {
+
+  /// ---------------- DISCOVER SERVICES WITH RETRY ----------------
+
+  Future<bool> _discoverServicesWithRetry(BleBluetoothDeviceModel d, {int maxRetries = 3,}) async {
+
+    for (int attempt = 1; attempt <= maxRetries; attempt++) {
+
+      debugPrint(
+        "🔍 BLE Service discovery attempt "
+            "$attempt/$maxRetries",
+      );
+
+      try {
+
+        // --------------------------------------
+        // CHECK CONNECTION
+        // --------------------------------------
+
+        final isConnected =
+        await d.device.isConnected;
+
+        if (!isConnected) {
+
+          debugPrint(
+            "❌ Device not connected "
+                "during service discovery",
+          );
+
+          return false;
+        }
+
+
+        // --------------------------------------
+        // DISCOVER SERVICES
+        // --------------------------------------
+
+        final services =
+        await d.device.discoverServices();
+
+        debugPrint(
+          "📋 Found ${services.length} BLE services",
+        );
+
+
+        // --------------------------------------
+        // PRINT ALL SERVICES
+        // --------------------------------------
+
+        for (final service in services) {
+
+          debugPrint(
+            "🔹 BLE Service: ${service.uuid}",
+          );
+
+          for (final characteristic
+          in service.characteristics) {
+
+            debugPrint(
+              "   └── Characteristic: "
+                  "${characteristic.uuid}",
+            );
+
+            debugPrint(
+              "       Properties: "
+                  "${characteristic.properties}",
+            );
+          }
+        }
+
+
+        // --------------------------------------
+        // CHECK SUPPORTED SERVICE
+        // --------------------------------------
+
+        final targetServiceUuids =
+        supportedServiceUuids.map((uuid) => uuid.toLowerCase(),
+        ).toList();
+
+        final foundCustomService = services.any((service) {
+            final discoveredUuid = service.uuid.toString().toLowerCase();
+            return targetServiceUuids.contains(discoveredUuid);
+          },
+        );
+
+
+        // --------------------------------------
+        // SERVICE FOUND
+        // --------------------------------------
+
+        if (foundCustomService) {
+
+          debugPrint("✅ Supported BLE service found",);
+
+          await _processServices(services);
+
+          // Verify that communication
+          // characteristics were found.
+          debugPrint("📌 Write Characteristic: ""${_writeChar?.uuid}");
+
+          debugPrint("📌 Notify Characteristic: ""${_notifyChar?.uuid}",);
+
+          debugPrint("📌 Write Ready: $_writeReady",);
+
+
+          if (_writeChar != null ||
+              _notifyChar != null) {
+
+            debugPrint(
+              "✅ BLE communication "
+                  "characteristics configured",
+            );
+
+            return true;
+          }
+
+          debugPrint(
+            "⚠️ Service found but "
+                "communication characteristics "
+                "were not found",
+          );
+
+        } else {
+
+          debugPrint(
+            "⚠️ Supported BLE service not found",
+          );
+        }
+
+
+        // --------------------------------------
+        // RETRY
+        // --------------------------------------
+
+        if (attempt < maxRetries) {
+
+          debugPrint(
+            "🔄 Retrying service discovery "
+                "in 500ms...",
+          );
+
+          await Future.delayed(
+            const Duration(
+              milliseconds: 500,
+            ),
+          );
+        }
+
+      } catch (e) {
+
+        debugPrint(
+          "❌ BLE Service discovery "
+              "attempt $attempt failed: $e",
+        );
+
+        if (attempt < maxRetries) {
+
+          await Future.delayed(
+            const Duration(
+              milliseconds: 500,
+            ),
+          );
+
+        } else {
+
+          return false;
+        }
+      }
+    }
+
+
+    debugPrint(
+      "❌ Supported BLE service not found "
+          "after $maxRetries attempts",
+    );
+
+    return false;
+  }
+
+  /*Future<bool> _discoverServicesWithRetry(BleBluetoothDeviceModel d, {int maxRetries = 3}) async {
+
     for (int attempt = 1; attempt <= maxRetries; attempt++) {
       debugPrint("🔍 BLE Service discovery attempt $attempt/$maxRetries");
 
       try {
         // Check if still connected
-        final isConnected = await d.device.isConnected;
+        final isConnected = d.device.isConnected;
         if (!isConnected) {
           debugPrint("❌ Device not connected during service discovery");
           // Don't try to reconnect, just return false
@@ -902,12 +1136,14 @@ class BluetoothBleService {
         final services = await d.device.discoverServices();
         debugPrint("📋 Found ${services.length} BLE services");
 
+
         for (var service in services) {
           debugPrint("BLE Service: ${service.uuid}");
         }
 
         bool foundCustomService = services.any(
-                (s) => [serviceUuid.toLowerCase(), serviceUuidForWlc.toLowerCase()].contains(s.uuid.toString().toLowerCase())
+                (s) => [serviceUuid.toLowerCase(),
+                  serviceUuidForWlc.toLowerCase()].contains(s.uuid.toString().toLowerCase())
         );
 
         if (foundCustomService) {
@@ -934,12 +1170,226 @@ class BluetoothBleService {
 
     debugPrint("❌ BLE Custom service not found after $maxRetries attempts");
     return false;
-  }
+  }*/
 
   /// ---------------- PROCESS SERVICES ----------------
-  Future<void> _processServices(List<BluetoothService> services) async {
+
+  Future<void> _processServices(List<BluetoothService> services,) async {
+
+    debugPrint(
+      "🔧 Processing BLE services...",
+    );
+
+
+    for (final service in services) {
+
+      final serviceUuidLower =
+      service.uuid
+          .toString()
+          .toLowerCase();
+
+
+      // ------------------------------------------
+      // CHECK IF SUPPORTED SERVICE
+      // ------------------------------------------
+
+      if (!supportedServiceUuids
+          .map(
+            (uuid) => uuid.toLowerCase(),
+      )
+          .contains(serviceUuidLower)) {
+
+        debugPrint(
+          "⏭️ Ignoring unsupported service: "
+              "${service.uuid}",
+        );
+
+        continue;
+      }
+
+
+      debugPrint(
+        "✅ Supported BLE Service Found: "
+            "${service.uuid}",
+      );
+
+      debugPrint(
+        "📊 Characteristics: "
+            "${service.characteristics.length}",
+      );
+
+
+      // ------------------------------------------
+      // PROCESS CHARACTERISTICS
+      // ------------------------------------------
+
+      for (final char
+      in service.characteristics) {
+
+        final uuid =
+        char.uuid
+            .toString()
+            .toLowerCase();
+
+
+        debugPrint(
+          "  🔹 Characteristic: $uuid",
+        );
+
+        debugPrint(
+          "     Properties: "
+              "${char.properties}",
+        );
+
+
+        // ========================================
+        // WRITE CHARACTERISTIC
+        // ========================================
+
+        if (writeUuids
+            .map(
+              (uuid) =>
+              uuid.toLowerCase(),
+        )
+            .contains(uuid) &&
+            (char.properties.write ||
+                char.properties.writeWithoutResponse)) {
+
+          if (_writeChar == null) {
+
+            _writeChar = char;
+
+            _writeReady = true;
+
+            debugPrint(
+              "✅ BLE WRITE characteristic ready: "
+                  "$uuid",
+            );
+          }
+        }
+
+
+        // ========================================
+        // NOTIFY CHARACTERISTIC
+        // ========================================
+
+        if (notifyUuids
+            .map(
+              (uuid) =>
+              uuid.toLowerCase(),
+        )
+            .contains(uuid) &&
+            char.properties.notify) {
+
+          if (_notifyChar == null) {
+
+            _notifyChar = char;
+
+            debugPrint(
+              "✅ BLE NOTIFY characteristic found: "
+                  "$uuid",
+            );
+
+
+            try {
+
+              // Enable notifications
+              await _notifyChar!
+                  .setNotifyValue(true);
+
+              debugPrint(
+                "✅ BLE Notify enabled successfully",
+              );
+
+
+              // Listen for incoming data
+              _notifySubscription =
+                  _notifyChar!
+                      .onValueReceived
+                      .listen(
+                        (value) {
+
+                      debugPrint(
+                        "📩 BLE RAW DATA: "
+                            "$value",
+                      );
+
+                      debugPrint(
+                        "📩 BLE DATA LENGTH: "
+                            "${value.length}",
+                      );
+
+
+                      // Convert bytes to string
+                      final response =
+                      String.fromCharCodes(
+                        value,
+                      );
+
+
+                      debugPrint(
+                        "📩 BLE Device Response: "
+                            "$response",
+                      );
+
+
+                      // Process response
+                      _handleDeviceResponse(
+                        response,
+                      );
+                    },
+                  );
+
+            } catch (e) {
+
+              debugPrint(
+                "⚠️ Could not enable BLE "
+                    "notifications: $e",
+              );
+            }
+          }
+        }
+      }
+    }
+
+
+    // ------------------------------------------
+    // FINAL STATUS
+    // ------------------------------------------
+
+    debugPrint(
+      "==========================================",
+    );
+
+    debugPrint(
+      "🔧 BLE CHARACTERISTIC SETUP COMPLETE",
+    );
+
+    debugPrint(
+      "✏️ Write Characteristic: "
+          "${_writeChar?.uuid}",
+    );
+
+    debugPrint(
+      "📡 Notify Characteristic: "
+          "${_notifyChar?.uuid}",
+    );
+
+    debugPrint(
+      "✏️ Write Ready: $_writeReady",
+    );
+
+    debugPrint(
+      "==========================================",
+    );
+  }
+
+/*  Future<void> _processServices(List<BluetoothService> services) async {
+
     print("_processServices : $_processServices");
+
     for (var service in services) {
+
       if ([serviceUuid.toLowerCase(), serviceUuidForWlc.toLowerCase()].contains(service.uuid.toString().toLowerCase())) {
         debugPrint("✅ BLE Target Service Found: ${service.uuid}");
         debugPrint("📊 Found ${service.characteristics.length} BLE characteristics");
@@ -1016,8 +1466,46 @@ class BluetoothBleService {
           }
         }
       }
+
+      if (service.uuid.toString().toLowerCase() == transparentUartServiceUuid.toLowerCase()) {
+
+        for (final char in service.characteristics) {
+          final uuid = char.uuid.toString().toLowerCase();
+
+          if (uuid == transparentUartRxUuid.toLowerCase()) {
+            if (char.properties.write ||
+                char.properties.writeWithoutResponse) {
+              _writeChar = char;
+              _writeReady = true;
+
+              debugPrint('✅ UART RX Write characteristic found');
+            }
+          }
+
+          if (uuid == transparentUartTxUuid.toLowerCase()) {
+            if (char.properties.notify) {
+              _notifyChar = char;
+
+              await _notifyChar!.setNotifyValue(true);
+
+              _notifySubscription =
+                  _notifyChar!.onValueReceived.listen((value) {
+                    final response = String.fromCharCodes(value);
+
+                    debugPrint(
+                      '📩 UART TX received: $response',
+                    );
+
+                    _handleDeviceResponse(response);
+                  });
+
+              debugPrint('✅ UART TX Notify enabled');
+            }
+          }
+        }
+      }
     }
-  }
+  }*/
 
   /// ---------------- REFRESH CHARACTERISTICS ----------------
   Future<void> _refreshCharacteristics() async {

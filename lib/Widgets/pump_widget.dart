@@ -269,11 +269,11 @@ class PumpWidget extends StatelessWidget {
         if(!isNova)...[
           const SizedBox(height: 8),
           if (voltages.length == 6)...[
-            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RN', 'YN', 'BN']),
             const SizedBox(height: 5),
-            _buildVoltageCurrentInfo(voltages.sublist(3, 6), ['RN', 'YN', 'BN']),
+            _buildVoltageCurrentInfo(voltages.sublist(3, 6), ['RY', 'YB', 'BR']),
           ]else ...[
-            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RN', 'YN', 'BN']),
           ],
           const SizedBox(height: 8),
           _buildVoltageCurrentInfo(columns, ['RC', 'YC', 'BC']),
