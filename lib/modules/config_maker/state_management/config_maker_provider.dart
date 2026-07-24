@@ -1431,7 +1431,12 @@ class ConfigMakerProvider extends ChangeNotifier{
 
       List<String> findOutHowManySourceAndIrrigationPump = pump.where((pumpModel) => ((pumpModel.commonDetails.controllerId == p2000.controllerId || AppConstants.ecoGemModelList.contains(masterData['modelId'])) && pumpModel.commonDetails.objectId == 5))
           .toList()
-          .map((pumpModel) => pumpModel.pumpType.toString()).toList();
+          .map((pumpModel) {
+            if(AppConstants.aquacultureModelList.contains(masterData['modelId'])){
+              return '2';
+            }
+            return pumpModel.pumpType.toString();
+      }).toList();
       int loopingLimit = payloadPumpCount - findOutHowManySourceAndIrrigationPump.length;
       for(var pump = 0;pump < loopingLimit;pump++){
         findOutHowManySourceAndIrrigationPump.add('0');

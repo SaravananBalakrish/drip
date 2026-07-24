@@ -771,7 +771,6 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                                       }
                                     }
                                   }
-
                                 });
                               });
                               if((payload['acknowledgementState'] as HardwareAcknowledgementState) != HardwareAcknowledgementState.sending){
@@ -780,7 +779,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
                               await Future.delayed(const Duration(milliseconds: 500));
                             }
                           }
-                          if(payloadSendState == PayloadSendState.start){  // only stop if all payload completed
+                          if(payloadSendState == PayloadSendState.start){
                             stateSetter((){
                               setState(() {
                                 payloadSendState = PayloadSendState.stop;

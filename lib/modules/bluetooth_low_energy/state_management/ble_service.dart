@@ -391,43 +391,68 @@ class BleProvider extends ChangeNotifier {
             .properties.writeWithoutResponse);
   }
 
-  void updateCharacteristic(){
-    for (var s in _services){
+  void updateCharacteristic() {
+    // Debug all services
+    for (var s in _services) {
       debugPrint('service => $s');
     }
-    if(AppConstants.wlcModelList.contains(modelId)){
+
+    final isWlc = AppConstants.wlcModelList.contains(modelId);
+    final isPumpWifi = AppConstants.pumpWifiDefault.contains(modelId);
+
+    // Select service
+    if (isWlc) {
       debugPrint("connect to wlc model....");
       myService = _services[2];
-    }else if(AppConstants.pumpWifiDefault.contains(modelId)){
+    } else if (isPumpWifi) {
       debugPrint("connect to pumpWifiDefault model....");
       myService = _services[2];
-    }else{
+    } else {
       debugPrint("connect to node model....");
       myService = _services[1];
     }
+
     debugPrint("myService!.characteristics : ${myService!.characteristics}");
+
     for (BluetoothCharacteristic c in myService!.characteristics) {
       debugPrint("characteristic => ${c.uuid} == $c");
 
-      if (AppConstants.wlcModelList.contains(modelId) ?
-      (c.properties.writeWithoutResponse == false &&
-          c.properties.write == false &&
-          c.properties.notify == true) :
-      AppConstants.pumpWifiDefault.contains(modelId) ?
-      (c.properties.writeWithoutResponse == true &&
-          c.properties.write == false &&
-          c.properties.notify == true) :
-      (c.properties.writeWithoutResponse == false &&
-          c.properties.write == true &&
-          c.properties.notify == true)
-      ) {
+      final props = c.properties;
+
+      // -------- READ CHARACTERISTIC CONDITION --------
+      bool isReadCharacteristic = false;
+
+      if (isWlc) {
+        isReadCharacteristic =
+            !props.writeWithoutResponse &&
+                !props.write &&
+                props.notify;
+      } else if (isPumpWifi) {
+        isReadCharacteristic =
+            props.writeWithoutResponse &&
+                !props.write &&
+                props.notify;
+      } else {
+        isReadCharacteristic =
+            !props.writeWithoutResponse &&
+                props.write &&
+                props.notify;
+      }
+
+      if (isReadCharacteristic) {
         if (readFromHardware == null) {
           listeningReadFromHardwareSubscription(c);
         }
         debugPrint('readFromHardware == ${c.uuid}');
         readFromHardware = c;
       }
-      if ((c.properties.writeWithoutResponse || [...AppConstants.wlcModelList, ...AppConstants.pumpWifiDefault].contains(modelId)) && !c.properties.notify) {
+
+      // -------- WRITE CHARACTERISTIC CONDITION --------
+      final isWriteCharacteristic =
+          (props.writeWithoutResponse || isWlc || isPumpWifi) &&
+              !props.notify;
+
+      if (isWriteCharacteristic) {
         if (sendToHardware == null) {
           listeningSendToHardwareSubscription(c);
         }
@@ -436,6 +461,7 @@ class BleProvider extends ChangeNotifier {
       }
     }
   }
+
 
   void listeningSendToHardwareSubscription(BluetoothCharacteristic? characteristic) {
     debugPrint('listeningSendingData called............................................................');
@@ -1058,15 +1084,26 @@ class BleProvider extends ChangeNotifier {
       debugPrint('crc : ${sumOfAscii % 256}');
       debugPrint('payload : $payload');
     }
-
-    await sendToHardware?.write(listOfBytes,
-    withoutResponse:
-    sendToHardware!.properties.writeWithoutResponse);
+    sendDataToHw(listOfBytes);
     return Future.delayed(const Duration(seconds: 1));
   }
 
   void sendDataToHw(List<int> dataToSend) async {
-    if (sendToHardware != null) {
+    if (sendToHardware == null) return;
+    String pumpWifiDefaultServiceUuid = '49535343-FE7D-4AE5-8FA9-9FAFD205E455';
+    if(myService!.uuid.toString().toUpperCase() == pumpWifiDefaultServiceUuid){
+      const int chunkSize = 20;
+      for (int i = 0; i < dataToSend.length; i += chunkSize) {
+        final chunk = dataToSend.sublist(
+          i,
+          i + chunkSize > dataToSend.length ? dataToSend.length : i + chunkSize,
+        );
+        await sendToHardware!.write(
+          chunk,
+          withoutResponse: sendToHardware!.properties.writeWithoutResponse,
+        );
+      }
+    }else{
       await sendToHardware?.write(dataToSend,
           withoutResponse:
           sendToHardware!.properties.writeWithoutResponse);
@@ -1075,6 +1112,4 @@ class BleProvider extends ChangeNotifier {
         success: true);
     notifyListeners();
   }
-
 }
-
