@@ -5,17 +5,28 @@ import 'package:oro_drip_irrigation/utils/constants.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../Screens/Dealer/controllerverssionupdate.dart';
+import '../../../../models/customer/controller_context.dart';
+import '../../../../modules/bluetooth_low_energy/view/node_connection_page.dart';
 import '../../../../providers/user_provider.dart';
 import '../../../../repository/repository.dart';
+import '../../../../services/bluetooth/bluetooth_ble_service.dart';
+import '../../../../services/bluetooth/bluetooth_classic_service.dart';
 import '../../../../services/http_service.dart';
 import '../../../../utils/validators.dart';
 import '../../../../view_models/customer/general_setting_view_model.dart';
 
 class GeneralSettingsNarrow extends StatefulWidget {
-  const GeneralSettingsNarrow({super.key, required this.controllerId, required this.customerId,
-    required this.userId, required this.isSubUser});
+  const GeneralSettingsNarrow({
+    super.key,
+    required this.controllerId,
+    required this.customerId,
+    required this.userId,
+    required this.isSubUser,
+    required this.ctx
+  });
   final int customerId, controllerId, userId;
   final bool isSubUser;
+  final ControllerContext ctx;
 
   @override
   State<GeneralSettingsNarrow> createState() => _GeneralSettingsNarrowState();
@@ -44,7 +55,7 @@ class _GeneralSettingsNarrowState extends State<GeneralSettingsNarrow> {
               actions: [
                 IconButton(onPressed: () async {
                   final isAuthenticated = await Validators().verifyPassword(context);
-                   if (isAuthenticated) {
+                  if (isAuthenticated) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -87,7 +98,7 @@ class _GeneralSettingsNarrowState extends State<GeneralSettingsNarrow> {
                     padding: const EdgeInsets.only(top: 5, bottom: 5),
                     child: Column(
                       children: List.generate(5, (index) => getSettingTile(
-                        context, viewModel, index, widget.customerId, widget.controllerId, loggedInUser.id)),
+                          context, viewModel, index, widget.customerId, widget.controllerId, loggedInUser.id)),
                     ),
                   ),
                 ),
@@ -114,8 +125,81 @@ class _GeneralSettingsNarrowState extends State<GeneralSettingsNarrow> {
                   child: Padding(
                     padding: const EdgeInsets.only(top: 5, bottom: 5),
                     child: Column(
-                      children: List.generate(isEcoMdl? 7 : 6, (index) => getSettingTile(context,
-                          viewModel, isEcoMdl? index + 5 : index + 6, widget.customerId, widget.controllerId, loggedInUser.id)),
+                      children: [
+                        ...List.generate(isEcoMdl? 7 : 6, (index) => getSettingTile(context,
+                            viewModel, isEcoMdl? index + 5 : index + 6, widget.customerId, widget.controllerId, loggedInUser.id)),
+                        ListTile(
+                          leading: const Icon(Icons.developer_board, color: Colors.black,),
+                          title: const Text('Update Controller', style: TextStyle(color: Colors.black),),
+                          trailing: InkWell(
+                            onTap: () async {
+                              final bleService = BluetoothBleService();
+                              final blueService = BluetoothClassicService();
+
+                              // Ensure Bluetooth isn't already connected to a device
+                              // before starting the update flow.
+                              if (bleService.isConnected) {
+                                final connectedBleDevice = bleService.connectedDevice;
+                                if (connectedBleDevice != null) {
+                                  debugPrint('🔌 BLE device connected - disconnecting before update');
+                                  await bleService.disconnect(connectedBleDevice);
+                                }
+                              }
+
+                              if (blueService.isConnected) {
+                                debugPrint('🔌 Classic Bluetooth device connected - disconnecting before update');
+                                await blueService.disconnect();
+                              }
+
+                              if (!context.mounted) return;
+
+                              final Map<String, dynamic> data = {
+                                'controllerId': widget.ctx.controllerId,
+                                'deviceId': widget.ctx.imeiNo,
+                                'deviceName': widget.ctx.deviceName,
+                                'categoryId': widget.ctx.categoryId,
+                                'categoryName': widget.ctx.categoryName,
+                                'modelId': widget.ctx.modelId,
+                                'modelName': widget.ctx.deviceName,
+                                'InterfaceType': 1,
+                                'interface': 'GSM',
+                                'relayOutput': 3,
+                                'latchOutput': 0,
+                                'analogInput': 8,
+                                'digitalInput': 4,
+                              };
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NodeConnectionPage(
+                                    nodeData: data,
+                                    masterData: {
+                                      "userId": loggedInUser.id,
+                                      "customerId": widget.customerId,
+                                      "controllerId": widget.ctx.controllerId,
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                            child: IntrinsicWidth(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.green
+                                ),
+                                child: const Row(
+                                  children: [
+                                    Icon(Icons.bluetooth, color: Colors.white,),
+                                    Text("Update", style: TextStyle(color: Colors.white,),),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        )
+                      ],
                     ),
                   ),
                 ),

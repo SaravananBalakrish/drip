@@ -93,7 +93,7 @@ class CustomerHomeWide extends StatelessWidget {
 
         return Column(
           children: [
-            buildValveStatusLegend(isAquaculture),
+            !isOMS ? buildValveStatusLegend(isAquaculture) : const SizedBox(),
             Expanded(
               child: SingleChildScrollView(
                 child: isOMS ? buildOMSLine (cM, customerId, controllerId, modelId, deviceId,

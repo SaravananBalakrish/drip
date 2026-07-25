@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import '../widgets/crop_advisory_web_sidebar.dart';
 import 'package:oro_drip_irrigation/cropAdvisory/view/field_information_screen.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../repository/repository.dart';
@@ -281,40 +282,40 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
       if (image == null) return;
 
       // Verify if it's a crop image using ML Kit (Offline)
-      if (!kIsWeb) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Verifying image...'),
-              duration: Duration(seconds: 1),
-            ),
-          );
-        }
-
-        final bool isCrop = await ImageVerificationService.isCropImage(image.path);
-
-        if (!isCrop) {
-          if (mounted) {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text("Invalid Image"),
-                content: const Text(
-                  "The image does not appear to be a crop or plant. "
-                      "Please take a clear photo of your crop to proceed.",
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text("OK"),
-                  ),
-                ],
-              ),
-            );
-          }
-          return;
-        }
-      }
+      // if (!kIsWeb) {
+      //   if (mounted) {
+      //     ScaffoldMessenger.of(context).showSnackBar(
+      //       const SnackBar(
+      //         content: Text('Verifying image...'),
+      //         duration: Duration(seconds: 1),
+      //       ),
+      //     );
+      //   }
+      //
+      //   final bool isCrop = await ImageVerificationService.isCropImage(image.path);
+      //
+      //   if (!isCrop) {
+      //     if (mounted) {
+      //       showDialog(
+      //         context: context,
+      //         builder: (context) => AlertDialog(
+      //           title: const Text("Invalid Image"),
+      //           content: const Text(
+      //             "The image does not appear to be a crop or plant. "
+      //                 "Please take a clear photo of your crop to proceed.",
+      //           ),
+      //           actions: [
+      //             TextButton(
+      //               onPressed: () => Navigator.pop(context),
+      //               child: const Text("OK"),
+      //             ),
+      //           ],
+      //         ),
+      //       );
+      //     }
+      //     return;
+      //   }
+      // }
 
       final Uint8List bytes = await image.readAsBytes(); // ✅ single declaration
 
@@ -385,9 +386,10 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Padding(
+    Widget content = SafeArea(
+      child: Center(
+        child: Container(
+          constraints: BoxConstraints(maxWidth: kIsWeb ? 600 : double.infinity),
           padding: const EdgeInsets.all(16),
           child: SingleChildScrollView(
             child: Column(
@@ -432,46 +434,46 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                       style: const TextStyle(fontSize: 16),
                     ),
                   ),
-                  SectionCard(
-                   title: 'Crop Name',
-                   icon: Icons.energy_savings_leaf,
-                   child: Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [
-                       AppTextField(
-                         controller: _cropNameController,
-                         focusNode: _cropNameFocusNode,
-                         hint: 'Search Or Select The Crop(Eg.Rice,etc..)',
-                         suffix: const Icon(Icons.keyboard_arrow_down),
-                       ),
-                       _buildInlineSuggestions(
-                         focusNode: _cropNameFocusNode,
-                         controller: _cropNameController,
-                         suggestions: _cropNameSuggestions,
-                       ),
-                     ],
-                   ),
-                 ),
-                  SectionCard(
-                   title: 'Variety or Hybrid (Seed Type)',
-                   icon: Icons.spa,
-                   child: Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [
-                       AppTextField(
-                         controller: _varietyController,
-                         focusNode: _varietyFocusNode,
-                         hint: 'Search Or Select Variety Or Hybrid',
-                         suffix: const Icon(Icons.keyboard_arrow_down),
-                       ),
-                       _buildInlineSuggestions(
-                         focusNode: _varietyFocusNode,
-                         controller: _varietyController,
-                         suggestions: _varietySuggestions,
-                       ),
-                     ],
-                   ),
-                 ),
+                SectionCard(
+                  title: 'Crop Name',
+                  icon: Icons.energy_savings_leaf,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppTextField(
+                        controller: _cropNameController,
+                        focusNode: _cropNameFocusNode,
+                        hint: 'Search Or Select The Crop(Eg.Rice,etc..)',
+                        suffix: const Icon(Icons.keyboard_arrow_down),
+                      ),
+                      _buildInlineSuggestions(
+                        focusNode: _cropNameFocusNode,
+                        controller: _cropNameController,
+                        suggestions: _cropNameSuggestions,
+                      ),
+                    ],
+                  ),
+                ),
+                SectionCard(
+                  title: 'Variety or Hybrid (Seed Type)',
+                  icon: Icons.spa,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppTextField(
+                        controller: _varietyController,
+                        focusNode: _varietyFocusNode,
+                        hint: 'Search Or Select Variety Or Hybrid',
+                        suffix: const Icon(Icons.keyboard_arrow_down),
+                      ),
+                      _buildInlineSuggestions(
+                        focusNode: _varietyFocusNode,
+                        controller: _varietyController,
+                        suggestions: _varietySuggestions,
+                      ),
+                    ],
+                  ),
+                ),
                 SectionCard(
                   title: 'Planting Details',
                   icon: Icons.grass,
@@ -540,66 +542,66 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     ],
                   ),
                 ),
-     SectionCard(
-                   title: 'Crop Duration',
-                   icon: Icons.agriculture,
-                   child: Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [
-                       AppTextField(
-                         controller: _durationController,
-                         focusNode: _durationFocusNode,
-                         hint: 'Select The growth period',
-                         suffix: const Icon(Icons.keyboard_arrow_down),
-                       ),
-                       _buildInlineSuggestions(
-                         focusNode: _durationFocusNode,
-                         controller: _durationController,
-                         suggestions: _durationSuggestions,
-                       ),
-                     ],
-                   ),
-                 ),
-                  SectionCard(
-                   title: 'Plant Arrangement',
-                   icon: Icons.grid_view,
-                   child: Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [
-                       AppTextField(
-                         controller: _arrangementController,
-                         focusNode: _arrangementFocusNode,
-                         hint: 'Select The Plant Arrangement',
-                         suffix: const Icon(Icons.keyboard_arrow_down),
-                       ),
-                       _buildInlineSuggestions(
-                         focusNode: _arrangementFocusNode,
-                         controller: _arrangementController,
-                         suggestions: _arrangementSuggestions,
-                       ),
-                     ],
-                   ),
-                 ),
-                  SectionCard(
-                   title: 'Crop type',
-                   icon: Icons.park,
-                   child: Column(
-                     crossAxisAlignment: CrossAxisAlignment.start,
-                     children: [
-                       AppTextField(
-                         controller: _cropTypeController,
-                         focusNode: _cropTypeFocusNode,
-                         hint: 'Select The Type Of Cultivation Environment',
-                         suffix: const Icon(Icons.keyboard_arrow_down),
-                       ),
-                       _buildInlineSuggestions(
-                         focusNode: _cropTypeFocusNode,
-                         controller: _cropTypeController,
-                         suggestions: _cropTypeSuggestions,
-                       ),
-                     ],
-                    ),
+                SectionCard(
+                  title: 'Crop Duration',
+                  icon: Icons.agriculture,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppTextField(
+                        controller: _durationController,
+                        focusNode: _durationFocusNode,
+                        hint: 'Select The growth period',
+                        suffix: const Icon(Icons.keyboard_arrow_down),
+                      ),
+                      _buildInlineSuggestions(
+                        focusNode: _durationFocusNode,
+                        controller: _durationController,
+                        suggestions: _durationSuggestions,
+                      ),
+                    ],
                   ),
+                ),
+                SectionCard(
+                  title: 'Plant Arrangement',
+                  icon: Icons.grid_view,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppTextField(
+                        controller: _arrangementController,
+                        focusNode: _arrangementFocusNode,
+                        hint: 'Select The Plant Arrangement',
+                        suffix: const Icon(Icons.keyboard_arrow_down),
+                      ),
+                      _buildInlineSuggestions(
+                        focusNode: _arrangementFocusNode,
+                        controller: _arrangementController,
+                        suggestions: _arrangementSuggestions,
+                      ),
+                    ],
+                  ),
+                ),
+                SectionCard(
+                  title: 'Crop type',
+                  icon: Icons.park,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppTextField(
+                        controller: _cropTypeController,
+                        focusNode: _cropTypeFocusNode,
+                        hint: 'Select The Type Of Cultivation Environment',
+                        suffix: const Icon(Icons.keyboard_arrow_down),
+                      ),
+                      _buildInlineSuggestions(
+                        focusNode: _cropTypeFocusNode,
+                        controller: _cropTypeController,
+                        suggestions: _cropTypeSuggestions,
+                      ),
+                    ],
+                  ),
+                ),
                 SectionCard(
                   title: 'Crop Image',
                   icon: Icons.photo,
@@ -651,8 +653,9 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                 ),
                 CropContinueButton(
                   onTap: () async {
-                    print('userId:${widget.userId},controllerId:${widget.controllerId},edit:${widget.edit},cropId:${widget.cropId}');
-                     // Update singleton instance with data from this screen
+                    print(
+                        'userId:${widget.userId},controllerId:${widget.controllerId},edit:${widget.edit},cropId:${widget.cropId}');
+                    // Update singleton instance with data from this screen
                     _model.cropName = _cropNameController.text;
                     _model.cropVariety = _varietyController.text;
                     _model.plantingMethod = _plantingMethod;
@@ -661,15 +664,17 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
                     _model.cropDuration = _durationController.text;
                     _model.plantArrangement = _arrangementController.text;
                     _model.cropType = _cropTypeController.text;
-                     _model.cropImage = kIsWeb ? '' : cropImage?.path;
+                    _model.cropImage = kIsWeb ? '' : cropImage?.path;
                     _model.cropImageBytes = kIsWeb ? webImage : null;
 
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
                         builder: (_) => FieldInformationScreen(
-                          cropId: widget.cropId, edit: widget.edit,
-                          userId: widget.userId,controllerId: widget.controllerId,
+                          cropId: widget.cropId,
+                          edit: widget.edit,
+                          userId: widget.userId,
+                          controllerId: widget.controllerId,
                         ),
                       ),
                     );
@@ -681,6 +686,17 @@ class _CropDetailsScreenState extends State<CropDetailsScreen> {
           ),
         ),
       ),
+    );
+
+    return Scaffold(
+      body: kIsWeb
+          ? Row(
+              children: [
+                const CropAdvisoryWebSidebar(isSetup: true),
+                Expanded(child: content),
+              ],
+            )
+          : content,
     );
   }
 }
