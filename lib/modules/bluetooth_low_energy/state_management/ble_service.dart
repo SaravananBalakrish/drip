@@ -396,7 +396,7 @@ class BleProvider extends ChangeNotifier {
     for (var s in _services) {
       debugPrint('service => $s');
     }
-
+    print("modelId : ${modelId}");
     final isWlc = AppConstants.wlcModelList.contains(modelId);
     final isPumpWifi = AppConstants.pumpWifiDefault.contains(modelId);
 

@@ -5,10 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2f9418e-6c3f-4208-958b-3bdf91e8d388" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/user_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/user_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/IrrigationProgram/repository/irrigation_program_repo.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/IrrigationProgram/repository/irrigation_program_repo.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/Preferences/state_management/preference_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/Preferences/state_management/preference_provider.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/Preferences/view/preference_main_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/Preferences/view/preference_main_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/modules/bluetooth_low_energy/state_management/ble_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/bluetooth_low_energy/state_management/ble_service.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/config_maker/state_management/config_maker_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/config_maker/state_management/config_maker_provider.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/config_maker/view/config_web_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/config_maker/view/config_web_view.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/utils/constants.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils/constants.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/views/customer/view_base_layout/customer_screen_narrow.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/customer/view_base_layout/customer_screen_narrow.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/views/customer/view_base_layout/customer_screen_wide.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/customer/view_base_layout/customer_screen_wide.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
