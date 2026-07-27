@@ -5,10 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2f9418e-6c3f-4208-958b-3bdf91e8d388" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/Widgets/pump_widget.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/Widgets/pump_widget.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/services/bluetooth/bluetooth_ble_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/bluetooth/bluetooth_ble_service.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
