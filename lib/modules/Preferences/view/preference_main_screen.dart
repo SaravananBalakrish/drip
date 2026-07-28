@@ -796,9 +796,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                             child: Column(
                               children: [
                                 for(var settingIndex = 0; settingIndex < settingList[categoryIndex].setting.length; settingIndex++)
-                                  if(!settingList[categoryIndex].setting[settingIndex].display)
-                                    Container()
-                                  else if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "RTC TIMER")
+                                  if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "RTC TIMER")
                                     _buildRtcTimer(categoryIndex, settingIndex, pumpIndex, settingList)
                                   else if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "2 PHASE"
                                       || settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "AUTO RESTART 2 PHASE"
@@ -824,7 +822,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                       onValueChange: (newValue) => onChangeValue(categoryIndex, settingIndex, settingList, newValue),
                                       conditionToShow: getConditionToShow(type: settingList[categoryIndex].type, serialNumber: settingList[categoryIndex].setting[settingIndex].serialNumber, value: settingList[categoryIndex].setting[settingIndex].value,),
                                       subTitle: _getSubTitle(categoryIndex, settingIndex, settingList, pumpIndex),
-                                      hidden: (settingList[categoryIndex].setting[settingIndex].title == "Schedule by Days" 
+                                      display: settingList[categoryIndex].setting[settingIndex].display,
+                                      hidden: (settingList[categoryIndex].setting[settingIndex].title == "Schedule by Days"
                                           || (!isNova && AppConstants.otherCalibration.contains(settingList[categoryIndex].type) && [7,8].contains(settingList[categoryIndex].setting[settingIndex].serialNumber)))
                                           ? true
                                           : settingList[categoryIndex].setting[settingIndex].hidden,
@@ -2011,6 +2010,7 @@ Widget buildCustomListTileWidget({
   required Widget leading,
   bool conditionToShow = true,
   required bool hidden,
+  required bool display,
   bool enabled = true,
   required List<TextInputFormatter> inputFormatters,
   required List<String> dataList
@@ -2093,7 +2093,10 @@ Widget buildCustomListTileWidget({
       customWidget = Text('Unsupported Widget Type: $widgetType');
       break;
   }
-  return Visibility(
+    if(display == false){
+      return Container();
+    }
+    return Visibility(
     visible: !hidden,
     child: CustomAnimatedSwitcher(
       condition: conditionToShow,
