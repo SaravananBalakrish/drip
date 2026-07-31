@@ -92,6 +92,7 @@ final timerSettingsIcons = [
   MdiIcons.timerSand,
   MdiIcons.timerSand,
   MdiIcons.timerSand,
+  MdiIcons.timerSand,
 ];
 
 final currentSettingIcons = [
@@ -1232,7 +1233,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       if ([4, 5].contains(serialNumber)) result = conditions['schedule']!;
     }
 
-
+    print("result => $result");
     return result;
   }
 
@@ -1332,7 +1333,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   };
 
   Future<void> sendFunction() async {
-    print('start sendFunction');
     // mqttPayloadProvider.preferencePayload = {};
     breakLoop = false;
     Map<String, dynamic> userData = {
