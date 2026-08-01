@@ -11,6 +11,7 @@ import '../../../../providers/user_provider.dart';
 import '../../../../repository/repository.dart';
 import '../../../../services/communication_service.dart';
 import '../../../../services/http_service.dart';
+import '../../../../utils/formatters.dart';
 import '../../../../utils/helpers/program_code_helper.dart';
 import '../../../../utils/my_function.dart';
 import '../../../../utils/my_helper_class.dart';
@@ -26,6 +27,7 @@ import 'package:oro_drip_irrigation/utils/Theme/agritel_theme.dart';
 class _Tone {
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceMuted = Color(0xFFF7F8FA);
+  static const Color surfaceMutedBg = Color(0xFFDAF3BC);
   static const Color border = Color(0xFFE4E6EA);
   static const Color subBorder = Color(0xFFC5C6CA);
   static const Color textPrimary = Color(0xFF1A1D21);
@@ -101,27 +103,56 @@ ValveDisplayStatus _displayStatusFor(int status, int completePercent) {
 class _ValveDuration {
   final bool isTimeBased;
   final String display; // "00:04:32" or "12.50 l" depending on mode
-  final bool isActive; // values[17] == '1'
+  final bool isActive;
   const _ValveDuration({required this.isTimeBased, required this.display, required this.isActive});
 }
 
-_ValveDuration? _durationForValve(List<String> currentSchedule, String valveSNo) {
+_ValveDuration? _durationForValve(List<String> currentSchedule, String nodeSNo) {
+
   for (final row in currentSchedule) {
     final values = row.split(',');
     if (values.isEmpty) continue;
-    //if (values[0] != valveSNo) continue;
+
+    // OMS format: values[0] = NodeS_No (valve identifier)
     if (values.length <= 11) continue;
 
-    final raw = values[5];
-    final isTimeBased = raw.contains(':');
-    final isActive = values[10] == '1';
+    // Check if this row matches the extracted node SNo
+    final scheduleNodeSNo = values[0].trim();
+    if (scheduleNodeSNo != nodeSNo) continue;
 
-    return _ValveDuration(
-      isTimeBased: isTimeBased,
-      display: isTimeBased ? raw : '$raw L',
-      isActive: isActive,
-    );
+    //print("Found matching node: $scheduleNodeSNo, values: $values");
+
+    // Check if the program is running (status = 1)
+    final programStatus = int.tryParse(values[4].trim()) ?? 0;
+    if (programStatus != 1) continue;
+
+    final isTimeBased = values[3].trim() == '1';
+
+    if (isTimeBased) {
+      final remTime = values[5].trim();
+      if (remTime.isNotEmpty && remTime != '00:00:00') {
+        return _ValveDuration(
+          isTimeBased: true,
+          display: remTime,
+          isActive: true,
+        );
+      }
+    } else {
+      // Flow-based irrigation
+      final remFlow = values[7].trim();
+      if (remFlow.isNotEmpty && double.tryParse(remFlow) != null) {
+        final flowValue = double.parse(remFlow);
+        if (flowValue > 0) {
+          return _ValveDuration(
+            isTimeBased: false,
+            display: '${flowValue.toStringAsFixed(2)} L',
+            isActive: true,
+          );
+        }
+      }
+    }
   }
+  //print("No matching running node found for: $nodeSNo");
   return null;
 }
 
@@ -247,17 +278,20 @@ class _OmsLineState extends State<OmsLine> {
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: _Tone.subBorder, width: 0.5),
                 ),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: EdgeInsets.zero,
-                  itemCount: filteredIndices.length + 1,
-                  separatorBuilder: (_, __) => const Divider(height: 1, color: _Tone.border),
-                  itemBuilder: (context, i) {
-                    if (i == 0) return _buildTableHeaderRow();
-                    final nodeIndex = filteredIndices[i - 1];
-                    return _buildNodeRow(vm, programVm, nodeIndex);
-                  },
+                child: Padding(
+                  padding: const EdgeInsets.all(3.0),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.zero,
+                    itemCount: filteredIndices.length + 1,
+                    separatorBuilder: (_, __) => const Divider(height: 1, color: _Tone.border),
+                    itemBuilder: (context, i) {
+                      if (i == 0) return _buildTableHeaderRow();
+                      final nodeIndex = filteredIndices[i - 1];
+                      return _buildNodeRow(vm, programVm, nodeIndex);
+                    },
+                  ),
                 ),
               ),
             ),
@@ -286,7 +320,7 @@ class _OmsLineState extends State<OmsLine> {
     return SearchBar(
       constraints: const BoxConstraints(minHeight: 42),
       padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
-      hintText: "Search Street, Node ID...",
+      hintText: "Search by Zone, Node ID...",
       hintStyle: WidgetStateProperty.all(const TextStyle(fontSize: 13)),
       textStyle: WidgetStateProperty.all(const TextStyle(fontSize: 13)),
       leading: Icon(Icons.search_rounded, color: primary, size: 20),
@@ -308,7 +342,7 @@ class _OmsLineState extends State<OmsLine> {
           SizedBox(width: 28),
           SizedBox(width: 42),
           SizedBox(width: 150, child: Text('Node', style: headerStyle)),
-          Expanded(flex: 3, child: Text('Zone – Area/Place Name', style: headerStyle)),
+          Expanded(flex: 3, child: Text('Zone/Place Name', style: headerStyle)),
           SizedBox(width: 100, child: Text('Battery', style: headerStyle)),
           SizedBox(width: 100, child: Text('Solar', style: headerStyle)),
           Expanded(flex: 3, child: Text('Valves', style: headerStyle)),
@@ -324,7 +358,7 @@ class _OmsLineState extends State<OmsLine> {
 
     final sensors = node.rlyStatus.where((rly) {
       final sNo = rly.sNo.toString();
-      return sNo.startsWith('24.') || sNo.startsWith('46.');
+      return sNo.startsWith('22.') || sNo.startsWith('24.')  || sNo.startsWith('46.');
     }).toList();
 
     final selectedValves = nodeValveSelections[index] ?? <int>{};
@@ -347,12 +381,13 @@ class _OmsLineState extends State<OmsLine> {
     final isNodeFullySelected = selectedValves.length == valves.length && valves.isNotEmpty;
     final isExpanded = expandedNodes.contains(index);
 
+
     return Column(
       children: [
         InkWell(
           onTap: () => _toggleExpanded(index),
           child: Container(
-            color: isNodeFullySelected ? primary.withOpacity(0.04) : Colors.transparent,
+            color: isNodeFullySelected ? primary.withValues(alpha: 0.04) : Colors.transparent,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: Row(
               children: [
@@ -376,9 +411,19 @@ class _OmsLineState extends State<OmsLine> {
                 const SizedBox(width: 16),
                 SizedBox(
                   width: 150,
-                  child: Text(
-                    node.deviceId,
-                    style: const TextStyle(fontSize: 11, color: _Tone.textPrimary, fontFamily: 'monospace'),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        node.deviceId,
+                        style: const TextStyle(fontSize: 11, color: _Tone.textPrimary, fontFamily: 'monospace'),
+                      ),
+                      Text(
+                        Formatters().formatDateDMY(node.lastFeedbackReceivedTime),
+                        style: const TextStyle(fontSize: 10, color: _Tone.textMuted, fontFamily: 'monospace'),
+                      ),
+                    ],
                   ),
                 ),
                 Expanded(
@@ -393,12 +438,13 @@ class _OmsLineState extends State<OmsLine> {
                   width: 100,
                   child: _MetricChip(
                     label: '${node.batVolt} V',
-                    warn: (double.tryParse(node.batVolt.toString()) ?? 0) <= 0,
+                    warn: (double.tryParse(node.batVolt.toString()) ?? 0) <= 10,
                   ),
                 ),
-                SizedBox(width: 100, child: _MetricChip(label: '${node.sVolt} V', warn: true)),
+                SizedBox(width: 100, child: _MetricChip(label: '${node.sVolt} V',
+                    warn: (double.tryParse(node.sVolt.toString()) ?? 0) <= 10)),
                 Expanded(flex: 3, child: _ValveDotRow(valves: valves)),
-                Expanded(flex: 2, child: _RunningSummary(valves: valves, programVm: programVm)),
+                Expanded(flex: 2, child: _RunningSummary(valves: valves, programVm: programVm, nodeSNo: node.serialNumber,)),
                 SizedBox(
                   width: 70,
                   child: OutlinedButton(
@@ -435,6 +481,7 @@ class _OmsLineState extends State<OmsLine> {
         AnimatedSize(
           duration: const Duration(milliseconds: 150),
           child: isExpanded ? _NodeDetailPanel(
+            nodeSNo: node.serialNumber,
             sensors: sensors,
             valves: valves,
             selectedValveIdx: selectedValves,
@@ -449,8 +496,7 @@ class _OmsLineState extends State<OmsLine> {
               _onValveSelectionChanged(index, updated);
             },
             sensorWidgetBuilder: sensorWidget,
-          )
-              : const SizedBox.shrink(),
+          ) : const SizedBox.shrink(),
         ),
       ],
     );
@@ -533,7 +579,7 @@ class _OmsLineState extends State<OmsLine> {
                                         final commService = context.read<CommunicationService>();
                                         try {
                                           final payLoadFinal = jsonEncode({
-                                            "8400": {"8401": '${program.serialNumber}, 0'},
+                                            "8400": {"8401": '${program.serialNumber},0'},
                                           });
 
                                           await Future.delayed(const Duration(milliseconds: 100));
@@ -572,7 +618,7 @@ class _OmsLineState extends State<OmsLine> {
                                         final commService = context.read<CommunicationService>();
                                         try {
                                           final payLoadFinal = jsonEncode({
-                                            "8400": {"8401": '${program.serialNumber}, 1'},
+                                            "8400": {"8401": '${program.serialNumber},1'},
                                           });
 
                                           await Future.delayed(const Duration(milliseconds: 100));
@@ -744,8 +790,6 @@ class _OmsLineState extends State<OmsLine> {
     if (status == 'Program created' && mounted) debugPrint(status);
   }
 
-
-
   Widget _buildActionButton({
     required String label,
     required IconData icon,
@@ -827,7 +871,7 @@ class _OmsLineState extends State<OmsLine> {
     nodeValveSelections.forEach((nodeIndex, valveIdxSet) {
       if (valveIdxSet.isEmpty) return;
       final node = vm.nodeList[nodeIndex];
-      nodeIds.add(node.controllerId.toString());
+      nodeIds.add(node.serialNumber.toString());
       nodeNames.add(node.deviceName);
     });
 
@@ -838,7 +882,7 @@ class _OmsLineState extends State<OmsLine> {
     final commService = context.read<CommunicationService>();
     try {
       final payLoadFinal = jsonEncode({
-        "8300": {"8301": '$nodeIdString, 1'},
+        "8300": {"8301": '$nodeIdString,1'},
       });
 
       await Future.delayed(const Duration(milliseconds: 100));
@@ -870,7 +914,7 @@ class _OmsLineState extends State<OmsLine> {
     nodeValveSelections.forEach((nodeIndex, valveIdxSet) {
       if (valveIdxSet.isEmpty) return;
       final node = vm.nodeList[nodeIndex];
-      nodeIds.add(node.controllerId.toString());
+      nodeIds.add(node.serialNumber.toString());
       nodeNames.add(node.deviceName);
     });
 
@@ -880,7 +924,7 @@ class _OmsLineState extends State<OmsLine> {
     final commService = context.read<CommunicationService>();
     try {
       final payLoadFinal = jsonEncode({
-        "8300": {"8301": '$nodeIdString, 0'},
+        "8300": {"8301": '$nodeIdString,0'},
       });
 
       await Future.delayed(const Duration(milliseconds: 100));
@@ -977,6 +1021,7 @@ class _OmsLineState extends State<OmsLine> {
 /// Small metric chip
 /// ---------------------------------------------------------------------
 class _MetricChip extends StatelessWidget {
+
   final String label;
   final bool warn;
   const _MetricChip({required this.label, this.warn = false});
@@ -988,12 +1033,13 @@ class _MetricChip extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
         decoration: BoxDecoration(
-          color: warn ? _Tone.statusPendingBg : _Tone.surfaceMuted,
+          color: warn ? _Tone.statusPendingBg : _Tone.surfaceMutedBg,
           borderRadius: BorderRadius.circular(6),
         ),
         child: Text(
           label,
-          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: warn ? _Tone.statusPending : _Tone.textSecondary),
+          style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600,
+              color: warn ? _Tone.statusPending : _Tone.textSecondary),
         ),
       ),
     );
@@ -1047,9 +1093,10 @@ class _ValveDotRow extends StatelessWidget {
 /// CurrentProgramViewModel.currentSchedule, instead of a percent proxy.
 /// ---------------------------------------------------------------------
 class _RunningSummary extends StatelessWidget {
+  final int nodeSNo;
   final List<RelayStatus> valves;
   final CurrentProgramViewModel programVm;
-  const _RunningSummary({required this.valves, required this.programVm});
+  const _RunningSummary({required this.valves, required this.programVm, required this.nodeSNo});
 
   @override
   Widget build(BuildContext context) {
@@ -1060,6 +1107,8 @@ class _RunningSummary extends StatelessWidget {
           builder: (_, mqtt, ___) {
             int runningCount = 0;
             String? soonestDisplay;
+            String? currentSequenceNumber;
+
 
             for (final v in valves) {
               final status = mqtt.getValveOnOffStatus(double.parse(v.sNo.toString()).toStringAsFixed(3));
@@ -1068,15 +1117,25 @@ class _RunningSummary extends StatelessWidget {
               final percent = parts.length > 2 ? (int.tryParse(parts[2]) ?? 0) : 0;
               final display = _displayStatusFor(currentStatus, percent);
 
+
               if (display == ValveDisplayStatus.running) {
                 runningCount++;
-                final dur = _durationForValve(programVm.currentSchedule, v.sNo.toString());
+                final dur = _durationForValve(programVm.currentSchedule, nodeSNo.toString());
+                print("dur:$dur");
+
                 if (dur != null && dur.isActive) {
                   // Keep the first active duration we find as the
                   // headline value; good enough for the summary cell —
                   // the expanded card shows every valve's own duration.
                   soonestDisplay ??= dur.display;
                 }
+
+                // Get the sequence number for this valve from the schedule
+                final sequenceNum = _getSequenceNumberForValve(programVm.currentSchedule, nodeSNo.toString());
+                if (sequenceNum != null) {
+                  currentSequenceNumber = sequenceNum;
+                }
+                print("soonestDisplay:$soonestDisplay");
               }
             }
 
@@ -1084,16 +1143,29 @@ class _RunningSummary extends StatelessWidget {
               return const Text('—', style: TextStyle(fontSize: 12, color: _Tone.textMuted));
             }
 
-            return Row(
-              mainAxisSize: MainAxisSize.min,
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Icon(Icons.schedule, size: 13, color: _Tone.statusRunning),
-                const SizedBox(width: 4),
-                Flexible(
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(soonestDisplay != null && soonestDisplay.contains(":") ? Icons.timer_outlined : Icons.water_drop_outlined, size: 13, color: _Tone.statusRunning),
+                    const SizedBox(width: 4),
+                    Flexible(
+                      child: Text(
+                        soonestDisplay != null ? '$runningCount active · $soonestDisplay' : '$runningCount active',
+                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _Tone.statusRunning),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 17),
                   child: Text(
-                    soonestDisplay != null ? '$runningCount active · $soonestDisplay' : '$runningCount active',
-                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _Tone.statusRunning),
-                    overflow: TextOverflow.ellipsis,
+                    currentSequenceNumber != null ? 'Current Seq: $currentSequenceNumber' : 'No sequence',
+                    style: const TextStyle(color: Colors.black38, fontSize: 10),
                   ),
                 ),
               ],
@@ -1103,12 +1175,38 @@ class _RunningSummary extends StatelessWidget {
       },
     );
   }
+
+  String? _getSequenceNumberForValve(List<String> currentSchedule, String nodeSNo) {
+    for (final row in currentSchedule) {
+      final values = row.split(',');
+      if (values.isEmpty || values.length <= 11) continue;
+
+      final scheduleNodeSNo = values[0].trim();
+      if (scheduleNodeSNo != nodeSNo) continue;
+
+      // Check if the program is running (status = 1)
+      final programStatus = int.tryParse(values[4].trim()) ?? 0;
+      if (programStatus != 1) continue;
+
+      // Get the sequence number at index 1
+      if (values.length > 1) {
+        final sequenceTot = values[9].trim();
+        final currentSequence = values[2].trim();
+        if (sequenceTot.isNotEmpty && int.tryParse(sequenceTot) != null) {
+          return '$currentSequence/$sequenceTot';
+        }
+      }
+    }
+    return null;
+  }
+
 }
 
 /// ---------------------------------------------------------------------
 /// Expanded node detail panel
 /// ---------------------------------------------------------------------
 class _NodeDetailPanel extends StatelessWidget {
+  final int nodeSNo;
   final List<RelayStatus> sensors;
   final List<RelayStatus> valves;
   final Set<int> selectedValveIdx;
@@ -1117,6 +1215,7 @@ class _NodeDetailPanel extends StatelessWidget {
   final Widget Function(RelayStatus) sensorWidgetBuilder;
 
   const _NodeDetailPanel({
+    required this.nodeSNo,
     required this.sensors,
     required this.valves,
     required this.selectedValveIdx,
@@ -1149,6 +1248,7 @@ class _NodeDetailPanel extends StatelessWidget {
               final i = entry.key;
               final valve = entry.value;
               return _ValveDetailCard(
+                nodeSNo: nodeSNo,
                 valve: valve,
                 isSelected: selectedValveIdx.contains(i),
                 programVm: programVm,
@@ -1168,12 +1268,14 @@ class _NodeDetailPanel extends StatelessWidget {
 /// when a duration row exists for this valve and is active.
 /// ---------------------------------------------------------------------
 class _ValveDetailCard extends StatelessWidget {
+  final int nodeSNo;
   final RelayStatus valve;
   final bool isSelected;
   final CurrentProgramViewModel programVm;
   final VoidCallback onTap;
 
   const _ValveDetailCard({
+    required this.nodeSNo,
     required this.valve,
     required this.isSelected,
     required this.programVm,
@@ -1202,7 +1304,7 @@ class _ValveDetailCard extends StatelessWidget {
             final display = _displayStatusFor(currentStatus, completePercent);
             final style = _styleFor(display);
             final isFlowControl = valve.sNo.toString().startsWith('45.');
-            final duration = _durationForValve(programVm.currentSchedule, valve.sNo.toString());
+            final duration = _durationForValve(programVm.currentSchedule, nodeSNo.toString());
 
             return GestureDetector(
               onTap: onTap,
@@ -1273,7 +1375,7 @@ class _ValveDetailCard extends StatelessWidget {
                           // ticking clock; flow-based shows remaining
                           // volume, matching whichever mode the program
                           // used (values[4] format in currentSchedule).
-                          if (duration != null && duration.isActive) ...[
+                          /*if (duration != null && duration.isActive && currentStatus == 1) ...[
                             const SizedBox(height: 5),
                             Row(
                               children: [
@@ -1297,7 +1399,7 @@ class _ValveDetailCard extends StatelessWidget {
                           ] else if (display == ValveDisplayStatus.completed) ...[
                             const SizedBox(height: 4),
                             const Text('Finished', style: TextStyle(fontSize: 10, color: _Tone.textMuted)),
-                          ],
+                          ],*/
                         ],
                       ),
                     ),

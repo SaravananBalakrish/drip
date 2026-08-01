@@ -1192,7 +1192,6 @@ class ConfigMakerProvider extends ChangeNotifier{
     return moisturePayload.join(";");
   }
 
-
   String getObjectPayload() {
     List<dynamic> objectPayload = [];
     List<DeviceObjectModel> objectListToSend = [];
@@ -1233,7 +1232,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         String objectSerialNoForEcoGem = objectSerialNoForEcoGemSplitList.join(',');
         objectPayload.add({
           "S_No": [...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(masterData['modelId']) ? object.sNo! : objectSerialNoForEcoGem,
-          "ObjectType": object.objectId == AppConstants.analogWaterMeterObjectId ? AppConstants.waterMeterObjectId : object.objectId,
+          "ObjectType": object.objectId,
           "DeviceTypeNumber": controller.categoryId,
           "DeviceRunningNumber": findOutReferenceNumber(controller),
           "Output_InputNumber": object.connectionNo,
@@ -1432,7 +1431,12 @@ class ConfigMakerProvider extends ChangeNotifier{
 
       List<String> findOutHowManySourceAndIrrigationPump = pump.where((pumpModel) => ((pumpModel.commonDetails.controllerId == p2000.controllerId || AppConstants.ecoGemModelList.contains(masterData['modelId'])) && pumpModel.commonDetails.objectId == 5))
           .toList()
-          .map((pumpModel) => pumpModel.pumpType.toString()).toList();
+          .map((pumpModel) {
+            if(AppConstants.aquacultureModelList.contains(masterData['modelId'])){
+              return '2';
+            }
+            return pumpModel.pumpType.toString();
+      }).toList();
       int loopingLimit = payloadPumpCount - findOutHowManySourceAndIrrigationPump.length;
       for(var pump = 0;pump < loopingLimit;pump++){
         findOutHowManySourceAndIrrigationPump.add('0');
@@ -1479,7 +1483,7 @@ class ConfigMakerProvider extends ChangeNotifier{
         int sumpLowConnectionNo = 0;
         int levelConnectionNo = 0;
         int availableOfWaterMeter = pumpModel.waterMeter != 0.0 ? 1 : 0;
-        int availableOfPressure = pumpModel.pressureIn != 0.0 ? 1 : 0;
+        int availableOfPressure = (pumpModel.pressureIn != 0.0 || pumpModel.pressureOut != 0.0) ? 1 : 0;
         for(var float in listOfFloat){
           if(pumpModel.topSumpFloat == float.sNo){
             sumpPinCount += 1;
@@ -1589,7 +1593,7 @@ class ConfigMakerProvider extends ChangeNotifier{
       });
     }
 
-    print('listOfPumpPayload :: $listOfPumpPayload');
+    debugPrint('listOfPumpPayload :: $listOfPumpPayload');
     return listOfPumpPayload;
   }
 

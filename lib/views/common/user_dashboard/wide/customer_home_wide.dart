@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:reorderable_grid_view/reorderable_grid_view.dart';
 
 import '../../../../models/customer/site_model.dart';
+import '../../../../providers/user_provider.dart';
 import '../../../../utils/constants.dart';
 import '../../../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../../../customer/home_sub_classes/current_program.dart';
@@ -21,8 +22,11 @@ class CustomerHomeWide extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    final userData = context.read<UserProvider>().loggedInUser;
     final viewModel = Provider.of<CustomerScreenControllerViewModel>(context);
     int customerId = viewModel.mySiteList.data[viewModel.sIndex].customerId;
+
     final cM = viewModel.mySiteList.data[viewModel.sIndex].master[viewModel
         .mIndex];
 
@@ -48,6 +52,7 @@ class CustomerHomeWide extends StatelessWidget {
 
     return _buildWebLayout(
         context,
+        userData.id,
         customerId,
         cM.controllerId,
         cM.modelId,
@@ -57,7 +62,8 @@ class CustomerHomeWide extends StatelessWidget {
         viewModel,
         isNova,
         isAquaculture,
-        isOMS);
+        isOMS,
+    );
   }
 
   Widget displayLinearProgressIndicator() {
@@ -73,6 +79,7 @@ class CustomerHomeWide extends StatelessWidget {
   }
 
   Widget _buildWebLayout(BuildContext context,
+      int userId,
       int customerId,
       int controllerId,
       int modelId,
@@ -93,7 +100,7 @@ class CustomerHomeWide extends StatelessWidget {
 
         return Column(
           children: [
-            buildValveStatusLegend(isAquaculture),
+            !isOMS ? buildValveStatusLegend(isAquaculture) : const SizedBox(),
             Expanded(
               child: SingleChildScrollView(
                 child: isOMS ? buildOMSLine (cM, customerId, controllerId, modelId, deviceId,
@@ -199,7 +206,7 @@ class CustomerHomeWide extends StatelessWidget {
 
                     if (scheduledProgram.isNotEmpty)
                       ScheduledProgramWide(
-                        userId: customerId,
+                        userId: userId,
                         scheduledPrograms:
                         scheduledProgram,
                         controllerId: cM.controllerId,

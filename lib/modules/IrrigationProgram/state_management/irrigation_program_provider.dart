@@ -1382,6 +1382,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
                   break add;
                 }else{
                   sequenceData[j]['seqName'] = valSeqList[i]['seqName'];
+                  sequenceData[j]['mainValve'] = valSeqList[i]['mainValve'];
                   generateNew.addAll(returnSequenceDataUpdate(central: central, local: local, i: i,sequence: [sequenceData[j]],newSequence: false));
                   break add;
                 }
@@ -1539,6 +1540,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         }
       }
       payload += payload.isNotEmpty ? ';' : '';
+      print("sq['mainValve'] : ${sq['mainValve']}");
       Map<String, dynamic> jsonPayload = {
         'S_No' : sq['sNo'],
         'ProgramS_No' : serialNumber,

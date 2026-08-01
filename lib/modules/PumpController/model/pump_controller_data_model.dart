@@ -107,7 +107,6 @@ class IndividualPumpData {
   });
 
   factory IndividualPumpData.fromJson(Map<String, dynamic> json) {
-    print("json :: $json");
     final value = json["CF"] ?? "-";
     int firstIndex = 0;
     if (value != "-") {
@@ -172,6 +171,8 @@ class IndividualPumpData {
           : reason == 44 ? "$motorOff tank cable disconnected"
           : reason == 45 ? "$motorOff sump float failed"
           : reason == 46 ? "$motorOff tank float failed"
+          : reason == 47 ? "$motorOn Auto On Power On"
+          : reason == 48 ? "$motorOff Auto Off Power On"
           : "Unknown",
       waterMeter: json["WM"] ?? "",
       cumulativeFlow: value != "-" ? value.substring(firstIndex) : "-",
