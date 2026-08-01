@@ -51,7 +51,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> requestAppPermissions() async {
   debugPrint("Requesting permissions...");
 
-  // Notifications (iOS + Android 13+)
+  // Notifications (iOS + Android 13+) saels
   final notifStatus = await Permission.notification.request();
   debugPrint("Notification permission: $notifStatus");
 
