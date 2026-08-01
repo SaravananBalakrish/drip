@@ -60,6 +60,7 @@ class NodeList extends StatelessWidget {
             vm.onLivePayloadReceived(
               List.from(nodeLiveMessage),
               List.from(outputOnOffPayload),
+              false,
             );
           }
         });

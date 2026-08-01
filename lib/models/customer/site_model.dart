@@ -475,6 +475,7 @@ class IrrigationLineModel {
   final List<SensorModel> pressureIn;
   final List<SensorModel> pressureOut;
   final List<SensorModel> waterMeter;
+  final List<SensorModel> angWaterMeter;
   final List<SensorModel> co2Sensor;
   final List<SensorModel> humiditySensor;
   final List<SensorModel> temperature;
@@ -504,6 +505,7 @@ class IrrigationLineModel {
     required this.pressureIn,
     required this.pressureOut,
     required this.waterMeter,
+    required this.angWaterMeter,
     required this.co2Sensor,
     required this.humiditySensor,
     required this.temperature,
@@ -655,6 +657,17 @@ class IrrigationLineModel {
         .map(SensorModel.fromConfigObject)
         .toList();
 
+    final algWaterMeterSNoSet = (json['analogWaterMeter'] is List)
+        ? (json['analogWaterMeter'] as List).map((e) => (e as num).toDouble()).toSet()
+        : (json['analogWaterMeter'] is num)
+        ? {(json['analogWaterMeter'] as num).toDouble()}
+        : <double>{};
+
+    final angWaterMeter = configObjects
+        .where((obj) => algWaterMeterSNoSet.contains(obj.sNo))
+        .map(SensorModel.fromConfigObject)
+        .toList();
+
     final waterMeterSNoSet = (json['waterMeter'] is List)
         ? (json['waterMeter'] as List).map((e) => (e as num).toDouble()).toSet()
         : (json['waterMeter'] is num)
@@ -695,6 +708,7 @@ class IrrigationLineModel {
       pressureIn: pressureIn,
       pressureOut: pressureOut,
       waterMeter: waterMeter,
+      angWaterMeter: angWaterMeter,
 
       co2Sensor: co2,
       humiditySensor: humidity,

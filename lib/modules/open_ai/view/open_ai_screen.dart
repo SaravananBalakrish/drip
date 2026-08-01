@@ -579,7 +579,7 @@ class _AIChatScreenState extends State<AIChatScreen> {
                         context,
                         MaterialPageRoute(
                           builder: (_) =>  CropListScreen(
-                              userId: 1, controllerId: 1,
+                              userId: widget.userId, controllerId: widget.controllerId,
                           ),
                         ),
                       ),
