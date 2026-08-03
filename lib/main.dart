@@ -124,7 +124,6 @@ FutureOr<void> main() async {
         iOS: initializationSettingsIOS,
       );
 
-      await flutterLocalNotificationsPlugin.initialize(initSettings);
       await flutterLocalNotificationsPlugin.initialize(
         initSettings,
         onDidReceiveNotificationResponse: (details) {
