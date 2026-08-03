@@ -69,3 +69,8 @@ linux/**
 macos/**
 windows/**
 android/**
+
+.idea/workspace.xml
+web/splash/img/
+web/index.html
+android/app/src/main/**
