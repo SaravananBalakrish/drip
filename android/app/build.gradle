@@ -28,7 +28,7 @@ if (keystorePropertiesFile.exists()) {
 android {
 
     namespace = "com.niagaraautomations.oroDripirrigation"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     flavorDimensions += "flavor-type"
@@ -71,7 +71,7 @@ android {
     defaultConfig {
         applicationId "com.niagaraautomations.oroDripirrigation"
         minSdkVersion flutter.minSdkVersion
-        targetSdkVersion flutter.targetSdkVersion
+        targetSdkVersion 36
         versionCode 2279
         versionName "1.6.01"
         multiDexEnabled true
