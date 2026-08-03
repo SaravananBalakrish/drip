@@ -96,6 +96,43 @@ class CustomerFabMenu extends StatelessWidget {
           ],
         FloatingActionButton(
           heroTag: null,
+          backgroundColor: (commMode == 2 &&
+              !(vm.bluetoothClassicService.isConnected ||
+                  vm.bluetoothBleService.isConnected))
+              ? Colors.redAccent
+              : null,
+          onPressed: () => _showBottomSheet(context, currentMaster, vm,
+              vm.mySiteList.data[vm.sIndex].customerId, loggedInUser.id),
+          tooltip: 'Connectivity',
+          child: commMode == 1
+              ? Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                vm.wifiStrength == 0 ? Icons.wifi_off :
+                vm.wifiStrength <= 20 ? Icons.network_wifi_1_bar_outlined :
+                vm.wifiStrength <= 40 ? Icons.network_wifi_2_bar_outlined :
+                vm.wifiStrength <= 80 ? Icons.network_wifi_3_bar_outlined :
+                Icons.wifi,
+                color: Colors.black,
+              ),
+              Text(
+                '${vm.wifiStrength} %',
+                style: const TextStyle(fontSize: 11.0, color: Colors.black54),
+              ),
+            ],
+          )
+              : Icon(
+            (commMode == 2 &&
+                (vm.bluetoothClassicService.isConnected ||
+                    vm.bluetoothBleService.isConnected))
+                ? Icons.bluetooth
+                : Icons.bluetooth_disabled,
+            color: Colors.black,
+          ),
+        ),
+        /*FloatingActionButton(
+          heroTag: null,
           backgroundColor: (commMode == 2 && !(vm.bluetoothClassicService.isConnected &&
               vm.bluetoothBleService.isConnected)) ? Colors.redAccent : null,
           onPressed: () => _showBottomSheet(context,currentMaster, vm,
@@ -124,7 +161,7 @@ class CustomerFabMenu extends StatelessWidget {
               : Icons.bluetooth_disabled,
             color: Colors.black,
           ),
-        ),
+        ),*/
 
         if(isWlc)
           const SizedBox(height: 50,)
@@ -282,7 +319,22 @@ class CustomerFabMenu extends StatelessWidget {
                     trailing: commMode == 1 ?
                     Icon(Icons.check, color: Theme.of(context).primaryColorLight) : null,
                     onTap: () async {
+                      // Stop classic Bluetooth
                       await vm.bluetoothClassicService.resetBluetoothState();
+
+                      // Stop BLE scan if in progress
+                      if (vm.bluetoothBleService.isScanning) {
+                        await vm.bluetoothBleService.stopScan();
+                      }
+
+                      // Disconnect BLE if connected
+                      if (vm.bluetoothBleService.isConnected &&
+                          vm.bluetoothBleService.connectedDevice != null) {
+                        await vm.bluetoothBleService.disconnect(
+                          vm.bluetoothBleService.connectedDevice!,
+                        );
+                      }
+
                       vm.updateCommunicationMode(1, customerId);
                     },
                   ),

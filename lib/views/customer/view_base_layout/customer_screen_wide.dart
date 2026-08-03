@@ -35,6 +35,8 @@ class _CustomerScreenWideState
 
     final userProvider = context.read<UserProvider>();
     final loggedInUser = userProvider.loggedInUser;
+    print("loggedInUser => ${loggedInUser.toJson()}");
+
 
     final vm = context.watch<CustomerScreenControllerViewModel>();
     final navRail = context.watch<NavRailViewModel>();

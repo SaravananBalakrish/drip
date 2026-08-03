@@ -627,15 +627,15 @@
     },
     {
       "name": "google_mlkit_commons",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/google_mlkit_commons-0.11.1",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/google_mlkit_commons-0.8.1",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "2.16"
     },
     {
       "name": "google_mlkit_image_labeling",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/google_mlkit_image_labeling-0.14.2",
+      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/google_mlkit_image_labeling-0.12.1",
       "packageUri": "lib/",
-      "languageVersion": "3.8"
+      "languageVersion": "2.16"
     },
     {
       "name": "html",
