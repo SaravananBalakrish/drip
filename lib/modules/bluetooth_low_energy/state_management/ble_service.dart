@@ -53,6 +53,9 @@ enum FileMode{
   bootFail,
 }
 
+
+enum ConnectMode{pumpWifiDefault, normal}
+
 class BleProvider extends ChangeNotifier {
   BleNodeState bleNodeState = BleNodeState.bluetoothOff;
   TraceMode traceMode = TraceMode.traceOff;
@@ -64,6 +67,7 @@ class BleProvider extends ChangeNotifier {
   List<BluetoothDevice> _systemDevices = [];
   List<ScanResult> _scanResults = [];
   bool _isScanning = false;
+  ConnectMode bleConnectMode = ConnectMode.normal;
 
   /* connecting variables*/
   BluetoothDevice? device;
@@ -162,10 +166,11 @@ class BleProvider extends ChangeNotifier {
     }
   }
 
-  void autoScanAndFoundDevice({required String macAddressToConnect, required int modelIdToUpdate}) async{
+  void autoScanAndFoundDevice({required String macAddressToConnect, required int modelIdToUpdate, required ConnectMode connectMode}) async{
     modelId = modelIdToUpdate;
     bleNodeState = BleNodeState.scanning;
     forceStop = false;
+    bleConnectMode = connectMode;
     notifyListeners();
     startListeningDevice();
     startScan();
@@ -178,8 +183,12 @@ class BleProvider extends ChangeNotifier {
       for(var result in _scanResults){
         var adv = result.advertisementData;
         String upComingMacAddress = result.device.remoteId.toString().split(':').join('');
-        debugPrint("upComingMacAddress : ${upComingMacAddress}");
-        if(macAddressToConnect == upComingMacAddress){
+        debugPrint("upComingMacAddress : $upComingMacAddress");
+        bool filterByCondition = connectMode == ConnectMode.pumpWifiDefault;
+        debugPrint("filterByCondition : $filterByCondition");
+        if(macAddressToConnect == upComingMacAddress && (filterByCondition ? result.device.platformName.contains('WIFI_') : result.device.platformName.contains('NIA_'))){
+          print("result.device.platformName : ${result.device.platformName}");
+          print("device : ${result.device}");
           device = result.device;
           bleNodeState = BleNodeState.deviceFound;
           notifyListeners();
@@ -404,8 +413,9 @@ class BleProvider extends ChangeNotifier {
     if (isWlc) {
       debugPrint("connect to wlc model....");
       myService = _services[2];
-    } else if (isPumpWifi) {
+    } else if (isPumpWifi && bleConnectMode == ConnectMode.pumpWifiDefault) {
       debugPrint("connect to pumpWifiDefault model....");
+      debugPrint("_services : ${_services.length}");
       myService = _services[2];
     } else {
       debugPrint("connect to node model....");
@@ -427,7 +437,7 @@ class BleProvider extends ChangeNotifier {
             !props.writeWithoutResponse &&
                 !props.write &&
                 props.notify;
-      } else if (isPumpWifi) {
+      } else if (isPumpWifi && bleConnectMode == ConnectMode.pumpWifiDefault) {
         isReadCharacteristic =
             props.writeWithoutResponse &&
                 !props.write &&

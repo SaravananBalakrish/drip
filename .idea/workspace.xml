@@ -5,17 +5,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2f9418e-6c3f-4208-958b-3bdf91e8d388" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/modules/service_request/model/service_request_model.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/modules/service_request/repository/service_request_repository.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/modules/service_request/view/service_request_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_graph.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_graph.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/Preferences/view/preference_main_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/Preferences/view/preference_main_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/Preferences/view/view_config.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/Preferences/view/view_config.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/irrigation_report/view/motor_cyclic_log.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/irrigation_report/view/motor_cyclic_log.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/irrigation_report/view/zone_cyclic_log.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/irrigation_report/view/zone_cyclic_log.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/views/customer/widgets/customer_main_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/customer/widgets/customer_main_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/bluetooth_low_energy/state_management/ble_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/bluetooth_low_energy/state_management/ble_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/bluetooth_low_energy/view/node_connection_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/bluetooth_low_energy/view/node_connection_page.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/bluetooth_low_energy/view/node_dashboard.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/bluetooth_low_energy/view/node_dashboard.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/service_request/model/service_request_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/service_request/model/service_request_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/service_request/repository/service_request_repository.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/service_request/repository/service_request_repository.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/service_request/view/service_request_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/service_request/view/service_request_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/services/usb_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/services/usb_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/views/customer/controller_settings/narrow/general_settings_narrow.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/customer/controller_settings/narrow/general_settings_narrow.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/views/customer/node_list/node_list.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/customer/node_list/node_list.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/views/customer/widgets/app_bar_action.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/customer/widgets/app_bar_action.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/views/customer/widgets/customer_fab_menu.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/customer/widgets/customer_fab_menu.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +65,7 @@
     &quot;show.migrate.to.gradle.popup&quot;: &quot;false&quot;
   }
 }</component>
-  <component name="RunManager" selected="Flutter.main_oroProduction.dart">
+  <component name="RunManager" selected="Flutter.main_smartComm">
     <configuration name="main_oroProduction.dart" type="FlutterRunConfigurationType" factoryName="Flutter">
       <option name="buildFlavor" value="oroProduction" />
       <option name="filePath" value="$PROJECT_DIR$/lib/main_oroProduction.dart" />
