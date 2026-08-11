@@ -12,8 +12,3 @@ key.properties
 **/*.keystore
 **/*.jks
 
-.DS_Store
-.idea/
-.flutter-plugins-dependencies
-.dart_tool/
-
