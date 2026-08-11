@@ -66,6 +66,8 @@ class WidgetSetting {
   dynamic value;
   List<RtcTimeSetting>? rtcSettings;
   bool hidden;
+  bool display;
+  int payloadIndex;
   bool isChanged;
 
   WidgetSetting({
@@ -76,6 +78,8 @@ class WidgetSetting {
     this.value,
     this.rtcSettings,
     required this.hidden,
+    required this.display,
+    required this.payloadIndex,
     required this.isChanged,
     required this.serialNumber
   });
@@ -124,6 +128,8 @@ class WidgetSetting {
       value: value,
       rtcSettings: rtcSettings,
       hidden: json['hidden'],
+      display: json['display'] ?? true,
+      payloadIndex: json['payloadIndex'] ?? json['sNo'] ?? 0,
       isChanged: false,
     );
   }
@@ -189,7 +195,7 @@ class SettingList {
   List gemPayload(pumpType) {
     List<String> result = [];
 
-    if ([202].contains(type)) {
+    if ([202, 602].contains(type)) {
       var value1 = setting.firstWhere((element) => element.serialNumber == 1).value;
       var value2 = setting.firstWhere((element) => element.serialNumber == 12).value == true ? 1 : 0;
       var value3 = setting.firstWhere((element) => element.serialNumber == 13).rtcSettings!.map((e) => e.onTime).toList().join('_');
@@ -198,12 +204,12 @@ class SettingList {
       result.add("$value2");
       result.add(value3);
       result.add(value4);
-    } else if ([205].contains(type)) {
+    } else if ([205, 605].contains(type)) {
       var value1 = pumpType != 2 ? (setting.firstWhere((element) => element.serialNumber == 1).value == true ? 1 : 0) : 0;
       var value2 = pumpType != 2 ? (setting.firstWhere((element) => element.serialNumber == 2).value == true ? 1 : 0) : 0;
       result.add("$value1");
       result.add("$value2");
-    } else if (type == 207) {
+    } else if ([207, 607].contains(type)) {
       var value1 = setting.firstWhere((element) => element.serialNumber == 1).value;
       var value2 = setting.firstWhere((element) => element.serialNumber == 2).value;
       var value3 = setting.firstWhere((element) => element.serialNumber == 3).value;

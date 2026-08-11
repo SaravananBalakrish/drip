@@ -8,6 +8,7 @@ import 'package:oro_drip_irrigation/utils/helpers/mc_permission_helper.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/relay_status_avatar.dart';
 import 'package:provider/provider.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
+import '../../../modules/bluetooth_low_energy/state_management/ble_service.dart';
 import '../../../providers/user_provider.dart';
 import '../../../repository/repository.dart';
 import '../../../utils/constants.dart';
@@ -199,6 +200,7 @@ class NodeList extends StatelessWidget {
                           "customerId" : customerId,
                           "controllerId" : masterData.controllerId
                         },
+                        connectMode: ConnectMode.normal,
                       )));
                     }, icon: const Icon(Icons.bluetooth))
                   ],
@@ -465,6 +467,7 @@ class NodeList extends StatelessWidget {
                       "customerId": customerId,
                       "controllerId": masterData.controllerId,
                     },
+                    connectMode: ConnectMode.normal,
                   ),
                 ),
               );
@@ -631,6 +634,7 @@ class NodeList extends StatelessWidget {
                             "customerId": customerId,
                             "controllerId": masterData.controllerId,
                           },
+                          connectMode: ConnectMode.normal,
                         ),
                       ),
                     );

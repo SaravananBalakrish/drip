@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
- import '../../../Screens/Dealer/sevicecustomer.dart';
+import 'package:oro_drip_irrigation/modules/irrigation_report/view/oms_log.dart';
+import '../../../modules/service_request/view/service_request_screen.dart';
 import '../../../Screens/Logs/irrigation_and_pump_log.dart';
 import '../../../Screens/Map/oro_map/map_areator.dart';
 import '../../../Screens/Map/oro_map/map_oro.dart';
@@ -59,16 +60,19 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
         controllerId: cMaster.controllerId,
         isWide: true,
       );
-
     case 3:
-      return (isGem || isNova || isOms) ? IrrigationAndPumpLog(
+      return (isGem || isNova) ? IrrigationAndPumpLog(
         userData: {
           'userId': userId,
           'controllerId': cMaster.controllerId,
           'customerId': cSite.customerId,
         },
         masterData: cMaster,
-      ) :
+      ) : isOms ? OmsLog(
+          userId: cSite.customerId,
+          controllerId: cMaster.controllerId,
+          nodeControllerId: 0
+      ):
       ControllerSettingWide(
         userId: userId,
         customerId: cSite.customerId,
@@ -97,13 +101,13 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
         groupId: cSite.groupId,
         groupName: cSite.groupName,
       ) :
-      TicketHomePage(
+      ServiceRequestScreen(
         userId: cSite.customerId,
         controllerId: cMaster.controllerId,
       );
 
     case 6:
-      return TicketHomePage(
+      return ServiceRequestScreen(
         userId: cSite.customerId,
         controllerId: cMaster.controllerId,
       );
