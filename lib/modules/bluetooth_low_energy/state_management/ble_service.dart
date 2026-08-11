@@ -1098,10 +1098,13 @@ class BleProvider extends ChangeNotifier {
     return Future.delayed(const Duration(seconds: 1));
   }
 
+
+
   void sendDataToHw(List<int> dataToSend) async {
     if (sendToHardware == null) return;
     String pumpWifiDefaultServiceUuid = '49535343-FE7D-4AE5-8FA9-9FAFD205E455';
-    if(myService!.uuid.toString().toUpperCase() == pumpWifiDefaultServiceUuid){
+    // if(myService!.uuid.toString().toUpperCase() == pumpWifiDefaultServiceUuid){
+    if(bleConnectMode == ConnectMode.pumpWifiDefault){
       const int chunkSize = 20;
       for (int i = 0; i < dataToSend.length; i += chunkSize) {
         final chunk = dataToSend.sublist(
