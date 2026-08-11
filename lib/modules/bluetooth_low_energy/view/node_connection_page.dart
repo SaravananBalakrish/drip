@@ -37,6 +37,7 @@ class _NodeConnectionPageState extends State<NodeConnectionPage> {
     super.initState();
     print(widget.nodeData);
     bleService = Provider.of<BleProvider>(context, listen: false);
+    print("connectMode : ${widget.connectMode}");
     // nodeBluetoothResponse = getData();
     if (mounted) {
       _checkRequirements();

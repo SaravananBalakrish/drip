@@ -9,7 +9,7 @@ extension PumpModeX on PumpMode {
       case PumpMode.auto:
         return 'Auto Mode';
       case PumpMode.manual:
-        return 'Manual Mode';
+        return 'Mobile Mode';
       case PumpMode.idle:
         return 'Idle';
     }
@@ -135,9 +135,9 @@ Widget buildModeCard({
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              'Manual Mode',
-                              style: const TextStyle(
+                            const Text(
+                              'Mode',
+                              style: TextStyle(
                                 fontSize: 15,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white, // text color white
