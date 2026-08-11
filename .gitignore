@@ -41,11 +41,21 @@ macos/
 windows/
 ios/
 
-# Android build
+# Android build / generated artifacts
+# NOTE: deliberately NOT ignoring android/** wholesale — that folder holds
+# real source (AndroidManifest.xml, MainActivity, Gradle config, signing
+# setup) that should stay tracked. Only generated/build output is ignored.
 android/build/
 android/app/debug/
 android/app/profile/
 android/app/release/
+android/.gradle/
+android/captures/
+android/gradlew
+android/gradlew.bat
+android/local.properties
+android/**/gradle-wrapper.jar
+GeneratedPluginRegistrant.java
 
 # Secrets
 .env*
@@ -57,21 +67,35 @@ android/app/release/
 keystore.txt
 key.properties
 android/key.properties
-<<<<<<< HEAD
-ios/**
-linux/**
-macos/**
-windows/**
-android/**
-
-.idea/workspace.xml
-web/splash/img/
-web/index.html
-android/app/src/main/**
-=======
 assets/ssh/
 notification.env
 
 # Symbolication
 app.*.symbols
 app.*.map.json
+
+# Misc IDE/editor cruft picked up from platform folders
+.idea/workspace.xml
+**/dgph
+*.mode1v3
+*.mode2v3
+*.moved-aside
+*.pbxuser
+*.perspectivev3
+!default.mode1v3
+!default.mode2v3
+!default.pbxuser
+!default.perspectivev3
+**/*sync/
+.sconsign.dblite
+.tags*
+**/.vagrant/
+Icon?
+xcuserdata
+**/.generated/
+ServiceDefinitions.json
+
+# TODO: confirm these are meant to be ignored (index.html is usually
+# hand-edited, not generated) before keeping them long-term.
+web/splash/img/
+web/index.html
