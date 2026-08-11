@@ -1334,12 +1334,6 @@
       "languageVersion": "3.4"
     },
     {
-      "name": "usb_serial",
-      "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/usb_serial-0.5.2",
-      "packageUri": "lib/",
-      "languageVersion": "2.12"
-    },
-    {
       "name": "uuid",
       "rootUri": "file:///Users/user/.pub-cache/hosted/pub.dev/uuid-4.5.1",
       "packageUri": "lib/",

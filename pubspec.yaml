@@ -82,7 +82,6 @@ dependencies:
   new_version_plus: ^0.1.0
   skeletonizer: ^2.1.1
   reorderable_grid_view: ^2.2.8
-  usb_serial: ^0.5.2
   flutter_image_compress: ^2.4.0
   image_picker: ^1.2.2
   http_parser: ^4.1.2

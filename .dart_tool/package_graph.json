@@ -79,7 +79,6 @@
         "tuple",
         "upgrader",
         "url_launcher",
-        "usb_serial",
         "uuid",
         "vibration",
         "webview_flutter",
@@ -175,15 +174,6 @@
         "flutter_image_compress_ohos",
         "flutter_image_compress_platform_interface",
         "flutter_image_compress_web"
-      ]
-    },
-    {
-      "name": "usb_serial",
-      "version": "0.5.2",
-      "dependencies": [
-        "async",
-        "collection",
-        "flutter"
       ]
     },
     {
@@ -1159,14 +1149,6 @@
       ]
     },
     {
-      "name": "async",
-      "version": "2.13.0",
-      "dependencies": [
-        "collection",
-        "meta"
-      ]
-    },
-    {
       "name": "http",
       "version": "1.5.0",
       "dependencies": [
@@ -1904,6 +1886,14 @@
     {
       "name": "equatable",
       "version": "2.0.7",
+      "dependencies": [
+        "collection",
+        "meta"
+      ]
+    },
+    {
+      "name": "async",
+      "version": "2.13.0",
       "dependencies": [
         "collection",
         "meta"
