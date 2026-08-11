@@ -35,11 +35,6 @@ pubspec.lock
 # Generated Flutter files
 **/ios/Flutter/.last_build_id
 
-# Platform folders (ignore generated platform files)
-linux/
-macos/
-windows/
-ios/
 
 # Android build / generated artifacts
 # NOTE: deliberately NOT ignoring android/** wholesale — that folder holds
