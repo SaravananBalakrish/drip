@@ -94,3 +94,8 @@ ServiceDefinitions.json
 # hand-edited, not generated) before keeping them long-term.
 web/splash/img/
 web/index.html
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub/
+build/
