@@ -47,7 +47,6 @@ class IrrigationProgramRepository {
   }
 
   Future<http.Response> createUserProgram(body) async {
-    // print("created program");
     return await apiService.postRequest('/user/program/create', body);
   }
 
@@ -78,7 +77,4 @@ class IrrigationProgramRepository {
   Future<http.Response> createDayCountRtc(body) async {
     return await apiService.postRequest('/user/planning/dayCountRtc/create', body);
   }
-
- /* post => /api/v1/user/planning/dayCountRtc/get => userId, controllerId
-  post => /api/v1/user/planning/dayCountRtc/create => userId, controllerId, dayCountRtc, createUser*/
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:oro_drip_irrigation/Constants/properties.dart';
+import 'package:oro_drip_irrigation/app.dart';
 import 'package:oro_drip_irrigation/modules/Preferences/view/view_config.dart';
 import 'package:oro_drip_irrigation/services/communication_service.dart';
 import 'package:oro_drip_irrigation/services/http_service.dart';
@@ -88,6 +89,7 @@ final timerSettingsIcons = [
   MdiIcons.timerPlay,
   MdiIcons.timerStop,
   MdiIcons.timerRefresh,
+  MdiIcons.timerSand,
   MdiIcons.timerSand,
   MdiIcons.timerSand,
   MdiIcons.timerSand,
@@ -748,11 +750,19 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
               children: [
                 for(var categoryIndex = 0; categoryIndex < settingList.length; categoryIndex++)
                   if([
-                    // ...AppConstants.aquacultureModelList,
                     ...AppConstants.wlcModelList
-                  ].contains(widget.masterData['modelId']) && categoryIndex == 2)
+                  ].contains(widget.masterData['modelId']) && AppConstants.otherCalibration.contains(settingList[categoryIndex].type))
                     Container()
-                  else if((settingList[categoryIndex].type == 207 && isToGem) ? preferenceProvider.individualPumpSetting![pumpIndex].controlGem : true)
+                    else if([
+                    ...AppConstants.singlePhaseWlcModelList,
+                    ...AppConstants.threePhaseWlcModelList,
+                  ].contains(widget.masterData['modelId']) && AppConstants.otherSetting.contains(settingList[categoryIndex].type))
+                    Container()
+                  else if([
+                      ...AppConstants.singleOrThreePhaseWlcModelList,
+                    ].contains(widget.masterData['modelId']) && AppConstants.additionalSetting.contains(settingList[categoryIndex].type))
+                      Container()
+                  else if((AppConstants.levelSetting.contains(settingList[categoryIndex].type) && isToGem) ? preferenceProvider.individualPumpSetting![pumpIndex].controlGem : true)
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       width: constraints.maxWidth < 700 ? constraints.maxWidth : (constraints.maxWidth/2) - 40,
@@ -787,9 +797,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                             child: Column(
                               children: [
                                 for(var settingIndex = 0; settingIndex < settingList[categoryIndex].setting.length; settingIndex++)
-                                  if(!settingList[categoryIndex].setting[settingIndex].display)
-                                    Container()
-                                  else if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "RTC TIMER")
+                                  if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "RTC TIMER")
                                     _buildRtcTimer(categoryIndex, settingIndex, pumpIndex, settingList)
                                   else if(settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "2 PHASE"
                                       || settingList[categoryIndex].setting[settingIndex].title.toUpperCase() == "AUTO RESTART 2 PHASE"
@@ -815,8 +823,9 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                                       onValueChange: (newValue) => onChangeValue(categoryIndex, settingIndex, settingList, newValue),
                                       conditionToShow: getConditionToShow(type: settingList[categoryIndex].type, serialNumber: settingList[categoryIndex].setting[settingIndex].serialNumber, value: settingList[categoryIndex].setting[settingIndex].value,),
                                       subTitle: _getSubTitle(categoryIndex, settingIndex, settingList, pumpIndex),
-                                      hidden: (settingList[categoryIndex].setting[settingIndex].title == "Schedule by Days" 
-                                          || (!isNova && settingList[categoryIndex].type == 210 && [7,8].contains(settingList[categoryIndex].setting[settingIndex].serialNumber)))
+                                      display: settingList[categoryIndex].setting[settingIndex].display,
+                                      hidden: (settingList[categoryIndex].setting[settingIndex].title == "Schedule by Days"
+                                          || (!isNova && AppConstants.otherCalibration.contains(settingList[categoryIndex].type) && [7,8].contains(settingList[categoryIndex].setting[settingIndex].serialNumber)))
                                           ? true
                                           : settingList[categoryIndex].setting[settingIndex].hidden,
                                       enabled: true, modelId: widget.masterData['modelId'],
@@ -831,7 +840,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                       ),
                     ),
                 for(var categoryIndex = 0; categoryIndex < settingList.length; categoryIndex++)
-                  if(!((settingList[categoryIndex].type == 207 && isToGem) ? preferenceProvider.individualPumpSetting![pumpIndex].controlGem : true))
+                  if(!((AppConstants.levelSetting.contains(settingList[categoryIndex].type) && isToGem) ? preferenceProvider.individualPumpSetting![pumpIndex].controlGem : true))
                     const SizedBox(height: 50,)
               ],
             ),
@@ -992,19 +1001,19 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
 
   Widget _buildIcon(int categoryIndex, int settingIndex, List settingList) {
     return Icon(
-        ([206, 606].contains(settingList[categoryIndex].type))
+        (AppConstants.otherSetting.contains(settingList[categoryIndex].type))
             ? otherSettingsIcons[settingIndex]
-            : ([204, 604].contains(settingList[categoryIndex].type))
+            : (AppConstants.voltageSetting.contains(settingList[categoryIndex].type))
             ? voltageSettingsIcons[settingIndex]
-            : ([202, 602].contains(settingList[categoryIndex].type))
+            : (AppConstants.timerSetting.contains(settingList[categoryIndex].type))
             ? timerSettingsIcons[settingIndex]
-            : ([203, 603].contains(settingList[categoryIndex].type))
+            : (AppConstants.currentSetting.contains(settingList[categoryIndex].type))
             ? currentSettingIcons[settingIndex]
-            : ([208, 209, 608, 609].contains(settingList[categoryIndex].type))
+            : (AppConstants.currentCalibration.contains(settingList[categoryIndex].type))
             ? voltageCalibrationIcons[settingIndex]
-            : ([210, 610].contains(settingList[categoryIndex].type))
+            : (AppConstants.otherCalibration.contains(settingList[categoryIndex].type))
             ? otherCalibrationIcons[settingIndex]
-            : [207, 607].contains(settingList[categoryIndex].type)
+            : AppConstants.levelSetting.contains(settingList[categoryIndex].type)
             ? levelSettingsIcons[settingIndex]
             : [211, 611].contains(settingList[categoryIndex].type)
             ? Icons.numbers
@@ -1012,37 +1021,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         color: Theme.of(context).primaryColor
     );
   }
-
-  // dynamic _getSubTitle(int categoryIndex, int settingIndex, List settingList, int pumpIndex) {
-  //   print("categoryIndex : $categoryIndex");
-  //   print("settingIndex : $settingIndex");
-  //   return ((isNova || isToGem) &&
-  //       [208, 209, 210].contains(settingList[categoryIndex].type))
-  //       ? "Last setting: ${(_getValue(
-  //       type: settingList[categoryIndex].type,
-  //       categoryIndex: categoryIndex,
-  //       pumpIndex: pumpIndex,
-  //       settingIndex: settingIndex
-  //   )).isNotEmpty
-  //       ? (_getValue(
-  //       type: settingList[categoryIndex].type,
-  //       categoryIndex: categoryIndex,
-  //       pumpIndex: pumpIndex,
-  //       settingIndex: settingIndex
-  //   ).split(',')[
-  //   categoryIndex == 0
-  //   ? ([0, 1, 2].contains(settingIndex)
-  //       ? [0, 1, 2][settingIndex]
-  //       : 0
-  //   ) : categoryIndex == 1
-  //   ? ([0, 1, 2].contains(settingIndex)
-  //       ? [0, 1, 2][settingIndex]
-  //       : 0
-  //   ) : ([0,1,2,3,4,5,6,7].contains(settingIndex)
-  //       ? [0,1,2,3,4,5,6,7][settingIndex]
-  //       : 0
-  //   )]) : "Loading..."}" : null;
-  // }
 
   dynamic _getSubTitle(
       int categoryIndex,
@@ -1054,7 +1032,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
 
     // Condition check
     if (!(isNova || isToGem) ||
-        ![208, 209, 210].contains(settingList[categoryIndex].type)) {
+        ![...AppConstants.voltageCalibration, ...AppConstants.currentCalibration, ...AppConstants.otherCalibration].contains(settingList[categoryIndex].type)) {
       return null;
     }
 
@@ -1094,10 +1072,9 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   void onChangeValue(int categoryIndex, int settingIndex, List settingList, newValue) {
     setState(() {
       settingList[categoryIndex].setting[settingIndex].isChanged = true;
-      if(settingList[categoryIndex].type == 206) {
+      if(AppConstants.otherSetting.contains(settingList[categoryIndex].type)) {
         if (settingList[categoryIndex].setting[settingIndex].serialNumber == 15 ||
             settingList[categoryIndex].setting[settingIndex].serialNumber == 16) {
-
           if (settingList[categoryIndex].setting[settingIndex].serialNumber == 15) {
             settingList[categoryIndex].setting[settingIndex].value = true;
             settingList[categoryIndex].setting.firstWhere((setting) => setting.serialNumber == 16).value = false;
@@ -1133,17 +1110,20 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         for (var element in decodedList) {
           Map<String, dynamic> decode = element;
           decode.forEach((key, value) {
-            switch (type) {
-              case 208:
-              if (key == "calibration") valueToShow = value;
-              break;
-              case 209:
-              if (key == "calibration") valueToShow = value.split(',').skip(3).join(',');
-              break;
-              case 210:
-              if (key == "calibration") valueToShow = value.split(',').skip(6).join(',');
-              break;
+            if (AppConstants.voltageCalibration.contains(type)) {
+              if (key == "calibration") {
+                valueToShow = value;
+              }
+            } else if (AppConstants.currentCalibration.contains(type)) {
+              if (key == "calibration") {
+                valueToShow = value.split(',').skip(3).join(',');
+              }
+            } else if (AppConstants.otherCalibration.contains(type)) {
+              if (key == "calibration") {
+                valueToShow = value.split(',').skip(6).join(',');
+              }
             }
+
           });
         }
       }
@@ -1199,25 +1179,24 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     void setCondition(String key) {
       conditions[key] = value;
     }
-    switch (type) {
-      case 206:
+    if (AppConstants.otherSetting.contains(type)) {
       // if (serialNumber == 1) setCondition('phaseValue');
       if (serialNumber == 9) setCondition('light');
       if (serialNumber == 12) setCondition('peakHour');
-      if ([10,11].contains(serialNumber)) result = conditions['light']!;
-      if ([13,14].contains(serialNumber)) result = conditions['peakHour']!;
-      break;
-
-      case 204:
+      if ([10, 11].contains(serialNumber)) result = conditions['light']!;
+      if ([13, 14].contains(serialNumber)) result = conditions['peakHour']!;
+    } else if (AppConstants.voltageSetting.contains(type)) {
       if (serialNumber == 1) setCondition('lowVoltage');
       if (serialNumber == 6) setCondition('highVoltage');
-      if ([2,3].contains(serialNumber)) result = conditions['lowVoltage']!;
-      if ([4,5].contains(serialNumber)) result = conditions['phaseValue']! && conditions['lowVoltage']!;
-      if ([7,8].contains(serialNumber)) result = conditions['highVoltage']!;
-      if ([9,10].contains(serialNumber)) result = conditions['phaseValue']! && conditions['highVoltage']!;
-      break;
-
-      case 202:
+      if ([2, 3].contains(serialNumber)) result = conditions['lowVoltage']!;
+      if ([4, 5].contains(serialNumber)) {
+        result = conditions['phaseValue']! && conditions['lowVoltage']!;
+      }
+      if ([7, 8].contains(serialNumber)) result = conditions['highVoltage']!;
+      if ([9, 10].contains(serialNumber)) {
+        result = conditions['phaseValue']! && conditions['highVoltage']!;
+      }
+    } else if (AppConstants.timerSetting.contains(type)) {
       if (serialNumber == 3) setCondition('startingCapacitor');
       if (serialNumber == 4) result = conditions['startingCapacitor']!;
       if (serialNumber == 5) setCondition('starterFeedback');
@@ -1225,32 +1204,36 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       if (serialNumber == 7) setCondition('maxTime');
       if (serialNumber == 8) result = conditions['maxTime']!;
       if (serialNumber == 9) setCondition('cyclicTime');
-      if ([10,11].contains(serialNumber)) result = conditions['cyclicTime']!;
+      if ([10, 11].contains(serialNumber)) result = conditions['cyclicTime']!;
       if (serialNumber == 12) setCondition('rtc');
       if (serialNumber == 13) result = conditions['rtc']!;
-      break;
-
-      case 203:
+    } else if (AppConstants.currentSetting.contains(type)) {
       if (serialNumber == 1) setCondition('dryRun');
-      if (serialNumber == 4) result = conditions['phaseValue']! && conditions['dryRun']!;
-      if ([2, 3, 5, 6, 7, 8, 9, 10].contains(serialNumber)) result = conditions['dryRun']!;
+      if (serialNumber == 4) {
+        result = conditions['phaseValue']! && conditions['dryRun']!;
+      }
+      if ([2, 3, 5, 6, 7, 8, 9, 10].contains(serialNumber)) {
+        result = conditions['dryRun']!;
+      }
       if (serialNumber == 5) setCondition('dryRunRestart');
-      if (serialNumber == 6) result = conditions['dryRun']! && conditions['dryRunRestart']!;
+      if (serialNumber == 6) {
+        result = conditions['dryRun']! && conditions['dryRunRestart']!;
+      }
       if (serialNumber == 7) setCondition('dryRunOcc');
-      if ([8,9].contains(serialNumber)) result = conditions['dryRun']! && conditions['dryRunOcc']!;
+      if ([8, 9].contains(serialNumber)) {
+        result = conditions['dryRun']! && conditions['dryRunOcc']!;
+      }
       if (serialNumber == 11) setCondition('overLoad');
-      if (serialNumber == 14) result = conditions['phaseValue']! && conditions['overLoad']!;
+      if (serialNumber == 14) {
+        result = conditions['phaseValue']! && conditions['overLoad']!;
+      }
       if ([12, 13, 15].contains(serialNumber)) result = conditions['overLoad']!;
-      break;
-
-      case 205:
+    } else if (AppConstants.additionalSetting.contains(type)) {
       if (serialNumber == 3) setCondition('schedule');
-      if ([4,5].contains(serialNumber)) result = conditions['schedule']!;
-
-      default:
-        break;
+      if ([4, 5].contains(serialNumber)) result = conditions['schedule']!;
     }
 
+    print("result => $result");
     return result;
   }
 
@@ -1350,7 +1333,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
   };
 
   Future<void> sendFunction() async {
-    print('start sendFunction');
     // mqttPayloadProvider.preferencePayload = {};
     breakLoop = false;
     Map<String, dynamic> userData = {
@@ -1376,7 +1358,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
     print('start sendFunction');
     print("payloadForGem : ${payloadForGem}");
     try {
-      bool isLevelSettingChanged = preferenceProvider.individualPumpSetting!.any((pump) => pump.settingList.any((setting) => setting.type == 207 && setting.changed));
+      bool isLevelSettingChanged = preferenceProvider.individualPumpSetting!.any((pump) => pump.settingList.any((setting) => AppConstants.levelSetting.contains(setting.type) && setting.changed));
       bool isAnyOtherChanged = preferenceProvider.commonPumpSettings!.any((pump) => pump.settingList.any((setting) => setting.changed));
       bool resultFromDialog = false;
 
@@ -1422,17 +1404,20 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
                     pumpIndex++;
                   }
                   for (var individualPumpSetting in individualPump.settingList) {
-                    switch (individualPumpSetting.type) {
-                      case (203 || 603):
-                        if(key.contains("400-$pumpIndex")) individualPumpSetting.controllerReadStatus= "0";
-                        break;
-                      case (202 || 602):
-                        if(key.contains("300-$pumpIndex") || key.contains("500-$pumpIndex")) individualPumpSetting.controllerReadStatus = "0";
-                        break;
-                      case (205 || 605):
-                        if(key.contains("600-$pumpIndex")) individualPumpSetting.controllerReadStatus = "0";
-                        break;
+                    if (AppConstants.currentSetting.contains(individualPumpSetting.type)) {
+                      if (key.contains("400-$pumpIndex")) {
+                        individualPumpSetting.controllerReadStatus = "0";
+                      }
+                    } else if (AppConstants.timerSetting.contains(individualPumpSetting.type)) {
+                      if (key.contains("300-$pumpIndex") || key.contains("500-$pumpIndex")) {
+                        individualPumpSetting.controllerReadStatus = "0";
+                      }
+                    } else if (AppConstants.additionalSetting.contains(individualPumpSetting.type)) {
+                      if (key.contains("600-$pumpIndex")) {
+                        individualPumpSetting.controllerReadStatus = "0";
+                      }
                     }
+
                   }
                 }
               }
@@ -1563,10 +1548,10 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       int modelId = commonSetting.modelId;
       if(selectedOroPumpList.contains(deviceId)) {
         for (var settingCategory in commonSetting.settingList) {
-          if (!sendAll ? ([204, 604].contains(settingCategory.type) && settingCategory.changed) : [204, 604].contains(settingCategory.type)) {
+          if (!sendAll ? (AppConstants.voltageSetting.contains(settingCategory.type) && settingCategory.changed) : AppConstants.voltageSetting.contains(settingCategory.type)) {
             final payload = jsonEncode({"200": jsonEncode({"sentSms": 'voltageconfig,${getSettingValue(settingCategory)}'})});
             temp.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
-          } else if (!sendAll ? ([206, 606].contains(settingCategory.type) && settingCategory.changed) : [206, 606].contains(settingCategory.type)) {
+          } else if (!sendAll ? (AppConstants.otherSetting.contains(settingCategory.type) && settingCategory.changed) : AppConstants.otherSetting.contains(settingCategory.type)) {
             final payload = jsonEncode({"100": jsonEncode({"sentSms": 'ctconfig,${getSettingValue(settingCategory)}'})});
             temp.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
           }
@@ -1604,29 +1589,63 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             }
             for (var individualPumpSetting in individualPump.settingList) {
               final conditionToSend = (!sendAll ? individualPumpSetting.changed : true);
-              switch (individualPumpSetting.type) {
-                case (203 || 603):
-                  if (conditionToSend) {
-                    final payload = jsonEncode({"400-$pumpIndex": jsonEncode({"sentSms": 'currentconfig,$pumpIndex,${getSettingValue(individualPumpSetting)}'})});
-                    currentConfigList.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
-                  }
-                  break;
-                case (202 || 602):
-                  if (conditionToSend) {
-                    final payload = jsonEncode({"300-$pumpIndex": jsonEncode({"sentSms": 'delayconfig,$pumpIndex,${getSettingValue(individualPumpSetting)}'})});
-                    delayConfigList.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
-                    final payload2 = jsonEncode({"500-$pumpIndex": jsonEncode({"sentSms": 'rtcconfig,$pumpIndex,${getRtcValue(individualPumpSetting)}'})});
-                    rtcConfigList.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload2+$categoryId2": payload2);
-                  }
-                  break;
-                case (205 || 605):
-                  if (conditionToSend) {
-                    int index = preferenceProvider.individualPumpSetting!.indexWhere((e) => e.controllerId == commonSetting.controllerId);
-                    final payload = jsonEncode({"600-$pumpIndex": jsonEncode({"sentSms": 'scheduleconfig,$pumpIndex,${getSettingValue(individualPumpSetting, controlToOroGem: (isPumpWithValveModel || !isToGem || isPumpOnly) ? false : preferenceProvider.individualPumpSetting![index].controlGem)}'})});
-                    scheduleConfigList.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
-                  }
-                  break;
+              if (AppConstants.currentSetting.contains(individualPumpSetting.type)) {
+                if (conditionToSend) {
+                  final payload = jsonEncode({
+                    "400-$pumpIndex": jsonEncode({
+                      "sentSms": 'currentconfig,$pumpIndex,${getSettingValue(individualPumpSetting)}'
+                    })
+                  });
+                  currentConfigList.add(
+                      isToGem
+                          ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2"
+                          : payload
+                  );
+                }
+              } else if (AppConstants.timerSetting.contains(individualPumpSetting.type)) {
+                if (conditionToSend) {
+                  final payload = jsonEncode({
+                    "300-$pumpIndex": jsonEncode({
+                      "sentSms": 'delayconfig,$pumpIndex,${getSettingValue(individualPumpSetting)}'
+                    })
+                  });
+                  delayConfigList.add(
+                      isToGem
+                          ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2"
+                          : payload
+                  );
+
+                  final payload2 = jsonEncode({
+                    "500-$pumpIndex": jsonEncode({
+                      "sentSms": 'rtcconfig,$pumpIndex,${getRtcValue(individualPumpSetting)}'
+                    })
+                  });
+                  rtcConfigList.add(
+                      isToGem
+                          ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload2+$categoryId2"
+                          : payload2
+                  );
+                }
+              } else if (AppConstants.additionalSetting.contains(individualPumpSetting.type)) {
+                if (conditionToSend) {
+                  int index = preferenceProvider.individualPumpSetting!
+                      .indexWhere((e) => e.controllerId == commonSetting.controllerId);
+
+                  final payload = jsonEncode({
+                    "600-$pumpIndex": jsonEncode({
+                      "sentSms":
+                      'scheduleconfig,$pumpIndex,${getSettingValue(individualPumpSetting, controlToOroGem: (isPumpWithValveModel || !isToGem || isPumpOnly) ? false : preferenceProvider.individualPumpSetting![index].controlGem)}'
+                    })
+                  });
+
+                  scheduleConfigList.add(
+                      isToGem
+                          ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2"
+                          : payload
+                  );
+                }
               }
+
             }
 
             if (currentConfigList.isNotEmpty) temp.add(currentConfigList.join('_'));
@@ -1656,10 +1675,10 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       int modelId = commonSetting.modelId;
       if(selectedOroPumpList.contains(deviceId)){
         for (var settingCategory in commonSetting.settingList) {
-          if (!sendAll ? ([204].contains(settingCategory.type) && settingCategory.controllerReadStatus == "0") : [204].contains(settingCategory.type)) {
+          if (!sendAll ? (AppConstants.voltageSetting.contains(settingCategory.type) && settingCategory.controllerReadStatus == "0") : AppConstants.voltageSetting.contains(settingCategory.type)) {
             final payload = jsonEncode({"200": jsonEncode({"sentSms": 'voltageconfig,${getSettingValue(settingCategory)}'})});
             temp.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
-          } else if (!sendAll ? ([206].contains(settingCategory.type) && settingCategory.controllerReadStatus == "0") : [206].contains(settingCategory.type)) {
+          } else if (!sendAll ? (AppConstants.otherSetting.contains(settingCategory.type) && settingCategory.controllerReadStatus == "0") : AppConstants.otherSetting.contains(settingCategory.type)) {
             final payload = jsonEncode({"100": jsonEncode({"sentSms": 'ctconfig,${getSettingValue(settingCategory)}'})});
             temp.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
           }
@@ -1678,29 +1697,63 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             }
             for (var individualPumpSetting in individualPump.settingList) {
               final conditionToSend = (!sendAll ? individualPumpSetting.controllerReadStatus == "0" : true);
-              switch (individualPumpSetting.type) {
-                case 203:
-                  if (conditionToSend) {
-                    final payload = jsonEncode({"400-$pumpIndex": jsonEncode({"sentSms": 'currentconfig,$pumpIndex,${getSettingValue(individualPumpSetting)}'})});
-                    currentConfigList.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
-                  }
-                  break;
-                case 202:
-                  if (conditionToSend) {
-                    final payload = jsonEncode({"300-$pumpIndex": jsonEncode({"sentSms": 'delayconfig,$pumpIndex,${getSettingValue(individualPumpSetting)}'})});
-                    delayConfigList.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
-                    final payload2 = jsonEncode({"500-$pumpIndex": jsonEncode({"sentSms": 'rtcconfig,$pumpIndex,${getRtcValue(individualPumpSetting)}'})});
-                    rtcConfigList.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload2+$categoryId2": payload2);
-                  }
-                  break;
-                case 205:
-                  if (conditionToSend) {
-                    int index = preferenceProvider.individualPumpSetting!.indexWhere((e) => e.deviceId == commonSetting.deviceId);
-                    final payload = jsonEncode({"600-$pumpIndex": jsonEncode({"sentSms": 'scheduleconfig,$pumpIndex,${getSettingValue(individualPumpSetting, controlToOroGem: (isPumpWithValveModel || !isToGem || isPumpOnly) ? false : preferenceProvider.individualPumpSetting![index].controlGem)}'})});
-                    scheduleConfigList.add(isToGem ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2": payload);
-                  }
-                  break;
+              if (AppConstants.currentSetting.contains(individualPumpSetting.type)) {
+                if (conditionToSend) {
+                  final payload = jsonEncode({
+                    "400-$pumpIndex": jsonEncode({
+                      "sentSms": 'currentconfig,$pumpIndex,${getSettingValue(individualPumpSetting)}'
+                    })
+                  });
+                  currentConfigList.add(
+                    isToGem
+                        ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2"
+                        : payload,
+                  );
+                }
+              } else if (AppConstants.timerSetting.contains(individualPumpSetting.type)) {
+                if (conditionToSend) {
+                  final payload = jsonEncode({
+                    "300-$pumpIndex": jsonEncode({
+                      "sentSms": 'delayconfig,$pumpIndex,${getSettingValue(individualPumpSetting)}'
+                    })
+                  });
+                  delayConfigList.add(
+                    isToGem
+                        ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2"
+                        : payload,
+                  );
+
+                  final payload2 = jsonEncode({
+                    "500-$pumpIndex": jsonEncode({
+                      "sentSms": 'rtcconfig,$pumpIndex,${getRtcValue(individualPumpSetting)}'
+                    })
+                  });
+                  rtcConfigList.add(
+                    isToGem
+                        ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload2+$categoryId2"
+                        : payload2,
+                  );
+                }
+              } else if (AppConstants.additionalSetting.contains(individualPumpSetting.type)) {
+                if (conditionToSend) {
+                  int index = preferenceProvider.individualPumpSetting!
+                      .indexWhere((e) => e.deviceId == commonSetting.deviceId);
+
+                  final payload = jsonEncode({
+                    "600-$pumpIndex": jsonEncode({
+                      "sentSms":
+                      'scheduleconfig,$pumpIndex,${getSettingValue(individualPumpSetting, controlToOroGem: (isPumpWithValveModel || !isToGem || isPumpOnly) ? false : preferenceProvider.individualPumpSetting![index].controlGem)}'
+                    })
+                  });
+
+                  scheduleConfigList.add(
+                    isToGem
+                        ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId2"
+                        : payload,
+                  );
+                }
               }
+
             }
 
             if (currentConfigList.isNotEmpty) temp.add(currentConfigList.join('_'));
@@ -1754,15 +1807,14 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
           ? aeratorCalibrationSetting.settingList : commonSetting.settingList;
       if(selectedOroPumpList.contains(deviceId)) {
         for (var settingCategory in aeratorOrNormal) {
-          if ([208, 608].contains(settingCategory.type)) {
+          if (AppConstants.voltageCalibration.contains(settingCategory.type)) {
             final payload = jsonEncode({
               "900": jsonEncode({"sentSms": 'calibration,${getSettingValue(settingCategory)}'})
             });
             temp.add(isToGem
                 ? "$oroPumpSerialNumber+$referenceNumber+$deviceId+$interfaceType+$payload+$categoryId"
                 : payload);
-            print("payload ==>$payload");
-          } else if ([209, 609].contains(settingCategory.type)) {
+          } else if (AppConstants.currentCalibration.contains(settingCategory.type)) {
             var splitParts = [];
             if(isToGem) {
               splitParts = temp[0].split('+');
@@ -1778,7 +1830,7 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
             } else {
               temp[0] = jsonEncode({"900": jsonEncode(tempMap)});
             }
-          } else if ([210, 610].contains(settingCategory.type)) {
+          } else if (AppConstants.otherCalibration.contains(settingCategory.type)) {
             var splitParts = [];
             if(isToGem) {
               splitParts = temp[0].split('+');
@@ -1796,11 +1848,8 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
           }
         }
       }
-      print("temp : ${temp}");
-
       result.addAll(temp);
     }
-    print("result ==> $result");
     return result.join(';');
   }
 
@@ -1947,7 +1996,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
       },
     );
   }*/
-
 }
 
 Widget buildCustomListTileWidget({
@@ -1962,6 +2010,7 @@ Widget buildCustomListTileWidget({
   required Widget leading,
   bool conditionToShow = true,
   required bool hidden,
+  required bool display,
   bool enabled = true,
   required List<TextInputFormatter> inputFormatters,
   required List<String> dataList
@@ -2044,7 +2093,10 @@ Widget buildCustomListTileWidget({
       customWidget = Text('Unsupported Widget Type: $widgetType');
       break;
   }
-  return Visibility(
+    if(display == false){
+      return Container();
+    }
+    return Visibility(
     visible: !hidden,
     child: CustomAnimatedSwitcher(
       condition: conditionToShow,

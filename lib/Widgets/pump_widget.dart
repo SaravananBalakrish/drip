@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
+import '../flavors.dart';
 import '../models/customer/site_model.dart';
 import '../StateManagement/duration_notifier.dart';
 import '../StateManagement/mqtt_payload_provider.dart';
@@ -268,12 +269,17 @@ class PumpWidget extends StatelessWidget {
 
         if(!isNova)...[
           const SizedBox(height: 8),
-          if (voltages.length == 6)...[
-            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RN', 'YN', 'BN']),
-            const SizedBox(height: 5),
-            _buildVoltageCurrentInfo(voltages.sublist(3, 6), ['RY', 'YB', 'BR']),
-          ]else ...[
-            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RN', 'YN', 'BN']),
+
+          if(F.appFlavor!.name.contains('smart'))...[
+            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+          ]else...[
+            if (voltages.length == 6)...[
+              _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RN', 'YN', 'BN']),
+              const SizedBox(height: 5),
+              _buildVoltageCurrentInfo(voltages.sublist(3, 6), ['RY', 'YB', 'BR']),
+            ]else ...[
+              _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RN', 'YN', 'BN']),
+            ],
           ],
           const SizedBox(height: 8),
           _buildVoltageCurrentInfo(columns, ['RC', 'YC', 'BC']),
@@ -305,7 +311,6 @@ class PumpWidget extends StatelessWidget {
 
     for (int i = 0; i < columns.length && i < 3; i++) {
       final value = columns[i].trim();
-
       if (value != '-' && value.isNotEmpty) {
         connected.add(phaseNames[i]);
       }
