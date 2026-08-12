@@ -1,0 +1,717 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:oro_drip_irrigation/Constants/properties.dart';
+import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/preview_screen.dart';
+import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/schedule_screen.dart';
+import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/selection_screen.dart';
+import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/sequence_screen.dart';
+import 'package:oro_drip_irrigation/modules/IrrigationProgram/view/water_and_fertilizer_screen.dart';
+import 'package:provider/provider.dart';
+import '../../../models/customer/site_model.dart';
+import '../../../utils/constants.dart';
+import '../state_management/irrigation_program_provider.dart';
+import '../../../StateManagement/mqtt_payload_provider.dart';
+import '../widgets/custom_alert_dialog.dart';
+import '../widgets/custom_tab.dart';
+import 'alarm_screen.dart';
+import 'conditions_screen.dart';
+import 'done_screen.dart';
+
+class IrrigationProgram extends StatefulWidget {
+  final int userId;
+  final int customerId;
+  final int groupId;
+  final int categoryId;
+  final int controllerId;
+  final String deviceId;
+  final int serialNumber;
+  final String? programType;
+  final bool fromDealer;
+  final bool toDashboard;
+  final int modelId;
+  final String deviceName;
+  final String categoryName;
+  final List<NodeListModel> nodeList;
+
+  const IrrigationProgram({
+    Key? irrigationProgramKey,
+    required this.userId,
+    required this.controllerId,
+    required this.serialNumber,
+    this.programType,
+    required this.deviceId,
+    required this.fromDealer,
+    required this.groupId,
+    required this.categoryId,
+    this.toDashboard = false,
+    required this.customerId,
+    required this.modelId,
+    required this.deviceName,
+    required this.categoryName,
+    required this.nodeList,
+  }) : super(key: irrigationProgramKey);
+
+  @override
+  State<IrrigationProgram> createState() => _IrrigationProgramState();
+}
+
+class _IrrigationProgramState extends State<IrrigationProgram> with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+  late List<String> labels;
+  late List<IconData> icons;
+  late MqttPayloadProvider mqttPayloadProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    final irrigationProvider = Provider.of<IrrigationProgramMainProvider>(context, listen: false);
+    print(
+      {
+        'userId': widget.userId,
+        'customerId': widget.customerId,
+        'groupId': widget.groupId,
+        'categoryId': widget.categoryId,
+        'controllerId': widget.controllerId,
+        'deviceId': widget.deviceId,
+        'serialNumber': widget.serialNumber,
+        'programType': widget.programType,
+        'fromDealer': widget.fromDealer,
+        'toDashboard': widget.toDashboard,
+        'modelId': widget.modelId,
+        'deviceName': widget.deviceName,
+        'categoryName': widget.categoryName,
+      }
+    );
+    mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: false);
+
+    final result = irrigationProvider.getLabelAndIcon(
+      sno: widget.serialNumber,
+      programType: widget.programType,
+      conditionLibrary: irrigationProvider.conditionsLibraryIsNotEmpty,
+    );
+    labels = result.labels;
+    icons = result.icons;
+
+    if (mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        irrigationProvider.updateTabIndex(0);
+        irrigationProvider.doneData(widget.customerId, widget.controllerId, widget.serialNumber);
+        irrigationProvider.getUserProgramSequence(
+          userId: widget.customerId,
+          controllerId: widget.controllerId,
+          serialNumber: widget.serialNumber,
+          groupId: widget.groupId,
+          categoryId: widget.categoryId,
+          modelId: widget.modelId,
+        );
+        irrigationProvider.scheduleData(widget.customerId, widget.controllerId, widget.serialNumber);
+        irrigationProvider.getUserProgramCondition(widget.customerId, widget.controllerId, widget.serialNumber);
+        irrigationProvider.getWaterAndFertData(
+          userId: widget.customerId,
+          controllerId: widget.controllerId,
+          serialNumber: widget.serialNumber,
+        );
+        irrigationProvider.getUserProgramSelection(widget.customerId, widget.controllerId, widget.serialNumber);
+        irrigationProvider.getUserProgramAlarm(widget.customerId, widget.controllerId, widget.serialNumber);
+      });
+      _tabController = TabController(length: labels.length, vsync: this);
+      _tabController.addListener(() {
+        irrigationProvider.updateTabIndex(_tabController.index);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _navigateToTab(int tabIndex) {
+    if (_tabController.index != tabIndex) {
+      _tabController.animateTo(tabIndex);
+    }
+  }
+
+  void _navigateToNextTab() {
+    _tabController.animateTo((_tabController.index + 1) % _tabController.length);
+  }
+
+  void _navigateToPreviousTab() {
+    _tabController.animateTo((_tabController.index - 1 + _tabController.length) % _tabController.length);
+  }
+
+  bool _validateBeforeGoingTo(int targetIndex, IrrigationProgramMainProvider mainProvider) {
+    if (widget.programType != "Irrigation Program") {
+      return true;
+    }
+
+    final threshold = labels.length == 7 ? 2 : 3;
+    if (targetIndex <= threshold) {
+      return true;
+    }
+
+    if (!mainProvider.selectedObjects!.any((element) => element.objectId == 2)) {
+      _showValidationAlert(content: "Please select at least one head unit!");
+      return false;
+    }
+
+    if (!mainProvider.isPumpStationMode && mainProvider.pump!.isNotEmpty && !mainProvider.selectedObjects!.any((element) => element.objectId == 5) && !AppConstants.ecoGemFlowControlValveModel.contains(widget.modelId)) {
+      if (!mainProvider.ignoreValidation) {
+        final hasMultiplePumps = mainProvider.pump!.length > 1;
+        _showValidationAlert(
+          content: "Are you sure to proceed without pump selection?",
+          showConfirm: hasMultiplePumps,
+          onConfirm: () {
+            mainProvider.ignoreValidation = true;
+            _navigateToTab(targetIndex);
+          },
+          targetIndex: targetIndex,
+        );
+        return false;
+      }
+      return true;
+    }
+
+    if (mainProvider.isPumpStationMode) {
+      final result = mainProvider.calculateTotalFlowRate();
+      if (result['sequenceData'].isNotEmpty) {
+        _showFlowRateWarning(result);
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  void _showValidationAlert({
+    required String content,
+    bool showConfirm = false,
+    VoidCallback? onConfirm,
+    int? targetIndex,
+  }) {
+    showAdaptiveDialog(
+      context: context,
+      builder: (context) => CustomAlertDialog(
+        title: "Warning",
+        content: content,
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              if (showConfirm && onConfirm != null && targetIndex != null) {
+                onConfirm();
+              }
+            },
+            child: Text(showConfirm ? "Yes" : "OK"),
+          ),
+          if (showConfirm)
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("No", style: TextStyle(color: Colors.red)),
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _showFlowRateWarning(Map<String, dynamic> validationData) {
+    final mainProvider = Provider.of<IrrigationProgramMainProvider>(context, listen: false);
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Row(
+          children: [
+            Icon(Icons.warning, color: Colors.red),
+            Text("Warning!", style: TextStyle(color: Colors.red)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              "Pump station range is not sufficient for zone's valve flow rate!",
+              style: TextStyle(fontWeight: FontWeight.w300, fontStyle: FontStyle.italic),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Pump station range', style: TextStyle(color: Colors.black)),
+                const SizedBox(width: 20),
+                Text(
+                  '${validationData['pumpFlowRate']} L/hr',
+                  style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10),
+            for(var seq in validationData['sequenceData'])
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('${seq['name']}', style: const TextStyle(color: Colors.black)),
+                  const SizedBox(width: 20),
+                  Text(
+                    '${seq['flowrate']} L/hr',
+                    style: TextStyle(color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _handleTabNavigation(int targetIndex) {
+    final mainProvider = Provider.of<IrrigationProgramMainProvider>(context, listen: false);
+    if (_tabController.index == 0 && mainProvider.irrigationLine!.sequence.any((element) => element['valve'].isEmpty)) {
+      _showSequenceWarning(mainProvider);
+    } else if (_validateBeforeGoingTo(targetIndex, mainProvider)) {
+      _navigateToTab(targetIndex);
+    }
+  }
+
+  void _showSequenceWarning(IrrigationProgramMainProvider mainProvider) {
+    final indexWhereEmpty = mainProvider.irrigationLine!.sequence.indexWhere((element) => element['valve'].isEmpty);
+    showAdaptiveDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Warning!'),
+        content: RichText(
+          text: TextSpan(
+            children: [
+              const TextSpan(text: 'There is no valve configured at ', style: TextStyle(color: Colors.black)),
+              TextSpan(
+                text: '${mainProvider.irrigationLine!.sequence[indexWhereEmpty]['name']}',
+                style: const TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+    ));
+
+    final mainProvider = Provider.of<IrrigationProgramMainProvider>(context);
+    mqttPayloadProvider = Provider.of<MqttPayloadProvider>(context, listen: true);
+
+    if (mainProvider.irrigationLine != null && mainProvider.programDetails != null) {
+      final isIrrigationProgram = (mainProvider.programDetails!.programType == "Irrigation Program") ||
+          (mainProvider.selectedProgramType == "Irrigation Program");
+
+      final programName = widget.serialNumber == 0
+          ? "New Program"
+          : mainProvider.programDetails!.programName.isNotEmpty
+          ? (mainProvider.programName == '' ? "Program ${mainProvider.programCount + 1}" : mainProvider.programName)
+          : mainProvider.programDetails!.defaultProgramName;
+
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          return DefaultTabController(
+            length: labels.length,
+            child: Scaffold(
+              appBar: MediaQuery.of(context).size.width < 600
+                  ? AppBar(
+                title: Text(programName),
+                centerTitle: true,
+                leading: IconButton(
+                  onPressed: () {
+                    mainProvider.programLibraryData(widget.customerId, widget.controllerId);
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                ),
+                bottom: constraints.maxWidth < 600
+                    ? PreferredSize(
+                  preferredSize: const Size.fromHeight(80.0),
+                  child: TabBar(
+                    controller: _tabController,
+                    tabAlignment: TabAlignment.start,
+                    isScrollable: true,
+                    tabs: [
+                      for (int i = 0; i < labels.length; i++)
+                        InkWell(
+                          onTap: () => _handleTabNavigation(i),
+                          child: CustomTab(
+                            height: 80,
+                            label: labels[i],
+                            content: icons[i],
+                            tabIndex: i,
+                            selectedTabIndex: mainProvider.selectedTabIndex,
+                          ),
+                        ),
+                    ],
+                  ),
+                )
+                    : null,
+              )
+                  : const PreferredSize(preferredSize: Size(0, 0), child: SizedBox()),
+              body: Row(
+                children: [
+                  if (constraints.maxWidth > 500)
+                    Container(
+                      width: constraints.maxWidth * 0.15,
+                      color: Theme.of(context).primaryColorDark,
+                      child: ListView(
+                        padding: const EdgeInsets.all(10),
+                        children: [
+                          Center(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const BackButton(color: Colors.white),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: Text(
+                                      programName,
+                                      style: TextStyle(
+                                        fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          for (int i = 0; i < labels.length; i++)
+                            Material(
+                              type: MaterialType.transparency,
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                title: constraints.maxWidth > 500 && constraints.maxWidth <= 600
+                                    ? null
+                                    : Text(labels[i], style: const TextStyle(color: Colors.white)),
+                                leading: Icon(icons[i], color: Colors.white),
+                                selected: _tabController.index == i,
+                                selectedTileColor: _tabController.index == i ? Theme.of(context).primaryColorLight : null,
+                                hoverColor: _tabController.index == i ? Theme.of(context).primaryColorLight : null,
+                                onTap: () => _handleTabNavigation(i),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  Expanded(
+                    child: TabBarView(
+                      controller: _tabController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        for (int i = 0; i < labels.length; i++)
+                          _buildTabContent(
+                            index: i,
+                            isIrrigationProgram: isIrrigationProgram,
+                            conditionsLibraryIsNotEmpty: (mainProvider.conditionsLibraryIsNotEmpty),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              floatingActionButton: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (mainProvider.selectedTabIndex != 0)
+                    _buildActionButton(
+                      key: "prevPage",
+                      icon: Icons.navigate_before,
+                      onPressed: _navigateToPreviousTab,
+                      context: context,
+                    ),
+                  const SizedBox(width: 10),
+                  CircleAvatar(
+                    child: Text(
+                      "${mainProvider.selectedTabIndex + 1}",
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  if (mainProvider.selectedTabIndex != labels.length - 1)
+                    _buildActionButton(
+                      key: "nextPage",
+                      icon: Icons.navigate_next,
+                      context: context,
+                      onPressed: () {
+                        final nextIndex = _tabController.index + 1;
+                        final mainProvider = Provider.of<IrrigationProgramMainProvider>(context, listen: false);
+                        if (_tabController.index == 0 &&
+                            mainProvider.irrigationLine!.sequence.any((element) => element['valve'].isEmpty)) {
+                          _showSequenceWarning(mainProvider);
+                        } else if (_validateBeforeGoingTo(nextIndex, mainProvider)) {
+                          _navigateToNextTab();
+                        }
+                      },
+                    ),
+                ],
+              ),
+              floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+            ),
+          );
+        },
+      );
+    } else {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+  }
+
+  /*Widget _buildTabContent({required int index, required bool isIrrigationProgram, required bool conditionsLibraryIsNotEmpty}) {
+    switch (index) {
+      case 0:
+        return SequenceScreen(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: widget.controllerId, serialNumber: widget.serialNumber);
+      case 1:
+        return ScheduleScreen(serialNumber: widget.serialNumber,);
+      case 2:
+        return isIrrigationProgram
+            ? conditionsLibraryIsNotEmpty
+            ? ConditionsScreen(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: widget.controllerId, serialNumber: widget.serialNumber, deviceId: widget.deviceId,)
+            : const SelectionScreen()
+            : WaterAndFertilizerScreen(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: widget.controllerId, serialNumber: widget.serialNumber, isIrrigationProgram: isIrrigationProgram,);
+      case 3:
+        return isIrrigationProgram
+            ? conditionsLibraryIsNotEmpty
+            ? const SelectionScreen()
+            : WaterAndFertilizerScreen(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: widget.controllerId, serialNumber: widget.serialNumber, isIrrigationProgram: isIrrigationProgram,)
+            : const NewAlarmScreen2();
+      case 4:
+        return isIrrigationProgram
+            ? conditionsLibraryIsNotEmpty
+            ? WaterAndFertilizerScreen(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: widget.controllerId, serialNumber: widget.serialNumber, isIrrigationProgram: isIrrigationProgram,)
+            : const NewAlarmScreen2()
+            : AdditionalDataScreen(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: widget.controllerId, deviceId: widget.deviceId, serialNumber: widget.serialNumber, toDashboard: widget.toDashboard, fromDealer: widget.fromDealer, programType: widget.programType, conditionsLibraryIsNotEmpty: widget.conditionsLibraryIsNotEmpty, isIrrigationProgram: isIrrigationProgram,);
+      case 5:
+        return isIrrigationProgram
+            ? conditionsLibraryIsNotEmpty
+            ? const NewAlarmScreen2()
+            : AdditionalDataScreen(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: widget.controllerId, deviceId: widget.deviceId, serialNumber: widget.serialNumber, toDashboard: widget.toDashboard, fromDealer: widget.fromDealer, programType: widget.programType, conditionsLibraryIsNotEmpty: widget.conditionsLibraryIsNotEmpty, isIrrigationProgram: isIrrigationProgram,)
+            : PreviewScreen(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: widget.controllerId, deviceId: widget.deviceId, serialNumber: widget.serialNumber, toDashboard: widget.toDashboard, fromDealer: widget.fromDealer, programType: widget.programType, conditionsLibraryIsNotEmpty: widget.conditionsLibraryIsNotEmpty,);
+      case 6:
+        return conditionsLibraryIsNotEmpty
+            ? AdditionalDataScreen(userId: overAllPvd.userId, controllerId: widget.controllerId, deviceId: widget.deviceId, serialNumber: widget.serialNumber, toDashboard: widget.toDashboard, fromDealer: widget.fromDealer, programType: widget.programType, conditionsLibraryIsNotEmpty: widget.conditionsLibraryIsNotEmpty, isIrrigationProgram: isIrrigationProgram,)
+            : PreviewScreen(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: widget.controllerId, deviceId: widget.deviceId, serialNumber: widget.serialNumber, toDashboard: widget.toDashboard, fromDealer: widget.fromDealer, programType: widget.programType, conditionsLibraryIsNotEmpty: widget.conditionsLibraryIsNotEmpty,);
+      case 7:
+        return conditionsLibraryIsNotEmpty
+            ? PreviewScreen(userId: overAllPvd.takeSharedUserId ? overAllPvd.sharedUserId : overAllPvd.userId, controllerId: widget.controllerId, deviceId: widget.deviceId, serialNumber: widget.serialNumber, toDashboard: widget.toDashboard, fromDealer: widget.fromDealer, programType: widget.programType, conditionsLibraryIsNotEmpty: widget.conditionsLibraryIsNotEmpty,)
+            : Container();
+      default:
+        return Container();
+    }
+  }
+}*/
+
+  Widget _buildTabContent({
+    required int index,
+    required bool isIrrigationProgram,
+    required bool conditionsLibraryIsNotEmpty,
+  }) {
+    switch (index) {
+      case 0:
+        return SequenceScreen(
+          userId: widget.customerId,
+          controllerId: widget.controllerId,
+          serialNumber: widget.serialNumber,
+          deviceId: widget.deviceId,
+          modelId: widget.modelId,
+        );
+      case 1:
+        return ScheduleScreen(serialNumber: widget.serialNumber, modelId: widget.modelId);
+      case 2:
+        return conditionsLibraryIsNotEmpty
+            ? ConditionsScreen(
+          userId: widget.userId,
+          controllerId: widget.controllerId,
+          serialNumber: widget.serialNumber,
+          deviceId: widget.deviceId,
+          customerId: widget.customerId,
+        )
+            : isIrrigationProgram
+            ? SelectionScreen(modelId: widget.modelId, nodeList: widget.nodeList,)
+            : WaterAndFertilizerScreen(
+          userId: widget.userId,
+          controllerId: widget.controllerId,
+          serialNumber: widget.serialNumber,
+          isIrrigationProgram: isIrrigationProgram,
+          modelId: widget.modelId,
+        );
+      case 3:
+        return isIrrigationProgram
+            ? conditionsLibraryIsNotEmpty
+            ? SelectionScreen(modelId: widget.modelId, nodeList: widget.nodeList,)
+            : WaterAndFertilizerScreen(
+          userId: widget.customerId,
+          controllerId: widget.controllerId,
+          serialNumber: widget.serialNumber,
+          isIrrigationProgram: isIrrigationProgram,
+          modelId: widget.modelId,
+        )
+            : conditionsLibraryIsNotEmpty
+            ? WaterAndFertilizerScreen(
+          userId: widget.customerId,
+          controllerId: widget.controllerId,
+          serialNumber: widget.serialNumber,
+          isIrrigationProgram: isIrrigationProgram,
+          modelId: widget.modelId,
+        )
+            : AlarmScreen(modelId: widget.modelId);
+      case 4:
+        return isIrrigationProgram
+            ? conditionsLibraryIsNotEmpty
+            ? WaterAndFertilizerScreen(
+          userId: widget.customerId,
+          controllerId: widget.controllerId,
+          serialNumber: widget.serialNumber,
+          isIrrigationProgram: isIrrigationProgram,
+          modelId: widget.modelId,
+        )
+            : AlarmScreen(modelId: widget.modelId)
+            : conditionsLibraryIsNotEmpty
+            ? AlarmScreen(modelId: widget.modelId)
+            : AdditionalDataScreen(
+          userId: widget.userId,
+          controllerId: widget.controllerId,
+          deviceId: widget.deviceId,
+          serialNumber: widget.serialNumber,
+          toDashboard: widget.toDashboard,
+          fromDealer: widget.fromDealer,
+          programType: widget.programType,
+          isIrrigationProgram: isIrrigationProgram,
+          customerId: widget.customerId,
+          groupId: widget.groupId,
+          categoryId: widget.categoryId,
+          modelId: widget.modelId,
+          deviceName: widget.deviceName,
+          categoryName: widget.categoryName,
+        );
+      case 5:
+        return isIrrigationProgram
+            ? conditionsLibraryIsNotEmpty
+            ? AlarmScreen(modelId: widget.modelId)
+            : AdditionalDataScreen(
+          userId: widget.userId,
+          controllerId: widget.controllerId,
+          deviceId: widget.deviceId,
+          serialNumber: widget.serialNumber,
+          toDashboard: widget.toDashboard,
+          fromDealer: widget.fromDealer,
+          programType: widget.programType,
+          isIrrigationProgram: isIrrigationProgram,
+          customerId: widget.customerId,
+          groupId: widget.groupId,
+          categoryId: widget.categoryId,
+          modelId: widget.modelId,
+          deviceName: widget.deviceName,
+          categoryName: widget.categoryName,
+        )
+            : AdditionalDataScreen(
+          userId: widget.userId,
+          controllerId: widget.controllerId,
+          deviceId: widget.deviceId,
+          serialNumber: widget.serialNumber,
+          toDashboard: widget.toDashboard,
+          fromDealer: widget.fromDealer,
+          programType: widget.programType,
+          isIrrigationProgram: isIrrigationProgram,
+          customerId: widget.customerId,
+          groupId: widget.groupId,
+          categoryId: widget.categoryId,
+          modelId: widget.modelId,
+          deviceName: widget.deviceName,
+          categoryName: widget.categoryName,
+        );
+      case 6:
+        return conditionsLibraryIsNotEmpty
+            ? AdditionalDataScreen(
+          userId: widget.userId,
+          controllerId: widget.controllerId,
+          deviceId: widget.deviceId,
+          serialNumber: widget.serialNumber,
+          toDashboard: widget.toDashboard,
+          fromDealer: widget.fromDealer,
+          programType: widget.programType,
+          isIrrigationProgram: isIrrigationProgram,
+          customerId: widget.customerId,
+          groupId: widget.groupId,
+          categoryId: widget.categoryId,
+          modelId: widget.modelId,
+          deviceName: widget.deviceName,
+          categoryName: widget.categoryName,
+        )
+            : PreviewScreen(
+          userId: widget.userId,
+          controllerId: widget.controllerId,
+          deviceId: widget.deviceId,
+          serialNumber: widget.serialNumber,
+          toDashboard: widget.toDashboard,
+          fromDealer: widget.fromDealer,
+          programType: widget.programType,
+          customerId: widget.customerId,
+          groupId: widget.groupId,
+          categoryId: widget.categoryId,
+          modelId: widget.modelId,
+          deviceName: widget.deviceName,
+          categoryName: widget.categoryName,
+        );
+      case 7:
+        return conditionsLibraryIsNotEmpty
+            ? PreviewScreen(
+          userId: widget.userId,
+          controllerId: widget.controllerId,
+          deviceId: widget.deviceId,
+          serialNumber: widget.serialNumber,
+          toDashboard: widget.toDashboard,
+          fromDealer: widget.fromDealer,
+          programType: widget.programType,
+          customerId: widget.customerId,
+          groupId: widget.groupId,
+          categoryId: widget.categoryId,
+          modelId: widget.modelId,
+          deviceName: widget.deviceName,
+          categoryName: widget.categoryName,
+        )
+            : const SizedBox();
+      default:
+        return const SizedBox();
+    }
+  }
+
+  Widget _buildActionButton({
+    required String key,
+    required IconData icon,
+    required VoidCallback onPressed,
+    required BuildContext context,
+  }) {
+    return MaterialButton(
+      key: Key(key),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+      color: Theme.of(context).primaryColor,
+      onPressed: onPressed,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5),
+        child: Icon(icon, color: Colors.white),
+      ),
+    );
+  }
+}
