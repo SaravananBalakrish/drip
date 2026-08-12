@@ -99,3 +99,4 @@ web/index.html
 .flutter-plugins-dependencies
 .pub/
 build/
+.idea/
