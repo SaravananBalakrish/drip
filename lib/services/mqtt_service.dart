@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
-import 'package:mqtt_client/mqtt_browser_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
+ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:oro_drip_irrigation/utils/environment.dart';
 import 'package:uuid/uuid.dart';
@@ -94,22 +93,14 @@ class MqttService {
 
     if (_client != null) return;
 
-    if (kIsWeb) {
-      _client = MqttBrowserClient(
-        Environment.mqttWebUrl,
-        uniqueId,
-      );
-      _client!.websocketProtocols = ['mqtt'];
-      _client!.port = AppConstants.mqttWebPort;
 
-    } else {
       _client = MqttServerClient(
         Environment.mqttMobileUrl,
         uniqueId,
       );
 
       _client!.port = AppConstants.mqttMobilePort;
-    }
+
 
     _client!
       ..keepAlivePeriod = 30

@@ -10,7 +10,6 @@
 #endif
 #endif
 
-#import "VibrationPlugin.h"
 
 FOUNDATION_EXPORT double vibrationVersionNumber;
 FOUNDATION_EXPORT const unsigned char vibrationVersionString[];

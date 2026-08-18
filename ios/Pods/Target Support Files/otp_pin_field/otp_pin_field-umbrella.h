@@ -10,7 +10,6 @@
 #endif
 #endif
 
-#import "OtpPinFieldPlugin.h"
 
 FOUNDATION_EXPORT double otp_pin_fieldVersionNumber;
 FOUNDATION_EXPORT const unsigned char otp_pin_fieldVersionString[];

@@ -3,7 +3,7 @@
   "version": "0.0.2",
   "summary": "Flutter plugin for connecting and communicating with Bluetooth Low Energy devices, on Android and iOS",
   "description": "Flutter plugin for connecting and communicating with Bluetooth Low Energy devices, on Android and iOS",
-  "homepage": "https://github.com/boskokg/flutter_blue_plus",
+  "homepage": "https://github.com/chipweinberger/flutter_blue_plus",
   "license": {
     "file": "../LICENSE"
   },

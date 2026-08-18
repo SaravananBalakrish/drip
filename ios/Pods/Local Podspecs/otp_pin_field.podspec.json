@@ -1,6 +1,6 @@
 {
   "name": "otp_pin_field",
-  "version": "1.2.0+2",
+  "version": "1.5.2",
   "summary": "A new Flutter project.",
   "description": "A new Flutter project.",
   "homepage": "http://example.com",
@@ -13,12 +13,12 @@
   "source": {
     "path": "."
   },
-  "source_files": "Classes/**/*",
+  "source_files": "otp_pin_field/Sources/otp_pin_field/**/*",
   "dependencies": {
     "Flutter": []
   },
   "platforms": {
-    "ios": "9.0"
+    "ios": "12.0"
   },
   "pod_target_xcconfig": {
     "DEFINES_MODULE": "YES",

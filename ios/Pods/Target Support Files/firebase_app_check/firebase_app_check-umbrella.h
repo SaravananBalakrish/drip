@@ -10,10 +10,6 @@
 #endif
 #endif
 
-#import "FLTAppCheckProvider.h"
-#import "FLTAppCheckProviderFactory.h"
-#import "FLTFirebaseAppCheckPlugin.h"
-#import "FLTTokenRefreshStreamHandler.h"
 
 FOUNDATION_EXPORT double firebase_app_checkVersionNumber;
 FOUNDATION_EXPORT const unsigned char firebase_app_checkVersionString[];
