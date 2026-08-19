@@ -65,31 +65,4 @@ class ServiceRequestRepository {
 
     return rawData.map((json) => ServiceRequest.fromJson(json)).toList();
   }
-
-  Future<List<TicketHandler>> getDealers() async {
-    await Future.delayed(const Duration(milliseconds: 400));
-    return [
-      TicketHandler(
-        sNo: 1,
-        name: 'Southern Irrigation',
-        mobileNumber: '9988776655',
-        statusMessage: 'Authorized Dealer',
-        targetDates: [],
-        salesPerson: [
-          SalesPerson(sNo: 1, name: 'Kumar', mobileNumber: '9988776651', statusMessage: 'Technician'),
-          SalesPerson(sNo: 2, name: 'Selvam', mobileNumber: '9988776652', statusMessage: 'Field Engineer'),
-        ],
-      ),
-      TicketHandler(
-        sNo: 2,
-        name: 'Agro Tech Solutions',
-        mobileNumber: '8877665544',
-        statusMessage: 'Premium Partner',
-        targetDates: [],
-        salesPerson: [
-          SalesPerson(sNo: 3, name: 'Mani', mobileNumber: '8877665541', statusMessage: 'Mechanic'),
-        ],
-      ),
-    ];
-  }
 }

@@ -2911,7 +2911,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
 
       var updateUserProgramDetails = await repository.updateProgramDetails(userData);
       // var updateUserProgramDetails = await httpService.putRequest('updateUserProgramDetails', userData);
-      print("updateUserProgramDetails : ${updateUserProgramDetails.body}");
+
       if (updateUserProgramDetails.statusCode == 200) {
         final responseJson = updateUserProgramDetails.body;
         final convertedJson = jsonDecode(responseJson);
@@ -3033,8 +3033,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
 
   String generateRtcTimeString(String key) {
     var rtcTimeList = generateRtcTimeList(selectedScheduleType == scheduleTypes[1] ? sampleScheduleModel!.scheduleAsRunList.rtc : sampleScheduleModel!.scheduleByDays.rtc, key);
-    print("key : $key");
-    print("rtcTimeList ::: ${rtcTimeList}");
     return rtcTimeList.join('_');
   }
 
@@ -3172,8 +3170,6 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         .where((agitator) => !(selectedAgitators ?? []).contains(agitator))
         .toList().join(',')}");
     */
-
-    print("_sampleScheduleModel!.defaultModel : ${_sampleScheduleModel!.defaultModel.toJson()}");
     return {
       "2500" : {
         "2501" : "${hwPayloadForWF(serialNumber, programType)};",

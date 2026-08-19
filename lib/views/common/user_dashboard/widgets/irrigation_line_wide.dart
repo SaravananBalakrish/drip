@@ -284,7 +284,8 @@ class IrrigationLineWide extends StatelessWidget {
       }
 
       return SizedBox(
-        width: ((site.boosterPump.length + site.channel.length + site.agitator.length ) * 70) + 5,
+        width: ((site.boosterPump.length + site.channel.length + site.agitator.length ) * 70)-12.5,
+        //width: ((site.boosterPump.length + site.channel.length + site.agitator.length ) * 70) + 5,
         child: Stack(
           children: [
             Row(
@@ -343,18 +344,19 @@ class IrrigationLineWide extends StatelessWidget {
       child: const Row(
         children: [
           Padding(
-            padding: EdgeInsets.only(top: 42),
+            padding: EdgeInsets.only(top: 42.0, bottom: 5),
             child: VerticalDivider(width: 0, color: Colors.black12),
           ),
           SizedBox(width: 4.5),
           Padding(
-            padding: EdgeInsets.only(top: 45),
+            padding: EdgeInsets.only(top: 46.0, bottom: 2),
             child: VerticalDivider(width: 0, color: Colors.black12),
           ),
         ],
       ),
     );
   }
+
 
   void showRightSheet(BuildContext context, Widget child) {
     showGeneralDialog(
