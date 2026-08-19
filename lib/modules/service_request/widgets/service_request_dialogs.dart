@@ -25,10 +25,10 @@ class _AddHandlerSheetState extends State<AddHandlerSheet> {
   }
 
   Future<void> _fetchDealers() async {
-    final dealers = await widget.repository.getDealers();
+    // final dealers = await widget.repository.getDealers();
     if (mounted) {
       setState(() {
-        _dealers = dealers;
+        // _dealers = dealers;
         _isLoading = false;
       });
     }

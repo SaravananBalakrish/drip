@@ -1,8 +1,8 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
 export "FLUTTER_ROOT=/opt/homebrew/share/flutter"
-export "FLUTTER_APPLICATION_PATH=/Users/user/Downloads/drip-00a702b3028d24f579a514e3009905fbcf27a782"
-export "FLUTTER_FRAMEWORK_SWIFT_PACKAGE_PATH=/Users/user/Downloads/drip-00a702b3028d24f579a514e3009905fbcf27a782/macos/Flutter/ephemeral/Packages/.packages/FlutterFramework"
+export "FLUTTER_APPLICATION_PATH=/Users/user/Downloads/drip"
+export "FLUTTER_FRAMEWORK_SWIFT_PACKAGE_PATH=/Users/user/Downloads/drip/macos/Flutter/ephemeral/Packages/.packages/FlutterFramework"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_BUILD_DIR=build"
 export "FLUTTER_BUILD_NAME=1.0.0"
