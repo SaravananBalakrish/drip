@@ -2622,6 +2622,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
   String get pressureTolerance => _programDetails!.pressureTolerance;
   String get setFlow => _programDetails!.setFlow;
   String get flowTolerance => _programDetails!.flowTolerance;
+  String get flowScanTime => _programDetails!.flowScanTime;
 
   Future<void> doneData(int userId, int controllerId, int serialNumber) async {
     try {
@@ -2798,6 +2799,9 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
         break;
       case "flowTolerance":
         _programDetails!.flowTolerance = newValue;
+        break;
+      case "flowScanTime":
+        _programDetails!.flowScanTime = newValue;
         break;
       default:
         log("Not found");
@@ -3390,6 +3394,7 @@ class IrrigationProgramMainProvider extends ChangeNotifier {
               "CyclicOffTime": AppConstants.omsGemList.contains(modelId) ? (controlMode == 'Pressure' ? pressureTolerance : flowTolerance) : cyclicOffTime,
               "EnablePressure": AppConstants.omsGemList.contains(modelId) ?  (controlMode == 'Pressure' ? '1' : '2') : (enablePressure ? '1' : '0'),
               "PressureValue": AppConstants.omsGemList.contains(modelId) ? (controlMode == 'Pressure' ? setPressure : setFlow) : pressureValue,
+              "FlowScanTime": flowScanTime,
             }.entries.map((e) => e.value).join(",")
         };"
       }

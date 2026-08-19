@@ -21,6 +21,7 @@ import '../model/filtration_model.dart';
 import '../model/irrigation_line_model.dart';
 import '../model/moisture_model.dart';
 import '../model/ph_model.dart';
+import '../model/pressure_model.dart';
 import '../model/pump_model.dart';
 import '../model/source_model.dart';
 import '../repository/config_maker_repository.dart';
@@ -871,6 +872,9 @@ class _ConfigWebViewState extends State<ConfigWebView> {
     var moisture = configPvd.moisture.cast<MoistureModel>().map((object){
       return object.toJson();
     }).toList();
+    var pressure = configPvd.pressureSensor.cast<PressureModel>().map((object){
+      return object.toJson();
+    }).toList();
     var line = configPvd.line.cast<IrrigationLineModel>().map((object){
       return object.toJson();
     }).toList();
@@ -880,8 +884,6 @@ class _ConfigWebViewState extends State<ConfigWebView> {
     var phSensor = configPvd.ph.cast<PhModel>().map((object){
       return object.toJson();
     }).toList();
-    print('ecSensor : ${ecSensor}');
-    print('phSensor : ${phSensor}');
     var body = {
       "userId" : configPvd.masterData['customerId'],
       "controllerId" : configPvd.masterData['controllerId'],
@@ -895,6 +897,7 @@ class _ConfigWebViewState extends State<ConfigWebView> {
       "filterSite" : filtration,
       "fertilizerSite" : fertilization,
       "moistureSensor" : moisture,
+      "pressureSensor" : pressure,
       "irrigationLine" : line,
       "ecSensor" : ecSensor,
       "phSensor" : phSensor,

@@ -129,7 +129,7 @@ class _MoistureConfigurationState extends State<MoistureConfiguration> {
                     listOfObject: widget.configPvd.listOfGeneratedObject.where((object) => object.objectId == AppConstants.valveObjectId).toList(),
                     onPressed: (){
                       setState(() {
-                        widget.configPvd.updateSelectionInMoisture(moistureSensor.commonDetails.sNo!,);
+                        widget.configPvd.updateSelectionInMoisture(moistureSensor.commonDetails.sNo!);
                       });
                       Navigator.pop(context);
                     }
@@ -141,5 +141,4 @@ class _MoistureConfigurationState extends State<MoistureConfiguration> {
       ),
     );
   }
-
 }

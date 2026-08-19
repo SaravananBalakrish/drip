@@ -94,9 +94,10 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                                 );
                                               }
                                           );
-                                        }, icon: const Icon(Icons.dataset)
+                                        },
+                                        icon: const Icon(Icons.dataset)
                                     ),
-                                    if(availability(AppConstants.sourceObjectId))
+                                    if(availability(AppConstants.sourceObjectId) && !AppConstants.aquacultureModelList.contains(widget.configPvd.masterData['modelId']))
                                       getLineParameter(
                                           line: selectedIrrigationLine,
                                           currentParameterValue: selectedIrrigationLine.waterSource,
