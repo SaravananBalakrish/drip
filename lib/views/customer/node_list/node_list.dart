@@ -8,6 +8,7 @@ import 'package:oro_drip_irrigation/utils/helpers/mc_permission_helper.dart';
 import 'package:oro_drip_irrigation/views/customer/widgets/relay_status_avatar.dart';
 import 'package:provider/provider.dart';
 import '../../../StateManagement/mqtt_payload_provider.dart';
+import '../../../modules/bluetooth_low_energy/state_management/ble_service.dart';
 import '../../../providers/user_provider.dart';
 import '../../../repository/repository.dart';
 import '../../../utils/constants.dart';
@@ -60,6 +61,7 @@ class NodeList extends StatelessWidget {
             vm.onLivePayloadReceived(
               List.from(nodeLiveMessage),
               List.from(outputOnOffPayload),
+              false,
             );
           }
         });
@@ -198,6 +200,7 @@ class NodeList extends StatelessWidget {
                           "customerId" : customerId,
                           "controllerId" : masterData.controllerId
                         },
+                        connectMode: ConnectMode.normal,
                       )));
                     }, icon: const Icon(Icons.bluetooth))
                   ],
@@ -316,36 +319,36 @@ class NodeList extends StatelessWidget {
             SizedBox(
               width: 40,
               child: IconButton(
-                tooltip: isNova ? 'Set serial' : 'Set serial for all Nodes',
-                icon: Icon(
-                  Icons.format_list_numbered,
-                  color: Theme.of(context).primaryColorDark,
-                ),
-                onPressed: () => showDialog(
-                  context: context,
-                  builder: (_) => AlertDialog(
-                    title: const Text('Confirmation'),
-                    content: const Text('Are you sure! you want to proceed to reset all node ids?'),
-                    actions: [
-                      MaterialButton(
-                        color: Colors.redAccent,
-                        textColor: Colors.white,
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: const Text('Cancel'),
-                      ),
-                      MaterialButton(
-                        color: Theme.of(context).primaryColor,
-                        textColor: Colors.white,
-                        onPressed: () {
-                          vm.setSerialToAllNodes(masterData.deviceId, customerId, masterData.controllerId, userId);
-                          GlobalSnackBar.show(context, 'Sent your comment successfully', 200);
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text('Yes'),
-                      ),
-                    ],
+                  tooltip: isNova ? 'Set serial' : 'Set serial for all Nodes',
+                  icon: Icon(
+                    Icons.format_list_numbered,
+                    color: Theme.of(context).primaryColorDark,
                   ),
-                )
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: const Text('Confirmation'),
+                      content: const Text('Are you sure! you want to proceed to reset all node ids?'),
+                      actions: [
+                        MaterialButton(
+                          color: Colors.redAccent,
+                          textColor: Colors.white,
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Cancel'),
+                        ),
+                        MaterialButton(
+                          color: Theme.of(context).primaryColor,
+                          textColor: Colors.white,
+                          onPressed: () {
+                            vm.setSerialToAllNodes(masterData.deviceId, customerId, masterData.controllerId, userId);
+                            GlobalSnackBar.show(context, 'Sent your comment successfully', 200);
+                            Navigator.of(context).pop();
+                          },
+                          child: const Text('Yes'),
+                        ),
+                      ],
+                    ),
+                  )
               ),
             ),
             SizedBox(
@@ -464,6 +467,7 @@ class NodeList extends StatelessWidget {
                       "customerId": customerId,
                       "controllerId": masterData.controllerId,
                     },
+                    connectMode: ConnectMode.normal,
                   ),
                 ),
               );
@@ -527,17 +531,18 @@ class NodeList extends StatelessWidget {
         ),
       ),
       children: [
-        SizedBox(
+        Container(
+          color: Colors.teal.shade50,
           width: double.infinity,
           height: vm.calculateDynamicHeight(node) + 20,
           child: Column(
             children: [
               Container(
                 color: Colors.teal.shade100,
-                width: MediaQuery.sizeOf(context).width - 35,
+                width: MediaQuery.sizeOf(context).width ,
                 height: 25,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: [
                       const Text('Missed communication',
@@ -555,8 +560,10 @@ class NodeList extends StatelessWidget {
               ),
               ListTile(
                 contentPadding: const EdgeInsets.only(left: 8),
-                tileColor: Theme.of(context).primaryColor,
-                title: const Text('Last feedback',
+                // tileColor: Theme.of(context).primaryColor,
+
+                tileColor: Colors.white,
+                title: const Text('Last feedback node list ',
                     style: TextStyle(fontSize: 12)),
                 subtitle: Text(vm.formatDateTime(node.lastFeedbackReceivedTime),
                     style: const TextStyle(fontSize: 10)),
@@ -577,8 +584,7 @@ class NodeList extends StatelessWidget {
                           GlobalSnackBar.show(
                               context, 'Your comment sent successfully', 200);
                         },
-                        icon: Icon(Icons.fact_check_outlined,
-                            color: Theme.of(context).primaryColor),
+                        icon: const Icon(Icons.fact_check_outlined),
                       ),
                     ]else...[const SizedBox(width: 5)],
                   ],
@@ -630,6 +636,7 @@ class NodeList extends StatelessWidget {
                             "customerId": customerId,
                             "controllerId": masterData.controllerId,
                           },
+                          connectMode: ConnectMode.normal,
                         ),
                       ),
                     );
