@@ -24,6 +24,7 @@ import '../widget/custom_bouncing_button.dart';
 import '../widget/custom_connection_error.dart';
 import '../widget/custom_countdown_timer.dart';
 import '../widget/custom_gauge.dart';
+import '../widget/mode_card.dart';
 
 class PumpDashboardScreen extends StatefulWidget {
   final int userId, customerId;
@@ -969,74 +970,54 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
           ),
         ),
         const SizedBox(height: 15,),
-        // Replace your InkWell with this:
-
         AppConstants.wlcModelList.contains(widget.masterData.modelId)
-            ?   buildManualModeCard(
-          manualModeStatus: pumpData.manualMode, // Your live payload value
+            ? buildModeCard(
+          context: context,
+          modeStatus: pumpData.manualMode, // your live payload value
           isLoading: false,
-          onToggle: (bool isEnabled) async {
-            String payLoadFinal = '*${jsonEncode({"sentSms":"MANUAL${isEnabled ? 'ON' : 'OFF'}"})}#';
+          pumpName: pumps[index].name,
+          onModeSelected: (PumpMode selectedMode) async {
+            String payLoadFinal =
+                '*${jsonEncode({"sentSms": "MANUAL${selectedMode.statusCode}"})}#';
+
             var data = {
               "userId": widget.customerId,
               "controllerId": widget.masterData.controllerId,
               "data": payLoadFinal,
-              "messageStatus": "${pumps[index].name} Manual Mode ${isEnabled ? 'ON' : 'OFF'}",
+              "messageStatus": "${pumps[index].name} Mode set to ${selectedMode.label}",
               "createUser": widget.userId,
               "hardware": payLoadFinal,
             };
+
             final result = await context.read<CommunicationService>().sendCommand(
               serverMsg: '',
               payload: payLoadFinal,
             );
-            debugPrint("manual or auto result => $result");
-            // await mqttService.topicToPublishAndItsMessage(
-            //     payLoadFinal,
-            //     "${Environment.mqttPublishTopic}/${widget.masterData.deviceId}"
-            // );
+            debugPrint("mode change result => $result");
 
             await repository.sendManualOperationToServer(data);
 
             GlobalSnackBar.show(
-                context,
-                'Manual mode ${isEnabled ? "ON" : "OFF"} successfully',
-                200
+              context,
+              '${selectedMode.label} set successfully',
+              200,
             );
           },
-          enableDisableManual: (bool isEnabled) async {
-            String payLoadFinal = '*${jsonEncode({"sentSms":"BLEMANUAL"})}#';
-            var data = {
-              "userId": widget.customerId,
-              "controllerId": widget.masterData.controllerId,
-              "data": payLoadFinal,
-              "messageStatus": "${pumps[index].name} Manual Mode ${isEnabled ? 'ON' : 'OFF'}",
-              "createUser": widget.userId,
-              "hardware": payLoadFinal,
-            };
-            final result = await context.read<CommunicationService>().sendCommand(
-              serverMsg: '',
-              payload: payLoadFinal,
-            );
-            debugPrint("enable disable manual result => $result");
-
-            await repository.sendManualOperationToServer(data);
-          },
-          pumpName: '',
         ) : Container(),
 
       ],
     );
   }
 
+
+
   Widget buildManualModeCard({
     required String manualModeStatus,
     required Function(bool) onToggle,
-    required Function(bool) enableDisableManual,
     required String pumpName,
     bool isLoading = false,
   }) {
     bool isOn = manualModeStatus == '0';
-    bool isEnable = manualModeStatus != '2';
 
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -1056,129 +1037,6 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
           color: Colors.white,
           child: Column(
             children: [
-              InkWell(
-                onTap: isLoading ? null : () => enableDisableManual(!isOn),
-                splashColor: isOn ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Left side - Pump info with live indicator
-                      Expanded(
-                        child: Row(
-                          children: [
-                            // Animated status dot
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: isEnable ? Colors.green : Colors.grey,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: (isEnable ? Colors.green : Colors.grey).withOpacity(0.6),
-                                    blurRadius: 6,
-                                    spreadRadius: 1,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    pumpName,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        isEnable ? Icons.flash_on : Icons.flash_off,
-                                        size: 14,
-                                        color: isEnable ? Colors.green : Colors.grey,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        isEnable ? "Enable BLE Manual Key" : "Disable BLE Manual Key",
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: isOn ? Colors.green.shade700 : Colors.grey.shade600,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      // Right side - Modern toggle switch
-                      Container(
-                        width: 52,
-                        height: 28,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: isOn ? Colors.green : Colors.grey.shade300,
-                        ),
-                        child: Stack(
-                          alignment: isOn ? Alignment.centerRight : Alignment.centerLeft,
-                          children: [
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 250),
-                              curve: Curves.easeOutCubic,
-                              width: 24,
-                              height: 24,
-                              margin: const EdgeInsets.symmetric(horizontal: 2),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ],
-                              ),
-                              child: isLoading
-                                  ? const Center(
-                                child: SizedBox(
-                                  width: 14,
-                                  height: 14,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
-                                  ),
-                                ),
-                              )
-                                  : Icon(
-                                isOn ? Icons.check : Icons.close,
-                                size: 12,
-                                color: isOn ? Colors.green : Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
               InkWell(
                 onTap: isLoading ? null : () => onToggle(!isOn),
                 splashColor: isOn ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.1),

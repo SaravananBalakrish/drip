@@ -927,6 +927,7 @@ class AppConstants {
   static List<int> pumpModelList = [5, 6, 7, ...pumpPlusModelList, ...wlcModelList, ...aquaculturePumpModelList];
   static List<int> pumpPlusModelList = [8, 9, 10, ...wlcModelList, ...aquaculturePumpModelList];
   static List<int> wlcModelList = [76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86];
+  static List<int> pumpWifiDefault = [7, 10];
   static List<int> pumpList = [...pumpWithValveModelList, ...pumpModelList, ...shine2V, ...shine4V, ...elite10V, ...pumpPlusModelList];
   static List<int> senseModelList = [41, 42, 43, 44, 45];
   static List<int> ecoNodeList = [36];
@@ -935,4 +936,17 @@ class AppConstants {
   static List<int> extendList = [...extendLoraList, ...extendGsmList];
   static List<int> aquacultureModelList = [72];
   static List<int> aquaculturePumpModelList = [93, 94, 95];
+  static List<int> twoPhaseSetting = [201, 601, 701, 801, 901];
+  static List<int> timerSetting = [202, 602, 702, 802, 902];
+  static List<int> currentSetting = [203, 603, 703, 803, 903];
+  static List<int> voltageSetting = [204, 604, 704, 804, 904];
+  static List<int> additionalSetting = [205, 605, 705, 805, 905];
+  static List<int> otherSetting = [206, 606, 706, 806, 906];
+  static List<int> levelSetting = [207, 607, 707, 807, 907];
+  static List<int> voltageCalibration = [208, 608, 708, 808, 908];
+  static List<int> currentCalibration = [209, 609, 709, 809, 909];
+  static List<int> otherCalibration = [210, 610, 710, 810, 910];
+  static List<int> singlePhaseWlcModelList = [78, 79, 87, 88];
+  static List<int> threePhaseWlcModelList = [80, 83, 84, 85];
+  static List<int> singleOrThreePhaseWlcModelList = [81, 82, 86];
 }
