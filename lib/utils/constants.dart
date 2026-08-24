@@ -926,7 +926,8 @@ class AppConstants {
   static List<int> gsmModelList = [6, 9, 94, 67, 70];
   static List<int> pumpModelList = [5, 6, 7, ...pumpPlusModelList, ...wlcModelList, ...aquaculturePumpModelList];
   static List<int> pumpPlusModelList = [8, 9, 10, ...wlcModelList, ...aquaculturePumpModelList];
-  static List<int> wlcModelList = [76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86];
+  static List<int> wlcModelList = [76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88];
+  static List<int> wlc1010sdModelList = [76, ];
   static List<int> pumpWifiDefault = [7, 10];
   static List<int> pumpList = [...pumpWithValveModelList, ...pumpModelList, ...shine2V, ...shine4V, ...elite10V, ...pumpPlusModelList];
   static List<int> senseModelList = [41, 42, 43, 44, 45];

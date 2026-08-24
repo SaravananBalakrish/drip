@@ -1005,167 +1005,295 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
           },
         ) : Container(),
 
+        if(index == int.parse(pumpData.numberOfPumps) - 1 && AppConstants.wlc1010sdModelList.contains(widget.masterData.modelId))
+          changeOverWidget(pumpData),
       ],
     );
   }
 
-
-
-  Widget buildManualModeCard({
-    required String manualModeStatus,
-    required Function(bool) onToggle,
-    required String pumpName,
-    bool isLoading = false,
-  }) {
-    bool isOn = manualModeStatus == '0';
-
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: isOn ? Colors.green.withOpacity(0.2) : Colors.grey.withOpacity(0.1),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
+  Widget changeOverWidget(PumpControllerData pumpData) {
+    final pumps = widget.masterData.configObjects.where((e) => e.objectId == 5).toList();
+    bool isPump1Active = pumpData.changeOverMode == '0';
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(24),
-        child: Material(
-          color: Colors.white,
-          child: Column(
-            children: [
-              InkWell(
-                onTap: isLoading ? null : () => onToggle(!isOn),
-                splashColor: isOn ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      elevation: 4,
+      color: Colors.white,
+      surfaceTintColor: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Pump Change Over",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Pump 1
+                Column(
+                  children: [
+                    Image.asset(
+                      'assets/Images/Png/motor.png',
+                      width: 60,
+                      height: 60,
+                      color: isPump1Active ? Colors.blue : Colors.grey,
+                      colorBlendMode: BlendMode.srcIn,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      pumps.isNotEmpty ? pumps[0].name : "PUMP 1",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isPump1Active ? Colors.black87 : Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+                // Tap to change
+                GestureDetector(
+                  onTap: pumpData.dataFetchingStatus == 1 ? () async {
+                    String newMode = isPump1Active ? '1' : '0';
+                    String payLoadFinal = '*${jsonEncode({"sentSms": "COM$newMode"})}#';
+
+                    var data = {
+                      "userId": widget.customerId,
+                      "controllerId": widget.masterData.controllerId,
+                      "data": payLoadFinal,
+                      "messageStatus": "Pump ${newMode == '0' ? '1' : '2'} Mode set",
+                      "createUser": widget.userId,
+                      "hardware": payLoadFinal,
+                    };
+
+                    final result = await context.read<CommunicationService>().sendCommand(
+                      serverMsg: '',
+                      payload: payLoadFinal,
+                    );
+                    debugPrint("change over result => $result");
+
+                    await repository.sendManualOperationToServer(data);
+
+                    GlobalSnackBar.show(
+                      context,
+                      'Pump ${newMode == '0' ? '1' : '2'} set successfully',
+                      200,
+                    );
+
+                    await Future.delayed(const Duration(seconds: 2));
+                    liveRequest();
+                  } : null,
+                  child: Column(
                     children: [
-                      // Left side - Pump info with live indicator
-                      Expanded(
-                        child: Row(
-                          children: [
-                            // Animated status dot
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              width: 10,
-                              height: 10,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: isOn ? Colors.green : Colors.grey,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: (isOn ? Colors.green : Colors.grey).withOpacity(0.6),
-                                    blurRadius: 6,
-                                    spreadRadius: 1,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    pumpName,
-                                    style: const TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black87,
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        isOn ? Icons.flash_on : Icons.flash_off,
-                                        size: 14,
-                                        color: isOn ? Colors.green : Colors.grey,
-                                      ),
-                                      const SizedBox(width: 4),
-                                      Text(
-                                        isOn ? "Manual Control Active" : "Auto Mode",
-                                        style: TextStyle(
-                                          fontSize: 11,
-                                          color: isOn ? Colors.green.shade700 : Colors.grey.shade600,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: const Color(0xff006064),
+                        ),
+                        child: const Icon(
+                          Icons.sync,
+                          color: Colors.white,
+                          size: 30,
                         ),
                       ),
-
-                      const SizedBox(width: 12),
-
-                      // Right side - Modern toggle switch
-                      Container(
-                        width: 52,
-                        height: 28,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: isOn ? Colors.green : Colors.grey.shade300,
-                        ),
-                        child: Stack(
-                          alignment: isOn ? Alignment.centerRight : Alignment.centerLeft,
-                          children: [
-                            AnimatedContainer(
-                              duration: const Duration(milliseconds: 250),
-                              curve: Curves.easeOutCubic,
-                              width: 24,
-                              height: 24,
-                              margin: const EdgeInsets.symmetric(horizontal: 2),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                color: Colors.white,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.2),
-                                    blurRadius: 4,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ],
-                              ),
-                              child: isLoading
-                                  ? const Center(
-                                child: SizedBox(
-                                  width: 14,
-                                  height: 14,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
-                                  ),
-                                ),
-                              )
-                                  : Icon(
-                                isOn ? Icons.check : Icons.close,
-                                size: 12,
-                                color: isOn ? Colors.green : Colors.grey,
-                              ),
-                            ),
-                          ],
-                        ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        "Tap to change",
+                        style: TextStyle(fontSize: 10, color: Colors.grey),
                       ),
                     ],
                   ),
                 ),
-              ),
-            ],
-          ),
+                // Pump 2
+                Column(
+                  children: [
+                    Image.asset(
+                      'assets/Images/Png/motor.png',
+                      width: 60,
+                      height: 60,
+                      color: !isPump1Active ? Colors.blue : Colors.grey,
+                      colorBlendMode: BlendMode.srcIn,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      pumps.length > 1 ? pumps[1].name : "PUMP 2",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: !isPump1Active ? Colors.black87 : Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
+
+
+
+  // Widget buildManualModeCard({
+  //   required String manualModeStatus,
+  //   required Function(bool) onToggle,
+  //   required String pumpName,
+  //   bool isLoading = false,
+  // }) {
+  //   bool isOn = manualModeStatus == '0';
+  //
+  //   return Container(
+  //     margin: const EdgeInsets.symmetric(vertical: 6),
+  //     decoration: BoxDecoration(
+  //       borderRadius: BorderRadius.circular(24),
+  //       boxShadow: [
+  //         BoxShadow(
+  //           color: isOn ? Colors.green.withOpacity(0.2) : Colors.grey.withOpacity(0.1),
+  //           blurRadius: 12,
+  //           offset: const Offset(0, 4),
+  //         ),
+  //       ],
+  //     ),
+  //     child: ClipRRect(
+  //       borderRadius: BorderRadius.circular(24),
+  //       child: Material(
+  //         color: Colors.white,
+  //         child: Column(
+  //           children: [
+  //             InkWell(
+  //               onTap: isLoading ? null : () => onToggle(!isOn),
+  //               splashColor: isOn ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+  //               child: Container(
+  //                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+  //                 child: Row(
+  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  //                   children: [
+  //                     // Left side - Pump info with live indicator
+  //                     Expanded(
+  //                       child: Row(
+  //                         children: [
+  //                           // Animated status dot
+  //                           AnimatedContainer(
+  //                             duration: const Duration(milliseconds: 300),
+  //                             width: 10,
+  //                             height: 10,
+  //                             decoration: BoxDecoration(
+  //                               shape: BoxShape.circle,
+  //                               color: isOn ? Colors.green : Colors.grey,
+  //                               boxShadow: [
+  //                                 BoxShadow(
+  //                                   color: (isOn ? Colors.green : Colors.grey).withOpacity(0.6),
+  //                                   blurRadius: 6,
+  //                                   spreadRadius: 1,
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                           const SizedBox(width: 12),
+  //                           Expanded(
+  //                             child: Column(
+  //                               crossAxisAlignment: CrossAxisAlignment.start,
+  //                               children: [
+  //                                 Text(
+  //                                   pumpName,
+  //                                   style: const TextStyle(
+  //                                     fontSize: 15,
+  //                                     fontWeight: FontWeight.bold,
+  //                                     color: Colors.black87,
+  //                                   ),
+  //                                   overflow: TextOverflow.ellipsis,
+  //                                 ),
+  //                                 const SizedBox(height: 4),
+  //                                 Row(
+  //                                   children: [
+  //                                     Icon(
+  //                                       isOn ? Icons.flash_on : Icons.flash_off,
+  //                                       size: 14,
+  //                                       color: isOn ? Colors.green : Colors.grey,
+  //                                     ),
+  //                                     const SizedBox(width: 4),
+  //                                     Text(
+  //                                       isOn ? "Manual Control Active" : "Auto Mode",
+  //                                       style: TextStyle(
+  //                                         fontSize: 11,
+  //                                         color: isOn ? Colors.green.shade700 : Colors.grey.shade600,
+  //                                         fontWeight: FontWeight.w500,
+  //                                       ),
+  //                                     ),
+  //                                   ],
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //
+  //                     const SizedBox(width: 12),
+  //
+  //                     // Right side - Modern toggle switch
+  //                     Container(
+  //                       width: 52,
+  //                       height: 28,
+  //                       decoration: BoxDecoration(
+  //                         borderRadius: BorderRadius.circular(30),
+  //                         color: isOn ? Colors.green : Colors.grey.shade300,
+  //                       ),
+  //                       child: Stack(
+  //                         alignment: isOn ? Alignment.centerRight : Alignment.centerLeft,
+  //                         children: [
+  //                           AnimatedContainer(
+  //                             duration: const Duration(milliseconds: 250),
+  //                             curve: Curves.easeOutCubic,
+  //                             width: 24,
+  //                             height: 24,
+  //                             margin: const EdgeInsets.symmetric(horizontal: 2),
+  //                             decoration: BoxDecoration(
+  //                               shape: BoxShape.circle,
+  //                               color: Colors.white,
+  //                               boxShadow: [
+  //                                 BoxShadow(
+  //                                   color: Colors.black.withOpacity(0.2),
+  //                                   blurRadius: 4,
+  //                                   offset: const Offset(0, 1),
+  //                                 ),
+  //                               ],
+  //                             ),
+  //                             child: isLoading
+  //                                 ? const Center(
+  //                               child: SizedBox(
+  //                                 width: 14,
+  //                                 height: 14,
+  //                                 child: CircularProgressIndicator(
+  //                                   strokeWidth: 2,
+  //                                   valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
+  //                                 ),
+  //                               ),
+  //                             )
+  //                                 : Icon(
+  //                               isOn ? Icons.check : Icons.close,
+  //                               size: 12,
+  //                               color: isOn ? Colors.green : Colors.grey,
+  //                             ),
+  //                           ),
+  //                         ],
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 
 
   Widget _buildLight(PumpValveModel pumpItem, PumpControllerData pumpData) {

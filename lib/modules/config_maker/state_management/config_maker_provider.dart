@@ -33,7 +33,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     6 : 'Ec Configuration',
     7 : 'Ph Configuration',
   };
-  int selectedConfigurationTab = 1;
+  int selectedConfigurationTab = 0;
   int rangeStart = -1;
   int rangeEnd = -1;
   bool rangeMode = false;
