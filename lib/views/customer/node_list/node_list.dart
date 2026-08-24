@@ -563,7 +563,7 @@ class NodeList extends StatelessWidget {
                 // tileColor: Theme.of(context).primaryColor,
 
                 tileColor: Colors.white,
-                title: const Text('Last feedback node list ',
+                title: const Text('Last feedback',
                     style: TextStyle(fontSize: 12)),
                 subtitle: Text(vm.formatDateTime(node.lastFeedbackReceivedTime),
                     style: const TextStyle(fontSize: 10)),
