@@ -531,17 +531,18 @@ class NodeList extends StatelessWidget {
         ),
       ),
       children: [
-        SizedBox(
+        Container(
+          color: Colors.teal.shade50,
           width: double.infinity,
           height: vm.calculateDynamicHeight(node) + 20,
           child: Column(
             children: [
               Container(
                 color: Colors.teal.shade100,
-                width: MediaQuery.sizeOf(context).width - 35,
+                width: MediaQuery.sizeOf(context).width ,
                 height: 25,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
                     children: [
                       const Text('Missed communication',
@@ -559,7 +560,9 @@ class NodeList extends StatelessWidget {
               ),
               ListTile(
                 contentPadding: const EdgeInsets.only(left: 8),
-                tileColor: Theme.of(context).primaryColor,
+                // tileColor: Theme.of(context).primaryColor,
+
+                tileColor: Colors.white,
                 title: const Text('Last feedback',
                     style: TextStyle(fontSize: 12)),
                 subtitle: Text(vm.formatDateTime(node.lastFeedbackReceivedTime),
@@ -581,8 +584,7 @@ class NodeList extends StatelessWidget {
                           GlobalSnackBar.show(
                               context, 'Your comment sent successfully', 200);
                         },
-                        icon: Icon(Icons.fact_check_outlined,
-                            color: Theme.of(context).primaryColor),
+                        icon: const Icon(Icons.fact_check_outlined),
                       ),
                     ]else...[const SizedBox(width: 5)],
                   ],

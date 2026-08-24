@@ -7,9 +7,11 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:oro_drip_irrigation/utils/helpers/log_print.dart';
+import 'package:oro_drip_irrigation/utils/constants.dart';
 
 import '../../../repository/repository.dart';
 import '../../../services/http_service.dart';
+import '../../../views/common/user_dashboard/widgets/valve_status_legend.dart';
 import '../MapDeviceList.dart';
 import 'map_conection_objects.dart';
 
@@ -461,6 +463,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
   @override
   Widget build(BuildContext context) {
     // AppLog.log("build center:$center");
+    final bool isAquaculture = [...AppConstants.aquacultureModelList].contains(widget.modelId);
 
     return Scaffold(
       appBar: (widget.isCheckDashboard || kIsWeb) ? null : AppBar(title: const Text(" Geography"),
@@ -544,6 +547,12 @@ class _MapScreenOroState extends State<MapScreenOro> {
                 ],
               ),
             ),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: buildValveStatusLegend(false),
           ),
         ],
       ),

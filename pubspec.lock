@@ -205,10 +205,10 @@ packages:
     dependency: "direct main"
     description:
       name: dartssh2
-      sha256: e7c58c98bd11fb1c7bf7df0e1758c10e3a90f1ba83f0306510dab04ea58696d2
+      sha256: "8e464a4952bcf36b9e844521b4d05b6e30ed0491d00df98276b3cd5deec324c9"
       url: "https://pub.dev"
     source: hosted
-    version: "2.11.0"
+    version: "3.3.0"
   data_table_2:
     dependency: "direct main"
     description:
@@ -984,14 +984,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.3.2"
-  js:
-    dependency: transitive
-    description:
-      name: js
-      sha256: c1b2e9b5ea78c45e1a0788d29606ba27dc5f71f019f32ca5140f61ef071838cf
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.1"
   json_annotation:
     dependency: transitive
     description:
@@ -1356,10 +1348,10 @@ packages:
     dependency: transitive
     description:
       name: pointycastle
-      sha256: "4be0097fcf3fd3e8449e53730c631200ebc7b88016acecab2b0da2f0149222fe"
+      sha256: "92aa3841d083cc4b0f4709b5c74fd6409a3e6ba833ffc7dc6a8fee096366acf5"
       url: "https://pub.dev"
     source: hosted
-    version: "3.9.1"
+    version: "4.0.0"
   popover:
     dependency: "direct main"
     description:

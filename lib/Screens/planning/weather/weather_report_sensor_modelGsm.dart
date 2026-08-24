@@ -91,8 +91,6 @@ SensorHourReportGsm? parseSensorHourData({
   return zeroReport();
 }
 
-
-
 List<SensorHourReportGsm> getSingleSensorReport({
   required Map<String, dynamic> apiResponse,
   required String targetDevice,

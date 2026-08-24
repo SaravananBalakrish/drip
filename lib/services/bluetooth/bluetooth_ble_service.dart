@@ -7,7 +7,6 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:oro_drip_irrigation/services/mqtt_service.dart';
 import 'package:permission_handler/permission_handler.dart';
-
 import '../../Constants/constants.dart';
 import '../../StateManagement/mqtt_payload_provider.dart';
 import '../../utils/enums.dart';
