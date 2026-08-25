@@ -5,29 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f2f9418e-6c3f-4208-958b-3bdf91e8d388" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/modules/config_maker/model/pressure_model.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/modules/config_maker/view/pressure_configuration.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/dartpad/web_plugin_registrant.dart" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/dartpad/web_plugin_registrant.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/package_graph.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_graph.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/drip.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/drip.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.h" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Runner/GeneratedPluginRegistrant.m" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/IrrigationProgram/model/sequence_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/IrrigationProgram/model/sequence_model.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/IrrigationProgram/state_management/irrigation_program_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/IrrigationProgram/state_management/irrigation_program_provider.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/IrrigationProgram/view/done_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/IrrigationProgram/view/done_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/IrrigationProgram/view/preview_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/IrrigationProgram/view/preview_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/config_maker/state_management/config_maker_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/config_maker/state_management/config_maker_provider.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/config_maker/view/config_web_view.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/config_maker/view/config_web_view.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/config_maker/view/line_configuration.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/config_maker/view/line_configuration.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/config_maker/view/moisture_configuration.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/config_maker/view/moisture_configuration.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/config_maker/view/site_configure.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/config_maker/view/site_configure.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/config_maker/widget/product_limit_grid_list_tile.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/config_maker/widget/product_limit_grid_list_tile.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.cc" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.cc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.h" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/generated_plugin_registrant.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/linux/flutter/generated_plugins.cmake" beforeDir="false" afterPath="$PROJECT_DIR$/linux/flutter/generated_plugins.cmake" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/config_maker/view/pressure_configuration.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/config_maker/view/pressure_configuration.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

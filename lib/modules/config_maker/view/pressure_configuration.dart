@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/config_maker/view/site_configure.dart';
 import 'package:responsive_grid_list/responsive_grid_list.dart';
-
 import '../../../Constants/dialog_boxes.dart';
 import '../../../Constants/properties.dart';
-import '../model/moisture_model.dart';
 import '../model/pressure_model.dart';
 import '../state_management/config_maker_provider.dart';
 import '../../../Widgets/sized_image.dart';
