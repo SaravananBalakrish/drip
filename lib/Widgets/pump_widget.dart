@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:popover/popover.dart';
 import 'package:provider/provider.dart';
 import 'package:tuple/tuple.dart';
+import '../flavors.dart';
 import '../models/customer/site_model.dart';
 import '../StateManagement/duration_notifier.dart';
 import '../StateManagement/mqtt_payload_provider.dart';
@@ -268,12 +269,17 @@ class PumpWidget extends StatelessWidget {
 
         if(!isNova)...[
           const SizedBox(height: 8),
-          if (voltages.length == 6)...[
+
+          if(F.appFlavor!.name.contains('smart'))...[
             _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
-            const SizedBox(height: 5),
-            _buildVoltageCurrentInfo(voltages.sublist(3, 6), ['RN', 'YN', 'BN']),
-          ]else ...[
-            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+          ]else...[
+            if (voltages.length == 6)...[
+              _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RN', 'YN', 'BN']),
+              const SizedBox(height: 5),
+              _buildVoltageCurrentInfo(voltages.sublist(3, 6), ['RY', 'YB', 'BR']),
+            ]else ...[
+              _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RN', 'YN', 'BN']),
+            ],
           ],
           const SizedBox(height: 8),
           _buildVoltageCurrentInfo(columns, ['RC', 'YC', 'BC']),
@@ -305,7 +311,6 @@ class PumpWidget extends StatelessWidget {
 
     for (int i = 0; i < columns.length && i < 3; i++) {
       final value = columns[i].trim();
-
       if (value != '-' && value.isNotEmpty) {
         connected.add(phaseNames[i]);
       }
@@ -543,7 +548,7 @@ class AeratorWidget extends StatelessWidget {
         final voltages = hasVoltage ? pump.voltage.split('_') : [];
         final currents = hasVoltage ? pump.current.split('_') : [];
 
-        final List<String> columns = ['-', '-', '-'];
+        final List<String> columns = ['-', '-', '-', '-'];
         if (hasVoltage) {
           for (var pair in currents) {
             final parts = pair.trim().replaceAll('"', '').split(':');
@@ -748,14 +753,14 @@ class AeratorWidget extends StatelessWidget {
         if(!isNova)...[
           const SizedBox(height: 8),
           if (voltages.length == 6)...[
-            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR'], false),
             const SizedBox(height: 5),
-            _buildVoltageCurrentInfo(voltages.sublist(3, 6), ['RN', 'YN', 'BN']),
+            _buildVoltageCurrentInfo(voltages.sublist(3, 6), ['RN', 'YN', 'BN'], false),
           ]else ...[
-            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR']),
+            _buildVoltageCurrentInfo(voltages.sublist(0, 3), ['RY', 'YB', 'BR'], false),
           ],
           const SizedBox(height: 8),
-          _buildVoltageCurrentInfo(columns, ['RC', 'YC', 'BC']),
+          _buildVoltageCurrentInfo(columns, ['C1', 'C2', 'C3', 'C4'], true),
           const SizedBox(height: 10),
         ]else...[
           ListTile(
@@ -848,7 +853,7 @@ class AeratorWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildVoltageCurrentInfo(List<String> values, List<String> prefixes) {
+  Widget _buildVoltageCurrentInfo(List<String> values, List<String> prefixes, bool isAerator) {
 
     return Container(
       width: 320,
@@ -858,25 +863,32 @@ class AeratorWidget extends StatelessWidget {
         padding: const EdgeInsets.only(left: 8),
         child: Row(
           children: [
-            ...List.generate(3, (index) {
+            ...List.generate(isAerator ? 4:3, (index) {
               Color bgColor, borderColor;
-              switch (index) {
-                case 0:
-                  bgColor = Colors.red.shade100;
-                  borderColor = Colors.red.shade300;
-                  break;
-                case 1:
-                  bgColor = Colors.yellow.shade100;
-                  borderColor = Colors.yellow;
-                  break;
-                case 2:
-                  bgColor = Colors.blue.shade100;
-                  borderColor = Colors.blue.shade300;
-                  break;
-                default:
-                  bgColor = Colors.white;
-                  borderColor = Colors.grey;
+
+              if(isAerator) {
+                bgColor = Colors.green.shade100;
+                borderColor = Colors.green.shade300;
+              }else{
+                switch (index) {
+                  case 0:
+                    bgColor = Colors.red.shade100;
+                    borderColor = Colors.red.shade300;
+                    break;
+                  case 1:
+                    bgColor = Colors.yellow.shade100;
+                    borderColor = Colors.yellow;
+                    break;
+                  case 2:
+                    bgColor = Colors.blue.shade100;
+                    borderColor = Colors.blue.shade300;
+                    break;
+                  default:
+                    bgColor = Colors.white;
+                    borderColor = Colors.grey;
+                }
               }
+
               return Padding(
                 padding: const EdgeInsets.only(right: 7),
                 child: Container(
@@ -885,7 +897,7 @@ class AeratorWidget extends StatelessWidget {
                     border: Border.all(color: borderColor, width: 0.7),
                     borderRadius: BorderRadius.circular(3.0),
                   ),
-                  width: 95,
+                  width: isAerator ? 70 : 95,
                   height: 45,
                   child: Center(
                     child: Text(

@@ -205,10 +205,10 @@ packages:
     dependency: "direct main"
     description:
       name: dartssh2
-      sha256: e7c58c98bd11fb1c7bf7df0e1758c10e3a90f1ba83f0306510dab04ea58696d2
+      sha256: "8e464a4952bcf36b9e844521b4d05b6e30ed0491d00df98276b3cd5deec324c9"
       url: "https://pub.dev"
     source: hosted
-    version: "2.11.0"
+    version: "3.3.0"
   data_table_2:
     dependency: "direct main"
     description:
@@ -622,6 +622,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.2"
+  flutter_material_design_icons:
+    dependency: "direct main"
+    description:
+      name: flutter_material_design_icons
+      sha256: "9a7b6308736e328f9ce2249c3727a56a289c915a65ebf1b1b5f237c8232e92b7"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.1.0+7447"
   flutter_native_splash:
     dependency: "direct main"
     description:
@@ -828,18 +836,18 @@ packages:
     dependency: transitive
     description:
       name: google_mlkit_commons
-      sha256: "9990a65f407a3ef6bae646bf10143faa93fec126683771465bc6c0b43fb0e6e9"
+      sha256: "3e69fea4211727732cc385104e675ad1e40b29f12edd492ee52fa108423a6124"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.1"
+    version: "0.11.1"
   google_mlkit_image_labeling:
     dependency: "direct main"
     description:
       name: google_mlkit_image_labeling
-      sha256: ec0911d514e86c8d287772fd279e7a21abb078b6163957b8f9d7b1c204866f16
+      sha256: d744d1844c674aae860262f3bb22f5628fd96eaa9d482e6b8d64974efd003dac
       url: "https://pub.dev"
     source: hosted
-    version: "0.12.1"
+    version: "0.14.2"
   html:
     dependency: transitive
     description:
@@ -976,14 +984,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.3.2"
-  js:
-    dependency: transitive
-    description:
-      name: js
-      sha256: c1b2e9b5ea78c45e1a0788d29606ba27dc5f71f019f32ca5140f61ef071838cf
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.7.1"
   json_annotation:
     dependency: transitive
     description:
@@ -1072,14 +1072,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.13.0"
-  material_design_icons_flutter:
-    dependency: "direct main"
-    description:
-      name: material_design_icons_flutter
-      sha256: "6f986b7a51f3ad4c00e33c5c84e8de1bdd140489bbcdc8b66fc1283dad4dea5a"
-      url: "https://pub.dev"
-    source: hosted
-    version: "7.0.7296"
   meta:
     dependency: transitive
     description:
@@ -1356,10 +1348,10 @@ packages:
     dependency: transitive
     description:
       name: pointycastle
-      sha256: "4be0097fcf3fd3e8449e53730c631200ebc7b88016acecab2b0da2f0149222fe"
+      sha256: "92aa3841d083cc4b0f4709b5c74fd6409a3e6ba833ffc7dc6a8fee096366acf5"
       url: "https://pub.dev"
     source: hosted
-    version: "3.9.1"
+    version: "4.0.0"
   popover:
     dependency: "direct main"
     description:
@@ -1765,14 +1757,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.4"
-  usb_serial:
-    dependency: "direct main"
-    description:
-      name: usb_serial
-      sha256: a605a600e34e7f28d4e80851ca3999ef747e42e406138887b8a88b8c382a8b07
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.5.2"
   uuid:
     dependency: "direct main"
     description:

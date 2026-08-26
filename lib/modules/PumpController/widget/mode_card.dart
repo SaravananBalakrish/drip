@@ -74,7 +74,6 @@ extension PumpModeX on PumpMode {
 Widget buildModeCard({
   required String modeStatus, // raw value from your live payload
   required Function(PumpMode) onModeSelected,
-  required String pumpName,
   bool isLoading = false,
   required BuildContext context,
 }) {

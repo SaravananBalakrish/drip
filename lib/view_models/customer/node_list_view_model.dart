@@ -108,7 +108,7 @@ class NodeListViewModel extends ChangeNotifier {
 
   double calculateGridHeight(int itemCount) {
     int rows = (itemCount / 5).ceil();
-    return rows * 53;
+    return rows * 60;
   }
 
   String formatDateTime(String? dateTimeString) {
