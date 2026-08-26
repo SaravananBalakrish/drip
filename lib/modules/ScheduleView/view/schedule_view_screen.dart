@@ -596,9 +596,12 @@ class _ScheduleViewScreenState extends State<ScheduleViewScreen> {
     final String time12 = DateFormat("hh:mm:ss").format(DateFormat("HH:mm:ss").parse(startTime));
 
     // Calculate progress value
+    final int input = double.parse(inputValue).toInt();
+    final int completed = double.parse(completedValue).toInt();
+
     final double progressValue = method == "1"
         ? _calculateTimeProgress(inputValue, completedValue)
-        : int.parse(completedValue) / int.parse(inputValue);
+        : completed / input;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
