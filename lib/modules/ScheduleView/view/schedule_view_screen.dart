@@ -595,8 +595,7 @@ class _ScheduleViewScreenState extends State<ScheduleViewScreen> {
     // Convert 24-hour format time to 12-hour format
     final String time12 = DateFormat("hh:mm:ss").format(DateFormat("HH:mm:ss").parse(startTime));
 
-    print('input values :$inputValue,$completedValue');
-    // Calculate progress value
+     // Calculate progress value
 
     final int input = double.parse(inputValue).toInt();
     final int completed = double.parse(completedValue).toInt();
