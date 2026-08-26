@@ -1006,6 +1006,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
             ),
           ),
         ),
+        const SizedBox(height: 10,),
       ],
     );
   }

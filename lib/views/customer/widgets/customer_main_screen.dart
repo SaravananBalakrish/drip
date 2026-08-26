@@ -101,13 +101,13 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
         groupId: cSite.groupId,
         groupName: cSite.groupName,
       ) :
-      ServiceRequestScreen(
+      TicketHomePage(
         userId: cSite.customerId,
         controllerId: cMaster.controllerId,
       );
 
     case 6:
-      return ServiceRequestScreen(
+      return TicketHomePage(
         userId: cSite.customerId,
         controllerId: cMaster.controllerId,
       );
