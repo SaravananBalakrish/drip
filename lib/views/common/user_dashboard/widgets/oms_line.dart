@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import '../../../../StateManagement/mqtt_payload_provider.dart';
 import '../../../../models/customer/site_model.dart';
 import '../../../../modules/IrrigationProgram/view/program_library.dart';
+import '../../../../modules/bluetooth_low_energy/state_management/ble_service.dart';
+import '../../../../modules/bluetooth_low_energy/view/node_connection_page.dart';
 import '../../../../providers/user_provider.dart';
 import '../../../../repository/repository.dart';
 import '../../../../services/communication_service.dart';
@@ -199,7 +201,7 @@ class _OmsLineState extends State<OmsLine> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
       create: (_) => NodeListViewModel(context, Repository(HttpService()), widget.master.nodeList),
-      child: nodeListBody(context),
+      child: nodeListBody(context, ),
     );
   }
 
@@ -280,7 +282,8 @@ class _OmsLineState extends State<OmsLine> {
   /// Mobile / narrow layout: stacked cards, no table header, no fixed
   /// column widths — everything reflows vertically.
   /// ---------------------------------------------------------------------
-  Widget _buildNarrowNodeList(NodeListViewModel vm, CurrentProgramViewModel programVm, List<int> filteredIndices) {
+  Widget _buildNarrowNodeList(NodeListViewModel vm, CurrentProgramViewModel programVm,
+      List<int> filteredIndices) {
     if (filteredIndices.isEmpty) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 24),
@@ -651,6 +654,35 @@ class _OmsLineState extends State<OmsLine> {
 
                   if(!kIsWeb)...[
                     const SizedBox(width: 6),
+                    IconButton(onPressed: (){
+
+                      final loggedInUser = context.read<UserProvider>().loggedInUser;
+
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => NodeConnectionPage(
+                        nodeData: {
+                          'controllerId': widget.master.controllerId,
+                          'deviceId': widget.master.deviceId,
+                          'deviceName': widget.master.deviceName,
+                          'categoryId': widget.master.categoryId,
+                          'categoryName': widget.master.categoryName,
+                          'modelId': widget.master.modelId,
+                          'modelName': widget.master.modelName,
+                          'interfaceTypeId': widget.master.interfaceTypeId,
+                          'interface': widget.master.interface,
+                          'relayOutput': widget.master.relayOutput,
+                          'latchOutput': widget.master.latchOutput,
+                          'analogInput': widget.master.analogInput,
+                          'digitalInput': widget.master.digitalInput,
+
+                        },
+                        masterData: {
+                          "userId" : loggedInUser.id,
+                          "customerId" : widget.customerId,
+                          "controllerId" : widget.master.controllerId
+                        },
+                        connectMode: ConnectMode.normal,
+                      )));
+                    }, icon: const Icon(Icons.bluetooth)),
                     IconButton(
                       tooltip: 'Bluetooth',
                       onPressed: () => showEditProductDialog(
