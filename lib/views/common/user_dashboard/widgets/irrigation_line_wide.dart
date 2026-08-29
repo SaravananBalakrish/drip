@@ -283,8 +283,14 @@ class IrrigationLineWide extends StatelessWidget {
         widgets.add(_buildVerticalLine(height: 130));
       }
 
+      final boosterPumpWidth = site.boosterPump.length * 70.0;
+      final channelWidth = site.channel.length * 70.0;
+      final agitatorWidth = site.agitator.length * 57.5;
+
+      final totalWidth = boosterPumpWidth + channelWidth + agitatorWidth;
+
       return SizedBox(
-        width: ((site.boosterPump.length + site.channel.length + site.agitator.length ) * 70)-12.5,
+        width: agitatorWidth>0? totalWidth : totalWidth+5.5,
         //width: ((site.boosterPump.length + site.channel.length + site.agitator.length ) * 70) + 5,
         child: Stack(
           children: [
