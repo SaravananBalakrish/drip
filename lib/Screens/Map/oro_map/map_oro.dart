@@ -170,7 +170,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
               final centerPoint = _getPolygonCenter(points);
 
               final labelIcon = await _getLabelIcon(
-                "${obj["name"] ?? obj["objectName"]} ($per%)",
+                "${obj["name"] ?? obj["objectName"]} ($per%)",areaColor
               );
 
               newMarkers.add(
@@ -344,7 +344,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
     return LatLng(lat / points.length, lng / points.length);
   }
 
-  Future<BitmapDescriptor> _getLabelIcon(String text) async {
+  Future<BitmapDescriptor> _getLabelIcon(String text,Color labelColor) async {
     // Use device pixel ratio for high-resolution markers on mobile
     final double ratio = ui.PlatformDispatcher.instance.views.isNotEmpty
         ? ui.PlatformDispatcher.instance.views.first.devicePixelRatio
@@ -372,7 +372,7 @@ class _MapScreenOroState extends State<MapScreenOro> {
     final recorder = ui.PictureRecorder();
     final canvas = Canvas(recorder);
 
-    final paint = Paint()..color = Colors.white;
+    final paint = Paint()..color = labelColor;
     final border = Paint()
       ..color = Colors.black
       ..style = PaintingStyle.stroke
