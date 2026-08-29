@@ -12,6 +12,7 @@ import '../model/filtration_model.dart';
 import '../model/irrigation_line_model.dart';
 import '../model/moisture_model.dart';
 import '../model/ph_model.dart';
+import '../model/pressure_model.dart';
 import '../model/pump_model.dart';
 import '../model/source_model.dart';
 import '../view/config_base_page.dart';
@@ -32,6 +33,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     5 : 'Line Configuration',
     6 : 'Ec Configuration',
     7 : 'Ph Configuration',
+    8 : 'Pressure Configuration',
   };
   int selectedConfigurationTab = 0;
   int rangeStart = -1;
@@ -46,6 +48,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     5 : AppConstants.irrigationLineObjectId,
     6 : AppConstants.ecObjectId,
     7 : AppConstants.phObjectId,
+    8 : AppConstants.pressureSensorObjectId,
   };
   SelectionMode selectedSelectionMode = SelectionMode.auto;
   int selectedConnectionNo = 0;
@@ -67,6 +70,7 @@ class ConfigMakerProvider extends ChangeNotifier{
   List<SourceModel> source = [];
   List<PumpModel> pump = [];
   List<MoistureModel> moisture = [];
+  List<PressureModel> pressureSensor = [];
   List<EcModel> ec = [];
   List<PhModel> ph = [];
   List<IrrigationLineModel> line = [];
@@ -103,6 +107,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     source.clear();
     pump.clear();
     moisture.clear();
+    pressureSensor.clear();
     ec.clear();
     ph.clear();
     line.clear();
@@ -130,6 +135,7 @@ class ConfigMakerProvider extends ChangeNotifier{
     source.clear();
     pump.clear();
     moisture.clear();
+    pressureSensor.clear();
     ec.clear();
     ph.clear();
     line.clear();
@@ -381,8 +387,10 @@ class ConfigMakerProvider extends ChangeNotifier{
       }
 
       List<double> generatedSno = [];
+
       listOfGeneratedObject = (configMakerData['configObject'] as List<dynamic>).map((object) => DeviceObjectModel.fromJson(object)).toList();
       // remove if there any duplicates
+
       for(var i = listOfGeneratedObject.length - 1;i >= 0;i--){
         if(generatedSno.contains(listOfGeneratedObject[i].sNo)){
           listOfGeneratedObject.removeAt(i);
@@ -395,6 +403,7 @@ class ConfigMakerProvider extends ChangeNotifier{
       source = (configMakerData['waterSource'] as List<dynamic>).map((sourceObject) => SourceModel.fromJson(sourceObject)).toList();
       pump = (configMakerData['pump'] as List<dynamic>).map((pumpObject) => PumpModel.fromJson(pumpObject)).toList();
       moisture = (configMakerData['moistureSensor'] as List<dynamic>).map((moistureObject) => MoistureModel.fromJson(moistureObject)).toList();
+      pressureSensor = configMakerData['pressureSensor'] != null ? (configMakerData['pressureSensor'] as List<dynamic>).map((pressureObject) => PressureModel.fromJson(pressureObject)).toList() : [];
       if(configMakerData.containsKey('ecSensor')){
         ec = (configMakerData['ecSensor'] as List<dynamic>).map((ecObject) => EcModel.fromJson(ecObject)).toList();
       }
@@ -503,6 +512,10 @@ class ConfigMakerProvider extends ChangeNotifier{
               moisture.add(
                   MoistureModel(commonDetails: deviceObjectModel, valves: [])
               );
+            }else if(deviceObjectModel.objectId == AppConstants.pressureSensorObjectId){
+              pressureSensor.add(
+                  PressureModel(commonDetails: deviceObjectModel, valves: [], mainValve: [])
+              );
             }else if(deviceObjectModel.objectId == AppConstants.ecObjectId){
               ec.add(
                   EcModel(
@@ -558,6 +571,7 @@ class ConfigMakerProvider extends ChangeNotifier{
           fertilization.removeWhere((e) => filteredList.contains(e.commonDetails.sNo));
           source.removeWhere((e) => filteredList.contains(e.commonDetails.sNo));
           moisture.removeWhere((e) => filteredList.contains(e.commonDetails.sNo));
+          pressureSensor.removeWhere((e) => filteredList.contains(e.commonDetails.sNo));
           ec.removeWhere((e) => filteredList.contains(e.sNo));
           ph.removeWhere((e) => filteredList.contains(e.sNo));
           line.removeWhere((e) => filteredList.contains(e.commonDetails.sNo));
@@ -578,6 +592,9 @@ class ConfigMakerProvider extends ChangeNotifier{
           }
           for(var ms in moisture){
             ms.updateObjectIdIfDeletedInProductLimit(filteredList);
+          }
+          for(var ps in pressureSensor){
+            ps.updateObjectIdIfDeletedInProductLimit(filteredList);
           }
           for(var il in line){
             il.updateObjectIdIfDeletedInProductLimit(filteredList);
@@ -974,6 +991,22 @@ class ConfigMakerProvider extends ChangeNotifier{
       if(moistureSensor.commonDetails.sNo == sNo){
         moistureSensor.valves.clear();
         moistureSensor.valves.addAll(listOfSelectedSno);
+        listOfSelectedSno.clear();
+      }
+    }
+    notifyListeners();
+  }
+
+  void updateSelectionInPressure(double sNo, int objectId){
+    for(var ps in pressureSensor){
+      if(ps.commonDetails.sNo == sNo){
+        if(objectId == AppConstants.valveObjectId){
+          ps.valves.clear();
+          ps.valves.addAll(listOfSelectedSno);
+        }else{
+          ps.mainValve.clear();
+          ps.mainValve.addAll(listOfSelectedSno);
+        }
         listOfSelectedSno.clear();
       }
     }

@@ -66,6 +66,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
     _controller.addListener(() {setState(() {});});
     _controller.repeat();
     // mqttService.pumpDashboardPayload = widget.masterData.live?.cM as PumpControllerData?;
+    debugPrint("widget.masterData.live?.cM : ${widget.masterData.live}");
     mqttService.pumpDashboardPayload =
     widget.masterData.live?.cM != null
         ? widget.masterData.live?.cM as PumpControllerData?
@@ -268,6 +269,43 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
                   const SizedBox(height: 15,),
                   for(var index = 0; index < int.parse(snapshot.data!.numberOfPumps); index++)
                     buildNewPumpDetails(index: index, pumpData: snapshot.data!,),
+                  const SizedBox(height: 15,),
+                  if(AppConstants.wlcModelList.contains(widget.masterData.modelId))
+                    buildModeCard(
+                      context: context,
+                      modeStatus: snapshot.data!.manualMode, // your live payload value
+                      isLoading: false,
+                      onModeSelected: (PumpMode selectedMode) async {
+                        String payLoadFinal =
+                            '*${jsonEncode({"sentSms": "MANUAL${selectedMode.statusCode}"})}#';
+
+                        var data = {
+                          "userId": widget.customerId,
+                          "controllerId": widget.masterData.controllerId,
+                          "data": payLoadFinal,
+                          "messageStatus": "Mode set to ${selectedMode.label}",
+                          "createUser": widget.userId,
+                          "hardware": payLoadFinal,
+                        };
+
+                        final result = await context.read<CommunicationService>().sendCommand(
+                          serverMsg: '',
+                          payload: payLoadFinal,
+                        );
+                        debugPrint("mode change result => $result");
+
+                        await repository.sendManualOperationToServer(data);
+
+                        GlobalSnackBar.show(
+                          context,
+                          '${selectedMode.label} set successfully',
+                          200,
+                        );
+                      },
+                    ),
+                  if(AppConstants.wlc1010sdModelList.contains(widget.masterData.modelId))
+                    changeOverWidget(snapshot.data!),
+
                   if(widget.masterData.configObjects.any((e) => e.objectId == 19) && !AppConstants.pumpWithLightModelList.contains(widget.masterData.modelId))
                     _buildLight(snapshot.data!.pumps.firstWhere((pump) => pump is PumpValveModel) as PumpValveModel, snapshot.data!),
                   if(AppConstants.pumpWithValveModelList.contains(widget.masterData.modelId))
@@ -969,44 +1007,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
             ),
           ),
         ),
-        const SizedBox(height: 15,),
-        AppConstants.wlcModelList.contains(widget.masterData.modelId)
-            ? buildModeCard(
-          context: context,
-          modeStatus: pumpData.manualMode, // your live payload value
-          isLoading: false,
-          pumpName: pumps[index].name,
-          onModeSelected: (PumpMode selectedMode) async {
-            String payLoadFinal =
-                '*${jsonEncode({"sentSms": "MANUAL${selectedMode.statusCode}"})}#';
-
-            var data = {
-              "userId": widget.customerId,
-              "controllerId": widget.masterData.controllerId,
-              "data": payLoadFinal,
-              "messageStatus": "${pumps[index].name} Mode set to ${selectedMode.label}",
-              "createUser": widget.userId,
-              "hardware": payLoadFinal,
-            };
-
-            final result = await context.read<CommunicationService>().sendCommand(
-              serverMsg: '',
-              payload: payLoadFinal,
-            );
-            debugPrint("mode change result => $result");
-
-            await repository.sendManualOperationToServer(data);
-
-            GlobalSnackBar.show(
-              context,
-              '${selectedMode.label} set successfully',
-              200,
-            );
-          },
-        ) : Container(),
-
-        if(index == int.parse(pumpData.numberOfPumps) - 1 && AppConstants.wlc1010sdModelList.contains(widget.masterData.modelId))
-          changeOverWidget(pumpData),
+        const SizedBox(height: 10,),
       ],
     );
   }

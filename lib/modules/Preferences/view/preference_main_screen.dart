@@ -1355,8 +1355,6 @@ class _PreferenceMainScreenState extends State<PreferenceMainScreen> with Ticker
         ? getFailedPayload(isToGem: isToGem, sendAll: true).split("?")[0].split(';')
         : getPayload(isToGem: isToGem, sendAll: true).split("?")[0].split(';')
         : payloadParts;
-    print('start sendFunction');
-    print("payloadForGem : ${payloadForGem}");
     try {
       bool isLevelSettingChanged = preferenceProvider.individualPumpSetting!.any((pump) => pump.settingList.any((setting) => AppConstants.levelSetting.contains(setting.type) && setting.changed));
       bool isAnyOtherChanged = preferenceProvider.commonPumpSettings!.any((pump) => pump.settingList.any((setting) => setting.changed));

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oro_drip_irrigation/modules/config_maker/view/ec_configuration.dart';
 import 'package:oro_drip_irrigation/modules/config_maker/view/ph_configuration.dart';
+import 'package:oro_drip_irrigation/modules/config_maker/view/pressure_configuration.dart';
 import 'package:oro_drip_irrigation/modules/config_maker/view/pump_configuration.dart';
 import 'package:oro_drip_irrigation/modules/config_maker/view/source_configuration.dart';
 import 'package:oro_drip_irrigation/utils/constants.dart';
@@ -58,7 +59,9 @@ class _SiteConfigureState extends State<SiteConfigure> {
                     ? LineConfiguration(configPvd: widget.configPvd)
                     : widget.configPvd.selectedConfigurationTab == 6
                     ? EcConfiguration(configPvd: widget.configPvd,)
-                    : PhConfiguration(configPvd: widget.configPvd,)
+                    : widget.configPvd.selectedConfigurationTab == 6 ?
+                    PhConfiguration(configPvd: widget.configPvd,)
+                    : PressureConfiguration(configPvd: widget.configPvd)
               )
             ],
           ),
@@ -125,7 +128,7 @@ class _SiteConfigureState extends State<SiteConfigure> {
   bool showTabForAquaCulture(int tabKey){
     bool isAquaCultureGem = AppConstants.aquacultureModelList.contains(widget.configPvd.masterData['modelId']);
     if(!isAquaCultureGem) return true;
-    List<int> tabKeyNotToShowForAquaCulture = [1, 2, 3, 4, 6, 7];
+    List<int> tabKeyNotToShowForAquaCulture = [1, 2, 3, 4, 6, 7, 8];
     if(tabKeyNotToShowForAquaCulture.contains(tabKey)) {
       print("these tab not to show aqua culture..");
       return false;

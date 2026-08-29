@@ -95,7 +95,8 @@ class _LineConfigurationState extends State<LineConfiguration> {
                                                 );
                                               }
                                           );
-                                        }, icon: const Icon(Icons.dataset)
+                                        },
+                                        icon: const Icon(Icons.dataset)
                                     ),
                                     if(availability(AppConstants.sourceObjectId) && !AppConstants.aquacultureModelList.contains(widget.configPvd.masterData['modelId']))
                                       getLineParameter(
