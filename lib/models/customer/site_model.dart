@@ -2198,16 +2198,19 @@ class ProgramList {
 class Sequence {
   final String sNo;
   final String name;
+  final bool isActive;
 
   Sequence({
     required this.sNo,
     required this.name,
+    required this.isActive,
   });
 
   factory Sequence.fromJson(Map<String, dynamic> json) {
     return Sequence(
       sNo: json['sNo'] ?? '',
       name: json['name'] ?? '',
+      isActive: false,
     );
   }
 

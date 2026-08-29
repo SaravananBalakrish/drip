@@ -47,6 +47,7 @@ class CustomerFabMenu extends StatelessWidget {
     final isGem = [...AppConstants.gemModelList, ...AppConstants.omsGemList].contains(currentMaster.modelId);
     final isGemNova = [...AppConstants.ecoGemModelList].contains(currentMaster.modelId);
     final isWlc = [...AppConstants.wlcModelList].contains(currentMaster.modelId);
+    bool isOMS = [...AppConstants.omsGemList].contains(currentMaster.modelId);
 
     if (!isGem && !isGemNova && !isWlc) return const SizedBox.shrink();
 
@@ -56,8 +57,7 @@ class CustomerFabMenu extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
-        if(!isWlc)
-          ...[
+        if(!isWlc && !isOMS)...[
             FloatingActionButton(
               heroTag: null,
               onPressed: null,
