@@ -130,6 +130,10 @@ class _WeatherScreenNewState extends State<WeatherScreenNew>
               appBar: AppBar(
                 title: const Text("Weather"),
                 bottom: TabBar(
+                   labelColor: Colors.white,
+                  unselectedLabelColor: Colors.white54,
+                  indicatorColor: Colors.white,
+
                   controller: _tabController,
                   isScrollable: true,
                   tabs: [
