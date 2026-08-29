@@ -6,7 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="f2f9418e-6c3f-4208-958b-3bdf91e8d388" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/modules/ScheduleView/view/schedule_view_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/ScheduleView/view/schedule_view_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/models/customer/site_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/models/customer/site_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/PumpController/model/pump_controller_data_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/PumpController/model/pump_controller_data_model.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/modules/PumpController/view/pump_dashboard_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/modules/PumpController/view/pump_dashboard_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/views/customer/widgets/customer_main_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/views/customer/widgets/customer_main_screen.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -87,16 +89,5 @@
       <updated>1783488914245</updated>
     </task>
     <servers />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="Dart">
-          <url>file://$PROJECT_DIR$/lib/modules/ScheduleView/view/schedule_view_screen.dart</url>
-          <line>606</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

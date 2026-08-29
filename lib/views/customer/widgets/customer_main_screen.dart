@@ -106,13 +106,11 @@ Widget buildCustomerMainScreen({required int index, required UserRole role, requ
         userId: cSite.customerId,
         controllerId: cMaster.controllerId,
       );
-
     case 6:
       return TicketHomePage(
         userId: cSite.customerId,
         controllerId: cMaster.controllerId,
       );
-
     case 7:
       return isAquaculture ? MapScreenValve(customerId: cSite.customerId,
         controllerId: cMaster.controllerId,

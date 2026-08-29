@@ -30,7 +30,7 @@ class PumpControllerData {
   });
 
   factory PumpControllerData.fromJson(Map<String, dynamic> json, String key, int dataFetchingStatus) {
-    // print("json in the PumpControllerData :: $json");
+    print("json in the PumpControllerData :: $json");
     List<dynamic> pumpsJson = json[key] ?? [];
     dynamic lastElement = {};
 

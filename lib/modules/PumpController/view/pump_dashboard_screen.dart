@@ -66,6 +66,7 @@ class _PumpDashboardScreenState extends State<PumpDashboardScreen> with TickerPr
     _controller.addListener(() {setState(() {});});
     _controller.repeat();
     // mqttService.pumpDashboardPayload = widget.masterData.live?.cM as PumpControllerData?;
+    debugPrint("widget.masterData.live?.cM : ${widget.masterData.live}");
     mqttService.pumpDashboardPayload =
     widget.masterData.live?.cM != null
         ? widget.masterData.live?.cM as PumpControllerData?
