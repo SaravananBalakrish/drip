@@ -755,6 +755,7 @@ class MqttPayloadProvider with ChangeNotifier {
 
           notifyListeners();
         }
+        //OMS----------
         else if(data['mC']=='8200'){
 
           updateNodeLiveMessage(data['cM']['8201'].split(";"));
@@ -766,10 +767,15 @@ class MqttPayloadProvider with ChangeNotifier {
             final scheduleRows = scheduleData.split(';')
                 .where((row) => row.trim().isNotEmpty)
                 .toList();
-            print("Parsed schedule rows: $scheduleRows");
             updateCurrentProgram(scheduleRows);
           }
 
+          final alarmData = data['cM']['8205'] as String?;
+          if (alarmData != null && alarmData.isNotEmpty) {
+            updateAlarm(alarmData.split(';').where((e) => e.trim().isNotEmpty).toList(),);
+          } else {
+            updateAlarm([]);
+          }
 
         }
         else if(data.containsKey('3600') && data['3600'] != null && data['3600'].isNotEmpty){
@@ -876,13 +882,18 @@ class MqttPayloadProvider with ChangeNotifier {
         }
 
         if (data["mC"] == "PRGVIEW") {
-          _programPreview = data["cM"];
-          notifyListeners();
+          if (data["cM"] is String && (data["cM"] as String).isNotEmpty) {
+            _programPreview = data["cM"] as String;
+            notifyListeners();
+          }
+
         }
 
         if (data["mC"] == "SEQVIEW") {
-          _sequencePreview = data["cM"];
-          notifyListeners();
+          if (data["cM"] is String && (data["cM"] as String).isNotEmpty) {
+            _sequencePreview = data["cM"] as String;
+            notifyListeners();
+          }
         }
 
       } catch (e, stackTrace) {

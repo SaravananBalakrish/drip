@@ -54,6 +54,7 @@ List<Widget> appBarActions(
         controllerId: master.controllerId,
         irrigationLine: master.irrigationLine,
         isNarrow: isNarrow,
+        isOMS: false,
       ),
       IconButton(
         onPressed: () => Navigator.push(

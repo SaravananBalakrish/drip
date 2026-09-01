@@ -17,9 +17,12 @@ import '../../../../utils/formatters.dart';
 import '../../../../utils/helpers/program_code_helper.dart';
 import '../../../../utils/my_function.dart';
 import '../../../../utils/snack_bar.dart';
+import '../../../../view_models/customer/customer_screen_controller_view_model.dart';
 import '../../../../view_models/customer/node_list_view_model.dart';
 import '../../../../view_models/customer/current_program_view_model.dart';
 import 'package:oro_drip_irrigation/utils/Theme/agritel_theme.dart';
+
+import '../../../customer/widgets/alarm_button.dart';
 
 
 /// ---------------------------------------------------------------------
@@ -206,6 +209,7 @@ class _OmsLineState extends State<OmsLine> {
   }
 
   Widget nodeListBody(BuildContext context) {
+
     return Consumer3<NodeListViewModel, MqttPayloadProvider, CurrentProgramViewModel>(
       builder: (context, vm, mqttProvider, programVm, _) {
         final nodeLiveMessage = mqttProvider.nodeLiveMessage;
@@ -288,7 +292,7 @@ class _OmsLineState extends State<OmsLine> {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 24),
         child: Center(
-          child: Text('No nodes found', style: TextStyle(fontSize: 13, color: _Tone.textMuted)),
+          child: Text('No nodes found', style: TextStyle(fontSize: 15, color: _Tone.textMuted)),
         ),
       );
     }
@@ -321,12 +325,13 @@ class _OmsLineState extends State<OmsLine> {
   }
 
   Widget _buildSearchBar() {
+    final fontSize = widget.isNarrow ? 15.0 : 13.0;
     return SearchBar(
-      constraints: const BoxConstraints(minHeight: 42),
+      constraints: BoxConstraints(minHeight: widget.isNarrow ? 48 : 42),
       padding: WidgetStateProperty.all(const EdgeInsets.symmetric(horizontal: 12, vertical: 6)),
       hintText: "Search by Zone, Node ID...",
-      hintStyle: WidgetStateProperty.all(const TextStyle(fontSize: 13)),
-      textStyle: WidgetStateProperty.all(const TextStyle(fontSize: 13)),
+      hintStyle: WidgetStateProperty.all(TextStyle(fontSize: fontSize)),
+      textStyle: WidgetStateProperty.all(TextStyle(fontSize: fontSize)),
       leading: Icon(Icons.search_rounded, color: primary, size: 20),
       elevation: WidgetStateProperty.all(0),
       backgroundColor: WidgetStateProperty.all(Colors.white),
@@ -606,15 +611,23 @@ class _OmsLineState extends State<OmsLine> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          node.deviceName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: _Tone.textPrimary,
-                          ),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                node.deviceName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                  color: _Tone.textPrimary,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            _NodeStatusPill(valves: valves),
+                          ],
                         ),
                         const SizedBox(height: 3),
                         Text(
@@ -622,7 +635,7 @@ class _OmsLineState extends State<OmsLine> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
-                            fontSize: 10.5,
+                            fontSize: 12,
                             color: _Tone.textMuted,
                             fontFamily: 'monospace',
                           ),
@@ -631,80 +644,75 @@ class _OmsLineState extends State<OmsLine> {
                     ),
                   ),
 
-                  const SizedBox(width: 6),
-                  IconButton(
-                    tooltip: 'Edit',
-                    onPressed: () => showEditProductDialog(
-                      context,
-                      node,
-                      widget.customerId,
-                    ),
-                    icon: const Icon(
-                      Icons.edit_outlined,
-                      size: 20,
-                      color: Colors.black,
-                    ),
-                    visualDensity: VisualDensity.compact,
-                    padding: const EdgeInsets.all(8),
-                    constraints: const BoxConstraints(
-                      minWidth: 40,
-                      minHeight: 40,
-                    ),
+                  const SizedBox(width: 4),
+
+                  // Single overflow menu replaces the previous 2-3 separate
+                  // icon buttons (Edit + duplicate/dead Bluetooth button).
+                  // This frees up ~80px of header width on narrow screens
+                  // and gives each action a proper 48px touch target inside
+                  // the menu instead of cramped 40px icons in a row.
+                  PopupMenuButton<String>(
+                    tooltip: 'More actions',
+                    icon: const Icon(Icons.more_vert, size: 20, color: _Tone.textMuted),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    onSelected: (value) {
+                      if (value == 'edit') {
+                        showEditProductDialog(context, node, widget.customerId);
+                      } else if (value == 'bluetooth') {
+                        final loggedInUser = context.read<UserProvider>().loggedInUser;
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => NodeConnectionPage(
+                          nodeData: {
+                            'controllerId': widget.master.controllerId,
+                            'deviceId': widget.master.deviceId,
+                            'deviceName': widget.master.deviceName,
+                            'categoryId': widget.master.categoryId,
+                            'categoryName': widget.master.categoryName,
+                            'modelId': widget.master.modelId,
+                            'modelName': widget.master.modelName,
+                            'interfaceTypeId': widget.master.interfaceTypeId,
+                            'interface': widget.master.interface,
+                            'relayOutput': widget.master.relayOutput,
+                            'latchOutput': widget.master.latchOutput,
+                            'analogInput': widget.master.analogInput,
+                            'digitalInput': widget.master.digitalInput,
+                          },
+                          masterData: {
+                            "userId": loggedInUser.id,
+                            "customerId": widget.customerId,
+                            "controllerId": widget.master.controllerId,
+                          },
+                          connectMode: ConnectMode.normal,
+                        )));
+                      }
+                    },
+                    itemBuilder: (context) => [
+                      const PopupMenuItem(
+                        value: 'edit',
+                        child: Row(
+                          children: [
+                            Icon(Icons.edit_outlined, size: 19, color: _Tone.textSecondary),
+                            SizedBox(width: 10),
+                            Text('Rename node', style: TextStyle(fontSize: 15)),
+                          ],
+                        ),
+                      ),
+                      if (!kIsWeb)
+                        const PopupMenuItem(
+                          value: 'bluetooth',
+                          child: Row(
+                            children: [
+                              Icon(Icons.bluetooth, size: 19, color: _Tone.textSecondary),
+                              SizedBox(width: 10),
+                              Text('Connect via Bluetooth', style: TextStyle(fontSize: 15)),
+                            ],
+                          ),
+                        ),
+                    ],
                   ),
 
-                  if(!kIsWeb)...[
-                    const SizedBox(width: 6),
-                    IconButton(onPressed: (){
-
-                      final loggedInUser = context.read<UserProvider>().loggedInUser;
-
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => NodeConnectionPage(
-                        nodeData: {
-                          'controllerId': widget.master.controllerId,
-                          'deviceId': widget.master.deviceId,
-                          'deviceName': widget.master.deviceName,
-                          'categoryId': widget.master.categoryId,
-                          'categoryName': widget.master.categoryName,
-                          'modelId': widget.master.modelId,
-                          'modelName': widget.master.modelName,
-                          'interfaceTypeId': widget.master.interfaceTypeId,
-                          'interface': widget.master.interface,
-                          'relayOutput': widget.master.relayOutput,
-                          'latchOutput': widget.master.latchOutput,
-                          'analogInput': widget.master.analogInput,
-                          'digitalInput': widget.master.digitalInput,
-
-                        },
-                        masterData: {
-                          "userId" : loggedInUser.id,
-                          "customerId" : widget.customerId,
-                          "controllerId" : widget.master.controllerId
-                        },
-                        connectMode: ConnectMode.normal,
-                      )));
-                    }, icon: const Icon(Icons.bluetooth)),
-                    IconButton(
-                      tooltip: 'Bluetooth',
-                      onPressed: () => showEditProductDialog(
-                        context,
-                        node,
-                        widget.customerId,
-                      ),
-                      icon: const Icon(
-                        Icons.bluetooth,
-                        size: 20,
-                        color: Colors.black,
-                      ),
-                      visualDensity: VisualDensity.compact,
-                      padding: const EdgeInsets.all(8),
-                      constraints: const BoxConstraints(
-                        minWidth: 40,
-                        minHeight: 40,
-                      ),
-                    ),
-                  ],
-
-                  const SizedBox(width: 6),
+                  const SizedBox(width: 2),
 
                   AnimatedRotation(
                     turns: isExpanded ? 0.25 : 0,
@@ -766,14 +774,14 @@ class _OmsLineState extends State<OmsLine> {
                   children: [
                     const Icon(
                       Icons.sync_rounded,
-                      size: 13,
+                      size: 14,
                       color: _Tone.textMuted,
                     ),
                     const SizedBox(width: 5),
                     const Text(
                       'Last feedback',
                       style: TextStyle(
-                        fontSize: 10,
+                        fontSize: 12,
                         color: _Tone.textMuted,
                       ),
                     ),
@@ -783,7 +791,7 @@ class _OmsLineState extends State<OmsLine> {
                         node.lastFeedbackReceivedTime,
                       ),
                       style: const TextStyle(
-                        fontSize: 10,
+                        fontSize: 12,
                         color: _Tone.textMuted,
                         fontFamily: 'monospace',
                       ),
@@ -798,14 +806,14 @@ class _OmsLineState extends State<OmsLine> {
                   children: [
                     const Icon(
                       Icons.water_drop_outlined,
-                      size: 14,
+                      size: 15,
                       color: _Tone.textMuted,
                     ),
                     const SizedBox(width: 5),
                     const Text(
                       'Valves',
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 13,
                         fontWeight: FontWeight.w700,
                         color: _Tone.textPrimary,
                       ),
@@ -814,7 +822,7 @@ class _OmsLineState extends State<OmsLine> {
                     Text(
                       '${valves.length}',
                       style: const TextStyle(
-                        fontSize: 10,
+                        fontSize: 12,
                         color: _Tone.textMuted,
                       ),
                     ),
@@ -831,6 +839,7 @@ class _OmsLineState extends State<OmsLine> {
                   ),
                   child: _ValveDotRow(
                     valves: valves,
+                    isNarrow: true,
                   ),
                 ),
 
@@ -841,6 +850,7 @@ class _OmsLineState extends State<OmsLine> {
                   valves: valves,
                   programVm: programVm,
                   nodeSNo: node.serialNumber,
+                  isNarrow: true,
                 ),
               ],
             ),
@@ -903,17 +913,23 @@ class _OmsLineState extends State<OmsLine> {
 
   Widget _buildTopHeader(NodeListViewModel vm, MasterControllerModel cMaster,
       int controllerId, String deviceId, int customerId, int groupId) {
+
+    final scVm = context.watch<CustomerScreenControllerViewModel>();
+    final mqttVm = context.watch<MqttPayloadProvider>();
+
     final anyValveSelected = hasAnyValveSelected;
     final totalNodes = vm.nodeList.length;
     final valveCount = selectedValveCount;
     final programList = cMaster.programList ?? [];
+
+
 
     final countText = Text(
       valveCount > 0
           ? '$valveCount valve${valveCount == 1 ? '' : 's'} selected · $totalNodes nodes total'
           : '$totalNodes nodes available',
       style: TextStyle(
-        fontSize: 13,
+        fontSize: widget.isNarrow ? 15 : 13,
         fontWeight: FontWeight.w600,
         color: valveCount > 0 ? _Tone.textPrimary : _Tone.textSecondary,
       ),
@@ -940,6 +956,16 @@ class _OmsLineState extends State<OmsLine> {
         color: primary,
         filled: true,
       ),
+
+      AlarmButton(
+        alarmPayload: mqttVm.alarmDL,
+        deviceID: cMaster.deviceId,
+        customerId: scVm.mySiteList.data[scVm.sIndex].customerId,
+        controllerId: cMaster.controllerId,
+        irrigationLine: cMaster.irrigationLine,
+        isNarrow: false,
+        isOMS: true,
+      ),
     ];
 
     final container = BoxDecoration(
@@ -949,22 +975,50 @@ class _OmsLineState extends State<OmsLine> {
     );
 
     if (widget.isNarrow) {
-      // Stacked layout: count on its own line, full-width search bar,
-      // then action buttons wrap onto as many lines as needed.
+      // Stacked layout: count + alarm bell share the top line (the bell is
+      // a small icon-only affordance, not another full-width button), then
+      // a full-width search bar, then a predictable 2x2 grid of equal-width
+      // action buttons. A Wrap of five differently-sized buttons used to
+      // reflow unpredictably depending on label length; Expanded rows give
+      // every button the same width and a full 48px-tall touch target, and
+      // guarantee "Open"/"Close" (the most-used actions) always sit first.
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         decoration: container,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            countText,
+            Row(
+              children: [
+                Expanded(child: countText),
+                AlarmButton(
+                  alarmPayload: mqttVm.alarmDL,
+                  deviceID: cMaster.deviceId,
+                  customerId: scVm.mySiteList.data[scVm.sIndex].customerId,
+                  controllerId: cMaster.controllerId,
+                  irrigationLine: cMaster.irrigationLine,
+                  isNarrow: true,
+                  isOMS: true,
+                ),
+              ],
+            ),
             const SizedBox(height: 10),
             _buildSearchBar(),
             const SizedBox(height: 10),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: actionButtons,
+            Row(
+              children: [
+                Expanded(child: actionButtons[0]), // Open
+                const SizedBox(width: 8),
+                Expanded(child: actionButtons[1]), // Close
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(child: actionButtons[2]), // Programs
+                const SizedBox(width: 8),
+                Expanded(child: actionButtons[3]), // New program
+              ],
             ),
           ],
         ),
@@ -991,6 +1045,8 @@ class _OmsLineState extends State<OmsLine> {
               actionButtons[2],
               const SizedBox(width: 8),
               actionButtons[3],
+              const SizedBox(width: 8),
+              actionButtons[4],
             ],
           ),
         ],
@@ -1015,8 +1071,8 @@ class _OmsLineState extends State<OmsLine> {
 
                     return ListTile(
                       dense: true,
-                      leading: Text('${index + 1}'),
-                      title: Text(program.programName),
+                      leading: Text('${index + 1}', style: TextStyle(fontSize: widget.isNarrow ? 14 : 13)),
+                      title: Text(program.programName, style: TextStyle(fontSize: widget.isNarrow ? 14 : 13)),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -1042,9 +1098,9 @@ class _OmsLineState extends State<OmsLine> {
                                 GlobalSnackBar.show(context, 'Error sending command: $e', 500);
                               }
                             },
-                            label: const Text(
+                            label: Text(
                               "Stop",
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
+                              style: TextStyle(fontSize: widget.isNarrow ? 14 : 12, fontWeight: FontWeight.w600, color: Colors.white),
                             ),
                             style: OutlinedButton.styleFrom(
                               backgroundColor: Colors.red,
@@ -1078,9 +1134,9 @@ class _OmsLineState extends State<OmsLine> {
                                 GlobalSnackBar.show(context, 'Error sending command: $e', 500);
                               }
                             },
-                            label: const Text(
+                            label: Text(
                               "Start",
-                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
+                              style: TextStyle(fontSize: widget.isNarrow ? 14 : 12, fontWeight: FontWeight.w600, color: Colors.white),
                             ),
                             style: OutlinedButton.styleFrom(
                               backgroundColor: Colors.green,
@@ -1105,9 +1161,9 @@ class _OmsLineState extends State<OmsLine> {
             );
           },
           icon: const Icon(Icons.playlist_play, size: 16, color: Colors.white),
-          label: const Text(
+          label: Text(
             'Programs',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.white),
+            style: TextStyle(fontSize: widget.isNarrow ? 14 : 12, fontWeight: FontWeight.w600, color: Colors.white),
           ),
           style: OutlinedButton.styleFrom(
             backgroundColor: primary,
@@ -1224,11 +1280,12 @@ class _OmsLineState extends State<OmsLine> {
     bool filled = false,
   }) {
     final enabled = onPressed != null;
+    final labelFontSize = widget.isNarrow ? 14.0 : 12.0;
     if (filled) {
       return ElevatedButton.icon(
         onPressed: onPressed,
         icon: Icon(icon, size: 16),
-        label: Text(label, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+        label: Text(label, style: TextStyle(fontSize: labelFontSize, fontWeight: FontWeight.w600)),
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           foregroundColor: Colors.white,
@@ -1245,7 +1302,7 @@ class _OmsLineState extends State<OmsLine> {
       icon: Icon(icon, size: 16, color: enabled ? color : _Tone.textMuted),
       label: Text(
         label,
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: enabled ? _Tone.textPrimary : _Tone.textMuted),
+        style: TextStyle(fontSize: labelFontSize, fontWeight: FontWeight.w600, color: enabled ? _Tone.textPrimary : _Tone.textMuted),
       ),
       style: OutlinedButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
@@ -1453,11 +1510,63 @@ class _MetricChip extends StatelessWidget {
 }
 
 /// ---------------------------------------------------------------------
+/// Tiny "N active" / "Idle" pill shown right next to the node name so a
+/// user scanning a long list of cards can tell what's running without
+/// expanding every card.
+/// ---------------------------------------------------------------------
+class _NodeStatusPill extends StatelessWidget {
+  final List<RelayStatus> valves;
+  const _NodeStatusPill({required this.valves});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<MqttPayloadProvider>(
+      builder: (_, mqtt, __) {
+        int runningCount = 0;
+        for (final v in valves) {
+          final status = mqtt.getValveOnOffStatus(double.parse(v.sNo.toString()).toStringAsFixed(3));
+          final parts = status?.split(',') ?? [];
+          final currentStatus = parts.isNotEmpty ? (int.tryParse(parts[1]) ?? v.status) : v.status;
+          final percent = parts.length > 2 ? (int.tryParse(parts[2]) ?? 0) : 0;
+          if (_displayStatusFor(currentStatus, percent) == ValveDisplayStatus.running) runningCount++;
+        }
+
+        if (runningCount == 0) return const SizedBox.shrink();
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+          decoration: BoxDecoration(
+            color: _Tone.statusRunningBg,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 6,
+                height: 6,
+                decoration: const BoxDecoration(color: _Tone.statusRunning, shape: BoxShape.circle),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                '$runningCount',
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: _Tone.statusRunning),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// ---------------------------------------------------------------------
 /// Compact dot row used in both the wide row and the narrow card
 /// ---------------------------------------------------------------------
 class _ValveDotRow extends StatelessWidget {
   final List<RelayStatus> valves;
-  const _ValveDotRow({required this.valves});
+  final bool isNarrow;
+  const _ValveDotRow({required this.valves, this.isNarrow = false});
 
   @override
   Widget build(BuildContext context) {
@@ -1465,8 +1574,8 @@ class _ValveDotRow extends StatelessWidget {
       builder: (_, mqtt, __) {
         final shown = valves.take(8).toList();
         return Wrap(
-          spacing: 4,
-          runSpacing: 4,
+          spacing: 6,
+          runSpacing: 6,
           children: [
             ...shown.map((v) {
               final status = mqtt.getValveOnOffStatus(double.parse(v.sNo.toString()).toStringAsFixed(3));
@@ -1475,14 +1584,33 @@ class _ValveDotRow extends StatelessWidget {
               final percent = parts.length > 2 ? (int.tryParse(parts[2]) ?? 0) : 0;
               final display = _displayStatusFor(currentStatus, percent);
               final style = _styleFor(display);
-              return Tooltip(
-                message: '${v.name}: ${style.label}',
-                child: Container(
-                  width: 15,
-                  height: 15,
-                  decoration: BoxDecoration(color: style.dot, borderRadius: BorderRadius.circular(2)),
-                ),
+              final dot = Container(
+                width: isNarrow ? 18 : 15,
+                height: isNarrow ? 18 : 15,
+                decoration: BoxDecoration(color: style.dot, borderRadius: BorderRadius.circular(4)),
               );
+
+              // Tooltip needs a long-press to appear, which most mobile
+              // users never discover. On narrow layouts, a plain tap shows
+              // the same info via SnackBar instead.
+              if (isNarrow) {
+                return InkWell(
+                  borderRadius: BorderRadius.circular(4),
+                  onTap: () {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('${v.name}: ${style.label}'),
+                        duration: const Duration(seconds: 2),
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                  },
+                  child: dot,
+                );
+              }
+
+              return Tooltip(message: '${v.name}: ${style.label}', child: dot);
             }),
             if (valves.length > 8)
               Text('+${valves.length - 8}', style: const TextStyle(fontSize: 10, color: _Tone.textMuted)),
@@ -1500,7 +1628,8 @@ class _RunningSummary extends StatelessWidget {
   final int nodeSNo;
   final List<RelayStatus> valves;
   final CurrentProgramViewModel programVm;
-  const _RunningSummary({required this.valves, required this.programVm, required this.nodeSNo});
+  final bool isNarrow;
+  const _RunningSummary({required this.valves, required this.programVm, required this.nodeSNo, this.isNarrow = false});
 
   @override
   Widget build(BuildContext context) {
@@ -1536,7 +1665,7 @@ class _RunningSummary extends StatelessWidget {
             }
 
             if (runningCount == 0) {
-              return const Text('—', style: TextStyle(fontSize: 12, color: _Tone.textMuted));
+              return Text('—', style: TextStyle(fontSize: isNarrow ? 14 : 12, color: _Tone.textMuted));
             }
 
             return Column(
@@ -1545,12 +1674,12 @@ class _RunningSummary extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(soonestDisplay != null && soonestDisplay.contains(":") ? Icons.timer_outlined : Icons.water_drop_outlined, size: 13, color: _Tone.statusRunning),
+                    Icon(soonestDisplay != null && soonestDisplay.contains(":") ? Icons.timer_outlined : Icons.water_drop_outlined, size: isNarrow ? 15 : 13, color: _Tone.statusRunning),
                     const SizedBox(width: 4),
                     Flexible(
                       child: Text(
                         soonestDisplay != null ? '$runningCount active · $soonestDisplay' : '$runningCount active',
-                        style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _Tone.statusRunning),
+                        style: TextStyle(fontSize: isNarrow ? 13 : 11, fontWeight: FontWeight.w600, color: _Tone.statusRunning),
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
@@ -1560,7 +1689,7 @@ class _RunningSummary extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 17),
                   child: Text(
                     currentSequenceNumber != null ? 'Current Seq: $currentSequenceNumber' : 'No sequence',
-                    style: const TextStyle(color: Colors.black38, fontSize: 10),
+                    style: TextStyle(color: Colors.black38, fontSize: isNarrow ? 12 : 10),
                   ),
                 ),
               ],
@@ -1631,28 +1760,41 @@ class _NodeDetailPanel extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (sensors.isNotEmpty) ...[
-            const Text('Sensors', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _Tone.textMuted)),
+            Text('Sensors', style: TextStyle(fontSize: isNarrow ? 13 : 11, fontWeight: FontWeight.w600, color: _Tone.textMuted)),
             const SizedBox(height: 6),
             Wrap(spacing: 8, runSpacing: 8, children: sensors.map(sensorWidgetBuilder).toList()),
             const SizedBox(height: 14),
           ],
-          const Text('Valves', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: _Tone.textMuted)),
+          Text('Valves', style: TextStyle(fontSize: isNarrow ? 13 : 11, fontWeight: FontWeight.w600, color: _Tone.textMuted)),
           const SizedBox(height: 6),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: valves.asMap().entries.map((entry) {
-              final i = entry.key;
-              final valve = entry.value;
-              return _ValveDetailCard(
-                nodeSNo: nodeSNo,
-                valve: valve,
-                isSelected: selectedValveIdx.contains(i),
-                programVm: programVm,
-                isNarrow: isNarrow,
-                onTap: () => onValveTap(i),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              // On narrow screens, size each card off the *actual* space this
+              // Wrap has (constraints.maxWidth), not a guessed screen-width
+              // minus assumed padding. The old calc's assumed padding total
+              // didn't match the real padding stack (card padding + panel
+              // padding), so two cards never quite fit and the 2nd wrapped
+              // to its own line, leaving a big empty gap on the right.
+              final double? narrowCardWidth =
+              isNarrow ? (constraints.maxWidth - 8) / 2 : null;
+              return Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: valves.asMap().entries.map((entry) {
+                  final i = entry.key;
+                  final valve = entry.value;
+                  return _ValveDetailCard(
+                    nodeSNo: nodeSNo,
+                    valve: valve,
+                    isSelected: selectedValveIdx.contains(i),
+                    programVm: programVm,
+                    isNarrow: isNarrow,
+                    width: narrowCardWidth,
+                    onTap: () => onValveTap(i),
+                  );
+                }).toList(),
               );
-            }).toList(),
+            },
           ),
         ],
       ),
@@ -1671,6 +1813,7 @@ class _ValveDetailCard extends StatelessWidget {
   final bool isSelected;
   final CurrentProgramViewModel programVm;
   final bool isNarrow;
+  final double? width;
   final VoidCallback onTap;
 
   const _ValveDetailCard({
@@ -1680,6 +1823,7 @@ class _ValveDetailCard extends StatelessWidget {
     required this.programVm,
     required this.onTap,
     this.isNarrow = false,
+    this.width,
   });
 
   @override
@@ -1708,7 +1852,7 @@ class _ValveDetailCard extends StatelessWidget {
             return GestureDetector(
               onTap: onTap,
               child: Container(
-                width: isNarrow ? (MediaQuery.of(context).size.width - 12 * 2 - 8) / 2 : 178,
+                width: isNarrow ? width : 178,
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
                   color: _Tone.surface,
@@ -1749,7 +1893,7 @@ class _ValveDetailCard extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   valve.name.toString(),
-                                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: _Tone.textPrimary),
+                                  style: TextStyle(fontSize: isNarrow ? 14 : 12, fontWeight: FontWeight.w600, color: _Tone.textPrimary),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ),
@@ -1767,7 +1911,7 @@ class _ValveDetailCard extends StatelessWidget {
                             ],
                           ),
                           const SizedBox(height: 3),
-                          Text(style.label, style: TextStyle(fontSize: 10, color: style.fg, fontWeight: FontWeight.w500)),
+                          Text(style.label, style: TextStyle(fontSize: isNarrow ? 12 : 10, color: style.fg, fontWeight: FontWeight.w500)),
                         ],
                       ),
                     ),
@@ -1832,7 +1976,7 @@ class _MobileStatusChip extends StatelessWidget {
                 Text(
                   label,
                   style: const TextStyle(
-                    fontSize: 9,
+                    fontSize: 11,
                     color: _Tone.textMuted,
                   ),
                 ),
@@ -1840,7 +1984,7 @@ class _MobileStatusChip extends StatelessWidget {
                 Text(
                   value,
                   style: TextStyle(
-                    fontSize: 11,
+                    fontSize: 13,
                     fontWeight: FontWeight.w700,
                     color: warn
                         ? Colors.orange.shade800
