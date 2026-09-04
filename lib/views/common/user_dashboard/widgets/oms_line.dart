@@ -662,29 +662,21 @@ class _OmsLineState extends State<OmsLine> {
                         showEditProductDialog(context, node, widget.customerId);
                       } else if (value == 'bluetooth') {
                         final loggedInUser = context.read<UserProvider>().loggedInUser;
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => NodeConnectionPage(
-                          nodeData: {
-                            'controllerId': widget.master.controllerId,
-                            'deviceId': widget.master.deviceId,
-                            'deviceName': widget.master.deviceName,
-                            'categoryId': widget.master.categoryId,
-                            'categoryName': widget.master.categoryName,
-                            'modelId': widget.master.modelId,
-                            'modelName': widget.master.modelName,
-                            'interfaceTypeId': widget.master.interfaceTypeId,
-                            'interface': widget.master.interface,
-                            'relayOutput': widget.master.relayOutput,
-                            'latchOutput': widget.master.latchOutput,
-                            'analogInput': widget.master.analogInput,
-                            'digitalInput': widget.master.digitalInput,
-                          },
-                          masterData: {
-                            "userId": loggedInUser.id,
-                            "customerId": widget.customerId,
-                            "controllerId": widget.master.controllerId,
-                          },
-                          connectMode: ConnectMode.normal,
-                        )));
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => NodeConnectionPage(
+                              nodeData: node.toJson(),
+                              masterData: {
+                                "userId": loggedInUser.id,
+                                "customerId": widget.customerId,
+                                "controllerId": widget.master..controllerId,
+                              },
+                              connectMode: ConnectMode.normal,
+                            ),
+                          ),
+                        );
                       }
                     },
                     itemBuilder: (context) => [
